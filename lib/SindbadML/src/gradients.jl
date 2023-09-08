@@ -71,8 +71,9 @@ function gradsBatch!(
     land_init_space,
     forcing_one_timestep,
     tem,
+    param_to_index,
     optim;
-    logging=true) where F<:Callable
+    logging=true) where {F}
 
     p = Progress(length(xbatch); desc="Computing batch grads...", offset=0, color=:yellow, enabled=logging)
     for idx ∈ eachindex(xbatch)
@@ -86,7 +87,7 @@ function gradsBatch!(
         data_optim_now = (; site_obs = loc_obs, )
         data_cache = (; loc_forcing, forcing_one_timestep, allocated_output = DiffCache.(loc_output))
 
-        gg = ForwardDiffGrads(loss_function, new_vals, inits, data_cache, data_optim_now, tem, tbl_params, optim)
+        gg = ForwardDiffGrads(loss_function, new_vals, inits, data_cache, data_optim_now, tem, param_to_index, optim)
         f_grads[:, idx] = gg
 
         next!(p; showvalues=[(:site_name, site_name)])
@@ -94,7 +95,7 @@ function gradsBatch!(
 end
 
 function gradsBatchDistributed!(
-    loss_function::Function,
+    loss_function::F,
     f_grads,
     up_params_now,
     approaches,
@@ -106,8 +107,9 @@ function gradsBatchDistributed!(
     land_init_space,
     forcing_one_timestep,
     tem,
+    param_to_index,
     optim;
-    logging=true)
+    logging=false) where {F}
 
     #p = Progress(length(xbatch); desc="Computing batch grads...", offset=0, color=:yellow, enabled=logging)
     @sync @distributed for idx ∈ eachindex(xbatch)
@@ -121,15 +123,14 @@ function gradsBatchDistributed!(
         data_optim_now = (; site_obs = loc_obs, )
         data_cache = (; loc_forcing, forcing_one_timestep, allocated_output = DiffCache.(loc_output))
 
-        gg = ForwardDiffGrads(loss_function, new_vals, inits, data_cache, data_optim_now, tem, tbl_params, optim)
+        gg = ForwardDiffGrads(loss_function, new_vals, inits, data_cache, data_optim_now, tem, param_to_index, optim)
         f_grads[:, idx] = gg
-
         #next!(p; showvalues=[(:site_name, site_name)])
     end
 end
 
 function get∇params(
-    loss_function::Function,
+    loss_function::F,
     xfeatures,
     n_params,
     re,
@@ -143,8 +144,9 @@ function get∇params(
     land_init_space,
     forcing_one_timestep,
     tem,
+    param_to_index,
     optim;
-    logging=false)
+    logging=false) where {F}
 
     f_grads = zeros(Float32, n_params, length(xbatch))
     x_feat = xfeatures(; site=xbatch)
@@ -163,6 +165,7 @@ function get∇params(
         land_init_space,
         forcing_one_timestep,
         tem,
+        param_to_index,
         optim;
         logging=logging
         )
@@ -172,7 +175,7 @@ function get∇params(
 end
 
 function get∇paramsDistributed(
-    loss_function::Function,
+    loss_function::F,
     xfeatures,
     n_params,
     re,
@@ -186,8 +189,9 @@ function get∇paramsDistributed(
     land_init_space,
     forcing_one_timestep,
     tem,
+    param_to_index,
     optim;
-    logging=true)
+    logging=false) where {F}
 
     f_grads = SharedArray{Float32}(n_params, length(xbatch))
 
@@ -240,6 +244,7 @@ function train(
     land_init_space,
     forcing_one_timestep,
     tem,
+    param_to_index,
     optim;
     nepochs=2,
     opt = Optimisers.Adam(),
@@ -260,8 +265,7 @@ function train(
     p = Progress(nepochs; desc="Computing epochs...")
 
     for epoch ∈ 1:nepochs
-        xbatches = shuffle ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
-
+        #xbatches = shuffle ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
         for (batch_id, xbatch) ∈ enumerate(xbatches)
             ∇params = get∇params(
                 loss_function,
@@ -278,6 +282,7 @@ function train(
                 land_init_space,
                 forcing_one_timestep,
                 tem,
+                param_to_index,
                 optim
             )
 
@@ -297,6 +302,7 @@ function train(
             land_init_space,
             forcing_one_timestep,
             tem,
+            param_to_index,
             optim;
             logging=true
             )
@@ -390,7 +396,7 @@ function trainDistributed(
 end
 
 function get_site_losses(
-    loss_function::Function,
+    loss_function::F,
     up_params_now,
     approaches,
     new_sites,
@@ -401,9 +407,9 @@ function get_site_losses(
     land_init_space,
     forcing_one_timestep,
     tem,
+    param_to_index,
     optim;
-    logging=true
-    )
+    logging=false) where {F}
 
     tot_loss = fill(NaN32, length(new_sites))
     p = Progress(length(new_sites); desc="Computing site losses...", color=:yellow, enabled=logging)
@@ -428,7 +434,7 @@ function get_site_losses(
             allocated_output = loc_output,
             )
 
-        loss_site = loss_function(new_vals, inits, data_tmp, data_optim_now, tem, tbl_params, optim)
+        loss_site = loss_function(new_vals, inits, data_tmp, data_optim_now, tem, param_to_index, optim)
         tot_loss[idx] = loss_site
         next!(p; showvalues=[(:site_name, site_name)])
     end
