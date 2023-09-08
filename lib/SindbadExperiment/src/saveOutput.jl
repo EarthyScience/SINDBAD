@@ -1,37 +1,5 @@
 export saveOutCubes
-export getGlobalAttributesForOutCubes
-export getOutputFileInfo
 
-
-"""
-    getGlobalAttributesForOutCubes(info)
-
-
-"""
-function getGlobalAttributesForOutCubes(info)
-    os = Sys.iswindows() ? "Windows" : Sys.isapple() ?
-         "macOS" : Sys.islinux() ? "Linux" : "unknown"
-    io = IOBuffer()
-    versioninfo(io)
-    str = String(take!(io))
-    julia_info = split(str, "\n")
-
-    io = IOBuffer()
-    Pkg.status("Sindbad", io=io)
-    sindbad_version = String(take!(io))
-    global_attr = Dict(
-        "simulation_by" => ENV["USER"],
-        "experiment" => info.experiment.basics.name,
-        "domain" => info.experiment.basics.domain,
-        "date" => string(Date(now())),
-        # "SINDBAD" => sindbad_version,
-        "machine" => Sys.MACHINE,
-        "os" => os,
-        "host" => gethostname(),
-        "julia" => string(VERSION),
-    )
-    return global_attr
-end
 
 """
     getModelDataArray(model_data::AbstractArray{T, 2})
@@ -59,42 +27,6 @@ return model data with 1 sized dimension removed in case of 4-dimensional matrix
 function getModelDataArray(model_data::AbstractArray{T,4}) where {T}
     return model_data[:, 1, :, :]
 end
-
-"""
-    getOutputFileInfo(info)
-
-
-"""
-function getOutputFileInfo(info)
-    global_metadata = getGlobalAttributesForOutCubes(info)
-    file_prefix = joinpath(info.output.data, info.experiment.basics.name * "_" * info.experiment.basics.domain)
-    out_file_info = (; global_metadata=global_metadata, file_prefix=file_prefix)
-    return out_file_info
-end
-
-
-"""
-    getUniqueVarNames(var_pairs)
-
-return the list of variable names to be used to write model outputs to a field. - checks if the variable name is duplicated across different fields of SINDBAD land
-- uses field__variablename in case of duplicates, else uses the actual model variable name
-"""
-function getUniqueVarNames(var_pairs)
-    pure_vars = getVarName.(var_pairs)
-    fields = getVarField.(var_pairs)
-    uniq_vars = Symbol[]
-    for i in eachindex(pure_vars)
-        n_occur = sum(pure_vars .== pure_vars[i])
-        var_i = pure_vars[i]
-        if n_occur > 1
-            var_i = Symbol(String(fields[i]) * "__" * String(pure_vars[i]))
-        end
-        push!(uniq_vars, var_i)
-    end
-    return uniq_vars
-end
-
-
 
 
 """

@@ -247,8 +247,10 @@ function timeLoopTEM!(
     land,
     tem_helpers,
     ::DoNotDebugModel) # do not debug the models
-    num_timesteps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
-    for ts ∈ 1:num_timesteps
+    # num_timesteps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
+    for ts ∈ eachindex(loc_forcing[1])
+        # f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts)
+        # f_ts = getForcingForTimeStep(loc_forcing, ts)
         f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
         land = computeTEM(selected_models, f_ts, land, tem_helpers)
         setOutputForTimeStep!(loc_output, land, ts, tem_helpers.vals.output_vars)
