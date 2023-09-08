@@ -8,8 +8,8 @@ using PreallocationTools
 using GLMakie
 
 toggleStackTraceNT()
-# include("gen_obs.jl")
-# obs_synt = out_synt();
+include("gen_obs.jl")
+obs_synt = out_synt();
 
 
 experiment_json = "../exp_medium/settings_medium/experiment.json"
@@ -23,7 +23,7 @@ tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameters_to_optimize);
 
 forcing = getForcing(info);
- observations = getObservation(info, forcing.helpers);
+observations = getObservation(info, forcing.helpers);
 
 forc = (; Pair.(forcing.variables, forcing.data)...);
 obs = (; Pair.(observations.variables, observations.data)...);
@@ -63,7 +63,7 @@ site_location = loc_space_maps[3]
 loc_land_init = land_init_space[3];
 
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(op.data, forc, obs, site_location); # obs_synt
+    getLocDataObsN(op.data, forc, obs_synt, site_location); # obs_synt
 
 land_init = land_init_space[site_location[1][2]];
 
@@ -127,7 +127,7 @@ data_cache = (;
 );
 
 models = info.tem.models.forward;
-param_to_index = param_indices(models, tbl_params)
+param_to_index = param_indices(models, tbl_params);
 
 models = LongTuple(models...);
 
@@ -151,19 +151,19 @@ println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_f = forc.Tair.site
-c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr"));
+c = Cube(joinpath(@__DIR__, "../data/fluxnet_covariates.zarr"));
 xfeatures = cube_to_KA(c)
 
 # RU-Ha1, IT-PT1, US-Me5
 sites = xfeatures.site
 sites = [s for s ∈ sites]
-nogood = [
-    "AR-SLu",
-    "CA-Obs",
-    "DE-Lkb",
-    "SJ-Blv",
-    "US-ORv"];
-sites = setdiff(sites, nogood)
+# nogood = [
+#     "AR-SLu",
+#     "CA-Obs",
+#     "DE-Lkb",
+#     "SJ-Blv",
+#     "US-ORv"];
+# sites = setdiff(sites, nogood)
 
 # machine learning parameters baseline
 n_bs_feat = length(xfeatures.features)
@@ -187,7 +187,7 @@ data_optim = (;
     obs = obs_synt,
 );
 
-xbatch = cov_sites[1:4]
+xbatch = cov_sites[1:8]
 
 f_grads = zeros(Float32, n_params, length(xbatch))
 x_feat = xfeatures(; site=xbatch) 
@@ -196,7 +196,7 @@ gradsBatch!(
     siteLossInner,
     f_grads,
     sites_parameters,
-    info.tem.models.forward,
+    models,
     xbatch,
     sites_f,
     b_data,
@@ -205,6 +205,7 @@ gradsBatch!(
     land_init_space,
     forcing_one_timestep,
     tem,
+    param_to_index,
     optim;
     logging=true)
 
@@ -218,7 +219,7 @@ n_params = length(ml_baseline[end].bias)
     n_params,
     re,
     flat,
-    info.tem.models.forward,
+    models,
     xbatch,
     sites_f,
     b_data,
@@ -227,6 +228,7 @@ n_params = length(ml_baseline[end].bias)
     land_init_space,
     forcing_one_timestep,
     tem,
+    param_to_index,
     optim;
     logging=true);
     
@@ -244,6 +246,7 @@ history_loss = train(
     land_init_space,
     forcing_one_timestep,
     tem,
+    param_to_index,
     optim;
     nepochs=3,
     bs = 8,
