@@ -1,4 +1,5 @@
 export defaultVariableInfo
+export getUniqueVarNames
 export sindbad_variables
 export whatIs
 
@@ -1517,6 +1518,28 @@ returns a symbol with field__subfield of land to be used as a key for an entry i
 """
 function getFullVariableKey(var_field::String, var_sfield::String)
     return Symbol(var_field * "__" * var_sfield)
+end
+
+
+"""
+    getUniqueVarNames(var_pairs)
+
+return the list of variable names to be used to write model outputs to a field. - checks if the variable name is duplicated across different fields of SINDBAD land
+- uses field__variablename in case of duplicates, else uses the actual model variable name
+"""
+function getUniqueVarNames(var_pairs)
+    pure_vars = getVarName.(var_pairs)
+    fields = getVarField.(var_pairs)
+    uniq_vars = Symbol[]
+    for i in eachindex(pure_vars)
+        n_occur = sum(pure_vars .== pure_vars[i])
+        var_i = pure_vars[i]
+        if n_occur > 1
+            var_i = Symbol(String(fields[i]) * "__" * String(pure_vars[i]))
+        end
+        push!(uniq_vars, var_i)
+    end
+    return uniq_vars
 end
 
 

@@ -1,6 +1,6 @@
 export getForcingForTimeStep
 export getForcingNamedTuple
-export getForcingTimeSize
+# export getForcingTimeSize
 export getLocData
 export getLocForcingData
 export getLocOutputData
@@ -40,7 +40,8 @@ end
     foreach(forc_vars) do forc
         push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
         push!(output.args, quote
-            d = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+            d = v[ts]
+        # d = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
         end)
         push!(output.args,
             Expr(:(=),
@@ -66,7 +67,9 @@ end
 function getForcingForTimeStep(forcing::NamedTuple, forcing_t, ts::Int64)
     for f ∈ keys(forcing)
         v = forcing[f]
-        forcing_t = @set forcing_t[f] = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+        # forcing_t = @set forcing_t[f] = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+        dv = v[ts]
+        forcing_t = @set forcing_t[f] = dv
     end
     return forcing_t
 end
@@ -78,7 +81,7 @@ end
 """
 function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     map(forcing) do v
-        in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+        v[ts]
     end
 end
 
@@ -94,42 +97,62 @@ end
 
 
 
-"""
-    getForcingTimeSize(forcing::NamedTuple)
+# """
+#     getForcingTimeSize(forcing::NamedTuple)
+
+
+# """
+# function getForcingTimeSize(forcing::NamedTuple)
+#     forcingTimeSize = 1
+#     for v ∈ forcing
+#         if in(:time, AxisKeys.dimnames(v))
+#             forcingTimeSize = size(v, 1)
+#         end
+#     end
+#     return forcingTimeSize
+# end
+
+# """
+#     getForcingTimeSize(forcing, Val{forc_vars})
+
+
+# """
+# @generated function getForcingTimeSize(forcing, ::Val{forc_vars}) where {forc_vars}
+#     output = quote
+#         forcingTimeSize = 1
+#     end
+#     foreach(forc_vars) do forc
+#         push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
+#         push!(output.args,
+#             quote
+#                 forcingTimeSize = in(:time, AxisKeys.dimnames(v)) ? size(v, 1) :
+#                                   forcingTimeSize
+#             end)
+#     end
+#     push!(output.args, quote
+#         forcingTimeSize
+#     end)
+#     return output
+# end
 
 
 """
-function getForcingTimeSize(forcing::NamedTuple)
-    forcingTimeSize = 1
-    for v ∈ forcing
-        if in(:time, AxisKeys.dimnames(v))
-            forcingTimeSize = size(v, 1)
-        end
-    end
-    return forcingTimeSize
+    getForcingV(v::keyedArray, ts::Int64)
+
+
+"""
+function getForcingV(v::KeyedArray, ts::Int64)
+    in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : Array(v)
 end
 
+
 """
-    getForcingTimeSize(forcing, Val{forc_vars})
+    getForcingV(v::Array, ts::Int64)
 
 
 """
-@generated function getForcingTimeSize(forcing, ::Val{forc_vars}) where {forc_vars}
-    output = quote
-        forcingTimeSize = 1
-    end
-    foreach(forc_vars) do forc
-        push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
-        push!(output.args,
-            quote
-                forcingTimeSize = in(:time, AxisKeys.dimnames(v)) ? size(v, 1) :
-                                  forcingTimeSize
-            end)
-    end
-    push!(output.args, quote
-        forcingTimeSize
-    end)
-    return output
+function getForcingV(v::Array, ts::Int64)
+    v[ts]
 end
 
 """
@@ -160,7 +183,32 @@ end
 """
 function getLocForcingData(forcing, loc_space_map)
     loc_forcing = map(forcing) do a
-        view(a; loc_space_map...)
+        d_o = view(a; loc_space_map...)
+        if :time ∉ dimnames(d_o)
+            d_o = Array(d_o)
+        end
+        d_o
+    end
+    return loc_forcing
+end
+
+"""
+    getLocForcingData(forcing, output_array, loc_space_map)
+
+
+
+# Arguments:
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `loc_space_map`: DESCRIPTION
+"""
+function getLocForcingData(forcing, loc_space_map, num_timesteps)
+    loc_forcing = map(forcing) do a
+        d_o = view(a; loc_space_map...)
+        d_o_a = d_o
+        if :time ∉ dimnames(d_o)
+         d_o_a = fill(Array(d_o_a), num_timesteps)
+        end
+        d_o_a
     end
     return loc_forcing
 end
