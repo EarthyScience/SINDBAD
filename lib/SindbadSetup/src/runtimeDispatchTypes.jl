@@ -4,6 +4,7 @@ export EvolutionaryCMAES
 export LandOutArray
 export LandOutStacked
 export LandOutTimeseries
+export LandOutYAXArray
 export OptimLBFGS
 export OptimBFGS
 export OptimizationBBOadaptive
@@ -19,6 +20,7 @@ struct EvolutionaryCMAES end
 struct LandOutArray end
 struct LandOutStacked end
 struct LandOutTimeseries end
+struct LandOutYAXArray end
 struct OptimLBFGS end
 struct OptimBFGS end
 struct OptimizationBBOadaptive end

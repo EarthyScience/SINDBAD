@@ -1,6 +1,5 @@
 {
   "algorithm": "CMAEvolutionStrategy_CMAES",
-  "land_output_type": "array",
   "model_parameter_default": {
     "distribution": ["normal", [0, 1]],
     "is_ml": false

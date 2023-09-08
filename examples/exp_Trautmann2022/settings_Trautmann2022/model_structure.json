@@ -1,0 +1,125 @@
+{
+  "default_model": {
+    "order": 0,
+    "use_in_spinup": true
+  },
+  "models": {
+    "ambientCO2": {
+      "approach": "constant"
+    },
+    "evaporation": {
+      "approach": "vegFraction"
+    },
+    "evapotranspiration": {
+      "approach": "sum"
+    },
+    "EVI": {
+      "approach": "forcing",
+      "order": 14
+    },
+    "fAPAR": {
+      "approach": "EVI",
+      "order": 16
+    },
+    "getPools": {
+      "approach": "simple"
+    },
+    "gpp": {
+      "approach": "transpirationWUE"
+    },
+    "groundWSoilWInteraction": {
+      "approach": "gradient"
+    },
+    "groundWSurfaceWInteraction": {
+      "approach": "fracGroundW"
+    },
+    "interception": {
+      "approach": "vegFraction"
+    },
+    "percolation": {
+      "approach": "WBP"
+    },
+    "PET": {
+      "approach": "Lu2005"
+    },
+    "rainSnow": {
+      "approach": "rain"
+    },
+    "rootMaximumDepth": {
+      "approach": "fracSoilD"
+    },
+    "rootWaterEfficiency": {
+      "approach": "k2Layer"
+    },
+    "rootWaterUptake": {
+      "approach": "proportion"
+    },
+    "runoff": {
+      "approach": "sum"
+    },
+    "runoffBase": {
+      "approach": "Zhang2008"
+    },
+    "runoffOverland": {
+      "approach": "Sat"
+    },
+    "runoffSaturationExcess": {
+      "approach": "Bergstroem1992VegFraction"
+    },
+    "runoffSurface": {
+      "approach": "directIndirect"
+    },
+    "snowFraction": {
+      "approach": "HTESSEL"
+    },
+    "soilWBase": {
+      "approach": "smax2fRD4"
+    },
+    "sublimation": {
+      "approach": "GLEAM"
+    },
+    "transpiration": {
+      "approach": "demandSupply",
+      "order": 51
+    },
+    "transpirationDemand": {
+      "approach": "PETfAPAR"
+    },
+    "transpirationSupply": {
+      "approach": "wAWC"
+    },
+    "vegAvailableWater": {
+      "approach": "rootWaterEfficiency"
+    },
+    "vegFraction": {
+      "approach": "scaledEVI",
+      "order": 15
+    },
+    "waterBalance": {
+      "approach": "simple"
+    },
+    "wCycle": {
+      "approach": "components"
+    },
+    "wCycleBase": {
+      "approach": "simple"
+    },
+    "WUE": {
+      "approach": "expVPDDayCo2"
+    }
+  },
+  "pools": {
+    "water": {
+      "combine": "TWS",
+      "components": {
+        "soilW": [[4.0, 1000.0], 100.0],
+        "groundW": [1, 1000.0],
+        "snowW": [1, 0.01],
+        "surfaceW": [1, 0.01]
+      },
+      "state_variables": {
+        "Δ": 0.0
+      }
+    }
+  }
+}

@@ -39,7 +39,6 @@ for domain ∈ sites
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
-
     ## get the spinup sequence
     nrepeat = 200
 
@@ -96,18 +95,15 @@ for domain ∈ sites
 
 
     observations = getObservation(info, forcing.helpers)
-    obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow.
+    obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow.
 
     run_helpers = prepTEM(forcing, info)
 
     @time runTEM!(optimized_models,
-        run_helpers.forcing_nt_array,
         run_helpers.loc_forcings,
         run_helpers.forcing_one_timestep,
-        run_helpers.output_array,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,
-        run_helpers.loc_space_inds,
         run_helpers.tem_with_types)
 
     # some plots
@@ -161,13 +157,10 @@ for domain ∈ sites
     run_helpers = prepTEM(forcing, info)
 
     @time runTEM!(optimized_models,
-        run_helpers.forcing_nt_array,
         run_helpers.loc_forcings,
         run_helpers.forcing_one_timestep,
-        run_helpers.output_array,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,
-        run_helpers.loc_space_inds,
         run_helpers.tem_with_types)
 
     # save the outcubes

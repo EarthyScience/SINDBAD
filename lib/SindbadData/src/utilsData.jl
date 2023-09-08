@@ -209,7 +209,8 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::B
         rax = nothing
         if dn == info.forcing.data_dimension.time
             t = nc[info.forcing.data_dimension.time]
-            rax = Dim{Symbol(dn)}(t[:])
+            t = [_t for _t in t]
+            rax = Dim{Symbol(dn)}(t)
         else
             if dn in keys(nc)
                 dv = info.tem.helpers.numbers.sNT.(nc[dn][:])
@@ -298,7 +299,7 @@ function mapCleanData(_data, _data_qc, _data_fill, bounds_qc, _data_info, ::Val{
         _data = map((da, dq) -> applyQCBound(da, dq, bounds_qc, _data_fill), _data, _data_qc)
     end
     vT = Val{T}()
-    _data = map(_data -> cleanData(_data, _data_fill, _data_info, vT), _data)
+    _data = map(data_point -> cleanData(data_point, _data_fill, _data_info, vT), _data)
     return _data
 end
 
