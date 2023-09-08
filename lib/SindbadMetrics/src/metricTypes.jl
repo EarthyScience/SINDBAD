@@ -1,5 +1,5 @@
 # ------------------------- metric -------------------------
-
+abstract type SindbadMetric end
 export MSE
 export NMAE1R
 export NNSE
@@ -17,22 +17,22 @@ export Scor
 export Scor2
 export Scor2Inv
 
-struct MSE end
-struct NMAE1R end
-struct NNSE end
-struct NNSEInv end
-struct NNSEσ end
-struct NNSEσInv end
-struct NSE end
-struct NSEInv end
-struct NSEσ end
-struct NSEσInv end
-struct Pcor end
-struct Pcor2 end
-struct Pcor2Inv end
-struct Scor end
-struct Scor2 end
-struct Scor2Inv end
+struct MSE <: SindbadMetric end
+struct NMAE1R <: SindbadMetric end
+struct NNSE <: SindbadMetric end
+struct NNSEInv <: SindbadMetric end
+struct NNSEσ <: SindbadMetric end
+struct NNSEσInv <: SindbadMetric end
+struct NSE <: SindbadMetric end
+struct NSEInv <: SindbadMetric end
+struct NSEσ <: SindbadMetric end
+struct NSEσInv <: SindbadMetric end
+struct Pcor <: SindbadMetric end
+struct Pcor2 <: SindbadMetric end
+struct Pcor2Inv <: SindbadMetric end
+struct Scor <: SindbadMetric end
+struct Scor2 <: SindbadMetric end
+struct Scor2Inv <: SindbadMetric end
 
 # ------------------------- loss calculation -------------------------
 
