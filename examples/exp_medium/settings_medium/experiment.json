@@ -19,6 +19,7 @@
     "data_type": "Float32",
     "input_array_type": "keyed_array",
     "input_data_backend": "zarr",
+    "land_output_type": "array",
     "model_array_type": "static_array",
     "parallelization": "threads",
     "tolerance": 1.0e-2,
@@ -36,7 +37,7 @@
       "load_spinup": false,
       "run_spinup": true,
       "save_spinup": false,
-      "spinup_TEM": false,
+      "spinup_TEM": true,
       "store_spinup": false
     },
     "use_forward_diff": false

@@ -105,13 +105,13 @@ optim = (;
 # @code_warntype get_metric_debug(new_options[1])
 
 
-# pixel_run!(inits, data, tem);
+pixel_run!(inits, data, tem);
 
-# @time pixel_run!(inits, data, tem);
+@time pixel_run!(inits, data, tem);
 
-# @time coreTEM!(inits..., data..., tem...)
+@time coreTEM!(inits..., data..., tem...)
 
-# @code_warntype coreTEM!(inits..., data..., tem...)
+@code_warntype coreTEM!(inits..., data..., tem...)
 # # setLogLevel()
 # # setLogLevel(:debug)
 
@@ -122,10 +122,10 @@ optim = (;
 # # land_spin
 # # loss_vector
 
-# @time getSiteLossTEM(inits, data, data_optim, tem, optim)
+@time getSiteLossTEM(inits, data, data_optim, tem, optim)
 
 
-# @code_warntype getSiteLossTEM(inits, data, data_optim, tem, optim)
+@code_warntype getSiteLossTEM(inits, data, data_optim, tem, optim)
 
 # cost_option = new_options[1];
 
