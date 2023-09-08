@@ -79,16 +79,30 @@ inits = (;
     land_init
 );
 
+loc_obs_2 = [loc_obs[i] for i in eachindex(loc_obs)]
+
 data_optim = (;
     site_obs = loc_obs,
 );
 
 
 cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
+new_cost_options = Tuple(cost_options);
+
+new_options = Tuple([(; cost_metric= new_cost_options[i].cost_metric, obs_ind = new_cost_options[i].obs_ind, mod_ind = new_cost_options[i].mod_ind, valids = new_cost_options[i].valids, cost_weight = new_cost_options[i].cost_weight)
+    for i in eachindex(new_cost_options)])
+
 optim = (;
-    cost_options= cost_options,
+    cost_options= new_options,
     multiconstraint_method = info.optim.multi_constraint_method
 );
+
+function get_metric_debug(cost_option)
+    return getfield(cost_option, :cost_metric)
+end
+
+@code_warntype get_metric_debug(new_options[1])
+
 
 pixel_run!(inits, data, tem);
 
@@ -109,6 +123,91 @@ pixel_run!(inits, data, tem);
 
 @time getSiteLossTEM(inits, data, data_optim, tem, optim)
 
+
+@code_warntype getSiteLossTEM(inits, data, data_optim, tem, optim)
+
+cost_option = new_options[1];
+
+_lossMetric = SindbadTEM.SindbadSetup.SindbadMetrics.get_metric(cost_option) #cost_option.cost_metric # bad
+_obs_ind = cost_option.obs_ind
+_mod_ind = cost_option.mod_ind
+_valids = cost_option.valids
+_weight = cost_option.cost_weight
+
+function innner_loss2(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
+    ŷ = model_output[_mod_ind]
+    #if size(ŷ, 2) == 1
+    ŷ = getModelOutputView(ŷ)
+    #end
+    y = observations[_obs_ind]
+    yσ = observations[_obs_ind+1]
+    (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, _valids)
+    #@code_warntype loss(y, yσ, ŷ, _lossMetric)
+    metr = loss(y, yσ, ŷ, _lossMetric) # * _weight
+    if isnan(metr)
+        metr = oftype(metr, 1e19)
+    end
+    return metr
+end
+
+function get_valids(y, _valids)
+    return y[_valids]
+end
+
+function base_ys(observations, _obs_ind)
+    y = observations[_obs_ind]
+    return y
+end
+
+function apply_valids(y, _valids)
+    return y[_valids]
+end
+
+function combo_base(observations, _obs_ind, _valids)
+    y_new = apply_valids(observations[_obs_ind], _valids)
+    return y_new
+end
+
+
+@code_warntype apply_valids(loc_obs[_obs_ind], _valids)
+
+@code_warntype combo_base(loc_obss, _obs_ind, _valids)
+
+@code_warntype select_ar(loc_obs_2, indx, _valids)
+
+innner_loss2(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, loc_output, loc_obs)
+
+@code_warntype innner_loss2(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, loc_output, loc_obs)
+
+
+function get_ŷ2(model_output, _mod_ind)
+    ŷ = model_output[_mod_ind]
+    if size(ŷ, 2) == 1
+        ŷ_new = getModelOutputView(ŷ)
+    end
+    return ŷ_new
+end
+
+@inline function get_ŷ4(ŷ)
+    if size(ŷ, 2) == 1
+        return @view ŷ[:,1]
+    else
+        return ŷ
+    end
+end
+
+@code_warntype get_ŷ2(loc_output, _mod_ind)
+
+@code_warntype get_ŷ4(loc_output[_mod_ind])
+
+
+@code_warntype getModelOutputView(loc_output[1])
+
+getModelOutputView(loc_output[1])
+
+tw = loc_output[1]
+@view tw[:,1]
+
 CHUNK_SIZE = 12;
 data_cache = (;
     loc_forcing,
@@ -119,9 +218,9 @@ data_cache = (;
 models = info.tem.models.forward;
 param_to_index = param_indices(models, tbl_params);
 
-@profview siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
+@time siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
 
-@code_warntype siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
+siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
 
 #siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
 
@@ -258,3 +357,4 @@ history_loss = train(
 # tempo = string.(forc.Tair.time);
 # out_names = info.optimization.observational_constraints
 # plot_output(op, obs, out_names, cov_sites, sites_f, tempo)
+

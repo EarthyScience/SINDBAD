@@ -85,6 +85,14 @@ function combineLoss(loss_vector::AbstractArray, ::CostSum)
     return sum(loss_vector)
 end
 
+"""
+    combineLoss(loss_vector, ::CostSum)
+
+return the total of cost of each constraint as the overall cost
+"""
+function combineLoss(loss_vector, ::CostSum)
+    return sum(loss_vector)
+end
 
 """
     combineLoss(loss_vector::AbstractArray, ::CostMinimum)
@@ -124,7 +132,7 @@ return model and obs data filtering for the common nan
 - `ŷ`: model simulation data/estimate
 - `idxs`: model simulation data/estimate
 """
-function filterCommonNaN(y, yσ, ŷ, idxs)
+@inline function filterCommonNaN(y, yσ, ŷ, idxs)
     # idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because landWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
@@ -230,27 +238,54 @@ function getLossVector2(observations, model_output, cost_options)
 end
 
 function getLossVector(observations, model_output, cost_options)
-    loss_vector = [innner_loss(cost_option, model_output, observations) for cost_option in cost_options]
+    loss_vector = map(cost_options) do cost_option
+    #for cost_option in cost_options
+        #@code_warntype get_metric(cost_option)
+        _lossMetric = get_metric(cost_option) #cost_option.cost_metric # bad
+        _obs_ind = cost_option.obs_ind
+        _mod_ind = cost_option.mod_ind
+        _valids = cost_option.valids
+        _weight = cost_option.cost_weight
+        #y, yσ, ŷ =  base_ys(model_output, observations, _mod_ind, _obs_ind, _valids)
+       # metr = loss(y, yσ, ŷ, _lossMetric) * _weight
+        #l = innner_loss(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
+        #@show _weight
+        #push!(loss_vector, metr)
+        innner_loss(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
+    end
+    #@show loss_vector
     return loss_vector
 end
 
-function innner_loss(cost_option, model_output, observations)
-    lossMetric = cost_option.cost_metric
-    obs_ind = cost_option.obs_ind
-    ŷ = model_output[cost_option.mod_ind]
+function get_metric(cost_option)
+    return getfield(cost_option, :cost_metric)
+end
+
+function base_ys(model_output, observations, _mod_ind, _obs_ind, _valids)
+    ŷ = model_output[_mod_ind]
     if size(ŷ, 2) == 1
         ŷ = getModelOutputView(ŷ)
     end
-    y = observations[obs_ind]
-    yσ = observations[obs_ind+1]
-    (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
-    metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
+    y = observations[_obs_ind]
+    yσ = observations[_obs_ind+1]
+    y, yσ, ŷ = filterCommonNaN(y, yσ, ŷ, _valids)
+    return y, yσ, ŷ
+end
+
+function innner_loss(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
+    ŷ = model_output[_mod_ind]
+    if size(ŷ, 2) == 1
+        ŷ = getModelOutputView(ŷ)
+    end
+    y = observations[_obs_ind]
+    yσ = observations[_obs_ind+1]
+    (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, _valids)
+    metr = loss(y, yσ, ŷ, _lossMetric) * _weight
     if isnan(metr)
         metr = oftype(metr, 1e19)
     end
     return metr
 end
-
 
 
 """
