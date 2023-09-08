@@ -34,7 +34,7 @@ for (i, tj) ∈ enumerate(tjs)
 
     spinup_forcing = getSpinupForcing(run_helpers.loc_forcings[1], forcing_one_timestep, tem_with_types.spinup.sequence, tem_with_types.helpers)
 
-    spinupforc = :day_msc
+    spinupforc = :day_MSC
     sel_forcing = getfield(spinup_forcing, spinupforc)
 
 
