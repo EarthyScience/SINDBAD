@@ -1,4 +1,5 @@
 export runTEMYax
+export TEMYax
 
 
 """
@@ -131,7 +132,7 @@ end
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forcing_variables`: DESCRIPTION
 """
-function unpackYaxForward(args; out_variables::NamedTuple, forcing_variables::AbstractArray)
+function unpackYaxForward(args; out_variables, forcing_variables)
     nin = length(forcing_variables)
     nout = length(out_variables)
     outputs = args[1:nout]

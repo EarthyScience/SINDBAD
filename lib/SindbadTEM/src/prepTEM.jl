@@ -13,7 +13,7 @@ export prepTEM
 function addSpinupLog(land, seq, ::DoStoreSpinup) # when history is true
     n_repeat = 1
     for _seq in seq
-        n_repeat = n_repeat + _seq["n_repeat"]
+        n_repeat = n_repeat + _seq.n_repeat
     end
     spinuplog = Vector{typeof(land.pools)}(undef, n_repeat)
     @pack_land spinuplog => land.states
@@ -30,8 +30,6 @@ end
 - `::DoNotStoreSpinup`: indicates not to store the spinup history
 """
 function addSpinupLog(land, _, ::DoNotStoreSpinup) # when history is false
-    spinuplog = nothing
-    @pack_land spinuplog => land.states
     return land
 end
 
@@ -148,8 +146,12 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
     loc_forcings = map([loc_space_maps...]) do lsm
-        getLocForcingData(forcing_nt_array, lsm)
+        getLocForcingData(forcing_nt_array, lsm, forcing.helpers.sizes.time)
     end
+
+    # loc_forcings = map([loc_space_maps...]) do lsm
+    #     getLocForcingData(forcing_nt_array, lsm)
+    # end
     loc_outputs = map([loc_space_maps...]) do lsm
         getLocOutputData(output_array, lsm)
     end
@@ -157,6 +159,8 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     # loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
     # loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])
     land_init_space = Tuple([deepcopy(land_one) for _ ∈ 1:length(loc_space_maps)])
+
+    forcing_nt_array = nothing
 
     run_helpers = (; loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     # run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
