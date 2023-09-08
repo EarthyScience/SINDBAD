@@ -46,8 +46,11 @@ end
 # getLossVector(obs_array, run_helpers.output_array, prepCostOptions(obs_array, info.optim.cost_options))
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
-@time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
+@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
+opt_params = out_opti.out_params;
+out_model = out_opti.out_forward;
 # @time out_cost = runExperimentCost(experiment_json; replace_info=replace_info_spatial);
+
 
 
 ds = forcing.data[1];

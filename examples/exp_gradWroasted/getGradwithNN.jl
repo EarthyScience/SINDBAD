@@ -28,12 +28,10 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.land_init_space,
     run_helpers.tem_with_types)
 
-# @time out_params = runExperimentOpti(experiment_json);  
 tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
     info.optim.model_parameters_to_optimize);
 
-# @time out_params = runExperimentOpti(experiment_json);  
 function g_loss(x,
     mods,
     loc_forcings,
