@@ -77,7 +77,7 @@
     },
     "sequence": [
       {
-        "forcing": "day_msc",
+        "forcing": "day_MSC",
         "n_repeat": 100,
         "spinup_mode": "all_forward_models",
         "stop_function": null
