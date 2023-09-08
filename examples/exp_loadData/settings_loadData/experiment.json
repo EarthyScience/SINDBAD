@@ -79,7 +79,7 @@
     },
     "sequence": [
       {
-        "forcing": "day_msc",
+        "forcing": "day_MSC",
         "n_repeat": 15,
         "spinup_mode": "all_forward_models",
         "stop_function": null
@@ -91,7 +91,7 @@
         "stop_function": null
       },
       {
-        "forcing": "day_msc",
+        "forcing": "day_MSC",
         "n_repeat": 1,
         "spinup_mode": "eta_scale_AH",
         "stop_function": null
