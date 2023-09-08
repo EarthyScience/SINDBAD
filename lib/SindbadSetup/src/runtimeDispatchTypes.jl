@@ -92,7 +92,7 @@ struct DoUseForwardDiff end
 struct DoNotUseForwardDiff end
 
 # ------------------------- spinup methods -------------------------
-
+export SindbadSpinup
 export AllForwardModels
 export SelSpinupModels
 export EtaScaleA0H
@@ -106,18 +106,20 @@ export ODETsit5
 export SSPDynamicSSTsit5
 export SSPSSRootfind
 
-struct AllForwardModels end
-struct EtaScaleA0H end
-struct EtaScaleAH end
-struct NlsolveFixedpointTrustregionCEco end
-struct NlsolveFixedpointTrustregionCEcoTWS end
-struct NlsolveFixedpointTrustregionTWS end
-struct ODEAutoTsit5Rodas5 end
-struct ODEDP5 end
-struct ODETsit5 end
-struct SelSpinupModels end
-struct SSPDynamicSSTsit5 end
-struct SSPSSRootfind end
+abstract type SindbadSpinup end
+struct AllForwardModels <: SindbadSpinup end
+struct EtaScaleA0H <: SindbadSpinup end
+struct EtaScaleAH <: SindbadSpinup end
+struct NlsolveFixedpointTrustregionCEco <: SindbadSpinup end
+struct NlsolveFixedpointTrustregionCEcoTWS <: SindbadSpinup end
+struct NlsolveFixedpointTrustregionTWS <: SindbadSpinup end
+struct ODEAutoTsit5Rodas5 <: SindbadSpinup end
+struct ODEDP5 <: SindbadSpinup end
+struct ODETsit5 <: SindbadSpinup end
+struct SelSpinupModels <: SindbadSpinup end
+struct SSPDynamicSSTsit5 <: SindbadSpinup end
+struct SSPSSRootfind <: SindbadSpinup end
+
 
 # ------------------------- parallelization and model output options-------------------------
 

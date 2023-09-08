@@ -85,4 +85,6 @@ for (o, v) in enumerate(forc_vars)
 end
 
 
-# @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
+# @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
+# opt_params = out_opti.out_params;
+# out_model = out_opti.out_forward;
