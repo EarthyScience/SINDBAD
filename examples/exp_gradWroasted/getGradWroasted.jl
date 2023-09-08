@@ -13,7 +13,7 @@ forcing = getForcing(info);
 # Sindbad.eval(:(error_catcher = []));
 
 observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
 
@@ -21,13 +21,10 @@ run_helpers = prepTEM(forcing, info);
 
 
 @time runTEM!(info.tem.models.forward,
-    run_helpers.forcing_nt_array,
     run_helpers.loc_forcings,
     run_helpers.forcing_one_timestep,
-    run_helpers.output_array,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
-    run_helpers.loc_space_inds,
     run_helpers.tem_with_types)
 
 # @time out_params = runExperimentOpti(experiment_json);  
@@ -67,13 +64,11 @@ end
 # @time out_params = runExperimentOpti(experiment_json);  
 function g_loss(x,
     mods,
-    forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
     output_array,
     loc_outputs,
     land_init_space,
-    loc_space_inds,
     tem_with_types,
     observations,
     tbl_params,
@@ -81,13 +76,11 @@ function g_loss(x,
     multi_constraint_method)
     l = getLoss2(x,
         mods,
-        forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
         output_array,
         loc_outputs,
         land_init_space,
-        loc_space_inds,
         tem_with_types,
         observations,
         tbl_params,
@@ -101,13 +94,11 @@ mods = info.tem.models.forward;
 
 @time g_loss(tbl_params.default,
     mods,
-    run_helpers.forcing_nt_array,
     run_helpers.loc_forcings,
     run_helpers.forcing_one_timestep,
     run_helpers.output_array,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
-    run_helpers.loc_space_inds,
     run_helpers.tem_with_types,
     obs_array,
     tbl_params,
@@ -117,13 +108,11 @@ mods = info.tem.models.forward;
 function l1(p)
     return g_loss(p,
         mods,
-        run_helpers.forcing_nt_array,
         run_helpers.loc_forcings,
         run_helpers.forcing_one_timestep,
         run_helpers.output_array,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,
-        run_helpers.loc_space_inds,
         run_helpers.tem_with_types,
         obs_array,
         tbl_params,

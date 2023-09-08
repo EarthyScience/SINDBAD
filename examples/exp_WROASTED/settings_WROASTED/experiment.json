@@ -19,6 +19,7 @@
     "data_type": "Float32",
     "input_array_type": "keyed_array",
     "input_data_backend": "netcdf",
+    "land_output_type": "array",
     "model_array_type": "static_array",
     "parallelization": "threads",
     "tolerance": 1.0e-2,
@@ -94,7 +95,7 @@
       "states.root_water_efficiency": "d_soil",
       "states.transpiration_supply": null,
       "states.water_balance": null,
-      "WUE.AoE": null
+      "WUE.WUE": null
     }
   },
   "model_spinup": {

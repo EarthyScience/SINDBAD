@@ -6,10 +6,10 @@
       "optimization": "optimization.json"
     },
     "domain": "Global",
-    "name": "OptimDomain",
+    "name": "Trautmann2022_Opti",
     "time": {
-      "date_begin": "2001-01-01",
-      "date_end": "2005-12-31",
+      "date_begin": "2015-01-01",
+      "date_end": "2019-12-31",
       "temporal_resolution": "day",
       "timesteps_in_day": 1,
       "timesteps_in_year": 365
@@ -19,6 +19,7 @@
     "data_type": "Float32",
     "input_array_type": "keyed_array",
     "input_data_backend": "netcdf",
+    "land_output_type": "array",
     "model_array_type": "static_array",
     "parallelization": "threads",
     "tolerance": 1.0e-3,
@@ -26,7 +27,7 @@
   },
   "flags": {
     "calc_cost": true,
-    "catch_model_errors": false,
+    "catch_model_errors": true,
     "debug_model": false,
     "inline_update": false,
     "run_forward": true,
@@ -44,27 +45,30 @@
   "model_output": {
     "all": true,
     "depth_dimensions": {
-      "d_cEco": 8,
+      "d_ground": "groundW",
       "d_snow": "snowW",
-      "d_soil": "soilW"
+      "d_soil": "soilW",
+      "d_surface": "surfaceW"
     },
-    "format": "zarr",
+    "format": "nc",
     "output_array_type": "array",
     "path": null,
-    "save_single_file": true,
+    "save_single_file": false,
     "variables": {
       "fluxes.evapotranspiration": null,
+      "fluxes.evaporation": null,
       "fluxes.gpp": null,
+      "fluxes.gw_recharge": null,
       "fluxes.runoff": null,
+      "fluxes.sublimation": null,
       "fluxes.surface_runoff": null,
       "fluxes.transpiration": null,
-      "gppAirT.gpp_f_airT": null,
-      "gppDemand.gpp_demand": null,
-      "gppDemand.gpp_f_climate": null,
-      "gppPotential.gpp_potential": null,
-      "gppVPD.gpp_f_vpd": null,
+      "pools.groundW": "d_ground",
+      "pools.snowW": "d_snow",
       "pools.soilW": "d_soil",
+      "pools.surfaceW": "d_surface",
       "states.fAPAR": null,
+      "states.EVI": null,
       "states.water_balance": null
     }
   },
@@ -82,7 +86,7 @@
     "sequence": [
       {
         "forcing": "all_years",
-        "n_repeat": 1,
+        "n_repeat": 3,
         "spinup_mode": "all_forward_models",
         "stop_function": null
       }
