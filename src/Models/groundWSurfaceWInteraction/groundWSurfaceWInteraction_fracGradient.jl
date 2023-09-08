@@ -1,14 +1,14 @@
-export groundWsurfaceWInteraction_fracGradient
+export groundWSurfaceWInteraction_fracGradient
 
 #! format: off
-@bounds @describe @units @with_kw struct groundWsurfaceWInteraction_fracGradient{T1} <: groundWsurfaceWInteraction
-    kGW2Surf::T1 = 0.001 | (0.0001, 0.01) | "maximum transfer rate between GW and surface water" | "/d"
+@bounds @describe @units @with_kw struct groundWSurfaceWInteraction_fracGradient{T1} <: groundWSurfaceWInteraction
+    k_groundW_to_surfaceW::T1 = 0.001 | (0.0001, 0.01) | "maximum transfer rate between GW and surface water" | "/d"
 end
 #! format: on
 
-function compute(p_struct::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
+function compute(p_struct::groundWSurfaceWInteraction_fracGradient, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWsurfaceWInteraction_fracGradient p_struct
+    @unpack_groundWSurfaceWInteraction_fracGradient p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -19,22 +19,22 @@ function compute(p_struct::groundWsurfaceWInteraction_fracGradient, forcing, lan
     end
 
     ## calculate variables
-    tmp = kGW2Surf * (sum(groundW + ΔgroundW) - sum(surfaceW + ΔsurfaceW))
+    tmp = k_groundW_to_surfaceW * (totalS(groundW, ΔgroundW) - totalS(surfaceW, ΔsurfaceW))
 
     # update the delta storages
-    ΔgroundW .= ΔgroundW .- GW2Surf / n_groundW
-    ΔsurfaceW .= ΔsurfaceW .+ GW2Surf / n_surfaceW
+    ΔgroundW = addToEachElem(ΔgroundW, -groundW_to_surfaceW / n_groundW)
+    ΔsurfaceW = addToEachElem(ΔsurfaceW, groundW_to_surfaceW / n_surfaceW)
 
     ## pack land variables
     @pack_land begin
-        GW2Surf => land.fluxes
+        groundW_to_surfaceW => land.fluxes
         (ΔsurfaceW, ΔgroundW) => land.states
     end
 
     return land
 end
 
-function update(p_struct::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
+function update(p_struct::groundWSurfaceWInteraction_fracGradient, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, surfaceW) ∈ land.pools
@@ -66,7 +66,7 @@ $(SindbadParameters)
 ---
 
 # compute:
-Water exchange between surface and groundwater using groundWsurfaceWInteraction_fracGradient
+Water exchange between surface and groundwater using groundWSurfaceWInteraction_fracGradient
 
 *Inputs*
  - land.pools.groundW: groundwater storage
@@ -79,7 +79,7 @@ Water exchange between surface and groundwater using groundWsurfaceWInteraction_
 
 # update
 
-update pools and states in groundWsurfaceWInteraction_fracGradient
+update pools and states in groundWSurfaceWInteraction_fracGradient
 
  - land.pools.groundW
  - land.pools.surfaceW
@@ -96,4 +96,4 @@ update pools and states in groundWsurfaceWInteraction_fracGradient
 *Created by:*
  - skoirala
 """
-groundWsurfaceWInteraction_fracGradient
+groundWSurfaceWInteraction_fracGradient

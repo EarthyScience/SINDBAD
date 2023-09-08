@@ -34,9 +34,9 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `::DoRunForward`: a type dispatch for forward run
+- `::Union{DoRunForward, DoNotRunOptimization}`: a type dispatch for forward run when it is true, or when optimization is false
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunForward)
+function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForward, DoNotRunOptimization})
     print("-------------------Forward Run Mode---------------------------\n")
 
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
@@ -78,7 +78,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimizatio
             max_cache=info.experiment.exe_rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
-        obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+        obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
         optim_params = optimizeTEM(forcing, obs_array, info, info.tem.helpers.run.land_output_type)
         optim_file_prefix = joinpath(info.output.optim, info.experiment.basics.name * "_" * info.experiment.basics.domain)
         CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
@@ -101,7 +101,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     setLogLevel()
     observations = getObservation(info, forcing.helpers)
-    obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+    obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
     println("-------------------Cost Calculation Mode---------------------------\n")
     @info "runExperiment: do forward run..."
     println("----------------------------------------------\n")
