@@ -138,9 +138,9 @@ get the dimensions and corresponding data for SINDBAD output using YAXArray as a
 - `_`: unused argument
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `_`: unused argument
-- `::OutputYaxArray`: a type dispatch for using YAXArray as output data
+- `::OutputYAXArray`: a type dispatch for using YAXArray as output data
 """
-function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::OutputYaxArray)
+function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::OutputYAXArray)
     outdims_pairs = getOutDimsPairs(out_vars, info, land_init, forcing_helpers);
     info.forcing.data_dimension.time
     space_dims = Symbol.(info.forcing.data_dimension.space)
@@ -161,7 +161,7 @@ function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::Outpu
         path_output = info.output.data
         outformat = info.experiment.model_output.format
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-        out_dim = OutDims(vdims[1],
+        out_dim = OutDims(
             Dim{Symbol(depth_name)}(1:depth_size),
             vdims[2:end]...;
             path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),

@@ -92,7 +92,7 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
     spinup_forcing = getSpinupForcing(run_helpers.loc_forcings[1], forcing_one_timestep, tem_with_types.spinup.sequence, tem_with_types.helpers)
 
 
-    spinupforc = :day_msc
+    spinupforc = :day_MSC
     theforcing = getfield(spinup_forcing, spinupforc)
 
     spinup_models = tem_with_types.models.forward[tem_with_types.models.is_spinup]
