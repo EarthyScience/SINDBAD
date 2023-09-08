@@ -59,7 +59,7 @@ function scaledParams(up_params_now, tblParams, xbatch, idx)
 end
 
 function gradsBatch!(
-    loss_function::Function,
+    loss_function::F,
     f_grads,
     up_params_now,
     approaches,
@@ -72,7 +72,7 @@ function gradsBatch!(
     forcing_one_timestep,
     tem,
     optim;
-    logging=true)
+    logging=true) where F<:Callable
 
     p = Progress(length(xbatch); desc="Computing batch grads...", offset=0, color=:yellow, enabled=logging)
     for idx ∈ eachindex(xbatch)
