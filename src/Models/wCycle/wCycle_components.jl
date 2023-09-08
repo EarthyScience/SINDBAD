@@ -27,18 +27,10 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
     land = adjustPackMainPool(land, helpers, land.wCycleBase.w_model)
 
     # reset moisture changes to zero
-    for l in eachindex(ΔsnowW)
-        @rep_elem z_zero => (ΔsnowW, l, :snowW)
-    end
-    for l in eachindex(ΔsoilW)
-        @rep_elem z_zero => (ΔsoilW, l, :soilW)
-    end
-    for l in eachindex(ΔgroundW)
-        @rep_elem z_zero => (ΔgroundW, l, :groundW)
-    end
-    for l in eachindex(ΔsurfaceW)
-        @rep_elem z_zero => (ΔsurfaceW, l, :surfaceW)
-    end
+    ΔsnowW = inner_reset1(ΔsnowW, z_zero, helpers)
+    ΔsoilW = inner_reset2(ΔsoilW, z_zero, helpers)
+    ΔgroundW = inner_reset3(ΔgroundW, z_zero, helpers)
+    ΔsurfaceW = inner_reset4(ΔsurfaceW, z_zero, helpers)
 
     total_water = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
@@ -47,6 +39,34 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
         (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, total_water, total_water_prev) => land.states
     end
     return land
+end
+
+function inner_reset1(ΔsnowW, z_zero, helpers)
+    for l in eachindex(ΔsnowW)
+        @rep_elem z_zero => (ΔsnowW, l, :snowW)
+    end
+    return ΔsnowW
+end
+
+function inner_reset2(ΔsoilW, z_zero, helpers)
+    for l in eachindex(ΔsoilW)
+        @rep_elem z_zero => (ΔsoilW, l, :soilW)
+    end
+    return ΔsoilW
+end
+
+function inner_reset3(ΔgroundW, z_zero, helpers)
+    for l in eachindex(ΔgroundW)
+        @rep_elem z_zero => (ΔgroundW, l, :groundW)
+    end
+    return ΔgroundW
+end
+
+function inner_reset4(ΔsurfaceW , z_zero, helpers)
+    for l in eachindex(ΔsurfaceW)
+        @rep_elem z_zero => (ΔsurfaceW, l, :surfaceW)
+    end
+    return ΔsurfaceW 
 end
 
 @doc """
