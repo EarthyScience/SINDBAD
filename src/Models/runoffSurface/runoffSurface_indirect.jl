@@ -89,7 +89,7 @@ update pools and states in runoffSurface_indirect
 *References*
 
 *Versions*
- - 1.0 on 20.11.2019 [skoirala]: combine runoffSurfaceDirect, Indir, suw_recharge  
+ - 1.0 on 20.11.2019 [skoirala]: combine surface_runoff_direct, Indir, suw_recharge  
 
 *Created by:*
  - skoirala

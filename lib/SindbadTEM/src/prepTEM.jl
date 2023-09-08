@@ -143,13 +143,23 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
         loc_space_maps[1], tem_with_types, LandOutArray())
     debugModel(land_one, tem.helpers.run.debug_model)
 
+    # loc_forcing = getLocForcingData(forcing, loc_space_map)
+    # loc_output = getLocOutputData(output_array, loc_space_map)
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
-    loc_forcings = [loc_forcing for _ ∈ 1:Threads.nthreads()]
-    loc_outputs = [loc_output for _ ∈ 1:Threads.nthreads()]
-    land_init_space = [deepcopy(land_one) for _ ∈ 1:length(loc_space_maps)]
+    loc_forcings = map([loc_space_maps...]) do lsm
+        getLocForcingData(forcing_nt_array, lsm)
+    end
+    loc_outputs = map([loc_space_maps...]) do lsm
+        getLocOutputData(output_array, lsm)
+    end
 
-    run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    # loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
+    # loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])
+    land_init_space = Tuple([deepcopy(land_one) for _ ∈ 1:length(loc_space_maps)])
+
+    run_helpers = (; loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    # run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     return run_helpers
 end
 
@@ -208,6 +218,34 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     return run_helpers
 end
 
+
+
+"""
+    helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
+
+
+
+# Arguments:
+- `selected_models`: a tuple of all models selected in the given model structure
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `::LandOutYAXArray`: a dispatch for preparing TEM for using yax array for model output
+"""
+function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
+
+    # get the output things
+    _, _, loc_space_names = getSpatialInfo(forcing, output)
+
+    # generate vals for dispatch of forcing and output
+    tem_with_types = getTEMVals(forcing, output, loc_space_names, tem, tem_helpers);
+    land_init = output.land_init
+
+    run_helpers = (; land_init=land_init, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    # run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    return run_helpers
+end
 
 """
     prepTEM(forcing::NamedTuple, info::NamedTuple)

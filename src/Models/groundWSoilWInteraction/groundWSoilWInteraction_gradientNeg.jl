@@ -7,38 +7,47 @@ export groundWSoilWInteraction_gradientNeg
 end
 #! format: on
 
+function define(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
+    ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
+    gw_recharge = land.wCycleBase.z_zero
+    ## pack land variables
+    @pack_land gw_recharge => land.fluxes
+    return land
+end
+
 function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
     ## unpack parameters
     @unpack_groundWSoilWInteraction_gradientNeg p_struct
-
     ## unpack land variables
     @unpack_land begin
         wSat ∈ land.soilWBase
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
-        n_groundW ∈ land.wCycleBase
-        z_zero ∈ land.wCycleBase
+        (n_groundW, z_zero) ∈ land.wCycleBase
         gw_recharge ∈ land.fluxes
     end
     # maximum groundwater storage
     p_gwmax = wSat[end] * smax_scale
 
+    total_soilW = soilW[end] + ΔsoilW[end]
+    total_groundW = totalS(groundW, ΔgroundW)
+
     # gradient between groundW[1] & soilW
-    tmp_gradient = sum(groundW + ΔgroundW) / p_gwmax - (soilW[end] + ΔsoilW[end]) / wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
+    tmp_gradient = total_groundW / p_gwmax - total_soilW / wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
 
     # scale gradient with pot flux rate to get pot flux
     pot_flux = tmp_gradient * max_flux # need to make sure that the flux does not overflow | underflow storages
 
     # adjust the pot flux to what is there
-    tmp = min(pot_flux, wSat[end] - (soilW[end] + ΔsoilW[end]), sum(groundW + ΔgroundW))
-    tmp = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW))
+    tmp = min(pot_flux, wSat[end] - total_soilW, total_groundW)
+    tmp = max(tmp, -total_soilW, -total_groundW)
 
     # -> set all the positive values (from groundwater to soil) to zero
     gw_capillary_flux = minZero(tmp)
 
     # adjust the delta storages
-    ΔgroundW .= ΔgroundW .- gw_capillary_flux / n_groundW
-    ΔsoilW[end] = ΔsoilW[end] + gw_capillary_flux
+    ΔgroundW = addToEachElem(ΔgroundW, -gw_capillary_flux / n_groundW)
+    @add_to_elem gw_capillary_flux => (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     # adjust the gw_recharge as net flux between soil and groundwater. positive from soil to gw
     gw_recharge = gw_recharge - gw_capillary_flux

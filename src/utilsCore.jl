@@ -3,6 +3,7 @@ export clampZeroOne
 export cumSum!
 export flagUpper, flagLower
 export getFrac
+export getSindbadModelOrder
 export getSindbadModels
 export getVarField
 export getVarFull
@@ -264,20 +265,27 @@ function getFrac(num, den)
     return rat
 end
 
+"""
+    getSindbadModelOrder(model_name)
+
+helper function to return the default order of a sindbad model
+"""
+function getSindbadModelOrder(model_name)
+    mo = findall(x -> x == model_name, sindbad_models)[1]
+    println("The order [default] of $(model_name) in models.jl of core Sindbad.jl is $(mo)")
+end
 
 """
     getSindbadModels()
 
-helper function to return a table of sindbad model and approaches
+helper function to return a dictionary of sindbad model and approaches
 """
 function getSindbadModels()
     approaches = []
-
-    for _md ∈ sindbad_models.model
-        push!(approaches, join(subtypes(getfield(Sindbad.Models, _md)), ", "))
+    for _md ∈ sindbad_models
+        push!(approaches, Pair(_md, [nameof(_x) for _x in subtypes(getfield(Sindbad.Models, _md))]))
     end
-    model_approaches = Table((; model=[sindbad_models.model...], approaches=[approaches...]))
-    return model_approaches
+    return DataStructures.OrderedDict(approaches)
 end
 
 """

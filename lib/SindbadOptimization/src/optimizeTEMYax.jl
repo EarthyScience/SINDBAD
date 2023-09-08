@@ -35,7 +35,7 @@ function optimizeYax(args...;
     output, forcing, observation = unpackYaxOpti(args; forcing_variables)
     forcing = (; Pair.(forcing_variables, forcing)...)
     observation = (; Pair.(obs_variables, observation)...)
-    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.optimization.land_output_type, "LandOut"))()
+    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.exe_rules.land_output_type, "LandOut"))()
     params = optimizeTEM(forcing, observation, info, land_output_type)
     return output[:] = params.optim
 end
@@ -57,8 +57,7 @@ function optimizeTEMYax(forcing::NamedTuple,
     output::NamedTuple,
     tem::NamedTuple,
     optim::NamedTuple,
-    observations::NamedTuple,
-    ;
+    observations::NamedTuple;
     max_cache=1e9)
     incubes = (forcing.data..., observations.data...)
     indims = (forcing.dims..., observations.dims...)
