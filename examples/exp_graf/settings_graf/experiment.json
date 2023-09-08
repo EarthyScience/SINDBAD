@@ -22,7 +22,7 @@
     "land_output_type": "array",
     "model_array_type": "static_array",
     "parallelization": "threads",
-    "tolerance": 1.0e-3,
+    "tolerance": 1.0e-2,
     "yax_max_cache": 2e9
   },
   "flags": {

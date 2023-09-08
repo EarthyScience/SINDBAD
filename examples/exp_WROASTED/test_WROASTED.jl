@@ -56,22 +56,16 @@ run_helpers = prepTEM(forcing, info);
 
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
-@time getLossVector(obs_array, output_default, prepCostOptions(obs_array, info.optim.cost_options))
 
-@time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info);
+@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
+opt_params = out_opti.out_params;
+# out_model = out_opti.out_forward;
 
 optimized_models = info.tem.models.forward;
-
-if info.experiment.flags.run_optimization
-    tbl_params = getParameters(info.tem.models.forward,
-        info.optim.model_parameter_default,
-        info.optim.model_parameters_to_optimize)
-    optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
-end
-
-info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
-
-forcing = getForcing(info);
+tbl_params = getParameters(info.tem.models.forward,
+info.optimization.model_parameter_default,
+info.optimization.model_parameters_to_optimize);
+optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params);
 
 @time runTEM!(optimized_models,
     run_helpers.loc_forcings,
@@ -121,3 +115,14 @@ foreach(costOpt) do var_row
     plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
+
+# struct SpinSequence{f,n,m,s,a,a_t}
+#     forcing::f
+#     n_repeat::n
+#     spinup_mode::m
+#     stop_function::s
+#     aggregator::a
+#     aggregator_type::a_t
+# end
+
+# ss = SpinSequence(values(run_helpers.tem_with_types.spinup.sequence[1])...)

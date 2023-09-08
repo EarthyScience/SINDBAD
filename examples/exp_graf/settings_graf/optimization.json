@@ -89,7 +89,7 @@
       "gpp": {
         "cost_options": {
           "cost_metric": "NSE_inv",
-          "temporal_data_aggr": "month_msc"
+          "temporal_data_aggr": "month_MSC"
         },
         "data": {
           "bounds": [0.0, 100.0],
@@ -111,7 +111,7 @@
       "runoff": {
         "cost_options": {
           "cost_metric": "NSE_inv",
-          "temporal_data_aggr": "month_msc"
+          "temporal_data_aggr": "month_MSC"
         },
         "data": {
           "bounds": [-100.0, 100.0],
