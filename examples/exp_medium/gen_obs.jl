@@ -31,18 +31,18 @@ function out_synt()
 
     # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
     sites_f = forc.Tair.site
-    c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr"))
+    c = Cube(joinpath(@__DIR__, "../data/fluxnet_covariates.zarr"))
     xfeatures = cube_to_KA(c)
     # RU-Ha1, IT-PT1, US-Me5
     sites = xfeatures.site
     sites = [s for s ∈ sites]
-    nogood = [
-        "AR-SLu",
-        "CA-Obs",
-        "DE-Lkb",
-        "SJ-Blv",
-        "US-ORv"];
-    sites = setdiff(sites, nogood)
+    # nogood = [
+    #     "AR-SLu",
+    #     "CA-Obs",
+    #     "DE-Lkb",
+    #     "SJ-Blv",
+    #     "US-ORv"];
+    # sites = setdiff(sites, nogood)
 
     xfeatures = xfeatures(site=sites);
     # machine learning parameters baseline
@@ -99,6 +99,7 @@ function out_synt()
     #models = [m for m in info.tem.models.forward]
     models = info.tem.models.forward
     param_to_index =  param_indices(models, tbl_params)
+    models = LongTuple(models...);
 
     space_run!(
         models,
