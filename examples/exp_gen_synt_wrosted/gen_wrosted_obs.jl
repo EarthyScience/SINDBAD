@@ -12,7 +12,7 @@ forcing = getForcing(info);
 land_init = createLandInit(info.pools, info.tem);
 
 observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 obsv = getKeyedArray(observations);
 tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
@@ -36,13 +36,11 @@ n_neurons = 32
 n_params = sum(tbl_params.is_ml)
 
 run_helpers = prepTEM(forcing, info);
-forcing_nt_array = run_helpers.forcing_nt_array;
 loc_forcings = run_helpers.loc_forcings;
 forcing_one_timestep = run_helpers.forcing_one_timestep;
 output_array = run_helpers.output_array;
 loc_outputs = run_helpers.loc_outputs;
 land_init_space = run_helpers.land_init_space;
-loc_space_inds = run_helpers.loc_space_inds;
 tem_with_types = run_helpers.tem_with_types;
 
 # neural network design
@@ -118,10 +116,9 @@ loc_forcing, loc_output, loc_obs =
     getLocDataObsN(output_array,
         forc, obs_array, site_location);
 
-loc_space_ind = loc_space_inds[1];
 loc_land_init = run_helpers.land_one;
 loc_output = loc_outputs[1];
-loc_forcing = run_helpers.loc_forcing;
+loc_forcing = run_helpers.loc_forcings[1];
 
 def_params = tbl_params.default .* rand()
 pixel_run!(output,

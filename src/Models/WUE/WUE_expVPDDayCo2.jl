@@ -22,12 +22,12 @@ function compute(p_struct::WUE_expVPDDayCo2, forcing, land, helpers)
     end
 
     ## calculate variables
-    AoENoCO2 = WUEatOnehPa * exp(κ * -(VPDDay))
+    WUENoCO2 = WUEatOnehPa * exp(κ * -(VPDDay))
     fCO2_CO2 = o_one + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
-    AoE = AoENoCO2 * fCO2_CO2
+    WUE = WUENoCO2 * fCO2_CO2
 
     ## pack land variables
-    @pack_land (AoE, AoENoCO2) => land.WUE
+    @pack_land (WUE, WUENoCO2) => land.WUE
     return land
 end
 
@@ -47,7 +47,7 @@ Estimate wue using WUE_expVPDDayCo2
  - forcing.VPDDay: daytime mean VPD [kPa]
 
 *Outputs*
- - land.WUE.AoENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
+ - land.WUE.WUENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
 
 ---
 
