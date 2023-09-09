@@ -20,10 +20,10 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 """
 function coreTEM!(
     selected_models,
-    land_init,
     loc_forcing,
     forcing_one_timestep,
     loc_output,
+    land_init,
     tem_helpers,
     _,
     _,
@@ -62,10 +62,10 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 """
 function coreTEM!(
     selected_models,
-    land_init,
     loc_forcing,
     forcing_one_timestep,
     loc_output,
+    land_init,
     tem_helpers,
     tem_models,
     tem_spinup,
