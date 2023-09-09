@@ -31,7 +31,7 @@ function out_synt()
 
     # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
     sites_f = forc.Tair.site
-    c = Cube(joinpath(@__DIR__, "../data/fluxnet_covariates.zarr"))
+    c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr"))
     xfeatures = cube_to_KA(c)
     # RU-Ha1, IT-PT1, US-Me5
     sites = xfeatures.site
