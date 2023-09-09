@@ -111,7 +111,7 @@ function gradsBatchDistributed!(
     optim;
     logging=false) where {F}
 
-    #p = Progress(length(xbatch); desc="Computing batch grads...", offset=0, color=:yellow, enabled=logging)
+    p = Progress(length(xbatch); desc="Computing batch grads...", color=:yellow, enabled=logging)
     @sync @distributed for idx ∈ eachindex(xbatch)
 
         site_name, new_vals = scaledParams(up_params_now, tbl_params, xbatch, idx)
@@ -125,7 +125,7 @@ function gradsBatchDistributed!(
 
         gg = ForwardDiffGrads(loss_function, new_vals, inits, data_cache, data_optim_now, tem, param_to_index, optim)
         f_grads[:, idx] = gg
-        #next!(p; showvalues=[(:site_name, site_name)])
+        next!(p)
     end
 end
 
