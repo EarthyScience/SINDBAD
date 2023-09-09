@@ -2,69 +2,48 @@ export getSiteLossTEM
 export siteLossInner
 
 """
-    getSiteLossTEM(inits, data, data_optim, tem, optim)
-
-- inits = (;
-    selected_models,
-    land_init
-    );
-- data = (;
-    loc_forcing,
-    forcing_one_timestep,
-    allocated_output = loc_output
-    );
-- data_optim = (;
-    site_obs = loc_obs,
-    )
+    getSiteLossTEM(models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem, loc_obs, cost_options, constraint_method)
 - tem = (;
     )
-- optim = (;
-    cost_options,
-    multiconstraint_method
-    );
 """
-function getSiteLossTEM(inits, data, data_optim, tem, optim)
-    #@code_warntype coreTEM!(inits..., data..., tem...)
-    coreTEM!(inits..., data..., tem...)
-    #@code_warntype getLossVector(data_optim.site_obs, data.allocated_output, optim.cost_options)
-    lossVec = getLossVector(data_optim.site_obs, data.allocated_output, optim.cost_options)
-    t_loss = combineLoss(lossVec, optim.multiconstraint_method)
+function getSiteLossTEM(models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem, loc_obs, cost_options, constraint_method)
+
+    coreTEM!(
+        models,
+        loc_forcing,
+        forcing_one_timestep,
+        loc_output,
+        land_init,
+        tem...)
+
+    lossVec = getLossVector(loc_obs, loc_output, cost_options)
+    t_loss = combineLoss(lossVec, constraint_method)
     return t_loss
 end
 
-"""
-    siteLossInner(new_params, inits, data_cache, data_optim, tem, tbl_params)
 
-- new_params: Array
-- inits = (;
-    selected_models,
-    land_init
-    );
-- data = (;
-    loc_forcing,
-    forcing_one_timestep,
-    allocated_output = DiffCache.(loc_output)
-    );
-- data_optim = (;
-    site_obs = loc_obs,
-    )
+"""
+    siteLossInner(new_params, models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem, param_to_index, loc_obs, cost_options, constraint_method)
+    
 - tem = (;
     )
-- optim = (;
-    cost_options,
-    multiconstraint_method
-    );
-- tbl_params = (;
-    )
-- optim = (;
-    )
-
 """
-function siteLossInner(new_params, inits, data_cache, data_optim, tem, param_to_index, optim)
-    out_data = get_tmp.(data_cache.allocated_output, (new_params,))
-    new_apps = updateModelParametersType(param_to_index, inits.selected_models, new_params)
-    inits = (; selected_models = new_apps, land_init = inits.land_init)
-    data = (; data_cache..., allocated_output = out_data)
-    return getSiteLossTEM(inits, data, data_optim, tem, optim)
+function siteLossInner(
+    new_params,
+    models,
+    loc_forcing,
+    forcing_one_timestep,
+    loc_output,
+    land_init,
+    tem,
+    param_to_index,
+    loc_obs,
+    cost_options,
+    constraint_method)
+
+    out_data = get_tmp.(loc_output, (new_params,))
+    new_models = updateModelParametersType(param_to_index, models, new_params)
+ 
+    return getSiteLossTEM(new_models, loc_forcing, forcing_one_timestep, out_data, land_init, tem, loc_obs, cost_options, constraint_method)
 end
 
