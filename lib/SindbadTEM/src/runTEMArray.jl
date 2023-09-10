@@ -21,6 +21,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 function coreTEM!(
     selected_models,
     loc_forcing,
+    loc_spinup_forcing,
     forcing_one_timestep,
     loc_output,
     land_init,
@@ -61,6 +62,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 function coreTEM!(
     selected_models,
     loc_forcing,
+    loc_spinup_forcing,
     forcing_one_timestep,
     loc_output,
     land_init,
@@ -73,7 +75,7 @@ function coreTEM!(
 
     land_spin = spinupTEM(
         selected_models,
-        loc_forcing,
+        loc_spinup_forcing,
         forcing_one_timestep,
         land_prec,
         tem_helpers,
@@ -111,6 +113,7 @@ parallelize SINDBAD TEM using threads as backend
 function parallelizeTEM!(
     selected_models,
     loc_forcings,
+    loc_spinup_forcings,
     forcing_one_timestep,
     loc_outputs,
     land_init_space,
@@ -122,6 +125,7 @@ function parallelizeTEM!(
         coreTEM!(
             selected_models,
             loc_forcings[space_index],
+            loc_spinup_forcings[space_index],
             forcing_one_timestep,
             loc_outputs[space_index],
             land_init_space[space_index],
@@ -152,6 +156,7 @@ parallelize SINDBAD TEM using qbmap as backend
 function parallelizeTEM!(
     selected_models,
     loc_forcings,
+    loc_spinup_forcings,
     forcing_one_timestep,
     loc_outputs,
     land_init_space,
@@ -164,6 +169,7 @@ function parallelizeTEM!(
         coreTEM!(
             selected_models,
             loc_forcings[space_index],
+            loc_spinup_forcings[space_index],
             forcing_one_timestep,
             loc_outputs[space_index],
             land_init_space[space_index],
@@ -187,7 +193,7 @@ a function to run SINDBAD Terrestrial Ecosystem Model that simulates all locatio
 """
 function runTEM!(forcing::NamedTuple, info::NamedTuple)
     run_helpers = prepTEM(forcing, info)
-    runTEM!(run_helpers.tem_with_types.models.forward, run_helpers.loc_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
+    runTEM!(run_helpers.tem_with_types.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
     return run_helpers.output_array
 end
 
@@ -207,6 +213,7 @@ a function to run SINDBAD Terrestrial Ecosystem Model that simulates all locatio
 function runTEM!(
     selected_models,
     loc_forcings,
+    loc_spinup_forcings,
     forcing_one_timestep,
     loc_outputs,
     land_init_space,
@@ -214,6 +221,7 @@ function runTEM!(
     parallelizeTEM!(
         selected_models,
         loc_forcings,
+        loc_spinup_forcings,
         forcing_one_timestep,
         loc_outputs,
         land_init_space,
@@ -247,11 +255,8 @@ function timeLoopTEM!(
     land,
     tem_helpers,
     ::DoNotDebugModel) # do not debug the models
-    # num_timesteps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
     for ts ∈ eachindex(loc_forcing[1])
-        # f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts)
-        # f_ts = getForcingForTimeStep(loc_forcing, ts)
-        f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
+        f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
         land = computeTEM(selected_models, f_ts, land, tem_helpers)
         setOutputForTimeStep!(loc_output, land, ts, tem_helpers.vals.output_vars)
     end
@@ -283,7 +288,7 @@ function timeLoopTEM!(
     tem_helpers,
     ::DoDebugModel) # debug the models
     @info "\nforc\n"
-    @time f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, 1, tem_helpers.vals.forc_vars)
+    @time f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
     @info "\n-------------\n"
     @info "\neach model\n"
     @time land = computeTEM(selected_models, f_ts, land, tem_helpers, tem_helpers.run.debug_model)

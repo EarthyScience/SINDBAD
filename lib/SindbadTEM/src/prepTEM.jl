@@ -96,7 +96,7 @@ getTEMVals(forcing, output, loc_space_names, tem_helpers)
 """
 function getTEMVals(forcing, output, loc_space_names, tem, tem_helpers)
     @info "     preparing vals for generated functions"
-    vals = (; forc_vars=Val(forcing.variables), loc_space_names=Val(loc_space_names), output_vars=Val(output.variables))
+    vals = (; forc_types=Val(forcing.f_types), forc_vars=Val(forcing.variables), loc_space_names=Val(loc_space_names), output_vars=Val(output.variables))
     tem_dates = tem_helpers.dates
     tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
     tem_helpers = setTupleField(tem_helpers, (:dates, tem_dates))
@@ -145,10 +145,14 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     # loc_output = getLocOutputData(output_array, loc_space_map)
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
-
+    time_size = getproperty(forcing.helpers.sizes, Symbol(forcing.helpers.dimensions.time))
     loc_forcings = map([loc_space_inds...]) do lsi
-        getLocForcingDataa(forcing_nt_array, lsi, forcing.helpers.sizes.time)
+        getLocForcingData(forcing_nt_array, lsi, time_size)
     end
+    spinup_forcings = map(loc_forcings) do loc_forcing
+        getSpinupForcing(loc_forcing, forcing_one_timestep, tem_with_types.spinup.sequence, tem_with_types.helpers);
+    end
+
     # loc_forcings = map([loc_space_maps...]) do lsm
     #     getLocForcingData(forcing_nt_array, lsm, forcing.helpers.sizes.time)
     # end
@@ -166,7 +170,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 
     forcing_nt_array = nothing
 
-    run_helpers = (; loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    run_helpers = (; loc_forcings=loc_forcings, loc_spinup_forcings=spinup_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     # run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     return run_helpers
 end
