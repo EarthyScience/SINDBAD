@@ -47,7 +47,7 @@ function collectForcingHelpers(info, f_sizes, f_dimensions)
 end
 
 """
-    getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
+    createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
 
 
 
@@ -57,7 +57,7 @@ end
 - `f_dimensions`: DESCRIPTION
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
-function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
+function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @info "   processing forcing helpers..."
     @debug "     ::dimensions::"
     indims = getDataDims.(incubes, Ref(Symbol.(info.forcing.data_dimension.space)))
@@ -66,11 +66,22 @@ function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     f_helpers = collectForcingHelpers(info, f_sizes, f_dimensions)
     input_array_type = getfield(SindbadData, toUpperCaseFirst(info.experiment.exe_rules.input_array_type, "Input"))()
     typed_cubes = getInputArrayOfType(incubes, input_array_type)
+    data_ts_type=[]
+    for incube in typed_cubes
+        if in(:time, AxisKeys.dimnames(incube))
+            push!(data_ts_type, ForcingWithTime())
+        else
+            push!(data_ts_type, ForcingWithoutTime())
+        end 
+    end
+    data_ts_type = [_dt for _dt in data_ts_type]
+    f_types =  Tuple(Tuple.(Pair.(forcing_variables, data_ts_type)))
     @info "\n----------------------------------------------\n"
     forcing = (;
         data=typed_cubes,
         dims=indims,
         variables=forcing_variables,
+        f_types = f_types,
         helpers=f_helpers)
     return forcing
 end
@@ -121,6 +132,6 @@ function getForcing(info::NamedTuple)
         end
         incube
     end
-    return getForcingNamedTuple(incubes, f_sizes, f_dimension, info)
+    return createForcingNamedTuple(incubes, f_sizes, f_dimension, info)
 end
 
