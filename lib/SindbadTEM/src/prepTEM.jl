@@ -145,9 +145,13 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     # loc_output = getLocOutputData(output_array, loc_space_map)
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
-    loc_forcings = map([loc_space_maps...]) do lsm
-        getLocForcingData(forcing_nt_array, lsm, forcing.helpers.sizes.time)
+
+    loc_forcings = map([loc_space_inds...]) do lsi
+        getLocForcingDataa(forcing_nt_array, lsi, forcing.helpers.sizes.time)
     end
+    # loc_forcings = map([loc_space_maps...]) do lsm
+    #     getLocForcingData(forcing_nt_array, lsm, forcing.helpers.sizes.time)
+    # end
 
     # loc_forcings = map([loc_space_maps...]) do lsm
     #     getLocForcingData(forcing_nt_array, lsm)
