@@ -26,13 +26,13 @@ for (i, tj) ∈ enumerate(tjs)
 
     run_helpers = prepTEM(forcing, info);
     loc_forcings = run_helpers.loc_forcings;
+    spinup_forcing = run_helpers.loc_spinup_forcings;
     forcing_one_timestep = run_helpers.forcing_one_timestep;
     output_array = run_helpers.output_array;
     loc_outputs = run_helpers.loc_outputs;
     land_init_space = run_helpers.land_init_space;
     tem_with_types = run_helpers.tem_with_types;
 
-    spinup_forcing = getSpinupForcing(run_helpers.loc_forcings[1], forcing_one_timestep, tem_with_types.spinup.sequence, tem_with_types.helpers)
 
     spinupforc = :day_MSC
     sel_forcing = getfield(spinup_forcing, spinupforc)
