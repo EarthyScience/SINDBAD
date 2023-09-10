@@ -94,6 +94,16 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.land_init_space,
     run_helpers.tem_with_types)
 
+spinup_forcing = getSpinupForcing(run_helpers.loc_forcings[1], run_helpers.forcing_one_timestep, run_helpers.tem_with_types.spinup.sequence, run_helpers.tem_with_types.helpers);
+
+# @time spinupTEM(
+#     info.tem.models.forward,
+#     run_helpers.loc_forcings[1],
+#     run_helpers.forcing_one_timestep,
+#     run_helpers.land_init_space[1],
+#     run_helpers.tem_with_types.helpers,
+#     run_helpers.tem_with_types.models,
+#     run_helpers.tem_with_types.spinup);
 
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);

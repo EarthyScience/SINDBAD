@@ -273,23 +273,63 @@ function runSpinup(
         if spinup_mode == :spinup
             spinup_models = selected_models[tem_models.is_spinup]
         end
-        for loop_index ∈ 1:n_repeat
-            @debug "     sequence: $(seq_index), spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name), Loop: $(loop_index)/$(n_repeat)"
-            land = runSpinup(spinup_models,
-                sel_forcing,
-                forcing_one_timestep,
-                land,
-                tem_helpers,
-                tem_spinup,
-                spinup_mode)
-            land = setSpinupLog(land, log_index, tem_helpers.run.spinup.store_spinup)
-            log_index += 1
-        end
+        land = inn_loop(spinup_models,
+            sel_forcing,
+            forcing_one_timestep,
+            land,
+            tem_helpers,
+            tem_spinup,
+            spinup_mode,
+            n_repeat,
+            log_index)
+    # for loop_index ∈ 1:n_repeat
+    #         land = inn_loop(spinup_models,
+    #         sel_forcing,
+    #         forcing_one_timestep,
+    #         land,
+    #         tem_helpers,
+    #         tem_spinup,
+    #         spinup_mode,
+    #         n_repeat)
+            # @debug "     sequence: $(seq_index), spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name), Loop: $(loop_index)/$(n_repeat)"
+            # land = runSpinup(spinup_models,
+            #     sel_forcing,
+            #     forcing_one_timestep,
+            #     land,
+            #     tem_helpers,
+            #     tem_spinup,
+            #     spinup_mode)
+            # land = setSpinupLog(land, log_index, tem_helpers.run.spinup.store_spinup)
+            log_index += n_repeat
+        # end
         seq_index += 1
     end
     return land
 end
 
+function inn_loop(spinup_models,
+    sel_forcing,
+    forcing_one_timestep,
+    land,
+    tem_helpers,
+    tem_spinup,
+    spinup_mode,
+    n_repeat,
+    log_loop)
+    for loop_index ∈ 1:n_repeat
+        @debug "     sequence: $(seq_index), spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name), Loop: $(loop_index)/$(n_repeat)"
+        land = runSpinup(spinup_models,
+            sel_forcing,
+            forcing_one_timestep,
+            land,
+            tem_helpers,
+            tem_spinup,
+            spinup_mode)
+        land = setSpinupLog(land, log_loop, tem_helpers.run.spinup.store_spinup)
+        log_loop += 1
+    end
+    return land
+end
 """
     runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, SelSpinupModels)
 
