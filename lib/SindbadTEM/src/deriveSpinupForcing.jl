@@ -57,15 +57,19 @@ export getSpinupForcing
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::TimeNoDiff`: a type dispatch to use the temporal aggregator of SindbadUtils
 """
-function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeNoDiff)
+function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, x::TimeNoDiff)
+
     sub_forcing = map(forcing) do v
-        vtmp = v
-        if in(:time, AxisKeys.dimnames(v))
-            vtmp = v[time=1:length(time_aggregator[1].indices)]
-            v = temporalAggregation(v, time_aggregator, TimeNoDiff())
-            vtmp .= v
-        end
-        vtmp
+        # vtmp = v
+        # vtmp = v[1:length(time_aggregator[1].indices)]
+        # if in(:time, AxisKeys.dimnames(v))
+            # vtmp = v[1:length(time_aggregator[1].indices)]
+        vt=temporalAggregation(v, time_aggregator, x)
+        # @show typeof(vt), size(vt)
+            # vtmp .= v
+        # end
+        # vtmp
+        vt[:]
     end
     return sub_forcing
 end
@@ -84,7 +88,8 @@ end
 """
 function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeIndexed)
     sub_forcing = map(forcing) do v
-        in(:time, AxisKeys.dimnames(v)) ? v[time=time_aggregator] : v
+        v[time_aggregator]
+        # in(:time, AxisKeys.dimnames(v)) ? v[time=time_aggregator] : v
     end
     return sub_forcing
 end

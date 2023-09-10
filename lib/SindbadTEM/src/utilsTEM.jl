@@ -3,6 +3,7 @@ export getForcingNamedTuple
 # export getForcingTimeSize
 export getLocData
 export getLocForcingData
+export getLocForcingDataa
 export getLocOutputData
 export getLocForcing!
 export getLocOutput!
@@ -214,6 +215,25 @@ function getLocForcingData(forcing, loc_space_map, num_timesteps)
 end
 
 
+"""
+    getLocForcingDataa(forcing, output_array, loc_space_map)
+
+
+
+# Arguments:
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `loc_space_map`: DESCRIPTION
+"""
+function getLocForcingDataa(forcing, loc_space_ind, num_timesteps)
+    loc_forcing = map(forcing) do a
+        d_o_a = getArrayView(Array(a), loc_space_ind)
+        if :time ∉ dimnames(a)
+            d_o_a = fill(d_o_a, num_timesteps)
+        end
+        d_o_a
+    end
+    return loc_forcing
+end
 """
     getLocOutputData(forcing, output_array, loc_space_map)
 
