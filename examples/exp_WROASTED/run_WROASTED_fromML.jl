@@ -169,6 +169,7 @@ for site_index in sites
         run_helpers = prepTEM(models_with_matlab_params, forcing, info)
         @time runTEM!(models_with_matlab_params,
             run_helpers.loc_forcings,
+            run_helpers.loc_spinup_forcings,
             run_helpers.forcing_one_timestep,
             run_helpers.output_array,
             run_helpers.land_init_space,
@@ -246,6 +247,7 @@ for site_index in sites
                     info)                                
             runTEM!(models_with_matlab_params,
                 run_helpers.loc_forcings,
+                run_helpers.loc_spinup_forcings,
                 run_helpers.forcing_one_timestep,
                 run_helpers.loc_outputs,
                 run_helpers.land_init_space,
