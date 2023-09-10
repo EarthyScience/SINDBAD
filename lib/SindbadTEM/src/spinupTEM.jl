@@ -253,27 +253,25 @@ end
 """
 function runSpinup(
     selected_models,
-    forcing,
+    spinup_forcings,
     forcing_one_timestep,
     land,
     tem_helpers,
     tem_models,
     tem_spinup,
     ::DoRunSpinup) # do the spinup
-    spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_spinup.sequence, tem_helpers)
     seq_index = 1
     log_index = 1
     for spin_seq ∈ tem_spinup.sequence
         forc_name = spin_seq.forcing
         n_repeat = spin_seq.n_repeat
         spinup_mode = spin_seq.spinup_mode
-        sel_forcing = spinup_forcing[forc_name]
-        # sel_forcing = getSpinupForcing(forcing, forcing_one_timestep, spin_seq.aggregator, tem_helpers, spin_seq.aggregator_type)
+        sel_forcing = spinup_forcings[forc_name]
         spinup_models = selected_models
         if spinup_mode == :spinup
             spinup_models = selected_models[tem_models.is_spinup]
         end
-        land = inn_loop(spinup_models,
+        land = repeat_loop(spinup_models,
             sel_forcing,
             forcing_one_timestep,
             land,
@@ -282,24 +280,6 @@ function runSpinup(
             spinup_mode,
             n_repeat,
             log_index)
-    # for loop_index ∈ 1:n_repeat
-    #         land = inn_loop(spinup_models,
-    #         sel_forcing,
-    #         forcing_one_timestep,
-    #         land,
-    #         tem_helpers,
-    #         tem_spinup,
-    #         spinup_mode,
-    #         n_repeat)
-            # @debug "     sequence: $(seq_index), spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name), Loop: $(loop_index)/$(n_repeat)"
-            # land = runSpinup(spinup_models,
-            #     sel_forcing,
-            #     forcing_one_timestep,
-            #     land,
-            #     tem_helpers,
-            #     tem_spinup,
-            #     spinup_mode)
-            # land = setSpinupLog(land, log_index, tem_helpers.run.spinup.store_spinup)
             log_index += n_repeat
         # end
         seq_index += 1
@@ -307,7 +287,7 @@ function runSpinup(
     return land
 end
 
-function inn_loop(spinup_models,
+function repeat_loop(spinup_models,
     sel_forcing,
     forcing_one_timestep,
     land,
@@ -930,7 +910,7 @@ function timeLoopTEMSpinup(
     land,
     tem_helpers)
     for ts ∈ eachindex(spinup_forcing[1])
-        f_ts = getForcingForTimeStep(spinup_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
+        f_ts = getForcingForTimeStep(spinup_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
         land = computeTEM(spinup_models, f_ts, land, tem_helpers)
     end
     return land

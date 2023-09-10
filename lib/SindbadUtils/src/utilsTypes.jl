@@ -79,3 +79,10 @@ struct Spacelongitude end
 struct Spacelon end
 struct Spacesite end
 
+
+# -------------------------------- forcing variable type --------------------------------
+export ForcingWithTime
+export ForcingWithoutTime
+abstract type ForcingTimeSeries end
+struct ForcingWithTime <: ForcingTimeSeries end
+struct ForcingWithoutTime <: ForcingTimeSeries end

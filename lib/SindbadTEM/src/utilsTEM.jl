@@ -3,7 +3,6 @@ export getForcingNamedTuple
 # export getForcingTimeSize
 export getLocData
 export getLocForcingData
-export getLocForcingDataa
 export getLocOutputData
 export getLocForcing!
 export getLocOutput!
@@ -36,14 +35,13 @@ end
 - `ts`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-@generated function getForcingForTimeStep(forcing, forcing_t, ts, ::Val{forc_vars}) where {forc_vars}
+
+@generated function getForcingForTimeStep(forcing, forcing_t, ts, ::Val{forc_with_type}) where {forc_with_type}
     output = quote end
-    foreach(forc_vars) do forc
-        push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
-        push!(output.args, quote
-            d = v[ts]
-        # d = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
-        end)
+    foreach(forc_with_type) do forc_pair
+        forc = first(forc_pair)
+        forc_type=last(forc_pair)
+        push!(output.args, Expr(:(=), :d, Expr(:call, :getForcingV, Expr(:., :forcing, QuoteNode(forc)), :ts, forc_type)))
         push!(output.args,
             Expr(:(=),
                 :forcing_t,
@@ -86,6 +84,13 @@ function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     end
 end
 
+function getForcingV(v,ts,::ForcingWithTime)
+    v[ts]
+end
+
+function getForcingV(v,_,::ForcingWithoutTime)
+    v[1]
+end
 
 """
     getForcingNamedTuple(input_data, forcing_names)
@@ -193,6 +198,7 @@ function getLocForcingData(forcing, loc_space_map)
     return loc_forcing
 end
 
+
 """
     getLocForcingData(forcing, output_array, loc_space_map)
 
@@ -200,31 +206,9 @@ end
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `loc_space_map`: DESCRIPTION
+- `loc_space_ind`: DESCRIPTION
 """
-function getLocForcingData(forcing, loc_space_map, num_timesteps)
-    loc_forcing = map(forcing) do a
-        d_o = view(a; loc_space_map...)
-        d_o_a = d_o
-        if :time ∉ dimnames(d_o)
-         d_o_a = fill(Array(d_o_a), num_timesteps)
-        end
-        d_o_a
-    end
-    return loc_forcing
-end
-
-
-"""
-    getLocForcingDataa(forcing, output_array, loc_space_map)
-
-
-
-# Arguments:
-- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `loc_space_map`: DESCRIPTION
-"""
-function getLocForcingDataa(forcing, loc_space_ind, num_timesteps)
+function getLocForcingData(forcing, loc_space_ind, num_timesteps)
     loc_forcing = map(forcing) do a
         d_o_a = getArrayView(Array(a), loc_space_ind)
         if :time ∉ dimnames(a)

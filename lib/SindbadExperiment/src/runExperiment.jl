@@ -169,11 +169,12 @@ function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::S
     run_helpers = prepTEM(forcing, info)
     
     @time runTEM!(optimized_models,
-    run_helpers.loc_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+        run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.tem_with_types)
     run_output = run_helpers.output_array;
     output = prepTEMOut(info, forcing.helpers);
     saveOutCubes(info, run_output, output.dims, output.variables)
