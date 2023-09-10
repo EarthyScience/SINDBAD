@@ -213,7 +213,7 @@ history_loss_seq = train(
     cost_options,
     constraint_method;
     nepochs=3,
-    bs = 4
+    bs = 8
     )
 
 history_loss_par = trainDistributed(
@@ -233,5 +233,5 @@ history_loss_par = trainDistributed(
     cost_options,
     constraint_method;
     nepochs=3,
-    bs = 4
+    bs = 8
     )
