@@ -95,7 +95,6 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.land_init_space,
     run_helpers.tem_with_types)
 
-spinup_forcing = getSpinupForcing(run_helpers.loc_forcings[1], run_helpers.forcing_one_timestep, run_helpers.tem_with_types.spinup.sequence, run_helpers.tem_with_types.helpers);
 
 # @time spinupTEM(
 #     info.tem.models.forward,

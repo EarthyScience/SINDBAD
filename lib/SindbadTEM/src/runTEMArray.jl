@@ -255,7 +255,7 @@ function timeLoopTEM!(
     land,
     tem_helpers,
     ::DoNotDebugModel) # do not debug the models
-    for ts ∈ eachindex(loc_forcing[1])
+    for ts ∈ 1:tem_helpers.n_timesteps
         f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
         land = computeTEM(selected_models, f_ts, land, tem_helpers)
         setOutputForTimeStep!(loc_output, land, ts, tem_helpers.vals.output_vars)
@@ -288,7 +288,7 @@ function timeLoopTEM!(
     tem_helpers,
     ::DoDebugModel) # debug the models
     @info "\nforc\n"
-    @time f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
+    @time f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, 1, tem_helpers.vals.forc_types)
     @info "\n-------------\n"
     @info "\neach model\n"
     @time land = computeTEM(selected_models, f_ts, land, tem_helpers, tem_helpers.run.debug_model)
