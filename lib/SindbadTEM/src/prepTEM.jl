@@ -100,6 +100,8 @@ function getTEMVals(forcing, output, loc_space_names, tem, tem_helpers)
     tem_dates = tem_helpers.dates
     tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
     tem_helpers = setTupleField(tem_helpers, (:dates, tem_dates))
+    time_size = getproperty(forcing.helpers.sizes, Symbol(forcing.helpers.dimensions.time))
+    tem_helpers = setTupleField(tem_helpers, (:n_timesteps, time_size))
     tem_numbers = tem_helpers.numbers
     tem_numbers = (; tolerance=tem_numbers.tolerance)
     tem_helpers = setTupleField(tem_helpers, (:vals, vals))
@@ -150,7 +152,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
         getLocForcingData(forcing_nt_array, lsi, time_size)
     end
     spinup_forcings = map(loc_forcings) do loc_forcing
-        getSpinupForcing(loc_forcing, forcing_one_timestep, tem_with_types.spinup.sequence, tem_with_types.helpers);
+        getAllSpinupForcing(loc_forcing, tem_with_types.spinup.sequence, tem_with_types.helpers);
     end
 
     # loc_forcings = map([loc_space_maps...]) do lsm

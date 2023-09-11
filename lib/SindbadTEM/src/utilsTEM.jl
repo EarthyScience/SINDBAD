@@ -89,7 +89,7 @@ function getForcingV(v,ts,::ForcingWithTime)
 end
 
 function getForcingV(v,_,::ForcingWithoutTime)
-    v[1]
+    v
 end
 
 """
@@ -210,11 +210,12 @@ end
 """
 function getLocForcingData(forcing, loc_space_ind, num_timesteps)
     loc_forcing = map(forcing) do a
-        d_o_a = getArrayView(Array(a), loc_space_ind)
-        if :time ∉ dimnames(a)
-            d_o_a = fill(d_o_a, num_timesteps)
-        end
-        d_o_a
+        getArrayView(Array(a), loc_space_ind)
+        # d_o_a = getArrayView(Array(a), loc_space_ind)
+        # if :time ∉ dimnames(a)
+        #     d_o_a = fill(d_o_a, num_timesteps)
+        # end
+        # d_o_a
     end
     return loc_forcing
 end
