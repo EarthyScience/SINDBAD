@@ -65,14 +65,15 @@ out_model = out_opti.out_forward;
 
 
 ds = forcing.data[1];
-plotdat = run_helpers.output_array;
+plotdat = out_opti.out_forward;
 # plotdat = output_default;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+out_vars = keys(plotdat)
 for i ∈ eachindex(out_vars)
     v = out_vars[i]
-    vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
-    vname = vinfo["standard_name"]
+    # vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+    vname = v
+    # vname = vinfo["standard_name"]
     println("plot output-model => domain: $domain, variable: $vname")
     pd = plotdat[i]
     if size(pd, 2) == 1

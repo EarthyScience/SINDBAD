@@ -56,13 +56,13 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.tem_with_types)
 
 
-@time lw_timeseries_prep = runTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types);
+@time lw_timeseries_prep = runTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types);
 
 @time lw_timeseries = runTEM(forcing, info);
 
 land_timeseries = Vector{typeof(run_helpers.land_one)}(undef, info.tem.helpers.dates.size);
 
-@time lw_timeseries_vec = runTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.forcing_one_timestep, land_timeseries, run_helpers.land_one, run_helpers.tem_with_types);
+@time lw_timeseries_vec = runTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, land_timeseries, run_helpers.land_one, run_helpers.tem_with_types);
 
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
@@ -83,10 +83,10 @@ tbl_params = getParameters(info.tem.models.forward,
 
 defaults = tbl_params.default;
 
-@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcings, run_helpers.forcing_one_timestep, run_helpers.output_array, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.output_array, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.forcing_one_timestep, land_timeseries, run_helpers.land_one, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, land_timeseries, run_helpers.land_one, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
 
