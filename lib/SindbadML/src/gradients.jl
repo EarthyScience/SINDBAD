@@ -281,9 +281,10 @@ function train(
     bs_seed = 123,
     bs = 4,
     shuffle=true,
+    local_root = nothing,
     name="seq_training_output") where {F}
 
-    local_root = dirname(Base.active_project())
+    local_root = isnothing(local_root) ? dirname(Base.active_project()) : local_root
     f_path = joinpath(local_root, name)
     mkpath(f_path)
 
@@ -298,7 +299,7 @@ function train(
     p = Progress(nepochs; desc="Computing epochs...")
 
     for epoch ∈ 1:nepochs
-        #xbatches = shuffle ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
+        xbatches = shuffle ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
         for xbatch ∈ xbatches
             
             f_grads = zeros(Float32, n_params, length(xbatch))
@@ -377,9 +378,10 @@ function trainDistributed(
     bs_seed = 123,
     bs = 4,
     shuffle=true,
+    local_root = nothing,
     name="par_training_output") where {F}
 
-    local_root = dirname(Base.active_project())
+    local_root = isnothing(local_root) ? dirname(Base.active_project()) : local_root
     f_path = joinpath(local_root, name)
     mkpath(f_path)
 
@@ -394,7 +396,7 @@ function trainDistributed(
     p = Progress(nepochs; desc="Computing epochs...")
 
     for epoch ∈ 1:nepochs
-        #xbatches = shuffle ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
+        xbatches = shuffle ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
         for xbatch ∈ xbatches
             f_grads = SharedArray{Float32}(n_params, length(xbatch))
             x_feat = xfeatures(; site=xbatch)
