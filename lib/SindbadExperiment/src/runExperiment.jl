@@ -125,7 +125,8 @@ function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     @info "runExperimentForward: preparing output info for writing output..."
     output = prepTEMOut(info, forcing.helpers);
     saveOutCubes(info, run_output, output.dims, output.variables)
-    return run_output
+    forward_output = (; Pair.(getUniqueVarNames(output.variables), run_output)...)
+    return forward_output
 end
 
 
@@ -144,7 +145,8 @@ function runExperimentFullOutput(sindbad_experiment::String; replace_info=nothin
     @info "runExperimentForward: preparing output info for writing output..."
     output = prepTEMOut(info, forcing.helpers);
     saveOutCubes(info, run_output, output.dims, output.variables)
-    return run_output
+    forward_output = (; Pair.(getUniqueVarNames(run_helpers.out_vars), run_output)...)
+    return forward_output
 end
 
 
@@ -154,7 +156,8 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=nothing)
-    setLogLevel()
+    @info "runExperimentForwardParams: forward run of the parameters with optimized parameters..."
+    setLogLevel(:warn)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = false
@@ -178,7 +181,9 @@ function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::S
     run_output = run_helpers.output_array;
     output = prepTEMOut(info, forcing.helpers);
     saveOutCubes(info, run_output, output.dims, output.variables)
-    return run_output
+    forward_output = (; Pair.(getUniqueVarNames(run_helpers.out_vars), run_output)...)
+    setLogLevel()
+    return forward_output
 end
 
 """
