@@ -8,7 +8,7 @@ using Random
 
 # setup experiment
 function out_synt()
-    experiment_json = "../exp_medium/settings_medium/experiment.json"
+    experiment_json = "../exp_test_med_sbatch/settings_test_med_sbatch/experiment.json"
     info = getExperimentInfo(experiment_json);
     tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
