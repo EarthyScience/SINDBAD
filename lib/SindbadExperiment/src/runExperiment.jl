@@ -156,7 +156,7 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=nothing)
-    @info "runExperimentForwardParams: forward run of the parameters with optimized parameters..."
+    @info "runExperimentForwardParams: forward run of the model with optimized parameters..."
     setLogLevel(:warn)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_optimization"] = false

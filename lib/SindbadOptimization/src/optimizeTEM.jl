@@ -33,7 +33,7 @@ function getLoss(
     cost_options,
     multi_constraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    land_wrapper_timeseries = runTEM(updated_models, forcing, forcing_one_timestep, land_timeseries, land_init, tem)
+    land_wrapper_timeseries = runTEM(updated_models, forcing, spinup_forcing, forcing_one_timestep, land_timeseries, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
     @debug loss_vector
     return combineLoss(loss_vector, multi_constraint_method)
@@ -70,7 +70,7 @@ function getLoss(
     cost_options,
     multi_constraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    land_wrapper_timeseries = runTEM(updated_models, forcing, forcing_one_timestep, land_init, tem)
+    land_wrapper_timeseries = runTEM(updated_models, forcing, spinup_forcing, forcing_one_timestep, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
     return combineLoss(loss_vector, multi_constraint_method)
 end
