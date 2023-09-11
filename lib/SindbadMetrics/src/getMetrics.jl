@@ -274,13 +274,13 @@ end
 
 function innner_loss(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
     ŷ = model_output[_mod_ind]
-    if size(ŷ, 2) == 1
-        ŷ = getModelOutputView(ŷ)
-    end
+    #if size(ŷ, 2) == 1
+    ŷ = getModelOutputView(ŷ)
+    #end
     y = observations[_obs_ind]
-    yσ = observations[_obs_ind+1]
-    (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, _valids)
-    metr = loss(y, yσ, ŷ, _lossMetric) * _weight
+    #yσ = observations[_obs_ind+1]
+    #(y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, _valids)
+    metr = loss(y, one.(y), ŷ, _lossMetric) # * _weight
     if isnan(metr)
         metr = oftype(metr, 1e19)
     end

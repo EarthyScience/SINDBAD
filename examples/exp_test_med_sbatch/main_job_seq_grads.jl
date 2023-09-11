@@ -1,24 +1,61 @@
-using Distributed
-using SharedArrays
-addprocs(17)
+using Dates
+println(now())
 
-@everywhere begin
-    using SindbadData
-    using SindbadTEM
-    using SindbadML
-    using ForwardDiff
-    using PreallocationTools
-end
+using SindbadData
+using SindbadTEM
+using SindbadML
+using ForwardDiff
+using PreallocationTools
 
+using CairoMakie
+using JLD2
+using Dates
 
 toggleStackTraceNT()
 include("gen_obs.jl");
-
 obs_synt_single, params_map = out_synt()
 
-@everywhere obs_synt = $obs_synt_single
+println(now())
 
-experiment_json = "../exp_medium/settings_medium/experiment.json"
+cov_sites = get_sites_cov()
+
+ks = (:gpp, :nee, :reco, :transpiration, :evapotranspiration, :agb, :ndvi)
+cbars = (:viridis, :seaborn_icefire_gradient, :batlow100, :inferno, :magma, :thermal, :fastie)
+#obs_synt_single.ndvi
+name_exp = "seq_grads"
+#path = dirname(Base.active_project())
+path = joinpath("/Net/Groups/BGI/scratch/lalonso/SindbadRuns/", name_exp)
+mkpath(path)
+
+mkpath(joinpath(path, "maps_local/"))
+
+for (i,k) in enumerate(ks)
+    data_sites = getproperty(obs_synt_single, k)
+    data_subset = data_sites(site = cov_sites)
+    ds_ar = data_subset |> Array
+    fig = Figure(; resolution = (2400,700))
+    ax = Axis(fig[1,1]; xlabel = "time", ylabel = "site")
+    obj = heatmap!(ax, ds_ar; colormap = cbars[i])
+    Colorbar(fig[1,2], obj)
+    fig
+    save(joinpath(path, "maps_local/variable_$(k).png"), fig)
+end
+
+let 
+    params_scaled = params_map |> Array
+    fig = Figure(; resolution = (2400,700))
+    ax = Axis(fig[1,1]; xlabel = "paramer", ylabel = "site")
+    obj = heatmap!(ax, params_scaled; colormap = :tab20c,
+        colorrange=(-1,20), highclip=:yellow, lowclip=:black,)
+    Colorbar(fig[1,2], obj)
+    fig
+    save(joinpath(path, "maps_local/parameters_map.png"), fig)
+end
+
+
+obs_synt = obs_synt_single
+
+experiment_json = "../exp_test_med_sbatch/settings_test_med_sbatch/experiment.json"
 
 info = getExperimentInfo(experiment_json);
 
@@ -113,7 +150,9 @@ siteLossInner(
     constraint_method
     )
 
-@time ForwardDiffGrads(
+println("one gradient: ", now())
+
+ForwardDiffGrads(
     siteLossInner,
     tbl_params.default,
     models,
@@ -127,6 +166,23 @@ siteLossInner(
     cost_options,
     constraint_method
     )
+
+println("one gradient, second run: ", now())
+
+@time ForwardDiffGrads(
+        siteLossInner,
+        tbl_params.default,
+        models,
+        loc_forcing,
+        forcing_one_timestep,
+        DiffCache.(loc_output),
+        land_init,
+        tem,
+        param_to_index,
+        loc_obs,
+        cost_options,
+        constraint_method
+        )
 
 # load available covariates
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
@@ -150,12 +206,14 @@ cov_sites = xfeatures.site
 #sites_parameters .= tbl_params.default
 op = prepTEMOut(info, forcing.helpers);
 
-xbatch = cov_sites[1:8]
+xbatch = cov_sites
 
 f_grads = SharedArray{Float32}(n_params, length(xbatch)) # zeros(Float32, n_params, length(xbatch))
 x_feat = xfeatures(; site=xbatch) 
 
-gradsBatchDistributed!(
+println("full batch gradient: ", now())
+
+gradsBatch!(
     siteLossInner,
     f_grads,
     sites_parameters,
@@ -172,14 +230,17 @@ gradsBatchDistributed!(
     param_to_index,
     cost_options,
     constraint_method;
-    logging=false)
-    
-#isnan.(∇params) |> sum
+    logging=true)
 
-history_loss_par = trainDistributed(
+jldsave(joinpath(path, "test_gradients.jld2"); grads = f_grads)
+
+# #isnan.(∇params) |> sum
+println("start training: ", now())
+
+history_loss_par = train(
     ml_baseline,
     siteLossInner,
-    xfeatures[site=1:32],
+    xfeatures,
     models,
     sites_f,
     op.data,
@@ -192,6 +253,9 @@ history_loss_par = trainDistributed(
     param_to_index,
     cost_options,
     constraint_method;
-    nepochs=10,
-    bs = 8
+    nepochs=5,
+    bs = 16,
+    local_root=path,
     )
+
+println("end training: ", now())
