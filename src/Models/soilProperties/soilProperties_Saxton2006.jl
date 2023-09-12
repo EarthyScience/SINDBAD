@@ -252,7 +252,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
 
     CLAY = st_CLAY[sl]
     SAND = st_SAND[sl]
-    ORGM = st_ORGM[sl]
+    ORGM = zero(st_ORGM[sl])
     # ORGM = sp_ORGM[sl]
     # ORGM = z_zero
     # CLAY = CLAY

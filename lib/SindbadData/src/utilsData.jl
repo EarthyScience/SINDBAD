@@ -85,7 +85,7 @@ function getDataDims(c, mappinginfo)
     axnames = DimensionalData.name(dims(c))
     inollt = findall(∉(mappinginfo), axnames)
     !isempty(inollt) && append!(inax, axnames[inollt])
-    return InDims(inax...; artype=KeyedArray, filter=AllNaN())
+    return InDims(inax...; filter=AllNaN())
 end
 
 """
