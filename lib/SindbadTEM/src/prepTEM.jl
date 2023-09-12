@@ -61,8 +61,8 @@ function getSpatialInfo(forcing, output)
     @info "     getting the space locations to run the model loop"
     forcing_sizes = forcing.helpers.sizes
     loopvars = collect(keys(forcing_sizes))
-    additionaldims = setdiff(loopvars, [Symbol(forcing.helpers.dimensions.time)])::Vector{Symbol}
-    spacesize = values(forcing_sizes[additionaldims])::Tuple
+    additionaldims = setdiff(loopvars, [Symbol(forcing.helpers.dimensions.time)])
+    spacesize = values(forcing_sizes[additionaldims])
     loc_space_maps = vec(
         collect(Iterators.product(Base.OneTo.(spacesize)...))
     )::Vector{NTuple{length(forcing_sizes) -
@@ -85,19 +85,18 @@ function getSpatialInfo(forcing, output)
         push!(allNans, all(isnan, loc_forcing[1]))
     end
     loc_space_maps = loc_space_maps[allNans.==false]
-    loc_space_names = Tuple(first.(loc_space_maps[1]))
     loc_space_inds = Tuple([Tuple(last.(loc_space_map)) for loc_space_map ∈ loc_space_maps])
 
-    return loc_space_inds, loc_space_maps, loc_space_names
+    return loc_space_inds
 end
 
 
 """
-getTEMVals(forcing, output, loc_space_names, tem_helpers)
+getTEMVals(forcing, output, tem_helpers)
 """
-function getTEMVals(forcing, output, loc_space_names, tem, tem_helpers)
+function getTEMVals(forcing, output, tem, tem_helpers)
     @info "     preparing vals for generated functions"
-    vals = (; forc_types=Val(forcing.f_types), forc_vars=Val(forcing.variables), loc_space_names=Val(loc_space_names), output_vars=Val(output.variables))
+    vals = (; forc_types=Val(forcing.f_types), forc_vars=Val(forcing.variables), output_vars=Val(output.variables))
     tem_dates = tem_helpers.dates
     tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
     tem_helpers = setTupleField(tem_helpers, (:dates, tem_dates))
@@ -129,10 +128,10 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 
     
     # get the output things
-    loc_space_inds, loc_space_maps, loc_space_names = getSpatialInfo(forcing, output)
+    loc_space_inds = getSpatialInfo(forcing, output)
 
     # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output, loc_space_names, tem, tem_helpers);
+    tem_with_types = getTEMVals(forcing, output, tem, tem_helpers);
 
 
     ## run the model for one time step
@@ -182,10 +181,10 @@ end
 function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
     
     # get the output things
-    loc_space_inds, loc_space_maps, loc_space_names = getSpatialInfo(forcing, output)
+    loc_space_inds = getSpatialInfo(forcing, output)
 
     # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output, loc_space_names, tem, tem_helpers);
+    tem_with_types = getTEMVals(forcing, output, tem, tem_helpers);
 
     ## run the model for one time step
     @info "     producing model output with one location and one time step"
@@ -237,11 +236,8 @@ end
 """
 function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
 
-    # get the output things
-    _, _, loc_space_names = getSpatialInfo(forcing, output)
-
     # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output, loc_space_names, tem, tem_helpers);
+    tem_with_types = getTEMVals(forcing, output, tem, tem_helpers);
     land_init = output.land_init
 
     run_helpers = (; land_init=land_init, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
@@ -304,7 +300,6 @@ end
 
 function runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
     forcing_one_timestep = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.helpers.vals.forc_types)
-    # forcing_one_timestep = getForcingForTimeStep(loc_forcing, 1)
     land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
         tem.helpers)
     land_one = computeTEM(selected_models, forcing_one_timestep, land_prec, tem.helpers)
