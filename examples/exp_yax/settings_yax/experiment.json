@@ -7,7 +7,7 @@
     "domain": "Africa",
     "name": "FullDomain",
     "time": {
-      "date_begin": "210-01-01",
+      "date_begin": "2010-01-01",
       "date_end": "2010-12-31",
       "temporal_resolution": "day",
       "timesteps_in_day": 1,
@@ -48,7 +48,7 @@
       "d_snow": "snowW",
       "d_soil": "soilW"
     },
-    "format": "zarr",
+    "format": "nc",
     "output_array_type": "YAXArray",
     "path": "africa",
     "save_single_file": true,
