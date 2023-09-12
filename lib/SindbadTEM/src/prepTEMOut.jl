@@ -145,6 +145,7 @@ function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::Outpu
     info.forcing.data_dimension.time
     space_dims = Symbol.(info.forcing.data_dimension.space)
     var_dims = map(outdims_pairs) do dim_pairs
+        # @show dim_pairs
         od = []
         for _dim in dim_pairs
             if first(_dim) ∉ space_dims
@@ -158,15 +159,27 @@ function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::Outpu
     outdims = map(out_vars) do vname_full
         vname = Symbol(split(string(vname_full), '.')[end])
         vdims = var_dims[v_index]
-        path_output = info.output.data
         outformat = info.experiment.model_output.format
+        backend = outformat == "nc" ? :netcdf : :zarr
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-        out_dim = OutDims(
-            Dim{Symbol(depth_name)}(1:depth_size),
-            vdims[2:end]...;
-            path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
-            backend=:zarr,
-            overwrite=true)
+        out_dim = OutDims(vdims...;
+        path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
+        backend=backend,
+        overwrite=true)
+    # out_dim = OutDims(
+    #         vdims[1],
+    #         Dim{Symbol(depth_name)}(1:depth_size),
+    #         vdims[3:end]...;
+    #         path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
+    #         backend=:zarr,
+    #         overwrite=true)
+    #     if isnothing(depth_size) || depth_size == 1
+    #         out_dim = OutDims(vdims...;
+    #         path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
+    #         backend=:zarr,
+    #         overwrite=true)
+    #     end
+    
         v_index += 1
         out_dim
     end
