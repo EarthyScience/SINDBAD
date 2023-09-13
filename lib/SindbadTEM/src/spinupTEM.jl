@@ -283,6 +283,7 @@ function runSpinup(
         if spinup_mode == :spinup
             spinup_models = selected_models[tem_models.is_spinup]
         end
+        @debug "Spinup: \n         Sequence: $(seq_index), spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name)"
         land = repeat_loop(spinup_models,
             sel_forcing,
             forcing_one_timestep,
@@ -311,7 +312,7 @@ function repeat_loop(spinup_models,
     n_repeat,
     log_loop)
     for loop_index ∈ 1:n_repeat
-        @debug "     sequence: $(seq_index), spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name), Loop: $(loop_index)/$(n_repeat)"
+        @debug "        Loop: $(loop_index)/$(n_repeat)"
         land = runSpinup(spinup_models,
             sel_forcing,
             forcing_one_timestep,

@@ -1,12 +1,16 @@
 using Revise
 using ForwardDiff
-
+using SindbadData
 using SindbadTEM
 using SindbadMetrics
+using SindbadExperiment
 toggleStackTraceNT()
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
-info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify information from json with the replace_info
+replace_info = Dict(
+"experiment.exe_rules.model_number_type" => "Real")
+
+info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 forcing = getForcing(info);
 
@@ -61,20 +65,6 @@ function g_loss(x,
 end
 
 mods = info.tem.models.forward;
-g_loss(tbl_params.default,
-    mods,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.output_array,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types,
-    obs_array,
-    tbl_params,
-    cost_options,
-    info.optim.multi_constraint_method)
-
 function l1(p)
     return g_loss(p,
         mods,
@@ -93,6 +83,11 @@ end
 l1(tbl_params.default)
 
 
+
+
+
+
+
 p_vec = tbl_params.default;
 CHUNK_SIZE = length(p_vec)
 CHUNK_SIZE = 10
@@ -105,8 +100,19 @@ output_array = [Array{Any}(undef, size(od)) for od in run_helpers.output_array];
 # op = (; op..., data=op_dat);
 # output_array = op_dat;
 
-dualDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
+# dualDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
+dualDefs = ForwardDiff.Dual.(tbl_params.default);
 mods = updateModelParametersType(tbl_params, mods, dualDefs);
+
+run_helpers = prepTEM(forcing, info);
+
+@time runTEM!(mods,
+    run_helpers.loc_forcings,
+    run_helpers.loc_spinup_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.tem_with_types)
 
 
 # op = prepTEMOut(info, forcing.helpers);
