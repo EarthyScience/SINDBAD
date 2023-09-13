@@ -145,7 +145,6 @@ function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::Outpu
     info.forcing.data_dimension.time
     space_dims = Symbol.(info.forcing.data_dimension.space)
     var_dims = map(outdims_pairs) do dim_pairs
-        # @show dim_pairs
         od = []
         for _dim in dim_pairs
             if first(_dim) ∉ space_dims
@@ -166,20 +165,6 @@ function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::Outpu
         path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
         backend=backend,
         overwrite=true)
-    # out_dim = OutDims(
-    #         vdims[1],
-    #         Dim{Symbol(depth_name)}(1:depth_size),
-    #         vdims[3:end]...;
-    #         path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
-    #         backend=:zarr,
-    #         overwrite=true)
-    #     if isnothing(depth_size) || depth_size == 1
-    #         out_dim = OutDims(vdims...;
-    #         path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
-    #         backend=:zarr,
-    #         overwrite=true)
-    #     end
-    
         v_index += 1
         out_dim
     end
@@ -490,10 +475,12 @@ create the output fields needed for the optimization experiment
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     params = info.optim.model_parameters_to_optimize
     paramaxis = Dim{:parameter}(params)
+    outformat = info.experiment.model_output.format
+    backend = outformat == "nc" ? :netcdf : :zarr
     od = OutDims(paramaxis;
         path=joinpath(info.output.optim,
-            "optimized_parameters.$(info.experiment.model_output.format)"),
-        backend=:zarr,
+            "optimized_parameters.$(outformat)"),
+        backend=backend,
         overwrite=true)
     # list of parameter
     output = setTupleField(output, (:paramdims, od))

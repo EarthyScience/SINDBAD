@@ -342,9 +342,9 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Va
     end
 
     #todo mean of the data instead of zero or nan
-    vfill = num_type(0.0)
+    vfill = 0.0
     if fill_nan
-        vfill = num_type(NaN)
+        vfill = NaN
     end
     vNT = Val{num_type}()
     if clean_data
