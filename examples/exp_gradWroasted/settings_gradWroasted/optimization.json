@@ -62,9 +62,7 @@
     "nee",
     "reco",
     "transpiration",
-    "evapotranspiration",
-    "agb",
-    "ndvi"
+    "evapotranspiration"
   ],
   "observations": {
     "default_cost": {
