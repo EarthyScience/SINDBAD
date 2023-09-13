@@ -1,7 +1,6 @@
 export combineLoss
 export filterCommonNaN
 export getData
-export getLoss
 export getLossVector
 export getModelOutputView
 export prepCostOptions
