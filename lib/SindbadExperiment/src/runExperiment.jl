@@ -166,7 +166,8 @@ function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::S
     optimized_models = info.tem.models.forward;
     tbl_params = getParameters(info.tem.models.forward,
         info.optimization.model_parameter_default,
-        info.optimization.model_parameters_to_optimize);
+        info.optimization.model_parameters_to_optimize,
+        info.tem.helpers.numbers.sNT);
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, params_vector)
     
     run_helpers = prepTEM(forcing, info)
