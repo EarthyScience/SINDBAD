@@ -79,7 +79,8 @@ cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
 tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize)
+    info.optim.model_parameters_to_optimize,
+    info.tem.helpers.numbers.sNT)
 
 defaults = tbl_params.default;
 

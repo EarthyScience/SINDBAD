@@ -648,7 +648,8 @@ end
 
 
 """
-function getParameters(selected_models)
+function getParameters(selected_models, num_type; return_table=true)
+    model_names_list = nameof.(typeof.(selected_models));
     default = [flatten(selected_models)...]
     constrains = metaflatten(selected_models, Models.bounds)
     nbounds = length(constrains)
@@ -659,16 +660,31 @@ function getParameters(selected_models)
     model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
     name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
     approach_func = [getfield(Models, m) for m ∈ model_approach]
-    return Table(;
-        name,
-        default,
-        optim=default,
-        lower,
-        upper,
-        model,
-        model_approach,
-        approach_func,
-        name_full)
+    model_prev = model_approach[1]
+    m_id = findall(x-> x==model_prev, model_names_list)[1]
+    model_id = map(model_approach) do m
+        if m !== model_prev
+            model_prev = m
+            m_id = findall(x-> x==model_prev, model_names_list)[1]
+        end
+        m_id
+    end
+    # default = num_type.(default)
+    lower = num_type.(lower)
+    upper = num_type.(upper)
+    output = (;
+    model_id,
+    name,
+    default,
+    optim=default,
+    lower,
+    upper,
+    model,
+    model_approach,
+    approach_func,
+    name_full)
+    output = return_table ? Table(output) : output
+    return output
 end
 
 
@@ -677,35 +693,15 @@ end
 
 retrieve all model parameters
 """
-function getParameters(selected_models, model_parameter_default)
-    default = [flatten(selected_models)...]
-    constrains = metaflatten(selected_models, Models.bounds)
-    nbounds = length(constrains)
-    lower = [constrains[i][1] for i ∈ 1:nbounds]
-    upper = [constrains[i][2] for i ∈ 1:nbounds]
-    name = [fieldnameflatten(selected_models)...] # SVector(flatten(x))
-    model_approach = [parentnameflatten(selected_models)...]
-    model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
-    name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
-    approach_func = [getfield(Models, m) for m ∈ model_approach]
+function getParameters(selected_models, model_parameter_default, num_type)
+    models_tuple = getParameters(selected_models, num_type; return_table=false)
+    default = models_tuple.default
+    model_approach = models_tuple.model_approach
     dp_dist = typeof(default[1]).(model_parameter_default[:distribution][2])
-    # dp_dist = Tuple(dp_dist)
     dist = [model_parameter_default[:distribution][1] for m ∈ model_approach]
     p_dist = [dp_dist for m ∈ model_approach]
     is_ml = [model_parameter_default.is_ml for m ∈ model_approach]
-    return Table(;
-        name,
-        default,
-        optim=default,
-        lower,
-        upper,
-        model,
-        model_approach,
-        approach_func,
-        name_full,
-        dist,
-        p_dist,
-        is_ml)
+    return Table(; models_tuple... ,dist, p_dist, is_ml)
 end
 
 """
@@ -718,9 +714,9 @@ end
 - `model_parameter_default`: DESCRIPTION
 - `opt_parameter`: DESCRIPTION
 """
-function getParameters(selected_models, model_parameter_default, opt_parameter::Vector)
+function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type)
     opt_parameter = replaceCommaSeparatorParams(opt_parameter)
-    tbl_parameters = getParameters(selected_models, model_parameter_default)
+    tbl_parameters = getParameters(selected_models, model_parameter_default, num_type)
     return filter(row -> row.name_full in opt_parameter, tbl_parameters)
 end
 
@@ -734,9 +730,9 @@ end
 - `model_parameter_default`: DESCRIPTION
 - `opt_parameter`: DESCRIPTION
 """
-function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple)
+function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type)
     param_list = replaceCommaSeparatorParams(keys(opt_parameter))
-    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list)
+    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list, num_type)
     tbl_parameters_filtered = filter(row -> row.name_full in param_list, tbl_parameters)
     new_dist = tbl_parameters_filtered.dist
     new_p_dist = tbl_parameters_filtered.p_dist
