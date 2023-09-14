@@ -4,7 +4,7 @@ export WUE_Medlyn2011
 @bounds @describe @units @with_kw struct WUE_Medlyn2011{T1,T2,T3} <: WUE
     g1::T1 = 3.0 | (0.5, 12.0) | "stomatal conductance parameter" | "kPa^0.5"
     ζ::T2 = 1.0 | (0.85, 3.5) | "sensitivity of WUE to ambient co2" | ""
-    DwDc::T3 = 1.6 | (nothing, nothing) | "Ratio of the molecular diffusivities for water vapor and CO2" | ""
+    DwDc::T3 = 1.6 | (-Inf, Inf) | "Ratio of the molecular diffusivities for water vapor and CO2" | ""
 end
 #! format: on
 
