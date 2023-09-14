@@ -5,7 +5,7 @@ export WUE_VPDDayCo2
     WUEatOnehPa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
     Ca0::T2 = 380.0 | (300.0, 500.0) | "" | "ppm"
     Cm::T3 = 500.0 | (100.0, 2000.0) | "" | "ppm"
-    kpa_to_hpa::T5 = 10.0 | (nothing, nothing) | "unit conversion kPa to hPa" | ""
+    kpa_to_hpa::T5 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | ""
 end
 #! format: on
 
