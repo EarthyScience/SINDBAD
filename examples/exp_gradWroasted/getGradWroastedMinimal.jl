@@ -33,7 +33,8 @@ run_helpers = prepTEM(forcing, info);
 
 tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize);
+    info.optim.model_parameters_to_optimize,
+    info.tem.helpers.numbers.sNT);
 
 function g_loss(x,
     mods,
@@ -45,7 +46,8 @@ function g_loss(x,
     land_init_space,
     tem_with_types,
     observations,
-    tbl_params,
+    param_model_id_val,
+    p_type,
     cost_options,
     multi_constraint_method)
     l = getLoss(x,
@@ -58,7 +60,8 @@ function g_loss(x,
         land_init_space,
         tem_with_types,
         observations,
-        tbl_params,
+        param_model_id_val,
+        p_type,
         cost_options,
         multi_constraint_method)
     return l
@@ -76,16 +79,18 @@ function l1(p)
         run_helpers.land_init_space,
         run_helpers.tem_with_types,
         obs_array,
-        tbl_params,
+        info.optim.param_model_id_val,
+        typeof(tbl_params.default),
         cost_options,
         info.optim.multi_constraint_method)
 end
+l1(tbl_params.default .* rand())
+
 l1(tbl_params.default)
 
 
 
-
-
+l1(p_vec)
 
 
 p_vec = tbl_params.default;
@@ -120,6 +125,7 @@ run_helpers = prepTEM(forcing, info);
 # op = (; op..., data=op_dat);
 
 @time grad = ForwardDiff.gradient(l1, p_vec)
+
 
 # @time grad = ForwardDiff.gradient(l1, p_vec, cfg)
 

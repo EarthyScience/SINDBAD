@@ -65,10 +65,24 @@ opt_params = out_opti.out_params;
 optimized_models = info.tem.models.forward;
 tbl_params = getParameters(info.tem.models.forward,
 info.optimization.model_parameter_default,
-info.optimization.model_parameters_to_optimize);
-optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params);
+info.optimization.model_parameters_to_optimize,
+info.tem.helpers.numbers.sNT);
+selected_models = info.tem.models.forward;
+param_vector = tbl_params.default .* info.tem.helpers.numbers.sNT(rand());
+param_vector = tbl_params.default .* rand();
+param_vector = ForwardDiff.Dual.(tbl_params.default);
+@time selected_models = updateModelParameters(selected_models, param_vector, info.optim.param_model_id_val);
+# updateModelParameters(selected_models, param_vector, info.optim.param_model_id_val)
+@time runTEM!(selected_models,
+    run_helpers.loc_forcings,
+    run_helpers.loc_spinup_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.tem_with_types)
 
-@time runTEM!(optimized_models,
+
+@time runTEM!(info.tem.models.forward,
     run_helpers.loc_forcings,
     run_helpers.loc_spinup_forcings,
     run_helpers.forcing_one_timestep,

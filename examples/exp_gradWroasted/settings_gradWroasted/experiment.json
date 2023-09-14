@@ -20,7 +20,7 @@
     "input_data_backend": "netcdf",
     "land_output_type": "array",
     "model_array_type": "static_array",
-    "model_number_type": "ForwardDiff.Dual",
+    "model_number_type": "Float32",
     "parallelization": "threads",
     "tolerance": 1.0e-2,
     "yax_max_cache": 2e9
