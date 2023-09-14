@@ -88,7 +88,8 @@ for domain ∈ sites
 
     tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
-        info.optim.model_parameters_to_optimize)
+        info.optim.model_parameters_to_optimize,
+        info.tem.helpers.numbers.sNT)
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
     forcing = getForcing(info)
