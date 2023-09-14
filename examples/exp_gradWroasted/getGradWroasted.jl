@@ -29,7 +29,8 @@ run_helpers = prepTEM(forcing, info);
 
 tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize);
+    info.optim.model_parameters_to_optimize,
+    info.tem.helpers.numbers.sNT);
 
 function g_loss(x,
     mods,

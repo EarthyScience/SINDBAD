@@ -38,16 +38,16 @@ end
 
 
 """
-    updateModelParameters(tbl_params, selected_models::Tuple, pVector)
+    updateModelParameters(tbl_params, selected_models::Tuple, param_vector)
 
 update models/parameters without mutating the table of parameters
 
 # Arguments:
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
 - `selected_models`: a tuple of all models selected in the given model structure
-- `pVector`: DESCRIPTION
+- `param_vector`: DESCRIPTION
 """
-function updateModelParameters(tbl_params, selected_models::Tuple, pVector)
+function updateModelParameters(tbl_params, selected_models::Tuple, param_vector)
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
@@ -61,7 +61,7 @@ function updateModelParameters(tbl_params, selected_models::Tuple, pVector)
                     tbl_params)
                 pval = getproperty(approachx, var)
                 if !isempty(pindex)
-                    pval = pVector[pindex[1]]
+                    pval = param_vector[pindex[1]]
                 end
                 push!(newvals, var => pval)
             end
@@ -75,16 +75,16 @@ function updateModelParameters(tbl_params, selected_models::Tuple, pVector)
 end
 
 """
-    updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
+    updateModelParametersType(tbl_params, selected_models::Tuple, param_vector)
 
-get the new instances of the model with same parameter types as mentioned in pVector
+get the new instances of the model with same parameter types as mentioned in param_vector
 
 # Arguments:
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
 - `selected_models`: a tuple of all models selected in the given model structure
-- `pVector`: DESCRIPTION
+- `param_vector`: DESCRIPTION
 """
-function updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
+function updateModelParametersType(tbl_params, selected_models::Tuple, param_vector)
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
@@ -99,7 +99,7 @@ function updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
                 pval = getproperty(approachx, var)
                 if !isempty(pindex)
                     model_obj = tbl_params[pindex[1]].approach_func
-                    pval = pVector[pindex[1]]
+                    pval = param_vector[pindex[1]]
                 end
                 push!(newvals, var => pval)
             end
@@ -113,11 +113,31 @@ function updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
 end
 
 
+@generated function updateModelParameters(selected_models, param_vector, ::Val{p_vals}) where p_vals
+    output = quote end
+    p_index = 1
+    foreach(p_vals) do p
+        param = Symbol(split(string(first(p)), "____")[end])
+        mod_index = last(p)
+        push!(output.args,
+            Expr(:(=),
+                :selected_models,
+                Expr(:macrocall,
+                    Symbol("@set"),
+                    :(),
+                    Expr(:(=), Expr(:., Expr(:ref, :selected_models, mod_index), QuoteNode(param)), Expr(:ref, :param_vector, p_index))))) #= none:1 =#
+                    p_index += 1
+    end
+    return output
+end
+
+
+
 # """
-# updateModelParametersType(tbl_params, selected_models, pVector)
-# get the new instances of the model with same parameter types as mentioned in pVector
+# updateModelParametersType(tbl_params, selected_models, param_vector)
+# get the new instances of the model with same parameter types as mentioned in param_vector
 # """
-# function updateModelParametersType(tbl_params, selected_models, pVector)
+# function updateModelParametersType(tbl_params, selected_models, param_vector)
 #     updatedModels = Models.LandEcosystem[]
 #     foreach(selected_models) do approachx
 #         modelName = nameof(typeof(approachx))
@@ -131,7 +151,7 @@ end
 #                 #pval = getproperty(approachx, var)
 #                 if !isempty(pindex)
 #                     #model_obj = tbl_params[pindex[1]].approach_func
-#                     var = pVector[pindex[1]]
+#                     var = param_vector[pindex[1]]
 #                 end
 #                 push!(newvals, k => var)
 #             end
