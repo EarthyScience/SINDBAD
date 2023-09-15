@@ -4,14 +4,14 @@ using SindbadTEM
 using YAXArrays
 using SindbadML
 #using SindbadVisuals
-#using ForwardDiff
-#using PreallocationTools
+using ForwardDiff
+using PreallocationTools
 #using CairoMakie
 
 toggleStackTraceNT()
-# include("gen_obs.jl")
+include("gen_obs.jl")
 
-# obs_synt, params_map = out_synt();
+obs_synt, params_map = out_synt();
 
 # cov_sites = get_sites_cov()
 # ks = (:gpp, :transpiration, :evapotranspiration)
@@ -43,7 +43,7 @@ toggleStackTraceNT()
 # end
 
 
-experiment_json = "../exp_medium/settings_medium/experiment.json"
+experiment_json = "../exp_medium_reverse/settings_medium_reverse/experiment.json"
 #info = getConfiguration(experiment_json);
 #info = setupInfo(info);
 
@@ -86,7 +86,7 @@ site_location = loc_space_maps[3]
 loc_land_init = land_init_space[3];
 
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(op.data, forc, obs, site_location); # obs_synt
+    getLocDataObsN(op.data, forc, obs_synt, site_location); # obs_synt
 
 land_init = land_init_space[site_location[1][2]];
 forcing_one_timestep =run_helpers.forcing_one_timestep;
@@ -180,10 +180,10 @@ models = LongTuple(models...);
     
 println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-@time ForwardDiffGrads(
-    siteLossInner,
-    tbl_params.default,
-    models,
+using TaylorDiff
+#using ReverseDiff: GradientTape, GradientConfig, gradient, gradient!, compile, DiffResults
+
+f(x) = siteLossInner(x, models,
     loc_forcing,
     forcing_one_timestep,
     DiffCache.(loc_output),
@@ -194,96 +194,3 @@ println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     cost_options,
     constraint_method
     )
-
-
-# ForwardDiff.gradient(f, x)
-# load available covariates
-# rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
-sites_f = forc.Tair.site
-c = Cube(joinpath(@__DIR__, "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"));
-xfeatures = cube_to_KA(c)
-
-sites = xfeatures.site
-sites = [s for s ∈ sites]
-
-# machine learning parameters baseline
-n_bs_feat = length(xfeatures.features)
-n_neurons = 32
-n_params = sum(tbl_params.is_ml)
-
-ml_baseline = DenseNN(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
-sites_parameters = ml_baseline(xfeatures)
-#params_bounded = getParamsAct.(sites_parameters, tbl_params)
-cov_sites = xfeatures.site
-#sites_parameters .= tbl_params.default
-op = prepTEMOut(info, forcing.helpers);
-# b_data = (; allocated_output = op.data, forcing=forc);
-
-# data_optim = (;
-#     obs = obs_synt,
-# );
-xbatch = cov_sites[1:8]
-
-f_grads = zeros(Float32, n_params, length(xbatch))
-x_feat = xfeatures(; site=xbatch) 
-
-gradsBatch!(
-    siteLossInner,
-    f_grads,
-    sites_parameters,
-    models,
-    xbatch,
-    sites_f,
-    op.data,
-    forc,
-    obs_synt,
-    tbl_params, 
-    land_init_space,
-    forcing_one_timestep,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method;
-    logging=true)
-    
-#isnan.(∇params) |> sum
-history_loss = train(
-    ml_baseline,
-    siteLossInner,
-    xfeatures[site=1:16],
-    models,
-    sites_f,
-    op.data,
-    forc,
-    obs_synt,
-    tbl_params, 
-    land_init_space,
-    forcing_one_timestep,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method;
-    nepochs=5,
-    bs = 8
-    )
-
-
-# new_params = getParamsAct(up_params(; site=site_name), tbl_params)
-
-# space_run!(
-#     info.tem.models.forward,
-#     sites_parameters,
-#     tbl_params,
-#     sites_f,
-#     land_init_space,
-#     b_data,
-#     cov_sites,
-#     forcing_one_timestep,
-#     tem
-# )
-
-
-# tempo = string.(forc.Tair.time);
-# out_names = info.optimization.observational_constraints
-# plot_output(op, obs, out_names, cov_sites, sites_f, tempo)
-
