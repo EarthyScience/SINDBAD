@@ -34,7 +34,7 @@ function compute(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
     actAWC = maxZero(SM - sum_WP)
     SM_nor = minOne(actAWC / maxAWC)
     tfW = -q * (SM_nor - θstar)^t_two + o_one
-    c_allocation_f_soilW = SM_nor <= θstar ? tfW : o_one
+    c_allocation_f_soilW = SM_nor <= θstar ? tfW : one(tfW)
     gpp_f_soilW = clampZeroOne(c_allocation_f_soilW)
 
     ## pack land variables

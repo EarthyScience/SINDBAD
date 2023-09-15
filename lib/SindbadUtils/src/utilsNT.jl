@@ -1,6 +1,7 @@
 export dictToNamedTuple
 export dropFields
 export getCombinedNamedTuple
+export getNamedTuple
 export removeEmptyTupleFields
 export setTupleField
 export setTupleSubfield
@@ -88,6 +89,18 @@ function getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
     end
     return combined_nt
 end
+
+"""
+    getNamedTuple(input_data, input_names)
+
+# Arguments:
+- `input_data`: a vector of data
+- `input_names`: a vector/tuple of names    
+"""
+function getNamedTuple(input_data, input_names)
+    return (; Pair.(input_names, input_data)...)
+end
+
 
 """
     getTypes!(d, all_types)

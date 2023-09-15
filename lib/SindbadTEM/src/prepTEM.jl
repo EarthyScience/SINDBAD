@@ -61,8 +61,8 @@ function getSpatialInfo(forcing, output)
     @info "     getting the space locations to run the model loop"
     forcing_sizes = forcing.helpers.sizes
     loopvars = collect(keys(forcing_sizes))
-    additionaldims = setdiff(loopvars, [Symbol(forcing.helpers.dimensions.time)])::Vector{Symbol}
-    spacesize = values(forcing_sizes[additionaldims])::Tuple
+    additionaldims = setdiff(loopvars, [Symbol(forcing.helpers.dimensions.time)])
+    spacesize = values(forcing_sizes[additionaldims])
     loc_space_maps = vec(
         collect(Iterators.product(Base.OneTo.(spacesize)...))
     )::Vector{NTuple{length(forcing_sizes) -
@@ -76,30 +76,32 @@ function getSpatialInfo(forcing, output)
     end
     loc_space_maps = Tuple(loc_space_maps)
 
-    forcing_nt_array = getForcingNamedTuple(forcing.data, forcing.variables)
+    forcing_nt_array = getNamedTuple(forcing.data, forcing.variables)
 
     allNans = Bool[]
     for i ∈ eachindex(loc_space_maps)
-        loc_forcing = getLocForcingData(forcing_nt_array, loc_space_maps[i])
+        loc_space_ind = Tuple(last.(loc_space_maps[i]))
+        loc_forcing = getLocForcingData(forcing_nt_array, loc_space_ind)
         push!(allNans, all(isnan, loc_forcing[1]))
     end
     loc_space_maps = loc_space_maps[allNans.==false]
-    loc_space_names = Tuple(first.(loc_space_maps[1]))
     loc_space_inds = Tuple([Tuple(last.(loc_space_map)) for loc_space_map ∈ loc_space_maps])
 
-    return loc_space_inds, loc_space_maps, loc_space_names
+    return loc_space_inds
 end
 
 
 """
-getTEMVals(forcing, output, loc_space_names, tem_helpers)
+getTEMVals(forcing, output, tem_helpers)
 """
-function getTEMVals(forcing, output, loc_space_names, tem, tem_helpers)
+function getTEMVals(forcing, output, tem, tem_helpers)
     @info "     preparing vals for generated functions"
-    vals = (; forc_vars=Val(forcing.variables), loc_space_names=Val(loc_space_names), output_vars=Val(output.variables))
+    vals = (; forc_types=Val(forcing.f_types), forc_vars=Val(forcing.variables), output_vars=Val(output.variables))
     tem_dates = tem_helpers.dates
     tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
     tem_helpers = setTupleField(tem_helpers, (:dates, tem_dates))
+    time_size = getproperty(forcing.helpers.sizes, Symbol(forcing.helpers.dimensions.time))
+    tem_helpers = setTupleField(tem_helpers, (:n_timesteps, time_size))
     tem_numbers = tem_helpers.numbers
     tem_numbers = (; tolerance=tem_numbers.tolerance)
     tem_helpers = setTupleField(tem_helpers, (:vals, vals))
@@ -126,44 +128,39 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 
     
     # get the output things
-    loc_space_inds, loc_space_maps, loc_space_names = getSpatialInfo(forcing, output)
+    loc_space_inds = getSpatialInfo(forcing, output)
 
     # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output, loc_space_names, tem, tem_helpers);
+    tem_with_types = getTEMVals(forcing, output, tem, tem_helpers);
 
 
     ## run the model for one time step
     @info "     producing model output with one location and one time step"
-    forcing_nt_array = getForcingNamedTuple(forcing.data, forcing.variables)
+    forcing_nt_array = getNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     output_array = output.data
     forcing_one_timestep, loc_forcing, loc_output, land_one = runTEMOneLocation(selected_models, forcing_nt_array, output_array, land_init,
-        loc_space_maps[1], tem_with_types, LandOutArray())
+        loc_space_inds[1], tem_with_types, LandOutArray())
     debugModel(land_one, tem.helpers.run.debug_model)
 
-    # loc_forcing = getLocForcingData(forcing, loc_space_map)
-    # loc_output = getLocOutputData(output_array, loc_space_map)
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
-    loc_forcings = map([loc_space_maps...]) do lsm
-        getLocForcingData(forcing_nt_array, lsm, forcing.helpers.sizes.time)
+    loc_forcings = map([loc_space_inds...]) do lsi
+        getLocForcingData(forcing_nt_array, lsi)
+    end
+    spinup_forcings = map(loc_forcings) do loc_forcing
+        getAllSpinupForcing(loc_forcing, tem_with_types.spinup.sequence, tem_with_types.helpers);
     end
 
-    # loc_forcings = map([loc_space_maps...]) do lsm
-    #     getLocForcingData(forcing_nt_array, lsm)
-    # end
-    loc_outputs = map([loc_space_maps...]) do lsm
-        getLocOutputData(output_array, lsm)
+    loc_outputs = map([loc_space_inds...]) do lsi
+        getLocOutputData(output_array, lsi)
     end
 
-    # loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
-    # loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])
-    land_init_space = Tuple([deepcopy(land_one) for _ ∈ 1:length(loc_space_maps)])
+    land_init_space = Tuple([deepcopy(land_one) for _ ∈ 1:length(loc_space_inds)])
 
     forcing_nt_array = nothing
 
-    run_helpers = (; loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
-    # run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    run_helpers = (; loc_forcings=loc_forcings, loc_spinup_forcings=spinup_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     return run_helpers
 end
 
@@ -184,20 +181,20 @@ end
 function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
     
     # get the output things
-    loc_space_inds, loc_space_maps, loc_space_names = getSpatialInfo(forcing, output)
+    loc_space_inds = getSpatialInfo(forcing, output)
 
     # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output, loc_space_names, tem, tem_helpers);
+    tem_with_types = getTEMVals(forcing, output, tem, tem_helpers);
 
     ## run the model for one time step
     @info "     producing model output with one location and one time step"
     land_init = output.land_init
-    forcing_nt_array = getForcingNamedTuple(forcing.data, forcing.variables)
-    loc_forcing = getLocForcingData(forcing_nt_array, loc_space_maps[1])
+    forcing_nt_array = getNamedTuple(forcing.data, forcing.variables)
+    loc_forcing = getLocForcingData(forcing_nt_array, loc_space_inds[1])
     forcing_one_timestep, land_one = runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem_with_types)
     debugModel(land_one, tem.helpers.run.debug_model)
 
-    run_helpers = (; loc_forcing=loc_forcing, forcing_one_timestep=forcing_one_timestep, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    run_helpers = (; loc_forcing=loc_forcing, forcing_one_timestep=forcing_one_timestep, land_one=land_one, loc_space_inds=loc_space_inds, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     return run_helpers
 end
 
@@ -239,15 +236,11 @@ end
 """
 function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
 
-    # get the output things
-    _, _, loc_space_names = getSpatialInfo(forcing, output)
-
     # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output, loc_space_names, tem, tem_helpers);
+    tem_with_types = getTEMVals(forcing, output, tem, tem_helpers);
     land_init = output.land_init
 
     run_helpers = (; land_init=land_init, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
-    # run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     return run_helpers
 end
 
@@ -285,7 +278,7 @@ end
 
 
 """
-    runTEMOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
+    runTEMOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_ind, tem)
 
 
 
@@ -294,19 +287,19 @@ end
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output_array`: an output array/view for ALL locations
 - `land_init`: initial SINDBAD land with all fields and subfields
-- `loc_space_map`: DESCRIPTION
+- `loc_space_ind`: DESCRIPTION
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `::LandOutArray`: a dispatch for running model with preallocated array
 """
-function runTEMOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem, ::LandOutArray)
-    loc_forcing, loc_output = getLocData(forcing, output_array, loc_space_map)
+function runTEMOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_ind, tem, ::LandOutArray)
+    loc_forcing, loc_output = getLocData(forcing, output_array, loc_space_ind)
     forcing_one_timestep, land_one = runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
     setOutputForTimeStep!(loc_output, land_one, 1, tem.helpers.vals.output_vars)
     return forcing_one_timestep, loc_forcing, loc_output, land_one
 end
 
 function runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
-    forcing_one_timestep = getForcingForTimeStep(loc_forcing, 1)
+    forcing_one_timestep = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.helpers.vals.forc_types)
     land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
         tem.helpers)
     land_one = computeTEM(selected_models, forcing_one_timestep, land_prec, tem.helpers)

@@ -20,8 +20,8 @@ struct CCycleBaseGSI end
                      0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
                      0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
                      0.0 0.0 0 0.0 0.0 0.0 1.0 -1.0
-                 ] | (nothing, nothing) | "Transfer matrix for carbon at ecosystem level" | ""
-    p_C_to_N_cVeg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+                 ] | (-Inf, Inf) | "Transfer matrix for carbon at ecosystem level" | ""
+    p_C_to_N_cVeg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | (-Inf, Inf) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
     ηH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
     ηA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
     c_remain::T13 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
