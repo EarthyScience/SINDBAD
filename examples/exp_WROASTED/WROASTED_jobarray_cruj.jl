@@ -131,7 +131,8 @@ for o_set in opti_set
 
     tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
-        info.optim.model_parameters_to_optimize)
+        info.optim.model_parameters_to_optimize,
+        info.tem.helpers.numbers.sNT)
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
     forcing = getForcing(info)
@@ -143,6 +144,7 @@ for o_set in opti_set
 
     @time runTEM!(optimized_models,
         run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
         run_helpers.forcing_one_timestep,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,
@@ -219,6 +221,7 @@ for o_set in opti_set
     run_helpers = prepTEM(forcing, info)
     @time runTEM!(optimized_models,
         run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
         run_helpers.forcing_one_timestep,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,

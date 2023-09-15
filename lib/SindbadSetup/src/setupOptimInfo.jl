@@ -12,7 +12,8 @@ function checkOptimizedParametersInModels(info::NamedTuple)
     # @show info.optimization.observations, info.optimization.model_parameters_to_optimize
     tbl_params = getParameters(info.tem.models.forward,
         info.optimization.model_parameter_default,
-        info.optimization.model_parameters_to_optimize)
+        info.optimization.model_parameters_to_optimize,
+        info.tem.helpers.numbers.sNT)
     model_parameters = tbl_params.name_full
     # @show model_parameters
     optim_parameters = info.optimization.model_parameters_to_optimize
@@ -167,6 +168,16 @@ function getTypeInstanceForCostMetric(option_name::String)
     return struct_instance
 end
 
+function getParamModelIDVal(tbl_params)
+    param_names = Symbol.(replace.(tbl_params.name_full, "." => "____"))
+    model_id = tbl_params.model_id;
+    param_id_tuple=Tuple(map(param_names, model_id) do p,m
+        (p, m)
+    end)
+    return Val(param_id_tuple)
+end
+
+
 
 """
     setupOptimization(info::NamedTuple)
@@ -207,6 +218,14 @@ function setupOptimization(info::NamedTuple)
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     end
     info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))
+
+    tbl_params = getParameters(info.tem.models.forward,
+    info.optimization.model_parameter_default,
+    info.optimization.model_parameters_to_optimize,
+    info.tem.helpers.numbers.sNT);
+
+    param_model_id_val = getParamModelIDVal(tbl_params)
+    info = setTupleSubfield(info, :optim, (:param_model_id_val, param_model_id_val))
 
     # get the variables to be used during optimization
     obs_vars, optim_vars, store_vars, model_vars = getConstraintNames(info.optimization)

@@ -28,6 +28,7 @@ run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
     run_helpers.loc_forcings,
+    run_helpers.loc_spinup_forcings,
     run_helpers.forcing_one_timestep,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
@@ -36,11 +37,21 @@ run_helpers = prepTEM(forcing, info);
 for x ∈ 1:10
     @time runTEM!(info.tem.models.forward,
         run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
         run_helpers.forcing_one_timestep,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,
         run_helpers.tem_with_types)
 end
+
+@time spinupTEM(
+    info.tem.models.forward,
+    run_helpers.loc_spinup_forcings[1],
+    run_helpers.forcing_one_timestep,
+    run_helpers.land_init_space[1],
+    run_helpers.tem_with_types.helpers,
+    run_helpers.tem_with_types.models,
+    run_helpers.tem_with_types.spinup);
 
 # setLogLevel(:debug)
 # getLossVector(obs_array, run_helpers.output_array, prepCostOptions(obs_array, info.optim.cost_options))
@@ -54,14 +65,15 @@ out_model = out_opti.out_forward;
 
 
 ds = forcing.data[1];
-plotdat = run_helpers.output_array;
+plotdat = out_opti.out_forward;
 # plotdat = output_default;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+out_vars = keys(plotdat)
 for i ∈ eachindex(out_vars)
     v = out_vars[i]
-    vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
-    vname = vinfo["standard_name"]
+    # vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+    vname = v
+    # vname = vinfo["standard_name"]
     println("plot output-model => domain: $domain, variable: $vname")
     pd = plotdat[i]
     if size(pd, 2) == 1
