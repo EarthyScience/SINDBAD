@@ -43,7 +43,7 @@ toggleStackTraceNT()
 # end
 
 
-experiment_json = "../exp_medium/settings_medium/experiment.json"
+experiment_json = "../exp_long/settings_long/experiment.json"
 #info = getConfiguration(experiment_json);
 #info = setupInfo(info);
 

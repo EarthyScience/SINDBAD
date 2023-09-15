@@ -4,19 +4,26 @@ export getParamsAct
 export space_run!
 export space_run_distributed!
 
-function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
-    loc_forcing = map(forcing) do a
-        return view(a; loc_space_map...)
-    end
-    loc_obs = map(obs) do a
-        return Array(view(a; loc_space_map...))
-    end
-    ar_inds = Tuple(last.(loc_space_map))
-    loc_output = map(outcubes) do a
-        return getArrayView(a, ar_inds)
-    end
+function getLocDataObsN(outcubes, forcing, obs_array, loc_space_ind)
+    loc_forcing = getLocForcingData(forcing, loc_space_ind)
+    loc_obs = getLocForcingData(obs_array, loc_space_ind)
+    loc_output = getLocOutputData(outcubes, loc_space_ind)
     return loc_forcing, loc_output, loc_obs
 end
+
+# function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
+#     loc_forcing = map(forcing) do a
+#         return view(a; loc_space_map...)
+#     end
+#     loc_obs = map(obs) do a
+#         return Array(view(a; loc_space_map...))
+#     end
+#     ar_inds = Tuple(last.(loc_space_map))
+#     loc_output = map(outcubes) do a
+#         return getArrayView(a, ar_inds)
+#     end
+#     return loc_forcing, loc_output, loc_obs
+# end
 
 function getParamsAct(pNorm, tblParams)
     lb = oftype(tblParams.default, tblParams.lower)
