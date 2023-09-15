@@ -53,6 +53,7 @@
     "format": "nc",
     "output_array_type": "array",
     "path": null,
+    "plot_model_output": false,
     "save_single_file": false,
     "variables": {
       "fluxes.evapotranspiration": null,
