@@ -1,7 +1,7 @@
-export soilTexture_fixed
+export soilTexture_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct soilTexture_fixed{T1,T2,T3,T4} <: soilTexture
+@bounds @describe @units @with_kw struct soilTexture_constant{T1,T2,T3,T4} <: soilTexture
     CLAY::T1 = 0.2 | (0.0, 1.0) | "Clay content" | ""
     SILT::T2 = 0.3 | (0.0, 1.0) | "Silt content" | ""
     SAND::T3 = 0.5 | (0.0, 1.0) | "Sand content" | ""
@@ -9,11 +9,11 @@ export soilTexture_fixed
 end
 #! format: on
 
-function define(p_struct::soilTexture_fixed, forcing, land, helpers)
-    @unpack_soilTexture_fixed p_struct
+function define(p_struct::soilTexture_constant, forcing, land, helpers)
+    @unpack_soilTexture_constant p_struct
 
     ## set parameter variables
-    println("soilTexture_fixed: distributing the fixed texture properties over the soil layers.")
+    @debug "soilTexture_constant: distributing the constant texture properties over the soil layers."
     st_CLAY = zero(land.pools.soilW)
     st_ORGM = zero(land.pools.soilW)
     st_SAND = zero(land.pools.soilW)
@@ -24,8 +24,8 @@ function define(p_struct::soilTexture_fixed, forcing, land, helpers)
     return land
 end
 
-function precompute(p_struct::soilTexture_fixed, forcing, land, helpers)
-    @unpack_soilTexture_fixed p_struct
+function precompute(p_struct::soilTexture_constant, forcing, land, helpers)
+    @unpack_soilTexture_constant p_struct
     @unpack_land (st_CLAY, st_SAND, st_SILT, st_ORGM) ∈ land.soilTexture
 
     for sl ∈ eachindex(st_CLAY)
@@ -49,14 +49,14 @@ $(SindbadParameters)
 ---
 
 # compute:
-Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_fixed
+Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_constant
 
 *Inputs*
 
 *Outputs*
 
 # instantiate:
-instantiate/instantiate time-invariant variables for soilTexture_fixed
+instantiate/instantiate time-invariant variables for soilTexture_constant
 
 
 ---
@@ -74,4 +74,4 @@ instantiate/instantiate time-invariant variables for soilTexture_fixed
 *Notes*
  - texture does not change with space & depth
 """
-soilTexture_fixed
+soilTexture_constant

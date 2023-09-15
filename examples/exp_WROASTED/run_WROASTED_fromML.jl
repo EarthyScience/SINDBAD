@@ -83,27 +83,27 @@ for site_index in sites
     if isnothing(nrepeat_d)
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d < 0
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d == 0
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d > 0
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat_d),
         ]
     else
         error("cannot determine the repeat for disturbance")
@@ -137,7 +137,8 @@ for site_index in sites
     ### update the model parameters with values from matlab optimization
     tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
-        info.optim.model_parameters_to_optimize)
+        info.optim.model_parameters_to_optimize,
+        info.tem.helpers.numbers.sNT)
     opt_params = tbl_params.optim
     param_names = tbl_params.name_full
     param_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
@@ -162,13 +163,15 @@ for site_index in sites
 
         tbl_params_2 = getParameters(models_with_matlab_params,
             info.optim.model_parameter_default,
-            info.optim.model_parameters_to_optimize)
+            info.optim.model_parameters_to_optimize,
+            info.tem.helpers.numbers.sNT)
 
         ## run the model
 
         run_helpers = prepTEM(models_with_matlab_params, forcing, info)
         @time runTEM!(models_with_matlab_params,
             run_helpers.loc_forcings,
+            run_helpers.loc_spinup_forcings,
             run_helpers.forcing_one_timestep,
             run_helpers.output_array,
             run_helpers.land_init_space,
@@ -246,6 +249,7 @@ for site_index in sites
                     info)                                
             runTEM!(models_with_matlab_params,
                 run_helpers.loc_forcings,
+                run_helpers.loc_spinup_forcings,
                 run_helpers.forcing_one_timestep,
                 run_helpers.loc_outputs,
                 run_helpers.land_init_space,

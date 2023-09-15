@@ -41,7 +41,7 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
     to_groundW = abs(toAllocate)
     ΔgroundW = addToEachElem(ΔgroundW, to_groundW / n_groundW)
     toAllocate = toAllocate - to_groundW
-    WBP = abs(toAllocate) > tolerance ? toAllocate : z_zero
+    WBP = abs(toAllocate) > tolerance ? toAllocate : zero(toAllocate)
 
     ## pack land variables
     @pack_land begin

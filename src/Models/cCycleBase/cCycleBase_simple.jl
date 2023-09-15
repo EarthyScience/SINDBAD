@@ -18,8 +18,8 @@ export cCycleBase_simple
                      0.0 0.0 0.0 0.0 0.0 0.0 0.45 0.17 0.0 0.24 0.0 -1.0 0.0 0.0
                      0.0 0.0 0.0 0.0 0.0 0.43 0.0 0.43 0.28 0.28 0.4 0.43 -1.0 0.0
                      0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.005 0.0026 -1.0
-                 ] | (nothing, nothing) | "Transfer matrix for carbon at ecosystem level" | ""
-    p_C_to_N_cVeg::T3 = Float64[25.0, 260.0, 260.0, 25.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+                 ] | (-Inf, Inf) | "Transfer matrix for carbon at ecosystem level" | ""
+    p_C_to_N_cVeg::T3 = Float64[25.0, 260.0, 260.0, 25.0] | (-Inf, Inf) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 #! format: on
 
