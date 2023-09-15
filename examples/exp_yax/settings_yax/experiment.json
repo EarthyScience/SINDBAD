@@ -51,6 +51,7 @@
     "format": "nc",
     "output_array_type": "YAXArray",
     "path": "africa",
+    "plot_model_output": false,
     "save_single_file": true,
     "variables": {
       "fluxes.evapotranspiration": null,
