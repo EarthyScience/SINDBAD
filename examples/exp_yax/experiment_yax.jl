@@ -1,5 +1,6 @@
 using Revise
-using Sindbad
+using SindbadData
+using SindbadTEM
 using ProgressMeter
 toggleStackTraceNT()
 
@@ -14,12 +15,13 @@ indims = forcing.dims;
 forcing_variables = collect(forcing.variables);
 
 # information for running model
+output = prepTEMOut(info, forcing.helpers);
 run_helpers = prepTEM(forcing, info);
 outdims = run_helpers.out_dims;
 land_init = deepcopy(run_helpers.land_init);
 out_variables = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
 
-outcubes = runTEMYax(
+@time outcubes = runTEMYax(
     info.tem.models.forward,
     forcing,
     info);

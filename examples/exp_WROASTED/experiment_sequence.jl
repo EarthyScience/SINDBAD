@@ -55,24 +55,24 @@ for domain ∈ sites
     sequence = nothing
     if isnothing(nrepeat_d)
         sequence = [
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d < 0
         sequence = [
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d == 0
         sequence = [
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d > 0
         sequence = [
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat_d),
         ]
     else
         error("cannot determine the repeat for disturbance")
@@ -80,13 +80,16 @@ for domain ∈ sites
 
     replace_info["experiment.model_spinup.sequence"] = sequence
     @time output_default = runExperimentForward(experiment_json; replace_info=replace_info)
-    @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info)
+    @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info)
+    opt_params = out_opti.out_params;
+    # out_model = out_opti.out_forward;
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
     tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
-        info.optim.model_parameters_to_optimize)
+        info.optim.model_parameters_to_optimize,
+        info.tem.helpers.numbers.sNT)
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
     forcing = getForcing(info)
@@ -101,6 +104,7 @@ for domain ∈ sites
 
     @time runTEM!(optimized_models,
         run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
         run_helpers.forcing_one_timestep,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,
@@ -158,6 +162,7 @@ for domain ∈ sites
 
     @time runTEM!(optimized_models,
         run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
         run_helpers.forcing_one_timestep,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,

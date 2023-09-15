@@ -21,9 +21,7 @@ function define(p_struct::soilTexture_forcing, forcing, land, helpers)
     st_SILT = zero(land.pools.soilW)
 
     if length(st_CLAY_f) != length(st_CLAY)
-        # println(
-        # "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers."
-        # )
+        @debug "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers."
         for sl ∈ eachindex(st_CLAY)
             @rep_elem mean(st_CLAY_f) => (st_CLAY, sl, :soilW)
             @rep_elem mean(st_SAND_f) => (st_SAND, sl, :soilW)

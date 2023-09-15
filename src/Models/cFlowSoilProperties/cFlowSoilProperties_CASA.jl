@@ -2,12 +2,12 @@ export cFlowSoilProperties_CASA
 
 #! format: off
 @bounds @describe @units @with_kw struct cFlowSoilProperties_CASA{T1,T2,T3,T4,T5,T6} <: cFlowSoilProperties
-    effA::T1 = 0.85 | (nothing, nothing) | "" | ""
-    effB::T2 = 0.68 | (nothing, nothing) | "" | ""
-    effCLAY_cMicSoil_A::T3 = 0.003 | (nothing, nothing) | "" | ""
-    effCLAY_cMicSoil_B::T4 = 0.032 | (nothing, nothing) | "" | ""
-    effCLAY_cSoilSlow_A::T5 = 0.003 | (nothing, nothing) | "" | ""
-    effCLAY_cSoilSlow_B::T6 = 0.009 | (nothing, nothing) | "" | ""
+    effA::T1 = 0.85 | (-Inf, Inf) | "" | ""
+    effB::T2 = 0.68 | (-Inf, Inf) | "" | ""
+    effCLAY_cMicSoil_A::T3 = 0.003 | (-Inf, Inf) | "" | ""
+    effCLAY_cMicSoil_B::T4 = 0.032 | (-Inf, Inf) | "" | ""
+    effCLAY_cSoilSlow_A::T5 = 0.003 | (-Inf, Inf) | "" | ""
+    effCLAY_cSoilSlow_B::T6 = 0.009 | (-Inf, Inf) | "" | ""
 end
 #! format: on
 

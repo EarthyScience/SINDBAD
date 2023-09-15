@@ -138,9 +138,9 @@ get the dimensions and corresponding data for SINDBAD output using YAXArray as a
 - `_`: unused argument
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `_`: unused argument
-- `::OutputYaxArray`: a type dispatch for using YAXArray as output data
+- `::OutputYAXArray`: a type dispatch for using YAXArray as output data
 """
-function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::OutputYaxArray)
+function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::OutputYAXArray)
     outdims_pairs = getOutDimsPairs(out_vars, info, land_init, forcing_helpers);
     info.forcing.data_dimension.time
     space_dims = Symbol.(info.forcing.data_dimension.space)
@@ -158,15 +158,13 @@ function getOutDimsArrays(out_vars, info, _, land_init, forcing_helpers, ::Outpu
     outdims = map(out_vars) do vname_full
         vname = Symbol(split(string(vname_full), '.')[end])
         vdims = var_dims[v_index]
-        path_output = info.output.data
         outformat = info.experiment.model_output.format
+        backend = outformat == "nc" ? :netcdf : :zarr
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-        out_dim = OutDims(vdims[1],
-            Dim{Symbol(depth_name)}(1:depth_size),
-            vdims[2:end]...;
-            path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
-            backend=:zarr,
-            overwrite=true)
+        out_dim = OutDims(vdims...;
+        path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
+        backend=backend,
+        overwrite=true)
         v_index += 1
         out_dim
     end
@@ -477,10 +475,12 @@ create the output fields needed for the optimization experiment
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     params = info.optim.model_parameters_to_optimize
     paramaxis = Dim{:parameter}(params)
+    outformat = info.experiment.model_output.format
+    backend = outformat == "nc" ? :netcdf : :zarr
     od = OutDims(paramaxis;
         path=joinpath(info.output.optim,
-            "optimized_parameters.$(info.experiment.model_output.format)"),
-        backend=:zarr,
+            "optimized_parameters.$(outformat)"),
+        backend=backend,
         overwrite=true)
     # list of parameter
     output = setTupleField(output, (:paramdims, od))

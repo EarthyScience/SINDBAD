@@ -57,25 +57,25 @@ end
 sequence = nothing
 if isnothing(nrepeat_d)
     sequence = [
-        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d < 0
     sequence = [
-        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d == 0
     sequence = [
-        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d > 0
     sequence = [
         Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "stop_function" => nothing, "n_repeat" => nrepeat_d),
     ]
 else
     error("cannot determine the repeat for disturbance")
@@ -87,14 +87,23 @@ forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
 
-
 @time runTEM!(info.tem.models.forward,
     run_helpers.loc_forcings,
+    run_helpers.loc_spinup_forcings,
     run_helpers.forcing_one_timestep,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
     run_helpers.tem_with_types)
 
+
+# @time spinupTEM(
+#     info.tem.models.forward,
+#     run_helpers.loc_forcings[1],
+#     run_helpers.forcing_one_timestep,
+#     run_helpers.land_init_space[1],
+#     run_helpers.tem_with_types.helpers,
+#     run_helpers.tem_with_types.models,
+#     run_helpers.tem_with_types.spinup);
 
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);

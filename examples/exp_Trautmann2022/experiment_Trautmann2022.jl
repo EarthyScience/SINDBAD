@@ -26,6 +26,7 @@ run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
     run_helpers.loc_forcings,
+    run_helpers.loc_spinup_forcings,
     run_helpers.forcing_one_timestep,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
@@ -34,6 +35,7 @@ run_helpers = prepTEM(forcing, info);
 for x ∈ 1:10
     @time runTEM!(info.tem.models.forward,
         run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
         run_helpers.forcing_one_timestep,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,
@@ -85,4 +87,6 @@ for (o, v) in enumerate(forc_vars)
 end
 
 
-# @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
+# @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
+# opt_params = out_opti.out_params;
+# out_model = out_opti.out_forward;

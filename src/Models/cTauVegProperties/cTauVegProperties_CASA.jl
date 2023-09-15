@@ -2,13 +2,13 @@ export cTauVegProperties_CASA
 
 #! format: off
 @bounds @describe @units @with_kw struct cTauVegProperties_CASA{T1,T2,T3,T4,T5,T6,T7} <: cTauVegProperties
-    LIGNIN_per_PFT::T1 = Float64[0.2, 0.2, 0.22, 0.25, 0.2, 0.15, 0.1, 0.0, 0.2, 0.15, 0.15, 0.1] | (nothing, nothing) | "fraction of litter that is lignin" | ""
-    NONSOL2SOLLIGNIN::T2 = 2.22 | (nothing, nothing) | "" | ""
-    MTFA::T3 = 0.85 | (nothing, nothing) | "" | ""
-    MTFB::T4 = 0.018 | (nothing, nothing) | "" | ""
-    C2LIGNIN::T5 = 0.65 | (nothing, nothing) | "" | ""
-    LIGEFFA::T6 = 3.0 | (nothing, nothing) | "" | ""
-    LITC2N_per_PFT::T7 = Float64[40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0] | (nothing, nothing) | "carbon-to-nitrogen ratio in litter" | ""
+    LIGNIN_per_PFT::T1 = Float64[0.2, 0.2, 0.22, 0.25, 0.2, 0.15, 0.1, 0.0, 0.2, 0.15, 0.15, 0.1] | (-Inf, Inf) | "fraction of litter that is lignin" | ""
+    NONSOL2SOLLIGNIN::T2 = 2.22 | (-Inf, Inf) | "" | ""
+    MTFA::T3 = 0.85 | (-Inf, Inf) | "" | ""
+    MTFB::T4 = 0.018 | (-Inf, Inf) | "" | ""
+    C2LIGNIN::T5 = 0.65 | (-Inf, Inf) | "" | ""
+    LIGEFFA::T6 = 3.0 | (-Inf, Inf) | "" | ""
+    LITC2N_per_PFT::T7 = Float64[40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0] | (-Inf, Inf) | "carbon-to-nitrogen ratio in litter" | ""
 end
 #! format: on
 
