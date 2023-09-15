@@ -638,9 +638,9 @@ end
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: helper NT with necessary objects for model run and type consistencies
-- `nothing`: DESCRIPTION
-- `nothing`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::Val{s_main}`: a NT with names of the main pools
+- `::Val{s_comps}`: a NT with names of the component pools
+- `::Val{zix}`: a NT with zix of each pool
 """
 function setComponents(
     land,
@@ -693,9 +693,9 @@ end
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: helper NT with necessary objects for model run and type consistencies
-- `nothing`: DESCRIPTION
-- `nothing`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::Val{s_main}`: a NT with names of the main pools
+- `::Val{s_comps}`: a NT with names of the component pools
+- `::Val{zix}`: a NT with zix of each pool
 """
 @generated function setComponentFromMainPool(
     # function setComponentFromMainPool(
@@ -748,9 +748,9 @@ end
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: helper NT with necessary objects for model run and type consistencies
-- `nothing`: DESCRIPTION
-- `nothing`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::Val{s_main}`: a NT with names of the main pools
+- `::Val{s_comps}`: a NT with names of the component pools
+- `::Val{zix}`: a NT with zix of each pool
 """
 function setMainFromComponentPool(
     # function setMainFromComponentPool(

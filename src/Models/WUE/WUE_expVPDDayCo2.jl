@@ -6,7 +6,7 @@ export WUE_expVPDDayCo2
     κ::T2 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
     Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
     Cm::T4 = 500.0 | (10.0, 2000.0) | "" | "ppm"
-    kpa_to_hpa::T5 = 10.0 | (nothing, nothing) | "unit conversion kPa to hPa" | ""
+    kpa_to_hpa::T5 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | ""
 end
 #! format: on
 

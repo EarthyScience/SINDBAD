@@ -6,7 +6,7 @@ using FieldMetadata: @metadata
 using Parameters: @with_kw
 using StatsBase: mean
 @metadata describe "" String
-@metadata bounds (nothing, nothing) Tuple
+@metadata bounds (-Inf, Inf) Tuple
 @metadata units "" String
 export describe, bounds, units
 export DoCatchModelErrors

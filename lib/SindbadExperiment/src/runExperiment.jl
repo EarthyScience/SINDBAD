@@ -125,7 +125,8 @@ function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     @info "runExperimentForward: preparing output info for writing output..."
     output = prepTEMOut(info, forcing.helpers);
     saveOutCubes(info, run_output, output.dims, output.variables)
-    return run_output
+    forward_output = (; Pair.(getUniqueVarNames(output.variables), run_output)...)
+    return forward_output
 end
 
 
@@ -144,7 +145,8 @@ function runExperimentFullOutput(sindbad_experiment::String; replace_info=nothin
     @info "runExperimentForward: preparing output info for writing output..."
     output = prepTEMOut(info, forcing.helpers);
     saveOutCubes(info, run_output, output.dims, output.variables)
-    return run_output
+    forward_output = (; Pair.(getUniqueVarNames(run_helpers.out_vars), run_output)...)
+    return forward_output
 end
 
 
@@ -154,7 +156,8 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=nothing)
-    setLogLevel()
+    @info "runExperimentForwardParams: forward run of the model with optimized parameters..."
+    setLogLevel(:warn)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = false
@@ -163,21 +166,25 @@ function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::S
     optimized_models = info.tem.models.forward;
     tbl_params = getParameters(info.tem.models.forward,
         info.optimization.model_parameter_default,
-        info.optimization.model_parameters_to_optimize);
+        info.optimization.model_parameters_to_optimize,
+        info.tem.helpers.numbers.sNT);
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, params_vector)
     
     run_helpers = prepTEM(forcing, info)
     
     @time runTEM!(optimized_models,
-    run_helpers.loc_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+        run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.tem_with_types)
     run_output = run_helpers.output_array;
     output = prepTEMOut(info, forcing.helpers);
     saveOutCubes(info, run_output, output.dims, output.variables)
-    return run_output
+    forward_output = (; Pair.(getUniqueVarNames(run_helpers.out_vars), run_output)...)
+    setLogLevel()
+    return forward_output
 end
 
 """
