@@ -4,14 +4,14 @@ using SindbadTEM
 using YAXArrays
 using SindbadML
 #using SindbadVisuals
-#using ForwardDiff
-#using PreallocationTools
+using ForwardDiff
+using PreallocationTools
 #using CairoMakie
 
 toggleStackTraceNT()
-# include("gen_obs.jl")
+include("gen_obs.jl")
 
-# obs_synt, params_map = out_synt();
+obs_synt, params_map = out_synt();
 
 # cov_sites = get_sites_cov()
 # ks = (:gpp, :transpiration, :evapotranspiration)
@@ -43,7 +43,7 @@ toggleStackTraceNT()
 # end
 
 
-experiment_json = "../exp_medium/settings_medium/experiment.json"
+experiment_json = "../exp_medium_reverse/settings_medium_reverse/experiment.json"
 #info = getConfiguration(experiment_json);
 #info = setupInfo(info);
 
@@ -86,7 +86,7 @@ site_location = loc_space_maps[3]
 loc_land_init = land_init_space[3];
 
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(op.data, forc, obs, site_location); # obs_synt
+    getLocDataObsN(op.data, forc, obs_synt, site_location); # obs_synt
 
 land_init = land_init_space[site_location[1][2]];
 forcing_one_timestep =run_helpers.forcing_one_timestep;
@@ -179,6 +179,31 @@ models = LongTuple(models...);
     )
     
 println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+using ReverseDiff
+using ReverseDiff: GradientTape, GradientConfig, gradient, gradient!, compile, DiffResults
+
+f(x) = siteLossInner(x, models,
+    loc_forcing,
+    forcing_one_timestep,
+    DiffCache.(loc_output),
+    land_init,
+    tem,
+    param_to_index,
+    loc_obs,
+    cost_options,
+    constraint_method
+    )
+
+const f_tape = GradientTape(f, (tbl_params.default))
+
+# compile `f_tape` into a more optimized representation
+const compiled_f_tape = compile(f_tape)
+
+
+
+
+
 
 @time ForwardDiffGrads(
     siteLossInner,
