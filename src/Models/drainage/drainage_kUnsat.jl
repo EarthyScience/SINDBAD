@@ -30,7 +30,7 @@ function compute(p_struct::drainage_kUnsat, forcing, land, helpers)
         lossCap = min(soilW[sl] + ΔsoilW[sl], max_drain)
         k = unsatK(land, helpers, sl, unsat_k_model)
         drain = min(k, holdCap, lossCap)
-        drainage[sl] = drain > tolerance ? drain : z_zero
+        drainage[sl] = drain > tolerance ? drain : zero(drain)
         ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
         ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
     end

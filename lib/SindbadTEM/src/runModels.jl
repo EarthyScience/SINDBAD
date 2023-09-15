@@ -19,7 +19,7 @@ function computeTEM(models, forcing, land, tem_helpers, ::DoDebugModel) # debug 
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
         @show typeof(model)
-        @time _land = Models.compute(model, forcing, _land, tem_helpers)::otype
+        @time _land = Models.compute(model, forcing, _land, tem_helpers)#::otype
     end
 end
 
