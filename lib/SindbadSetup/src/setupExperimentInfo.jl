@@ -1,4 +1,6 @@
 export getExperimentInfo
+export getGlobalAttributesForOutCubes
+export getOutputFileInfo
 
 """
     getExperimentInfo(sindbad_experiment::String; replace_info = nothing)
@@ -15,6 +17,50 @@ function getExperimentInfo(sindbad_experiment::String; replace_info=nothing)
     setDebugErrorCatcher(info.tem.helpers.run.catch_model_errors)
     @info "\n------------------------------------------------\n"
     return info
+end
+
+
+"""
+    getGlobalAttributesForOutCubes(info)
+
+
+"""
+function getGlobalAttributesForOutCubes(info)
+    os = Sys.iswindows() ? "Windows" : Sys.isapple() ?
+         "macOS" : Sys.islinux() ? "Linux" : "unknown"
+    io = IOBuffer()
+    versioninfo(io)
+    str = String(take!(io))
+    julia_info = split(str, "\n")
+
+    io = IOBuffer()
+    # Pkg.status("Sindbad", io=io)
+    # sindbad_version = String(take!(io))
+    global_attr = Dict(
+        "simulation_by" => ENV["USER"],
+        "experiment" => info.experiment.basics.name,
+        "domain" => info.experiment.basics.domain,
+        "date" => string(Date(now())),
+        # "SINDBAD" => sindbad_version,
+        "machine" => Sys.MACHINE,
+        "os" => os,
+        "host" => gethostname(),
+        "julia" => string(VERSION),
+    )
+    return global_attr
+end
+
+
+"""
+    getOutputFileInfo(info)
+
+
+"""
+function getOutputFileInfo(info)
+    global_metadata = getGlobalAttributesForOutCubes(info)
+    file_prefix = joinpath(info.output.data, info.experiment.basics.name * "_" * info.experiment.basics.domain)
+    out_file_info = (; global_metadata=global_metadata, file_prefix=file_prefix)
+    return out_file_info
 end
 
 

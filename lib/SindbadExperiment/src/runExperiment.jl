@@ -73,8 +73,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimizatio
         run_output = optimizeTEMYax(forcing,
             info.tem,
             info.optim,
-            observations,
-            ;
+            observations;
             max_cache=info.experiment.exe_rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
@@ -126,9 +125,67 @@ function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     @info "runExperimentForward: preparing output info for writing output..."
     output = prepTEMOut(info, forcing.helpers);
     saveOutCubes(info, run_output, output.dims, output.variables)
-    return run_output
+    forward_output = (; Pair.(getUniqueVarNames(output.variables), run_output)...)
+    return forward_output
 end
 
+
+"""
+    runExperimentFullOutput(sindbad_experiment::String; replace_info = nothing)
+
+uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
+"""
+function runExperimentFullOutput(sindbad_experiment::String; replace_info=nothing)
+    setLogLevel()
+    replace_info = deepcopy(replace_info)
+    replace_info["experiment.flags.run_optimization"] = false
+    replace_info["experiment.flags.calc_cost"] = false
+    info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+    run_output = runExperiment(info, forcing, info.tem.helpers.run.run_forward)
+    @info "runExperimentForward: preparing output info for writing output..."
+    output = prepTEMOut(info, forcing.helpers);
+    saveOutCubes(info, run_output, output.dims, output.variables)
+    forward_output = (; Pair.(getUniqueVarNames(run_helpers.out_vars), run_output)...)
+    return forward_output
+end
+
+
+"""
+    runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=nothing)
+
+uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
+"""
+function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=nothing)
+    @info "runExperimentForwardParams: forward run of the model with optimized parameters..."
+    setLogLevel(:warn)
+    replace_info = deepcopy(replace_info)
+    replace_info["experiment.flags.run_optimization"] = false
+    replace_info["experiment.flags.calc_cost"] = false
+    info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+
+    optimized_models = info.tem.models.forward;
+    tbl_params = getParameters(info.tem.models.forward,
+        info.optimization.model_parameter_default,
+        info.optimization.model_parameters_to_optimize,
+        info.tem.helpers.numbers.sNT);
+    optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, params_vector)
+    
+    run_helpers = prepTEM(forcing, info)
+    
+    @time runTEM!(optimized_models,
+        run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.tem_with_types)
+    run_output = run_helpers.output_array;
+    output = prepTEMOut(info, forcing.helpers);
+    saveOutCubes(info, run_output, output.dims, output.variables)
+    forward_output = (; Pair.(getUniqueVarNames(run_helpers.out_vars), run_output)...)
+    setLogLevel()
+    return forward_output
+end
 
 """
     runExperimentOpti(sindbad_experiment::String; replace_info = nothing)
@@ -138,7 +195,8 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     run_output = runExperiment(info, forcing, info.tem.helpers.run.run_optimization)
-    return run_output
+    forward_output = runExperimentForwardParams(run_output, sindbad_experiment; replace_info=replace_info)
+    return (; out_params=run_output, out_forward=forward_output)
 end
 
 

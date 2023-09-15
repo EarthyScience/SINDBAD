@@ -2,7 +2,7 @@ export cFlowVegProperties_CASA
 
 #! format: off
 @bounds @describe @units @with_kw struct cFlowVegProperties_CASA{T1} <: cFlowVegProperties
-    WOODLIGFRAC::T1 = 0.4 | (nothing, nothing) | "fraction of wood that is lignin" | ""
+    WOODLIGFRAC::T1 = 0.4 | (-Inf, Inf) | "fraction of wood that is lignin" | ""
 end
 #! format: on
 

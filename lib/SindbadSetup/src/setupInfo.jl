@@ -183,20 +183,16 @@ end
 - `::ModelArrayStaticArray`: DESCRIPTION
 """
 function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayStaticArray)
-    return SVector{length(input_values)}(num_type(ix) for ix ∈ input_values)
+    input_typed = typeof(num_type(1.0)) === eltype(input_values) ? input_values : num_type.(input_values) 
+    return SVector{length(input_values)}(input_typed)
     # return SVector{length(input_values)}(num_type(ix) for ix ∈ input_values)
 end
 
 
 """
-    generateDatesInfo(info)
-
-fills info.tem.helpers.dates with date and time related fields needed in the models.
-"""
-
-"""
     generateDatesInfo(info::NamedTuple)
 
+fills info.tem.helpers.dates with date and time related fields needed in the models.
 
 """
 function generateDatesInfo(info::NamedTuple)
@@ -222,14 +218,9 @@ end
 
 
 """
-    generatePoolsInfo(info)
-
-generates the info.tem.helpers.pools and info.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
-"""
-
-"""
     generatePoolsInfo(info::NamedTuple)
 
+generates the info.tem.helpers.pools and info.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
 
 """
 function generatePoolsInfo(info::NamedTuple)
@@ -250,9 +241,11 @@ function generatePoolsInfo(info::NamedTuple)
         hlp_states = setTupleField(hlp_states, (elSymbol, (;)))
         pool_info = getfield(getfield(info.model_structure.pools, element), :components)
         nlayers = Int64[]
+        # layer_thicknesses = []
         layer_thicknesses = info.tem.helpers.numbers.num_type[]
         layer = Int64[]
-        inits = info.tem.helpers.numbers.num_type[]
+        inits = []
+        # inits = info.tem.helpers.numbers.num_type[]
         sub_pool_name = Symbol[]
         main_pool_name = Symbol[]
         main_pools =
@@ -285,7 +278,8 @@ function generatePoolsInfo(info::NamedTuple)
         # main pools
         for main_pool ∈ main_pool_name
             zix = Int[]
-            initial_values = info.tem.helpers.numbers.num_type[]
+            initial_values = []
+            # initial_values = info.tem.helpers.numbers.num_type[]
             components = Symbol[]
             for (ind, par) ∈ enumerate(sub_pool_name)
                 if startswith(String(par), String(main_pool))
@@ -308,7 +302,7 @@ function generatePoolsInfo(info::NamedTuple)
             tmp_elem = setTupleSubfield(tmp_elem, :initial_values, (main_pool, initial_values))
             hlp_elem = setTupleSubfield(hlp_elem, :zix, (main_pool, zix))
             hlp_elem = setTupleSubfield(hlp_elem, :components, (main_pool, Tuple(components)))
-            onetyped = createArrayofType(initial_values .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
+            onetyped = createArrayofType(ones(size(initial_values)),
                 Nothing[],
                 info.tem.helpers.numbers.sNT,
                 nothing,
@@ -331,9 +325,11 @@ function generatePoolsInfo(info::NamedTuple)
         end
         for sub_pool ∈ unique_sub_pools
             zix = Int[]
-            initial_values = info.tem.helpers.numbers.num_type[]
+            initial_values = []
+            # initial_values = info.tem.helpers.numbers.num_type[]
             components = Symbol[]
             ltck = info.tem.helpers.numbers.num_type[]
+            # ltck = []
             for (ind, par) ∈ enumerate(sub_pool_name)
                 if par == sub_pool
                     push!(zix, ind)
@@ -356,7 +352,7 @@ function generatePoolsInfo(info::NamedTuple)
             hlp_elem = setTupleSubfield(hlp_elem, :layer_thickness, (sub_pool, Tuple(ltck)))
             hlp_elem = setTupleSubfield(hlp_elem, :zix, (sub_pool, zix))
             hlp_elem = setTupleSubfield(hlp_elem, :components, (sub_pool, Tuple(components)))
-            onetyped = createArrayofType(initial_values .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
+            onetyped = createArrayofType(ones(size(initial_values)),
                 Nothing[],
                 info.tem.helpers.numbers.sNT,
                 nothing,
@@ -396,7 +392,7 @@ function generatePoolsInfo(info::NamedTuple)
             tmp_elem = setTupleSubfield(tmp_elem, :zix, (combined_pool_name, zix))
             tmp_elem = setTupleSubfield(tmp_elem, :initial_values, (combined_pool_name, initial_values))
             hlp_elem = setTupleSubfield(hlp_elem, :zix, (combined_pool_name, zix))
-            onetyped = createArrayofType(initial_values .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
+            onetyped = createArrayofType(ones(size(initial_values)),
                 Nothing[],
                 info.tem.helpers.numbers.sNT,
                 nothing,
@@ -513,7 +509,6 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                         indx,
                         false,
                         model_array_type)
-                    # compdat::AbstractArray = @view pool_array[indx]
                     init_pools = setTupleField(init_pools, (component, compdat))
                 end
             end
@@ -653,7 +648,8 @@ end
 
 
 """
-function getParameters(selected_models)
+function getParameters(selected_models, num_type; return_table=true)
+    model_names_list = nameof.(typeof.(selected_models));
     default = [flatten(selected_models)...]
     constrains = metaflatten(selected_models, Models.bounds)
     nbounds = length(constrains)
@@ -664,16 +660,31 @@ function getParameters(selected_models)
     model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
     name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
     approach_func = [getfield(Models, m) for m ∈ model_approach]
-    return Table(;
-        name,
-        default,
-        optim=default,
-        lower,
-        upper,
-        model,
-        model_approach,
-        approach_func,
-        name_full)
+    model_prev = model_approach[1]
+    m_id = findall(x-> x==model_prev, model_names_list)[1]
+    model_id = map(model_approach) do m
+        if m !== model_prev
+            model_prev = m
+            m_id = findall(x-> x==model_prev, model_names_list)[1]
+        end
+        m_id
+    end
+    # default = num_type.(default)
+    lower = num_type.(lower)
+    upper = num_type.(upper)
+    output = (;
+    model_id,
+    name,
+    default,
+    optim=default,
+    lower,
+    upper,
+    model,
+    model_approach,
+    approach_func,
+    name_full)
+    output = return_table ? Table(output) : output
+    return output
 end
 
 
@@ -682,35 +693,15 @@ end
 
 retrieve all model parameters
 """
-function getParameters(selected_models, model_parameter_default)
-    default = [flatten(selected_models)...]
-    constrains = metaflatten(selected_models, Models.bounds)
-    nbounds = length(constrains)
-    lower = [constrains[i][1] for i ∈ 1:nbounds]
-    upper = [constrains[i][2] for i ∈ 1:nbounds]
-    name = [fieldnameflatten(selected_models)...] # SVector(flatten(x))
-    model_approach = [parentnameflatten(selected_models)...]
-    model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
-    name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
-    approach_func = [getfield(Models, m) for m ∈ model_approach]
+function getParameters(selected_models, model_parameter_default, num_type)
+    models_tuple = getParameters(selected_models, num_type; return_table=false)
+    default = models_tuple.default
+    model_approach = models_tuple.model_approach
     dp_dist = typeof(default[1]).(model_parameter_default[:distribution][2])
-    # dp_dist = Tuple(dp_dist)
     dist = [model_parameter_default[:distribution][1] for m ∈ model_approach]
     p_dist = [dp_dist for m ∈ model_approach]
     is_ml = [model_parameter_default.is_ml for m ∈ model_approach]
-    return Table(;
-        name,
-        default,
-        optim=default,
-        lower,
-        upper,
-        model,
-        model_approach,
-        approach_func,
-        name_full,
-        dist,
-        p_dist,
-        is_ml)
+    return Table(; models_tuple... ,dist, p_dist, is_ml)
 end
 
 """
@@ -723,9 +714,9 @@ end
 - `model_parameter_default`: DESCRIPTION
 - `opt_parameter`: DESCRIPTION
 """
-function getParameters(selected_models, model_parameter_default, opt_parameter::Vector)
+function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type)
     opt_parameter = replaceCommaSeparatorParams(opt_parameter)
-    tbl_parameters = getParameters(selected_models, model_parameter_default)
+    tbl_parameters = getParameters(selected_models, model_parameter_default, num_type)
     return filter(row -> row.name_full in opt_parameter, tbl_parameters)
 end
 
@@ -739,9 +730,9 @@ end
 - `model_parameter_default`: DESCRIPTION
 - `opt_parameter`: DESCRIPTION
 """
-function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple)
+function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type)
     param_list = replaceCommaSeparatorParams(keys(opt_parameter))
-    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list)
+    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list, num_type)
     tbl_parameters_filtered = filter(row -> row.name_full in param_list, tbl_parameters)
     new_dist = tbl_parameters_filtered.dist
     new_p_dist = tbl_parameters_filtered.p_dist
@@ -808,16 +799,16 @@ function getPoolInformation(main_pools,
             if isa(main_pool_info[1], Number)
                 lenpool = main_pool_info[1]
                 # layer_thickness = repeat([nothing], lenpool)
-                layer_thickness = num_type.(main_pool_info[1])
+                layer_thickness = (main_pool_info[1])
             else
                 lenpool = length(main_pool_info[1])
-                layer_thickness = num_type.(main_pool_info[1])
+                layer_thickness = (main_pool_info[1])
             end
 
             append!(layer_thicknesses, layer_thickness)
             append!(nlayers, fill(1, lenpool))
             append!(layer, collect(1:lenpool))
-            append!(inits, fill(num_type(main_pool_info[2]), lenpool))
+            append!(inits, fill((main_pool_info[2]), lenpool))
 
             if prename == ""
                 append!(sub_pool_name, fill(main_pool, lenpool))
@@ -838,8 +829,7 @@ function getPoolInformation(main_pools,
                     inits,
                     sub_pool_name,
                     main_pool_name;
-                    prename=prefix,
-                    num_type=num_type)
+                    prename=prefix)
         end
     end
     return layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name
@@ -1237,7 +1227,7 @@ function prepNumericHelpers(info::NamedTuple, ttype)
     tolerance = num_type(info.experiment.exe_rules.tolerance)
     info = (; info..., tem=(;))
     sNT = (a) -> num_type(a)
-    if occursin("ForwardDiff.Dual", info.experiment.exe_rules.data_type)
+    if occursin("ForwardDiff.Dual", info.experiment.exe_rules.model_number_type)
         tag_type = ForwardDiff.tagtype(𝟘)
         @show tag_type, num_type
         try
@@ -1344,7 +1334,7 @@ end
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run
 """
-function setNumericHelpers(info::NamedTuple, ttype=info.experiment.exe_rules.data_type)
+function setNumericHelpers(info::NamedTuple, ttype=info.experiment.exe_rules.model_number_type)
     num_helpers = prepNumericHelpers(info, ttype)
     info = (;
         info...,
@@ -1373,9 +1363,11 @@ function setSpinupInfo(info)
                 aggregator = createTimeAggregator(info.tem.helpers.dates.range, seq[kk], mean, skip_aggregation)
                 seq["aggregator"] = aggregator
                 seq["aggregator_type"] = TimeNoDiff()
+                seq["n_timesteps"] = length(aggregator[1].indices)
                 if occursin("_year", seq[kk])
                     seq["aggregator"] = vcat(aggregator[1].indices...)
                     seq["aggregator_type"] = TimeIndexed()
+                    seq["n_timesteps"] = length(seq["aggregator"])
                 end
             end
             if kk == "spinup_mode"

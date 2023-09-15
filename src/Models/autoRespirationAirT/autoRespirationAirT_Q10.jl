@@ -4,7 +4,7 @@ export autoRespirationAirT_Q10
 @bounds @describe @units @with_kw struct autoRespirationAirT_Q10{T1,T2,T3} <: autoRespirationAirT
     Q10::T1 = 2.0 | (1.05, 3.0) | "Q10 parameter for maintenance respiration" | ""
     Tref::T2 = 20.0 | (0.0, 40.0) | "Reference temperature for the maintenance respiration" | "°C"
-    Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
+    Q10_base::T3 = 10.0 | (-Inf, Inf) | "base temperature difference" | "°C"
 end
 #! format: on
 

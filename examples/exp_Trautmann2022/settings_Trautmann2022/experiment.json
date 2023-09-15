@@ -16,11 +16,11 @@
     }
   },
   "exe_rules": {
-    "data_type": "Float32",
     "input_array_type": "keyed_array",
     "input_data_backend": "netcdf",
     "land_output_type": "array",
     "model_array_type": "static_array",
+    "model_number_type": "Float32",
     "parallelization": "threads",
     "tolerance": 1.0e-3,
     "yax_max_cache": 2e9
@@ -53,6 +53,7 @@
     "format": "nc",
     "output_array_type": "array",
     "path": null,
+    "plot_model_output": false,
     "save_single_file": false,
     "variables": {
       "fluxes.evapotranspiration": null,

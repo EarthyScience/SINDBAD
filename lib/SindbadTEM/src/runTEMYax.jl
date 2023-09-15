@@ -1,4 +1,5 @@
 export runTEMYax
+export TEMYax
 
 
 """
@@ -22,13 +23,14 @@ function coreTEMYax(
     tem_models,
     tem_spinup)
 
-    forcing_one_timestep = getForcingForTimeStep(forcing, 1)
+    forcing_one_timestep = getForcingForTimeStep(forcing, deepcopy(forcing), 1, tem_helpers.vals.forc_types)
+    spinup_forcing = getAllSpinupForcing(forcing, tem_spinup.sequence, tem_helpers);
 
     land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
     land_spin = spinupTEM(
         selected_models,
-        forcing,
+        spinup_forcing,
         forcing_one_timestep,
         land_prec,
         tem_helpers,
@@ -42,7 +44,8 @@ function coreTEMYax(
         land_spin,
         tem_helpers,
         tem_helpers.run.debug_model)
-    return land_time_series
+
+    return landWrapper(land_time_series)
 end
 
 
@@ -70,6 +73,7 @@ function TEMYax(args...;
 
     i = 1
     foreach(out_variables) do var_pair
+        # @show i, var_pair
         data = land_out[first(var_pair)][last(var_pair)]
             viewCopyYax(outputs[i], data)
             i += 1
@@ -86,7 +90,7 @@ end
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `selected_models`: a tuple of all models selected in the given model structure
-- `max_cache`: DESCRIPTION
+- `max_cache`: cache size to use for mapCube
 """
 function runTEMYax(
     selected_models::Tuple,
@@ -103,9 +107,6 @@ function runTEMYax(
     outdims = run_helpers.out_dims;
     land_init = deepcopy(run_helpers.land_init);
     out_variables = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
-    # @show "I am here"
-    # @show indims
-    # @show outdims
     outcubes = mapCube(TEMYax,
         (incubes...,);
         selected_models=selected_models,
@@ -116,7 +117,7 @@ function runTEMYax(
         indims=indims,
         outdims=outdims,
         max_cache=info.experiment.exe_rules.yax_max_cache,
-        ispar=false)
+        ispar=true)
     return outcubes
 end
 
@@ -131,7 +132,7 @@ end
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forcing_variables`: DESCRIPTION
 """
-function unpackYaxForward(args; out_variables::NamedTuple, forcing_variables::AbstractArray)
+function unpackYaxForward(args; out_variables, forcing_variables)
     nin = length(forcing_variables)
     nout = length(out_variables)
     outputs = args[1:nout]
