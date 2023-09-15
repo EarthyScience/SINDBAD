@@ -53,14 +53,55 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.land_init_space,
     run_helpers.tem_with_types)
 
-@time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
-observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
+# @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
-@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
-opt_params = out_opti.out_params;
+# observations = getObservation(info, forcing.helpers);
+# obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
+
+# @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
+# opt_params = out_opti.out_params;
 # out_model = out_opti.out_forward;
+
+optimized_models = info.tem.models.forward;
+tbl_params = getParameters(info.tem.models.forward,
+    info.optimization.model_parameter_default,
+    info.optimization.model_parameters_to_optimize,
+    info.tem.helpers.numbers.sNT);
+selected_models = info.tem.models.forward;
+
+rand_m = rand()
+# param_vector = tbl_params.default .* info.tem.helpers.numbers.sNT(rand_m);
+param_vector = tbl_params.default .* rand_m;
+# param_vector = ForwardDiff.Dual.(tbl_params.default .* rand_m);
+@time selected_models = updateModelParameters(info.tem.models.forward, param_vector, info.optim.param_model_id_val);
+n_m = updateModelParameters(tbl_params, info.tem.models.forward, param_vector);
+# updateModelParameters(selected_models, param_vector, info.optim.param_model_id_val)
+run_helpers_s = prepTEM(selected_models, forcing, info);
+@time runTEM!(selected_models,
+    run_helpers_s.loc_forcings,
+    run_helpers_s.loc_spinup_forcings,
+    run_helpers_s.forcing_one_timestep,
+    run_helpers_s.loc_outputs,
+    run_helpers_s.land_init_space,
+    run_helpers_s.tem_with_types)
+
+run_helpers_n = prepTEM(n_m, forcing, info);
+@time runTEM!(n_m,
+    run_helpers_n.loc_forcings,
+    run_helpers_n.loc_spinup_forcings,
+    run_helpers_n.forcing_one_timestep,
+    run_helpers_n.loc_outputs,
+    run_helpers_n.land_init_space,
+    run_helpers_n.tem_with_types)
+
+@time runTEM!(info.tem.models.forward,
+    run_helpers.loc_forcings,
+    run_helpers.loc_spinup_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.tem_with_types)
 
 # some plots
 ds = forcing.data[1];

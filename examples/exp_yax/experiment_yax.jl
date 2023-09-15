@@ -21,7 +21,7 @@ outdims = run_helpers.out_dims;
 land_init = deepcopy(run_helpers.land_init);
 out_variables = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
 
-outcubes = runTEMYax(
+@time outcubes = runTEMYax(
     info.tem.models.forward,
     forcing,
     info);

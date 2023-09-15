@@ -16,7 +16,8 @@ obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for p
 obsv = getKeyedArray(observations);
 tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize);
+    info.optim.model_parameters_to_optimize,
+    info.tem.helpers.numbers.sNT);
 
 # covariates
 function cube_to_KA(c)

@@ -22,7 +22,7 @@ function compute(p_struct::rainSnow_Tair, forcing, land, helpers)
     ## calculate variables
     if Tair < Tair_thres
         snow = Rain
-        rain = z_zero
+        rain = zero(Rain)
     end
     precip = rain + snow
 

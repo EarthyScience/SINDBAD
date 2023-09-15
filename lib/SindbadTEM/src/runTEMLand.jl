@@ -19,6 +19,7 @@ export runTEM
 function coreTEM(
     selected_models,
     forcing,
+    _,
     forcing_one_timestep,
     land_init,
     tem_helpers,
@@ -56,6 +57,7 @@ end
 function coreTEM(
     selected_models,
     forcing,
+    spinup_forcing,
     forcing_one_timestep,
     land_init,
     tem_helpers,
@@ -67,7 +69,7 @@ function coreTEM(
 
     land_spin = spinupTEM(
         selected_models,
-        forcing,
+        spinup_forcing,
         forcing_one_timestep,
         land_prec,
         tem_helpers,
@@ -104,6 +106,7 @@ end
 function coreTEM(
     selected_models,
     forcing,
+    _,
     forcing_one_timestep,
     land_time_series,
     land_init,
@@ -144,6 +147,7 @@ end
 function coreTEM(
     selected_models,
     forcing,
+    spinup_forcing,
     forcing_one_timestep,
     land_time_series,
     land_init,
@@ -156,7 +160,7 @@ function coreTEM(
 
     land_spin = spinupTEM(
         selected_models,
-        forcing,
+        spinup_forcing,
         forcing_one_timestep,
         land_prec,
         tem_helpers,
@@ -181,7 +185,7 @@ end
 """
 function runTEM(forcing::NamedTuple, info::NamedTuple)
     run_helpers = prepTEM(forcing, info)
-    land_time_series = coreTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types.helpers, run_helpers.tem_with_types.models, run_helpers.tem_with_types.spinup, run_helpers.tem_with_types.helpers.run.spinup.spinup_TEM)
+    land_time_series = coreTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types.helpers, run_helpers.tem_with_types.models, run_helpers.tem_with_types.spinup, run_helpers.tem_with_types.helpers.run.spinup.spinup_TEM)
     return landWrapper(land_time_series)
 end
 
@@ -200,10 +204,11 @@ end
 function runTEM(
     selected_models::Tuple,
     forcing::NamedTuple,
+    spinup_forcing,
     forcing_one_timestep,
     land_init::NamedTuple,
     tem::NamedTuple)
-    land_time_series = coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
+    land_time_series = coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_init, tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
     return landWrapper(land_time_series)
 end
 
@@ -223,11 +228,12 @@ end
 function runTEM(
     selected_models::Tuple,
     forcing::NamedTuple,
+    spinup_forcing,
     forcing_one_timestep,
     land_time_series,
     land_init::NamedTuple,
     tem::NamedTuple)
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
+    coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_time_series, land_init, tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
     return landWrapper(land_time_series)
 end
 
@@ -253,9 +259,8 @@ function timeLoopTEM(
     land,
     tem_helpers,
     ::DoNotDebugModel) # do not debug the models
-    # num_timesteps = getForcingTimeSize(forcing, tem_helpers.vals.forc_vars)
-    for ts ∈ eachindex(forcing[1])
-        f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
+    for ts ∈ 1:tem_helpers.n_timesteps
+        f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
         land = computeTEM(selected_models, f_ts, land, tem_helpers)
         land_time_series[ts] = land
     end
@@ -315,8 +320,8 @@ function timeLoopTEM(
     tem_helpers,
     ::DoNotDebugModel) # do not debug the models
     # num_timesteps = getForcingTimeSize(forcing, tem_helpers.vals.forc_vars)
-    land_time_series = map(eachindex(forcing[1])) do ts
-        f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
+    land_time_series = map(1:tem_helpers.n_timesteps) do ts
+        f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
         land = computeTEM(selected_models, f_ts, land, tem_helpers)
         land
     end
@@ -344,7 +349,7 @@ function timeLoopTEM(
     tem_helpers,
     ::DoDebugModel) # debug the models
     @info "\nforc\n"
-    @time f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, 1, tem_helpers.vals.forc_vars)
+    @time f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, 1, tem_helpers.vals.forc_types)
     @info "\n-------------\n"
     @info "\neach model\n"
     @time land = computeTEM(selected_models, f_ts, land, tem_helpers, tem_helpers.run.debug_model)

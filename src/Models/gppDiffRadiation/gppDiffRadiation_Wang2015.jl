@@ -45,7 +45,7 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
 
 
     cScGPP = o_one - μ * (o_one - CI_nor)
-    gpp_f_cloud = RgPot > z_zero ? cScGPP : z_zero
+    gpp_f_cloud = RgPot > z_zero ? cScGPP : zero(cScGPP)
 
     ## pack land variables
     @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
