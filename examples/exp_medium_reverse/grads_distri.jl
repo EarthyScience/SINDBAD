@@ -1,51 +1,24 @@
-# dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadML
-using SindbadData
-using SindbadTEM
-using YAXArrays
-using SindbadML
-#using SindbadVisuals
-#using ForwardDiff
-#using PreallocationTools
-#using CairoMakie
+using Distributed
+using SharedArrays
+addprocs(17)
+
+@everywhere begin
+    using SindbadData
+    using SindbadTEM
+    using SindbadML
+    using ForwardDiff
+    using PreallocationTools
+end
+
 
 toggleStackTraceNT()
-# include("gen_obs.jl")
+include("gen_obs.jl");
 
-# obs_synt, params_map = out_synt();
+obs_synt_single, params_map = out_synt()
 
-# cov_sites = get_sites_cov()
-# ks = (:gpp, :transpiration, :evapotranspiration)
-# cbars = (:viridis, :inferno, :magma)
-
-# path = dirname(Base.active_project())
-
-# for (i,k) in enumerate(ks)
-#     data_sites = getproperty(obs_synt, k)
-#     data_subset = data_sites(site = cov_sites)
-#     ds_ar = data_subset |> Array
-#     fig = Figure(; resolution = (2400,700))
-#     ax = Axis(fig[1,1]; xlabel = "time", ylabel = "site")
-#     obj = heatmap!(ax, ds_ar; colormap = cbars[i])
-#     Colorbar(fig[1,2], obj)
-#     fig
-#     save(joinpath(path, "maps_synt/variable_$(k).png"), fig)
-# end
-
-# let 
-#     params_scaled = params_map |> Array
-#     fig = Figure(; resolution = (2400,700))
-#     ax = Axis(fig[1,1]; xlabel = "paramer", ylabel = "site")
-#     obj = heatmap!(ax, params_scaled; colormap = :tab20c,
-#         colorrange=(-1,20), highclip=:yellow, lowclip=:black,)
-#     Colorbar(fig[1,2], obj)
-#     fig
-#     save(joinpath(path, "maps_synt/parameters_map.png"), fig)
-# end
-
+@everywhere obs_synt = $obs_synt_single
 
 experiment_json = "../exp_medium/settings_medium/experiment.json"
-#info = getConfiguration(experiment_json);
-#info = setupInfo(info);
 
 info = getExperimentInfo(experiment_json);
 
@@ -58,9 +31,6 @@ observations = getObservation(info, forcing.helpers);
 
 forc = (; Pair.(forcing.variables, forcing.data)...);
 obs = (; Pair.(observations.variables, observations.data)...);
-
-#obs_array = getKeyedArrayWithNames(observations);
-#obsv = getKeyedArray(observations);
 
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
@@ -86,7 +56,7 @@ site_location = loc_space_maps[3]
 loc_land_init = land_init_space[3];
 
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(op.data, forc, obs, site_location); # obs_synt
+    getLocDataObsN(op.data, forc, obs_synt, site_location); # obs_synt
 
 land_init = land_init_space[site_location[1][2]];
 forcing_one_timestep =run_helpers.forcing_one_timestep;
@@ -104,22 +74,6 @@ coreTEM!(
 
 # @profview_allocs coreTEM!(inits..., data..., tem...)
 
-@time coreTEM!(
-    models,
-    loc_forcing,
-    forcing_one_timestep,
-    loc_output,
-    land_init,
-    tem...)
-
-@code_warntype coreTEM!(
-    models,
-    loc_forcing,
-    forcing_one_timestep,
-    loc_output,
-    land_init,
-    tem...)
-
 # setLogLevel()
 # setLogLevel(:debug)
 
@@ -133,15 +87,10 @@ new_options = [(; cost_metric= new_cost_options[i].cost_metric,
     valids = new_cost_options[i].valids,
     cost_weight = new_cost_options[i].cost_weight) for i in eachindex(new_cost_options)]
 
-#cost_options= cost_options
 constraint_method = info.optim.multi_constraint_method
 
-@time  getSiteLossTEM(models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem,
+getSiteLossTEM(models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem,
     loc_obs, cost_options, constraint_method)
-
-@code_warntype getSiteLossTEM(models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem,
-    loc_obs, cost_options, constraint_method)
-
 
 #CHUNK_SIZE = 13;
 
@@ -150,7 +99,7 @@ param_to_index = param_indices(models, tbl_params);
 
 models = LongTuple(models...);
 
-@time siteLossInner(
+siteLossInner(
     tbl_params.default,
     models,
     loc_forcing,
@@ -163,22 +112,6 @@ models = LongTuple(models...);
     cost_options,
     constraint_method
     )
-
-@code_warntype siteLossInner(
-    tbl_params.default,
-    models,
-    loc_forcing,
-    forcing_one_timestep,
-    DiffCache.(loc_output),
-    land_init,
-    tem,
-    param_to_index,
-    loc_obs,
-    cost_options,
-    constraint_method
-    )
-    
-println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 @time ForwardDiffGrads(
     siteLossInner,
@@ -195,8 +128,6 @@ println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     constraint_method
     )
 
-
-# ForwardDiff.gradient(f, x)
 # load available covariates
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_f = forc.Tair.site
@@ -215,19 +146,16 @@ ml_baseline = DenseNN(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
 sites_parameters = ml_baseline(xfeatures)
 #params_bounded = getParamsAct.(sites_parameters, tbl_params)
 cov_sites = xfeatures.site
+
 #sites_parameters .= tbl_params.default
 op = prepTEMOut(info, forcing.helpers);
-# b_data = (; allocated_output = op.data, forcing=forc);
 
-# data_optim = (;
-#     obs = obs_synt,
-# );
 xbatch = cov_sites[1:8]
 
-f_grads = zeros(Float32, n_params, length(xbatch))
+f_grads = SharedArray{Float32}(n_params, length(xbatch)) # zeros(Float32, n_params, length(xbatch))
 x_feat = xfeatures(; site=xbatch) 
 
-gradsBatch!(
+gradsBatchDistributed!(
     siteLossInner,
     f_grads,
     sites_parameters,
@@ -244,13 +172,14 @@ gradsBatch!(
     param_to_index,
     cost_options,
     constraint_method;
-    logging=true)
+    logging=false)
     
 #isnan.(∇params) |> sum
-history_loss = train(
+
+history_loss_par = trainDistributed(
     ml_baseline,
     siteLossInner,
-    xfeatures[site=1:16],
+    xfeatures[site=1:32],
     models,
     sites_f,
     op.data,
@@ -263,27 +192,6 @@ history_loss = train(
     param_to_index,
     cost_options,
     constraint_method;
-    nepochs=5,
+    nepochs=10,
     bs = 8
     )
-
-
-# new_params = getParamsAct(up_params(; site=site_name), tbl_params)
-
-# space_run!(
-#     info.tem.models.forward,
-#     sites_parameters,
-#     tbl_params,
-#     sites_f,
-#     land_init_space,
-#     b_data,
-#     cov_sites,
-#     forcing_one_timestep,
-#     tem
-# )
-
-
-# tempo = string.(forc.Tair.time);
-# out_names = info.optimization.observational_constraints
-# plot_output(op, obs, out_names, cov_sites, sites_f, tempo)
-
