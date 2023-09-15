@@ -206,9 +206,9 @@ function getData(model_output::AbstractArray, observations, cost_option)
     yσ = observations[obs_ind+1]
     # ymask = observations[obs_ind + 2]
 
-    #ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
+    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
 
-    #y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
+    y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
     return (y, yσ, ŷ)
 end
 
@@ -232,11 +232,41 @@ returns a vector of losses for variables in info.cost_options.observational_cons
 - `model_output::AbstractArray`: a collection of SINDBAD model output time series as a preallocated array
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
+function getLossVector(observations, model_output::AbstractArray, cost_options)
+    loss_vector = map(cost_options) do cost_option
+        @debug "$(cost_option.variable)"
+        lossMetric = cost_option.cost_metric
+        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
+        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
+        (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
+        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
+        metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
+        if isnan(metr)
+            metr = oftype(metr, 1e19)
+        end
+        @debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
+        metr
+    end
+    @debug "\n-------------------\n"
+    return loss_vector
+end
+
+
+"""
+    getLossVector(observations, model_output::AbstractArray, cost_options)
+
+returns a vector of losses for variables in info.cost_options.observational_constraints
+
+# Arguments:
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
+- `model_output::AbstractArray`: a collection of SINDBAD model output time series as a preallocated array
+- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
+"""
 function getLossVector2(observations, model_output, cost_options)
     return [0,0,0]
 end
 
-function getLossVector(observations, model_output, cost_options)
+function getLossVector4(observations, model_output, cost_options)
     loss_vector = map(cost_options) do cost_option
     #for cost_option in cost_options
         #@code_warntype get_metric(cost_option)
@@ -297,7 +327,7 @@ returns a vector of losses for variables in info.cost_options.observational_cons
 - `model_output:::landWrapper`: a collection of SINDBAD model output as a time series of stacked land NT
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
-function getLossVector(observations, model_output::landWrapper, cost_options)
+function getLossVector3(observations, model_output::landWrapper, cost_options)
     loss_vector = map(cost_options) do cost_option
         #@debug "$(cost_option.variable)"
         lossMetric = cost_option.cost_metric

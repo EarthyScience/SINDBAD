@@ -160,7 +160,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 
     forcing_nt_array = nothing
 
-    run_helpers = (; loc_forcings=loc_forcings, loc_spinup_forcings=spinup_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    run_helpers = (; loc_forcings=loc_forcings, loc_space_inds=loc_space_inds, loc_spinup_forcings=spinup_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     return run_helpers
 end
 
@@ -302,7 +302,8 @@ function runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
     forcing_one_timestep = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.helpers.vals.forc_types)
     land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
         tem.helpers)
-    land_one = computeTEMOne(selected_models, forcing_one_timestep, land_prec, tem.helpers)
+
+    land_one = computeTEM(LongTuple(selected_models...), forcing_one_timestep, land_prec, tem.helpers)
     land_one = removeEmptyTupleFields(land_one)
     land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
     return forcing_one_timestep, land_one
