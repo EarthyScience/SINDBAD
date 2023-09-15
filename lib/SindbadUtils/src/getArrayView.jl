@@ -6,6 +6,16 @@ export getArrayView
 
 
 """
+function getArrayView(a::AbstractArray{<:Real,1}, inds::Tuple{Int64})
+    # @show 2, 1, inds, length(inds), typeof(inds)
+    return view(a, first(inds))
+end
+
+"""
+    getArrayView(a::AbstractArray{<:Real, 2}, inds::Tuple{Int64})
+
+
+"""
 function getArrayView(a::AbstractArray{<:Real,2}, inds::Tuple{Int64})
     # @show 2, 1, inds, length(inds), typeof(inds)
     return view(a, :, first(inds))

@@ -4,8 +4,8 @@ struct WCycleBaseSimple end
 
 #! format: off
 @bounds @describe @units @with_kw struct wCycleBase_simple{T1,T2} <: wCycleBase
-    o_one::T1 = 1.0 | (nothing, nothing) | "type stable one" | ""
-    z_zero::T2 = 0.0 | (nothing, nothing) | "type stable zero" | ""
+    o_one::T1 = 1.0 | (-Inf, Inf) | "type stable one" | ""
+    z_zero::T2 = 0.0 | (-Inf, Inf) | "type stable zero" | ""
 end
 #! format: on
 

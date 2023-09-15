@@ -1,50 +1,54 @@
 # -------------------------------- time aggregator --------------------------------
 export getTimeAggregatorTypeInstance
+export TimeAggregatorTypes
 export TimeAllYears
 export TimeArray
 export TimeDay
 export TimeDayAnomaly
-export TimeDayIav
-export TimeDayMsc
-export TimeDayMscAnomaly
+export TimeDayIAV
+export TimeDayMSC
+export TimeDayMSCAnomaly
 export TimeDiff
 export TimeFirstYear
 export TimeIndexed
 export TimeMean
 export TimeMonth
 export TimeMonthAnomaly
-export TimeMonthIav
-export TimeMonthMsc
-export TimeMonthMscAnomaly
+export TimeMonthIAV
+export TimeMonthMSC
+export TimeMonthMSCAnomaly
 export TimeNoDiff
 export TimeRandomYear
-export TimeShufflend_years
+export TimeShuffleYears
 export TimeSizedArray
-export Timend_year
-export Timend_yearAnomaly
+export TimeYear
+export TimeYearAnomaly
+
+abstract type TimeAggregatorTypes end
 
 struct TimeAllYears end
 struct TimeArray end
 struct TimeDay end
 struct TimeDayAnomaly end
-struct TimeDayIav end
-struct TimeDayMsc end
-struct TimeDayMscAnomaly end
-struct TimeDiff end
+struct TimeDayIAV end
+struct TimeDayMSC end
+struct TimeDayMSCAnomaly end
+struct TimeDiff <: TimeAggregatorTypes end
 struct TimeFirstYear end
-struct TimeIndexed end
+struct TimeIndexed <: TimeAggregatorTypes end
 struct TimeMean end
 struct TimeMonth end
 struct TimeMonthAnomaly end
-struct TimeMonthIav end
-struct TimeMonthMsc end
-struct TimeMonthMscAnomaly end
-struct TimeNoDiff end
+struct TimeMonthIAV end
+struct TimeMonthMSC end
+struct TimeMonthMSCAnomaly end
+struct TimeNoDiff <: TimeAggregatorTypes end
 struct TimeRandomYear end
-struct TimeShufflend_years end
+struct TimeShuffleYears end
 struct TimeSizedArray end
-struct Timend_year end
-struct Timend_yearAnomaly end
+struct TimeYear end
+struct TimeYearAnomaly end
+
 
 
 function getTimeAggregatorTypeInstance(aggr::Symbol)
@@ -75,3 +79,10 @@ struct Spacelongitude end
 struct Spacelon end
 struct Spacesite end
 
+
+# -------------------------------- forcing variable type --------------------------------
+export ForcingWithTime
+export ForcingWithoutTime
+abstract type ForcingTimeSeries end
+struct ForcingWithTime <: ForcingTimeSeries end
+struct ForcingWithoutTime <: ForcingTimeSeries end

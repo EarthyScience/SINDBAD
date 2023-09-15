@@ -44,6 +44,7 @@ run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
     run_helpers.loc_forcings,
+    run_helpers.loc_spinup_forcings,
     run_helpers.forcing_one_timestep,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
@@ -52,7 +53,9 @@ run_helpers = prepTEM(forcing, info);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
-@time out_params = runExperimentOpti(experiment_json; replace_info=replace_info);
+@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
+opt_params = out_opti.out_params;
+# out_model = out_opti.out_forward;
 
 
 """
@@ -104,19 +107,22 @@ function getPredAndObsVector(observations::NamedTuple,
     #TODO do with fewer allocations
 end
 
-out_params = runExperimentOpti(experiment_json; replace_info=replace_info);
+@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
+opt_params = out_opti.out_params;
+# out_model = out_opti.out_forward;
 pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optim)
 
 develop_f =
     () -> begin
-        #tbl = getParameters(info.tem.models.forward, info.optim.model_parameters_to_optimize);
+        #tbl = getParameters(info.tem.models.forward, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
         #code run from @infiltrate in optimizeTEM
         # d = shifloNormal(2,5)
         # using StatsPlots
         # plot(d)
 
         tbl_params = getParameters(tem.models.forward, optim.model_parameter_default,
-            optim.model_parameters_to_optimize)
+            optim.model_parameters_to_optimize,
+            info.tem.helpers.numbers.sNT)
         # get the default and bounds
         default_values = tem.helpers.numbers.sNT.(tbl_params.default)
         lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
@@ -148,6 +154,7 @@ develop_f =
 
             @time runTEM!(updated_models,
                 run_helpers.loc_forcings,
+                run_helpers.loc_spinup_forcings,
                 run_helpers.forcing_one_timestep,
                 run_helpers.loc_outputs,
                 run_helpers.land_init_space,
