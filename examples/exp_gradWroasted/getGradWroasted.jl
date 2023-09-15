@@ -22,49 +22,21 @@ run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
     run_helpers.loc_forcings,
+    run_helpers.loc_spinup_forcings,
     run_helpers.forcing_one_timestep,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
     run_helpers.tem_with_types)
 
-# @time out_params = runExperimentOpti(experiment_json);  
 tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize);
+    info.optim.model_parameters_to_optimize,
+    info.tem.helpers.numbers.sNT);
 
-function getLoss2(
-    param_vector::AbstractArray,
-    base_models,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem,
-    observations,
-    tbl_params,
-    cost_options,
-    multi_constraint_method)
-    updated_models = updateModelParametersType(tbl_params, base_models, param_vector)
-    runTEM!(updated_models,
-        forcing_nt_array,
-        loc_forcings,
-        forcing_one_timestep,
-        output_array,
-        loc_outputs,
-        land_init_space,
-        loc_space_inds,
-        tem)
-    loss_vector = getLossVector(observations, output_array, cost_options)
-    return combineLoss(loss_vector, multi_constraint_method)
-end
-
-# @time out_params = runExperimentOpti(experiment_json);  
 function g_loss(x,
     mods,
     loc_forcings,
+    loc_spinup_forcings,
     forcing_one_timestep,
     output_array,
     loc_outputs,
@@ -77,6 +49,7 @@ function g_loss(x,
     l = getLoss2(x,
         mods,
         loc_forcings,
+        loc_spinup_forcings,
         forcing_one_timestep,
         output_array,
         loc_outputs,
@@ -95,6 +68,7 @@ mods = info.tem.models.forward;
 @time g_loss(tbl_params.default,
     mods,
     run_helpers.loc_forcings,
+    run_helpers.loc_spinup_forcings,
     run_helpers.forcing_one_timestep,
     run_helpers.output_array,
     run_helpers.loc_outputs,
@@ -109,6 +83,7 @@ function l1(p)
     return g_loss(p,
         mods,
         run_helpers.loc_forcings,
+        run_helpers.loc_spinup_forcings,
         run_helpers.forcing_one_timestep,
         run_helpers.output_array,
         run_helpers.loc_outputs,
@@ -157,7 +132,11 @@ mods = updateModelParametersType(tbl_params, mods, dualDefs);
 # op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_types.helpers.numbers.num_type},tem_with_types.helpers.numbers.num_type,10}}(undef, size(od)) for od in run_helpers.output_array];
 # op = (; op..., data=op_dat);
 
-
-@time grad = ForwardDiff.gradient(l1, p_vec, cfg)
+@time grad = ForwardDiff.gradient(l1, p_vec)
 
 # @time grad = ForwardDiff.gradient(l1, p_vec, cfg)
+
+# @time grad = ForwardDiff.gradient(l1, p_vec, cfg)
+
+
+

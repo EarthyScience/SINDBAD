@@ -4,7 +4,7 @@ export gppSoilW_GSI
 @bounds @describe @units @with_kw struct gppSoilW_GSI{T1,T2,T3,T4} <: gppSoilW
     fW_τ::T1 = 0.8 | (0.01, 1.0) | "contribution factor for current stressor" | "fraction"
     fW_slope::T2 = 5.24 | (1.0, 10.0) | "slope of sigmoid" | "fraction"
-    fW_slope_mult::T3 = 100.0 | (nothing, nothing) | "multiplier for the slope of sigmoid" | "fraction"
+    fW_slope_mult::T3 = 100.0 | (-Inf, Inf) | "multiplier for the slope of sigmoid" | "fraction"
     fW_base::T4 = 0.2096 | (0.1, 0.8) | "base of sigmoid" | "fraction"
 end
 #! format: on
