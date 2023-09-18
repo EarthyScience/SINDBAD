@@ -114,8 +114,7 @@
       {
         "forcing": "first_year",
         "n_repeat": 200,
-        "spinup_mode": "all_forward_models",
-        "stop_function": null
+        "spinup_mode": "all_forward_models"
       }
     ]
   }
