@@ -139,9 +139,19 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     forcing_nt_array = getNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     output_array = output.data
-    forcing_one_timestep, loc_forcing, loc_output, land_one = runTEMOneLocation(selected_models, forcing_nt_array, output_array, land_init,
+    forcing_one_timestep, land_one = runTEMOneLocation(selected_models, forcing_nt_array, land_init,
         loc_space_inds[1], tem_with_types, LandOutArray())
     debugModel(land_one, tem.helpers.run.debug_model)
+
+    ovars = output.variables;
+    i = 1
+    output_array = map(output_array) do od
+        ov = ovars[i]
+        mod_field = first(ov)
+        mod_subfield = last(ov)
+        lvar = getproperty(getproperty(land_one, mod_field), mod_subfield)
+        typeof(lvar).(od)
+    end
 
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
@@ -291,11 +301,11 @@ end
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `::LandOutArray`: a dispatch for running model with preallocated array
 """
-function runTEMOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_ind, tem, ::LandOutArray)
-    loc_forcing, loc_output = getLocData(forcing, output_array, loc_space_ind)
+function runTEMOneLocation(selected_models, forcing, land_init, loc_space_ind, tem, ::LandOutArray)
+    loc_forcing = getLocForcingData(forcing, loc_space_ind)
     forcing_one_timestep, land_one = runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
-    setOutputForTimeStep!(loc_output, land_one, 1, tem.helpers.vals.output_vars)
-    return forcing_one_timestep, loc_forcing, loc_output, land_one
+    # setOutputForTimeStep!(loc_output, land_one, 1, tem.helpers.vals.output_vars)
+    return forcing_one_timestep, land_one
 end
 
 function runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
