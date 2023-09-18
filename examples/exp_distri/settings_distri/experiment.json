@@ -66,14 +66,6 @@
     }
   },
   "model_spinup": {
-    "differential_eqn": {
-      "absolute_tolerance": 1e-2,
-      "pools": [
-        "cEco"
-      ],
-      "relative_tolerance": 1e-2,
-      "time_jump": 200.0
-    },
     "paths": {
       "restart_file_in": null,
       "restart_file_out": null
@@ -87,7 +79,15 @@
       {
         "forcing": "all_years",
         "n_repeat": 1,
-        "spinup_mode": "all_forward_models"
+        "spinup_mode": "all_forward_models",
+        "options": {
+          "absolute_tolerance": 1e-2,
+          "pools": [
+            "cEco"
+          ],
+          "relative_tolerance": 1e-2,
+          "time_jump": 200.0
+        }
       }
     ]
   }
