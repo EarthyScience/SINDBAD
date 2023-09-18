@@ -103,14 +103,3 @@ foreach(costOpt) do var_row
     plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
-
-# struct SpinSequence{f,n_r,m,s,a,a_t}
-#     forcing::f
-#     n_repeat::n
-#     n_timesteps::n
-#     spinup_mode::m
-#     aggregator::a
-#     aggregator_type::a_t
-# end
-
-# ss = SpinSequence(values(run_helpers.tem_with_types.spinup.sequence[1])...)

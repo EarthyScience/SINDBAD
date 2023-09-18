@@ -150,7 +150,11 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
         mod_field = first(ov)
         mod_subfield = last(ov)
         lvar = getproperty(getproperty(land_one, mod_field), mod_subfield)
-        typeof(lvar).(od)
+        if lvar isa Vector
+            eltype(lvar).(od)
+        else
+            typeof(lvar).(od)
+        end
     end
 
     # collect local data and create copies
@@ -162,6 +166,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
         getAllSpinupForcing(loc_forcing, tem_with_types.spinup.sequence, tem_with_types.helpers);
     end
 
+    tem_with_types = getSpinupTemLite(tem_with_types);
     loc_outputs = map([loc_space_inds...]) do lsi
         getLocOutputData(output_array, lsi)
     end
@@ -175,6 +180,22 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 end
 
 
+function getSpinupTemLite(tem_with_types)
+    tem_spinup = tem_with_types.spinup
+    newseqs = []
+    for seq in tem_spinup.sequence
+        SpinSequenceWithAggregator
+        ns = SpinSequence(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.options)
+        push!(newseqs, ns)
+    end
+    restart_file_in = tem_spinup.paths.restart_file_in
+    restart_file_out = tem_spinup.paths.restart_file_out
+    paths = (; restart_file_in = isnothing(restart_file_in) ? "./" : restart_file_in, restart_file_out = isnothing(restart_file_out) ? "./" : restart_file_out)
+    tem_spin_lite = (; paths=paths, sequence = [_s for _s in newseqs])
+    tem_with_types = (; tem_with_types..., spinup = tem_spin_lite)
+    return tem_with_types
+
+end
 """
     helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
 
