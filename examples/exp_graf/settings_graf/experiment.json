@@ -85,8 +85,7 @@
       {
         "forcing": "all_years",
         "n_repeat": 1,
-        "spinup_mode": "all_forward_models",
-        "stop_function": null
+        "spinup_mode": "all_forward_models"
       }
     ]
   }

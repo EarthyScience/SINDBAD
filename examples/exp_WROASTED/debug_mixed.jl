@@ -53,7 +53,6 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.land_init_space,
     run_helpers.tem_with_types)
 
-
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
 # observations = getObservation(info, forcing.helpers);
@@ -73,7 +72,7 @@ selected_models = info.tem.models.forward;
 rand_m = rand()
 # param_vector = tbl_params.default .* info.tem.helpers.numbers.sNT(rand_m);
 param_vector = tbl_params.default .* rand_m;
-# param_vector = ForwardDiff.Dual.(tbl_params.default .* rand_m);
+param_vector = ForwardDiff.Dual.(tbl_params.default .* rand_m);
 @time selected_models = updateModelParameters(info.tem.models.forward, param_vector, info.optim.param_model_id_val);
 n_m = updateModelParameters(tbl_params, info.tem.models.forward, param_vector);
 # updateModelParameters(selected_models, param_vector, info.optim.param_model_id_val)
@@ -145,7 +144,7 @@ foreach(costOpt) do var_row
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
 
-# struct SpinSequence{f,n,m,s,a,a_t}
+# struct SpinSequence{f,n_r,m,s,a,a_t}
 #     forcing::f
 #     n_repeat::n
 #     spinup_mode::m
