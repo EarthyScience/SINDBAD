@@ -1363,9 +1363,9 @@ function setSpinupInfo(info)
                 aggregator = createTimeAggregator(info.tem.helpers.dates.range, seq[kk], mean, skip_aggregation)
                 seq["aggregator"] = aggregator
                 seq["aggregator_type"] = TimeNoDiff()
+                seq["aggregator_indices"] = [_ind for _ind in vcat(aggregator[1].indices...)]
                 seq["n_timesteps"] = length(aggregator[1].indices)
                 if occursin("_year", seq[kk])
-                    seq["aggregator"] = vcat(aggregator[1].indices...)
                     seq["aggregator_type"] = TimeIndexed()
                     seq["n_timesteps"] = length(seq["aggregator"])
                 end

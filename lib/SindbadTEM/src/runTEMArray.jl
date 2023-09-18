@@ -30,7 +30,7 @@ function coreTEM!(
     _,
     ::DoNotSpinupTEM) # without spinup
 
-    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
+    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers,tem_helpers.run.debug_model)
 
     timeLoopTEM!(
         selected_models,
@@ -71,16 +71,17 @@ function coreTEM!(
     tem_spinup,
     ::DoSpinupTEM) # with spinup
 
-    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
+    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers,tem_helpers.run.debug_model)
 
-    land_spin = spinupTEM(
-        selected_models,
-        loc_spinup_forcing,
-        forcing_one_timestep,
-        land_prec,
-        tem_helpers,
-        tem_models,
-        tem_spinup)
+    # # @time land_spin = spinupTEM(
+    #     selected_models,
+    #     loc_spinup_forcing,
+    #     forcing_one_timestep,
+    #     land_prec,
+    #     tem_helpers,
+    #     tem_models,
+    #     tem_spinup)
+    land_spin = land_prec
 
     timeLoopTEM!(
         selected_models,

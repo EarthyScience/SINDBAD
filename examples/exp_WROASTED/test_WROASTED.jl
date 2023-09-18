@@ -104,11 +104,11 @@ foreach(costOpt) do var_row
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
 
-# struct SpinSequence{f,n,m,s,a,a_t}
+# struct SpinSequence{f,n_r,m,s,a,a_t}
 #     forcing::f
 #     n_repeat::n
+#     n_timesteps::n
 #     spinup_mode::m
-#     stop_function::s
 #     aggregator::a
 #     aggregator_type::a_t
 # end
