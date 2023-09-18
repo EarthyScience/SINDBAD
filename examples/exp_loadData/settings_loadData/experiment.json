@@ -82,20 +82,17 @@
       {
         "forcing": "day_MSC",
         "n_repeat": 15,
-        "spinup_mode": "all_forward_models",
-        "stop_function": null
+        "spinup_mode": "all_forward_models"
       },
       {
         "forcing": "all_years",
         "n_repeat": 1,
-        "spinup_mode": "all_forward_models",
-        "stop_function": null
+        "spinup_mode": "all_forward_models"
       },
       {
         "forcing": "day_MSC",
         "n_repeat": 1,
-        "spinup_mode": "eta_scale_AH",
-        "stop_function": null
+        "spinup_mode": "eta_scale_AH"
       }
     ]
   }
