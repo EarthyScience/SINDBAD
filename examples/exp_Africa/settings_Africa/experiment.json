@@ -85,8 +85,7 @@
       {
         "forcing": "day_MSC",
         "n_repeat": 20,
-        "spinup_mode": "all_forward_models",
-        "stop_function": null
+        "spinup_mode": "all_forward_models"
       }
     ]
   }
