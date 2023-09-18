@@ -18,7 +18,7 @@ debug the compute function of SINDBAD models
 function computeTEM(models, forcing, land, tem_helpers, ::DoDebugModel) # debug the models
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
-        @show typeof(model)
+        println("compute: $(typeof(model))")
         @time _land = Models.compute(model, forcing, _land, tem_helpers)#::otype
     end
 end
@@ -89,6 +89,44 @@ generate the expression to run the function for each element of a given Tuple to
 @generated function foldlUnrolled(f, x::Tuple{Vararg{Any,N}}; init) where {N}
     exes = Any[:(init = f(init, x[$i])) for i ∈ 1:N]
     return Expr(:block, exes...)
+end
+
+
+"""
+    precomputeTEM(models, forcing, land, tem_helpers, ::DoDebugModel)
+
+debug the precompute function of SINDBAD models
+
+# Arguments:
+- `models`: a list of SINDBAD models to run
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `::DoDebugModel`: a type dispatch to debug the compute functions of model
+"""
+function precomputeTEM(models, forcing, land, tem_helpers, ::DoDebugModel) # debug the models
+    otype = typeof(land)
+    return foldlUnrolled(models; init=land) do _land, model
+        println("precompute: $(typeof(model))")
+        @time _land = Models.precompute(model, forcing, _land, tem_helpers)#::otype
+    end
+end
+
+
+"""
+    precomputeTEM(models, forcing, land, tem_helpers, ::DoNotDebugModel)
+
+run the precompute function of SINDBAD models
+
+# Arguments:
+- `models`: a list of SINDBAD models to run
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `::DoNotDebugModel`: a type dispatch to not debug but run the compute functions of model
+"""
+function precomputeTEM(models, forcing, land, tem_helpers, ::DoNotDebugModel) # do not debug the models 
+    return precomputeTEM(models, forcing, land, tem_helpers) 
 end
 
 
