@@ -139,7 +139,8 @@ end
 """
 function name_to_id(site_name, sites_forcing)
     site_id_forc = findall(x -> x == site_name, sites_forcing)
-    id_site = !isempty(site_id_forc) ? [Symbol("site") => site_id_forc[1]] : error("site not available")
+#    id_site = !isempty(site_id_forc) ? [Symbol("site") => site_id_forc[1]] : error("site not available")
+    id_site = !isempty(site_id_forc) ? (site_id_forc[1],) : error("site not available")
     return id_site
 end
 

@@ -36,13 +36,6 @@ function out_synt()
     # RU-Ha1, IT-PT1, US-Me5
     sites = xfeatures.site
     sites = [s for s ∈ sites]
-    # nogood = [
-    #     "AR-SLu",
-    #     "CA-Obs",
-    #     "DE-Lkb",
-    #     "SJ-Blv",
-    #     "US-ORv"];
-    # sites = setdiff(sites, nogood)
 
     xfeatures = xfeatures(site=sites);
     # machine learning parameters baseline
@@ -66,40 +59,14 @@ function out_synt()
     b_data = (; allocated_output = op.data, forcing=forc);
     land_init_space = run_helpers.land_init_space;
 
-    # do the run with default parameters
-    # params_bounded .= tbl_params.default
-
-    # space_run!(
-    #     info.tem.models.forward,
-    #     params_bounded,
-    #     tbl_params,
-    #     sites_f,
-    #     land_init_space,
-    #     b_data,
-    #     obs,
-    #     cov_sites,
-    #     forcing_one_timestep,
-    #     tem
-    # )
-
-    # uno = b_data.allocated_output[1][:,1,:]
-    # using GLMakie
-    # heatmap(uno)
-
-    # series(uno'; color = resample_cmap(:Spectral_11, 205), linewidth=0.1)
-
-
-    # tempo = string.(forc.Tair.time);
-    # out_names = info.optimization.observational_constraints
-    # plot_output(op, obs, out_names, cov_sites, sites_f, tempo)
-
-
     # do the run with the original bounded parameters
     params_bounded = getParamsAct.(sites_parameters, tbl_params)
     #models = [m for m in info.tem.models.forward]
     models = info.tem.models.forward
     param_to_index =  param_indices(models, tbl_params)
     models = LongTuple(models...);
+
+    loc_spinup_forcings = run_helpers.loc_spinup_forcings;
 
     space_run!(
         models,
@@ -111,6 +78,7 @@ function out_synt()
         obs,
         cov_sites,
         forcing_one_timestep,
+        loc_spinup_forcings,
         tem
     )
 

@@ -46,6 +46,7 @@ function space_run!(
     obs,
     cov_sites,
     forcing_one_timestep,
+    loc_spinup_forcings,
     tem
 )
     p = Progress(size(cov_sites,1))
@@ -54,14 +55,17 @@ function space_run!(
         new_params = up_params(; site=site_name)
 
         site_location = name_to_id(site_name, all_sites)
-        loc_land_init = land_init_space[site_location[1][2]]
-        
+        loc_land_init = land_init_space[site_location[1]]
+
+        loc_spinup_forcing = loc_spinup_forcings[site_location[1]];
+
         loc_forcing, loc_output, loc_obs = getLocDataObsN(b_data.allocated_output, b_data.forcing, obs, site_location)
         new_approaches = updateModelParametersType(param_to_index, selected_models, new_params)
 
         coreTEM!(
             new_approaches,
             loc_forcing,
+            loc_spinup_forcing,
             forcing_one_timestep,
             loc_output,
             loc_land_init,
@@ -80,6 +84,7 @@ function space_run_distributed!(
     obs,
     cov_sites,
     forcing_one_timestep,
+    loc_spinup_forcings,
     tem
 )
     p = Progress(size(cov_sites,1))
@@ -88,14 +93,16 @@ function space_run_distributed!(
         site_name = cov_sites[site_index]
         new_params = up_params(; site=site_name)
         site_location = name_to_id(site_name, all_sites)
-        loc_land_init = land_init_space[site_location[1][2]]
-        
+        loc_land_init = land_init_space[site_location[1]]
+        loc_spinup_forcing = loc_spinup_forcings[site_location[1]];
+
         loc_forcing, loc_output, loc_obs = getLocDataObsN(b_data.allocated_output, b_data.forcing, obs, site_location)
         new_approaches = updateModelParametersType(param_to_index, selected_models, new_params)
 
         coreTEM!(
             new_approaches,
             loc_forcing,
+            loc_spinup_forcing,
             forcing_one_timestep,
             loc_output,
             loc_land_init,
