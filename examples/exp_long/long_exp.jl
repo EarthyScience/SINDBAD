@@ -88,6 +88,7 @@ loc_land_init = land_init_space[3];
 
 loc_forcing, loc_output, loc_obs =
     getLocDataObsN(op.data, forc, obs, site_location); # obs_synt
+
 loc_spinup_forcing = run_helpers.loc_spinup_forcings[site_location[1]];
 
 
@@ -209,7 +210,7 @@ println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 # load available covariates
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_f = forc.Tair.site
-c = Cube(joinpath(@__DIR__, "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"));
+c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
 xfeatures = cube_to_KA(c)
 
 sites = xfeatures.site
@@ -245,10 +246,11 @@ gradsBatch!(
     sites_f,
     op.data,
     forc,
-    obs_synt,
+    obs,
     tbl_params, 
     land_init_space,
     forcing_one_timestep,
+    run_helpers.loc_spinup_forcings,
     tem,
     param_to_index,
     cost_options,
@@ -264,15 +266,16 @@ history_loss = train(
     sites_f,
     op.data,
     forc,
-    obs_synt,
+    obs, #obs_synt,
     tbl_params, 
     land_init_space,
     forcing_one_timestep,
+    run_helpers.loc_spinup_forcings,
     tem,
     param_to_index,
     cost_options,
     constraint_method;
-    nepochs=5,
+    nepochs=2,
     bs = 8
     )
 

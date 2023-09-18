@@ -44,8 +44,10 @@ function siteLossInner(
     constraint_method)
 
     out_data = get_tmp.(loc_output, (new_params,))
+    #@code_warntype updateModelParametersType(param_to_index, models, new_params)
     new_models = updateModelParametersType(param_to_index, models, new_params)
- 
+    #@code_war ntype getSiteLossTEM(new_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, out_data, land_init, tem, loc_obs, cost_options, constraint_method)
+
     return getSiteLossTEM(new_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, out_data, land_init, tem, loc_obs, cost_options, constraint_method)
 end
 
