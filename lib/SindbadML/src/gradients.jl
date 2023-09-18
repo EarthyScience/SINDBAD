@@ -71,6 +71,7 @@ function gradsBatch!(
     tbl_params, 
     land_init_space,
     forcing_one_timestep,
+    loc_spinup_forcings,
     tem,
     param_to_index,
     cost_options,
@@ -82,7 +83,10 @@ function gradsBatch!(
 
         site_name, new_vals = scaledParams(up_params_now, tbl_params, xbatch, idx)
         site_location = name_to_id(site_name, all_sites)
-        land_init = land_init_space[site_location[1][2]]
+
+        land_init = land_init_space[site_location[1]]
+        loc_spinup_forcing = loc_spinup_forcings[site_location[1]];
+
         loc_forcing, loc_output, loc_obs  = getLocDataObsN(output_data, forcing_data, obs_data, site_location) # check output order in original definition
 
         gg = ForwardDiffGrads(
@@ -90,6 +94,7 @@ function gradsBatch!(
             new_vals,
             models,
             loc_forcing,
+            loc_spinup_forcing,
             forcing_one_timestep,
             DiffCache.(loc_output),
             land_init,
@@ -114,6 +119,7 @@ function gradsBatchDistributed!(
     all_sites,
     output_data,
     forcing_data,
+    loc_spinup_forcings,
     obs_data,
     tbl_params, 
     land_init_space,
@@ -130,7 +136,9 @@ function gradsBatchDistributed!(
 
         site_name, new_vals = scaledParams(up_params_now, tbl_params, xbatch, idx)
         site_location = name_to_id(site_name, all_sites)
-        land_init = land_init_space[site_location[1][2]]
+        land_init = land_init_space[site_location[1]]
+        loc_spinup_forcing = loc_spinup_forcings[site_location[1]];
+
         loc_forcing, loc_output, loc_obs  = getLocDataObsN(output_data, forcing_data, obs_data, site_location) # check output order in original definition
 
         gg = ForwardDiffGrads(
@@ -139,6 +147,7 @@ function gradsBatchDistributed!(
             models,
             loc_forcing,
             forcing_one_timestep,
+            loc_spinup_forcing,
             DiffCache.(loc_output),
             land_init,
             tem,
@@ -174,6 +183,7 @@ function get_site_losses(
     tbl_params,
     land_init_space,
     forcing_one_timestep,
+    loc_spinup_forcings,
     tem,
     param_to_index,
     cost_options,
@@ -186,7 +196,9 @@ function get_site_losses(
     for idx ∈ eachindex(new_sites)
         site_name, new_vals = scaledParams(up_params_now,  tbl_params, new_sites, idx)
         site_location = name_to_id(site_name, all_sites)
-        land_init = land_init_space[site_location[1][2]]
+
+        land_init = land_init_space[site_location[1]]
+        loc_spinup_forcing = loc_spinup_forcings[site_location[1]];
 
         loc_forcing, loc_output, loc_obs  = getLocDataObsN(output_data, forcing_data, obs_data, site_location)
 
@@ -195,6 +207,7 @@ function get_site_losses(
             models,
             loc_forcing,
             forcing_one_timestep,
+            loc_spinup_forcing,
             loc_output,
             land_init,
             tem,
@@ -218,6 +231,7 @@ function get_site_lossesDistributed(
     all_sites,
     output_data,
     forcing_data,
+    loc_spinup_forcings,
     obs_data,
     tbl_params,
     land_init_space,
@@ -235,7 +249,9 @@ function get_site_lossesDistributed(
     @sync @distributed for idx ∈ eachindex(new_sites)
         site_name, new_vals = scaledParams(up_params_now,  tbl_params, new_sites, idx)
         site_location = name_to_id(site_name, all_sites)
-        land_init = land_init_space[site_location[1][2]]
+        
+        land_init = land_init_space[site_location[1]]
+        loc_spinup_forcing = loc_spinup_forcings[site_location[1]];
 
         loc_forcing, loc_output, loc_obs  = getLocDataObsN(output_data, forcing_data, obs_data, site_location)
 
@@ -244,6 +260,7 @@ function get_site_lossesDistributed(
             models,
             loc_forcing,
             forcing_one_timestep,
+            loc_spinup_forcing,
             loc_output,
             land_init,
             tem,
@@ -272,6 +289,7 @@ function train(
     tbl_params, 
     land_init_space,
     forcing_one_timestep,
+    loc_spinup_forcings,
     tem,
     param_to_index,
     cost_options,
@@ -319,6 +337,7 @@ function train(
                 tbl_params, 
                 land_init_space,
                 forcing_one_timestep,
+                loc_spinup_forcings,
                 tem,
                 param_to_index,
                 cost_options,
@@ -344,6 +363,7 @@ function train(
                 tbl_params,
                 land_init_space,
                 forcing_one_timestep,
+                loc_spinup_forcings,
                 tem,
                 param_to_index,
                 cost_options,
@@ -369,6 +389,7 @@ function trainDistributed(
     tbl_params, 
     land_init_space,
     forcing_one_timestep,
+    loc_spinup_forcings,
     tem,
     param_to_index,
     cost_options,
@@ -411,6 +432,7 @@ function trainDistributed(
                 all_sites,
                 output_data,
                 forcing_data,
+                loc_spinup_forcings,
                 obs_data,
                 tbl_params, 
                 land_init_space,
@@ -433,6 +455,7 @@ function trainDistributed(
                 all_sites,
                 output_data,
                 forcing_data,
+                loc_spinup_forcings,
                 obs_data,
                 tbl_params,
                 land_init_space,
