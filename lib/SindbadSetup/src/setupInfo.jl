@@ -1353,6 +1353,7 @@ function setSpinupInfo(info)
     infospin = info.experiment.model_spinup
     # change spinup sequence dispatch variables to Val, get the temporal aggregators
     seqq = infospin.sequence
+    seqq_typed = []
     for seq in seqq
         for kk in keys(seq)
             if kk == "forcing"
@@ -1367,7 +1368,7 @@ function setSpinupInfo(info)
                 seq["n_timesteps"] = length(aggregator[1].indices)
                 if occursin("_year", seq[kk])
                     seq["aggregator_type"] = TimeIndexed()
-                    seq["n_timesteps"] = length(seq["aggregator"])
+                    seq["n_timesteps"] = length(seq["aggregator_indices"])
                 end
             end
             if kk == "spinup_mode"
@@ -1377,9 +1378,12 @@ function setSpinupInfo(info)
                 seq[kk] = Symbol(seq[kk])
             end
         end
+        optns = in(seq, "options") ? seqp["options"] : (;)
+        sst = SpinSequenceWithAggregator(seq["forcing"], seq["n_repeat"], seq["n_timesteps"], seq["spinup_mode"], optns, seq["aggregator_indices"], seq["aggregator"], seq["aggregator_type"]);
+        push!(seqq_typed, sst)
     end
-
-    infospin = setTupleField(infospin, (:sequence, dictToNamedTuple.([seqq...])))
+    
+    infospin = setTupleField(infospin, (:sequence, [_s for _s in seqq_typed]))
     info = setTupleSubfield(info, :tem, (:spinup, infospin))
     return info
 end

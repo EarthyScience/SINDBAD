@@ -81,7 +81,16 @@ function coreTEM!(
     #     tem_helpers,
     #     tem_models,
     #     tem_spinup)
-    land_spin = land_prec
+    # land_spin = land_prec
+    
+    land_spin = spinupTEM(
+            selected_models,
+            loc_spinup_forcing,
+            forcing_one_timestep,
+            land_prec,
+            tem_helpers,
+            tem_models,
+            tem_spinup)
 
     timeLoopTEM!(
         selected_models,

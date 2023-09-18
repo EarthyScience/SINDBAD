@@ -68,12 +68,6 @@
     }
   },
   "model_spinup": {
-    "differential_eqn": {
-      "absolute_tolerance": 1e-2,
-      "pools": ["cEco"],
-      "relative_tolerance": 1e-2,
-      "time_jump": 200.0
-    },
     "paths": {
       "restart_file_in": "exp_loadData/output_DE-Hai_WROASTED/restart.jld2",
       "restart_file_out": "out.restart.jld2"
