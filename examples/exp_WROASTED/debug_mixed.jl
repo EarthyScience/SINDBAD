@@ -144,13 +144,15 @@ foreach(costOpt) do var_row
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
 
-# struct SpinSequence{f,n_r,m,s,a,a_t}
-#     forcing::f
-#     n_repeat::n
-#     spinup_mode::m
-#     stop_function::s
-#     aggregator::a
-#     aggregator_type::a_t
-# end
 
-# ss = SpinSequence(values(run_helpers.tem_with_types.spinup.sequence[1])...)
+# # struct SpinSequence{f,n_r,m,s,a,a_t}
+# #     forcing::f
+# #     n_repeat::n
+# #     n_timesteps::n
+# #     spinup_mode::m
+# #     aggregator::a
+# #     aggregator_type::a_t
+# # end
+
+# seq=run_helpers.tem_with_types.spinup.sequence[1]
+# ss = SpinSequence2(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.aggregator_indices, seq.aggregator, seq.aggregator_type);

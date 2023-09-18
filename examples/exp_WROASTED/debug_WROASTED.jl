@@ -84,9 +84,23 @@ replace_info["experiment.model_spinup.sequence"] = sequence
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 forcing = getForcing(info);
+# output = prepTEMOut(info, forcing.helpers);
+# output_array = output.data;
+# ovars = output.variables;
+# i = 1
+# output_array2 = map(output_array) do od
+#     ov = ovars[i]
+#     mod_field = first(ov)
+#     mod_subfield = last(ov)
+#     lvar = getproperty(getproperty(land_one, mod_field), mod_subfield)
+#     @show lvar, typeof(lvar)
+#     @show ov, typeof(od)
+#     eltype(lvar).(od)
+# end
+
 
 run_helpers = prepTEM(forcing, info);
-
+# land_one = run_helpers.land_one;
 @time runTEM!(info.tem.models.forward,
     run_helpers.loc_forcings,
     run_helpers.loc_spinup_forcings,

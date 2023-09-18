@@ -68,13 +68,6 @@
     }
   },
   "model_spinup": {
-    "differential_eqn": {
-      "absolute_tolerance": 1e-2,
-      "maxiters": 100,
-      "pools": ["cEco"],
-      "relative_tolerance": 1e-2,
-      "time_jump": 200.0
-    },
     "paths": {
       "restart_file_in": null,
       "restart_file_out": null
