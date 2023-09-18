@@ -271,33 +271,43 @@ function runSpinup(
     tem_spinup,
     _,
     ::DoRunSpinup) # do the spinup
-    seq_index = 1
     log_index = 1
     for spin_seq ∈ tem_spinup.sequence
-        forc_name = spin_seq.forcing
-        n_repeat = spin_seq.n_repeat
-        n_timesteps = spin_seq.n_timesteps
-        spinup_mode = spin_seq.spinup_mode
-        sel_forcing = spinup_forcings[forc_name]
-        spinup_models = selected_models
-        if spinup_mode == :spinup
-            spinup_models = selected_models[tem_models.is_spinup]
-        end
-        @debug "Spinup: \n         Sequence: $(seq_index), spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name)"
-        land = repeat_loop(spinup_models,
-            sel_forcing,
-            forcing_one_timestep,
-            land,
-            tem_helpers,
-            tem_spinup,
-            n_timesteps,
-            spinup_mode,
-            n_repeat,
-            log_index)
-            log_index += n_repeat
-        # end
-        seq_index += 1
+        do_sequence(spin_seq, selected_models, spinup_forcings, forcing_one_timestep, land, tem_helpers, tem_spinup, log_index)
+        log_index += spin_seq.n_repeat
     end
+    return land
+end
+
+function do_sequence(spin_seq::SpinSequence,
+    selected_models,
+    spinup_forcings,
+    forcing_one_timestep,
+    land,
+    tem_helpers,
+    tem_spinup,
+    log_index)
+    forc_name = spin_seq.forcing
+    n_repeat = spin_seq.n_repeat
+    n_timesteps = spin_seq.n_timesteps
+    spinup_mode = spin_seq.spinup_mode
+    sel_forcing = spinup_forcings[forc_name]
+    spinup_models = selected_models
+    if spinup_mode == :spinup
+        spinup_models = selected_models[tem_models.is_spinup]
+    end
+    @debug "Spinup: \n         spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name)"
+    land = repeat_loop(spinup_models,
+        sel_forcing,
+        forcing_one_timestep,
+        land,
+        tem_helpers,
+        tem_spinup,
+        n_timesteps,
+        spinup_mode,
+        n_repeat,
+        log_index)
+    # end
     return land
 end
 
