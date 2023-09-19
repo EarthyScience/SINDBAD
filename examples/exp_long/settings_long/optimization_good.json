@@ -83,7 +83,7 @@
     "default_observation": {
       "additive_unit_conversion": false,
       "bounds": null,
-      "data_path": "../data/fluxnet_cube/FLUXNET_v1.zarr",
+      "data_path": "/Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr",
       "is_categorical": false,
       "standard_name": null,
       "sindbad_unit": null,
@@ -99,7 +99,7 @@
     "variables": {
       "agb": {
         "cost_options": {
-          "cost_metric": "NNSE_inv"
+          "cost_metric": "NMAE1R"
         },
         "data": {
           "bounds": [0.0, 100000.0],
