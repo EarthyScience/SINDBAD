@@ -4,43 +4,56 @@ using SindbadTEM
 using YAXArrays
 using SindbadML
 #using SindbadVisuals
-#using ForwardDiff
+using ForwardDiff
+using Zygote
+using Optimisers
 using PreallocationTools
-#using CairoMakie
+using CairoMakie
+using JLD2
 
 toggleStackTraceNT()
-# include("gen_obs.jl")
 
-# obs_synt, params_map = out_synt();
+include("gen_obs.jl")
 
-# cov_sites = get_sites_cov()
-# ks = (:gpp, :transpiration, :evapotranspiration)
-# cbars = (:viridis, :inferno, :magma)
+obs_synt, params_map = out_synt();
 
-# path = dirname(Base.active_project())
+cov_sites = get_sites_cov()
 
-# for (i,k) in enumerate(ks)
-#     data_sites = getproperty(obs_synt, k)
-#     data_subset = data_sites(site = cov_sites)
-#     ds_ar = data_subset |> Array
-#     fig = Figure(; resolution = (2400,700))
-#     ax = Axis(fig[1,1]; xlabel = "time", ylabel = "site")
-#     obj = heatmap!(ax, ds_ar; colormap = cbars[i])
-#     Colorbar(fig[1,2], obj)
-#     fig
-#     save(joinpath(path, "maps_synt/variable_$(k).png"), fig)
-# end
+ks = (:gpp, :nee, :reco, :transpiration, :evapotranspiration, :agb, :ndvi)
+cbars = (:viridis, :seaborn_icefire_gradient, :batlow100, :inferno, :magma, :thermal, :fastie)
 
-# let 
-#     params_scaled = params_map |> Array
-#     fig = Figure(; resolution = (2400,700))
-#     ax = Axis(fig[1,1]; xlabel = "paramer", ylabel = "site")
-#     obj = heatmap!(ax, params_scaled; colormap = :tab20c,
-#         colorrange=(-1,20), highclip=:yellow, lowclip=:black,)
-#     Colorbar(fig[1,2], obj)
-#     fig
-#     save(joinpath(path, "maps_synt/parameters_map.png"), fig)
-# end
+path = dirname(Base.active_project())
+
+data_sites = getproperty(obs_synt, :ndvi)
+data_subset = data_sites(site = cov_sites)
+
+data_subset(site = "ZM-Mon") |> sum
+#mkpath(path)
+
+mkpath(joinpath(path, "maps_local/"))
+
+for (i,k) in enumerate(ks)
+    data_sites = getproperty(obs_synt, k)
+    data_subset = data_sites(site = cov_sites)
+    ds_ar = data_subset |> Array
+    fig = Figure(; resolution = (2400,700))
+    ax = Axis(fig[1,1]; xlabel = "time", ylabel = "site")
+    obj = heatmap!(ax, ds_ar; colormap = cbars[i])
+    Colorbar(fig[1,2], obj)
+    fig
+    save(joinpath(path, "maps_local/variable_$(k).png"), fig)
+end
+
+let 
+    params_scaled = params_map |> Array
+    fig = Figure(; resolution = (2400,700))
+    ax = Axis(fig[1,1]; xlabel = "paramer", ylabel = "site")
+    obj = heatmap!(ax, params_scaled; colormap = :tab20c,
+        colorrange=(-1,20), highclip=:yellow, lowclip=:black,)
+    Colorbar(fig[1,2], obj)
+    fig
+    save(joinpath(path, "maps_local/parameters_map.png"), fig)
+end
 
 
 experiment_json = "../exp_long/settings_long/experiment.json"
@@ -118,14 +131,6 @@ coreTEM!(
     land_init,
     tem...)
 
-@code_warntype coreTEM!(
-    models,
-    loc_forcing,
-    loc_spinup_forcing,
-    forcing_one_timestep,
-    loc_output,
-    land_init,
-    tem...)
 
 # setLogLevel()
 # setLogLevel(:debug)
@@ -157,22 +162,9 @@ param_to_index = param_indices(models, tbl_params);
 
 models = LongTuple(models...);
 
-@time siteLossInner(
-    tbl_params.default,
-    models,
-    loc_forcing,
-    loc_spinup_forcing,
-    forcing_one_timestep,
-    DiffCache.(loc_output),
-    land_init,
-    tem,
-    param_to_index,
-    loc_obs,
-    cost_options,
-    constraint_method
-    )
+# selected_models = updateModelParameters(info.tem.models.forward, param_vector, info.optim.param_model_id_val);
 
-@code_warntype siteLossInner(
+@time siteLossInner(
     tbl_params.default,
     models,
     loc_forcing,
@@ -210,7 +202,7 @@ println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 # load available covariates
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_f = forc.Tair.site
-c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
+c = Cube(joinpath(@__DIR__, "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
 xfeatures = cube_to_KA(c)
 
 sites = xfeatures.site
@@ -232,7 +224,7 @@ op = prepTEMOut(info, forcing.helpers);
 # data_optim = (;
 #     obs = obs_synt,
 # );
-xbatch = cov_sites[1:8]
+xbatch = cov_sites # [1:8]
 
 f_grads = zeros(Float32, n_params, length(xbatch))
 x_feat = xfeatures(; site=xbatch) 
@@ -257,45 +249,84 @@ gradsBatch!(
     constraint_method;
     logging=true)
     
-#isnan.(∇params) |> sum
-history_loss = train(
-    ml_baseline,
-    siteLossInner,
-    xfeatures[site=1:16],
-    models,
-    sites_f,
-    op.data,
-    forc,
-    obs, #obs_synt,
-    tbl_params, 
-    land_init_space,
-    forcing_one_timestep,
-    run_helpers.loc_spinup_forcings,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method;
-    nepochs=2,
-    bs = 8
-    )
+jldsave(joinpath(path, "test_grads_batch.jld2"); grads = f_grads)
 
+#=
+name="seq_training_output_test"
+nepoch = 2
+local_root = isnothing(local_root) ? dirname(Base.active_project()) : local_root
+f_path = joinpath(local_root, name)
+mkpath(f_path)
 
-# new_params = getParamsAct(up_params(; site=site_name), tbl_params)
+xfeatures = xfeatures[site=1:24]
+sites = xfeatures.site
 
-# space_run!(
-#     info.tem.models.forward,
-#     sites_parameters,
-#     tbl_params,
-#     sites_f,
-#     land_init_space,
-#     b_data,
-#     cov_sites,
-#     forcing_one_timestep,
-#     tem
-# )
+flat, re, opt_state = destructureNN(ml_baseline; nn_opt = Optimisers.Adam())
+n_params = length(ml_baseline[end].bias)
 
+xbatches = batch_shuffle(sites, bs; seed=123)
+new_sites = reduce(vcat, xbatches)
+tot_loss = fill(NaN32, length(new_sites), nepochs)
 
-# tempo = string.(forc.Tair.time);
-# out_names = info.optimization.observational_constraints
-# plot_output(op, obs, out_names, cov_sites, sites_f, tempo)
+p = Progress(nepochs; desc="Computing epochs...")
 
+for epoch ∈ 1:nepochs
+    xbatches = shuffle ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
+    for xbatch ∈ xbatches
+        
+        f_grads = zeros(Float32, n_params, length(xbatch))
+
+        x_feat = xfeatures(; site=xbatch)
+        inst_params, pb = Zygote.pullback((x, p) -> re(p)(x), x_feat, flat)
+        gradsBatch!(
+            siteLossInner,
+            f_grads,
+            inst_params,
+            models,
+            xbatch,
+            all_sites,
+            output_data,
+            forcing_data,
+            obs_data,
+            tbl_params, 
+            land_init_space,
+            forcing_one_timestep,
+            loc_spinup_forcings,
+            tem,
+            param_to_index,
+            cost_options,
+            constraint_method;
+            logging=false
+            )
+
+        _, ∇params = pb(f_grads)
+        opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
+    end
+
+    up_params_now = re(flat)(xfeatures(; site=new_sites))
+
+    # loss_now = get_site_losses(
+    #         loss_function,
+    #         up_params_now,
+    #         models,
+    #         new_sites,
+    #         all_sites,
+    #         output_data,
+    #         forcing_data,
+    #         obs_data,
+    #         tbl_params,
+    #         land_init_space,
+    #         forcing_one_timestep,
+    #         loc_spinup_forcings,
+    #         tem,
+    #         param_to_index,
+    #         cost_options,
+    #         constraint_method;
+    #         logging=false
+    #         )
+    # jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
+    # tot_loss[:, epoch] = loss_now # fill(epoch,length(new_sites)) 
+    # next!(p; showvalues=[(:epoch, epoch)])
+end
+
+=#
