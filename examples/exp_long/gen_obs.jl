@@ -8,11 +8,12 @@ using Random
 
 # setup experiment
 function out_synt()
-    experiment_json = "../exp_medium/settings_medium/experiment.json"
+    experiment_json = "../exp_long/settings_long/experiment.json"
     info = getExperimentInfo(experiment_json);
     tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
-        info.optim.model_parameters_to_optimize);
+        info.optim.model_parameters_to_optimize,
+        info.tem.helpers.numbers.sNT);
 
     forcing = getForcing(info);
     observations = getObservation(info, forcing.helpers);
@@ -43,7 +44,7 @@ function out_synt()
     n_neurons = 32
     n_params = sum(tbl_params.is_ml)
 
-    ml_baseline = DenseNN(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=312)
+    ml_baseline = DenseNN(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=1618033)
     sites_parameters = ml_baseline(xfeatures)
     params_bounded = getParamsAct.(sites_parameters, tbl_params)
     cov_sites = xfeatures.site
@@ -95,9 +96,10 @@ function out_synt()
     time_range = obs.gpp.time
     site_names = obs.gpp.site
     k_arrs = assemble_synt(op, Symbol.(out_names), time_range, site_names)
-
+    run_helpers = nothing
     return (; obs..., k_arrs...), params_bounded
 end
+
 
 function assemble_synt(output, out_names, time_range, site_names)
     k_arrs = []
