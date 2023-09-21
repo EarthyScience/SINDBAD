@@ -1,60 +1,38 @@
-# dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadML
+using Distributed
+using SharedArrays
+addprocs(10)
+
 using SindbadData
 using SindbadTEM
-using YAXArrays
 using SindbadML
-#using SindbadVisuals
 using ForwardDiff
 using Zygote
 using Optimisers
 using PreallocationTools
+using YAXArrays, YAXArrayBase
+using AxisKeys
+using Random
+
+@everywhere begin
+    using SindbadData
+    using SindbadTEM
+    using SindbadML
+    using ForwardDiff
+    using Zygote
+    using Optimisers
+    using PreallocationTools
+end
+
 using CairoMakie
 using JLD2
 
 toggleStackTraceNT()
+include("gen_obs.jl");
 
-include("gen_obs.jl")
-
-obs_synt, params_map = out_synt();
-
+obs_synt_s, params_map = out_synt();
 cov_sites = get_sites_cov()
 
-ks = (:gpp, :nee, :reco, :transpiration, :evapotranspiration, :agb, :ndvi)
-cbars = (:viridis, :seaborn_icefire_gradient, :batlow100, :inferno, :magma, :thermal, :fastie)
-
-path = dirname(Base.active_project())
-
-data_sites = getproperty(obs_synt, :ndvi)
-data_subset = data_sites(site = cov_sites)
-
-data_subset(site = "ZM-Mon") |> sum
-#mkpath(path)
-
-mkpath(joinpath(path, "maps_local/"))
-
-for (i,k) in enumerate(ks)
-    data_sites = getproperty(obs_synt, k)
-    data_subset = data_sites(site = cov_sites)
-    ds_ar = data_subset |> Array
-    fig = Figure(; resolution = (2400,700))
-    ax = Axis(fig[1,1]; xlabel = "time", ylabel = "site")
-    obj = heatmap!(ax, ds_ar; colormap = cbars[i])
-    Colorbar(fig[1,2], obj)
-    fig
-    save(joinpath(path, "maps_local/variable_$(k).png"), fig)
-end
-
-let 
-    params_scaled = params_map |> Array
-    fig = Figure(; resolution = (2400,700))
-    ax = Axis(fig[1,1]; xlabel = "paramer", ylabel = "site")
-    obj = heatmap!(ax, params_scaled; colormap = :tab20c,
-        colorrange=(-1,20), highclip=:yellow, lowclip=:black,)
-    Colorbar(fig[1,2], obj)
-    fig
-    save(joinpath(path, "maps_local/parameters_map.png"), fig)
-end
-
+@everywhere obs_synt = $obs_synt_s
 
 experiment_json = "../exp_long/settings_long/experiment.json"
 #info = getConfiguration(experiment_json);
@@ -72,9 +50,6 @@ observations = getObservation(info, forcing.helpers);
 
 forc = (; Pair.(forcing.variables, forcing.data)...);
 obs = (; Pair.(observations.variables, observations.data)...);
-
-#obs_array = getKeyedArrayWithNames(observations);
-#obsv = getKeyedArray(observations);
 
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
@@ -100,7 +75,7 @@ site_location = loc_space_inds[3]
 loc_land_init = land_init_space[3];
 
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(op.data, forc, obs, site_location); # obs_synt
+    getLocDataObsN(op.data, forc, obs_synt, site_location); # obs_synt
 
 loc_spinup_forcing = run_helpers.loc_spinup_forcings[site_location[1]];
 
@@ -120,7 +95,6 @@ coreTEM!(
         land_init,
         tem...)
 
-# @profview_allocs coreTEM!(inits..., data..., tem...)
 
 @time coreTEM!(
     models,
@@ -130,10 +104,6 @@ coreTEM!(
     loc_output,
     land_init,
     tem...)
-
-
-# setLogLevel()
-# setLogLevel(:debug)
 
 
 cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
@@ -148,21 +118,14 @@ new_options = [(; cost_metric= new_cost_options[i].cost_metric,
 #cost_options= cost_options
 constraint_method = info.optim.multi_constraint_method
 
+
 @time  getSiteLossTEM(models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem,
     loc_obs, cost_options, constraint_method)
-
-@code_warntype getSiteLossTEM(models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem,
-    loc_obs, cost_options, constraint_method)
-
-
 #CHUNK_SIZE = 13;
-
 models = info.tem.models.forward;
 param_to_index = param_indices(models, tbl_params);
 
 models = LongTuple(models...);
-
-# selected_models = updateModelParameters(info.tem.models.forward, param_vector, info.optim.param_model_id_val);
 
 @time siteLossInner(
     tbl_params.default,
@@ -197,19 +160,20 @@ println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     constraint_method
     )
 
-
-# ForwardDiff.gradient(f, x)
 # load available covariates
+
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_f = forc.Tair.site
-c = Cube(joinpath(@__DIR__, "../data/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
+c = Cube(joinpath(@__DIR__, "../data/fluxnet_covariates.zarr"));
 xfeatures = cube_to_KA(c)
 
+# RU-Ha1, IT-PT1, US-Me5
 sites = xfeatures.site
 sites = [s for s ∈ sites]
 
 sites = setdiff(sites, ["CA-NS6", "SD-Dem", "US-WCr", "ZM-Mon"])
 xfeatures = xfeatures(site=sites)
+
 
 # machine learning parameters baseline
 n_bs_feat = length(xfeatures.features)
@@ -220,117 +184,82 @@ ml_baseline = DenseNN(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
 sites_parameters = ml_baseline(xfeatures)
 #params_bounded = getParamsAct.(sites_parameters, tbl_params)
 cov_sites = xfeatures.site
+
+forcing_one_timestep=run_helpers.forcing_one_timestep
+
 #sites_parameters .= tbl_params.default
+
 op = prepTEMOut(info, forcing.helpers);
-# b_data = (; allocated_output = op.data, forcing=forc);
 
-# data_optim = (;
-#     obs = obs_synt,
-# );
-
-xbatch = cov_sites #[1:129]
-
-f_grads = zeros(Float32, n_params, length(xbatch))
-x_feat = xfeatures(; site=xbatch) 
-
-gradsBatch!(
-    siteLossInner,
-    f_grads,
-    sites_parameters,
-    models,
-    xbatch,
-    sites_f,
-    op.data,
-    forc,
-    obs,
-    tbl_params, 
-    land_init_space,
-    forcing_one_timestep,
-    run_helpers.loc_spinup_forcings,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method;
-    logging=true)
-    
-jldsave(joinpath(path, "test_grads_batch.jld2"); grads = f_grads)
-
-#=
-name="seq_training_output_test"
-nepoch = 2
-local_root = isnothing(local_root) ? dirname(Base.active_project()) : local_root
-f_path = joinpath(local_root, name)
+local_root = dirname(Base.active_project())  #isnothing(local_root) ? dirname(Base.active_project()) : local_root
+f_path = joinpath(local_root, "training_par")
 mkpath(f_path)
 
-xfeatures = xfeatures[site=1:24]
-sites = xfeatures.site
+# start training 
 
-flat, re, opt_state = destructureNN(ml_baseline; nn_opt = Optimisers.Adam())
+sites = xfeatures.site
+flat, re, opt_state = destructureNN(ml_baseline; nn_opt =  Optimisers.Adam())
 n_params = length(ml_baseline[end].bias)
+
+sites = sites[1:16]
+nepochs = 2
+shuffle_opt = true
+bs_seed = 123
+bs = 8
 
 xbatches = batch_shuffle(sites, bs; seed=123)
 new_sites = reduce(vcat, xbatches)
 tot_loss = fill(NaN32, length(new_sites), nepochs)
 
-p = Progress(nepochs; desc="Computing epochs...")
+#p = Progress(nepochs; desc="Computing epochs...")
+
+loc_spinup_forcings = run_helpers.loc_spinup_forcings
+
+models = info.tem.models.forward;
+param_to_index = param_indices(models, tbl_params);
+
+models = LongTuple(models...);
+
+@everywhere using SindbadML: scaledParams
+all_sites = sites_f
+
+@everywhere loc_spinup_forcings_par = $loc_spinup_forcings
 
 for epoch ∈ 1:nepochs
-    xbatches = shuffle ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
+    xbatches = shuffle_opt ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
     for xbatch ∈ xbatches
-        
-        f_grads = zeros(Float32, n_params, length(xbatch))
-
+        f_grads = SharedArray{Float32}(n_params, length(xbatch))
         x_feat = xfeatures(; site=xbatch)
+
         inst_params, pb = Zygote.pullback((x, p) -> re(p)(x), x_feat, flat)
-        gradsBatch!(
+
+        gradsBatchDistributed!(
             siteLossInner,
             f_grads,
             inst_params,
             models,
             xbatch,
             all_sites,
-            output_data,
-            forcing_data,
-            obs_data,
+            op.data,
+            forc,
+            loc_spinup_forcings,
+            obs,
             tbl_params, 
             land_init_space,
             forcing_one_timestep,
-            loc_spinup_forcings,
             tem,
             param_to_index,
             cost_options,
-            constraint_method;
-            logging=false
+            constraint_method
             )
 
         _, ∇params = pb(f_grads)
         opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
     end
-
     up_params_now = re(flat)(xfeatures(; site=new_sites))
 
-    # loss_now = get_site_losses(
-    #         loss_function,
-    #         up_params_now,
-    #         models,
-    #         new_sites,
-    #         all_sites,
-    #         output_data,
-    #         forcing_data,
-    #         obs_data,
-    #         tbl_params,
-    #         land_init_space,
-    #         forcing_one_timestep,
-    #         loc_spinup_forcings,
-    #         tem,
-    #         param_to_index,
-    #         cost_options,
-    #         constraint_method;
-    #         logging=false
-    #         )
-    # jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
-    # tot_loss[:, epoch] = loss_now # fill(epoch,length(new_sites)) 
-    # next!(p; showvalues=[(:epoch, epoch)])
-end
+    #loss_now = get_site_losses()
 
-=#
+    #jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
+    # tot_loss[:, epoch] =  1 #loss_now
+end
