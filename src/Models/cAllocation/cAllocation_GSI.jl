@@ -37,10 +37,10 @@ function compute(p_struct::cAllocation_GSI, forcing, land, helpers)
         c_allocation_f_soilW ∈ land.cAllocationSoilW
         c_allocation_f_soilT ∈ land.cAllocationSoilT
     end
-
+    c_two = one(c_allocation_f_soilT) + one(c_allocation_f_soilT)
     # allocation to root; wood & leaf
-    a_cVegLeaf = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * t_two)
-    a_cVegWood = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * t_two)
+    a_cVegLeaf = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * c_two)
+    a_cVegWood = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * c_two)
     a_cVegRoot = c_allocation_f_soilT / ((c_allocation_f_soilW + c_allocation_f_soilT))
 
     # @needscheck. from semda l and w are allocated more when there is no water stress
