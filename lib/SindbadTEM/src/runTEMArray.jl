@@ -30,7 +30,7 @@ function coreTEM!(
     _,
     ::DoNotSpinupTEM) # without spinup
 
-    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers,tem_helpers.run.debug_model)
+    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers, tem_helpers.run.debug_model)
 
     timeLoopTEM!(
         selected_models,
@@ -71,7 +71,7 @@ function coreTEM!(
     tem_spinup,
     ::DoSpinupTEM) # with spinup
 
-    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers,tem_helpers.run.debug_model)
+    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers.model_helpers, tem_helpers.run.debug_model)
 
     # # @time land_spin = spinupTEM(
     #     selected_models,
@@ -98,7 +98,10 @@ function coreTEM!(
         forcing_one_timestep,
         loc_output,
         land_spin,
-        tem_helpers,
+        tem_helpers.vals.forc_types,
+        tem_helpers.model_helpers,
+        tem_helpers.vals.output_vars,
+        tem_helpers.n_timesteps,
         tem_helpers.run.debug_model)
     return nothing
 end
@@ -263,16 +266,34 @@ function timeLoopTEM!(
     forcing_one_timestep,
     loc_output,
     land,
-    tem_helpers,
+    forc_types,
+    model_helpers,
+    output_vars,
+    n_timesteps,
     ::DoNotDebugModel) # do not debug the models
-    for ts ∈ 1:tem_helpers.n_timesteps
-        f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
-        land = computeTEM(selected_models, f_ts, land, tem_helpers)
-        setOutputForTimeStep!(loc_output, land, ts, tem_helpers.vals.output_vars)
+    forc_types = 
+    for ts ∈ 1:n_timesteps
+        f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, forc_types)
+        land = computeTEM(selected_models, f_ts, land, model_helpers)
+        setOutputForTimeStep!(loc_output, land, ts, output_vars)
     end
     return nothing
 end
 
+function dooneT(
+    selected_models,
+    loc_forcing,
+    forcing_one_timestep,
+    loc_output,
+    land,
+    tem_helpers,
+    ts
+)
+    f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
+    land = computeTEM(selected_models, f_ts, land, tem_helpers)
+    setOutputForTimeStep!(loc_output, land, ts, tem_helpers.vals.output_vars)
+    return nothing
+end
 
 """
     timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, DoDebugModel)
@@ -301,10 +322,10 @@ function timeLoopTEM!(
     @time f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, 1, tem_helpers.vals.forc_types)
     @info "\n-------------\n"
     @info "\neach model\n"
-    @time land = computeTEM(selected_models, f_ts, land, tem_helpers, tem_helpers.run.debug_model)
+    @time land = computeTEM(selected_models, f_ts, land, tem_helpers.model_helpers, tem_helpers.run.debug_model)
     @info "\n-------------\n"
     @info "\nall models\n"
-    @time land = computeTEM(selected_models, f_ts, land, tem_helpers)
+    @time land = computeTEM(selected_models, f_ts, land, tem_helpers.model_helpers)
     @info "\n-------------\n"
     @info "\nset output\n"
     @time setOutputForTimeStep!(loc_output, land, 1, tem_helpers.vals.output_vars)

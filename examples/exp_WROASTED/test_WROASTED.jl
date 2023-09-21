@@ -89,7 +89,7 @@ foreach(costOpt) do var_row
         tspan = first(non_nan_index):last(non_nan_index)
     end
     obs_σ = obs_σ[tspan]
-    obs_var = obs_var[tspan]
+    obs_var = obs_var[tspan, 1, 1, 1]
     def_var = def_var[tspan, 1, 1, 1]
     opt_var = opt_var[tspan, 1, 1, 1]
 

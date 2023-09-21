@@ -96,17 +96,25 @@ getTEMVals(forcing, output, tem_helpers)
 """
 function getTEMVals(forcing, output, tem, tem_helpers)
     @info "     preparing vals for generated functions"
-    vals = (; forc_types=Val(forcing.f_types), forc_vars=Val(forcing.variables), output_vars=Val(output.variables))
+    vals = (; forc_types=Val(forcing.f_types), output_vars=Val(output.variables))
+    upd_tem_helpers = (;)
+    # vals = (; forc_types=Val(forcing.f_types), forc_vars=Val(forcing.variables), output_vars=Val(output.variables))
     tem_dates = tem_helpers.dates
     tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
-    tem_helpers = setTupleField(tem_helpers, (:dates, tem_dates))
+    # upd_tem_helpers = setTupleField(upd_tem_helpers, (:dates, tem_dates))
     time_size = getproperty(forcing.helpers.sizes, Symbol(forcing.helpers.dimensions.time))
-    tem_helpers = setTupleField(tem_helpers, (:n_timesteps, time_size))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:n_timesteps, time_size))
     tem_numbers = tem_helpers.numbers
     tem_numbers = (; tolerance=tem_numbers.tolerance)
-    tem_helpers = setTupleField(tem_helpers, (:vals, vals))
-    tem_helpers = setTupleField(tem_helpers, (:numbers, tem_numbers))
-    tem_with_types = setTupleField(tem, (:helpers, tem_helpers))
+    model_helpers = (;)
+    model_helpers = setTupleField(model_helpers, (:dates, tem_dates))
+    model_helpers = setTupleField(model_helpers, (:run, (; catch_model_errors=tem_helpers.run.catch_model_errors)))
+    model_helpers = setTupleField(model_helpers, (:numbers, tem_numbers))
+    model_helpers = setTupleField(model_helpers, (:pools, tem_helpers.pools))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:vals, vals))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:model_helpers, model_helpers))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:run, tem_helpers.run))
+    tem_with_types = setTupleField(tem, (:helpers, upd_tem_helpers))
     return tem_with_types
 end
 
@@ -150,7 +158,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
         mod_field = first(ov)
         mod_subfield = last(ov)
         lvar = getproperty(getproperty(land_one, mod_field), mod_subfield)
-        if lvar isa Vector
+        if lvar isa AbstractArray
             eltype(lvar).(od)
         else
             typeof(lvar).(od)
@@ -185,7 +193,8 @@ function getSpinupTemLite(tem_with_types)
     newseqs = []
     for seq in tem_spinup.sequence
         SpinSequenceWithAggregator
-        ns = SpinSequence(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.options)
+        ns = (; forcing=seq.forcing, n_repeat= seq.n_repeat, n_timesteps=seq.n_timesteps, spinup_mode=seq.spinup_mode, options=seq.options)
+        # ns = SpinSequence(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.options)
         push!(newseqs, ns)
     end
     restart_file_in = tem_spinup.paths.restart_file_in
@@ -332,8 +341,8 @@ end
 function runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
     forcing_one_timestep = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.helpers.vals.forc_types)
     land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
-        tem.helpers)
-    land_one = computeTEM(selected_models, forcing_one_timestep, land_prec, tem.helpers)
+        tem.helpers.model_helpers)
+    land_one = computeTEM(selected_models, forcing_one_timestep, land_prec, tem.helpers.model_helpers)
     land_one = removeEmptyTupleFields(land_one)
     land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
     return forcing_one_timestep, land_one
