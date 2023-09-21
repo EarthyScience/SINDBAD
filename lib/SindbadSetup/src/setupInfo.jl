@@ -273,7 +273,7 @@ function generatePoolsInfo(info::NamedTuple)
         hlp_elem = setTupleField(hlp_elem, (:all_components, (;)))
         hlp_elem = setTupleField(hlp_elem, (:zeros, (;)))
         hlp_elem = setTupleField(hlp_elem, (:ones, (;)))
-        hlp_elem = setTupleField(hlp_elem, (:vals, (;)))
+        # hlp_elem = setTupleField(hlp_elem, (:vals, (;)))
 
         # main pools
         for main_pool ∈ main_pool_name
@@ -403,7 +403,7 @@ function generatePoolsInfo(info::NamedTuple)
             vals_tuple = setTupleSubfield(vals_tuple, :zix, (combined_pool_name, Val(hlp_elem.zix)))
             vals_tuple = setTupleSubfield(vals_tuple, :self, (combined_pool_name, Val(combined_pool_name)))
             vals_tuple = setTupleSubfield(vals_tuple, :all_components, (combined_pool_name, Val(all_components)))
-            hlp_elem = setTupleField(hlp_elem, (:vals, vals_tuple))
+            # hlp_elem = setTupleField(hlp_elem, (:vals, vals_tuple))
             hlp_elem = setTupleSubfield(hlp_elem, :components, (combined_pool_name, Tuple(components)))
             # onetyped = ones(length(initial_values))
             hlp_elem = setTupleSubfield(hlp_elem,

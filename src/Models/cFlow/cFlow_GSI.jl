@@ -68,10 +68,7 @@ function adjust_pk(c_eco_k, kValue, flowValue, maxValue, zix, helpers)
     c_eco_k_f_sum = zero(eltype(c_eco_k))
     for ix ∈ zix
         # @show ix, c_eco_k[ix]
-        tmp = c_eco_k[ix] + kValue + flowValue
-        if tmp > maxValue
-            tmp = maxValue
-        end
+        tmp = min(c_eco_k[ix] + kValue + flowValue, maxValue)
         @rep_elem tmp => (c_eco_k, ix, :cEco)
         c_eco_k_f_sum = c_eco_k_f_sum + tmp
     end
@@ -97,7 +94,7 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     eco_stressor_now = c_allocation_f_soilW * c_allocation_f_soilT * c_allocation_f_cloud
 
     # get the smoothened stressor based on contribution of previous steps using ARMA-like formulation
-    eco_stressor = (o_one - f_τ) * eco_stressor_prev + f_τ * eco_stressor_now
+    eco_stressor = (one(f_τ) - f_τ) * eco_stressor_prev + f_τ * eco_stressor_now
 
     slope_eco_stressor = eco_stressor - eco_stressor_prev
 
@@ -111,46 +108,28 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     leaf_to_reserve = leaf_root_to_reserve # should it be divided by 2?
     root_to_reserve = leaf_root_to_reserve
     #todo this is needed to make sure that the flow out of Leaf or root does not exceed one. was not needed in matlab version, but reaches this point often in julia, when the eco_stressor suddenly drops from 1 to near zero.
-    k_shedding_leaf = min(shedding_rate, o_one - leaf_to_reserve)
-    k_shedding_root = min(shedding_rate, o_one - root_to_reserve)
+    k_shedding_leaf = min(shedding_rate, one(leaf_to_reserve) - leaf_to_reserve)
+    k_shedding_root = min(shedding_rate, one(root_to_reserve) - root_to_reserve)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
-    Re2L_i = z_zero
+    Re2L_i = zero(slope_leaf_root_to_reserve)
     if c_allocation_f_soilW + c_allocation_f_cloud !== z_zero
         Re2L_i = reserve_to_leaf_root * (c_allocation_f_soilW / (c_allocation_f_cloud + c_allocation_f_soilW)) # if water stressor is high, , larger fraction of reserve goes to the leaves for light acquisition
     end
-    Re2R_i = reserve_to_leaf_root * (o_one - Re2L_i) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
+    Re2R_i = reserve_to_leaf_root * (one(Re2L_i) - Re2L_i) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
 
     # adjust the outflow rate from the flow pools
-
-    # # get the indices of leaf & root
-    # cVegLeafzix = getZix(land.pools.cVegLeaf)
-    # cVegRootzix = getZix(land.pools.cVegRoot)
-    # cVegReservezix = getZix(land.pools.cVegReserve)
-
-    # c_eco_k[cVegLeafzix] .= min.((c_eco_k[cVegLeafzix] .+ k_shedding_leaf .+ leaf_to_reserve), o_one)
-    # leaf_to_reserve_frac = leaf_to_reserve ./ (c_eco_k[cVegLeafzix])
-    # k_shedding_leaf_frac = k_shedding_leaf / (c_eco_k[cVegLeafzix])
-
-    # c_eco_k[cVegRootzix] .= min.((c_eco_k[cVegRootzix] .+ k_shedding_root .+ root_to_reserve), o_one)
-    # root_to_reserve_frac = root_to_reserve ./ (c_eco_k[cVegRootzix])
-    # k_shedding_root_frac = k_shedding_root / (c_eco_k[cVegRootzix])
-
-    # c_eco_k[cVegReservezix] .= min.((c_eco_k[cVegReservezix] .+ reserve_to_leaf .+ reserve_to_root), o_one)
-    # reserve_to_leaf_frac = reserve_to_leaf ./ c_eco_k[cVegReservezix]
-    # reserve_to_root_frac = reserve_to_root ./ c_eco_k[cVegReservezix]
-
     # @show reserve_to_leaf_frac, reserve_to_root_frac
 
-    c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, k_shedding_leaf, leaf_to_reserve, o_one, helpers.pools.zix.cVegLeaf, helpers)
+    c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, k_shedding_leaf, leaf_to_reserve, one(leaf_to_reserve), helpers.pools.zix.cVegLeaf, helpers)
     leaf_to_reserve_frac = getFrac(leaf_to_reserve, c_eco_k_f_sum)
     k_shedding_leaf_frac = getFrac(k_shedding_leaf, c_eco_k_f_sum)
 
-    c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, k_shedding_root, root_to_reserve, o_one, helpers.pools.zix.cVegRoot, helpers)
+    c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, k_shedding_root, root_to_reserve, one(root_to_reserve), helpers.pools.zix.cVegRoot, helpers)
     root_to_reserve_frac = getFrac(root_to_reserve, c_eco_k_f_sum)
     k_shedding_root_frac = getFrac(k_shedding_root, c_eco_k_f_sum)
 
-    c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, Re2L_i, Re2R_i, o_one, helpers.pools.zix.cVegReserve, helpers)
+    c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, Re2L_i, Re2R_i, one(Re2R_i), helpers.pools.zix.cVegReserve, helpers)
     reserve_to_leaf_frac = getFrac(Re2L_i, c_eco_k_f_sum)
     reserve_to_root_frac = getFrac(Re2R_i, c_eco_k_f_sum)
 
