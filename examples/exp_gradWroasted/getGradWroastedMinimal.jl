@@ -105,6 +105,7 @@ CHUNK_SIZE = 10
 
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
+dualDefs = ForwardDiff.Dual.(tbl_params.default);
 dualDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
 @time mods = updateModelParameters(info.tem.models.forward, dualDefs, info.optim.param_model_id_val);
 

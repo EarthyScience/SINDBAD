@@ -178,6 +178,47 @@ function getData(model_output::landWrapper, observations, cost_option)
     return (y, yσ, ŷ)
 end
 
+
+
+"""
+    getData(model_output::landWrapper, observations, cost_option)
+
+
+
+# Arguments:
+- `model_output`: a NT of SINDBAD model output time series as a NT of variable names
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
+- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
+"""
+function getData(model_output::NamedTuple, observations, cost_option)
+    obs_ind = cost_option.obs_ind
+    mod_field = cost_option.mod_field
+    mod_subfield = cost_option.mod_subfield
+    ŷ = model_output
+    if hasproperty(model_output, mod_subfield)
+        ŷ = getproperty(model_output, mod_subfield)
+    else
+        sfname = Symbol(String(mod_field) * "__" * String(mod_subfield))
+        ŷ = getproperty(model_output, sfname)
+    end
+    y = observations[obs_ind]
+    yσ = observations[obs_ind+1]
+    if size(ŷ, 2) == 1
+        ŷ = getModelOutputView(ŷ)
+        y = y[:]
+        yσ = yσ[:]
+    end
+    # ymask = observations[obs_ind + 2]
+
+    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
+
+    y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
+
+    return (y, yσ, ŷ)
+end
+
+
+
 """
     getData(model_output::AbstractArray, observations, cost_option)
 

@@ -4,7 +4,7 @@ export foldlUnrolled
 export precomputeTEM
 
 """
-    computeTEM(models, forcing, land, tem_helpers, ::DoDebugModel)
+    computeTEM(models, forcing, land, model_helpers, ::DoDebugModel)
 
 debug the compute function of SINDBAD models
 
@@ -12,20 +12,20 @@ debug the compute function of SINDBAD models
 - `models`: a list of SINDBAD models to run
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `model_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::DoDebugModel`: a type dispatch to debug the compute functions of model
 """
-function computeTEM(models, forcing, land, tem_helpers, ::DoDebugModel) # debug the models
+function computeTEM(models, forcing, land, model_helpers, ::DoDebugModel) # debug the models
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
         println("compute: $(typeof(model))")
-        @time _land = Models.compute(model, forcing, _land, tem_helpers)#::otype
+        @time _land = Models.compute(model, forcing, _land, model_helpers)#::otype
     end
 end
 
 
 """
-    computeTEM(models, forcing, land, tem_helpers, ::DoNotDebugModel)
+    computeTEM(models, forcing, land, model_helpers, ::DoNotDebugModel)
 
 run the compute function of SINDBAD models
 
@@ -33,16 +33,16 @@ run the compute function of SINDBAD models
 - `models`: a list of SINDBAD models to run
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `model_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::DoNotDebugModel`: a type dispatch to not debug but run the compute functions of model
 """
-function computeTEM(models, forcing, land, tem_helpers, ::DoNotDebugModel) # do not debug the models 
-    return computeTEM(models, forcing, land, tem_helpers) 
+function computeTEM(models, forcing, land, model_helpers, ::DoNotDebugModel) # do not debug the models 
+    return computeTEM(models, forcing, land, model_helpers) 
 end
 
 
 """
-    computeTEM(models, forcing, land, tem_helpers)
+    computeTEM(models, forcing, land, model_helpers)
 
 run the compute function of SINDBAD models
 
@@ -50,16 +50,16 @@ run the compute function of SINDBAD models
 - `models`: a list of SINDBAD models to run
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `model_helpers`: helper NT with necessary objects for model run and type consistencies
 """
-function computeTEM(models, forcing, land, tem_helpers) 
+function computeTEM(models, forcing, land, model_helpers) 
     return foldlUnrolled(models; init=land) do _land, model
-        _land = Models.compute(model, forcing, _land, tem_helpers)
+        _land = Models.compute(model, forcing, _land, model_helpers)
     end
 end
 
 """
-    definePrecomputeTEM(models, forcing, land, tem_helpers)
+    definePrecomputeTEM(models, forcing, land, model_helpers)
 
 run the define and precompute functions of SINDBAD models to instantiate all fields of land
 
@@ -67,12 +67,12 @@ run the define and precompute functions of SINDBAD models to instantiate all fie
 - `models`: a list of SINDBAD models to run
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `model_helpers`: helper NT with necessary objects for model run and type consistencies
 """
-function definePrecomputeTEM(models, forcing, land, tem_helpers)
+function definePrecomputeTEM(models, forcing, land, model_helpers)
     return foldlUnrolled(models; init=land) do _land, model
-        _land = Models.define(model, forcing, _land, tem_helpers)
-        _land = Models.precompute(model, forcing, _land, tem_helpers)
+        _land = Models.define(model, forcing, _land, model_helpers)
+        _land = Models.precompute(model, forcing, _land, model_helpers)
     end
 end
 
@@ -93,7 +93,7 @@ end
 
 
 """
-    precomputeTEM(models, forcing, land, tem_helpers, ::DoDebugModel)
+    precomputeTEM(models, forcing, land, model_helpers, ::DoDebugModel)
 
 debug the precompute function of SINDBAD models
 
@@ -101,20 +101,20 @@ debug the precompute function of SINDBAD models
 - `models`: a list of SINDBAD models to run
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `model_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::DoDebugModel`: a type dispatch to debug the compute functions of model
 """
-function precomputeTEM(models, forcing, land, tem_helpers, ::DoDebugModel) # debug the models
+function precomputeTEM(models, forcing, land, model_helpers, ::DoDebugModel) # debug the models
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
         println("precompute: $(typeof(model))")
-        @time _land = Models.precompute(model, forcing, _land, tem_helpers)#::otype
+        @time _land = Models.precompute(model, forcing, _land, model_helpers)#::otype
     end
 end
 
 
 """
-    precomputeTEM(models, forcing, land, tem_helpers, ::DoNotDebugModel)
+    precomputeTEM(models, forcing, land, model_helpers, ::DoNotDebugModel)
 
 run the precompute function of SINDBAD models
 
@@ -122,16 +122,16 @@ run the precompute function of SINDBAD models
 - `models`: a list of SINDBAD models to run
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `model_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::DoNotDebugModel`: a type dispatch to not debug but run the compute functions of model
 """
-function precomputeTEM(models, forcing, land, tem_helpers, ::DoNotDebugModel) # do not debug the models 
-    return precomputeTEM(models, forcing, land, tem_helpers) 
+function precomputeTEM(models, forcing, land, model_helpers, ::DoNotDebugModel) # do not debug the models 
+    return precomputeTEM(models, forcing, land, model_helpers) 
 end
 
 
 """
-    precomputeTEM(models, forcing, land, tem_helpers)
+    precomputeTEM(models, forcing, land, model_helpers)
 
 run the precompute function of SINDBAD models to instantiate all fields of land
 
@@ -139,10 +139,10 @@ run the precompute function of SINDBAD models to instantiate all fields of land
 - `models`: a list of SINDBAD models to run
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `model_helpers`: helper NT with necessary objects for model run and type consistencies
 """
-function precomputeTEM(models, forcing, land, tem_helpers)
+function precomputeTEM(models, forcing, land, model_helpers)
     return foldlUnrolled(models; init=land) do _land, model
-        _land = Models.precompute(model, forcing, _land, tem_helpers)
+        _land = Models.precompute(model, forcing, _land, model_helpers)
     end
 end

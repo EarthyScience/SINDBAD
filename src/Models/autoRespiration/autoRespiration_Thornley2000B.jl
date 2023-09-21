@@ -37,7 +37,6 @@ function compute(p_struct::autoRespiration_Thornley2000B, forcing, land, helpers
         gpp ∈ land.fluxes
         C_to_N_cVeg ∈ land.cCycleBase
         auto_respiration_f_airT ∈ land.autoRespirationAirT
-        (z_zero, o_one) ∈ land.wCycleBase
     end
     # adjust nitrogen efficiency rate of maintenance respiration to the current
     # model time step
@@ -50,11 +49,11 @@ function compute(p_struct::autoRespiration_Thornley2000B, forcing, land, helpers
 
         # scalars of maintenance respiration for models A; B & C
         # km is the maintenance respiration coefficient [d-1]
-        k_respiration_maintain_ix = minOne(o_one / C_to_N_cVeg[ix] * RMN * auto_respiration_f_airT)
+        k_respiration_maintain_ix = minOne(one(eltype(C_to_N_cVeg)) / C_to_N_cVeg[ix] * RMN * auto_respiration_f_airT)
         k_respiration_maintain_su_ix = k_respiration_maintain[ix] * YG
 
         # growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
-        RA_G_ix = (o_one - YG) * (gpp * c_allocation[ix])
+        RA_G_ix = (one(YG) - YG) * (gpp * c_allocation[ix])
 
         # maintenance respiration: R_m = km * (C + YG * GPP * allocationToPool)
         RA_M_ix = k_respiration_maintain_ix * (cEco[ix] + YG * gpp * c_allocation[ix])
