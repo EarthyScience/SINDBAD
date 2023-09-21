@@ -29,6 +29,10 @@ data_subset = data_sites(site = cov_sites)
 
 data_subset(site = "ZM-Mon") |> sum
 #mkpath(path)
+name_exp = "long_seq"
+#path = dirname(Base.active_project())
+path = joinpath("/Net/Groups/BGI/work_3/scratch/lalonso/SindbadRuns/", name_exp)
+mkpath(path)
 
 mkpath(joinpath(path, "maps_local/"))
 
@@ -56,7 +60,7 @@ let
 end
 
 
-experiment_json = "../exp_long/settings_long/experiment.json"
+experiment_json = "../exp_long_slurm/settings_long/experiment.json"
 #info = getConfiguration(experiment_json);
 #info = setupInfo(info);
 
@@ -228,11 +232,6 @@ param_to_index = param_indices(models, tbl_params);
 
 models = LongTuple(models...);
 
-name = "training_seq"
-local_root = dirname(Base.active_project())  #isnothing(local_root) ? dirname(Base.active_project()) : local_root
-f_path = joinpath(local_root, name)
-mkpath(f_path)
-
 using SindbadML: scaledParams
 all_sites = sites_f
 
@@ -294,7 +293,7 @@ for epoch ∈ 1:nepochs
             constraint_method;
             logging=false
             )
-    jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
+    jldsave(joinpath(path, "$(name_exp)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
     tot_loss[:, epoch] =  loss_now
     println("epoch: ", epoch)
 end
