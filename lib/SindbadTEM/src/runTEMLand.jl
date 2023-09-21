@@ -319,7 +319,6 @@ function timeLoopTEM(
     land,
     tem_helpers,
     ::DoNotDebugModel) # do not debug the models
-    # num_timesteps = getForcingTimeSize(forcing, tem_helpers.vals.forc_vars)
     land_time_series = map(1:tem_helpers.n_timesteps) do ts
         f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
         land = computeTEM(selected_models, f_ts, land, tem_helpers)

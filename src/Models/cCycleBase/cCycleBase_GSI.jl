@@ -76,9 +76,9 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     for ix ∈ eachindex(vegZix)
         @rep_elem p_C_to_N_cVeg[ix] => (C_to_N_cVeg, vegZix[ix], :cEco)
     end
-
+    c_one = one(eltype(c_eco_k_base))
     for i ∈ eachindex(c_eco_k_base)
-        tmp = o_one - (exp(-c_τ_eco[i])^(o_one / helpers.dates.timesteps_in_year))
+        tmp = c_one - (exp(-c_τ_eco[i])^(c_one / helpers.dates.timesteps_in_year))
         @rep_elem tmp => (c_eco_k_base, i, :cEco)
     end
 

@@ -23,7 +23,7 @@ end
 
 
 """
-    getForcingForTimeStep(forcing, forcing_t, ts, Val{forc_vars})
+    getForcingForTimeStep(forcing, forcing_t, ts, Val{forc_with_type})
 
 
 
