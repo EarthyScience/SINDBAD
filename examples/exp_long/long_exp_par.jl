@@ -1,6 +1,6 @@
 using Distributed
 using SharedArrays
-addprocs(10)
+addprocs(4)
 
 using SindbadData
 using SindbadTEM
@@ -223,7 +223,7 @@ models = LongTuple(models...);
 @everywhere using SindbadML: scaledParams
 all_sites = sites_f
 
-@everywhere loc_spinup_forcings_par = $loc_spinup_forcings
+#@everywhere loc_spinup_forcings_par = $loc_spinup_forcings
 
 for epoch ∈ 1:nepochs
     xbatches = shuffle_opt ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
@@ -233,33 +233,58 @@ for epoch ∈ 1:nepochs
 
         inst_params, pb = Zygote.pullback((x, p) -> re(p)(x), x_feat, flat)
 
-        gradsBatchDistributed!(
+        @sync @distributed for idx ∈ eachindex(xbatch)
+
+            site_name, new_vals = scaledParams(inst_params, tbl_params, xbatch, idx)
+            site_location = name_to_id(site_name, all_sites)
+            land_init = land_init_space[site_location[1]]
+            loc_spinup_forcing = loc_spinup_forcings[site_location[1]];
+    
+            loc_forcing, loc_output, loc_obs  = getLocDataObsN(op.data, forc, obs_synt, site_location) # check output order in original definition
+    
+            gg=ForwardDiffGrads(
+                siteLossInner,
+                new_vals,
+                models,
+                loc_forcing,
+                loc_spinup_forcing,
+                forcing_one_timestep,
+                DiffCache.(loc_output),
+                land_init,
+                tem,
+                param_to_index,
+                loc_obs,
+                cost_options,
+                constraint_method
+                )
+            f_grads[:, idx] = gg
+            println("batch site: ", site_name)
+        end
+        _, ∇params = pb(f_grads)
+        opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
+        println("batch: ", now())
+    end
+    up_params_now = re(flat)(xfeatures(; site=new_sites))
+    loss_now =  get_site_losses(
             siteLossInner,
-            f_grads,
-            inst_params,
+            up_params_now,
             models,
-            xbatch,
-            all_sites,
+            new_sites,
+            sites_f,
             op.data,
             forc,
             loc_spinup_forcings,
-            obs,
-            tbl_params, 
-            land_init_space,
             forcing_one_timestep,
+            obs_synt,
+            tbl_params,
+            land_init_space,
             tem,
             param_to_index,
             cost_options,
-            constraint_method
+            constraint_method;
+            logging=false
             )
-
-        _, ∇params = pb(f_grads)
-        opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
-    end
-    up_params_now = re(flat)(xfeatures(; site=new_sites))
-
-    #loss_now = get_site_losses()
-
     #jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
-    # tot_loss[:, epoch] =  1 #loss_now
+    tot_loss[:, epoch] =  loss_now
+    println("epoch: ", epoch)
 end

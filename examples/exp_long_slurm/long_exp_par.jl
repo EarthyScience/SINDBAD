@@ -1,19 +1,38 @@
-# dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadML
+using Distributed
+using SharedArrays
+addprocs(9)
+
 using SindbadData
 using SindbadTEM
-using YAXArrays
 using SindbadML
-#using SindbadVisuals
 using ForwardDiff
 using Zygote
 using Optimisers
 using PreallocationTools
+using YAXArrays, YAXArrayBase
+using AxisKeys
+using Random
+
+@everywhere begin
+    using SindbadData
+    using SindbadTEM
+    using SindbadML
+    using ForwardDiff
+    using Zygote
+    using Optimisers
+    using PreallocationTools
+end
+
 using CairoMakie
 using JLD2
 
 toggleStackTraceNT()
+include("gen_obs.jl");
 
-include("gen_obs.jl")
+obs_synt_s, params_map = out_synt();
+cov_sites = get_sites_cov()
+
+@everywhere obs_synt = $obs_synt_s
 
 obs_synt, params_map = out_synt();
 
@@ -29,6 +48,10 @@ data_subset = data_sites(site = cov_sites)
 
 data_subset(site = "ZM-Mon") |> sum
 #mkpath(path)
+name_exp = "long_par"
+#path = dirname(Base.active_project())
+path = joinpath("/Net/Groups/BGI/work_3/scratch/lalonso/SindbadRuns/", name_exp)
+mkpath(path)
 
 mkpath(joinpath(path, "maps_local/"))
 
@@ -56,7 +79,8 @@ let
 end
 
 
-experiment_json = "../exp_long/settings_long/experiment.json"
+experiment_json = "../exp_long_slurm/settings_long_slurm/experiment.json"
+
 #info = getConfiguration(experiment_json);
 #info = setupInfo(info);
 
@@ -72,7 +96,6 @@ observations = getObservation(info, forcing.helpers);
 
 forc = (; Pair.(forcing.variables, forcing.data)...);
 obs = (; Pair.(observations.variables, observations.data)...);
-
 
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
@@ -98,7 +121,7 @@ site_location = loc_space_inds[3]
 loc_land_init = land_init_space[3];
 
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(op.data, forc, obs, site_location); # obs_synt
+    getLocDataObsN(op.data, forc, obs_synt, site_location); # obs_synt
 
 loc_spinup_forcing = run_helpers.loc_spinup_forcings[site_location[1]];
 
@@ -118,6 +141,17 @@ coreTEM!(
         land_init,
         tem...)
 
+
+@time coreTEM!(
+    models,
+    loc_forcing,
+    loc_spinup_forcing,
+    forcing_one_timestep,
+    loc_output,
+    land_init,
+    tem...)
+
+
 cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
 new_cost_options = Tuple(cost_options);
 
@@ -130,18 +164,14 @@ new_options = [(; cost_metric= new_cost_options[i].cost_metric,
 #cost_options= cost_options
 constraint_method = info.optim.multi_constraint_method
 
+
 @time  getSiteLossTEM(models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem,
     loc_obs, cost_options, constraint_method)
-
-
 #CHUNK_SIZE = 13;
-
 models = info.tem.models.forward;
 param_to_index = param_indices(models, tbl_params);
 
 models = LongTuple(models...);
-
-# selected_models = updateModelParameters(info.tem.models.forward, param_vector, info.optim.param_model_id_val);
 
 @time siteLossInner(
     tbl_params.default,
@@ -176,19 +206,20 @@ println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     constraint_method
     )
 
-
-# ForwardDiff.gradient(f, x)
 # load available covariates
+
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_f = forc.Tair.site
-c = Cube(joinpath(@__DIR__, "../data/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
+c = Cube(joinpath(@__DIR__, "../data/fluxnet_covariates.zarr"));
 xfeatures = cube_to_KA(c)
 
+# RU-Ha1, IT-PT1, US-Me5
 sites = xfeatures.site
 sites = [s for s ∈ sites]
 
 sites = setdiff(sites, ["CA-NS6", "SD-Dem", "US-WCr", "ZM-Mon"])
 xfeatures = xfeatures(site=sites)
+
 
 # machine learning parameters baseline
 n_bs_feat = length(xfeatures.features)
@@ -199,7 +230,11 @@ ml_baseline = DenseNN(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
 sites_parameters = ml_baseline(xfeatures)
 #params_bounded = getParamsAct.(sites_parameters, tbl_params)
 cov_sites = xfeatures.site
+
+forcing_one_timestep=run_helpers.forcing_one_timestep
+
 #sites_parameters .= tbl_params.default
+
 op = prepTEMOut(info, forcing.helpers);
 
 # start training 
@@ -208,9 +243,7 @@ sites = xfeatures.site
 flat, re, opt_state = destructureNN(ml_baseline; nn_opt =  Optimisers.Adam())
 n_params = length(ml_baseline[end].bias)
 
-# sites = sites[1:16]
-
-nepochs = 50
+nepochs = 2
 shuffle_opt = true
 bs_seed = 123
 bs = 8
@@ -219,7 +252,6 @@ xbatches = batch_shuffle(sites, bs; seed=123)
 new_sites = reduce(vcat, xbatches)
 tot_loss = fill(NaN32, length(new_sites), nepochs)
 
-#p = Progress(nepochs; desc="Computing epochs...")
 
 loc_spinup_forcings = run_helpers.loc_spinup_forcings
 
@@ -228,23 +260,20 @@ param_to_index = param_indices(models, tbl_params);
 
 models = LongTuple(models...);
 
-name = "training_seq"
-local_root = dirname(Base.active_project())  #isnothing(local_root) ? dirname(Base.active_project()) : local_root
-f_path = joinpath(local_root, name)
-mkpath(f_path)
-
-using SindbadML: scaledParams
+@everywhere using SindbadML: scaledParams
 all_sites = sites_f
+
+#@everywhere loc_spinup_forcings_par = $loc_spinup_forcings
 
 for epoch ∈ 1:nepochs
     xbatches = shuffle_opt ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
     for xbatch ∈ xbatches
-        f_grads = zeros(n_params, length(xbatch))
+        f_grads = SharedArray{Float32}(n_params, length(xbatch))
         x_feat = xfeatures(; site=xbatch)
 
         inst_params, pb = Zygote.pullback((x, p) -> re(p)(x), x_feat, flat)
 
-        for idx ∈ eachindex(xbatch)
+        @sync @distributed for idx ∈ eachindex(xbatch)
             site_name, new_vals = scaledParams(inst_params, tbl_params, xbatch, idx)
             site_location = name_to_id(site_name, all_sites)
             land_init = land_init_space[site_location[1]]
@@ -294,7 +323,7 @@ for epoch ∈ 1:nepochs
             constraint_method;
             logging=false
             )
-    jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
+    jldsave(joinpath(path, "$(name_exp)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
     tot_loss[:, epoch] =  loss_now
     println("epoch: ", epoch)
 end
