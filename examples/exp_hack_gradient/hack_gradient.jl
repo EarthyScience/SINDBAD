@@ -63,14 +63,14 @@ forcing_one_timestep =run_helpers.forcing_one_timestep;
 models = info.tem.models.forward;
 models = LongTuple(models...);
 
-@time coreTEM!(
-        models,
-        loc_forcing,
-        loc_spinup_forcing,
-        forcing_one_timestep,
-        loc_output,
-        land_init,
-        tem...)
+# @time coreTEM!(
+#         models,
+#         loc_forcing,
+#         loc_spinup_forcing,
+#         forcing_one_timestep,
+#         loc_output,
+#         land_init,
+#         tem...)
 
 cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
 # new_cost_options = Tuple(cost_options);
@@ -84,17 +84,17 @@ cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
 #cost_options= cost_options
 constraint_method = info.optim.multi_constraint_method
 
-@time  getSiteLossTEM(
-    models,
-    loc_forcing,
-    loc_spinup_forcing,
-    forcing_one_timestep,
-    loc_output,
-    land_init,
-    tem,
-    loc_obs,
-    cost_options,
-    constraint_method)
+# @time  getSiteLossTEM(
+#     models,
+#     loc_forcing,
+#     loc_spinup_forcing,
+#     forcing_one_timestep,
+#     loc_output,
+#     land_init,
+#     tem,
+#     loc_obs,
+#     cost_options,
+#     constraint_method)
 
 
 #CHUNK_SIZE = 13;
@@ -105,22 +105,24 @@ param_to_index = param_indices(models, tbl_params);
 models = LongTuple(models...);
 
 
-@time siteLossInner(
-    tbl_params.default,
-    models,
-    loc_forcing,
-    loc_spinup_forcing,
-    forcing_one_timestep,
-    DiffCache.(loc_output),
-    land_init,
-    tem,
-    param_to_index,
-    loc_obs,
-    cost_options,
-    constraint_method
-    )
+# @time siteLossInner(
+#     tbl_params.default,
+#     models,
+#     loc_forcing,
+#     loc_spinup_forcing,
+#     forcing_one_timestep,
+#     DiffCache.(loc_output),
+#     land_init,
+#     tem,
+#     param_to_index,
+#     loc_obs,
+#     cost_options,
+#     constraint_method
+#     )
     
 println("Do gradient")
+
+catched_model_args = []
 
 @time ForwardDiffGrads(
     siteLossInner,
@@ -138,6 +140,8 @@ println("Do gradient")
     constraint_method
     )
 
+(model, forcing, _land, tem_helpers) = last(catched_model_args);
+@code_warntype Sindbad.Models.compute(model, forcing, _land, tem_helpers)
 
 # ForwardDiff.gradient(f, x)
 # load available covariates
