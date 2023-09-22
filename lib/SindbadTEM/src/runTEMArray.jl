@@ -72,19 +72,19 @@ function coreTEM!(
     tem_models,
     tem_spinup,
     ::DoSpinupTEM) # with spinup
-
+    println(@__LINE__," ",@__FILE__)
     #@code_warntype precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
-    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
-
-    land_spin = spinupTEM(
-        selected_models,
-        loc_spinup_forcing,
-        forcing_one_timestep,
-        land_prec,
-        tem_helpers,
-        tem_models,
-        tem_spinup)
-
+    land_spin = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
+    println(@__LINE__," ",@__FILE__)
+    # land_spin = spinupTEM(
+    #     selected_models,
+    #     loc_spinup_forcing,
+    #     forcing_one_timestep,
+    #     land_prec,
+    #     tem_helpers,
+    #     tem_models,
+    #     tem_spinup)
+    println(@__LINE__," ",@__FILE__)
     timeLoopTEM!(
         selected_models,
         loc_forcing,
@@ -93,6 +93,7 @@ function coreTEM!(
         land_spin,
         tem_helpers,
         tem_helpers.run.debug_model)
+    println(@__LINE__," ",@__FILE__)
     return nothing
 end
 
@@ -258,9 +259,15 @@ function timeLoopTEM!(
     land,
     tem_helpers,
     ::DoNotDebugModel) # do not debug the models
-    for ts ∈ 1:tem_helpers.n_timesteps
+    for ts ∈ 1:20
+        println("Running time step $ts")
         f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
+        oldlandtype = typeof(land)
         land = computeTEM(selected_models, f_ts, land, tem_helpers)
+        newlanddtype = typeof(land)
+        if oldlandtype != newlanddtype
+            @warn "Type of land changed in time step ts"
+        end
         setOutputForTimeStep!(loc_output, land, ts, tem_helpers.vals.output_vars)
     end
     return nothing
