@@ -35,13 +35,18 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
     # set WBP as the soil percolation
     percolation = WBP
     toAllocate = percolation
-    if toAllocate > z_zero
-        ΔsoilW, toAllocate = inner_toAlloc(land.pools.soilW, wSat, soilW, ΔsoilW, toAllocate, helpers)
+    all_allocs = map(wSat,soilW,ΔsoilW) do ws,sow,dsw
+        alloc1 = ws - (sow + dsw)
+        allocated = (alloc1<toAllocate)*alloc1 + (alloc1>toAllocate)*toAllocate
+        toAllocate = toAllocate - allocated
+        allocated
     end
-    to_groundW = abs(toAllocate)
-    ΔgroundW = addToEachElem(ΔgroundW, to_groundW / n_groundW)
-    toAllocate = toAllocate - to_groundW
-    WBP = abs(toAllocate) > tolerance ? toAllocate : zero(toAllocate)
+    ΔsoilW = ΔsoilW .+ all_allocs
+    #ΔsoilW, toAllocate = inner_toAlloc(land.pools.soilW, wSat, soilW, ΔsoilW, toAllocate, helpers)
+    #to_groundW = abs(toAllocate)
+    #ΔgroundW = addToEachElem(ΔgroundW, to_groundW / n_groundW)
+    #toAllocate = toAllocate - to_groundW
+    WBP = toAllocate
 
     ## pack land variables
     @pack_land begin
@@ -50,15 +55,6 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
         (ΔgroundW, ΔsoilW) => land.states
     end
     return land
-end
-
-function inner_toAlloc(land_pools_soilW, wSat, soilW, ΔsoilW, toAllocate, helpers)
-    for sl ∈ eachindex(land_pools_soilW)
-        allocated = min(wSat[sl] - (soilW[sl] + ΔsoilW[sl]), toAllocate)
-        @add_to_elem allocated => (ΔsoilW, sl, :soilW)
-        toAllocate = toAllocate - allocated
-    end
-    return ΔsoilW, toAllocate
 end
 
 function update(p_struct::percolation_WBP, forcing, land, helpers)
