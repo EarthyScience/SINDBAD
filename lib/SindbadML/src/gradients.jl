@@ -22,6 +22,7 @@ Wraps a multi-input argument function to be used by ForwardDiff.
 """
 #@everywhere 
 function ForwardDiffGrads(loss_function::F, vals::AbstractArray, args...) where {F}
+    println("Starting grads comp")
     loss_tmp(x) = loss_function(x, args...)
     return ForwardDiff.gradient(loss_tmp, vals)
 end
