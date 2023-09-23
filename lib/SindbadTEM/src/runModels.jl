@@ -19,7 +19,7 @@ function computeTEM(models, forcing, land, model_helpers, ::DoDebugModel) # debu
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
         println("compute: $(typeof(model))")
-        @time _land = Models.compute(model, forcing, _land, model_helpers)#::otype
+        @time _land = Models.compute(model, forcing, _land, model_helpers)::otype
     end
 end
 
@@ -53,6 +53,10 @@ run the compute function of SINDBAD models
 - `model_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function computeTEM(models, forcing, land, model_helpers) 
+    # return foldlUnrolled(models; init=land) do _land, model
+    #     println("compute: $(typeof(model))")
+    #     @time _land = Models.compute(model, forcing, _land, model_helpers)#::otype
+    # end
     return foldlUnrolled(models; init=land) do _land, model
         _land = Models.compute(model, forcing, _land, model_helpers)
     end
@@ -76,6 +80,25 @@ function definePrecomputeTEM(models, forcing, land, model_helpers)
     end
 end
 
+
+"""
+    definePrecomputeComputeTEM(models, forcing, land, model_helpers)
+
+run the define, precompute, and compute functions of SINDBAD models to instantiate all fields of land
+
+# Arguments:
+- `models`: a list of SINDBAD models to run
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `model_helpers`: helper NT with necessary objects for model run and type consistencies
+"""
+function definePrecomputeComputeTEM(models, forcing, land, model_helpers)
+    return foldlUnrolled(models; init=land) do _land, model
+        _land = Models.define(model, forcing, _land, model_helpers)
+        _land = Models.precompute(model, forcing, _land, model_helpers)
+        _land = Models.compute(model, forcing, _land, model_helpers)
+    end
+end
 """
     foldlUnrolled(f, x::Tuple{Vararg{Any, N}}; init)
 
