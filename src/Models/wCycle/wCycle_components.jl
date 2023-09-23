@@ -28,16 +28,16 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
 
     # reset moisture changes to zero
     for l in eachindex(ΔsnowW)
-        @rep_elem z_zero => (ΔsnowW, l, :snowW)
+        @rep_elem zero(eltype(ΔsnowW)) => (ΔsnowW, l, :snowW)
     end
     for l in eachindex(ΔsoilW)
-        @rep_elem z_zero => (ΔsoilW, l, :soilW)
+        @rep_elem zero(eltype(ΔsoilW)) => (ΔsoilW, l, :soilW)
     end
     for l in eachindex(ΔgroundW)
-        @rep_elem z_zero => (ΔgroundW, l, :groundW)
+        @rep_elem zero(eltype(ΔgroundW)) => (ΔgroundW, l, :groundW)
     end
     for l in eachindex(ΔsurfaceW)
-        @rep_elem z_zero => (ΔsurfaceW, l, :surfaceW)
+        @rep_elem zero(eltype(ΔsurfaceW)) => (ΔsurfaceW, l, :surfaceW)
     end
 
     total_water = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
