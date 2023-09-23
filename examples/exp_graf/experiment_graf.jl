@@ -66,7 +66,7 @@ end
 
 ds = forcing.data[1];
 plotdat = out_opti.out_forward;
-# plotdat = output_default;
+plotdat = output_default;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = keys(plotdat)
 for i ∈ eachindex(out_vars)
