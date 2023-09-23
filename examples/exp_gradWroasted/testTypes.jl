@@ -32,14 +32,14 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.land_init_space,
     run_helpers.tem_with_types)
 
-@time spinupTEM(
-    info.tem.models.forward,
-    run_helpers.loc_spinup_forcings[1],
-    run_helpers.forcing_one_timestep,
-    run_helpers.land_init_space[1],
-    run_helpers.tem_with_types.helpers,
-    run_helpers.tem_with_types.models,
-    run_helpers.tem_with_types.spinup);
+# @time spinupTEM(
+#     info.tem.models.forward,
+#     run_helpers.loc_spinup_forcings[1],
+#     run_helpers.forcing_one_timestep,
+#     run_helpers.land_init_space[1],
+#     run_helpers.tem_with_types.helpers,
+#     run_helpers.tem_with_types.models,
+#     run_helpers.tem_with_types.spinup);
 
 tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
@@ -49,7 +49,7 @@ tbl_params = getParameters(info.tem.models.forward,
 
 p_vec = tbl_params.default * 1.0;
 
-# dualDefs = ForwardDiff.Dual.(tbl_params.default);
+p_vec = ForwardDiff.Dual.(tbl_params.default);
 
 @time mods = updateModelParameters(info.tem.models.forward, p_vec, info.optim.param_model_id_val);
 

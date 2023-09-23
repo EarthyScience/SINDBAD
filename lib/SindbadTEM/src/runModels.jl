@@ -55,7 +55,7 @@ run the compute function of SINDBAD models
 function computeTEM(models, forcing, land, model_helpers) 
     # return foldlUnrolled(models; init=land) do _land, model
     #     println("compute: $(typeof(model))")
-    #     @time _land = Models.compute(model, forcing, _land, model_helpers)#::otype
+    #     @time _land = Models.compute(model, forcing, _land, model_helpers)::typeof(_land)
     # end
     return foldlUnrolled(models; init=land) do _land, model
         _land = Models.compute(model, forcing, _land, model_helpers)
