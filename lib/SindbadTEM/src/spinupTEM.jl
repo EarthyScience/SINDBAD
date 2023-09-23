@@ -293,9 +293,9 @@ function do_sequence(spin_seq,
     spinup_mode = spin_seq.spinup_mode
     sel_forcing = spinup_forcings[forc_name]
     spinup_models = selected_models
-    # if spinup_mode == :spinup
-    #     spinup_models = selected_models[tem_models.is_spinup]
-    # end
+    if spinup_mode == :spinup
+        spinup_models = selected_models[tem_models.is_spinup]
+    end
     @debug "Spinup: \n         spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name)"
     land = repeat_loop(spinup_models,
         sel_forcing,

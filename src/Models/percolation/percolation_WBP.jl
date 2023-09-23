@@ -21,8 +21,10 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
         @add_to_elem allocated => (ΔsoilW, sl, :soilW)
         to_allocate = to_allocate - allocated
     end
-    to_groundW = abs(to_allocate)
-    ΔgroundW = addToEachElem(ΔgroundW, to_groundW / n_groundW)
+    to_groundW = to_allocate / n_groundW
+    ΔgroundW = addToEachElem(ΔgroundW, to_groundW)
+    # to_groundW = abs(to_allocate)
+    # ΔgroundW = addToEachElem(ΔgroundW, to_groundW / n_groundW)
     to_allocate = to_allocate - to_groundW
     WBP = to_allocate
 

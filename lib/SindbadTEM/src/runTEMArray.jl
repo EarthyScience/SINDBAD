@@ -274,13 +274,14 @@ function timeLoopTEM!(
     output_vars,
     n_timesteps,
     ::DoNotDebugModel) # do not debug the models
-    # land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, 1)
+    land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, 1)
+    # n_timesteps=20
     for ts ∈ 1:n_timesteps
         # println(ts)
-        # land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, ts)
-        f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, forc_types)
-        land = computeTEM(selected_models, f_ts, land, model_helpers)
-        setOutputForTimeStep!(loc_output, land, ts, output_vars)
+        land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, ts)#::typeof(land)
+        # f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, forc_types)
+        # land = computeTEM(selected_models, f_ts, land, model_helpers)
+        # setOutputForTimeStep!(loc_output, land, ts, output_vars)
     end
 end
 
