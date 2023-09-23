@@ -63,12 +63,7 @@ function getSpatialInfo(forcing, output)
     loopvars = collect(keys(forcing_sizes))
     additionaldims = setdiff(loopvars, [Symbol(forcing.helpers.dimensions.time)])
     spacesize = values(forcing_sizes[additionaldims])
-    loc_space_maps = vec(
-        collect(Iterators.product(Base.OneTo.(spacesize)...))
-    )::Vector{NTuple{length(forcing_sizes) -
-                    1,
-        Int}}
-
+    loc_space_maps = vec(collect(Iterators.product(Base.OneTo.(spacesize)...)))
     loc_space_maps = map(loc_space_maps) do loc_names
         map(zip(loc_names, additionaldims)) do (loc_index, lv)
             lv => loc_index
@@ -76,7 +71,7 @@ function getSpatialInfo(forcing, output)
     end
     loc_space_maps = Tuple(loc_space_maps)
 
-    forcing_nt_array = getNamedTuple(forcing.data, forcing.variables)
+    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
 
     allNans = Bool[]
     for i ∈ eachindex(loc_space_maps)
@@ -144,7 +139,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 
     ## run the model for one time step
     @info "     producing model output with one location and one time step"
-    forcing_nt_array = getNamedTuple(forcing.data, forcing.variables)
+    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     output_array = output.data
     forcing_one_timestep, land_one = runTEMOneLocation(selected_models, forcing_nt_array, land_init,
@@ -229,7 +224,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     ## run the model for one time step
     @info "     producing model output with one location and one time step"
     land_init = output.land_init
-    forcing_nt_array = getNamedTuple(forcing.data, forcing.variables)
+    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     loc_forcing = getLocForcingData(forcing_nt_array, loc_space_inds[1])
     forcing_one_timestep, land_one = runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem_with_types)
     debugModel(land_one, tem.helpers.run.debug_model)
@@ -340,10 +335,16 @@ end
 
 function runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
     forcing_one_timestep = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.helpers.vals.forc_types)
-    land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
+    # land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
+    #     tem.helpers.model_helpers)
+    # land_one = computeTEM(selected_models, forcing_one_timestep, land_prec, tem.helpers.model_helpers)
+    # land_one = removeEmptyTupleFields(land_one)
+    # land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
+    land_one = definePrecomputeComputeTEM(selected_models, forcing_one_timestep, land_init,
         tem.helpers.model_helpers)
-    land_one = computeTEM(selected_models, forcing_one_timestep, land_prec, tem.helpers.model_helpers)
     land_one = removeEmptyTupleFields(land_one)
     land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
+    land_one = definePrecomputeComputeTEM(selected_models, forcing_one_timestep, land_one,
+        tem.helpers.model_helpers)
     return forcing_one_timestep, land_one
 end
