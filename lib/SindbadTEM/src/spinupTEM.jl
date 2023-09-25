@@ -271,33 +271,43 @@ function runSpinup(
     tem_spinup,
     _,
     ::DoRunSpinup) # do the spinup
-    seq_index = 1
     log_index = 1
     for spin_seq ∈ tem_spinup.sequence
-        forc_name = spin_seq.forcing
-        n_repeat = spin_seq.n_repeat
-        n_timesteps = spin_seq.n_timesteps
-        spinup_mode = spin_seq.spinup_mode
-        sel_forcing = spinup_forcings[forc_name]
-        spinup_models = selected_models
-        if spinup_mode == :spinup
-            spinup_models = selected_models[tem_models.is_spinup]
-        end
-        @debug "Spinup: \n         Sequence: $(seq_index), spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name)"
-        land = repeat_loop(spinup_models,
-            sel_forcing,
-            forcing_one_timestep,
-            land,
-            tem_helpers,
-            tem_spinup,
-            n_timesteps,
-            spinup_mode,
-            n_repeat,
-            log_index)
-            log_index += n_repeat
-        # end
-        seq_index += 1
+        land = do_sequence(spin_seq, selected_models, spinup_forcings, forcing_one_timestep, land, tem_helpers, tem_spinup, log_index)
+        log_index += spin_seq.n_repeat
     end
+    return land
+end
+
+function do_sequence(spin_seq,
+    selected_models,
+    spinup_forcings,
+    forcing_one_timestep,
+    land,
+    tem_helpers,
+    tem_spinup,
+    log_index)
+    forc_name = spin_seq.forcing
+    n_repeat = spin_seq.n_repeat
+    n_timesteps = spin_seq.n_timesteps
+    spinup_mode = spin_seq.spinup_mode
+    sel_forcing = spinup_forcings[forc_name]
+    spinup_models = selected_models
+    if spinup_mode == :spinup
+        spinup_models = selected_models[tem_models.is_spinup]
+    end
+    @debug "Spinup: \n         spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name)"
+    land = repeat_loop(spinup_models,
+        sel_forcing,
+        forcing_one_timestep,
+        land,
+        tem_helpers,
+        tem_spinup,
+        n_timesteps,
+        spinup_mode,
+        n_repeat,
+        log_index)
+    # end
     return land
 end
 
@@ -321,7 +331,7 @@ function repeat_loop(spinup_models,
             tem_spinup,
             n_timesteps,
             spinup_mode)
-        land = setSpinupLog(land, log_loop, tem_helpers.run.spinup.store_spinup)
+        # land = setSpinupLog(land, log_loop, tem_helpers.run.spinup.store_spinup)
         log_loop += 1
     end
     return land
@@ -525,11 +535,11 @@ scale the carbon pools using the scalars from cCycleBase
 function runSpinup(_, _, _, land, helpers, _, _, ::EtaScaleAH)
     @unpack_land cEco ∈ land.pools
     cEco_prev = copy(cEco)
-    ηH = land.wCycleBase.o_one
+    ηH = one(eltype(cEco))
     if :ηH ∈ propertynames(land.cCycleBase)
         ηH = land.cCycleBase.ηH
     end
-    ηA = land.wCycleBase.o_one
+    ηA = one(eltype(cEco))
     if :ηA ∈ propertynames(land.cCycleBase)
         ηA = land.cCycleBase.ηA
     end
@@ -569,8 +579,8 @@ scale the carbon pools using the scalars from cCycleBase
 function runSpinup(_, _, _, land, helpers, _, _, ::EtaScaleA0H)
     @unpack_land cEco ∈ land.pools
     cEco_prev = copy(cEco)
-    ηH = land.wCycleBase.o_one
-    c_remain = land.wCycleBase.o_one
+    ηH = one(eltype(cEco))
+    c_remain = one(eltype(cEco))
     if :ηH ∈ propertynames(land.cCycleBase)
         ηH = land.cCycleBase.ηH
         c_remain = land.cCycleBase.c_remain
@@ -946,7 +956,7 @@ function timeLoopTEMSpinup(
     n_timesteps)
     for ts ∈ 1:n_timesteps
         f_ts = getForcingForTimeStep(spinup_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
-        land = computeTEM(spinup_models, f_ts, land, tem_helpers)
+        land = computeTEM(spinup_models, f_ts, land, tem_helpers.model_helpers)
     end
     return land
 end

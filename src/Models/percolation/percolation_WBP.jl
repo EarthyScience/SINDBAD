@@ -2,51 +2,31 @@ export percolation_WBP
 
 struct percolation_WBP <: percolation end
 
-function define(p_struct::percolation_WBP, forcing, land, helpers)
-
-    ## unpack land variables
-    @unpack_land begin
-        z_zero ∈ land.wCycleBase
-    end
-
-    # set WBP as the soil percolation
-    percolation = z_zero
-    WBP = z_zero
-
-    ## pack land variables
-    @pack_land begin
-        percolation => land.fluxes
-        WBP => land.states
-    end
-    return land
-end
-
 function compute(p_struct::percolation_WBP, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
         (soilW, groundW) ∈ land.pools
         (ΔgroundW, ΔsoilW, WBP) ∈ land.states
-        (z_zero, o_one, n_groundW) ∈ land.wCycleBase
+        (o_one, n_groundW) ∈ land.wCycleBase
         tolerance ∈ helpers.numbers
         wSat ∈ land.soilWBase
     end
 
     # set WBP as the soil percolation
     percolation = WBP
-    toAllocate = percolation
-    all_allocs = map(wSat,soilW,ΔsoilW) do ws,sow,dsw
-        alloc1 = ws - (sow + dsw)
-        allocated = (alloc1<toAllocate)*alloc1 + (alloc1>toAllocate)*toAllocate
-        toAllocate = toAllocate - allocated
-        allocated
+    to_allocate = o_one * percolation
+    for sl ∈ eachindex(land.pools.soilW)
+        allocated = min(wSat[sl] - (soilW[sl] + ΔsoilW[sl]), to_allocate)
+        @add_to_elem allocated => (ΔsoilW, sl, :soilW)
+        to_allocate = to_allocate - allocated
     end
-    ΔsoilW = ΔsoilW .+ all_allocs
-    #ΔsoilW, toAllocate = inner_toAlloc(land.pools.soilW, wSat, soilW, ΔsoilW, toAllocate, helpers)
-    #to_groundW = abs(toAllocate)
-    #ΔgroundW = addToEachElem(ΔgroundW, to_groundW / n_groundW)
-    #toAllocate = toAllocate - to_groundW
-    WBP = toAllocate
+    to_groundW = to_allocate / n_groundW
+    ΔgroundW = addToEachElem(ΔgroundW, to_groundW)
+    # to_groundW = abs(to_allocate)
+    # ΔgroundW = addToEachElem(ΔgroundW, to_groundW / n_groundW)
+    to_allocate = to_allocate - to_groundW
+    WBP = to_allocate
 
     ## pack land variables
     @pack_land begin

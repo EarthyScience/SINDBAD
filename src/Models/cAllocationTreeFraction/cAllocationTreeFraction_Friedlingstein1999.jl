@@ -48,6 +48,7 @@ function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, 
 
     # adjust for spatial consideration of TreeFrac & plant level
     # partitioning between fine & coarse roots
+    o_one = one(eltype(c_allocation))
     a_cVegWood = frac_tree
     a_cVegRoot = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
     a_cVegRootF = a_cVegRoot * (Rf2Rc * frac_tree + (o_one - frac_tree))

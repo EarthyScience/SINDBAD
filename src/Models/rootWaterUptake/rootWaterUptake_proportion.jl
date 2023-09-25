@@ -29,11 +29,15 @@ function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
         tolerance ∈ helpers.numbers
     end
     # get the transpiration
-    toUptake = transpiration
+    # to_uptake = o_one * transpiration
     PAWTotal = sum(PAW)
+    to_uptake = maxZero(oftype(PAWTotal, transpiration))
+
     # extract from top to bottom
-    if PAWTotal > z_zero
-        root_water_uptake, ΔsoilW = inner_uptake(land.pools.soilW, toUptake, PAW, PAWTotal, root_water_uptake, ΔsoilW, helpers)
+    for sl ∈ eachindex(land.pools.soilW)
+        uptake_proportion = to_uptake * getFrac(PAW[sl], PAWTotal)
+        @rep_elem uptake_proportion => (root_water_uptake, sl, :soilW)
+        @add_to_elem -root_water_uptake[sl] => (ΔsoilW, sl, :soilW)
     end
     # pack land variables
     @pack_land begin
