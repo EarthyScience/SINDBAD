@@ -32,19 +32,18 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     @unpack_land begin
         wSat ∈ land.soilWBase
         soilW ∈ land.pools
-        o_one ∈ land.wCycleBase
     end
-
+    w_one = one(eltype(soilW))
     ## for the litter pools; only use the top layer"s moisture
     soilW_top = min(frac2perc * soilW[1] / wSat[1], frac2perc)
-    soilW_top_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_top)
+    soilW_top_sc = fSoilW_cTau(w_one, WoptA, WoptB, Wexp, Wopt, soilW_top)
     cLitZix = getZix(land.pools.cLit, helpers.pools.zix.cLit)
 
     c_eco_k_f_soilW = inner_c_eco_lit(cLitZix, soilW_top_sc, c_eco_k_f_soilW, helpers)
 
     ## repeat for the soil pools; using all soil moisture layers
     soilW_all = min(frac2perc * sum(soilW) / sum(wSat), frac2perc)
-    soilW_all_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_all)
+    soilW_all_sc = fSoilW_cTau(w_one, WoptA, WoptB, Wexp, Wopt, soilW_all)
 
     cSoilZix = getZix(land.pools.cSoil, helpers.pools.zix.cSoil)
     c_eco_k_f_soilW = inner_c_eco_soil(cSoilZix, soilW_all_sc, c_eco_k_f_soilW, helpers)
@@ -54,31 +53,16 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     return land
 end
 
-function inner_c_eco_lit(cLitZix, soilW_top_sc, c_eco_k_f_soilW, helpers)
-    for l_zix ∈ cLitZix
-        @rep_elem soilW_top_sc => (c_eco_k_f_soilW, l_zix, :cEco)
-    end
-    return c_eco_k_f_soilW
-end
-
-function inner_c_eco_soil(cSoilZix, soilW_all_sc, c_eco_k_f_soilW, helpers)
-    for s_zix ∈ cSoilZix
-        @rep_elem soilW_all_sc => (c_eco_k_f_soilW, s_zix, :cEco)
-    end
-    return c_eco_k_f_soilW
-end
-
-
-function fSoilW_cTau(o_one, A, B, wExp, wOpt, wSoil)
+function fSoilW_cTau(the_one, A, B, wExp, wOpt, wSoil)
     # first half of the response curve
-    W2p1 = o_one / ((o_one + exp(A * -wExp)) * (o_one + exp(A * -wExp)))
-    W2C1 = o_one / W2p1
-    W21 = W2C1 / ((o_one + exp(A * (wOpt - wExp - wSoil))) * (o_one + exp(A * (-wOpt - wExp + wSoil))))
+    W2p1 = the_one / ((the_one + exp(A * -wExp)) * (the_one + exp(A * -wExp)))
+    W2C1 = the_one / W2p1
+    W21 = W2C1 / ((the_one + exp(A * (wOpt - wExp - wSoil))) * (the_one + exp(A * (-wOpt - wExp + wSoil))))
 
     # second half of the response curve
-    W2p2 = o_one / ((o_one + exp(B * -wExp)) * (o_one + exp(B * -wExp)))
-    W2C2 = o_one / W2p2
-    T22 = W2C2 / ((o_one + exp(B * (wOpt - wExp - wSoil))) * (o_one + exp(B * (-wOpt - wExp + wSoil))))
+    W2p2 = the_one / ((the_one + exp(B * -wExp)) * (the_one + exp(B * -wExp)))
+    W2C2 = the_one / W2p2
+    T22 = W2C2 / ((the_one + exp(B * (wOpt - wExp - wSoil))) * (the_one + exp(B * (-wOpt - wExp + wSoil))))
 
     # combine the response curves
     soilW_sc = wSoil >= wOpt ? T22 : W21
