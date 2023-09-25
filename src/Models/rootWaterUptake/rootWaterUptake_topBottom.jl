@@ -27,13 +27,13 @@ function compute(p_struct::rootWaterUptake_topBottom, forcing, land, helpers)
         transpiration ∈ land.fluxes
         z_zero ∈ land.wCycleBase
     end
-    root_water_uptake .= z_zero
-    # get the transpiration
-    to_uptake = transpiration
+    to_uptake = oftype(eltype(PAW), transpiration)
+
     for sl ∈ eachindex(land.pools.soilW)
-        root_water_uptake[sl] = min(to_uptake, PAW[sl])
-        to_uptake = to_uptake - root_water_uptake[sl]
-        ΔsoilW[sl] = ΔsoilW[sl] - root_water_uptake[sl]
+        uptake_from_layer = min(to_uptake, PAW[sl])
+        @rep_elem uptake_from_layer => (root_water_uptake, sl, :soilW)
+        @add_to_elem -root_water_uptake[sl] => (ΔsoilW, sl, :soilW)
+        to_uptake = to_uptake - uptake_from_layer
     end
 
     ## pack land variables
