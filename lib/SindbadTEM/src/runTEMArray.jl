@@ -73,21 +73,21 @@ function coreTEM!(
     tem_models,
     tem_spinup,
     ::DoSpinupTEM) # with spinup
-    println(@__LINE__," ",@__FILE__)
+    # println(@__LINE__," ",@__FILE__)
     #@code_warntype precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers.model_helpers, tem_helpers.run.debug_model)
-    println(@__LINE__," ",@__FILE__)
+    # println(@__LINE__," ",@__FILE__)
 
     land_spin = land_prec
     
-    # land_spin = spinupTEM(
-    #         selected_models,
-    #         loc_spinup_forcing,
-    #         forcing_one_timestep,
-    #         land_prec,
-    #         tem_helpers,
-    #         tem_models,
-    #         tem_spinup)
+    land_spin = spinupTEM(
+            selected_models,
+            loc_spinup_forcing,
+            forcing_one_timestep,
+            land_prec,
+            tem_helpers,
+            tem_models,
+            tem_spinup)
 
     timeLoopTEM!(
         selected_models,
@@ -100,7 +100,7 @@ function coreTEM!(
         tem_helpers.vals.output_vars,
         tem_helpers.n_timesteps,
         tem_helpers.run.debug_model)
-    println(@__LINE__," ",@__FILE__)
+    # println(@__LINE__," ",@__FILE__)
     return nothing
 end
 
@@ -270,15 +270,15 @@ function timeLoopTEM!(
     n_timesteps,
     ::DoNotDebugModel) # do not debug the models
     land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, 1)
-    n_timesteps=20
+    # n_timesteps=20
     for ts ∈ 1:n_timesteps
         println(ts)
-        oldlandtype = typeof(land)
+        # oldlandtype = typeof(land)
         land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, ts)#::typeof(land)
-        newlanddtype = typeof(land)
-        if oldlandtype != newlanddtype
-            @warn "Type of land changed in time step ts"
-        end
+        # newlanddtype = typeof(land)
+        # if oldlandtype != newlanddtype
+        #     @warn "Type of land changed in time step ts"
+        # end
     end
 end
 
