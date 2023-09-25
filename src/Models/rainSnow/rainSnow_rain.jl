@@ -7,7 +7,7 @@ function define(p_struct::rainSnow_rain, forcing, land, helpers)
     @unpack_forcing Rain ∈ forcing
 
     ## calculate variables
-    snow = land.wCycleBase.z_zero
+    snow = zero(Rain)
     rain = Rain
     precip = rain
 
@@ -21,16 +21,14 @@ end
 function compute(p_struct::rainSnow_rain, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing Rain ∈ forcing
-    @unpack_land (z_zero, o_one) ∈ land.wCycleBase
 
     ## calculate variables
     rain = Rain
-    snow = z_zero
     precip = rain
 
     ## pack land variables
     @pack_land begin
-        (precip, rain, snow) => land.fluxes
+        (precip, rain) => land.fluxes
     end
     return land
 end

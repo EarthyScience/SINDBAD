@@ -10,7 +10,7 @@ prepare the spinup forcing all forcing setups in the spinup sequence
 - `spin_seq`: a sequence of information to carry out spinup at different steps with information on models to use, forcing, stopping critera, etc.
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
-function getAllSpinupForcing(forcing, spin_sequences, tem_helpers)
+function getAllSpinupForcing(forcing, spin_sequences::Vector{SpinSequenceWithAggregator}, tem_helpers)
     spinup_forcing = (;)
     for seq ∈ spin_sequences
         forc = getfield(seq, :forcing)
@@ -33,7 +33,7 @@ prepare the spinup forcing set for a given spinup sequence
 - `sequence`: a with all information needed to run a spinup sequence
 - `:Val{forc_types}`: a type dispatch with the tuple of pairs of forcing name and time/no time types
 """
-function getSpinupForcing(forcing, sequence, ::Val{forc_types}) where {forc_types}
+function getSpinupForcing(forcing, sequence::SpinSequenceWithAggregator, ::Val{forc_types}) where {forc_types}
     seq_forcing = map(forc_types) do fnt
         f_name = first(fnt)
         f_type = last(fnt)
@@ -55,8 +55,8 @@ get the aggregated spinup forcing variable
 - `sequence`: a with all information needed to run a spinup sequence
 - `::ForcingWithTime`: a type dispatch to indicate that the variable has a time axis
 """
-function getSpinupForcingVariable(v, sequence, ::ForcingWithTime)
-    timeAggregateForcingV(v, sequence.aggregator, sequence.aggregator_type)
+function getSpinupForcingVariable(v, sequence::SpinSequenceWithAggregator, ::ForcingWithTime)
+    timeAggregateForcingV(v, sequence.aggregator_indices, sequence.aggregator, sequence.aggregator_type)
 end
 
 """
@@ -83,7 +83,7 @@ aggregate the forcing variable with time where an aggregation/collection is need
 - `aggregator`: a time aggregator object needed to time aggregate the data 
 - `ag_type::TimeNoDiff`: a type dispatch to indicate that the variable has to be aggregated in time
 """
-function timeAggregateForcingV(v, aggregator, ag_type::TimeNoDiff)
+function timeAggregateForcingV(v, _, aggregator, ag_type::TimeNoDiff)
     vt=temporalAggregation(v, aggregator, ag_type)
     vt[:]
 end
@@ -98,6 +98,6 @@ aggregate the forcing variable with time where an aggregation/collection is need
 - `aggregator`: a time aggregator object/index needed to slice data 
 - `::TimeIndexed`: a type dispatch to just slice the variable time series using index
 """
-function timeAggregateForcingV(v, aggregator, ::TimeIndexed)
-    v[aggregator]
+function timeAggregateForcingV(v, aggregator_index, _, ::TimeIndexed)
+    v[aggregator_index]
 end

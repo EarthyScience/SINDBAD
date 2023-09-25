@@ -27,10 +27,18 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
     land = adjustPackMainPool(land, helpers, land.wCycleBase.w_model)
 
     # reset moisture changes to zero
-    ΔsnowW = inner_reset1(ΔsnowW, z_zero, helpers)
-    ΔsoilW = inner_reset2(ΔsoilW, z_zero, helpers)
-    ΔgroundW = inner_reset3(ΔgroundW, z_zero, helpers)
-    ΔsurfaceW = inner_reset4(ΔsurfaceW, z_zero, helpers)
+    for l in eachindex(ΔsnowW)
+        @rep_elem zero(eltype(ΔsnowW)) => (ΔsnowW, l, :snowW)
+    end
+    for l in eachindex(ΔsoilW)
+        @rep_elem zero(eltype(ΔsoilW)) => (ΔsoilW, l, :soilW)
+    end
+    for l in eachindex(ΔgroundW)
+        @rep_elem zero(eltype(ΔgroundW)) => (ΔgroundW, l, :groundW)
+    end
+    for l in eachindex(ΔsurfaceW)
+        @rep_elem zero(eltype(ΔsurfaceW)) => (ΔsurfaceW, l, :surfaceW)
+    end
 
     total_water = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
