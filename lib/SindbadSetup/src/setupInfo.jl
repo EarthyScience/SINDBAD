@@ -273,7 +273,7 @@ function generatePoolsInfo(info::NamedTuple)
         hlp_elem = setTupleField(hlp_elem, (:all_components, (;)))
         hlp_elem = setTupleField(hlp_elem, (:zeros, (;)))
         hlp_elem = setTupleField(hlp_elem, (:ones, (;)))
-        hlp_elem = setTupleField(hlp_elem, (:vals, (;)))
+        # hlp_elem = setTupleField(hlp_elem, (:vals, (;)))
 
         # main pools
         for main_pool ∈ main_pool_name
@@ -403,7 +403,7 @@ function generatePoolsInfo(info::NamedTuple)
             vals_tuple = setTupleSubfield(vals_tuple, :zix, (combined_pool_name, Val(hlp_elem.zix)))
             vals_tuple = setTupleSubfield(vals_tuple, :self, (combined_pool_name, Val(combined_pool_name)))
             vals_tuple = setTupleSubfield(vals_tuple, :all_components, (combined_pool_name, Val(all_components)))
-            hlp_elem = setTupleField(hlp_elem, (:vals, vals_tuple))
+            # hlp_elem = setTupleField(hlp_elem, (:vals, vals_tuple))
             hlp_elem = setTupleSubfield(hlp_elem, :components, (combined_pool_name, Tuple(components)))
             # onetyped = ones(length(initial_values))
             hlp_elem = setTupleSubfield(hlp_elem,
@@ -1353,6 +1353,7 @@ function setSpinupInfo(info)
     infospin = info.experiment.model_spinup
     # change spinup sequence dispatch variables to Val, get the temporal aggregators
     seqq = infospin.sequence
+    seqq_typed = []
     for seq in seqq
         for kk in keys(seq)
             if kk == "forcing"
@@ -1363,11 +1364,11 @@ function setSpinupInfo(info)
                 aggregator = createTimeAggregator(info.tem.helpers.dates.range, seq[kk], mean, skip_aggregation)
                 seq["aggregator"] = aggregator
                 seq["aggregator_type"] = TimeNoDiff()
+                seq["aggregator_indices"] = [_ind for _ind in vcat(aggregator[1].indices...)]
                 seq["n_timesteps"] = length(aggregator[1].indices)
                 if occursin("_year", seq[kk])
-                    seq["aggregator"] = vcat(aggregator[1].indices...)
                     seq["aggregator_type"] = TimeIndexed()
-                    seq["n_timesteps"] = length(seq["aggregator"])
+                    seq["n_timesteps"] = length(seq["aggregator_indices"])
                 end
             end
             if kk == "spinup_mode"
@@ -1377,9 +1378,12 @@ function setSpinupInfo(info)
                 seq[kk] = Symbol(seq[kk])
             end
         end
+        optns = in(seq, "options") ? seqp["options"] : (;)
+        sst = SpinSequenceWithAggregator(seq["forcing"], seq["n_repeat"], seq["n_timesteps"], seq["spinup_mode"], optns, seq["aggregator_indices"], seq["aggregator"], seq["aggregator_type"]);
+        push!(seqq_typed, sst)
     end
-
-    infospin = setTupleField(infospin, (:sequence, dictToNamedTuple.([seqq...])))
+    
+    infospin = setTupleField(infospin, (:sequence, [_s for _s in seqq_typed]))
     info = setTupleSubfield(info, :tem, (:spinup, infospin))
     return info
 end

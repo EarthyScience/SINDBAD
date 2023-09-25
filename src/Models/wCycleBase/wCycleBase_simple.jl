@@ -31,6 +31,15 @@ function define(p_struct::wCycleBase_simple, forcing, land, helpers)
         n_surfaceW = oftype(first(land.pools.surfaceW), length(land.pools.surfaceW))
         @pack_land n_surfaceW => land.wCycleBase
     end
+
+    if hasproperty(land.pools, :soilW)
+        o_one = oftype(first(land.pools.soilW), 1)
+        z_zero = oftype(first(land.pools.soilW), 0)
+    elseif hasproperty(land.pools, :cEco)
+        o_one = oftype(first(land.pools.cEco), 1)
+        z_zero = oftype(first(land.pools.cEco), 0)
+    end
+
     w_model = WCycleBaseSimple()
     @pack_land begin
         (w_model, o_one, z_zero) => land.wCycleBase

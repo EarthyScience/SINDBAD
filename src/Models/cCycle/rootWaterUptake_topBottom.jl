@@ -27,10 +27,10 @@ function compute(p_struct::rootWaterUptake_topBottom, forcing, land, helpers)
         transpiration ∈ land.fluxes
     end
     # get the transpiration
-    toUptake = transpiration
+    to_uptake = transpiration
     for sl ∈ eachindex(land.pools.soilW)
-        root_water_uptake[sl] = min(toUptake, PAW[sl])
-        toUptake = toUptake - root_water_uptake[sl]
+        root_water_uptake[sl] = min(to_uptake, PAW[sl])
+        to_uptake = to_uptake - root_water_uptake[sl]
         ΔsoilW[sl] = ΔsoilW[sl] - root_water_uptake[sl]
     end
 
