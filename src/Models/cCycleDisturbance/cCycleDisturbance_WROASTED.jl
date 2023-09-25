@@ -39,22 +39,19 @@ function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
         (zix_veg_all, c_lose_to_zix_vec) ∈ land.cCycleDisturbance
         cEco ∈ land.pools
         (c_giver, c_taker, c_remain) ∈ land.cCycleBase
-        (z_zero, o_one) ∈ land.wCycleBase
     end
-    if dist_intensity > z_zero
-        for zixVeg ∈ zix_veg_all
-            cLoss = maxZero(cEco[zixVeg] - c_remain) * dist_intensity
-            @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
-            c_lose_to_zix = c_lose_to_zix_vec[zixVeg]
-            for tZ ∈ eachindex(c_lose_to_zix)
-                tarZix = c_lose_to_zix[tZ]
-                toGain = cLoss / length(c_lose_to_zix)
-                @add_to_elem toGain => (cEco, tarZix, :cEco)
-            end
+    for zixVeg ∈ zix_veg_all
+        cLoss = maxZero(cEco[zixVeg] - c_remain) * dist_intensity
+        @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
+        c_lose_to_zix = c_lose_to_zix_vec[zixVeg]
+        for tZ ∈ eachindex(c_lose_to_zix)
+            tarZix = c_lose_to_zix[tZ]
+            toGain = cLoss / oftype(cLoss, length(c_lose_to_zix))
+            @add_to_elem toGain => (cEco, tarZix, :cEco)
         end
-        @pack_land cEco => land.pools
-        land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
     end
+    @pack_land cEco => land.pools
+    land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
     ## pack land variables
     return land
 end

@@ -12,7 +12,7 @@ function define(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
     @unpack_forcing (Rg, RgPot) ∈ forcing
 
     ## calculate variables
-    CI = land.wCycleBase.o_one #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
+    CI = one(μ) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
     CI_min = CI
     CI_max = CI
     ## pack land variables
@@ -28,14 +28,15 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
 
     @unpack_land begin
         (CI_min, CI_max) ∈ land.gppDiffRadiation
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero) ∈ land.wCycleBase
         tolerance ∈ helpers.numbers
     end
 
     ## calculate variables
     ## FROM SHANNING
+    rg_frac = getFrac(Rg, RgPot)
 
-    CI = clampZeroOne(o_one - getFrac(Rg, RgPot)) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
+    CI = clampZeroOne(one(rg_frac) - rg_frac) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
 
     # update the minimum and maximum on the go
     CI_min = min(CI, CI_min)
@@ -44,8 +45,8 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
     CI_nor = clampZeroOne(getFrac(CI - CI_min, CI_max - CI_min)) # @needscheck: originally, CI_min and max were based on the year's data. see below.
 
 
-    cScGPP = o_one - μ * (o_one - CI_nor)
-    gpp_f_cloud = RgPot > z_zero ? cScGPP : zero(cScGPP)
+    cScGPP = one(μ) - μ * (one(μ) - CI_nor)
+    gpp_f_cloud = RgPot > zero(RgPot) ? cScGPP : zero(cScGPP)
 
     ## pack land variables
     @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
