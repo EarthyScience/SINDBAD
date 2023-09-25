@@ -272,7 +272,6 @@ function timeLoopTEM!(
     land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, 1)
     # n_timesteps=20
     for ts ∈ 1:n_timesteps
-        println(ts)
         # oldlandtype = typeof(land)
         land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, ts)#::typeof(land)
         # newlanddtype = typeof(land)
