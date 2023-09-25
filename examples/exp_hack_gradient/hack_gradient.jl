@@ -63,14 +63,14 @@ forcing_one_timestep =run_helpers.forcing_one_timestep;
 models = info.tem.models.forward;
 models = LongTuple(models...);
 
-# @time coreTEM!(
-#         models,
-#         loc_forcing,
-#         loc_spinup_forcing,
-#         forcing_one_timestep,
-#         loc_output,
-#         land_init,
-#         tem...)
+@time coreTEM!(
+        models,
+        loc_forcing,
+        loc_spinup_forcing,
+        forcing_one_timestep,
+        loc_output,
+        land_init,
+        tem...)
 
 cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
 # new_cost_options = Tuple(cost_options);
