@@ -101,7 +101,7 @@ p_vec = tbl_params.default;
 l1(p_vec)
 
 CHUNK_SIZE = length(p_vec)
-CHUNK_SIZE = 10
+CHUNK_SIZE = 2
 
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
@@ -122,15 +122,7 @@ run_helpers_d = prepTEM(mods, forcing, info);
     run_helpers_d.land_init_space,
     run_helpers_d.tem_with_types)
 
-    @code_warntype coreTEM!(mods,
-    run_helpers_d.loc_forcings[1],
-    run_helpers_d.loc_spinup_forcings[1],
-    run_helpers_d.forcing_one_timestep,
-    run_helpers_d.loc_outputs[1],
-    run_helpers_d.land_init_space[1],
-    run_helpers_d.tem_with_types)
-    
-    @time coreTEM!(mods,
+@time coreTEM!(mods,
     run_helpers_d.loc_forcings[1],
     run_helpers_d.loc_spinup_forcings[1],
     run_helpers_d.forcing_one_timestep,
@@ -142,7 +134,7 @@ run_helpers_d = prepTEM(mods, forcing, info);
     run_helpers_d.tem_with_types.helpers.run.spinup.spinup_TEM
     )
 
-    @code_warntype coreTEM!(mods,
+@code_warntype coreTEM!(mods,
     run_helpers_d.loc_forcings[1],
     run_helpers_d.loc_spinup_forcings[1],
     run_helpers_d.forcing_one_timestep,
@@ -153,16 +145,6 @@ run_helpers_d = prepTEM(mods, forcing, info);
     run_helpers_d.tem_with_types.spinup,
     run_helpers_d.tem_with_types.helpers.run.spinup.spinup_TEM
     )
-    # selected_models,
-    # loc_forcing,
-    # loc_spinup_forcing,
-    # forcing_one_timestep,
-    # loc_output,
-    # land_init,
-    # tem_helpers,
-    # tem_models,
-    # tem_spinup,
-    # ::DoSpinupTEM
 @time spinupTEM(
     mods,
     run_helpers_d.loc_spinup_forcings[1],
