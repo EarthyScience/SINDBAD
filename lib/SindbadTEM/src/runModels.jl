@@ -95,12 +95,12 @@ run the compute function of SINDBAD models
 """
 function computeTEM(models::LongTuple, forcing, _land, model_helpers) 
     return reduce_lt(models, init=_land) do model, _land
-        println(nameof(typeof(model)))
-        if nameof(typeof(model)) == :percolation_WBP
-            push!(Main.catched_model_args,(model, forcing, _land, model_helpers))
-            error("Hahaha")
-        end
-        return @time Models.compute(model, forcing, _land, model_helpers)
+        # println(nameof(typeof(model)))
+        # if nameof(typeof(model)) == :percolation_WBP
+        #     push!(Main.catched_model_args,(model, forcing, _land, model_helpers))
+        #     error("Hahaha")
+        # end
+        return Models.compute(model, forcing, _land, model_helpers)
     end
 end
 
