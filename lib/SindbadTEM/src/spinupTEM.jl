@@ -41,7 +41,7 @@ end
 """
 function (cEco_spin::RunSpinup_cEco)(pout, p)
     land = cEco_spin.land
-    helpers = cEco_spin.tem_helpers
+    helpers = cEco_spin.tem_helpers.model_helpers
     n_timesteps = cEco_spin.n_timesteps
     zix = helpers.pools.zix
 
@@ -67,7 +67,7 @@ end
 """
 function (cEco_TWS_spin::RunSpinup_cEco_TWS)(pout, p)
     land = cEco_TWS_spin.land
-    helpers = cEco_TWS_spin.tem_helpers
+    helpers = cEco_TWS_spin.tem_helpers.model_helpers
     n_timesteps = cEco_TWS_spin.n_timesteps
     zix = helpers.pools.zix
 
@@ -103,7 +103,7 @@ end
 """
 function (TWS_spin::RunSpinup_TWS)(pout, p)
     land = TWS_spin.land
-    helpers = TWS_spin.tem_helpers
+    helpers = TWS_spin.tem_helpers.model_helpers
     n_timesteps = TWS_spin.n_timesteps
     zix = helpers.pools.zix
 
@@ -293,9 +293,9 @@ function do_sequence(spin_seq,
     spinup_mode = spin_seq.spinup_mode
     sel_forcing = spinup_forcings[forc_name]
     spinup_models = selected_models
-    if spinup_mode == :spinup
-        spinup_models = selected_models[tem_models.is_spinup]
-    end
+    # if spinup_mode == :spinup
+    #     spinup_models = selected_models[tem_models.is_spinup]
+    # end
     @debug "Spinup: \n         spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name)"
     land = repeat_loop(spinup_models,
         sel_forcing,
@@ -534,6 +534,7 @@ scale the carbon pools using the scalars from cCycleBase
 """
 function runSpinup(_, _, _, land, helpers, _, _, ::EtaScaleAH)
     @unpack_land cEco ∈ land.pools
+    helpers = helpers.model_helpers
     cEco_prev = copy(cEco)
     ηH = one(eltype(cEco))
     if :ηH ∈ propertynames(land.cCycleBase)
@@ -578,6 +579,7 @@ scale the carbon pools using the scalars from cCycleBase
 """
 function runSpinup(_, _, _, land, helpers, _, _, ::EtaScaleA0H)
     @unpack_land cEco ∈ land.pools
+    helpers = helpers.model_helpers
     cEco_prev = copy(cEco)
     ηH = one(eltype(cEco))
     c_remain = one(eltype(cEco))
@@ -585,7 +587,6 @@ function runSpinup(_, _, _, land, helpers, _, _, ::EtaScaleA0H)
         ηH = land.cCycleBase.ηH
         c_remain = land.cCycleBase.c_remain
     end
-
     for cSoilZix ∈ helpers.pools.zix.cSoil
         cSoilNew = cEco[cSoilZix] * ηH
         @rep_elem cSoilNew => (cEco, cSoilZix, :cEco)
