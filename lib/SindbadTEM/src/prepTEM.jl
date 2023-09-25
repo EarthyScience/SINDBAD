@@ -335,16 +335,14 @@ end
 
 function runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
     forcing_one_timestep = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.helpers.vals.forc_types)
-    # land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
-    #     tem.helpers.model_helpers)
-    # land_one = computeTEM(selected_models, forcing_one_timestep, land_prec, tem.helpers.model_helpers)
-    # land_one = removeEmptyTupleFields(land_one)
-    # land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
-    land_one = definePrecomputeComputeTEM(selected_models, forcing_one_timestep, land_init,
+    land_one = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
         tem.helpers.model_helpers)
+    land_one = computeTEM(selected_models, forcing_one_timestep, land_one, tem.helpers.model_helpers)
     land_one = removeEmptyTupleFields(land_one)
     land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
-    land_one = definePrecomputeComputeTEM(selected_models, forcing_one_timestep, land_one,
+
+    land_one = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
         tem.helpers.model_helpers)
+    land_one = computeTEM(selected_models, forcing_one_timestep, land_one, tem.helpers.model_helpers)
     return forcing_one_timestep, land_one
 end
