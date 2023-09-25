@@ -68,13 +68,6 @@
     }
   },
   "model_spinup": {
-    "differential_eqn": {
-      "absolute_tolerance": 1e-2,
-      "maxiters": 100,
-      "pools": ["cEco"],
-      "relative_tolerance": 1e-2,
-      "time_jump": 200.0
-    },
     "paths": {
       "restart_file_in": null,
       "restart_file_out": null
@@ -83,14 +76,12 @@
       {
         "forcing": "day_MSC",
         "n_repeat": 15,
-        "spinup_mode": "all_forward_models",
-        "stop_function": null
+        "spinup_mode": "all_forward_models"
       },
       {
         "forcing": "all_years",
         "n_repeat": 1,
-        "spinup_mode": "all_forward_models",
-        "stop_function": null
+        "spinup_mode": "all_forward_models"
       }
     ]
   }

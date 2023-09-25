@@ -58,15 +58,15 @@ end
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
-opt_params = out_opti.out_params;
-out_model = out_opti.out_forward;
+# opt_params = out_opti.out_params;
+# out_model = out_opti.out_forward;
 # @time out_cost = runExperimentCost(experiment_json; replace_info=replace_info_spatial);
 
 
 
 ds = forcing.data[1];
 plotdat = out_opti.out_forward;
-# plotdat = output_default;
+plotdat = output_default;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = keys(plotdat)
 for i ∈ eachindex(out_vars)
