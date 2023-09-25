@@ -115,12 +115,31 @@ run the define and precompute functions of SINDBAD models to instantiate all fie
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `model_helpers`: helper NT with necessary objects for model run and type consistencies
 """
-function definePrecomputeTEM(models, forcing, land, model_helpers)
+function definePrecomputeTEM(models::Tuple, forcing, land, model_helpers)
     return foldlUnrolled(models; init=land) do _land, model
         _land = Models.define(model, forcing, _land, model_helpers)
         _land = Models.precompute(model, forcing, _land, model_helpers)
     end
 end
+
+"""
+    definePrecomputeTEM(models::LongTuple, forcing, land, model_helpers)
+
+run the precompute function of SINDBAD models to instantiate all fields of land
+
+# Arguments:
+- `models`: a list of SINDBAD models to run
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `model_helpers`: helper NT with necessary objects for model run and type consistencies
+"""
+function definePrecomputeTEM(models::LongTuple, forcing, _land, model_helpers)
+    return reduce_lt(models, init=_land) do model, _land
+        _land = Models.define(model, forcing, _land, model_helpers)
+        _land = Models.precompute(model, forcing, _land, model_helpers)
+    end
+end
+
 
 """
     foldlUnrolled(f, x::Tuple{Vararg{Any, N}}; init)
