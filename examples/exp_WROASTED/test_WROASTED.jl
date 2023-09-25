@@ -89,7 +89,7 @@ foreach(costOpt) do var_row
         tspan = first(non_nan_index):last(non_nan_index)
     end
     obs_σ = obs_σ[tspan]
-    obs_var = obs_var[tspan]
+    obs_var = obs_var[tspan, 1, 1, 1]
     def_var = def_var[tspan, 1, 1, 1]
     opt_var = opt_var[tspan, 1, 1, 1]
 
@@ -103,14 +103,3 @@ foreach(costOpt) do var_row
     plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
-
-# struct SpinSequence{f,n,m,s,a,a_t}
-#     forcing::f
-#     n_repeat::n
-#     spinup_mode::m
-#     stop_function::s
-#     aggregator::a
-#     aggregator_type::a_t
-# end
-
-# ss = SpinSequence(values(run_helpers.tem_with_types.spinup.sequence[1])...)

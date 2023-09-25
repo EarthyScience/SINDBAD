@@ -102,19 +102,20 @@ cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
 # op = prepTEMOut(info, forcing.helpers);
 # output_array = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in run_helpers.output_array];
-output_array = [Array{Any}(undef, size(od)) for od in run_helpers.output_array];
+# output_array = [Array{Any}(undef, size(od)) for od in run_helpers.output_array];
 # op = (; op..., data=op_dat);
 # output_array = op_dat;
 
 dualDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
-mods = updateModelParametersType(tbl_params, mods, dualDefs);
+@time mods = updateModelParameters(info.tem.models.forward, dualDefs, info.optim.param_model_id_val);
 
+run_helpers = prepTEM(mods, forcing, info);
 
 # op = prepTEMOut(info, forcing.helpers);
 # op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_types.helpers.numbers.num_type},tem_with_types.helpers.numbers.num_type,10}}(undef, size(od)) for od in run_helpers.output_array];
 # op = (; op..., data=op_dat);
 
-@time grad = ForwardDiff.gradient(l1, p_vec)
+@time grad = ForwardDiff.gradient(l1, dualDefs)
 
 # @time grad = ForwardDiff.gradient(l1, p_vec, cfg)
 

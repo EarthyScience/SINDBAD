@@ -157,9 +157,10 @@ function getLoss(
     cost_options,
     multi_constraint_method)
     # @show param_vector
-    param_vector = p_type(param_vector)
+    # param_vector = p_type(param_vector)
     # param_vector = param_vector)
     selected_models = updateModelParameters(selected_models, param_vector, param_model_id_val)
+    @show "iam running tem"
     runTEM!(selected_models,
         loc_forcings,
         loc_spinup_forcings,
@@ -167,8 +168,13 @@ function getLoss(
         loc_outputs,
         land_init_space,
         tem)
+
     loss_vector = getLossVector(observations, output_array, cost_options)
-    return combineLoss(loss_vector, multi_constraint_method)
+
+    l = combineLoss(loss_vector, multi_constraint_method)
+    @show "i calculated vector"
+
+    return l
 end
 
 

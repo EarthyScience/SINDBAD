@@ -121,6 +121,30 @@ struct SSPDynamicSSTsit5 <: SindbadSpinup end
 struct SSPSSRootfind <: SindbadSpinup end
 
 
+# spinup sequence and types
+export SpinSequence
+export SpinSequenceWithAggregator
+
+struct SpinSequenceWithAggregator
+    forcing::Symbol
+    n_repeat::Int
+    n_timesteps::Int
+    spinup_mode::SindbadSpinup
+    options::NamedTuple
+    aggregator_indices::Vector{Int}
+    aggregator::Vector{TimeAggregator}
+    aggregator_type::TimeAggregatorTypes
+end
+
+
+struct SpinSequence
+    forcing::Symbol
+    n_repeat::Int
+    n_timesteps::Int
+    spinup_mode::SindbadSpinup
+    options::NamedTuple
+end
+
 # ------------------------- parallelization and model output options-------------------------
 
 export DoOutputAll
