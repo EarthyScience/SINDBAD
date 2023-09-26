@@ -5,6 +5,7 @@ export getLocOutputData
 export getLocForcing!
 export getLocOutput!
 export getNumberOfTimeSteps
+export setOutputForTimeStep!
 
 """
     fillLocOutput!(ar, val, ts::Int64)

@@ -63,7 +63,16 @@ forcing_one_timestep =run_helpers.forcing_one_timestep;
 models = info.tem.models.forward;
 models = LongTuple(models...);
 
-@time coreTEM!(
+coreTEM!(
+        models,
+        loc_forcing,
+        loc_spinup_forcing,
+        forcing_one_timestep,
+        loc_output,
+        land_init,
+        tem...)
+
+@code_warntype coreTEM!(
         models,
         loc_forcing,
         loc_spinup_forcing,
@@ -124,7 +133,7 @@ println("Do gradient")
 
 catched_model_args = []
 
-@time ForwardDiffGrads(
+@time f_grads_one = ForwardDiffGrads(
     siteLossInner,
     tbl_params.default,
     models,
@@ -139,6 +148,29 @@ catched_model_args = []
     cost_options,
     constraint_method
     )
+
+
+ml_baseline = DenseNN(78, 32, 42; extra_hlayers=2, seed=523)
+
+flat, re, opt_state = destructureNN(ml_baseline; nn_opt =  Optimisers.Adam())
+
+x_feat = xfeatures[site=1:2]
+
+inst_params, pb = Zygote.pullback(p -> re(p)(x_feat), flat)
+
+using Random
+Random.seed!(123)
+f_grads = hcat(f_grads_one, f_grads_one*rand())
+
+pb(f_grads)
+
+f_grads_m = mean(f_grads, dims=2)
+
+pb(f_grads_m[:,1])
+
+
+
+
 
 (model, forcing, _land, tem_helpers) = last(catched_model_args);
 @code_warntype Sindbad.Models.compute(model, forcing, _land, tem_helpers)
