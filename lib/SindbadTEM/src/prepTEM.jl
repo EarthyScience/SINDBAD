@@ -329,7 +329,6 @@ end
 function runTEMOneLocation(selected_models, forcing, land_init, loc_space_ind, tem, ::LandOutArray)
     loc_forcing = getLocForcingData(forcing, loc_space_ind)
     forcing_one_timestep, land_one = runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
-    # setOutputForTimeStep!(loc_output, land_one, 1, tem.helpers.vals.output_vars)
     return forcing_one_timestep, land_one
 end
 

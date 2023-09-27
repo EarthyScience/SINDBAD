@@ -22,7 +22,7 @@ Wraps a multi-input argument function to be used by ForwardDiff.
 """
 #@everywhere 
 function ForwardDiffGrads(loss_function::F, vals::AbstractArray, args...) where {F}
-    println("Starting grads comp")
+    #println("Starting grads comp")
     loss_tmp(x) = loss_function(x, args...)
     return ForwardDiff.gradient(loss_tmp, vals)
 end
@@ -324,7 +324,9 @@ function train(
             f_grads = zeros(Float32, n_params, length(xbatch))
 
             x_feat = xfeatures(; site=xbatch)
-            inst_params, pb = Zygote.pullback((x, p) -> re(p)(x), x_feat, flat)
+            
+            inst_params, pb = Zygote.pullback(p -> re(p)(x_feat), flat)
+
             gradsBatch!(
                 loss_function,
                 f_grads,
@@ -347,6 +349,7 @@ function train(
                 )
 
             _, ∇params = pb(f_grads)
+            
             opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
         end
 
