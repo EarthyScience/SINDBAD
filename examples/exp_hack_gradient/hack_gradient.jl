@@ -72,28 +72,6 @@ loc_spinup_forcing = loc_spinup_forcings[site_location];
 cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
 constraint_method = info.optim.multi_constraint_method
 
-    
-# println("Do gradient")
-
-# catched_model_args = []
-
-# @time f_grads_one = ForwardDiffGrads(
-#     siteLossInner,
-#     tbl_params.default,
-#     models_lt,
-#     loc_forcing,
-#     loc_spinup_forcing,
-#     forcing_one_timestep,
-#     DiffCache.(loc_output),
-#     land_init,
-#     tem,
-#     param_to_index,
-#     loc_obs,
-#     cost_options,
-#     constraint_method
-#     )
-
-   
 
 # ForwardDiff.gradient(f, x)
 # load available covariates
@@ -147,19 +125,32 @@ gradsBatch!(
         constraint_method
         )
 
-#params_bounded = getParamsAct.(sites_parameters, tbl_params)
-cov_sites = xfeatures.site
-#sites_parameters .= tbl_params.default
-
-# start training 
-
-sites = xfeatures.site
-flat, re, opt_state = destructureNN(ml_baseline; nn_opt =  Optimisers.Adam())
-n_params = length(ml_baseline[end].bias)
-
-# sites = sites[1:16]
-
-nepochs = 50
+nepochs = 2
 shuffle_opt = true
 bs_seed = 123
-bs = 8
+bs = 4
+
+site_loss, re, flat = train(
+    ml_baseline,
+    siteLossInner,
+    xfeatures,
+    models_lt,
+    sites_forcing,
+    loc_forcings,
+    loc_spinup_forcings,
+    forcing_one_timestep,
+    loc_outputs,
+    land_init,
+    loc_observations,
+    tbl_params,
+    tem,
+    param_to_index,
+    cost_options,
+    constraint_method;
+    nepochs=nepochs,
+    opt=Optimisers.Adam(),
+    bs_seed=bs_seed,
+    bs=bs,
+    shuffle=shuffle_opt,
+    local_root=nothing,
+    name="seq_training_output")
