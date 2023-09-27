@@ -23,7 +23,7 @@
     "source_variable": null
   },
   "subset": {
-    "site": [1, 205]
+    "site": [1, 20]
   },
   "variables": {
     "ambient_CO2": {
