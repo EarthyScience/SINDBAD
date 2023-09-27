@@ -124,13 +124,13 @@ gradsBatch!(
         cost_options,
         constraint_method
         )
-
+        
 nepochs = 2
 shuffle_opt = true
 bs_seed = 123
 bs = 4
 
-site_loss, re, flat = train(
+sites_loss, re, flat = train(
     ml_baseline,
     siteLossInner,
     xfeatures,
