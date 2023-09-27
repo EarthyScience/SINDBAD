@@ -80,32 +80,36 @@ function gradsBatch!(
     # scaled_params_batch = getParamsAct(params_batch, tbl_params)
 
     p = Progress(length(sites_batch); desc="Computing batch grads...", color=:yellow, enabled=logging)
-    Threads.@threads for idx ∈ eachindex(indices_batch)
-        site_location = indices_batch[idx]
-        site_name = sites_forcing[site_location]
-        loc_params = scaled_params_batch(site=site_name)
-        loc_forcing = loc_forcings[site_location]
-        loc_obs = loc_observations[site_location]
-        loc_output = loc_outputs[site_location]
-        loc_spinup_forcing = loc_spinup_forcings[site_location]
+    @sync begin
+        for idx ∈ eachindex(indices_batch)
+           Threads.@spawn begin
+                site_location = indices_batch[idx]
+                site_name = sites_forcing[site_location]
+                loc_params = scaled_params_batch(site=site_name)
+                loc_forcing = loc_forcings[site_location]
+                loc_obs = loc_observations[site_location]
+                loc_output = loc_outputs[site_location]
+                loc_spinup_forcing = loc_spinup_forcings[site_location]
 
-        gg = ForwardDiffGrads(
-            loss_function,
-            loc_params,
-            models,
-            loc_forcing,
-            loc_spinup_forcing,
-            forcing_one_timestep,
-            DiffCache.(loc_output),
-            land_one,
-            tem,
-            param_to_index,
-            loc_obs,
-            cost_options,
-            constraint_method
-        )
-        grads_batch[:, idx] = gg
-        next!(p)
+                gg = ForwardDiffGrads(
+                    loss_function,
+                    loc_params,
+                    models,
+                    loc_forcing,
+                    loc_spinup_forcing,
+                    forcing_one_timestep,
+                    DiffCache.(loc_output),
+                    land_one,
+                    tem,
+                    param_to_index,
+                    loc_obs,
+                    cost_options,
+                    constraint_method
+                )
+                grads_batch[:, idx] = gg
+                next!(p)
+           end
+        end
     end
 end
 
@@ -141,32 +145,35 @@ function get_site_losses(
 
 
     p = Progress(size(sites_loss,1); desc="Computing batch grads...", color=:yellow, enabled=logging)
+    @sync begin
+        for idx ∈ eachindex(indices_sites)
+            Threads.@spawn begin
+                site_location = indices_sites[idx]
+                site_name = sites_forcing[site_location]
+                loc_params = scaled_params(site=site_name)
+                loc_forcing = loc_forcings[site_location]
+                loc_obs = loc_observations[site_location]
+                loc_output = loc_outputs[site_location]
+                loc_spinup_forcing = loc_spinup_forcings[site_location]
 
-    Threads.@threads for idx ∈ eachindex(indices_sites)
-        site_location = indices_sites[idx]
-        site_name = sites_forcing[site_location]
-        loc_params = scaled_params(site=site_name)
-        loc_forcing = loc_forcings[site_location]
-        loc_obs = loc_observations[site_location]
-        loc_output = loc_outputs[site_location]
-        loc_spinup_forcing = loc_spinup_forcings[site_location]
-
-        gg = loss_function(
-            loc_params,
-            models,
-            loc_forcing,
-            loc_spinup_forcing,
-            forcing_one_timestep,
-            loc_output,
-            land_one,
-            tem,
-            param_to_index,
-            loc_obs,
-            cost_options,
-            constraint_method
-        )
-        sites_loss[idx, epoch_number] = gg
-        next!(p)
+                gg = loss_function(
+                    loc_params,
+                    models,
+                    loc_forcing,
+                    loc_spinup_forcing,
+                    forcing_one_timestep,
+                    loc_output,
+                    land_one,
+                    tem,
+                    param_to_index,
+                    loc_obs,
+                    cost_options,
+                    constraint_method
+                )
+                sites_loss[idx, epoch_number] = gg
+                next!(p)
+            end
+        end
     end
 end
 
@@ -245,9 +252,10 @@ function train(
                 constraint_method;
                 logging=false
             )
-            grads_batch = mean(fetch.(grads_batch), dims=2)
-            _, ∇params = pb(grads_batch[:,1])
-
+            
+            grads_batch = mean(grads_batch, dims=2)[:,1]
+            ∇params = pb(grads_batch)[1]
+            
             opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
         end
 
