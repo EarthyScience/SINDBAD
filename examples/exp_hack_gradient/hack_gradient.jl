@@ -24,99 +24,63 @@ tbl_params = getParameters(info.tem.models.forward,
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 
-forc = (; Pair.(forcing.variables, forcing.data)...);
-obs = (; Pair.(observations.variables, observations.data)...);
+#forc = (; Pair.(forcing.variables, forcing.data)...);
+#obs = (; Pair.(observations.variables, observations.data)...);
 
+#land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
-land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-
-
-op = prepTEMOut(info, forcing.helpers);
-
-run_helpers = prepTEM(forcing, info);
-
-land_init_space = run_helpers.land_init_space;
-tem_with_types = run_helpers.tem_with_types;
-
-tem = (;
-    tem_helpers = tem_with_types.helpers,
-    tem_models = tem_with_types.models,
-    tem_spinup = tem_with_types.spinup,
-    tem_run_spinup = tem_with_types.helpers.run.spinup.spinup_TEM,
-);
-
-loc_space_inds = run_helpers.loc_space_inds;
-land_init_space = run_helpers.land_init_space;
-
-site_location = loc_space_inds[3]    
-loc_land_init = land_init_space[3];
-
-loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(op.data, forc, obs, site_location); # obs_synt
-
-loc_spinup_forcing = run_helpers.loc_spinup_forcings[site_location[1]];
-
-
-land_init = land_init_space[site_location[1]];
-forcing_one_timestep =run_helpers.forcing_one_timestep;
-
-models = info.tem.models.forward;
-models = LongTuple(models...);
-
-coreTEM!(
-        models,
-        loc_forcing,
-        loc_spinup_forcing,
-        forcing_one_timestep,
-        loc_output,
-        land_init,
-        tem...)
-
-@code_warntype coreTEM!(
-        models,
-        loc_forcing,
-        loc_spinup_forcing,
-        forcing_one_timestep,
-        loc_output,
-        land_init,
-        tem...)
-
-cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
-# new_cost_options = Tuple(cost_options);
-
-# new_options = [(; cost_metric= new_cost_options[i].cost_metric,
-#     obs_ind = new_cost_options[i].obs_ind,
-#     mod_ind = new_cost_options[i].mod_ind,
-#     valids = new_cost_options[i].valids,
-#     cost_weight = new_cost_options[i].cost_weight) for i in eachindex(new_cost_options)]
-
-#cost_options= cost_options
-constraint_method = info.optim.multi_constraint_method
-
-# @time  getSiteLossTEM(
-#     models,
-#     loc_forcing,
-#     loc_spinup_forcing,
-#     forcing_one_timestep,
-#     loc_output,
-#     land_init,
-#     tem,
-#     loc_obs,
-#     cost_options,
-#     constraint_method)
-
-
-#CHUNK_SIZE = 13;
-
+#op = prepTEMOut(info, forcing.helpers);
 models = info.tem.models.forward;
 param_to_index = param_indices(models, tbl_params);
+models_lt = LongTuple(models...);
 
-models = LongTuple(models...);
+run_helpers = prepTEM(models_lt, forcing, observations, info);
+
+forcing_one_timestep = run_helpers.forcing_one_timestep;
+land_init = run_helpers.land_one;
+tem = (;
+    tem_helpers = run_helpers.tem_with_types.helpers,
+    tem_models = run_helpers.tem_with_types.models,
+    tem_spinup = run_helpers.tem_with_types.spinup,
+    tem_run_spinup = run_helpers.tem_with_types.helpers.run.spinup.spinup_TEM,
+);
+
+# site specific variables
+loc_forcings = run_helpers.loc_forcings;
+loc_observations = run_helpers.loc_observations;
+loc_outputs = run_helpers.loc_outputs;
+loc_spinup_forcings = run_helpers.loc_spinup_forcings;
+loc_space_inds = run_helpers.loc_space_inds;
+site_location = loc_space_inds[1][1]
+loc_forcing = loc_forcings[site_location];
+loc_obs = loc_observations[site_location];
+loc_output = loc_outputs[site_location];
+loc_spinup_forcing = loc_spinup_forcings[site_location];
 
 
-# @time siteLossInner(
+# run the model
+@time coreTEM!(
+        models_lt,
+        loc_forcing,
+        loc_spinup_forcing,
+        forcing_one_timestep,
+        loc_output,
+        land_init,
+        tem...)
+
+# cost related
+cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
+constraint_method = info.optim.multi_constraint_method
+
+    
+# println("Do gradient")
+
+# catched_model_args = []
+
+# @time f_grads_one = ForwardDiffGrads(
+#     siteLossInner,
 #     tbl_params.default,
-#     models,
+#     models_lt,
 #     loc_forcing,
 #     loc_spinup_forcing,
 #     forcing_one_timestep,
@@ -128,77 +92,64 @@ models = LongTuple(models...);
 #     cost_options,
 #     constraint_method
 #     )
-    
-println("Do gradient")
 
-catched_model_args = []
-
-@time f_grads_one = ForwardDiffGrads(
-    siteLossInner,
-    tbl_params.default,
-    models,
-    loc_forcing,
-    loc_spinup_forcing,
-    forcing_one_timestep,
-    DiffCache.(loc_output),
-    land_init,
-    tem,
-    param_to_index,
-    loc_obs,
-    cost_options,
-    constraint_method
-    )
-
-
-ml_baseline = DenseNN(78, 32, 42; extra_hlayers=2, seed=523)
-
-flat, re, opt_state = destructureNN(ml_baseline; nn_opt =  Optimisers.Adam())
-
-x_feat = xfeatures[site=1:2]
-
-inst_params, pb = Zygote.pullback(p -> re(p)(x_feat), flat)
-
-using Random
-Random.seed!(123)
-f_grads = hcat(f_grads_one, f_grads_one*rand())
-
-pb(f_grads)
-
-f_grads_m = mean(f_grads, dims=2)
-
-pb(f_grads_m[:,1])
-
-
-
-
-
-(model, forcing, _land, tem_helpers) = last(catched_model_args);
-@code_warntype Sindbad.Models.compute(model, forcing, _land, tem_helpers)
+   
 
 # ForwardDiff.gradient(f, x)
 # load available covariates
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
-sites_f = forc.Tair.site
+sites_forcing = forcing.data[1].site
 c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
 xfeatures = cube_to_KA(c)
 
-sites = xfeatures.site
-sites = [s for s ∈ sites]
+sites_feature = xfeatures.site
+sites_feature = [s for s ∈ sites_feature]
 
-sites = setdiff(sites, ["CA-NS6", "SD-Dem", "US-WCr", "ZM-Mon"])
-xfeatures = xfeatures(site=sites)
+# remove bad sites
+sites_feature = setdiff(sites_feature, ["CA-NS6", "SD-Dem", "US-WCr", "ZM-Mon"])
+xfeatures = xfeatures(site=sites_feature)
+
+# pseudo batch
+sites_batch = ["AR-SLu", "AT-Neu", "AU-Cum"]
+# sites_forcing[1:4]
 
 # machine learning parameters baseline
 n_bs_feat = length(xfeatures.features)
 n_neurons = 32
 n_params = sum(tbl_params.is_ml)
-
 ml_baseline = DenseNN(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
-sites_parameters = ml_baseline(xfeatures)
+
+parameters_sites = ml_baseline(xfeatures)
+
+grads_batch = zeros(Float32, n_params, length(sites_batch))
+
+indices_batch = name_to_id.(sites_batch, Ref(sites_forcing))
+params_batch = parameters_sites(; site=sites_batch)
+scaled_params_batch = getParamsAct(params_batch, tbl_params)
+
+gradsBatch!(
+        siteLossInner,
+        grads_batch,
+        scaled_params_batch,
+        models_lt,
+        sites_batch,
+        indices_batch,
+        sites_forcing,
+        loc_forcings,
+        loc_spinup_forcings,
+        forcing_one_timestep,
+        loc_outputs,
+        land_init,
+        loc_observations,
+        tem,
+        param_to_index,
+        cost_options,
+        constraint_method
+        )
+
 #params_bounded = getParamsAct.(sites_parameters, tbl_params)
 cov_sites = xfeatures.site
 #sites_parameters .= tbl_params.default
-op = prepTEMOut(info, forcing.helpers);
 
 # start training 
 
