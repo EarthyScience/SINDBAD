@@ -125,7 +125,7 @@ run_helpers_m = prepTEM(mods, forcing, info);
     
 
     
-@time coreTEM!(old_mods,
+@code_warntype coreTEM!(old_mods,
     run_helpers.loc_forcings[1],
     run_helpers.loc_spinup_forcings[1],
     run_helpers.forcing_one_timestep,
@@ -134,10 +134,11 @@ run_helpers_m = prepTEM(mods, forcing, info);
     run_helpers.tem_with_types.helpers,
     run_helpers.tem_with_types.models,
     run_helpers.tem_with_types.spinup,
-    run_helpers.tem_with_types.helpers.run.spinup.spinup_TEM
+    DoNotSpinupTEM()
+    # run_helpers.tem_with_types.helpers.run.spinup.spinup_TEM
     )
     
-@time coreTEM!(mods,
+@code_warntype coreTEM!(mods,
     run_helpers_m.loc_forcings[1],
     run_helpers_m.loc_spinup_forcings[1],
     run_helpers_m.forcing_one_timestep,
@@ -146,7 +147,8 @@ run_helpers_m = prepTEM(mods, forcing, info);
     run_helpers_m.tem_with_types.helpers,
     run_helpers_m.tem_with_types.models,
     run_helpers_m.tem_with_types.spinup,
-    run_helpers_m.tem_with_types.helpers.run.spinup.spinup_TEM
+    DoNotSpinupTEM()
+    # run_helpers_m.tem_with_types.helpers.run.spinup.spinup_TEM
     )
         
 
