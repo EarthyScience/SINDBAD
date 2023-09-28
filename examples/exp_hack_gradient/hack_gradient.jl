@@ -53,7 +53,9 @@ loc_spinup_forcings = run_helpers.loc_spinup_forcings;
 loc_space_inds = run_helpers.loc_space_inds;
 site_location = loc_space_inds[1][1]
 loc_forcing = loc_forcings[site_location];
+
 loc_obs = loc_observations[site_location];
+
 loc_output = loc_outputs[site_location];
 loc_spinup_forcing = loc_spinup_forcings[site_location];
 
@@ -69,7 +71,9 @@ loc_spinup_forcing = loc_spinup_forcings[site_location];
         tem...)
 
 # cost related
-cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
+
+cost_options = [prepCostOptions(loc_obs, info.optim.cost_options) for loc_obs in loc_observations];
+
 constraint_method = info.optim.multi_constraint_method
 
 
@@ -105,7 +109,7 @@ indices_batch = name_to_id.(sites_batch, Ref(sites_forcing))
 params_batch = parameters_sites(; site=sites_batch)
 scaled_params_batch = getParamsAct(params_batch, tbl_params)
 
-gradsBatch!(
+@time gradsBatch!(
         siteLossInner,
         grads_batch,
         scaled_params_batch,
@@ -124,13 +128,26 @@ gradsBatch!(
         cost_options,
         constraint_method
         )
-        
-nepochs = 2
+
+n_sites = 127
+train_split = 0.8
+batch_size = 16
+
+nbatch = trunc(Int, n_sites * train_split/batch_size) 
+
+train_size = nbatch * batch_size
+
+valid_split = 0.1
+valid_size = trunc(Int, n_sites * valid_split) 
+
+test_size = n_sites - valid_size - train_size
+
+nepochs = 5
 shuffle_opt = true
 bs_seed = 123
-bs = 4
+bs = 6
 
-sites_loss, re, flat = train(
+@time sites_loss, re, flat = train(
     ml_baseline,
     siteLossInner,
     xfeatures,
