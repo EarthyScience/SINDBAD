@@ -143,7 +143,6 @@ function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     run_output = runExperiment(info, forcing, info.tem.helpers.run.run_forward)
-    @info "runExperimentForward: preparing output info for writing output..."
     output = prepTEMOut(info, forcing.helpers);
     saveOutCubes(info, run_output, output.dims, output.variables)
     forward_output = (; Pair.(getUniqueVarNames(output.variables), run_output)...)
