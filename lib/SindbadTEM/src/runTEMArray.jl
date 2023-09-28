@@ -270,16 +270,8 @@ function timeLoopTEM!(
     n_timesteps,
     ::DoNotDebugModel) # do not debug the models
     land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, 1)
-    n_timesteps=1
-    println("I'm also here !")
     for ts ∈ 1:n_timesteps
-        oldlandtype = typeof(land)
         land = runTimeStep(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, forc_types, model_helpers, output_vars, ts)#::typeof(land)
-        push!(Main.catched_model_args, (land, loc_output))
-        newlanddtype = typeof(land)
-        if oldlandtype != newlanddtype
-            @warn "Type of land changed in time step ts"
-        end
     end
 end
 
@@ -293,13 +285,9 @@ function runTimeStep(
     model_helpers,
     output_vars,
     ts)
-    @time f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, forc_types)
+    f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, forc_types)
     land = computeTEM(selected_models, f_ts, land, model_helpers)
-    
-    @show typeof(loc_output[5][1])
-    @show typeof(land.fluxes.evapotranspiration)
-
-    @time setOutputForTimeStep!(loc_output, land, ts, output_vars)
+    setOutputForTimeStep!(loc_output, land, ts, output_vars)
     return land
 end
 
