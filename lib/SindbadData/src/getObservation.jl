@@ -20,7 +20,7 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
     yax_sub = nothing
     v_info_sub = nothing
     bounds_sub = nothing
-    @info "   $(data_sub_field)"
+    @debug "   $(data_sub_field)"
     get_it_from_path = false
     if hasproperty(v_info, data_sub_field) && use_data_sub
         get_it_from_path = true
@@ -38,16 +38,16 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
         bounds_sub = v_info_sub.bounds
     else
         if data_sub_field == :qflag
-            @info "     no \"$(data_sub_field)\" field OR use_quality_flag=false in optimization settings"
+            @debug "     no \"$(data_sub_field)\" field OR use_quality_flag=false in optimization settings"
         elseif data_sub_field == :unc
-            @info "     no \"$(data_sub_field)\" field OR use_uncertainty=false in optimization settings"
+            @debug "     no \"$(data_sub_field)\" field OR use_uncertainty=false in optimization settings"
         elseif data_sub_field == :weight
-            @info "     no \"$(data_sub_field)\" field OR use_spatial_weight=false in optimization settings"
+            @debug "     no \"$(data_sub_field)\" field OR use_spatial_weight=false in optimization settings"
         else
-            @info "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
+            @debug "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
         end
         if !isnothing(yax)
-            @info "       assuming values of ones"
+            @info "       assuming values of ones for $(data_sub_field)"
             nc_sub = nc
             yax_sub = map(x -> one(x), yax)
             v_info_sub = default_info
@@ -119,15 +119,16 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         if !isnothing(yax_mask)
             yax_mask_v .= yax_mask .* yax_mask_v
         end
-        @info "   harmonizing qflag"
+        @debug "getObservation: harmonizing observations..."
+        @debug "   harmonizing qflag"
         cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info, num_type; clean_data=false)
-        @info "   harmonizing data"
+        @debug "   harmonizing data"
         cyax = subsetAndProcessYax(yax, yax_mask, tar_dims, vinfo_data, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
-        @info "   harmonizing unc"
+        @debug "   harmonizing unc"
         cyax_unc = subsetAndProcessYax(yax_unc, yax_mask, tar_dims, vinfo_unc, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
-        @info "   harmonizing weight"
+        @debug "   harmonizing weight"
         cyax_wgt = subsetAndProcessYax(yax_wgt, yax_mask, tar_dims, vinfo_wgt, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
-        @info "   harmonizing mask"
+        @debug "   harmonizing mask"
         yax_mask_v = subsetAndProcessYax(yax_mask_v, yax_mask_v, tar_dims, vinfo_mask, info, num_type_bool; clean_data=false)
 
         push!(obscubes, cyax)
@@ -136,11 +137,12 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(obscubes, cyax_wgt)
         @info " \n"
     end
-    @info "getObservation: getting observation dimensions..."
+    @info "getObservation: getting observation helpers..."
+    @debug "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(info.forcing.data_dimension.space))
-    @info "getObservation: getting number of time steps..."
+    @debug "getObservation: getting number of time steps..."
     nts = forcing_helpers.sizes
-    @info "getObservation: getting variable name..."
+    @debug "getObservation: getting variable name..."
     varnames_all = []
     for v ∈ varnames
         push!(varnames_all, v)

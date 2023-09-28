@@ -624,6 +624,26 @@ end
 
 
 """
+    getOrderedOutputList(varlist, var_o::Symbol)
+
+return the corresponding variable from the full list
+
+# Arguments:
+- `varlist`: the full variable list 
+- `var_o`: the variable to find
+"""
+function getOrderedOutputList(varlist, var_o::Symbol)
+    for var ∈ varlist
+        vname = Symbol(split(string(var), '.')[end])
+        if vname === var_o
+            return var
+        end
+    end
+end
+
+
+
+"""
     getOrderedSelectedModels(info::NamedTuple, selected_models::AbstractArray)
 
 gets the ordered list of selected models from info.model_structure.models
@@ -1049,14 +1069,51 @@ function getVariableGroups(var_list::AbstractArray)
     return varNT
 end
 
+
+"""
+    getVariablePair(out_var)
+
+return a vector of pairs with field and subfield of land from the list of variables (out_vars) in field.subfield convention
+"""
+function getVariablePair(out_var::String)
+    sep = "."
+    if occursin(",", out_var)
+        sep = ","
+    end
+    return Tuple(Symbol.(split(string(out_var), sep)))
+end
+
+
+"""
+    getVariablePair(out_var)
+
+return a vector of pairs with field and subfield of land from the list of variables (out_vars) in field.subfield convention
+"""
+function getVariablePair(out_var::Symbol)
+    getVariablePair(string(out_var))
+end
+
 """
     getVariablesToStore(info::NamedTuple)
 
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
 function getVariablesToStore(info::NamedTuple)
-    write_store_vars = getVariableGroups(collect(propertynames(info.experiment.model_output.variables)))
-    info = (; info..., tem=(; info.tem..., variables=write_store_vars))
+    out_vars = collect(propertynames(info.experiment.model_output.variables))
+
+    if info.experiment.flags.run_optimization
+        out_vars = map(info.optim.variables.obs) do vo
+            vn = getfield(info.optim.variables.optim, vo)
+            Symbol(string(vn[1]) * "." * string(vn[2]))
+        end
+    elseif info.experiment.flags.calc_cost
+        out_vars = union(String.(keys(info.experiment.model_output.variables)),
+                info.optim.variables.model)
+    end
+
+    out_vars_pairs = Tuple(getVariablePair.(out_vars))
+
+    info = (; info..., tem=(; info.tem..., variables=out_vars_pairs))
     return info
 end
 
@@ -1398,8 +1455,6 @@ function setupInfo(info::NamedTuple)
     info = setNumericHelpers(info)
     @info "SetupExperiment: setting Output Helpers..."
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., output=info.output)))
-    @info "SetupExperiment: setting Variable Helpers..."
-    info = getVariablesToStore(info)
     @info "SetupExperiment: setting Pools Info..."
     info = generatePoolsInfo(info)
     @info "SetupExperiment: setting Dates Helpers..."
@@ -1407,7 +1462,7 @@ function setupInfo(info::NamedTuple)
     selected_models = collect(propertynames(info.model_structure.models))
     # @show sel
     # selected_models = (selected_models..., :dummy)
-    @info "SetupExperiment: setting Models..."
+    @info "SetupExperiment: setting Model Structure..."
     selected_models = getOrderedSelectedModels(info, selected_models)
     info = (;
         info...,
@@ -1415,11 +1470,11 @@ function setupInfo(info::NamedTuple)
             info.tem...,
             models=(; selected_models=Table((; model=[selected_models...])))))
     info = getSpinupAndForwardModels(info)
-    @info "SetupExperiment:         ....saving selected models code..."
+    @info "SetupExperiment:         ...saving Selected Models Code..."
     _ = parseSaveCode(info)
 
     # add information related to model run
-    @info "SetupExperiment: setting running flags..."
+    @info "SetupExperiment: setting Model Run Flags..."
     run_info = getModelRunInfo(info)
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
     @info "SetupExperiment: setting Spinup Info..."
@@ -1428,23 +1483,9 @@ function setupInfo(info::NamedTuple)
         @info "SetupExperiment: setting Optimization and Observation info..."
         info = setupOptimization(info)
     end
-    # adjust the model variable list for different model spinupTEM
-    sel_vars = nothing
-    if info.experiment.flags.run_optimization
-        sel_vars = info.optim.variables.store
-    elseif info.experiment.flags.calc_cost
-        if info.experiment.flags.run_forward
-            sel_vars = getVariableGroups(
-                union(String.(keys(info.experiment.model_output.variables)),
-                    info.optim.variables.model)
-            )
-        else
-            sel_vars = info.optim.variables.store
-        end
-    else
-        sel_vars = info.tem.variables
-    end
-    info = (; info..., tem=(; info.tem..., variables=sel_vars))
+    @info "SetupExperiment: setting Variable Helpers..."
+    info = getVariablesToStore(info)
+
     @info "\n----------------------------------------------\n"
     return info
 end

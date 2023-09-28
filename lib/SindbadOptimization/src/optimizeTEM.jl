@@ -34,7 +34,7 @@ function getLoss(
     multi_constraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
     land_wrapper_timeseries = runTEM(updated_models, forcing, spinup_forcing, forcing_one_timestep, land_timeseries, land_init, tem)
-    loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
+    loss_vector = getLossVector(land_wrapper_timeseries, observations, cost_options)
     @debug loss_vector
     return combineLoss(loss_vector, multi_constraint_method)
 end
@@ -71,7 +71,7 @@ function getLoss(
     multi_constraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
     land_wrapper_timeseries = runTEM(updated_models, forcing, spinup_forcing, forcing_one_timestep, land_init, tem)
-    loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
+    loss_vector = getLossVector(land_wrapper_timeseries, observations, cost_options)
     return combineLoss(loss_vector, multi_constraint_method)
 end
 
@@ -116,7 +116,7 @@ function getLoss(
         loc_outputs,
         land_init_space,
         tem)
-    loss_vector = getLossVector(observations, output_array, cost_options)
+    loss_vector = getLossVector(output_array, observations, cost_options)
     return combineLoss(loss_vector, multi_constraint_method)
 end
 
@@ -160,7 +160,7 @@ function getLoss(
     # param_vector = p_type(param_vector)
     # param_vector = param_vector)
     selected_models = updateModelParameters(selected_models, param_vector, param_model_id_val)
-    @show "iam running tem"
+
     runTEM!(selected_models,
         loc_forcings,
         loc_spinup_forcings,
@@ -169,7 +169,7 @@ function getLoss(
         land_init_space,
         tem)
 
-    loss_vector = getLossVector(observations, output_array, cost_options)
+    loss_vector = getLossVector(output_array, observations, cost_options)
 
     l = combineLoss(loss_vector, multi_constraint_method)
     @show "i calculated vector"
@@ -210,7 +210,7 @@ function optimizeTEM(forcing::NamedTuple,
     upper_bounds = tbl_params.upper
 
     run_helpers = prepTEM(forcing, info)
-    param_model_id_val = info.optim.param_model_id_val
+    # param_model_id_val = info.optim.param_model_id_val
     cost_function =
         x -> getLoss(x,
             tem.models.forward,

@@ -1,573 +1,0 @@
-[ Info: getExperimentInfo: load configurations...
-[ Info: getConfiguration: readConfiguration:: forcing ::: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/settings_test_med_sbatch/forcing.json
-[ Info: getConfiguration: readConfiguration:: model_structure ::: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/settings_test_med_sbatch/model_structure.json
-[ Info: getConfiguration: readConfiguration:: optimization ::: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/settings_test_med_sbatch/optimization_good.json
-[ Info: Setup output directories in: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/output_FLUXNET_Hybrid
-[ Info: Saving a copy of json settings to: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/output_FLUXNET_Hybrid/settings
-┌ Info: 
-└ ----------------------------------------------
-[ Info: getExperimentInfo: setup experiment...
-[ Info: SetupExperiment: setting Numeric Helpers...
-[ Info: SetupExperiment: setting Output Helpers...
-[ Info: SetupExperiment: setting Variable Helpers...
-[ Info: SetupExperiment: setting Pools Info...
-[ Info: SetupExperiment: setting Dates Helpers...
-[ Info: SetupExperiment: setting Models...
-[ Info: SetupExperiment:         ....saving selected models code...
-[ Info: SetupExperiment: setting running flags...
-[ Info: SetupExperiment: setting Spinup Info...
-[ Info: SetupExperiment: setting Optimization and Observation info...
-┌ Info: 
-└ ----------------------------------------------
-[ Info: saveInfo: saving info...
-┌ Info: 
-└ ------------------------------------------------
-[ Info: getForcing: default_data_path: /Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr
-[ Info: getForcing: getting forcing variables...
-[ Info:      source_var: atmCO2_SCRIPPS_global
-┌ Info:      sindbad_var: ambient_CO2
-└  
-[ Info:      source_var: CLYPPT_SoilGrids
-┌ Info:      sindbad_var: CLAY
-└  
-[ Info:      source_var: dist_frac_sb2018
-┌ Info:      sindbad_var: dist_intensity
-└  
-[ Info:      source_var: OCSTHA_SoilGrids
-┌ Info:      sindbad_var: ORGM
-└  
-[ Info:      source_var: SW_IN_ERAIv2_gfld
-┌ Info:      sindbad_var: PAR
-└  
-[ Info:      source_var: P_ERAIv2_gfld
-┌ Info:      sindbad_var: Rain
-└  
-[ Info:      source_var: SW_IN_ERAIv2_gfld
-┌ Info:      sindbad_var: Rg
-└  
-[ Info:      source_var: SW_IN_POT_ONEFlux
-┌ Info:      sindbad_var: RgPot
-└  
-[ Info:      source_var: NETRAD_ERAIv2_gfld
-┌ Info:      sindbad_var: Rn
-└  
-[ Info:      source_var: SNDPPT_SoilGrids
-┌ Info:      sindbad_var: SAND
-└  
-[ Info:      source_var: SLTPPT_SoilGrids
-┌ Info:      sindbad_var: SILT
-└  
-[ Info:      source_var: TA_ERAIv2_gfld
-┌ Info:      sindbad_var: Tair
-└  
-[ Info:      source_var: TA_DayTime_ERAIv2_gfld
-┌ Info:      sindbad_var: TairDay
-└  
-[ Info:      source_var: VPD_ERAIv2_gfld
-┌ Info:      sindbad_var: VPD
-└  
-[ Info:      source_var: VPD_DayTime_ERAIv2_gfld
-┌ Info:      sindbad_var: VPDDay
-└  
-[ Info:    processing forcing helpers...
-┌ Info: 
-└ ----------------------------------------------
-[ Info: getObservation:  default_observation_data_path: /Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr
-[ Info: getObservation: getting observation variables...
-[ Info:  constraint: gpp
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: nee
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: reco
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: transpiration
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: evapotranspiration
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: agb
-[ Info:    data
-[ Info:    qflag
-[ Info:      no "qflag" field OR use_quality_flag=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: ndvi
-[ Info:    data
-[ Info:    qflag
-[ Info:      no "qflag" field OR use_quality_flag=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info: getObservation: getting observation dimensions...
-[ Info: getObservation: getting number of time steps...
-[ Info: getObservation: getting variable name...
-┌ Info: 
-└ ----------------------------------------------
-[ Info:      prepTEMOut: creating initial out/land...
-[ Info:      prepTEMOut: getting data variables...
-[ Info:      prepTEMOut: getting output dimension and arrays...
-[ Info:      prepTEMOut: getting parameter output for optimization...
-┌ Info: 
-└ ----------------------------------------------
-[ Info: prepTEM: preparing to run terrestrial ecosystem model (TEM)
-[ Info:      prepTEMOut: creating initial out/land...
-[ Info:      prepTEMOut: getting data variables...
-[ Info:      prepTEMOut: getting output dimension and arrays...
-[ Info:      prepTEMOut: getting parameter output for optimization...
-┌ Info: 
-└ ----------------------------------------------
-[ Info:      getting the space locations to run the model loop
-[ Info:      preparing vals for generated functions
-[ Info:      producing model output with one location and one time step
-[ Info:      preallocating local, threaded, and spatial data
-┌ Info: 
-└ ----------------------------------------------
-Progress:   2%|▋                                        |  ETA: 0:17:35[KProgress:   3%|█▎                                       |  ETA: 0:09:20[KProgress:   4%|█▋                                       |  ETA: 0:07:36[KProgress:   5%|█▉                                       |  ETA: 0:06:26[KProgress:   5%|██▎                                      |  ETA: 0:05:36[KProgress:   6%|██▌                                      |  ETA: 0:04:59[KProgress:   7%|██▉                                      |  ETA: 0:04:30[KProgress:   8%|███▏                                     |  ETA: 0:04:06[KProgress:   8%|███▌                                     |  ETA: 0:03:47[KProgress:   9%|███▊                                     |  ETA: 0:03:31[KProgress:  10%|████▏                                    |  ETA: 0:03:17[KProgress:  11%|████▍                                    |  ETA: 0:03:05[KProgress:  12%|████▊                                    |  ETA: 0:02:55[KProgress:  12%|█████                                    |  ETA: 0:02:46[KProgress:  13%|█████▍                                   |  ETA: 0:02:38[KProgress:  14%|█████▋                                   |  ETA: 0:02:30[KProgress:  15%|██████                                   |  ETA: 0:02:24[KProgress:  15%|██████▎                                  |  ETA: 0:02:18[KProgress:  16%|██████▋                                  |  ETA: 0:02:13[KProgress:  17%|███████                                  |  ETA: 0:02:08[KProgress:  18%|███████▎                                 |  ETA: 0:02:03[KProgress:  18%|███████▋                                 |  ETA: 0:01:59[KProgress:  19%|███████▉                                 |  ETA: 0:01:55[KProgress:  20%|████████▎                                |  ETA: 0:01:51[KProgress:  21%|████████▌                                |  ETA: 0:01:48[KProgress:  22%|████████▉                                |  ETA: 0:01:45[KProgress:  22%|█████████▏                               |  ETA: 0:01:42[KProgress:  23%|█████████▌                               |  ETA: 0:01:39[KProgress:  24%|█████████▊                               |  ETA: 0:01:36[KProgress:  25%|██████████▏                              |  ETA: 0:01:34[KProgress:  25%|██████████▍                              |  ETA: 0:01:31[KProgress:  26%|██████████▊                              |  ETA: 0:01:29[KProgress:  27%|███████████                              |  ETA: 0:01:27[KProgress:  28%|███████████▍                             |  ETA: 0:01:25[KProgress:  28%|███████████▋                             |  ETA: 0:01:23[KProgress:  29%|████████████                             |  ETA: 0:01:21[KProgress:  30%|████████████▎                            |  ETA: 0:01:19[KProgress:  31%|████████████▋                            |  ETA: 0:01:17[KProgress:  32%|████████████▉                            |  ETA: 0:01:15[KProgress:  32%|█████████████▎                           |  ETA: 0:01:14[KProgress:  33%|█████████████▌                           |  ETA: 0:01:12[KProgress:  34%|█████████████▉                           |  ETA: 0:01:11[KProgress:  35%|██████████████▎                          |  ETA: 0:01:09[KProgress:  35%|██████████████▌                          |  ETA: 0:01:08[KProgress:  36%|██████████████▉                          |  ETA: 0:01:06[KProgress:  37%|███████████████▏                         |  ETA: 0:01:05[KProgress:  38%|███████████████▌                         |  ETA: 0:01:03[KProgress:  38%|███████████████▊                         |  ETA: 0:01:02[KProgress:  39%|████████████████▏                        |  ETA: 0:01:01[KProgress:  40%|████████████████▍                        |  ETA: 0:01:00[KProgress:  41%|████████████████▊                        |  ETA: 0:00:58[KProgress:  42%|█████████████████                        |  ETA: 0:00:57[KProgress:  42%|█████████████████▍                       |  ETA: 0:00:56[KProgress:  43%|█████████████████▋                       |  ETA: 0:00:55[KProgress:  44%|██████████████████                       |  ETA: 0:00:54[KProgress:  45%|██████████████████▎                      |  ETA: 0:00:53[KProgress:  45%|██████████████████▋                      |  ETA: 0:00:52[KProgress:  46%|██████████████████▉                      |  ETA: 0:00:51[KProgress:  47%|███████████████████▎                     |  ETA: 0:00:50[KProgress:  48%|███████████████████▌                     |  ETA: 0:00:49[KProgress:  48%|███████████████████▉                     |  ETA: 0:00:48[KProgress:  49%|████████████████████▏                    |  ETA: 0:00:47[KProgress:  50%|████████████████████▌                    |  ETA: 0:00:46[KProgress:  51%|████████████████████▉                    |  ETA: 0:00:45[KProgress:  52%|█████████████████████▏                   |  ETA: 0:00:44[KProgress:  52%|█████████████████████▌                   |  ETA: 0:00:43[KProgress:  53%|█████████████████████▊                   |  ETA: 0:00:42[KProgress:  54%|██████████████████████▏                  |  ETA: 0:00:41[KProgress:  55%|██████████████████████▍                  |  ETA: 0:00:40[KProgress:  55%|██████████████████████▊                  |  ETA: 0:00:39[KProgress:  56%|███████████████████████                  |  ETA: 0:00:39[KProgress:  57%|███████████████████████▍                 |  ETA: 0:00:38[KProgress:  58%|███████████████████████▋                 |  ETA: 0:00:37[KProgress:  58%|████████████████████████                 |  ETA: 0:00:36[KProgress:  59%|████████████████████████▎                |  ETA: 0:00:35[KProgress:  60%|████████████████████████▋                |  ETA: 0:00:35[KProgress:  61%|████████████████████████▉                |  ETA: 0:00:34[KProgress:  62%|█████████████████████████▎               |  ETA: 0:00:33[KProgress:  62%|█████████████████████████▌               |  ETA: 0:00:32[KProgress:  63%|█████████████████████████▉               |  ETA: 0:00:31[KProgress:  64%|██████████████████████████▏              |  ETA: 0:00:31[KProgress:  65%|██████████████████████████▌              |  ETA: 0:00:30[KProgress:  65%|██████████████████████████▊              |  ETA: 0:00:29[KProgress:  66%|███████████████████████████▏             |  ETA: 0:00:28[KProgress:  67%|███████████████████████████▌             |  ETA: 0:00:28[KProgress:  68%|███████████████████████████▊             |  ETA: 0:00:27[KProgress:  68%|████████████████████████████▏            |  ETA: 0:00:26[KProgress:  69%|████████████████████████████▍            |  ETA: 0:00:25[KProgress:  70%|████████████████████████████▊            |  ETA: 0:00:25[KProgress:  71%|█████████████████████████████            |  ETA: 0:00:24[KProgress:  72%|█████████████████████████████▍           |  ETA: 0:00:23[KProgress:  72%|█████████████████████████████▋           |  ETA: 0:00:23[KProgress:  73%|██████████████████████████████           |  ETA: 0:00:22[KProgress:  74%|██████████████████████████████▎          |  ETA: 0:00:21[KProgress:  75%|██████████████████████████████▋          |  ETA: 0:00:21[KProgress:  75%|██████████████████████████████▉          |  ETA: 0:00:20[KProgress:  76%|███████████████████████████████▎         |  ETA: 0:00:19[KProgress:  77%|███████████████████████████████▌         |  ETA: 0:00:19[KProgress:  78%|███████████████████████████████▉         |  ETA: 0:00:18[KProgress:  78%|████████████████████████████████▏        |  ETA: 0:00:17[KProgress:  79%|████████████████████████████████▌        |  ETA: 0:00:17[KProgress:  80%|████████████████████████████████▊        |  ETA: 0:00:16[KProgress:  81%|█████████████████████████████████▏       |  ETA: 0:00:15[KProgress:  82%|█████████████████████████████████▍       |  ETA: 0:00:15[KProgress:  82%|█████████████████████████████████▊       |  ETA: 0:00:14[KProgress:  83%|██████████████████████████████████       |  ETA: 0:00:13[KProgress:  84%|██████████████████████████████████▍      |  ETA: 0:00:13[KProgress:  85%|██████████████████████████████████▊      |  ETA: 0:00:12[KProgress:  85%|███████████████████████████████████      |  ETA: 0:00:11[KProgress:  86%|███████████████████████████████████▍     |  ETA: 0:00:11[KProgress:  87%|███████████████████████████████████▋     |  ETA: 0:00:10[KProgress:  88%|████████████████████████████████████     |  ETA: 0:00:10[KProgress:  88%|████████████████████████████████████▎    |  ETA: 0:00:09[KProgress:  89%|████████████████████████████████████▋    |  ETA: 0:00:08[KProgress:  90%|████████████████████████████████████▉    |  ETA: 0:00:08[KProgress:  91%|█████████████████████████████████████▎   |  ETA: 0:00:07[KProgress:  92%|█████████████████████████████████████▌   |  ETA: 0:00:07[KProgress:  92%|█████████████████████████████████████▉   |  ETA: 0:00:06[KProgress:  93%|██████████████████████████████████████▏  |  ETA: 0:00:05[KProgress:  94%|██████████████████████████████████████▌  |  ETA: 0:00:05[KProgress:  95%|██████████████████████████████████████▊  |  ETA: 0:00:04[KProgress:  95%|███████████████████████████████████████▏ |  ETA: 0:00:04[KProgress:  96%|███████████████████████████████████████▍ |  ETA: 0:00:03[KProgress:  97%|███████████████████████████████████████▊ |  ETA: 0:00:02[KProgress:  98%|████████████████████████████████████████ |  ETA: 0:00:02[KProgress:  98%|████████████████████████████████████████▍|  ETA: 0:00:01[KProgress:  99%|████████████████████████████████████████▋|  ETA: 0:00:01[KProgress: 100%|█████████████████████████████████████████| Time: 0:01:15[K
-[ Info: getExperimentInfo: load configurations...
-[ Info: getConfiguration: readConfiguration:: forcing ::: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/settings_test_med_sbatch/forcing.json
-[ Info: getConfiguration: readConfiguration:: model_structure ::: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/settings_test_med_sbatch/model_structure.json
-[ Info: getConfiguration: readConfiguration:: optimization ::: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/settings_test_med_sbatch/optimization_good.json
-[ Info: Setup output directories in: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/output_FLUXNET_Hybrid
-[ Info: Saving a copy of json settings to: /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/../exp_test_med_sbatch/output_FLUXNET_Hybrid/settings
-┌ Info: 
-└ ----------------------------------------------
-[ Info: getExperimentInfo: setup experiment...
-[ Info: SetupExperiment: setting Numeric Helpers...
-[ Info: SetupExperiment: setting Output Helpers...
-[ Info: SetupExperiment: setting Variable Helpers...
-[ Info: SetupExperiment: setting Pools Info...
-[ Info: SetupExperiment: setting Dates Helpers...
-[ Info: SetupExperiment: setting Models...
-[ Info: SetupExperiment:         ....saving selected models code...
-[ Info: SetupExperiment: setting running flags...
-[ Info: SetupExperiment: setting Spinup Info...
-[ Info: SetupExperiment: setting Optimization and Observation info...
-┌ Info: 
-└ ----------------------------------------------
-[ Info: saveInfo: saving info...
-┌ Info: 
-└ ------------------------------------------------
-[ Info: getForcing: default_data_path: /Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr
-[ Info: getForcing: getting forcing variables...
-[ Info:      source_var: atmCO2_SCRIPPS_global
-┌ Info:      sindbad_var: ambient_CO2
-└  
-[ Info:      source_var: CLYPPT_SoilGrids
-┌ Info:      sindbad_var: CLAY
-└  
-[ Info:      source_var: dist_frac_sb2018
-┌ Info:      sindbad_var: dist_intensity
-└  
-[ Info:      source_var: OCSTHA_SoilGrids
-┌ Info:      sindbad_var: ORGM
-└  
-[ Info:      source_var: SW_IN_ERAIv2_gfld
-┌ Info:      sindbad_var: PAR
-└  
-[ Info:      source_var: P_ERAIv2_gfld
-┌ Info:      sindbad_var: Rain
-└  
-[ Info:      source_var: SW_IN_ERAIv2_gfld
-┌ Info:      sindbad_var: Rg
-└  
-[ Info:      source_var: SW_IN_POT_ONEFlux
-┌ Info:      sindbad_var: RgPot
-└  
-[ Info:      source_var: NETRAD_ERAIv2_gfld
-┌ Info:      sindbad_var: Rn
-└  
-[ Info:      source_var: SNDPPT_SoilGrids
-┌ Info:      sindbad_var: SAND
-└  
-[ Info:      source_var: SLTPPT_SoilGrids
-┌ Info:      sindbad_var: SILT
-└  
-[ Info:      source_var: TA_ERAIv2_gfld
-┌ Info:      sindbad_var: Tair
-└  
-[ Info:      source_var: TA_DayTime_ERAIv2_gfld
-┌ Info:      sindbad_var: TairDay
-└  
-[ Info:      source_var: VPD_ERAIv2_gfld
-┌ Info:      sindbad_var: VPD
-└  
-[ Info:      source_var: VPD_DayTime_ERAIv2_gfld
-┌ Info:      sindbad_var: VPDDay
-└  
-[ Info:    processing forcing helpers...
-┌ Info: 
-└ ----------------------------------------------
-[ Info: getObservation:  default_observation_data_path: /Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr
-[ Info: getObservation: getting observation variables...
-[ Info:  constraint: gpp
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: nee
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: reco
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: transpiration
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: evapotranspiration
-[ Info:    data
-[ Info:    qflag
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: agb
-[ Info:    data
-[ Info:    qflag
-[ Info:      no "qflag" field OR use_quality_flag=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info:  constraint: ndvi
-[ Info:    data
-[ Info:    qflag
-[ Info:      no "qflag" field OR use_quality_flag=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    unc
-[ Info:      no "unc" field OR use_uncertainty=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    weight
-[ Info:      no "weight" field OR use_spatial_weight=false in optimization settings
-[ Info:        assuming values of ones
-[ Info:    sel_mask
-[ Info:      no "sel_mask" field OR sel_mask=null in optimization settings
-[ Info:        assuming values of ones
-[ Info:    harmonizing qflag
-[ Info:    harmonizing data
-[ Info:    harmonizing unc
-[ Info:    harmonizing weight
-[ Info:    harmonizing mask
-[ Info:  
-[ Info: getObservation: getting observation dimensions...
-[ Info: getObservation: getting number of time steps...
-[ Info: getObservation: getting variable name...
-┌ Info: 
-└ ----------------------------------------------
-[ Info:      prepTEMOut: creating initial out/land...
-[ Info:      prepTEMOut: getting data variables...
-[ Info:      prepTEMOut: getting output dimension and arrays...
-[ Info:      prepTEMOut: getting parameter output for optimization...
-┌ Info: 
-└ ----------------------------------------------
-[ Info: prepTEM: preparing to run terrestrial ecosystem model (TEM)
-[ Info:      prepTEMOut: creating initial out/land...
-[ Info:      prepTEMOut: getting data variables...
-[ Info:      prepTEMOut: getting output dimension and arrays...
-[ Info:      prepTEMOut: getting parameter output for optimization...
-┌ Info: 
-└ ----------------------------------------------
-[ Info:      getting the space locations to run the model loop
-[ Info:      preparing vals for generated functions
-[ Info:      producing model output with one location and one time step
-[ Info:      preallocating local, threaded, and spatial data
-┌ Info: 
-└ ----------------------------------------------
-[ Info:      prepTEMOut: creating initial out/land...
-[ Info:      prepTEMOut: getting data variables...
-[ Info:      prepTEMOut: getting output dimension and arrays...
-[ Info:      prepTEMOut: getting parameter output for optimization...
-┌ Info: 
-└ ----------------------------------------------
-ERROR: LoadError: UndefVarError: `jldsave` not defined
-Stacktrace:
- [1] top-level scope
-   @ /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/main_job.jl:209
-in expression starting at /Net/Groups/BGI/scratch/lalonso/sindbad.jl/examples/exp_test_med_sbatch/main_job.jl:209
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-ssn = :site
-  1.173962 seconds (1.10 M allocations: 75.076 MiB, 3.81% gc time, 61.02% compilation time)
