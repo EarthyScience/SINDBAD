@@ -1,5 +1,7 @@
 export dictToNamedTuple
 export dropFields
+export foldlLongTupleG
+export LongTupleG
 export getCombinedNamedTuple
 export makeNamedTuple
 export removeEmptyTupleFields
@@ -119,6 +121,45 @@ function getTypes!(d, all_types)
     return unique(all_types)
 end
 
+struct LongTupleG{NSPLIT,T <: Tuple}
+    data::T
+    n::Val{NSPLIT}
+    function LongTupleG{n}(arg::T) where {n,T<: Tuple}
+        return new{n,T}(arg,Val{n}())
+    end
+    function LongTupleG{n}(args...) where n
+        s = length(args)
+        nt = s ÷ n
+        r = mod(s,n) # 5 for our current use case
+        nt = r == 0 ? nt : nt + 1
+        idx = 1
+        tup = ntuple(nt) do i
+            nn = r != 0 && i==nt ? r : n
+            t = ntuple(x -> args[x+idx-1], nn)
+            idx += nn
+            return t
+        end
+        return new{n,typeof(tup)}(tup)
+    end
+end
+
+Base.map(f, arg::LongTupleG{N}) where N = LongTupleG{N}(map(tup-> map(f, tup), arg.data))
+
+@inline Base.foreach(f, arg::LongTupleG) = foreach(tup-> foreach(f, tup), arg.data)
+
+
+@generated function foldlLongTupleG(f, x::LongTupleG{NSPL,T}; init) where {T,NSPL}
+    exes = []
+    N = length(T.parameters)
+    lastlength = length(last(T.parameters).parameters)
+    for i in 1:N
+        N2 = i==N ? lastlength : NSPL
+        for j in 1:N2
+            push!(exes, :(init = f(x.data[$i][$j], init)))
+        end
+    end
+    return Expr(:block, exes...)
+end
 
 """
     removeEmptyTupleFields(tpl::NamedTuple)
