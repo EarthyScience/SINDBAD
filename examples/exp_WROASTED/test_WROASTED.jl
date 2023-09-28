@@ -53,19 +53,18 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.land_init_space,
     run_helpers.tem_with_types)
 
-@time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
+@time output_default = runExperimentCost(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
-opt_params = out_opti.out_params;
-# out_model = out_opti.out_forward;
+# opt_params = out_opti.out_params;
 
 # some plots
 ds = forcing.data[1];
-opt_dat = run_helpers.output_array;
 def_dat = output_default;
+opt_dat = out_opti.out_forward;
 costOpt = prepCostOptions(obs_array, info.optim.cost_options);
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 foreach(costOpt) do var_row
