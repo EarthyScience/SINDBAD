@@ -1,11 +1,25 @@
 using SindbadTEM
+using JLD2
+using SindbadML
 
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-begin_year = "1979"
+begin_year = "2000"
 end_year = "2017"
 
 domain = "US-WCr"
+
+# load neural network and covariates in order to predict the new BAD? parameters
+re_structure, flat_weights = load("./output_FLUXNET_Hybrid/train_sujan/seq_training_output_epoch_2.jld2", "re", "flat")
+
+nn_model = re_structure(flat_weights)
+
+c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
+xfeatures = cube_to_KA(c)
+
+new_nn_parameters = nn_model(xfeatures)
+new_params = new_nn_parameters(; site = domain) # unbounded, see later the scaling
+
 # domain = "MY-PSO"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
@@ -57,7 +71,9 @@ tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameters_to_optimize,
     info.tem.helpers.numbers.sNT)
 
-new_params = tbl_params.default;
+# new_params = tbl_params.default;
+new_params = getParamsAct(new_params, tbl_params)
+
 models = info.tem.models.forward;
 param_to_index = param_indices(models, tbl_params);
 
@@ -76,4 +92,4 @@ new_models = updateModelParametersType(param_to_index, models, new_params)
 op = run_helpers.loc_outputs[1];
 ov = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
 
-lines(op[end-4][:,1])
+lines(op[6][:,1])
