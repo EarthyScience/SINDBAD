@@ -42,6 +42,7 @@ function getSiteLossTEM(models, loc_forcing, loc_spinup_forcing, forcing_one_tim
         tem...)
     #println(@__LINE__," ",@__FILE__)
     lossVec = getLossVector(loc_obs, loc_output, cost_options)
+    #@show lossVec
     #println(@__LINE__," ",@__FILE__)
     t_loss = combineLoss(lossVec, constraint_method)
     #println(@__LINE__," ",@__FILE__)
