@@ -406,7 +406,7 @@ end
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
-function prepTEM(selected_models, forcing::NamedTuple, observations, info::NamedTuple)
+function prepTEM(selected_models, forcing::NamedTuple, observations::NamedTuple, info::NamedTuple)
     @info "prepTEM: preparing to run terrestrial ecosystem model (TEM)"
     tem_helpers = info.tem.helpers
     output = prepTEMOut(info, forcing.helpers)
