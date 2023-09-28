@@ -58,7 +58,7 @@ end
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
 function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
-    @info "   processing forcing helpers..."
+    @info "getForcing: processing forcing helpers..."
     @debug "     ::dimensions::"
     indims = getDataDims.(incubes, Ref(Symbol.(info.forcing.data_dimension.space)))
     @debug "     ::variable names::"
@@ -123,9 +123,9 @@ function getForcing(info::NamedTuple)
         vinfo = getCombinedNamedTuple(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)
-        @info "     source_var: $(vinfo.source_variable)"
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)
-        @info "     sindbad_var: $(k)\n "
+        @info " sindbad_var: $(k) "
+        @debug "     source_var: $(vinfo.source_variable)"
         if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
             f_sizes = collectForcingSizes(info, incube)
             f_dimension = getSindbadDims(incube)

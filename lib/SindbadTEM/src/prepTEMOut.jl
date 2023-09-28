@@ -55,26 +55,27 @@ a helper function to get the name and size of the depth dimension for a given va
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `land_init`: initial SINDBAD land with all fields and subfields
 """
-function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::NamedTuple)
-    field_name = first(split(string(vname), '.'))
-    vname_s = split(string(vname), '.')[end]
+function getDepthDimensionSizeName(v_full_str, info::NamedTuple, land_init::NamedTuple)
+    v_full_sym = Symbol(v_full_str)
+    field_name = first(split(v_full_str, '.'))
+    v_name = split(v_full_str, '.')[end]
     tmp_vars = info.experiment.model_output.variables
     dim_size = 1
-    dim_name = vname_s * "_idx"
-    if vname in keys(tmp_vars)
-        vdim = tmp_vars[vname]
+    dim_name = v_name * "_idx"
+    if v_full_sym in keys(tmp_vars)
+        v_dim = tmp_vars[v_full_sym]
         dim_size = 1
-        dim_name = vname_s * "_idx"
-        if !isnothing(vdim) && isa(vdim, String)
-            dim_name = vdim
+        dim_name = v_name * "_idx"
+        if !isnothing(v_dim) && isa(v_dim, String)
+            dim_name = v_dim
         end
-        if isnothing(vdim)
+        if isnothing(v_dim)
             dim_size = dim_size
-        elseif isa(vdim, Int64)
-            dim_size = vdim
-        elseif isa(vdim, String)
-            if Symbol(vdim) in keys(info.experiment.model_output.depth_dimensions)
-                dim_size_K = getfield(info.experiment.model_output.depth_dimensions, Symbol(vdim))
+        elseif isa(v_dim, Int64)
+            dim_size = v_dim
+        elseif isa(v_dim, String)
+            if Symbol(v_dim) in keys(info.experiment.model_output.depth_dimensions)
+                dim_size_K = getfield(info.experiment.model_output.depth_dimensions, Symbol(v_dim))
                 if isa(dim_size_K, Int64)
                     dim_size = dim_size_K
                 elseif isa(dim_size_K, String)
@@ -82,18 +83,18 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
                 end
             else
                 error(
-                    "The output depth dimension for $(vname) is specified as $(vdim) but this key does not exist in depth_dimensions. Either add it to depth_dimensions or add a numeric value."
+                    "The output depth dimension for $(v_name) is specified as $(v_dim) but this key does not exist in depth_dimensions. Either add it to depth_dimensions or add a numeric value."
                 )
             end
         else
             error(
-                "The depth dimension for $(vname) is specified as $(typeof(vdim)). Only null, integers, or string keys to depth_dimensions are accepted."
+                "The depth dimension for $(v_name) is specified as $(typeof(v_dim)). Only null, integers, or string keys to depth_dimensions are accepted."
             )
         end
 
     elseif field_name == "pools"
-        dim_name = vname_s * "_idx"
-        dim_size = length(getfield(land_init.pools, Symbol(vname_s)))
+        dim_name = v_name * "_idx"
+        dim_size = length(getfield(land_init.pools, Symbol(v_name)))
     end
     return dim_size, dim_name
 end
@@ -123,6 +124,7 @@ function getNumericArrays(out_vars, info, tem_helpers, land_init, forcing_sizes)
             ax_vals[2:end]...)
         ar .= info.tem.helpers.numbers.sNT(NaN)
     end
+    outarray = [outarray...]
     return outarray
 end
 
@@ -356,39 +358,16 @@ function getOutArrayType(num_type, ::DoNotUseForwardDiff)
     return num_type
 end
 
-"""
-    getOrderedOutputList(varlist, var_o::Symbol)
-
-return the correspinding variable from the full list
-
-# Arguments:
-- `varlist`: the full variable list 
-- `var_o`: the variable to find
-"""
-function getOrderedOutputList(varlist, var_o::Symbol)
-    for var ∈ varlist
-        vname = Symbol(split(string(var), '.')[end])
-        if vname === var_o
-            return var
-        end
-    end
-end
 
 """
-    getVariablePairs(out_vars)
+    getVariableString(var_pair)
 
 return a vector of pairs with field and subfield of land from the list of variables (out_vars) in field.subfield convention
 """
-function getVariablePairs(out_vars)
-    vf = Symbol[]
-    vsf = Symbol[]
-    for _vf ∈ out_vars
-        push!(vf, Symbol(split(string(_vf), '.')[1]))
-        push!(vsf, Symbol(split(string(_vf), '.')[2]))
-    end
-    ovro = Tuple(Tuple.(Pair.(vf, vsf)))
-    return ovro
+function getVariableString(var_pair::Tuple, sep=".")
+    return string(first(var_pair)) * sep * string(last(var_pair))
 end
+
 
 """
     setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
@@ -401,38 +380,26 @@ base function to prepare the output NT for the forward run
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
-    @info "     prepTEMOut: creating initial out/land..."
+    @info "  prepTEMOut: preparing output variables and helpers..."
+    @debug "     prepTEMOut: creating initial out/land..."
     land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
-    @info "     prepTEMOut: getting data variables..."
+    @debug "     prepTEMOut: getting data variables..."
 
-    out_vars = if hasproperty(info, :optim)
-        map(info.optim.variables.obs) do vo
-            vn = getfield(info.optim.variables.optim, vo)
-            Symbol(string(vn[1]) * "." * string(vn[2]))
-        end
-    else
-        map(Iterators.flatten(info.tem.variables)) do vn
-            getOrderedOutputList(collect(keys(info.experiment.model_output.variables)), vn)
-        end
-    end
-
+    out_vars = getVariableString.(info.tem.variables)
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
-    @info "     prepTEMOut: getting output dimension and arrays..."
+    @debug "     prepTEMOut: getting output dimension and arrays..."
     output_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.model_output.output_array_type, "Output"))()
     outdims, outarray = getOutDimsArrays(out_vars, info, tem_helpers, land_init, forcing_helpers, output_array_type)
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     output_tuple = setTupleField(output_tuple, (:data, outarray))
-
-    ovro = getVariablePairs(out_vars)
-    output_tuple = setTupleField(output_tuple, (:variables, ovro))
-
+    output_tuple = setTupleField(output_tuple, (:variables, info.tem.variables))
 
     if info.experiment.flags.run_optimization || info.experiment.flags.calc_cost
-        @info "     prepTEMOut: getting parameter output for optimization..."
+        @debug "     prepTEMOut: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple)
     end
-    @info "\n----------------------------------------------\n"
+    @debug "\n----------------------------------------------\n"
     return output_tuple
 end
 

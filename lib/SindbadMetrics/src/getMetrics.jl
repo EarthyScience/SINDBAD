@@ -84,14 +84,6 @@ function combineLoss(loss_vector::AbstractArray, ::CostSum)
     return sum(loss_vector)
 end
 
-"""
-    combineLoss(loss_vector, ::CostSum)
-
-return the total of cost of each constraint as the overall cost
-"""
-function combineLoss(loss_vector, ::CostSum)
-    return sum(loss_vector)
-end
 
 """
     combineLoss(loss_vector::AbstractArray, ::CostMinimum)
@@ -131,7 +123,7 @@ return model and obs data filtering for the common nan
 - `ŷ`: model simulation data/estimate
 - `idxs`: model simulation data/estimate
 """
-@inline function filterCommonNaN(y, yσ, ŷ, idxs)
+function filterCommonNaN(y, yσ, ŷ, idxs)
     # idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because landWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
@@ -147,7 +139,7 @@ return model and obs data filtering for the common nan
 - `ŷ`: model simulation data/estimate
 """
 function filterCommonNaN(y, yσ, ŷ)
-    # @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
+    @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
     idxs = (.!isInvalid.(y .* yσ .* ŷ))
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
@@ -273,7 +265,7 @@ returns a vector of losses for variables in info.cost_options.observational_cons
 - `model_output::AbstractArray`: a collection of SINDBAD model output time series as a preallocated array
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
-function getLossVector(observations, model_output::AbstractArray, cost_options)
+function getLossVector(model_output, observations, cost_options)
     loss_vector = map(cost_options) do cost_option
         @debug "$(cost_option.variable)"
         lossMetric = cost_option.cost_metric
@@ -292,100 +284,6 @@ function getLossVector(observations, model_output::AbstractArray, cost_options)
     return loss_vector
 end
 
-
-"""
-    getLossVector(observations, model_output::AbstractArray, cost_options)
-
-returns a vector of losses for variables in info.cost_options.observational_constraints
-
-# Arguments:
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `model_output::AbstractArray`: a collection of SINDBAD model output time series as a preallocated array
-- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
-"""
-function getLossVector2(observations, model_output, cost_options)
-    return [0,0,0]
-end
-
-function getLossVector4(observations, model_output, cost_options)
-    loss_vector = map(cost_options) do cost_option
-    #for cost_option in cost_options
-        #@code_warntype get_metric(cost_option)
-        _lossMetric = get_metric(cost_option) #cost_option.cost_metric # bad
-        _obs_ind = cost_option.obs_ind
-        _mod_ind = cost_option.mod_ind
-        _valids = cost_option.valids
-        _weight = cost_option.cost_weight
-        #y, yσ, ŷ =  base_ys(model_output, observations, _mod_ind, _obs_ind, _valids)
-       # metr = loss(y, yσ, ŷ, _lossMetric) * _weight
-        #l = innner_loss(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
-        #@show _weight
-        #push!(loss_vector, metr)
-        innner_loss(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
-    end
-    #@show loss_vector
-    return loss_vector
-end
-
-function get_metric(cost_option)
-    return getfield(cost_option, :cost_metric)
-end
-
-function base_ys(model_output, observations, _mod_ind, _obs_ind, _valids)
-    ŷ = model_output[_mod_ind]
-    if size(ŷ, 2) == 1
-        ŷ = getModelOutputView(ŷ)
-    end
-    y = observations[_obs_ind]
-    yσ = observations[_obs_ind+1]
-    y, yσ, ŷ = filterCommonNaN(y, yσ, ŷ, _valids)
-    return y, yσ, ŷ
-end
-
-function innner_loss(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
-    ŷ = model_output[_mod_ind]
-    #if size(ŷ, 2) == 1
-    ŷ = getModelOutputView(ŷ)
-    #end
-    y = observations[_obs_ind]
-    #yσ = observations[_obs_ind+1]
-    #(y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, _valids)
-    metr = loss(y, one.(y), ŷ, _lossMetric) # * _weight
-    if isnan(metr)
-        metr = oftype(metr, 1e19)
-    end
-    return metr
-end
-
-
-"""
-    getLossVector(observations, model_output::landWrapper, cost_options)
-
-returns a vector of losses for variables in info.cost_options.observational_constraints
-
-# Arguments:
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `model_output:::landWrapper`: a collection of SINDBAD model output as a time series of stacked land NT
-- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
-"""
-function getLossVector3(observations, model_output::landWrapper, cost_options)
-    loss_vector = map(cost_options) do cost_option
-        #@debug "$(cost_option.variable)"
-        lossMetric = cost_option.cost_metric
-        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        #@debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-        metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
-        if isnan(metr)
-            metr = oftype(metr, 1e19)
-        end
-        #@debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
-        metr
-    end
-    #@debug "\n-------------------\n"
-    return loss_vector
-end
 
 """
     getModelOutputView(mod_dat::AbstractArray{T, 2})
@@ -414,7 +312,6 @@ remove all the variables that have less than minimum datapoints from being used 
 """
 function prepCostOptions(observations, cost_options)
     valids=[]
-    cost = []
     is_valid = []
     vars = cost_options.variable
     obs_inds = cost_options.obs_ind
@@ -431,13 +328,10 @@ function prepCostOptions(observations, cost_options)
         else
             push!(is_valid, true)
         end
-        push!(cost, zero(eltype(y)))
         push!(valids, idxs)
     end
-    cost = [_c for _c  in cost]
     cost_options = setTupleField(cost_options, (:valids, valids))
     cost_options = setTupleField(cost_options, (:is_valid, is_valid))
-    cost_options = setTupleField(cost_options, (:cost, cost))
     cost_options = dropFields(cost_options, (:min_data_points, :temporal_data_aggr, :aggr_func,))
     cost_option_table = Table(cost_options)
     cost_options_table_filtered = filter(row -> row.is_valid === true , cost_option_table)
