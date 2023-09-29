@@ -86,7 +86,7 @@ sites_feature_all = [s for s in xfeatures_all.site]
 sites_common_all = intersect(sites_feature_all, sites_forcing)
 
 test_grads = 16
-# test_grads = 0
+test_grads = 0
 if test_grads !== 0
     sites_common = sites_common_all[1:test_grads]
 else
@@ -106,7 +106,7 @@ valid_split = 0.1
 batch_size = 16
 batch_size = min(batch_size, trunc(Int, 1/3*length(sites_common)))
 batch_seed = 123
-n_epochs = 10
+n_epochs = 2
 n_neurons = 32
 n_params = sum(tbl_params.is_ml)
 shuffle_opt = true
