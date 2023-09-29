@@ -24,12 +24,6 @@ tbl_params = getParameters(info.tem.models.forward,
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 
-#forc = (; Pair.(forcing.variables, forcing.data)...);
-#obs = (; Pair.(observations.variables, observations.data)...);
-
-#land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-
-#op = prepTEMOut(info, forcing.helpers);
 models = info.tem.models.forward;
 param_to_index = param_indices(models, tbl_params);
 models_lt = LongTuple(models...);
@@ -82,77 +76,90 @@ constraint_method = info.optim.multi_constraint_method
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_forcing = forcing.data[1].site
 c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
-xfeatures = cube_to_KA(c)
+xfeatures_o = cube_to_KA(c)
+to_rm = findall(x->x>0, occursin.("VIF", xfeatures_o.features))
+to_rm_names = xfeatures_o.features[to_rm]
+new_features = setdiff(xfeatures_o.features, to_rm_names)
+xfeatures_all = xfeatures_o(; features = new_features)
 
-sites_feature = xfeatures.site
-sites_feature = [s for s ∈ sites_feature]
+sites_feature_all = [s for s in xfeatures_all.site]
+sites_common_all = intersect(sites_feature_all, sites_forcing)
+
+test_grads = 16
+test_grads = 0
+if test_grads !== 0
+    sites_common = sites_common_all[1:test_grads]
+else
+    sites_common = sites_common_all
+end
+
+xfeatures = xfeatures_all(; site=sites_common)
+n_features = length(xfeatures.features)
 
 # remove bad sites
-sites_feature = setdiff(sites_feature, ["CA-NS6", "SD-Dem", "US-WCr", "ZM-Mon"])
-xfeatures = xfeatures(site=sites_feature)
+# sites_common = setdiff(sites_common, ["CA-NS6", "SD-Dem", "US-WCr", "ZM-Mon"])
 
-# pseudo batch
-sites_batch = ["AR-SLu", "AT-Neu", "AU-Cum"]
-# sites_forcing[1:4]
+n_sites = length(sites_common)
 
-# machine learning parameters baseline
-n_bs_feat = length(xfeatures.features)
+train_split = 0.8
+valid_split = 0.1
+batch_size = 16
+batch_size = min(batch_size, trunc(Int, 1/3*length(sites_common)))
+batch_seed = 123
+n_epochs = 2
 n_neurons = 32
 n_params = sum(tbl_params.is_ml)
-ml_baseline = DenseNN(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
+shuffle_opt = true
 
+# get site splits 
+n_batches = trunc(Int, n_sites * train_split/batch_size) 
+n_sites_train = n_batches * batch_size
+n_sites_valid = trunc(Int, n_sites * valid_split) 
+n_sites_test = n_sites - n_sites_valid - n_sites_train
+
+# filter and shuffle sites and subset
+sites_training = shuffle_list(sites_common; seed=batch_seed)[1:n_sites_train]
+indices_sites_training = name_to_id.(sites_training, Ref(sites_forcing))
+
+
+# NN 
+ml_baseline = DenseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=523)
 parameters_sites = ml_baseline(xfeatures)
 
-grads_batch = zeros(Float32, n_params, length(sites_batch))
-
-indices_batch = name_to_id.(sites_batch, Ref(sites_forcing))
+## test for gradients in batch
+grads_batch = zeros(Float32, n_params, length(sites_training))
+sites_batch = sites_training#[1:n_sites_train]
+indices_sites_batch = indices_sites_training
 params_batch = parameters_sites(; site=sites_batch)
 scaled_params_batch = getParamsAct(params_batch, tbl_params)
 
 @time gradsBatch!(
-        siteLossInner,
-        grads_batch,
-        scaled_params_batch,
-        models_lt,
-        sites_batch,
-        indices_batch,
-        sites_forcing,
-        loc_forcings,
-        loc_spinup_forcings,
-        forcing_one_timestep,
-        loc_outputs,
-        land_init,
-        loc_observations,
-        tem,
-        param_to_index,
-        cost_options,
-        constraint_method
-        )
+    siteLossInner,
+    grads_batch,
+    scaled_params_batch,
+    models_lt,
+    sites_batch,
+    indices_sites_batch[1:1],
+    loc_forcings,
+    loc_spinup_forcings,
+    forcing_one_timestep,
+    loc_outputs,
+    land_init,
+    loc_observations,
+    tem,
+    param_to_index,
+    cost_options,
+    constraint_method
+)
 
-n_sites = 127
-train_split = 0.8
-batch_size = 16
-
-nbatch = trunc(Int, n_sites * train_split/batch_size) 
-
-train_size = nbatch * batch_size
-
-valid_split = 0.1
-valid_size = trunc(Int, n_sites * valid_split) 
-
-test_size = n_sites - valid_size - train_size
-
-nepochs = 5
-shuffle_opt = true
-bs_seed = 123
-bs = 6
-
+# machine learning parameters baseline
 @time sites_loss, re, flat = train(
     ml_baseline,
     siteLossInner,
     xfeatures,
     models_lt,
-    sites_forcing,
+    sites_training,
+    indices_sites_training,
     loc_forcings,
     loc_spinup_forcings,
     forcing_one_timestep,
@@ -164,12 +171,10 @@ bs = 6
     param_to_index,
     cost_options,
     constraint_method;
-    nepochs=nepochs,
-    opt=Optimisers.Adam(),
-    bs_seed=bs_seed,
-    bs=bs,
+    n_epochs=n_epochs,
+    optimizer=Optimisers.Adam(),
+    batch_seed=batch_seed,
+    batch_size=batch_size,
     shuffle=shuffle_opt,
-    local_root=nothing,
-    name="seq_training_output"
-    )
-
+    local_root=info.output.data,
+    name="seq_training_output")
