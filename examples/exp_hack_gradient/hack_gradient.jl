@@ -82,13 +82,17 @@ constraint_method = info.optim.multi_constraint_method
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_forcing = forcing.data[1].site
 c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
-xfeatures_all = cube_to_KA(c)
+xfeatures_o = cube_to_KA(c)
+to_rm = findall(x->x>0, occursin.("VIF", xfeatures_o.features))
+to_rm_names = xfeatures_o.features[to_rm]
+new_features = setdiff(xfeatures_o.features, to_rm_names)
+xfeatures_all = xfeatures_o(; features = new_features)
 
 sites_feature_all = [s for s in xfeatures_all.site]
 sites_common_all = intersect(sites_feature_all, sites_forcing)
 
 test_grads = 25
-# test_grads = 0
+test_grads = 0
 if test_grads !== 0
     sites_common = sites_common_all[1:test_grads]
 else
@@ -108,7 +112,7 @@ valid_split = 0.1
 batch_size = 16
 batch_size = min(batch_size, trunc(Int, 1/3*length(sites_common)))
 batch_seed = 123
-n_epochs = 5
+n_epochs = 2
 n_neurons = 32
 n_params = sum(tbl_params.is_ml)
 shuffle_opt = true
@@ -173,10 +177,10 @@ scaled_params_batch = getParamsAct(params_batch, tbl_params)
     param_to_index,
     cost_options,
     constraint_method;
-    nepochs=nepochs,
+    nepochs=n_epochs,
     opt=Optimisers.Adam(),
-    bs_seed=bs_seed,
-    bs=bs,
+    bs_seed=batch_seed,
+    bs=batch_size,
     shuffle=shuffle_opt,
     local_root=nothing,
     name="seq_training_output")
