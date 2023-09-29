@@ -145,9 +145,9 @@ function get_site_losses(
 
 
     # p = Progress(size(loss_array_sites,1); desc="Computing batch grads...", color=:yellow, enabled=logging)
-    #@sync begin
+    @sync begin
         for idx ∈ eachindex(indices_sites)
-    #        Threads.@spawn begin
+           Threads.@spawn begin
                 site_location = indices_sites[idx]
                 site_name = sites_list[idx]
                 loc_params = scaled_params(site=site_name)
@@ -173,8 +173,8 @@ function get_site_losses(
                 )
                 loss_array_sites[idx, epoch_number] = gg
                 # next!(p)
-    #        end
-    #    end
+           end
+       end
     end
 end
 
@@ -185,7 +185,7 @@ function train(
     xfeatures,
     models_lt,
     sites_training,
-    indices_sites,
+    indices_sites_training,
     loc_forcings,
     loc_spinup_forcings,
     forcing_one_timestep,
@@ -213,7 +213,7 @@ function train(
     n_params = length(nn_model_params[end].bias)
 
     sites_batches = batch_shuffle(sites_training, bs; seed=bs_seed)
-    indices_sites_batches = batch_shuffle(indices_sites, bs; seed=bs_seed)
+    indices_sites_batches = batch_shuffle(indices_sites_training, bs; seed=bs_seed)
     grads_batch = zeros(Float32, n_params, bs)
 
     loss_array_sites = fill(NaN32, length(sites_training), nepochs)
@@ -223,8 +223,9 @@ function train(
 
     for epoch ∈ 1:nepochs
         sites_batches = shuffle ? batch_shuffle(sites_training, bs; seed=epoch + bs_seed) : sites_batches
-        indices_sites_batches = shuffle ? batch_shuffle(indices_sites, bs; seed=epoch + bs_seed) : indices_sites_batches
-        grads_all_batches = map(sites_batches_epoch, indices_sites_batches) do sites_batch, indices_batch
+        indices_sites_batches = shuffle ? batch_shuffle(indices_sites_training, bs; seed=epoch + bs_seed) : indices_sites_batches
+        batch_id = 1
+        grads_all_batches = map(sites_batches, indices_sites_batches) do sites_batch, indices_batch
             x_feature_batch = xfeatures(; site=sites_batch)
             new_params, pb = Zygote.pullback(p -> re(p)(x_feature_batch), flat)            
             scaled_params_batch = getParamsAct(new_params, tbl_params)
@@ -246,7 +247,7 @@ function train(
                 param_to_index,
                 cost_options,
                 constraint_method;
-                logging=false
+                logging=true
             )
             
             #grads_batch = mean(grads_batch, dims=2)[:,1]
@@ -254,6 +255,8 @@ function train(
             ∇params = pb(grads_batch)[1]
             
             opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
+            jldsave(joinpath(f_path, "$(name)_batch_$(batch_id)_epoch_$(epoch).jld2"); sites_batch=sites_batch,x_feature_batch=x_feature_batch, grads_batch=grads_batch, scaled_params_batch=scaled_params_batch, new_params=new_params, re=re, flat=flat, d_params=∇params)
+            batch_id += 1
             grads_batch
         end
         params_epoch = re(flat)(xfeatures)
