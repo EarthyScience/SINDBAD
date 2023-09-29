@@ -94,7 +94,8 @@ function gradsBatch!(
                 loc_output = loc_outputs[site_location]
                 loc_spinup_forcing = loc_spinup_forcings[site_location]
                 loc_cost_option = cost_options[site_location]
-
+                # @show site_location
+                # tcPrint(land_one.pools, c_olor=false)
                 gg = ForwardDiffGrads(
                     loss_function,
                     loc_params,
@@ -103,7 +104,7 @@ function gradsBatch!(
                     loc_spinup_forcing,
                     forcing_one_timestep,
                     DiffCache.(loc_output),
-                    land_one,
+                    deepcopy(land_one),
                     tem,
                     param_to_index,
                     loc_obs,
@@ -172,7 +173,7 @@ function get_site_losses(
                     loc_spinup_forcing,
                     forcing_one_timestep,
                     loc_output,
-                    land_one,
+                    deepcopy(land_one),
                     tem,
                     param_to_index,
                     loc_obs,
@@ -265,8 +266,8 @@ function train(
                     site_name_tmp = sites_batch[ci[2]]
                     p_vec_tmp = scaled_params_batch(site=site_name_tmp)
                     p_index_tmp = ci[1]
-                    println("   site:", site_name_tmp)
-                    println("   parameter:", Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp])))
+                    println("   site: ", site_name_tmp)
+                    println("   parameter: ", Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp])))
                 end
                 @warn "replacing all nans by 0.0"
                 grads_batch = replace(grads_batch, NaN => zero(Float32))
