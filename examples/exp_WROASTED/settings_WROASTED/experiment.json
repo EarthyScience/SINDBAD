@@ -107,7 +107,7 @@
     "sequence": [
       {
         "forcing": "first_year",
-        "n_repeat": 200,
+        "n_repeat": 100,
         "spinup_mode": "all_forward_models"
       }
     ]
