@@ -24,12 +24,6 @@ tbl_params = getParameters(info.tem.models.forward,
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 
-#forc = (; Pair.(forcing.variables, forcing.data)...);
-#obs = (; Pair.(observations.variables, observations.data)...);
-
-#land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-
-#op = prepTEMOut(info, forcing.helpers);
 models = info.tem.models.forward;
 param_to_index = param_indices(models, tbl_params);
 models_lt = LongTuple(models...);
@@ -91,8 +85,8 @@ xfeatures_all = xfeatures_o(; features = new_features)
 sites_feature_all = [s for s in xfeatures_all.site]
 sites_common_all = intersect(sites_feature_all, sites_forcing)
 
-test_grads = 25
-test_grads = 0
+test_grads = 16
+# test_grads = 0
 if test_grads !== 0
     sites_common = sites_common_all[1:test_grads]
 else
@@ -112,7 +106,7 @@ valid_split = 0.1
 batch_size = 16
 batch_size = min(batch_size, trunc(Int, 1/3*length(sites_common)))
 batch_seed = 123
-n_epochs = 2
+n_epochs = 10
 n_neurons = 32
 n_params = sum(tbl_params.is_ml)
 shuffle_opt = true
@@ -177,10 +171,10 @@ scaled_params_batch = getParamsAct(params_batch, tbl_params)
     param_to_index,
     cost_options,
     constraint_method;
-    nepochs=n_epochs,
-    opt=Optimisers.Adam(),
-    bs_seed=batch_seed,
-    bs=batch_size,
+    n_epochs=n_epochs,
+    optimizer=Optimisers.Adam(),
+    batch_seed=batch_seed,
+    batch_size=batch_size,
     shuffle=shuffle_opt,
-    local_root=nothing,
+    local_root=info.output.data,
     name="seq_training_output")
