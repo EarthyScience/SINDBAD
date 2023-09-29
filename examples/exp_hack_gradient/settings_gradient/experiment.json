@@ -115,6 +115,12 @@
         "n_repeat": 100,
         "spinup_mode": "all_forward_models",
         "stop_function": null
+      },
+      {
+        "forcing": "first_year",
+        "n_repeat": 1,
+        "spinup_mode": "eta_scale_AH",
+        "stop_function": null
       }
     ]
   }
