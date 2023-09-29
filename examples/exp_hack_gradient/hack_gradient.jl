@@ -85,7 +85,7 @@ xfeatures_all = xfeatures_o(; features = new_features)
 sites_feature_all = [s for s in xfeatures_all.site]
 sites_common_all = intersect(sites_feature_all, sites_forcing)
 
-# test_grads = 16
+test_grads = 16
 test_grads = 0
 if test_grads !== 0
     sites_common = sites_common_all[1:test_grads]
@@ -139,7 +139,7 @@ scaled_params_batch = getParamsAct(params_batch, tbl_params)
     scaled_params_batch,
     models_lt,
     sites_batch,
-    indices_sites_batch,
+    indices_sites_batch[1:1],
     loc_forcings,
     loc_spinup_forcings,
     forcing_one_timestep,
