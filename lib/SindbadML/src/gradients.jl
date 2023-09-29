@@ -197,10 +197,10 @@ function train(
     param_to_index,
     cost_options,
     constraint_method;
-    nepochs=2,
-    opt=Optimisers.Adam(),
-    bs_seed=123,
-    bs=4,
+    n_epochs=2,
+    optimizer=Optimisers.Adam(),
+    batch_seed=123,
+    batch_size=4,
     shuffle=true,
     local_root=nothing,
     name="seq_training_output") where {F}
@@ -209,25 +209,25 @@ function train(
     f_path = joinpath(local_root, name)
     mkpath(f_path)
 #
-    flat, re, opt_state = destructureNN(nn_model_params; nn_opt=opt)
+    flat, re, opt_state = destructureNN(nn_model_params; nn_opt=optimizer)
     n_params = length(nn_model_params[end].bias)
 
-    sites_batches = batch_shuffle(sites_training, bs; seed=bs_seed)
-    indices_sites_batches = batch_shuffle(indices_sites_training, bs; seed=bs_seed)
-    grads_batch = zeros(Float32, n_params, bs)
+    sites_batches = batch_shuffle(sites_training, batch_size; seed=batch_seed)
+    indices_sites_batches = batch_shuffle(indices_sites_training, batch_size; seed=batch_seed)
+    grads_batch = zeros(Float32, n_params, batch_size)
 
-    loss_array_sites = fill(NaN32, length(sites_training), nepochs)
+    loss_array_sites = fill(NaN32, length(sites_training), n_epochs)
 
-    p = Progress(nepochs; desc="Computing epochs...")
+    p = Progress(n_epochs; desc="Computing epochs...")
 
 
-    for epoch ∈ 1:nepochs
-        sites_batches = shuffle ? batch_shuffle(sites_training, bs; seed=epoch + bs_seed) : sites_batches
-        indices_sites_batches = shuffle ? batch_shuffle(indices_sites_training, bs; seed=epoch + bs_seed) : indices_sites_batches
+    for epoch ∈ 1:n_epochs
+        sites_batches = shuffle ? batch_shuffle(sites_training, batch_size; seed=epoch + batch_seed) : sites_batches
+        indices_sites_batches = shuffle ? batch_shuffle(indices_sites_training, batch_size; seed=epoch + batch_seed) : indices_sites_batches
         batch_id = 1
         grads_all_batches = map(sites_batches, indices_sites_batches) do sites_batch, indices_batch
             x_feature_batch = xfeatures(; site=sites_batch)
-            new_params, pb = Zygote.pullback(p -> re(p)(x_feature_batch), flat)            
+            new_params, pullback_func = Zygote.pullback(p -> re(p)(x_feature_batch), flat)            
             scaled_params_batch = getParamsAct(new_params, tbl_params)
             grads_batch .= zero(Float32)
             gradsBatch!(
@@ -249,10 +249,24 @@ function train(
                 constraint_method;
                 logging=true
             )
-            
+
+            num_nans = sum(isnan.(grads_batch))
+            if num_nans > 0
+                @warn ":::nan in grads:::"
+                foreach(findall(x->isnan(x), grads_batch)) do ci
+                    site_name_tmp = sites_batch[last(ci)]
+                    p_vec_tmp = scaled_params_batch(site=site_name_tmp)
+                    p_index_tmp = first(ci)
+                    println("   site:", site_name_tmp)
+                    println("   parameter:", Pair(tbl_params.name[p_index_tmp], p_vec_tmp[p_index_tmp]))
+                end
+                @warn "replacing all nans by 0.0"
+                grads_batch = replace(grads_batch, NaN => zero(Float32))
+            end
+
             #grads_batch = mean(grads_batch, dims=2)[:,1]
             
-            ∇params = pb(grads_batch)[1]
+            ∇params = pullback_func(grads_batch)[1]
             
             opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
             jldsave(joinpath(f_path, "$(name)_batch_$(batch_id)_epoch_$(epoch).jld2"); sites_batch=sites_batch,x_feature_batch=x_feature_batch, grads_batch=grads_batch, scaled_params_batch=scaled_params_batch, new_params=new_params, re=re, flat=flat, d_params=∇params)
