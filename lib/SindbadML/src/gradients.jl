@@ -72,11 +72,15 @@ function gradsBatch!(
     param_to_index,
     cost_options,
     constraint_method;
+    do_one=false,
     logging=true) where {F}
 
 # Threads.@spawn allows dynamic scheduling instead of static scheduling
 # of Threads.@threads macro.
 # See <https://github.com/JuliaLang/julia/issues/21017>
+    if do_one
+        indices_batch = indices_batch[1:1]
+    end
 
     p = Progress(length(sites_batch); desc="Computing batch grads...", color=:yellow, enabled=logging)
     @sync begin
@@ -141,8 +145,12 @@ function get_site_losses(
     param_to_index,
     cost_options,
     constraint_method;
+    do_one=false,
     logging=true) where {F}
 
+    if do_one
+        indices_sites = indices_sites[1:1]
+    end
 
     # p = Progress(size(loss_array_sites,1); desc="Computing batch grads...", color=:yellow, enabled=logging)
     @sync begin
@@ -216,7 +224,7 @@ function train(
     indices_sites_batches = batch_shuffle(indices_sites_training, batch_size; seed=batch_seed)
     grads_batch = zeros(Float32, n_params, batch_size)
 
-    loss_array_sites = fill(NaN32, length(sites_training), n_epochs)
+    loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs)
 
     p = Progress(n_epochs; desc="Computing epochs...")
 
@@ -254,11 +262,11 @@ function train(
             if num_nans > 0
                 @warn ":::nan in grads:::"
                 foreach(findall(x->isnan(x), grads_batch)) do ci
-                    site_name_tmp = sites_batch[last(ci)]
+                    site_name_tmp = sites_batch[ci[2]]
                     p_vec_tmp = scaled_params_batch(site=site_name_tmp)
-                    p_index_tmp = first(ci)
+                    p_index_tmp = ci[1]
                     println("   site:", site_name_tmp)
-                    println("   parameter:", Pair(tbl_params.name[p_index_tmp], p_vec_tmp[p_index_tmp]))
+                    println("   parameter:", Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp])))
                 end
                 @warn "replacing all nans by 0.0"
                 grads_batch = replace(grads_batch, NaN => zero(Float32))
