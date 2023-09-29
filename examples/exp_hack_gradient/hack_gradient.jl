@@ -183,4 +183,6 @@ scaled_params_batch = getParamsAct(params_batch, tbl_params)
     bs=batch_size,
     shuffle=shuffle_opt,
     local_root=nothing,
-    name="seq_training_output")
+    name="seq_training_output"
+    )
+
