@@ -263,12 +263,29 @@ function train(
             if num_nans > 0
                 @warn ":::nan in grads:::"
                 foreach(findall(x->isnan(x), grads_batch)) do ci
-                    site_name_tmp = sites_batch[ci[2]]
+                    si = ci[2]
+                    sii = indices_batch[si]
+                    site_name_tmp = sites_batch[si]
                     p_vec_tmp = scaled_params_batch(site=site_name_tmp)
                     p_index_tmp = ci[1]
                     println("   site: ", site_name_tmp)
                     println("   parameter: ", Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp])))
-                end
+                    loss_function(
+                        p_vec_tmp,
+                        models_lt,
+                        loc_forcings[sii],
+                        loc_spinup_forcings[sii],
+                        forcing_one_timestep,
+                        loc_outputs[sii],
+                        deepcopy(land_init),
+                        tem,
+                        param_to_index,
+                        loc_observations[sii],
+                        cost_options[sii],
+                        constraint_method
+                        ; show_vec=true)
+                        println("   ----------------------------------------------------- ")
+                    end
                 @warn "replacing all nans by 0.0"
                 grads_batch = replace(grads_batch, NaN => zero(Float32))
             end
