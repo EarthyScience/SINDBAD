@@ -66,76 +66,76 @@ loc_spinup_forcing = loc_spinup_forcings[site_location];
 
 # cost related
 
-cost_options = [prepCostOptions(loc_obs, info.optim.cost_options) for loc_obs in loc_observations];
+cost_options = [prepCostOptions(loc_obs, info.optim.cost_options) for loc_obs in loc_observations];;
 
-constraint_method = info.optim.multi_constraint_method
+constraint_method = info.optim.multi_constraint_method;
 
 
 # ForwardDiff.gradient(f, x)
 # load available covariates
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
-sites_forcing = forcing.data[1].site
+sites_forcing = forcing.data[1].site;
 c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
-xfeatures_o = cube_to_KA(c)
-to_rm = findall(x->x>0, occursin.("VIF", xfeatures_o.features))
-to_rm_names = xfeatures_o.features[to_rm]
-new_features = setdiff(xfeatures_o.features, to_rm_names)
-xfeatures_all = xfeatures_o(; features = new_features)
+xfeatures_o = cube_to_KA(c);
+to_rm = findall(x->x>0, occursin.("VIF", xfeatures_o.features));
+to_rm_names = xfeatures_o.features[to_rm];
+new_features = setdiff(xfeatures_o.features, to_rm_names);
+xfeatures_all = xfeatures_o(; features = new_features);
 
-sites_feature_all = [s for s in xfeatures_all.site]
-sites_common_all = intersect(sites_feature_all, sites_forcing)
+sites_feature_all = [s for s in xfeatures_all.site];
+sites_common_all = intersect(sites_feature_all, sites_forcing);
 
-test_grads = 16
-test_grads = 0
+test_grads = 16;
+test_grads = 0;
 if test_grads !== 0
-    sites_common = sites_common_all[1:test_grads]
+    sites_common = sites_common_all[1:test_grads];
 else
-    sites_common = sites_common_all
+    sites_common = sites_common_all;
 end
 
-xfeatures = xfeatures_all(; site=sites_common)
-n_features = length(xfeatures.features)
+xfeatures = xfeatures_all(; site=sites_common);
+n_features = length(xfeatures.features);
 
 # remove bad sites
 # sites_common = setdiff(sites_common, ["CA-NS6", "SD-Dem", "US-WCr", "ZM-Mon"])
 
 
 # get site splits 
-train_split = 0.8
-valid_split = 0.1
-batch_size = 16
-batch_size = min(batch_size, trunc(Int, 1/3*length(sites_common)))
-batch_seed = 123
+train_split = 0.8;
+valid_split = 0.1;
+batch_size = 16;
+batch_size = min(batch_size, trunc(Int, 1/3*length(sites_common)));
+batch_seed = 123;
 
-n_sites = length(sites_common)
-n_batches = trunc(Int, n_sites * train_split/batch_size) 
-n_sites_train = n_batches * batch_size
-n_sites_valid = trunc(Int, n_sites * valid_split) 
-n_sites_test = n_sites - n_sites_valid - n_sites_train
+n_sites = length(sites_common);
+n_batches = trunc(Int, n_sites * train_split/batch_size);
+n_sites_train = n_batches * batch_size;
+n_sites_valid = trunc(Int, n_sites * valid_split);
+n_sites_test = n_sites - n_sites_valid - n_sites_train;
 
 # filter and shuffle sites and subset
-sites_training = shuffle_list(sites_common; seed=batch_seed)[1:n_sites_train]
-indices_sites_training = name_to_id.(sites_training, Ref(sites_forcing))
+sites_training = shuffle_list(sites_common; seed=batch_seed)[1:n_sites_train];
+indices_sites_training = name_to_id.(sites_training, Ref(sites_forcing));
 
 
 # NN 
-n_epochs = 3
-n_neurons = 32
-n_params = sum(tbl_params.is_ml)
-shuffle_opt = true
-ml_baseline = DenseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=523)
-parameters_sites = ml_baseline(xfeatures)
+n_epochs = 100;
+n_neurons = 32;
+n_params = sum(tbl_params.is_ml);
+shuffle_opt = true;
+ml_baseline = DenseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=523);
+parameters_sites = ml_baseline(xfeatures);
 
 ## test for gradients in batch
-fgrads_batch = zeros(Float32, n_params, length(sites_training))
-grads_batch = zeros(Float32, n_params, length(sites_training))
-sites_batch = sites_training#[1:n_sites_train]
-indices_sites_batch = indices_sites_training
-params_batch = parameters_sites(; site=sites_batch)
-scaled_params_batch = getParamsAct(params_batch, tbl_params)
+fgrads_batch = zeros(Float32, n_params, length(sites_training));
+grads_batch = zeros(Float32, n_params, length(sites_training));
+sites_batch = sites_training#[1:n_sites_train];
+indices_sites_batch = indices_sites_training;
+params_batch = parameters_sites(; site=sites_batch);
+scaled_params_batch = getParamsAct(params_batch, tbl_params);
 
-gradient_lib = UseForwardDiff()
-gradient_lib = UseFiniteDiff()
+gradient_lib = UseForwardDiff();
+gradient_lib = UseFiniteDiff();
 
 @time gradientBatch!(
     gradient_lib,
@@ -185,7 +185,7 @@ gradient_lib = UseFiniteDiff()
     local_root=info.output.data,
     name="seq_training_output")
 
-loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs)
+loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
 @time lossSites(
             siteLossInner,
