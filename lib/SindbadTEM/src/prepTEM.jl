@@ -338,7 +338,7 @@ function runTEMOne(selected_models, loc_forcing, land_init, tem)
     land_one = computeTEM(selected_models, forcing_one_timestep, land_one, tem.helpers.model_helpers)
     land_one = removeEmptyTupleFields(land_one)
     land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
-    land_one = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
+    land_one = definePrecomputeTEM(selected_models, forcing_one_timestep, land_one,
         tem.helpers.model_helpers)
     land_one = computeTEM(selected_models, forcing_one_timestep, land_one, tem.helpers.model_helpers)
     return forcing_one_timestep, land_one
