@@ -1,7 +1,7 @@
 # simpler forms
 
 
-function gradsBatch!(loss_function::Function, up_params_now, f_grads, xbatch, sites_f, data, data_optim,
+function gradientBatch!(loss_function::Function, up_params_now, f_grads, xbatch, sites_f, data, data_optim,
     tem, tblParams, land_init_space, approaches; logging=true)
 
     p = Progress(length(xbatch); desc="Computing batch grads...", offset=1, color=:yellow, enabled=logging)
@@ -17,7 +17,7 @@ function gradsBatch!(loss_function::Function, up_params_now, f_grads, xbatch, si
         data_optim = (; site_obs = loc_obs, )
         data_cache = (; allocated_output = DiffCache.(loc_output), site_forcings= loc_forcing)
 
-        gg = ForwardDiffGrads(loss_function, new_vals, inits, data_cache, data_optim, tem, tblParams)
+        gg = gradientSite(loss_function, new_vals, inits, data_cache, data_optim, tem, tblParams)
         f_grads[:, idx] = gg
 
         next!(p; showvalues=[(:site_name, site_name)])

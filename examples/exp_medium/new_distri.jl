@@ -126,7 +126,7 @@ kwargs = (;
     
 println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-@time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
+@time gradientSite(siteLossInner, tbl_params.default, kwargs...)
 
 # load available covariates
 
@@ -186,7 +186,7 @@ gradsBatchDistributed!(siteLossInner,
 f_grads_seq = zeros(Float32, n_params, length(xbatch))
 x_feat = xfeatures(; site=xbatch) 
 
-gradsBatch!(
+gradientBatch!(
     siteLossInner,
     f_grads_seq,
     sites_parameters,

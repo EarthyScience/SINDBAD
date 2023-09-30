@@ -117,7 +117,7 @@ kwargs = (;
 
 n_params = sum(tbl_params.is_ml)
 
-@time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
+@time gradientSite(siteLossInner, tbl_params.default, kwargs...)
 
 # load available covariates
 

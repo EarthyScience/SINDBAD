@@ -144,7 +144,7 @@ models = LongTuple(models...);
     
 println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-@time ForwardDiffGrads(
+@time gradientSite(
     siteLossInner,
     tbl_params.default,
     models,
@@ -242,7 +242,7 @@ for epoch ∈ 1:nepochs
     
             loc_forcing, loc_output, loc_obs  = getLocDataObsN(op.data, forc, obs_synt, site_location) # check output order in original definition
     
-            gg=ForwardDiffGrads(
+            gg=gradientSite(
                 siteLossInner,
                 new_vals,
                 models,
@@ -265,7 +265,7 @@ for epoch ∈ 1:nepochs
         println("batch: ", now())
     end
     up_params_now = re(flat)(xfeatures(; site=new_sites))
-    loss_now =  get_site_losses(
+    loss_now =  lossSites(
             siteLossInner,
             up_params_now,
             models,
