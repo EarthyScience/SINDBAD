@@ -21,15 +21,15 @@ Wraps a multi-input argument function to be used by ForwardDiff.
     - kwargs :: keyword arguments needed by the loss_function
 """
 #@everywhere 
-function gradientSite(::UseForwardDiff, loss_function::F, vals::AbstractArray, args...) where {F}
+function gradientSite(gradient_lib::UseForwardDiff, loss_function::F, vals::AbstractArray, args...) where {F}
     #println("Starting grads comp")
-    loss_tmp(x) = loss_function(x, args...)
+    loss_tmp(x) = loss_function(x, gradient_lib, args...)
     return ForwardDiff.gradient(loss_tmp, vals)#::Vector{Float32}
 end
 
 function gradientSite(::UseFiniteDiff, loss_function::F, vals::AbstractArray, args...) where {F}
     #println("Starting grads comp")
-    loss_tmp(x) = loss_function(x, args...)
+    loss_tmp(x) = loss_function(x, gradient_lib, args...)
     return FiniteDiff.finite_difference_gradient(loss_tmp, vals)
 end
 
@@ -63,6 +63,14 @@ function scaledParams(up_params_now, tblParams, xbatch, idx)
     x_params = up_params_now(; site=site_name)
     scaled_params = getParamsAct(x_params, tblParams)
     return site_name, scaled_params
+end
+
+function getOutputCache(loc_output, ::UseForwardDiff)
+    return DiffCache.(loc_output)
+end
+
+function getOutputCache(loc_output, ::UseFiniteDiff)
+    return loc_output
 end
 
 function gradientBatch!(
@@ -115,7 +123,7 @@ function gradientBatch!(
                     loc_forcing,
                     loc_spinup_forcing,
                     forcing_one_timestep,
-                    DiffCache.(loc_output),
+                    getOutputCache(loc_output, gradient_lib),
                     deepcopy(land_one),
                     tem,
                     param_to_index,
@@ -141,6 +149,7 @@ function destructureNN(model; nn_opt=Optimisers.Adam())
 end
 
 function lossSites(
+    gradient_lib,
     loss_function::F,
     loss_array_sites,
     epoch_number,
@@ -180,6 +189,7 @@ function lossSites(
 
                 gg = loss_function(
                     loc_params,
+                    gradient_lib,
                     models,
                     loc_forcing,
                     loc_spinup_forcing,
@@ -320,6 +330,7 @@ function train(
         scaled_params_epoch = getParamsAct(params_epoch, tbl_params)
         
         @time lossSites(
+            gradient_lib,
             loss_function,
             loss_array_sites,
             epoch,
