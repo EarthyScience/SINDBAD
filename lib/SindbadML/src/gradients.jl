@@ -1,11 +1,15 @@
-export ForwardDiffGrads
-export gradsBatch!
+export gradientSite
+export gradientBatch!
 export newVals
 export get∇params
 export train
-export get_site_losses
+export lossSites
 export destructureNN
 
+export UseFiniteDiff
+export UseForwardDiff
+struct UseFiniteDiff end
+struct UseForwardDiff end
 
 """
     ForwardDiff_grads(loss_function::Function, vals::AbstractArray, args...)
@@ -17,10 +21,16 @@ Wraps a multi-input argument function to be used by ForwardDiff.
     - kwargs :: keyword arguments needed by the loss_function
 """
 #@everywhere 
-function ForwardDiffGrads(loss_function::F, vals::AbstractArray, args...) where {F}
+function gradientSite(::UseForwardDiff, loss_function::F, vals::AbstractArray, args...) where {F}
     #println("Starting grads comp")
     loss_tmp(x) = loss_function(x, args...)
-    return ForwardDiff.gradient(loss_tmp, vals)
+    return ForwardDiff.gradient(loss_tmp, vals)#::Vector{Float32}
+end
+
+function gradientSite(::UseFiniteDiff, loss_function::F, vals::AbstractArray, args...) where {F}
+    #println("Starting grads comp")
+    loss_tmp(x) = loss_function(x, args...)
+    return FiniteDiff.finite_difference_gradient(loss_tmp, vals)
 end
 
 """
@@ -33,7 +43,7 @@ Wraps a multi-input argument function to be used by ForwardDiff.
     - CHUNK_SIZE :: https://juliadiff.org/ForwardDiff.jl/dev/user/advanced/#Configuring-Chunk-Size
     - kwargs :: keyword arguments needed by the loss_function
 """
-function ForwardDiffGradsCfg(loss_function::F, vals::AbstractArray, args...; CHUNK_SIZE=12) where {F}
+function gradientSiteCfg(loss_function::F, vals::AbstractArray, args...; CHUNK_SIZE=12) where {F}
     out = similar(vals)
     loss_tmp(x) = loss_function(x, args...)
     cfg = ForwardDiff.GradientConfig(loss_tmp, vals, ForwardDiff.Chunk{CHUNK_SIZE}())
@@ -55,7 +65,8 @@ function scaledParams(up_params_now, tblParams, xbatch, idx)
     return site_name, scaled_params
 end
 
-function gradsBatch!(
+function gradientBatch!(
+    gradient_lib,
     loss_function::F,
     grads_batch,
     scaled_params_batch,
@@ -96,7 +107,8 @@ function gradsBatch!(
                 loc_cost_option = cost_options[site_location]
                 # @show site_location
                 # tcPrint(land_one.pools, c_olor=false)
-                gg = ForwardDiffGrads(
+                gg = gradientSite(
+                    gradient_lib,
                     loss_function,
                     loc_params,
                     models,
@@ -128,7 +140,7 @@ function destructureNN(model; nn_opt=Optimisers.Adam())
     return flat, re, opt_state
 end
 
-function get_site_losses(
+function lossSites(
     loss_function::F,
     loss_array_sites,
     epoch_number,
@@ -180,6 +192,7 @@ function get_site_losses(
                     loc_cost_option,
                     constraint_method
                 )
+                # @show site_name, site_location, idx, gg
                 loss_array_sites[idx, epoch_number] = gg
                 # next!(p)
            end
@@ -189,6 +202,7 @@ end
 
 
 function train(
+    gradient_lib,
     nn_model_params::Flux.Chain,
     loss_function::F,
     xfeatures,
@@ -239,7 +253,8 @@ function train(
             new_params, pullback_func = Zygote.pullback(p -> re(p)(x_feature_batch), flat)            
             scaled_params_batch = getParamsAct(new_params, tbl_params)
             grads_batch .= zero(Float32)
-            gradsBatch!(
+            gradientBatch!(
+                gradient_lib,
                 loss_function,
                 grads_batch,
                 scaled_params_batch,
@@ -270,6 +285,7 @@ function train(
                     p_index_tmp = ci[1]
                     println("   site: ", site_name_tmp)
                     println("   parameter: ", Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp])))
+                    println("   parameter_vector: ", p_vec_tmp)
                     loss_function(
                         p_vec_tmp,
                         models_lt,
@@ -285,7 +301,8 @@ function train(
                         constraint_method
                         ; show_vec=true)
                         println("   ----------------------------------------------------- ")
-                    end
+                    # @show p_vec_tmp
+                end
                 @warn "replacing all nans by 0.0"
                 grads_batch = replace(grads_batch, NaN => zero(Float32))
             end
@@ -302,7 +319,7 @@ function train(
         params_epoch = re(flat)(xfeatures)
         scaled_params_epoch = getParamsAct(params_epoch, tbl_params)
         
-        get_site_losses(
+        @time lossSites(
             loss_function,
             loss_array_sites,
             epoch,

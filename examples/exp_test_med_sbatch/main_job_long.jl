@@ -157,7 +157,7 @@ siteLossInner(
 
 println("one gradient: ", now())
 
-ForwardDiffGrads(
+gradientSite(
     siteLossInner,
     tbl_params.default,
     models,
@@ -174,7 +174,7 @@ ForwardDiffGrads(
 
 println("one gradient, second run: ", now())
 
-@time ForwardDiffGrads(
+@time gradientSite(
         siteLossInner,
         tbl_params.default,
         models,

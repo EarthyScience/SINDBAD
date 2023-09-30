@@ -9,7 +9,7 @@ using Plots
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "2005"
 end_year = "2017"
-domain = "DE-Hai"
+domain = "SD-Dem"
 # domain = "CA-NS6"
 # domain = "AU-Emr"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
