@@ -22,7 +22,7 @@ using JLD2
 
 include("iter_tools.jl")
 include("nn_dense.jl")
-include("site_loss.jl")
 include("gradients.jl")
+include("site_loss.jl")
 
 end # module SindbadML
