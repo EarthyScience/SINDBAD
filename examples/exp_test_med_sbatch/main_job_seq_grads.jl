@@ -199,7 +199,7 @@ models = LongTuple(models...);
     
 println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-@time ForwardDiffGrads(
+@time gradientSite(
     siteLossInner,
     tbl_params.default,
     models,
@@ -248,7 +248,7 @@ x_feat = xfeatures(; site=xbatch)
 
 println("full batch gradient: ", now())
 
-gradsBatch!(
+gradientBatch!(
     siteLossInner,
     f_grads,
     sites_parameters,
