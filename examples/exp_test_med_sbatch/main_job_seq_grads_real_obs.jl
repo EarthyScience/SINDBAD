@@ -153,7 +153,7 @@ siteLossInner(
 
 println("one gradient: ", now())
 
-ForwardDiffGrads(
+gradientSite(
     siteLossInner,
     tbl_params.default,
     models,
@@ -170,7 +170,7 @@ ForwardDiffGrads(
 
 println("one gradient, second run: ", now())
 
-@time ForwardDiffGrads(
+@time gradientSite(
         siteLossInner,
         tbl_params.default,
         models,
@@ -214,7 +214,7 @@ x_feat = xfeatures(; site=xbatch)
 
 println("full batch gradient: ", now())
 
-gradsBatch!(
+gradientBatch!(
     siteLossInner,
     f_grads,
     sites_parameters,
