@@ -205,7 +205,7 @@ const compiled_f_tape = compile(f_tape)
 
 
 
-@time ForwardDiffGrads(
+@time gradientSite(
     siteLossInner,
     tbl_params.default,
     models,
@@ -252,7 +252,7 @@ xbatch = cov_sites[1:8]
 f_grads = zeros(Float32, n_params, length(xbatch))
 x_feat = xfeatures(; site=xbatch) 
 
-gradsBatch!(
+gradientBatch!(
     siteLossInner,
     f_grads,
     sites_parameters,

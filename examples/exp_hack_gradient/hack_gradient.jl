@@ -99,19 +99,15 @@ n_features = length(xfeatures.features)
 # remove bad sites
 # sites_common = setdiff(sites_common, ["CA-NS6", "SD-Dem", "US-WCr", "ZM-Mon"])
 
-n_sites = length(sites_common)
 
+# get site splits 
 train_split = 0.8
 valid_split = 0.1
 batch_size = 16
 batch_size = min(batch_size, trunc(Int, 1/3*length(sites_common)))
 batch_seed = 123
-n_epochs = 1
-n_neurons = 32
-n_params = sum(tbl_params.is_ml)
-shuffle_opt = true
 
-# get site splits 
+n_sites = length(sites_common)
 n_batches = trunc(Int, n_sites * train_split/batch_size) 
 n_sites_train = n_batches * batch_size
 n_sites_valid = trunc(Int, n_sites * valid_split) 
@@ -123,23 +119,32 @@ indices_sites_training = name_to_id.(sites_training, Ref(sites_forcing))
 
 
 # NN 
+n_epochs = 3
+n_neurons = 32
+n_params = sum(tbl_params.is_ml)
+shuffle_opt = true
 ml_baseline = DenseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=523)
 parameters_sites = ml_baseline(xfeatures)
 
 ## test for gradients in batch
+fgrads_batch = zeros(Float32, n_params, length(sites_training))
 grads_batch = zeros(Float32, n_params, length(sites_training))
 sites_batch = sites_training#[1:n_sites_train]
 indices_sites_batch = indices_sites_training
 params_batch = parameters_sites(; site=sites_batch)
 scaled_params_batch = getParamsAct(params_batch, tbl_params)
 
-@time gradsBatch!(
+gradient_lib = UseForwardDiff()
+gradient_lib = UseFiniteDiff()
+
+@time gradientBatch!(
+    gradient_lib,
     siteLossInner,
     grads_batch,
     scaled_params_batch,
     models_lt,
     sites_batch,
-    indices_sites_batch[1:1],
+    indices_sites_batch,
     loc_forcings,
     loc_spinup_forcings,
     forcing_one_timestep,
@@ -154,6 +159,7 @@ scaled_params_batch = getParamsAct(params_batch, tbl_params)
 
 # machine learning parameters baseline
 @time sites_loss, re, flat = train(
+    gradient_lib,
     ml_baseline,
     siteLossInner,
     xfeatures,
@@ -178,3 +184,26 @@ scaled_params_batch = getParamsAct(params_batch, tbl_params)
     shuffle=shuffle_opt,
     local_root=info.output.data,
     name="seq_training_output")
+
+loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs)
+
+@time lossSites(
+            siteLossInner,
+            loss_array_sites,
+            2,
+            parameters_sites,
+            models_lt,
+            sites_training,
+            indices_sites_training,
+            loc_forcings,
+            loc_spinup_forcings,
+            forcing_one_timestep,
+            loc_outputs,
+            land_init,
+            loc_observations,
+            tem,
+            param_to_index,
+            cost_options,
+            constraint_method;
+            logging=false
+        )

@@ -231,9 +231,9 @@ kwargs = (;
     
 println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-@time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
+@time gradientSite(siteLossInner, tbl_params.default, kwargs...)
 
-@time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
+@time gradientSite(siteLossInner, tbl_params.default, kwargs...)
 
 # ForwardDiff.gradient(f, x)
 
@@ -282,7 +282,7 @@ xbatch = cov_sites[1:4]
 f_grads = zeros(Float32, n_params, length(xbatch))
 x_feat = xfeatures(; site=xbatch) 
 
-gradsBatch!(
+gradientBatch!(
     siteLossInner,
     f_grads,
     sites_parameters,

@@ -10,6 +10,7 @@ using SindbadTEM
 using Flux
 using Optimisers
 #@everywhere
+using FiniteDiff
 using ForwardDiff
 using Zygote
 using Statistics
