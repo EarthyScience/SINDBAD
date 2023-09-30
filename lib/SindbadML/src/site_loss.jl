@@ -63,8 +63,17 @@ end
 - tem = (;
     )
 """
+function getTmpOut(loc_output, _, ::UseFiniteDiff)
+    return loc_output
+end
+
+function getTmpOut(loc_output, new_params, ::UseForwardDiff)
+    return get_tmp.(loc_output, (new_params,))
+end
+
 function siteLossInner(
     new_params,
+    gradient_lib,
     models,
     loc_forcing,
     loc_spinup_forcing,
@@ -79,7 +88,7 @@ function siteLossInner(
     show_vec=false)
 
     #println(@__LINE__," ",@__FILE__)
-    out_data = get_tmp.(loc_output, (new_params,))
+    out_data = getTmpOut(loc_output, new_params, gradient_lib)
     #@code_warntype updateModelParametersType(param_to_index, models, new_params)
     #new_params_float = ForwardDiff.value.(new_params)
     #@show new_params_float
