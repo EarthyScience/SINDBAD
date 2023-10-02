@@ -22,13 +22,11 @@ Wraps a multi-input argument function to be used by ForwardDiff.
 """
 #@everywhere 
 function gradientSite(gradient_lib::UseForwardDiff, loss_function::F, vals::AbstractArray, args...) where {F}
-    #println("Starting grads comp")
     loss_tmp(x) = loss_function(x, gradient_lib, args...)
     return ForwardDiff.gradient(loss_tmp, vals)#::Vector{Float32}
 end
 
 function gradientSite(gradient_lib::UseFiniteDiff, loss_function::F, vals::AbstractArray, args...) where {F}
-    #println("Starting grads comp")
     loss_tmp(x) = loss_function(x, gradient_lib, args...)
     return FiniteDiff.finite_difference_gradient(loss_tmp, vals)
 end
