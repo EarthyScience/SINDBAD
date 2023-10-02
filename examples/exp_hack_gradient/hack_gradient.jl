@@ -1,5 +1,6 @@
 # install dependencies by running the following line first:
 # dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadOptimization ../../lib/SindbadML
+using Revise
 using SindbadData
 using SindbadTEM
 using YAXArrays
@@ -184,6 +185,24 @@ gradient_lib = UseFiniteDiff();
     shuffle=shuffle_opt,
     local_root=info.output.data,
     name="seq_training_output")
+
+    fig = Figure(; resolution = (2400,1200))
+    ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
+    obj = plot!(ax, sites_loss';
+        colorrange=(0,5))
+    Colorbar(fig[1,2], obj)
+    fig
+    save(joinpath(info.output.figure, "epoch_loss.png"), fig)
+
+    fig = Figure(; resolution = (2400,1200))
+    ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
+    for _cl in 1:size(sites_loss,1)
+        obj = lines!(ax, sites_loss[_cl,:])
+    fig
+    obj = lines!(ax, mean(sites_loss, dims=1)[1,:], linewidth = 5, color = "black")
+
+    end
+    save(joinpath(info.output.figure, "epoch_lines.png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
