@@ -47,15 +47,6 @@ function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
     return land
 end
 
-function inner_uptake(land_pools_soilW, toUptake, PAW, PAWTotal, root_water_uptake, ΔsoilW, helpers)
-    for sl ∈ eachindex(land_pools_soilW)
-        uptakeProportion = maxZero(PAW[sl] / PAWTotal)
-        @rep_elem toUptake * uptakeProportion => (root_water_uptake, sl, :soilW)
-        @add_to_elem -root_water_uptake[sl] => (ΔsoilW, sl, :soilW)
-    end
-    return root_water_uptake, ΔsoilW
-end
-
 function update(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack variables
