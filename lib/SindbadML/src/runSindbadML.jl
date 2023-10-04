@@ -1,10 +1,11 @@
+export destructureNN
+export get∇params
 export gradientSite
 export gradientBatch!
 export newVals
-export get∇params
-export train
-export lossSites
-export destructureNN
+export lossEpoch
+export lossSite
+export trainSindbadML
 
 export UseFiniteDifferences
 export UseFiniteDiff
@@ -12,6 +13,61 @@ export UseForwardDiff
 struct UseFiniteDifferences end
 struct UseFiniteDiff end
 struct UseForwardDiff end
+
+
+"""
+    destructureNN(model; nn_opt=Optimisers.Adam())
+"""
+function destructureNN(model; nn_opt=Optimisers.Adam())
+    flat, re = Optimisers.destructure(model)
+    opt_state = Optimisers.setup(nn_opt, flat)
+    return flat, re, opt_state
+end
+
+function getLoss(models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem, loc_obs, cost_options, constraint_method; show_vec=false)
+    #println(@__LINE__," ",@__FILE__)
+    coreTEM!(
+        models,
+        loc_forcing,
+        loc_spinup_forcing,
+        forcing_one_timestep,
+        loc_output,
+        land_init,
+        tem...)
+    lossVec = getLossVector(loc_obs, loc_output, cost_options)
+    t_loss = combineLoss(lossVec, constraint_method)
+    if show_vec
+        println("   loss_vector: ", Tuple([Pair.(string.(cost_options.variable), lossVec)...]) )
+    end
+    return t_loss
+end
+
+
+
+function getOutputCache(loc_output, ::UseForwardDiff)
+    return DiffCache.(loc_output)
+end
+
+function getOutputCache(loc_output, ::UseFiniteDiff)
+    return loc_output
+end
+
+function getOutputCache(loc_output, ::UseFiniteDifferences)
+    return loc_output
+end
+
+function getOutputFromCache(loc_output, _, ::UseFiniteDiff)
+    return loc_output
+end
+
+function getOutputFromCache(loc_output, _, ::UseFiniteDifferences)
+    return loc_output
+end
+
+function getOutputFromCache(loc_output, new_params, ::UseForwardDiff)
+    return get_tmp.(loc_output, (new_params,))
+end
+
 
 """
     ForwardDiff_grads(loss_function::Function, vals::AbstractArray, args...)
@@ -38,58 +94,11 @@ function gradientSite(gradient_lib::UseFiniteDifferences, loss_function::F, vals
     return FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1), loss_tmp, vals.data.data)
 end
 
-"""
-    ForwardDiff_grads(loss_function::Function, vals::AbstractArray, args...; CHUNK_SIZE = 42)
-
-Wraps a multi-input argument function to be used by ForwardDiff.
-
-    - loss_function :: The loss function to be used by ForwardDiff
-    - vals :: Gradient evaluation `values`
-    - CHUNK_SIZE :: https://juliadiff.org/ForwardDiff.jl/dev/user/advanced/#Configuring-Chunk-Size
-    - kwargs :: keyword arguments needed by the loss_function
-"""
-function gradientSiteCfg(loss_function::F, vals::AbstractArray, args...; CHUNK_SIZE=12) where {F}
-    out = similar(vals)
-    loss_tmp(x) = loss_function(x, args...)
-    cfg = ForwardDiff.GradientConfig(loss_tmp, vals, ForwardDiff.Chunk{CHUNK_SIZE}())
-    ForwardDiff.gradient!(out, loss_tmp, vals, cfg)
-    return out
-end
-
-"""
-    scaledParams(up_params_now, xbatch, idx)
-
-Returns:
-    - site_name
-    - scaled parameters within the proper bounds
-"""
-function scaledParams(up_params_now, tblParams, xbatch, idx)
-    site_name = xbatch[idx]
-    x_params = up_params_now(; site=site_name)
-    scaled_params = getParamsAct(x_params, tblParams)
-    return site_name, scaled_params
-end
-
-function getOutputCache(loc_output, ::UseForwardDiff)
-    return DiffCache.(loc_output)
-end
-
-function getOutputCache(loc_output, ::UseFiniteDiff)
-    return loc_output
-end
-
-function getOutputCache(loc_output, ::UseFiniteDifferences)
-    return loc_output
-end
-
 function gradientBatch!(
-    gradient_lib, loss_function::F, grads_batch, scaled_params_batch, models, sites_batch, indices_batch, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_one, loc_observations, tem, param_to_index, cost_options, constraint_method; do_one=false, logging=true) where {F}
-# Threads.@spawn allows dynamic scheduling instead of static scheduling
-# of Threads.@threads macro.
-# See <https://github.com/JuliaLang/julia/issues/21017>
-    # if do_one
-    #     indices_batch = indices_batch[1:1]
-    # end
+    gradient_lib, loss_function::F, grads_batch, scaled_params_batch, models, sites_batch, indices_batch, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_one, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=true) where {F}
+    # Threads.@spawn allows dynamic scheduling instead of static scheduling
+    # of Threads.@threads macro.
+    # See <https://github.com/JuliaLang/julia/issues/21017>
 
     p = Progress(length(sites_batch); desc="Computing batch grads...", color=:yellow, enabled=logging)
     @sync begin
@@ -115,22 +124,34 @@ function gradientBatch!(
 end
 
 
-"""
-    destructureNN(model; nn_opt=Optimisers.Adam())
-"""
-function destructureNN(model; nn_opt=Optimisers.Adam())
-    flat, re = Optimisers.destructure(model)
-    opt_state = Optimisers.setup(nn_opt, flat)
-    return flat, re, opt_state
+
+
+function lossSite(
+    new_params,
+    gradient_lib,
+    models,
+    loc_forcing,
+    loc_spinup_forcing,
+    forcing_one_timestep,
+    loc_output,
+    land_init,
+    tem,
+    param_to_index,
+    loc_obs,
+    cost_options,
+    constraint_method;
+    show_vec=false)
+
+    out_data = getOutputFromCache(loc_output, new_params, gradient_lib)
+    new_models = updateModelParametersType(param_to_index, models, new_params)
+    return getLoss(new_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, out_data, land_init, tem, loc_obs, cost_options, constraint_method; show_vec=show_vec)
 end
 
-function lossSites(
-    gradient_lib, loss_function::F, loss_array_sites, epoch_number, scaled_params, models, sites_list, indices_sites, loc_forcings, loc_spinup_forcings,
-    forcing_one_timestep, loc_outputs, land_one, loc_observations, tem, param_to_index, cost_options, constraint_method; do_one=false, logging=true) where {F}
 
-    if do_one
-        indices_sites = indices_sites[1:1]
-    end
+
+function lossEpoch(
+    gradient_lib, loss_function::F, loss_array_sites, epoch_number, scaled_params, models, sites_list, indices_sites, loc_forcings, loc_spinup_forcings,
+    forcing_one_timestep, loc_outputs, land_one, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=true) where {F}
 
     # p = Progress(size(loss_array_sites,1); desc="Computing batch grads...", color=:yellow, enabled=logging)
     @sync begin
@@ -155,7 +176,21 @@ function lossSites(
 end
 
 
-function train(
+"""
+    scaledParams(up_params_now, xbatch, idx)
+
+Returns:
+    - site_name
+    - scaled parameters within the proper bounds
+"""
+function scaledParams(up_params_now, tblParams, xbatch, idx)
+    site_name = xbatch[idx]
+    x_params = up_params_now(; site=site_name)
+    scaled_params = getParamsAct(x_params, tblParams)
+    return site_name, scaled_params
+end
+
+function trainSindbadML(
     gradient_lib, nn_model_params::Flux.Chain, loss_function::F, xfeatures, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=2, optimizer=Optimisers.Adam(), batch_seed=123, batch_size=4, shuffle=true, local_root=nothing, name="seq_training_output") where {F}
 
     local_root = isnothing(local_root) ? dirname(Base.active_project()) : local_root
@@ -165,8 +200,8 @@ function train(
     flat, re, opt_state = destructureNN(nn_model_params; nn_opt=optimizer)
     n_params = length(nn_model_params[end].bias)
 
-    sites_batches = batch_shuffle(sites_training, batch_size; seed=batch_seed)
-    indices_sites_batches = batch_shuffle(indices_sites_training, batch_size; seed=batch_seed)
+    sites_batches = shuffleBatches(sites_training, batch_size; seed=batch_seed)
+    indices_sites_batches = shuffleBatches(indices_sites_training, batch_size; seed=batch_seed)
     grads_batch = zeros(Float32, n_params, batch_size)
 
     loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs)
@@ -175,8 +210,8 @@ function train(
 
 
     for epoch ∈ 1:n_epochs
-        sites_batches = shuffle ? batch_shuffle(sites_training, batch_size; seed=epoch + batch_seed) : sites_batches
-        indices_sites_batches = shuffle ? batch_shuffle(indices_sites_training, batch_size; seed=epoch + batch_seed) : indices_sites_batches
+        sites_batches = shuffle ? shuffleBatches(sites_training, batch_size; seed=epoch + batch_seed) : sites_batches
+        indices_sites_batches = shuffle ? shuffleBatches(indices_sites_training, batch_size; seed=epoch + batch_seed) : indices_sites_batches
         batch_id = 1
         grads_all_batches = map(sites_batches, indices_sites_batches) do sites_batch, indices_batch
             x_feature_batch = xfeatures(; site=sites_batch)
@@ -219,7 +254,7 @@ function train(
         params_epoch = re(flat)(xfeatures)
         scaled_params_epoch = getParamsAct(params_epoch, tbl_params)
         
-        @time lossSites(
+        @time lossEpoch(
             gradient_lib, loss_function, loss_array_sites, epoch, scaled_params_epoch, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false )
         jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); grads_all_batches= grads_all_batches, loss= loss_array_sites[:, epoch], re=re, flat=flat)
         next!(p; showvalues=[(:epoch, epoch)])

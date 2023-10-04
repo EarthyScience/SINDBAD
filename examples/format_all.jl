@@ -2,7 +2,7 @@ using JuliaFormatter
 format(
     "../",
     MinimalStyle(),
-    margin=200,
+    margin=100,
     always_for_in=true,
     for_in_replacement="∈",
     format_docstrings=true,

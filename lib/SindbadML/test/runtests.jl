@@ -3,10 +3,10 @@ using Test
 
 @testset "SindbadML.jl" begin
     list = string.('a':'d')
-    @test shuffle_list(list) == ["a", "d", "b", "c"]
-    @test shuffle_list(list; seed = 312) == ["c", "b", "d", "a"]
-    @test length(bs_iter(10; batch_size=5)) == 2
-    batch_test = batch_shuffle(list, 2; seed=1)
+    @test shuffleList(list) == ["a", "d", "b", "c"]
+    @test shuffleList(list; seed = 312) == ["c", "b", "d", "a"]
+    @test length(partitionBatches(10; batch_size=5)) == 2
+    batch_test = shuffleBatches(list, 2; seed=1)
     @test length(batch_test) == 2
     @test length(batch_test[1]) == 2
 
