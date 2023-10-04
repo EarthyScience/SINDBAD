@@ -1,3 +1,4 @@
+using Revise
 using SindbadExperiment
 toggleStackTraceNT()
 experiment_json = "../exp_distri/settings_distri/experiment.json"
@@ -5,9 +6,7 @@ info = getConfiguration(experiment_json);
 info = setupInfo(info);
 
 forcing = getForcing(info);
-forc = (; Pair.(forcing.variables, forcing.data)...);
-
-#observations = getObservation(info, forcing.helpers);
+observations = getObservation(info, forcing.helpers);
 
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
