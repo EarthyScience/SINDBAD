@@ -1,13 +1,10 @@
 module SindbadTEM
-    using Distributed: @distributed, @sync, @everywhere, pmap
-    import AxisKeys
     using ComponentArrays
     using ConstructionBase
     using InteractiveUtils
     using NLsolve
     using ProgressMeter
     using SindbadSetup
-    @reexport using Pkg
     @reexport using SindbadSetup
 
     using ThreadPools
@@ -23,6 +20,5 @@ module SindbadTEM
     include("runTEMYax.jl")
     include("spinupTEM.jl")
     include("updateParameters.jl")
-    include("runSpatial.jl")
 
 end # module SindbadTEM
