@@ -18,9 +18,8 @@ using Base.Iterators: repeated, partition
 using Random
 using JLD2
 
-include("iter_tools.jl")
-include("nn_dense.jl")
-include("gradients.jl")
-include("site_loss.jl")
+include("utilsML.jl")
+include("setupNeuralNetwork.jl")
+include("runSindbadML.jl")
 
 end # module SindbadML

@@ -115,7 +115,7 @@ function getConfiguration(sindbad_experiment::String; replace_info=nothing)
         force=true)
     for k ∈ keys(infoTuple.experiment.basics.config_files)
         v = getfield(infoTuple.experiment.basics.config_files, k)
-        #cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]); force=true)
+        cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]); force=true)
     end
     @info "\n----------------------------------------------\n"
     return infoTuple
