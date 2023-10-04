@@ -53,12 +53,6 @@ function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=0, seed=1618) # ~ (
         Flux.Dense(n_neurons => n_params, Flux.sigmoid))
 end
 
-function getParamsAct(pNorm, tbl_params)
-    lb = oftype(tbl_params.default, tbl_params.lower)
-    ub = oftype(tbl_params.default, tbl_params.upper)
-    pVec = pNorm .* (ub .- lb) .+ lb
-    return pVec
-end
 
 ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
 

@@ -4,7 +4,7 @@ using GLMakie
 using Colors
 using SindbadUtils
 
-include("plot_output_data.jl")
+include("plotOutputData.jl")
 @reexport using GLMakie.Makie
 
 end # module SindbadVisuals
