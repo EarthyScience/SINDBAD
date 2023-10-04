@@ -3,7 +3,7 @@ export get∇params
 export gradientSite
 export gradientBatch!
 export newVals
-export lossEpoch
+export getLossForSites
 export lossSite
 export trainSindbadML
 
@@ -149,7 +149,7 @@ end
 
 
 
-function lossEpoch(
+function getLossForSites(
     gradient_lib, loss_function::F, loss_array_sites, epoch_number, scaled_params, models, sites_list, indices_sites, loc_forcings, loc_spinup_forcings,
     forcing_one_timestep, loc_outputs, land_one, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=true) where {F}
 
@@ -254,7 +254,7 @@ function trainSindbadML(
         params_epoch = re(flat)(xfeatures)
         scaled_params_epoch = getParamsAct(params_epoch, tbl_params)
         
-        @time lossEpoch(
+        @time getLossForSites(
             gradient_lib, loss_function, loss_array_sites, epoch, scaled_params_epoch, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false )
         jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); grads_all_batches= grads_all_batches, loss= loss_array_sites[:, epoch], re=re, flat=flat)
         next!(p; showvalues=[(:epoch, epoch)])

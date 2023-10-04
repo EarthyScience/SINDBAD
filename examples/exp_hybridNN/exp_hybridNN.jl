@@ -26,7 +26,7 @@ forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 
 models = info.tem.models.forward;
-param_to_index = param_indices(models, tbl_params);
+param_to_index = getParameterIndices(models, tbl_params);
 models_lt = LongTuple(models...);
 
 run_helpers = prepTEM(models_lt, forcing, observations, info);
@@ -70,7 +70,7 @@ constraint_method = info.optim.multi_constraint_method;
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_forcing = forcing.data[1].site;
 c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
-xfeatures_o = cube_to_KA(c);
+xfeatures_o = yaxCubeToKeyedArray(c);
 to_rm = findall(x->x>0, occursin.("VIF", xfeatures_o.features));
 to_rm_names = xfeatures_o.features[to_rm];
 new_features = setdiff(xfeatures_o.features, to_rm_names);
@@ -162,7 +162,7 @@ save(joinpath(info.output.figure, "epoch_lines.png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
-@time lossEpoch(
+@time getLossForSites(
             lossSite,
             loss_array_sites,
             2,

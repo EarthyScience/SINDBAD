@@ -1,10 +1,10 @@
-export plot_output
+export plotOutput
 
 """
-    plot_output(output, out_names, cov_sites, sites_f, tempo)
+    plotOutput(output, out_names, cov_sites, sites_f, tempo)
 
 """
-function plot_output(output, out_names, cov_sites, sites_f, tempo)
+function plotOutput(output, out_names, cov_sites, sites_f, tempo)
     #pair_names = output.variables
     #out_names = [p[2] for p in pair_names]
     snames = length(out_names)
@@ -82,10 +82,10 @@ function plot_output(output, out_names, cov_sites, sites_f, tempo)
 end
 
 """
-    plot_output(output, obs, out_names, cov_sites, sites_f, tempo)
+    plotOutput(output, obs, out_names, cov_sites, sites_f, tempo)
 
 """
-function plot_output(output, obs, out_names, cov_sites, sites_f, tempo)
+function plotOutput(output, obs, out_names, cov_sites, sites_f, tempo)
     #pair_names = output.variables
     #out_names = [p[2] for p in pair_names]
     snames = length(out_names)
