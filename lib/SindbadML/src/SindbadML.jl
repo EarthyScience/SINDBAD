@@ -4,13 +4,11 @@ using Distributed: @distributed, @sync
 using SharedArrays: SharedArray
 
 using Reexport: @reexport
-#@everywhere 
 using SindbadTEM
-#using OptimizeSindbad
 using Flux
 using Optimisers
-#@everywhere
 using FiniteDiff
+using FiniteDifferences
 using ForwardDiff
 using Zygote
 using Statistics
