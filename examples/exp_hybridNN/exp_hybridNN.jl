@@ -1,4 +1,5 @@
 # install dependencies by running the following line first:
+# dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadML
 # dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadOptimization ../../lib/SindbadML
 using Revise
 using SindbadData
@@ -85,7 +86,7 @@ if test_grads !== 0
     sites_common = sites_common_all[1:test_grads];
 else
     sites_common = sites_common_all;
-end
+end;
 
 xfeatures = xfeatures_all(; site=sites_common);
 n_features = length(xfeatures.features);
