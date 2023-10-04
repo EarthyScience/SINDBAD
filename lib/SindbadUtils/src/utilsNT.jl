@@ -1,6 +1,8 @@
 export dictToNamedTuple
 export dropFields
+export foldlLongTuple
 export foldlLongTupleG
+export foldlUnrolled
 export LongTuple
 export LongTupleG
 export getCombinedNamedTuple
@@ -127,6 +129,23 @@ end
             push!(exes, :(init = f(x.data[$i][$j], init)))
         end
     end
+    return Expr(:block, exes...)
+end
+
+
+
+"""
+    foldlUnrolled(f, x::Tuple{Vararg{Any, N}}; init)
+
+generate the expression to run the function for each element of a given Tuple to avoid complexity of for loops for compiler
+
+# Arguments:
+- `f`: a function call
+- `x`: the iterative to loop through
+- `init`: initial variable to overwrite
+"""
+@generated function foldlUnrolled(f, x::Tuple{Vararg{Any,N}}; init) where {N}
+    exes = Any[:(init = f(init, x[$i])) for i ∈ 1:N]
     return Expr(:block, exes...)
 end
 

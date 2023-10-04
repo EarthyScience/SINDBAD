@@ -46,7 +46,7 @@ loc_observations = run_helpers.loc_observations;
 loc_outputs = run_helpers.loc_outputs;
 loc_spinup_forcings = run_helpers.loc_spinup_forcings;
 loc_space_inds = run_helpers.loc_space_inds;
-site_location = loc_space_inds[1][1]
+site_location = loc_space_inds[1][1];
 loc_forcing = loc_forcings[site_location];
 
 loc_obs = loc_observations[site_location];
@@ -60,7 +60,7 @@ loc_spinup_forcing = loc_spinup_forcings[site_location];
 
 # cost related
 
-cost_options = [prepCostOptions(loc_obs, info.optim.cost_options) for loc_obs in loc_observations];;
+cost_options = [prepCostOptions(loc_obs, info.optim.cost_options) for loc_obs in loc_observations];
 
 constraint_method = info.optim.multi_constraint_method;
 
@@ -80,7 +80,7 @@ sites_feature_all = [s for s in xfeatures_all.site];
 sites_common_all = intersect(sites_feature_all, sites_forcing);
 
 test_grads = 16;
-# test_grads = 0;
+test_grads = 0;
 if test_grads !== 0
     sites_common = sites_common_all[1:test_grads];
 else
@@ -113,7 +113,7 @@ indices_sites_training = siteNameToID.(sites_training, Ref(sites_forcing));
 
 
 # NN 
-n_epochs = 2;
+n_epochs = 20;
 n_neurons = 32;
 n_params = sum(tbl_params.is_ml);
 shuffle_opt = true;
@@ -141,7 +141,7 @@ gradient_lib = UseFiniteDiff();
         gradient_lib, ml_baseline, lossSite, xfeatures, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; 
         n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data, name="seq_training_output")
 
-
+using CairoMakie
 fig = Figure(; resolution = (2400,1200))
 ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
 obj = plot!(ax, sites_loss';
@@ -163,22 +163,23 @@ save(joinpath(info.output.figure, "epoch_lines.png"), fig)
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
 @time getLossForSites(
-            lossSite,
-            loss_array_sites,
-            2,
-            parameters_sites,
-            models_lt,
-            sites_training,
-            indices_sites_training,
-            loc_forcings,
-            loc_spinup_forcings,
-            forcing_one_timestep,
-            loc_outputs,
-            land_init,
-            loc_observations,
-            tem,
-            param_to_index,
-            cost_options,
-            constraint_method;
-            logging=false
-        )
+    gradient_lib,
+    lossSite,
+    loss_array_sites,
+    2,
+    parameters_sites,
+    models_lt,
+    sites_training,
+    indices_sites_training,
+    loc_forcings,
+    loc_spinup_forcings,
+    forcing_one_timestep,
+    loc_outputs,
+    land_init,
+    loc_observations,
+    tem,
+    param_to_index,
+    cost_options,
+    constraint_method;
+    logging=false
+    )
