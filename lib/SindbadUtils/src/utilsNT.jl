@@ -1,6 +1,7 @@
 export dictToNamedTuple
 export dropFields
 export foldlLongTupleG
+export LongTuple
 export LongTupleG
 export getCombinedNamedTuple
 export makeNamedTuple
@@ -8,6 +9,62 @@ export removeEmptyTupleFields
 export setTupleField
 export setTupleSubfield
 export tcPrint
+
+struct LongTuple{T <: Tuple}
+    data::T
+    function LongTuple(arg::T) where {T<: Tuple}
+        return new{T}(arg)
+    end
+    function LongTuple(args...)
+        n = 6
+        s = length(args)
+        nt = s ÷ n
+        r = mod(s,n)
+        nt = r == 0 ? nt : nt + 1
+        idx = 1
+        tup = ntuple(nt) do i
+            n = r != 0 && i==nt ? r : n
+            t = ntuple(x -> args[x+idx-1], n)
+            idx += n
+            return t
+        end
+        return new{typeof(tup)}(tup)
+    end
+end
+
+Base.map(f, arg::LongTuple) = LongTuple(map(tup-> map(f, tup), arg.data))
+
+@inline Base.foreach(f, arg::LongTuple) = foreach(tup-> foreach(f, tup), arg.data)
+
+#Base.foreach(f, arg::LongTuple, args...) = foreach(tup-> foreach((x)-> f(x, args...), tup), arg.data)
+
+
+struct LongTupleG{NSPLIT,T <: Tuple}
+    data::T
+    n::Val{NSPLIT}
+    function LongTupleG{n}(arg::T) where {n,T<: Tuple}
+        return new{n,T}(arg,Val{n}())
+    end
+    function LongTupleG{n}(args...) where n
+        s = length(args)
+        nt = s ÷ n
+        r = mod(s,n) # 5 for our current use case
+        nt = r == 0 ? nt : nt + 1
+        idx = 1
+        tup = ntuple(nt) do i
+            nn = r != 0 && i==nt ? r : n
+            t = ntuple(x -> args[x+idx-1], nn)
+            idx += nn
+            return t
+        end
+        return new{n,typeof(tup)}(tup)
+    end
+end
+
+Base.map(f, arg::LongTupleG{N}) where N = LongTupleG{N}(map(tup-> map(f, tup), arg.data))
+
+@inline Base.foreach(f, arg::LongTupleG) = foreach(tup-> foreach(f, tup), arg.data)
+
 
 """
     collectColorForTypes(d; c_olor = true)
@@ -45,6 +102,32 @@ function dictToNamedTuple(d::AbstractDict)
     end
     dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
     return dTuple
+end
+
+
+@generated function foldlLongTuple(f, x::LongTuple{<: Tuple{Vararg{Any,N}}}; init) where {N}
+    exes = []
+    for i in 1:N
+        N2 = i==N ? 5 : 6
+        for j in 1:N2
+            push!(exes, :(init = f(x.data[$i][$j], init)))
+        end
+    end
+    return Expr(:block, exes...)
+end
+
+
+@generated function foldlLongTupleG(f, x::LongTupleG{NSPL,T}; init) where {T,NSPL}
+    exes = []
+    N = length(T.parameters)
+    lastlength = length(last(T.parameters).parameters)
+    for i in 1:N
+        N2 = i==N ? lastlength : NSPL
+        for j in 1:N2
+            push!(exes, :(init = f(x.data[$i][$j], init)))
+        end
+    end
+    return Expr(:block, exes...)
 end
 
 
@@ -92,17 +175,6 @@ function getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
     return combined_nt
 end
 
-"""
-    makeNamedTuple(input_data, input_names)
-
-# Arguments:
-- `input_data`: a vector of data
-- `input_names`: a vector/tuple of names    
-"""
-function makeNamedTuple(input_data, input_names)
-    return (; Pair.(input_names, input_data)...)
-end
-
 
 """
     getTypes!(d, all_types)
@@ -121,44 +193,16 @@ function getTypes!(d, all_types)
     return unique(all_types)
 end
 
-struct LongTupleG{NSPLIT,T <: Tuple}
-    data::T
-    n::Val{NSPLIT}
-    function LongTupleG{n}(arg::T) where {n,T<: Tuple}
-        return new{n,T}(arg,Val{n}())
-    end
-    function LongTupleG{n}(args...) where n
-        s = length(args)
-        nt = s ÷ n
-        r = mod(s,n) # 5 for our current use case
-        nt = r == 0 ? nt : nt + 1
-        idx = 1
-        tup = ntuple(nt) do i
-            nn = r != 0 && i==nt ? r : n
-            t = ntuple(x -> args[x+idx-1], nn)
-            idx += nn
-            return t
-        end
-        return new{n,typeof(tup)}(tup)
-    end
-end
 
-Base.map(f, arg::LongTupleG{N}) where N = LongTupleG{N}(map(tup-> map(f, tup), arg.data))
+"""
+    makeNamedTuple(input_data, input_names)
 
-@inline Base.foreach(f, arg::LongTupleG) = foreach(tup-> foreach(f, tup), arg.data)
-
-
-@generated function foldlLongTupleG(f, x::LongTupleG{NSPL,T}; init) where {T,NSPL}
-    exes = []
-    N = length(T.parameters)
-    lastlength = length(last(T.parameters).parameters)
-    for i in 1:N
-        N2 = i==N ? lastlength : NSPL
-        for j in 1:N2
-            push!(exes, :(init = f(x.data[$i][$j], init)))
-        end
-    end
-    return Expr(:block, exes...)
+# Arguments:
+- `input_data`: a vector of data
+- `input_names`: a vector/tuple of names    
+"""
+function makeNamedTuple(input_data, input_names)
+    return (; Pair.(input_names, input_data)...)
 end
 
 """
