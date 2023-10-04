@@ -25,38 +25,15 @@ function compute(p_struct::cTau_mult, forcing, land, helpers)
         c_eco_k_base ∈ land.cCycleBase
         c_eco_k ∈ land.states
     end
-
-    c_eco_k = inner_eco_base(
-        c_eco_k,
-        c_eco_k_base,
-        c_eco_k_f_LAI,
-        c_eco_k_f_soil_props,
-        c_eco_k_f_veg_props,
-        c_eco_k_f_soilT,
-        c_eco_k_f_soilW,
-        helpers)
-
-    ## pack land variables
-    @pack_land c_eco_k => land.states
-    return land
-end
-
-function inner_eco_base(
-    c_eco_k,
-    c_eco_k_base,
-    c_eco_k_f_LAI,
-    c_eco_k_f_soil_props,
-    c_eco_k_f_veg_props,
-    c_eco_k_f_soilT,
-    c_eco_k_f_soilW,
-    helpers)
-
     for i ∈ eachindex(c_eco_k)
         tmp = c_eco_k_base[i] * c_eco_k_f_LAI[i] * c_eco_k_f_soil_props[i] * c_eco_k_f_veg_props[i] * c_eco_k_f_soilT * c_eco_k_f_soilW[i]
         tmp = clampZeroOne(tmp)
         @rep_elem tmp => (c_eco_k, i, :cEco)
     end
-    return c_eco_k
+
+    ## pack land variables
+    @pack_land c_eco_k => land.states
+    return land
 end
 
 @doc """

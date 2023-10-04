@@ -49,34 +49,6 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
     return land
 end
 
-function inner_reset1(ΔsnowW, z_zero, helpers)
-    for l in eachindex(ΔsnowW)
-        @rep_elem z_zero => (ΔsnowW, l, :snowW)
-    end
-    return ΔsnowW
-end
-
-function inner_reset2(ΔsoilW, z_zero, helpers)
-    for l in eachindex(ΔsoilW)
-        @rep_elem z_zero => (ΔsoilW, l, :soilW)
-    end
-    return ΔsoilW
-end
-
-function inner_reset3(ΔgroundW, z_zero, helpers)
-    for l in eachindex(ΔgroundW)
-        @rep_elem z_zero => (ΔgroundW, l, :groundW)
-    end
-    return ΔgroundW
-end
-
-function inner_reset4(ΔsurfaceW , z_zero, helpers)
-    for l in eachindex(ΔsurfaceW)
-        @rep_elem z_zero => (ΔsurfaceW, l, :surfaceW)
-    end
-    return ΔsurfaceW 
-end
-
 @doc """
 update the water cycle pools per component
 
