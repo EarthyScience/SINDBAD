@@ -17,7 +17,7 @@ export setOutputForTimeStep!
 - `val`: DESCRIPTION
 - `ts`: DESCRIPTION
 """
-function fillLocOutput!(ar, val, ts::Int64)
+function fillLocOutput!(ar::T, val::T1, ts::T2) where {T, T1, T2<:Int}
     data_ts = getLocOutputView(ar, val, ts)
     return data_ts .= val
 end
@@ -162,8 +162,8 @@ end
 - `val`: DESCRIPTION
 - `ts`: DESCRIPTION
 """
-function getLocOutputView(ar, val::AbstractVector, ts::Int64)
-    return view(ar, ts, 1:length(val))
+function getLocOutputView(ar::T, val::T1, ts::T2) where {T, T1<:AbstractVector, T2<:Int}
+    return view(ar, ts, 1:size(val,1))
 end
 
 """
@@ -176,7 +176,7 @@ end
 - `val`: DESCRIPTION
 - `ts`: DESCRIPTION
 """
-function getLocOutputView(ar, val::Real, ts::Int64)
+function getLocOutputView(ar::T, val::T1, ts::T2) where {T, T1<:Real, T2<:Int}
     return view(ar, ts)
 end
 
@@ -226,4 +226,5 @@ function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {out
             fillLocOutput!(data_o, data_l, ts)
         end
     end
+    return nothing
 end

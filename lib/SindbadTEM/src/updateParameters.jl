@@ -1,7 +1,7 @@
 
 export updateModelParameters
 export updateModelParametersType
-export param_indices
+export getParameterIndices
 
 """
     updateModelParameters(tbl_params::Table, selected_models::Tuple)
@@ -196,25 +196,25 @@ end
 #     return updatedModels
 # end
 
-function param_indices(selected_models, tbl_params)
+function getParameterIndices(selected_models, tbl_params)
     r = (;)
     tempvec = Pair{Symbol,Int}[]
     for m in selected_models
-          r = (;r...,indices_by_model(m, tbl_params, tempvec)...)
+        r = (; r..., getModelParameterIndices(m, tbl_params, tempvec)...)
     end
     r
 end
 
-function indices_by_model(model, tbl_params,r)
+function getModelParameterIndices(model, tbl_params, r)
     modelName = nameof(typeof(model))
     empty!(r)
     for var in propertynames(model)
-          pindex = findfirst(row ->  row.name == var && row.model_approach == modelName,tbl_params)
-          if !isnothing(pindex)
-                push!(r,var=>pindex)
-          end
+        pindex = findfirst(row -> row.name == var && row.model_approach == modelName, tbl_params)
+        if !isnothing(pindex)
+            push!(r, var => pindex)
+        end
     end
-    NamedTuple((modelName=>NamedTuple(r),))
+    NamedTuple((modelName => NamedTuple(r),))
 end
 
 function updateModelParametersType(param_to_index, selected_models, pVector)

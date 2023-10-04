@@ -37,20 +37,15 @@ function precompute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, he
     if max_root_depth > z_zero
         @rep_elem one(eltype(root_over)) => (root_over, 1, :soilW)
     end
-    root_over = inner_pool(land.pools.soilW, root_over, cumulative_soil_depths, max_root_depth, z_zero, helpers)
-    ## pack land variables
-    @pack_land root_over => land.rootWaterEfficiency
-    return land
-end
-
-function inner_pool(land_pools_soilW, root_over, cumulative_soil_depths, max_root_depth, z_zero, helpers)
-    for sl ∈ eachindex(land_pools_soilW)[2:end]
+    for sl ∈ eachindex(land.pools.soilW)[2:end]
         soilcumuD = cumulative_soil_depths[sl-1]
         rootOver = max_root_depth - soilcumuD
         rootEff = rootOver >= z_zero ? one(eltype(root_over)) : zero(eltype(root_over))
         @rep_elem rootEff => (root_over, sl, :soilW)
     end
-    return root_over
+    ## pack land variables
+    @pack_land root_over => land.rootWaterEfficiency
+    return land
 end
 
 function compute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
@@ -67,18 +62,13 @@ function compute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpe
     tmp_rootEff = max_root_water_efficiency -
                   (max_root_water_efficiency - min_root_water_efficiency) * (exp(-k_efficiency_cVegRoot * totalS(cVegRoot))) # root fraction/efficiency as a function of total carbon in root pools
 
-    root_water_efficiency = inner_root_water(root_water_efficiency, land.pools.soilW, root_over, tmp_rootEff, helpers)
-    ## pack land variables
-    @pack_land root_water_efficiency => land.states
-    return land
-end
-
-function inner_root_water(root_water_efficiency, land_pools_soilW, root_over, tmp_rootEff, helpers)
-    for sl ∈ eachindex(land_pools_soilW)
+    for sl ∈ eachindex(land.pools.soilW)
         root_water_efficiency_sl = root_over[sl] * tmp_rootEff
         @rep_elem root_water_efficiency_sl => (root_water_efficiency, sl, :soilW)
     end
-    return root_water_efficiency
+    ## pack land variables
+    @pack_land root_water_efficiency => land.states
+    return land
 end
 
 @doc """
