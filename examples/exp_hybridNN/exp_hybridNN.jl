@@ -13,7 +13,7 @@ using JLD2
 
 toggleStackTraceNT()
 
-experiment_json = "../exp_hack_gradient/settings_gradient/experiment.json"
+experiment_json = "../exp_hybridNN/settings_hybridNN/experiment.json"
 
 info = getExperimentInfo(experiment_json);
 
@@ -108,12 +108,12 @@ n_sites_valid = trunc(Int, n_sites * valid_split);
 n_sites_test = n_sites - n_sites_valid - n_sites_train;
 
 # filter and shuffle sites and subset
-sites_training = shuffle_list(sites_common; seed=batch_seed)[1:n_sites_train];
-indices_sites_training = name_to_id.(sites_training, Ref(sites_forcing));
+sites_training = shuffleList(sites_common; seed=batch_seed)[1:n_sites_train];
+indices_sites_training = siteNameToID.(sites_training, Ref(sites_forcing));
 
 
 # NN 
-n_epochs = 100;
+n_epochs = 2;
 n_neurons = 32;
 n_params = sum(tbl_params.is_ml);
 shuffle_opt = true;
@@ -133,12 +133,12 @@ gradient_lib = UseFiniteDiff();
 # gradient_lib = UseFiniteDifferences();
 
 @time gradientBatch!(
-    gradient_lib, siteLossInner, grads_batch, scaled_params_batch, models_lt, sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings,
+    gradient_lib, lossSite, grads_batch, scaled_params_batch, models_lt, sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings,
     forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
 
 # machine learning parameters baseline
-@time sites_loss, re, flat = train(
-        gradient_lib, ml_baseline, siteLossInner, xfeatures, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; 
+@time sites_loss, re, flat = trainSindbadML(
+        gradient_lib, ml_baseline, lossSite, xfeatures, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; 
         n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data, name="seq_training_output")
 
 
@@ -162,8 +162,8 @@ save(joinpath(info.output.figure, "epoch_lines.png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
-@time lossSites(
-            siteLossInner,
+@time lossEpoch(
+            lossSite,
             loss_array_sites,
             2,
             parameters_sites,
