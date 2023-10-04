@@ -1,8 +1,8 @@
+using Revise
 using ForwardDiff
-using SindbadTEM
-using SindbadData
-using SindbadTEM.SindbadMetrics
 
+using SindbadTEM
+using SindbadMetrics
 toggleStackTraceNT()
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
@@ -15,7 +15,6 @@ forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 cost_options = prepCostOptions(obs_array, info.optim.cost_options);
-
 
 run_helpers = prepTEM(forcing, info);
 
@@ -46,7 +45,7 @@ function g_loss(x,
     tbl_params,
     cost_options,
     multi_constraint_method)
-    l = getLoss2(x,
+    l = getLoss(x,
         mods,
         loc_forcings,
         loc_spinup_forcings,
@@ -63,9 +62,7 @@ function g_loss(x,
 end
 
 mods = info.tem.models.forward;
-#mods = [m for m in mods];
-
-@time g_loss(tbl_params.default,
+g_loss(tbl_params.default,
     mods,
     run_helpers.loc_forcings,
     run_helpers.loc_spinup_forcings,
