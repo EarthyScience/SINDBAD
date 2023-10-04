@@ -37,14 +37,18 @@ function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, 
         (z_zero, o_one) ∈ land.wCycleBase
     end
     # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
-    _pools = land.pools
-    _zix_pools = helpers.pools.zix
-
-    r0 = inner_rsl(z_zero, _pools.cVegRoot, _zix_pools.cVegRoot, c_allocation)
-    s0 = inner_rsl(z_zero, _pools.cVegWood, _zix_pools.cVegWood, c_allocation)
-    l0 = inner_rsl(z_zero, _pools.cVegLeaf, _zix_pools.cVegLeaf, c_allocation)
-
-    # this is to below ground root fine+coarse
+    r0 = z_zero
+    for ix ∈ getZix(land.pools.cVegRoot, helpers.pools.zix.cVegRoot)
+        r0 = r0 + c_allocation[ix]
+    end
+    s0 = z_zero
+    for ix ∈ getZix(land.pools.cVegWood, helpers.pools.zix.cVegWood)
+        s0 = s0 + c_allocation[ix]
+    end
+    l0 = z_zero
+    for ix ∈ getZix(land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf)
+        l0 = l0 + c_allocation[ix]
+    end     # this is to below ground root fine+coarse
 
     # adjust for spatial consideration of TreeFrac & plant level
     # partitioning between fine & coarse roots
@@ -57,49 +61,21 @@ function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, 
     a_cVegLeaf = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
 
     c_allocation = setCAlloc(c_allocation, a_cVegWood, land.pools.cVegWood, helpers.pools.zix.cVegWood, helpers)
-    has_p = hasproperty(cVeg_names_for_c_allocation_frac_tree, :cVegRootC)
-
-    c_allocation = inner_has(
-        has_p,
-        c_allocation,
-        a_cVegRoot,
-        a_cVegRootC,
-        a_cVegRootF,
-        land.pools,
-        helpers.pools.zix,
-        helpers)
+    if hasproperty(cVeg_names_for_c_allocation_frac_tree, :cVegRootC)
+        c_allocation = setCAlloc(c_allocation, a_cVegRootC, land.pools.cVegRootC, helpers.pools.zix.cVegRootC,
+            helpers)
+        c_allocation = setCAlloc(c_allocation, a_cVegRootF, land.pools.cVegRootF, helpers.pools.zix.cVegRootF,
+            helpers)
+    else
+        c_allocation = setCAlloc(c_allocation, a_cVegRoot, land.pools.cVegRoot, helpers.pools.zix.cVegRoot,
+            helpers)
+    end
 
     c_allocation = setCAlloc(c_allocation, a_cVegLeaf, land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf, helpers)
 
     @pack_land c_allocation => land.states
 
     return land
-end
-
-function inner_rsl(rsl, _cVeg_type, _zix_Veg_type, c_allocation)
-    for ix ∈ getZix(_cVeg_type, _zix_Veg_type)
-        rsl = rsl + c_allocation[ix]
-    end
-    return rsl
-end
-
-function inner_has(
-    has_p,
-    c_allocation,
-    a_cVegRoot,
-    a_cVegRootC,
-    a_cVegRootF,
-    _pools,
-    _zix_pools,
-    helpers)
-
-    if has_p
-        c_allocation = setCAlloc(c_allocation, a_cVegRootC, _pools.cVegRootC, _zix_pools.cVegRootC, helpers)
-        c_allocation = setCAlloc(c_allocation, a_cVegRootF, _pools.cVegRootF, _zix_pools.cVegRootF, helpers)
-    else
-        c_allocation = setCAlloc(c_allocation, a_cVegRoot, _pools.cVegRoot, _zix_pools.cVegRoot, helpers)
-    end
-    return c_allocation
 end
 
 @doc """
