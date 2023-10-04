@@ -35,18 +35,7 @@ function compute(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
-    ΔsoilW, soil_capillary_flux = inner_soilcap(land.pools.soilW, soilW, ΔsoilW, soil_capillary_flux, wSat, soil_kFC, max_frac, tolerance, o_one, helpers)
-
-    ## pack land variables
-    @pack_land begin
-        soil_capillary_flux => land.fluxes
-        ΔsoilW => land.states
-    end
-    return land
-end
-
-function inner_soilcap(land_pools_soilW, soilW, ΔsoilW, soil_capillary_flux, wSat, soil_kFC, max_frac, tolerance, o_one, helpers)
-    for sl ∈ 1:(length(land_pools_soilW)-1)
+    for sl ∈ 1:(length(land.pools.soilW)-1)
         dos_soilW = clampZeroOne((soilW[sl] + ΔsoilW[sl]) ./ wSat[sl])
         tmpCapFlow = sqrt(soil_kFC[sl+1] * soil_kFC[sl]) * (o_one - dos_soilW)
         holdCap = maxZero(wSat[sl] - (soilW[sl] + ΔsoilW[sl]))
@@ -57,7 +46,13 @@ function inner_soilcap(land_pools_soilW, soilW, ΔsoilW, soil_capillary_flux, wS
         @add_to_elem soil_capillary_flux[sl] => (ΔsoilW, sl, :soilW)
         @add_to_elem -soil_capillary_flux[sl] => (ΔsoilW, sl + 1, :soilW)
     end
-    return ΔsoilW, soil_capillary_flux
+
+    ## pack land variables
+    @pack_land begin
+        soil_capillary_flux => land.fluxes
+        ΔsoilW => land.states
+    end
+    return land
 end
 
 function update(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)

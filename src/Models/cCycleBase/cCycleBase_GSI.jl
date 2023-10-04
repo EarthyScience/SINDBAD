@@ -89,7 +89,6 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
-
 function adjustPackPoolComponents(land, helpers, ::CCycleBaseGSI)
     @unpack_land (cVeg,
         cLit,
