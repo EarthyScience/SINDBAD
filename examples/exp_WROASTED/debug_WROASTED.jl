@@ -9,7 +9,7 @@ using Plots
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "2005"
 end_year = "2017"
-domain = "SD-Dem"
+domain = "DE-Hai"
 # domain = "CA-NS6"
 # domain = "AU-Emr"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
@@ -98,11 +98,10 @@ forcing = getForcing(info);
 #     eltype(lvar).(od)
 # end
 
-old_mods = info.tem.models.forward
 
-run_helpers = prepTEM(old_mods, forcing, info);
+run_helpers = prepTEM(forcing, info);
 # land_one = run_helpers.land_one;
-@time runTEM!(old_mods,
+@time runTEM!(info.tem.models.forward,
     run_helpers.loc_forcings,
     run_helpers.loc_spinup_forcings,
     run_helpers.forcing_one_timestep,
@@ -111,62 +110,14 @@ run_helpers = prepTEM(old_mods, forcing, info);
     run_helpers.tem_with_types)
 
 
-mods = LongTuple(info.tem.models.forward...);
-
-run_helpers_m = prepTEM(mods, forcing, info);
-    # land_one = run_helpers.land_one;
-@time runTEM!(mods,
-        run_helpers_m.loc_forcings,
-        run_helpers_m.loc_spinup_forcings,
-        run_helpers_m.forcing_one_timestep,
-        run_helpers_m.loc_outputs,
-        run_helpers_m.land_init_space,
-        run_helpers_m.tem_with_types)
-    
-
-    
-@time coreTEM!(old_mods,
-    run_helpers.loc_forcings[1],
-    run_helpers.loc_spinup_forcings[1],
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs[1],
-    run_helpers.land_init_space[1],
-    run_helpers.tem_with_types.helpers,
-    run_helpers.tem_with_types.models,
-    run_helpers.tem_with_types.spinup,
-    run_helpers.tem_with_types.helpers.run.spinup.spinup_TEM
-    )
-    
-@time coreTEM!(mods,
-    run_helpers_m.loc_forcings[1],
-    run_helpers_m.loc_spinup_forcings[1],
-    run_helpers_m.forcing_one_timestep,
-    run_helpers_m.loc_outputs[1],
-    run_helpers_m.land_init_space[1],
-    run_helpers_m.tem_with_types.helpers,
-    run_helpers_m.tem_with_types.models,
-    run_helpers_m.tem_with_types.spinup,
-    run_helpers_m.tem_with_types.helpers.run.spinup.spinup_TEM
-    )
-        
-
-@time spinupTEM(
-    old_mods,
-    run_helpers.loc_spinup_forcings[1],
-    run_helpers.forcing_one_timestep,
-    run_helpers.land_init_space[1],
-    run_helpers.tem_with_types.helpers,
-    run_helpers.tem_with_types.models,
-    run_helpers.tem_with_types.spinup);
-        
-@time spinupTEM(
-    mods,
-    run_helpers_m.loc_spinup_forcings[1],
-    run_helpers_m.forcing_one_timestep,
-    run_helpers_m.land_init_space[1],
-    run_helpers_m.tem_with_types.helpers,
-    run_helpers_m.tem_with_types.models,
-    run_helpers_m.tem_with_types.spinup);
+# @time spinupTEM(
+#     info.tem.models.forward,
+#     run_helpers.loc_forcings[1],
+#     run_helpers.forcing_one_timestep,
+#     run_helpers.land_init_space[1],
+#     run_helpers.tem_with_types.helpers,
+#     run_helpers.tem_with_types.models,
+#     run_helpers.tem_with_types.spinup);
 
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
