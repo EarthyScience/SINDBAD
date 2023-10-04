@@ -20,14 +20,14 @@ tbl_params = getParameters(info.tem.models.forward,
     info.tem.helpers.numbers.sNT);
 
 # covariates
-function cube_to_KA(c)
+function yaxCubeToKeyedArray(c)
     namesCube = YAXArrayBase.dimnames(c)
     return KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
 end
 
 sites_f = forc.Tair.site;
 c = Cube("examples/data/fluxnet_cube/fluxnet_covariates.zarr")
-xfeatures = cube_to_KA(c)
+xfeatures = yaxCubeToKeyedArray(c)
 # RU-Ha1, IT-PT1, US-Me5
 sites = xfeatures.site
 sites = [s for s ∈ sites]

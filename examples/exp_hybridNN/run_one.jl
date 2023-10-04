@@ -15,7 +15,7 @@ re_structure, flat_weights = load("./seq_training_output/seq_training_output_epo
 nn_model = re_structure(flat_weights)
 
 c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
-xfeatures = cube_to_KA(c)
+xfeatures = yaxCubeToKeyedArray(c)
 
 new_nn_parameters = nn_model(xfeatures)
 new_params = new_nn_parameters(; site = domain) # unbounded, see later the scaling
@@ -75,7 +75,7 @@ tbl_params = getParameters(info.tem.models.forward,
 new_params = getParamsAct(new_params, tbl_params)
 
 models = info.tem.models.forward;
-param_to_index = param_indices(models, tbl_params);
+param_to_index = getParameterIndices(models, tbl_params);
 
 models = LongTuple(models...);
 new_models = updateModelParametersType(param_to_index, models, new_params)
