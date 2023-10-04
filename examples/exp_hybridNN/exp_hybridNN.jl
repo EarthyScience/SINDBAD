@@ -152,11 +152,10 @@ save(joinpath(info.output.figure, "epoch_loss.png"), fig)
 
 fig = Figure(; resolution = (2400,1200))
 ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
-for _cl in 1:axes(sites_loss,1)
+foreach(axes(sites_loss,1)) do _cl
     obj = lines!(ax, sites_loss[_cl,:])
-fig
-obj = lines!(ax, mean(sites_loss, dims=1)[1,:], linewidth = 5, color = "black")
-
+    fig
+    obj = lines!(ax, mean(sites_loss, dims=1)[1,:], linewidth = 5, color = "black")
 end
 save(joinpath(info.output.figure, "epoch_lines.png"), fig)
 
