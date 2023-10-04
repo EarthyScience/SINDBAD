@@ -56,14 +56,7 @@ loc_spinup_forcing = loc_spinup_forcings[site_location];
 
 
 # run the model
-@time coreTEM!(
-        models_lt,
-        loc_forcing,
-        loc_spinup_forcing,
-        forcing_one_timestep,
-        loc_output,
-        land_init,
-        tem...)
+@time coreTEM!( models_lt, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem...)
 
 # cost related
 
@@ -87,7 +80,7 @@ sites_feature_all = [s for s in xfeatures_all.site];
 sites_common_all = intersect(sites_feature_all, sites_forcing);
 
 test_grads = 16;
-test_grads = 0;
+# test_grads = 0;
 if test_grads !== 0
     sites_common = sites_common_all[1:test_grads];
 else
@@ -137,72 +130,35 @@ scaled_params_batch = getParamsAct(params_batch, tbl_params);
 
 gradient_lib = UseForwardDiff();
 gradient_lib = UseFiniteDiff();
+# gradient_lib = UseFiniteDifferences();
 
 @time gradientBatch!(
-    gradient_lib,
-    siteLossInner,
-    grads_batch,
-    scaled_params_batch,
-    models_lt,
-    sites_batch,
-    indices_sites_batch,
-    loc_forcings,
-    loc_spinup_forcings,
-    forcing_one_timestep,
-    loc_outputs,
-    land_init,
-    loc_observations,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method
-)
+    gradient_lib, siteLossInner, grads_batch, scaled_params_batch, models_lt, sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings,
+    forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
 
 # machine learning parameters baseline
 @time sites_loss, re, flat = train(
-    gradient_lib,
-    ml_baseline,
-    siteLossInner,
-    xfeatures,
-    models_lt,
-    sites_training,
-    indices_sites_training,
-    loc_forcings,
-    loc_spinup_forcings,
-    forcing_one_timestep,
-    loc_outputs,
-    land_init,
-    loc_observations,
-    tbl_params,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method;
-    n_epochs=n_epochs,
-    optimizer=Optimisers.Adam(),
-    batch_seed=batch_seed,
-    batch_size=batch_size,
-    shuffle=shuffle_opt,
-    local_root=info.output.data,
-    name="seq_training_output")
+        gradient_lib, ml_baseline, siteLossInner, xfeatures, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; 
+        n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data, name="seq_training_output")
 
-    fig = Figure(; resolution = (2400,1200))
-    ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
-    obj = plot!(ax, sites_loss';
-        colorrange=(0,5))
-    Colorbar(fig[1,2], obj)
-    fig
-    save(joinpath(info.output.figure, "epoch_loss.png"), fig)
 
-    fig = Figure(; resolution = (2400,1200))
-    ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
-    for _cl in 1:size(sites_loss,1)
-        obj = lines!(ax, sites_loss[_cl,:])
-    fig
-    obj = lines!(ax, mean(sites_loss, dims=1)[1,:], linewidth = 5, color = "black")
+fig = Figure(; resolution = (2400,1200))
+ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
+obj = plot!(ax, sites_loss';
+    colorrange=(0,5))
+Colorbar(fig[1,2], obj)
+fig
+save(joinpath(info.output.figure, "epoch_loss.png"), fig)
 
-    end
-    save(joinpath(info.output.figure, "epoch_lines.png"), fig)
+fig = Figure(; resolution = (2400,1200))
+ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
+for _cl in 1:axes(sites_loss,1)
+    obj = lines!(ax, sites_loss[_cl,:])
+fig
+obj = lines!(ax, mean(sites_loss, dims=1)[1,:], linewidth = 5, color = "black")
+
+end
+save(joinpath(info.output.figure, "epoch_lines.png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 

@@ -6,8 +6,10 @@ export train
 export lossSites
 export destructureNN
 
+export UseFiniteDifferences
 export UseFiniteDiff
 export UseForwardDiff
+struct UseFiniteDifferences end
 struct UseFiniteDiff end
 struct UseForwardDiff end
 
@@ -29,6 +31,11 @@ end
 function gradientSite(gradient_lib::UseFiniteDiff, loss_function::F, vals::AbstractArray, args...) where {F}
     loss_tmp(x) = loss_function(x, gradient_lib, args...)
     return FiniteDiff.finite_difference_gradient(loss_tmp, vals)
+end
+
+function gradientSite(gradient_lib::UseFiniteDifferences, loss_function::F, vals::AbstractArray, args...) where {F}
+    loss_tmp(x) = loss_function(x, gradient_lib, args...)
+    return FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1), loss_tmp, vals.data.data)
 end
 
 """
@@ -71,33 +78,18 @@ function getOutputCache(loc_output, ::UseFiniteDiff)
     return loc_output
 end
 
-function gradientBatch!(
-    gradient_lib,
-    loss_function::F,
-    grads_batch,
-    scaled_params_batch,
-    models,
-    sites_batch,
-    indices_batch,
-    loc_forcings,
-    loc_spinup_forcings,
-    forcing_one_timestep,
-    loc_outputs,
-    land_one,
-    loc_observations,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method;
-    do_one=false,
-    logging=true) where {F}
+function getOutputCache(loc_output, ::UseFiniteDifferences)
+    return loc_output
+end
 
+function gradientBatch!(
+    gradient_lib, loss_function::F, grads_batch, scaled_params_batch, models, sites_batch, indices_batch, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_one, loc_observations, tem, param_to_index, cost_options, constraint_method; do_one=false, logging=true) where {F}
 # Threads.@spawn allows dynamic scheduling instead of static scheduling
 # of Threads.@threads macro.
 # See <https://github.com/JuliaLang/julia/issues/21017>
-    if do_one
-        indices_batch = indices_batch[1:1]
-    end
+    # if do_one
+    #     indices_batch = indices_batch[1:1]
+    # end
 
     p = Progress(length(sites_batch); desc="Computing batch grads...", color=:yellow, enabled=logging)
     @sync begin
@@ -114,21 +106,7 @@ function gradientBatch!(
                 # @show site_location
                 # tcPrint(land_one.pools, c_olor=false)
                 gg = gradientSite(
-                    gradient_lib,
-                    loss_function,
-                    loc_params,
-                    models,
-                    loc_forcing,
-                    loc_spinup_forcing,
-                    forcing_one_timestep,
-                    getOutputCache(loc_output, gradient_lib),
-                    deepcopy(land_one),
-                    tem,
-                    param_to_index,
-                    loc_obs,
-                    loc_cost_option,
-                    constraint_method
-                )
+                    gradient_lib, loss_function, loc_params, models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, getOutputCache(loc_output, gradient_lib), deepcopy(land_one), tem, param_to_index, loc_obs, loc_cost_option, constraint_method )
                 grads_batch[:, idx] = gg
                 next!(p)
            end
@@ -147,26 +125,8 @@ function destructureNN(model; nn_opt=Optimisers.Adam())
 end
 
 function lossSites(
-    gradient_lib,
-    loss_function::F,
-    loss_array_sites,
-    epoch_number,
-    scaled_params,
-    models,
-    sites_list,
-    indices_sites,
-    loc_forcings,
-    loc_spinup_forcings,
-    forcing_one_timestep,
-    loc_outputs,
-    land_one,
-    loc_observations,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method;
-    do_one=false,
-    logging=true) where {F}
+    gradient_lib, loss_function::F, loss_array_sites, epoch_number, scaled_params, models, sites_list, indices_sites, loc_forcings, loc_spinup_forcings,
+    forcing_one_timestep, loc_outputs, land_one, loc_observations, tem, param_to_index, cost_options, constraint_method; do_one=false, logging=true) where {F}
 
     if do_one
         indices_sites = indices_sites[1:1]
@@ -186,21 +146,7 @@ function lossSites(
                 loc_cost_option = cost_options[site_location]
 
                 gg = loss_function(
-                    loc_params,
-                    gradient_lib,
-                    models,
-                    loc_forcing,
-                    loc_spinup_forcing,
-                    forcing_one_timestep,
-                    loc_output,
-                    deepcopy(land_one),
-                    tem,
-                    param_to_index,
-                    loc_obs,
-                    loc_cost_option,
-                    constraint_method
-                )
-                # @show site_name, site_location, idx, gg
+                    loc_params, gradient_lib, models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, deepcopy(land_one), tem, param_to_index, loc_obs, loc_cost_option, constraint_method)
                 loss_array_sites[idx, epoch_number] = gg
                 # next!(p)
            end
@@ -210,31 +156,7 @@ end
 
 
 function train(
-    gradient_lib,
-    nn_model_params::Flux.Chain,
-    loss_function::F,
-    xfeatures,
-    models_lt,
-    sites_training,
-    indices_sites_training,
-    loc_forcings,
-    loc_spinup_forcings,
-    forcing_one_timestep,
-    loc_outputs,
-    land_init,
-    loc_observations,
-    tbl_params,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method;
-    n_epochs=2,
-    optimizer=Optimisers.Adam(),
-    batch_seed=123,
-    batch_size=4,
-    shuffle=true,
-    local_root=nothing,
-    name="seq_training_output") where {F}
+    gradient_lib, nn_model_params::Flux.Chain, loss_function::F, xfeatures, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=2, optimizer=Optimisers.Adam(), batch_seed=123, batch_size=4, shuffle=true, local_root=nothing, name="seq_training_output") where {F}
 
     local_root = isnothing(local_root) ? dirname(Base.active_project()) : local_root
     f_path = joinpath(local_root, name)
@@ -261,26 +183,8 @@ function train(
             new_params, pullback_func = Zygote.pullback(p -> re(p)(x_feature_batch), flat)            
             scaled_params_batch = getParamsAct(new_params, tbl_params)
             grads_batch .= zero(Float32)
-            gradientBatch!(
-                gradient_lib,
-                loss_function,
-                grads_batch,
-                scaled_params_batch,
-                models_lt,
-                sites_batch,
-                indices_batch,
-                loc_forcings,
-                loc_spinup_forcings,
-                forcing_one_timestep,
-                loc_outputs,
-                land_init,
-                loc_observations,
-                tem,
-                param_to_index,
-                cost_options,
-                constraint_method;
-                logging=true
-            )
+            gradientBatch!(gradient_lib, loss_function, grads_batch, scaled_params_batch, models_lt, sites_batch, indices_batch, loc_forcings, loc_spinup_forcings,
+            forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=true )
 
             num_nans = sum(isnan.(grads_batch))
             if num_nans > 0
@@ -295,20 +199,8 @@ function train(
                     println("   parameter: ", Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp])))
                     println("   parameter_vector: ", p_vec_tmp)
                     loss_function(
-                        p_vec_tmp,
-                        models_lt,
-                        loc_forcings[sii],
-                        loc_spinup_forcings[sii],
-                        forcing_one_timestep,
-                        loc_outputs[sii],
-                        deepcopy(land_init),
-                        tem,
-                        param_to_index,
-                        loc_observations[sii],
-                        cost_options[sii],
-                        constraint_method
-                        ; show_vec=true)
-                        println("   ----------------------------------------------------- ")
+                        p_vec_tmp, models_lt, loc_forcings[sii], loc_spinup_forcings[sii], forcing_one_timestep, loc_outputs[sii], deepcopy(land_init), tem, param_to_index, loc_observations[sii], cost_options[sii], constraint_method ; show_vec=true)
+                    println("   ----------------------------------------------------- ")
                     # @show p_vec_tmp
                 end
                 @warn "replacing all nans by 0.0"
@@ -328,26 +220,7 @@ function train(
         scaled_params_epoch = getParamsAct(params_epoch, tbl_params)
         
         @time lossSites(
-            gradient_lib,
-            loss_function,
-            loss_array_sites,
-            epoch,
-            scaled_params_epoch,
-            models_lt,
-            sites_training,
-            indices_sites_training,
-            loc_forcings,
-            loc_spinup_forcings,
-            forcing_one_timestep,
-            loc_outputs,
-            land_init,
-            loc_observations,
-            tem,
-            param_to_index,
-            cost_options,
-            constraint_method;
-            logging=false
-        )
+            gradient_lib, loss_function, loss_array_sites, epoch, scaled_params_epoch, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false )
         jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); grads_all_batches= grads_all_batches, loss= loss_array_sites[:, epoch], re=re, flat=flat)
         next!(p; showvalues=[(:epoch, epoch)])
     end
