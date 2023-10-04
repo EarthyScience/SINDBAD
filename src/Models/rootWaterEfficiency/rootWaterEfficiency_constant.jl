@@ -37,27 +37,17 @@ function precompute(p_struct::rootWaterEfficiency_constant, forcing, land, helpe
     if max_root_depth >= z_zero
         @rep_elem constant_root_water_efficiency => (root_water_efficiency, 1, :soilW)
     end
-    # for sl ∈ eachindex(land.pools.soilW)[2:end]
-    #     soilcumuD = cumulative_soil_depths[sl-1]
-    #     rootOver = max_root_depth - soilcumuD
-    #     rootEff = rootOver >= z_zero ? constant_root_water_efficiency : zero(eltype(root_water_efficiency))
-    #     @rep_elem rootEff => (root_water_efficiency, sl, :soilW)
-    # end
-    root_water_efficiency = inner_loop(root_water_efficiency, land.pools.soilW, cumulative_soil_depths, max_root_depth, z_zero, constant_root_water_efficiency, helpers)
-    ## pack land variables
-    @pack_land root_water_efficiency => land.states
-    return land
-end
-
-function inner_loop(root_water_efficiency, land_pools_soilW, cumulative_soil_depths, max_root_depth, z_zero, constant_root_water_efficiency, helpers)
-    for sl ∈ eachindex(land_pools_soilW)[2:end]
+    for sl ∈ eachindex(land.pools.soilW)[2:end]
         soilcumuD = cumulative_soil_depths[sl-1]
         rootOver = max_root_depth - soilcumuD
         rootEff = rootOver >= z_zero ? constant_root_water_efficiency : zero(eltype(root_water_efficiency))
         @rep_elem rootEff => (root_water_efficiency, sl, :soilW)
     end
-    return root_water_efficiency
+    ## pack land variables
+    @pack_land root_water_efficiency => land.states
+    return land
 end
+
 
 @doc """
 sets the maximum fraction of water that root can uptake from soil layers as constant

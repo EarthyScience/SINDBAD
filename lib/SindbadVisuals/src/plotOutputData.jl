@@ -1,10 +1,10 @@
-export plot_output
+export plotOutput
 
 """
-    plot_output(output, out_names, cov_sites, sites_f, tempo)
+    plotOutput(output, out_names, cov_sites, sites_f, tempo)
 
 """
-function plot_output(output, out_names, cov_sites, sites_f, tempo)
+function plotOutput(output, out_names, cov_sites, sites_f, tempo)
     #pair_names = output.variables
     #out_names = [p[2] for p in pair_names]
     snames = length(out_names)
@@ -15,7 +15,7 @@ function plot_output(output, out_names, cov_sites, sites_f, tempo)
     slice_dates = range(1, lentime, step=lentime ÷ 8)
 
     site_name = Observable(cov_sites[1])
-    s = @lift(name_to_id($site_name, sites_f)[1][2])
+    s = @lift(siteNameToID($site_name, sites_f)[1][2])
 
     var_index = Observable(1)
     #var_info = @lift(getVariableInfo(output.variables[$var_index], "day"))
@@ -82,10 +82,10 @@ function plot_output(output, out_names, cov_sites, sites_f, tempo)
 end
 
 """
-    plot_output(output, obs, out_names, cov_sites, sites_f, tempo)
+    plotOutput(output, obs, out_names, cov_sites, sites_f, tempo)
 
 """
-function plot_output(output, obs, out_names, cov_sites, sites_f, tempo)
+function plotOutput(output, obs, out_names, cov_sites, sites_f, tempo)
     #pair_names = output.variables
     #out_names = [p[2] for p in pair_names]
     snames = length(out_names)
@@ -96,7 +96,7 @@ function plot_output(output, obs, out_names, cov_sites, sites_f, tempo)
     slice_dates = range(1, lentime, step=lentime ÷ 8)
 
     site_name = Observable(cov_sites[1])
-    s = @lift(name_to_id($site_name, sites_f)[1][2])
+    s = @lift(siteNameToID($site_name, sites_f)[1][2])
 
     var_index = Observable(1)
     #var_info = @lift(getVariableInfo(output.variables[$var_index], "day"))
