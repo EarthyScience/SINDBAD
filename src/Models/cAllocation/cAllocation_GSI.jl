@@ -54,14 +54,6 @@ function compute(p_struct::cAllocation_GSI, forcing, land, helpers)
     @rep_elem a_cVegLeaf => (c_allocation_to_veg, 3, :cEco)
 
     # distribute the allocation according to pools
-    c_allocation = inner_c_allocation(cVeg_names, c_allocation, cVeg_zix, cVeg_nzix, c_allocation_to_veg, helpers)
-
-    @pack_land c_allocation => land.states
-
-    return land
-end
-
-function inner_c_allocation(cVeg_names, c_allocation, cVeg_zix, cVeg_nzix, c_allocation_to_veg, helpers)
     for cl in eachindex(cVeg_names)
         zix = cVeg_zix[cl]
         nZix = cVeg_nzix[cl]
@@ -70,7 +62,10 @@ function inner_c_allocation(cVeg_names, c_allocation, cVeg_zix, cVeg_nzix, c_all
             @rep_elem c_allocation_to_veg_ix => (c_allocation, ix, :cEco)
         end
     end
-    return c_allocation
+
+    @pack_land c_allocation => land.states
+
+    return land
 end
 
 @doc """

@@ -1,6 +1,4 @@
 export getSpatialSubset
-export name_to_id
-export ids_location
 
 """
     getSpatialSubset(ss, v)
@@ -131,27 +129,4 @@ end
 """
 function spatialSubset(v, ss_range, ::SpaceID)
     return v[ID=ss_range]
-end
-
-"""
-`name_to_id`(`site_name`, `sites_forcing`)
-"""
-function name_to_id(site_name, sites_forcing)
-    site_id_forc = findall(x -> x == site_name, sites_forcing)
-#    id_site = !isempty(site_id_forc) ? [Symbol("site") => site_id_forc[1]] : error("site not available")
-    id_site = !isempty(site_id_forc) ? (site_id_forc[1],) : error("site not available")
-    return id_site
-end
-
-"""
-`ids_location`(cov_sites, `sites_f`)
-"""
-function ids_location(cov_sites, sites_f)
-    ids = Int[]
-    for site_index ∈ eachindex(cov_sites)
-        site_name = cov_sites[site_index]
-        site_location = name_to_id(site_name, sites_f)
-        push!(ids, site_location[1][2])
-    end
-    return ids
 end
