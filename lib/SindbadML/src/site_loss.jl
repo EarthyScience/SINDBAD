@@ -7,7 +7,6 @@ export siteLossInner
     )
 """
 function getSiteLossTEM(forward_models, spinup_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem, loc_obs, cost_options, constraint_method; show_vec=false)
-    #println(@__LINE__," ",@__FILE__)
     coreTEM!(
         forward_models,
         spinup_models,
@@ -17,11 +16,8 @@ function getSiteLossTEM(forward_models, spinup_models, loc_forcing, loc_spinup_f
         loc_output,
         land_init,
         tem...)
-    #println(@__LINE__," ",@__FILE__)
     lossVec = getLossVector(loc_obs, loc_output, cost_options)
-    #println(@__LINE__," ",@__FILE__)
     t_loss = combineLoss(lossVec, constraint_method)
-    #println(@__LINE__," ",@__FILE__)
     return t_loss
 end
 
@@ -40,19 +36,11 @@ function getSiteLossTEM(models, loc_forcing, loc_spinup_forcing, forcing_one_tim
         loc_output,
         land_init,
         tem...)
-    #println(@__LINE__," ",@__FILE__)
     lossVec = getLossVector(loc_obs, loc_output, cost_options)
-    #@show lossVec
-    #println(@__LINE__," ",@__FILE__)
     t_loss = combineLoss(lossVec, constraint_method)
     if show_vec
         println("   loss_vector: ", Tuple([Pair.(string.(cost_options.variable), lossVec)...]) )
     end
-    # @show "I go here"
-    # if isnan(t_loss)
-    #     @show Pair.(cost_options.variable, lossVec)
-    # end
-    #println(@__LINE__," ",@__FILE__)
     return t_loss
 end
 
@@ -64,6 +52,10 @@ end
     )
 """
 function getTmpOut(loc_output, _, ::UseFiniteDiff)
+    return loc_output
+end
+
+function getTmpOut(loc_output, _, ::UseFiniteDifferences)
     return loc_output
 end
 
@@ -87,19 +79,8 @@ function siteLossInner(
     constraint_method;
     show_vec=false)
 
-    #println(@__LINE__," ",@__FILE__)
     out_data = getTmpOut(loc_output, new_params, gradient_lib)
-    #@code_warntype updateModelParametersType(param_to_index, models, new_params)
-    #new_params_float = ForwardDiff.value.(new_params)
-    #@show new_params_float
-    #@show new_params
-    #new_spinup_models = updateModelParametersType(param_to_index, models, new_params_float)
     new_models = updateModelParametersType(param_to_index, models, new_params)
-    #@code_war ntype getSiteLossTEM(new_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, out_data, land_init, tem, loc_obs, cost_options, constraint_method)
-    #println(@__LINE__," ",@__FILE__)
-    #a = getSiteLossTEM(new_models, new_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, out_data, land_init, tem, loc_obs, cost_options, constraint_method)
-    # a = getSiteLossTEM(new_models, new_spinup_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, out_data, land_init, tem, loc_obs, cost_options, constraint_method)
-    #@show a, out_data
     return getSiteLossTEM(new_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, out_data, land_init, tem, loc_obs, cost_options, constraint_method; show_vec=show_vec)
 end
 
