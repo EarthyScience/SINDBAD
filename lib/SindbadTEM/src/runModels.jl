@@ -1,5 +1,4 @@
 export computeTEM
-export computeTEMOne
 export definePrecomputeTEM
 export precomputeTEM
 
