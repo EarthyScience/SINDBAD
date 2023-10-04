@@ -3,46 +3,7 @@ export computeTEMOne
 export definePrecomputeTEM
 export foldlUnrolled
 export precomputeTEM
-export LongTuple
 
-struct LongTuple{T <: Tuple}
-    data::T
-    function LongTuple(arg::T) where {T<: Tuple}
-        return new{T}(arg)
-    end
-    function LongTuple(args...)
-        n = 6
-        s = length(args)
-        nt = s ÷ n
-        r = mod(s,n)
-        nt = r == 0 ? nt : nt + 1
-        idx = 1
-        tup = ntuple(nt) do i
-            n = r != 0 && i==nt ? r : n
-            t = ntuple(x -> args[x+idx-1], n)
-            idx += n
-            return t
-        end
-        return new{typeof(tup)}(tup)
-    end
-end
-
-Base.map(f, arg::LongTuple) = LongTuple(map(tup-> map(f, tup), arg.data))
-
-@inline Base.foreach(f, arg::LongTuple) = foreach(tup-> foreach(f, tup), arg.data)
-
-#Base.foreach(f, arg::LongTuple, args...) = foreach(tup-> foreach((x)-> f(x, args...), tup), arg.data)
-
-@generated function reduce_lt(f, x::LongTuple{<: Tuple{Vararg{Any,N}}}; init) where {N}
-    exes = []
-    for i in 1:N
-        N2 = i==N ? 5 : 6
-        for j in 1:N2
-            push!(exes, :(init = f(x.data[$i][$j], init)))
-        end
-    end
-    return Expr(:block, exes...)
-end
 
 """
     computeTEM(models, forcing, land, model_helpers, ::DoDebugModel)
@@ -94,12 +55,7 @@ run the compute function of SINDBAD models
 - `model_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function computeTEM(models::LongTuple, forcing, _land, model_helpers) 
-    return reduce_lt(models, init=_land) do model, _land
-        # println(nameof(typeof(model)))
-        # if nameof(typeof(model)) == :percolation_WBP
-        #     push!(Main.catched_model_args,(model, forcing, _land, model_helpers))
-        #     error("Hahaha")
-        # end
+    return foldlLongTuple(models, init=_land) do model, _land
         Models.compute(model, forcing, _land, model_helpers)
     end
 end
@@ -169,7 +125,7 @@ run the precompute function of SINDBAD models to instantiate all fields of land
 - `model_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function definePrecomputeTEM(models::LongTuple, forcing, _land, model_helpers)
-    return reduce_lt(models, init=_land) do model, _land
+    return foldlLongTuple(models, init=_land) do model, _land
         _land = Models.define(model, forcing, _land, model_helpers)
         _land = Models.precompute(model, forcing, _land, model_helpers)
     end
@@ -242,7 +198,7 @@ run the precompute function of SINDBAD models to instantiate all fields of land
 - `model_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function precomputeTEM(models::LongTuple, forcing, _land, model_helpers)
-    return reduce_lt(models, init=_land) do model, _land
+    return foldlLongTuple(models, init=_land) do model, _land
         Models.precompute(model, forcing, _land, model_helpers)
     end
 end
