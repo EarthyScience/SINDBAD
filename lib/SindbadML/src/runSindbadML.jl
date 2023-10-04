@@ -34,7 +34,7 @@ function getLoss(models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, 
         loc_output,
         land_init,
         tem...)
-    lossVec = getLossVector(loc_obs, loc_output, cost_options)
+    lossVec = getLossVector(loc_output, loc_obs, cost_options)
     t_loss = combineLoss(lossVec, constraint_method)
     if show_vec
         println("   loss_vector: ", Tuple([Pair.(string.(cost_options.variable), lossVec)...]) )
@@ -112,8 +112,6 @@ function gradientBatch!(
                 loc_output = loc_outputs[site_location]
                 loc_spinup_forcing = loc_spinup_forcings[site_location]
                 loc_cost_option = cost_options[site_location]
-                # @show site_location
-                # tcPrint(land_one.pools, c_olor=false)
                 gg = gradientSite(
                     gradient_lib, loss_function, loc_params, models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, getOutputCache(loc_output, gradient_lib), deepcopy(land_one), tem, param_to_index, loc_obs, loc_cost_option, constraint_method )
                 grads_batch[:, idx] = gg
@@ -254,8 +252,9 @@ function trainSindbadML(
         params_epoch = re(flat)(xfeatures)
         scaled_params_epoch = getParamsAct(params_epoch, tbl_params)
         
-        @time getLossForSites(
+        getLossForSites(
             gradient_lib, loss_function, loss_array_sites, epoch, scaled_params_epoch, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false )
+        println("-------------done:: epoch: $(epoch)-----------------------")
         jldsave(joinpath(f_path, "$(name)_epoch_$(epoch).jld2"); grads_all_batches= grads_all_batches, loss= loss_array_sites[:, epoch], re=re, flat=flat)
         next!(p; showvalues=[(:epoch, epoch)])
     end
