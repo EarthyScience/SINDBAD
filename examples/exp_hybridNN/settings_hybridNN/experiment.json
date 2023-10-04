@@ -95,16 +95,10 @@
       "states.root_water_efficiency": "d_soil",
       "states.transpiration_supply": null,
       "states.water_balance": null,
-      "WUE.AoE": null
+      "WUE.WUE": null
     }
   },
   "model_spinup": {
-    "differential_eqn": {
-      "absolute_tolerance": 1,
-      "pools": ["cEco"],
-      "relative_tolerance": 1e-2,
-      "time_jump": 2000.0
-    },
     "paths": {
       "restart_file_in": null,
       "restart_file_out": null
@@ -113,14 +107,12 @@
       {
         "forcing": "first_year",
         "n_repeat": 100,
-        "spinup_mode": "all_forward_models",
-        "stop_function": null
+        "spinup_mode": "all_forward_models"
       },
       {
         "forcing": "first_year",
         "n_repeat": 1,
-        "spinup_mode": "eta_scale_AH",
-        "stop_function": null
+        "spinup_mode": "eta_scale_AH"
       }
     ]
   }
