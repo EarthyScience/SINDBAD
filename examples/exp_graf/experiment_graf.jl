@@ -54,7 +54,6 @@ end
     run_helpers.tem_with_types.spinup);
 
 # setLogLevel(:debug)
-# getLossVector(obs_array, run_helpers.output_array, prepCostOptions(obs_array, info.optim.cost_options))
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
