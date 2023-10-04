@@ -87,10 +87,10 @@ cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
 # setLogLevel(:debug)
 # @profview getLossVector(obs_array, run_helpers.output_array, cost_options) # |> sum
-@time getLossVector(obs_array, run_helpers.output_array, cost_options) # |> sum
-@time getLossVector(obs_array, lw_timeseries_prep, cost_options) # |> sum
-@time getLossVector(obs_array, lw_timeseries, cost_options) # |> sum
-@time getLossVector(obs_array, lw_timeseries_vec, cost_options) #|> sum
+@time getLossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
+@time getLossVector(lw_timeseries_prep, obs_array, cost_options) # |> sum
+@time getLossVector(lw_timeseries, obs_array, cost_options) # |> sum
+@time getLossVector(lw_timeseries_vec, obs_array, cost_options) #|> sum
 
 
 tbl_params = getParameters(info.tem.models.forward,
