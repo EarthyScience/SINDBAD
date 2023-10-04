@@ -129,8 +129,7 @@ end
 """
 function helpPrepTEM(selected_models, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayFD)
 
-    #@show "im here?"
-    # get the output things
+    @info "     preparing spatial and tem helpers"
     loc_space_inds = getSpatialInfo(forcing, output)
 
     # generate vals for dispatch of forcing and output
@@ -142,8 +141,9 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, observations::NamedTu
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     output_array = output.data
-    forcing_one_timestep, land_one = runTEMOneLocation(selected_models, forcing_nt_array, land_init,
-        loc_space_inds[1], tem_with_types, LandOutArray())
+    loc_forcing = getLocForcingData(forcing_nt_array, loc_space_inds[1])
+    forcing_one_timestep, land_one = runTEMOne(selected_models, loc_forcing, land_init, tem_with_types)
+
     debugModel(land_one, tem.helpers.run.debug_model)
 
     ovars = output.variables;
@@ -160,17 +160,13 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, observations::NamedTu
         end
     end
 
-    ## run the model for one time step
-    @info "     getting observations ready"
-
-    observations_nt_array = makeNamedTuple(observations.data, observations.variables)
-
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
     loc_forcings = map([loc_space_inds...]) do lsi
         getLocForcingData(forcing_nt_array, lsi)
     end
     
+    observations_nt_array = makeNamedTuple(observations.data, observations.variables)
     loc_observations = map([loc_space_inds...]) do lsi
         getLocForcingData(observations_nt_array, lsi)
     end
@@ -183,8 +179,6 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, observations::NamedTu
     loc_outputs = map([loc_space_inds...]) do lsi
         getLocOutputData(output_array, lsi)
     end
-
-    # land_init_space = Tuple([deepcopy(land_one) for _ ∈ 1:length(loc_space_inds)])
 
     forcing_nt_array = nothing
 
@@ -214,8 +208,6 @@ end
 """
 function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
 
-    #@show "im here?"
-    # get the output things
     @info "     preparing spatial and tem helpers"
     loc_space_inds = getSpatialInfo(forcing, output)
 
@@ -253,7 +245,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     loc_forcings = map([loc_space_inds...]) do lsi
         getLocForcingData(forcing_nt_array, lsi)
     end
-    spinup_forcings = map(loc_forcings) do loc_forcing
+    loc_spinup_forcings = map(loc_forcings) do loc_forcing
         getAllSpinupForcing(loc_forcing, tem_with_types.spinup.sequence, tem_with_types.helpers);
     end
 
@@ -266,7 +258,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 
     forcing_nt_array = nothing
 
-    run_helpers = (; loc_forcings=loc_forcings, loc_space_inds=loc_space_inds, loc_spinup_forcings=spinup_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    run_helpers = (; loc_forcings, loc_space_inds, loc_spinup_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types)
     return run_helpers
 end
 
@@ -283,7 +275,7 @@ function getSpinupTemLite(tem_with_types)
     restart_file_in = tem_spinup.paths.restart_file_in
     restart_file_out = tem_spinup.paths.restart_file_out
     paths = (; restart_file_in = isnothing(restart_file_in) ? "./" : restart_file_in, restart_file_out = isnothing(restart_file_out) ? "./" : restart_file_out)
-    tem_spin_lite = (; paths=paths, sequence = [_s for _s in newseqs])
+    tem_spin_lite = (; paths, sequence = [_s for _s in newseqs])
     tem_with_types = (; tem_with_types..., spinup = tem_spin_lite)
     return tem_with_types
 
@@ -318,7 +310,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     forcing_one_timestep, land_one = runTEMOne(selected_models, loc_forcing, land_init, tem_with_types)
     debugModel(land_one, tem.helpers.run.debug_model)
 
-    run_helpers = (; loc_forcing=loc_forcing, forcing_one_timestep=forcing_one_timestep, land_one=land_one, loc_space_inds=loc_space_inds, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    run_helpers = (; loc_forcing, forcing_one_timestep, land_one, loc_space_inds, out_dims=output.dims, out_vars=output.variables, tem_with_types)
     return run_helpers
 end
 
@@ -364,7 +356,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     tem_with_types = getTEMVals(forcing, output, tem, tem_helpers);
     land_init = output.land_init
 
-    run_helpers = (; land_init=land_init, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    run_helpers = (; land_init, out_dims=output.dims, out_vars=output.variables, tem_with_types)
     return run_helpers
 end
 
