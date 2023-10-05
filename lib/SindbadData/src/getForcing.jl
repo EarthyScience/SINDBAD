@@ -124,7 +124,7 @@ function getForcing(info::NamedTuple)
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)
-        @info " sindbad_var: $(k) from $(vinfo.source_variable) "
+        @info "  $(k): $(vinfo.source_variable)"
         if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
             f_sizes = collectForcingSizes(info, incube)
             f_dimension = getSindbadDims(incube)
