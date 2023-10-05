@@ -88,7 +88,7 @@ function pixel_run!(output_array,
     forcing_one_timestep)
 
     loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
-    up_apps = Tuple(updateModelParametersType(tbl_params, forward, upVector))
+    up_apps = Tuple(updateModelParameters(tbl_params, forward, upVector))
     return coreTEM!(loc_output,
         up_apps,
         loc_forcing,
