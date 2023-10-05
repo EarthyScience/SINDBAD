@@ -163,7 +163,7 @@
       "source_variable": "SLTPPT",
       "space_time_type": "spatiovertical"
     },
-    "f_tair": {
+    "f_airT": {
       "additive_unit_conversion": true,
       "bounds": [-80.0, 60.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.t2m.2005-2013.nc",
@@ -175,7 +175,7 @@
       "source_variable": "t2m",
       "space_time_type": "spatiotemporal"
     },
-    "f_tair_day": {
+    "f_airT_day": {
       "additive_unit_conversion": true,
       "bounds": [-80.0, 60.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.t2m_daytime_mean.2005-2013.nc",
