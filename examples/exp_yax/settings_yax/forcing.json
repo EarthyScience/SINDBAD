@@ -23,7 +23,7 @@
     "source_variable": null
   },
   "variables": {
-    "CLAY": {
+    "f_clay": {
       "bounds": [0.0, 100.0],
       "data_path": "../data/3Ddata/Africa.soilgrids.CLYPPT.mean.nc",
       "standard_name": "CLAY",
@@ -34,7 +34,7 @@
       "source_variable": "CLYPPT",
       "space_time_type": "spatiovertical"
     },
-    "fAPAR": {
+    "f_fAPAR": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/3Ddata/Africa.seviri.FVC.2010.nc",
       "standard_name": "fAPAR from FVC",
@@ -42,7 +42,7 @@
       "source_unit": "-",
       "source_variable": "FVC"
     },
-    "frac_vegetation": {
+    "f_frac_vegetation": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/3Ddata/Africa.seviri.FVC.2010.nc",
       "standard_name": "vegFrac",
@@ -51,7 +51,7 @@
       "source_unit": "-",
       "source_variable": "FVC"
     },
-    "ORGM": {
+    "f_orgm": {
       "bounds": [0.0, 100.0],
       "data_path": "../data/3Ddata/Africa.soilgrids.OCSTHA.mean.nc",
       "standard_name": "CLAY",
@@ -62,7 +62,7 @@
       "source_variable": "OCSTHA",
       "space_time_type": "spatiovertical"
     },
-    "PAR": {
+    "f_PAR": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/3Ddata/Africa.era5.ssrd.2010.nc",
       "standard_name": "Photosynthetically active radiation (=Rg*.5)",
@@ -71,7 +71,7 @@
       "source_unit": "MJ m-2",
       "source_variable": "ssrd"
     },
-    "PsurfDay": {
+    "f_psurf_day": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/3Ddata/Africa.era5.sp.2010.nc",
       "standard_name": "surface pressure",
@@ -80,7 +80,7 @@
       "source_unit": "pa",
       "source_variable": "sp"
     },
-    "Rain": {
+    "f_rain": {
       "bounds": [0.0, 1000.0],
       "data_path": "../data/3Ddata/Africa.era5.tp.2010.nc",
       "standard_name": "Rain",
@@ -88,7 +88,7 @@
       "source_unit": "mm d-1",
       "source_variable": "tp"
     },
-    "Rg": {
+    "f_rg": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/3Ddata/Africa.era5.ssrd.2010.nc",
       "standard_name": "Global Radiation",
@@ -97,7 +97,7 @@
       "source_unit": "MJ m-2",
       "source_variable": "ssrd"
     },
-    "RgPot": {
+    "f_rg_pot": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/3Ddata/Africa.era5.snr.2010.nc",
       "standard_name": "Potential Global Radiation",
@@ -106,7 +106,7 @@
       "source_unit": "W m-2",
       "source_variable": "snr"
     },
-    "Rn": {
+    "f_rn": {
       "bounds": [-50.0, 500.0],
       "data_path": "../data/3Ddata/Africa.era5.snr.2010.nc",
       "standard_name": "Net radiation",
@@ -115,7 +115,7 @@
       "source_unit": "W m-2",
       "source_variable": "snr"
     },
-    "SAND": {
+    "f_sand": {
       "bounds": [0.0, 100.0],
       "data_path": "../data/3Ddata/Africa.soilgrids.SNDPPT.mean.nc",
       "standard_name": "SAND",
@@ -126,7 +126,7 @@
       "source_variable": "SNDPPT",
       "space_time_type": "spatiovertical"
     },
-    "SILT": {
+    "f_silt": {
       "bounds": [0.0, 100.0],
       "data_path": "../data/3Ddata/Africa.soilgrids.SLTPPT.mean.nc",
       "standard_name": "CLAY",
@@ -137,7 +137,7 @@
       "source_variable": "SLTPPT",
       "space_time_type": "spatiovertical"
     },
-    "Tair": {
+    "f_tair": {
       "additive_unit_conversion": true,
       "bounds": [-80.0, 60.0],
       "data_path": "../data/3Ddata/Africa.era5.t2m.2010.nc",
@@ -147,7 +147,7 @@
       "source_unit": "K",
       "source_variable": "t2m"
     },
-    "TairDay": {
+    "f_tair_day": {
       "additive_unit_conversion": true,
       "bounds": [-80.0, 60.0],
       "data_path": "../data/3Ddata/Africa.era5.t2m_daytime_mean.2010.nc",
@@ -157,7 +157,7 @@
       "source_unit": "K",
       "source_variable": "t2m_daytime_mean"
     },
-    "VPD": {
+    "f_VPD": {
       "bounds": [-1.0, 10.0],
       "data_path": "../data/3Ddata/Africa.era5.vpd.2010.nc",
       "standard_name": "Vapor pressure deficit Day",
@@ -166,7 +166,7 @@
       "source_unit": "hPa",
       "source_variable": "vpd"
     },
-    "VPDDay": {
+    "f_VPD_day": {
       "bounds": [0.0, 100.0],
       "data_path": "../data/3Ddata/Africa.era5.vpd_daytime_mean.2010.nc",
       "standard_name": "Vapor pressure deficit Day",

@@ -25,7 +25,7 @@ function yaxCubeToKeyedArray(c)
     return KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
 end
 
-sites_f = forc.Tair.site;
+sites_f = forc.f_airT.site;
 c = Cube("examples/data/fluxnet_cube/fluxnet_covariates.zarr")
 xfeatures = yaxCubeToKeyedArray(c)
 # RU-Ha1, IT-PT1, US-Me5

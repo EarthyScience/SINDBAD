@@ -4,8 +4,9 @@ struct PET_forcing <: PET end
 
 function compute(p_struct::PET_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing PET ∈ forcing
+    @unpack_forcing f_PET ∈ forcing
 
+    PET = f_PET
     ## pack land variables
     @pack_land PET => land.fluxes
     return land

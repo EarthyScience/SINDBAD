@@ -13,7 +13,7 @@ export PET_Lu2005
     pres_sl::T9 = 101.3 | (0.0, 101.3) | "atmospheric pressure at sea level" | "kpa"
     pres_elev::T10 = 0.01055 | (-Inf, Inf) | "rate of change of atmospheric pressure with elevation" | "kpa/m"
     λ_base::T11 = 2.501 | (-Inf, Inf) | "latent heat of vaporization" | "MJ/kg"
-    λ_tair::T12 = 0.002361 | (-Inf, Inf) | "rate of change of latent heat of vaporization with temperature" | "MJ/kg/°C"
+    λ_airT::T12 = 0.002361 | (-Inf, Inf) | "rate of change of latent heat of vaporization with temperature" | "MJ/kg/°C"
     γ_resistance::T13 = 0.622 | (-Inf, Inf) | "ratio of canopy resistance to atmospheric resistance" | ""
     Δt::T14 = 2.0 | (-Inf, Inf) | "time delta for calculation of G" | "day"
     G_base::T15 = 4.2 | (-Inf, Inf) | "base groundheat flux" | ""
@@ -23,10 +23,10 @@ end
 function define(p_struct::PET_Lu2005, forcing, land, helpers)
     ## unpack forcing
     @unpack_PET_Lu2005 p_struct
-    @unpack_forcing Tair ∈ forcing
+    @unpack_forcing f_airT ∈ forcing
     PET = land.wCycleBase.z_zero
     ## calculate variables
-    Tair_prev = Tair
+    Tair_prev = f_airT
 
     ## pack land variables
     @pack_land (PET, Tair_prev) => land.fluxes
@@ -37,7 +37,7 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
     ## unpack parameters
     @unpack_PET_Lu2005 p_struct
     ## unpack forcing
-    @unpack_forcing (Rn, Tair) ∈ forcing
+    @unpack_forcing (f_rn, f_airT) ∈ forcing
 
     @unpack_land begin
         Tair_prev ∈ land.fluxes
@@ -46,13 +46,13 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
 
     ## calculate variables
     # slope of the saturation vapor pressure temperature curve [kPa/°C]
-    Δ = svp_1 * (svp_2 * Tair + svp_3)^svp_4 - svp_5
+    Δ = svp_1 * (svp_2 * f_airT + svp_3)^svp_4 - svp_5
 
     # atmp is the atmospheric pressure [kPa], elev = elevation
     atmp = pres_sl - pres_elev * elev
 
     # λ is the latent heat of vaporization [MJ/kg]
-    λ = λ_base - λ_tair * Tair
+    λ = λ_base - λ_airT * f_airT
 
     # γ is the the psychrometric constant modified by the ratio of
     # canopy resistance to atmospheric resistance [kPa/°C].
@@ -63,13 +63,13 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
     # G = 4.2 * (Tair_ip1 - Tair_im1) / dt
     # where Ti is the mean air temperature [°C] for the period i; &
     # dt the difference of time [days]..
-    ΔTair = Tair - Tair_prev
+    ΔTair = f_airT - Tair_prev
     G = G_base * (ΔTair) / Δt
     G = z_zero #@needscheck: current G is set to zero because the original formula looked at tomorrow's temperature, and we only have today and yesterday's data available during a model run
-    PET = (α * (Δ / (Δ + γ)) * (Rn - G)) / λ
+    PET = (α * (Δ / (Δ + γ)) * (f_rn - G)) / λ
     PET = maxZero(PET)
 
-    Tair_prev = Tair
+    Tair_prev = f_airT
 
     ## pack land variables
     @pack_land (PET, Tair_prev) => land.fluxes
@@ -88,8 +88,8 @@ $(SindbadParameters)
 Set potential evapotranspiration using PET_Lu2005
 
 *Inputs*
- - forcing.Rn: Net radiation
- - forcing.Tair: Air temperature
+ - forcing.f_rn: Net radiation
+ - forcing.f_airT: Air temperature
 
 *Outputs*
  - land.fluxes.PET: the value of PET for current time step

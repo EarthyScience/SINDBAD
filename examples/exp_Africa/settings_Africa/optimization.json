@@ -6,12 +6,12 @@
   },
   "model_parameters_to_optimize": [
     "gppPotential,εmax",
-    "gppAirT,Topt",
-    "gppAirT,ToptA",
-    "gppAirT,ToptB",
+    "gppAirT,opt_airT",
+    "gppAirT,opt_airT_A",
+    "gppAirT,opt_airT_B",
     "gppVPD,κ",
-    "gppVPD,Cκ",
-    "gppVPD,Cm"
+    "gppVPD,c_κ",
+    "gppVPD,sat_ambient_CO2"
   ],
   "multi_constraint_method": "cost_sum",
   "multi_objective_algorithm": false,

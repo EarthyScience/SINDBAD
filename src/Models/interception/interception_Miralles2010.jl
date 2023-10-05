@@ -2,10 +2,10 @@ export interception_Miralles2010
 
 #! format: off
 @bounds @describe @units @with_kw struct interception_Miralles2010{T1,T2,T3,T4,T5} <: interception
-    CanopyStorage::T1 = 1.2 | (0.4, 2.0) | "Canopy storage" | "mm"
+    canopy_storage::T1 = 1.2 | (0.4, 2.0) | "Canopy storage" | "mm"
     fte::T2 = 0.02 | (0.02, 0.02) | "fraction of trunk evaporation" | ""
-    evapRate::T3 = 0.3 | (0.1, 0.5) | "mean evaporation rate" | "mm/hr"
-    St::T4 = 0.02 | (0.02, 0.02) | "trunk capacity" | "mm"
+    evap_rate::T3 = 0.3 | (0.1, 0.5) | "mean evaporation rate" | "mm/hr"
+    trunk_capacity::T4 = 0.02 | (0.02, 0.02) | "trunk capacity" | "mm"
     pd::T5 = 0.02 | (0.02, 0.02) | "fraction rain to trunks" | ""
 end
 #! format: on
@@ -21,10 +21,10 @@ function compute(p_struct::interception_Miralles2010, forcing, land, helpers)
         rainInt ∈ land.states
     end
     tmp = 1.0
-    CanopyStorage = CanopyStorage * tmp
+    canopy_storage = canopy_storage * tmp
     fte = fte * tmp
-    evapRate = evapRate * tmp
-    St = St * tmp
+    evap_rate = evap_rate * tmp
+    trunk_capacity = trunk_capacity * tmp
     pd = pd * tmp
     #catch for division by zero
     valids = rainInt > 0.0 & fAPAR > 0.0
@@ -35,28 +35,28 @@ function compute(p_struct::interception_Miralles2010, forcing, land, helpers)
     Ic2 = 0.0
     It2 = 0.0
     It = 0.0
-    #Rain intensity must be larger than evap rate
+    #f_rain intensity must be larger than evap rate
     #adjusting evap rate:
-    v = rainInt < evapRate & valids == 1
-    evapRate[v] = rainInt[v]
+    v = rainInt < evap_rate & valids == 1
+    evap_rate[v] = rainInt[v]
     #Pgc: amount of gross rainfall necessary to saturate the canopy
     Pgc =
         -1 *
-        (rainInt * CanopyStorage / ((1.0 - fte) * evapRate)) *
-        log(1.0 - ((1.0 - fte) * evapRate / rainInt))
+        (rainInt * canopy_storage / ((1.0 - fte) * evap_rate)) *
+        log(1.0 - ((1.0 - fte) * evap_rate / rainInt))
     #Pgt: amount of gross rainfall necessary to saturate the trunks
-    Pgt = Pgc + rainInt * St / (pd * fAPAR * (rainInt - evapRate * (1.0 - fte)))
+    Pgt = Pgc + rainInt * trunk_capacity / (pd * fAPAR * (rainInt - evap_rate * (1.0 - fte)))
     #Ic: interception loss from canopy
     Ic1 = fAPAR * rain #Pg < Pgc
-    Ic2 = fAPAR * (Pgc + ((1.0 - fte) * evapRate / rainInt) * (rain - Pgc)) #Pg > Pgc
+    Ic2 = fAPAR * (Pgc + ((1.0 - fte) * evap_rate / rainInt) * (rain - Pgc)) #Pg > Pgc
     v = rain <= Pgc & valids == 1
     Ic[v] = Ic1[v]
     Ic[v==0] = Ic2[v==0]
     #It: interception loss from trunks
-    #It1 = St;# Pg < Pgt
-    It2 = pd * fAPAR * (1.0 - (1.0 - fte) * evapRate / rainInt) * (rain - Pgc)#Pg > Pgt
+    #It1 = trunk_capacity;# Pg < Pgt
+    It2 = pd * fAPAR * (1.0 - (1.0 - fte) * evap_rate / rainInt) * (rain - Pgc)#Pg > Pgt
     v = rain <= Pgt
-    It[v] = St[v]
+    It[v] = trunk_capacity[v]
     It[v==0] = It2[v==0]
     tmp = Ic + It
     tmp[rain==0.0] = 0.0

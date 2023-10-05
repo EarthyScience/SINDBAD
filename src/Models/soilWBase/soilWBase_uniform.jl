@@ -8,7 +8,7 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
     @unpack_land begin
         (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈
         land.soilProperties
-        (st_CLAY, st_ORGM, st_SAND, st_SILT) ∈ land.soilTexture
+        (st_clay, st_orgm, st_sand, st_silt) ∈ land.soilTexture
         soilW ∈ land.pools
         n_soilW ∈ land.wCycleBase
     end
@@ -96,7 +96,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_uniform
 *Inputs*
  - helpers.pools.: soil layers & depths
  - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
- - land.soilTexture.p_[SAND/SILT/CLAY/ORGM]: texture properties [nPix, nZix]
+ - land.soilTexture.p_[sand/silt/clay/orgm]: texture properties [nPix, nZix]
 
 *Outputs*
  - all soil hydraulic properties in land.soilWBase.p_[parameterName] (nPix, nTix)

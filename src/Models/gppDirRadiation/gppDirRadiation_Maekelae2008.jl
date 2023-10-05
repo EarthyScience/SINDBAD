@@ -9,7 +9,7 @@ end
 function compute(p_struct::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDirRadiation_Maekelae2008 p_struct
-    @unpack_forcing PAR ∈ forcing
+    @unpack_forcing f_PAR ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -18,7 +18,7 @@ function compute(p_struct::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     end
 
     ## calculate variables
-    gpp_f_light = o_one / (γ * PAR * fAPAR + o_one)
+    gpp_f_light = o_one / (γ * f_PAR * fAPAR + o_one)
 
     ## pack land variables
     @pack_land gpp_f_light => land.gppDirRadiation
@@ -37,7 +37,7 @@ $(SindbadParameters)
 Effect of direct radiation using gppDirRadiation_Maekelae2008
 
 *Inputs*
- - forcing.PAR: photosynthetically active radiation [MJ/m2/time]
+ - forcing.f_PAR: photosynthetically active radiation [MJ/m2/time]
  - land.states.fAPAR: fraction of absorbed photosynthetically active radiation []
  - γ: light response curve parameter to account for light  saturation [m2/MJ-1 of APAR]. The smaller γ the smaller  the effect; no effect if it becomes 0 [i.e. linear light response]
 
