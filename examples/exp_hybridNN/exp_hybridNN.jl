@@ -118,7 +118,7 @@ n_epochs = 20;
 n_neurons = 32;
 n_params = sum(tbl_params.is_ml);
 shuffle_opt = true;
-ml_baseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=batch_seed);
+ml_baseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=523);
 parameters_sites = ml_baseline(xfeatures);
 
 ## test for gradients in batch
@@ -130,7 +130,7 @@ params_batch = parameters_sites(; site=sites_batch);
 scaled_params_batch = getParamsAct(params_batch, tbl_params);
 
 gradient_lib = UseForwardDiff();
-# gradient_lib = UseFiniteDiff();
+gradient_lib = UseFiniteDiff();
 # gradient_lib = UseFiniteDifferences();
 
 @time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, models_lt,
@@ -170,4 +170,4 @@ loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 @time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, models_lt,
     sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings,
     forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index,
-    cost_options, constraint_method; logging=false )
+    cost_options, constraint_method; logging=false)

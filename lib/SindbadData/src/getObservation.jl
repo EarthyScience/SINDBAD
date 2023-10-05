@@ -6,14 +6,14 @@ export getObservation
 
 
 # Arguments:
-- `nc`: DESCRIPTION
-- `data_path`: DESCRIPTION
-- `default_info`: DESCRIPTION
-- `v_info`: DESCRIPTION
-- `data_sub_field`: DESCRIPTION
+- `nc`: file/nc object of the data
+- `data_path`: path for the data file
+- `default_info`: default variable info for constraints
+- `v_info`: info of the observation constraint that will overwrite default_info
+- `data_sub_field`: subfile of the observation
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `yax`: DESCRIPTION
-- `use_data_sub`: DESCRIPTION
+- `yax`: the base observation yax array
+- `use_data_sub`: flag to use the subfield of observation constraint
 """
 function getAllConstraintData(nc, data_backend, data_path, default_info, v_info, data_sub_field, info; yax=nothing, use_data_sub=true)
     nc_sub = nothing
@@ -30,6 +30,7 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
         end
     end
     if get_it_from_path
+        @info "   $(data_sub_field) from $(v_info_sub.source_variable)"
         v_info_var = getfield(v_info, data_sub_field)
         v_info_sub = getCombinedNamedTuple(default_info, v_info_var)
         data_path_sub = getAbsDataPath(info, v_info_sub.data_path)
@@ -47,7 +48,7 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
             @debug "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
         end
         if !isnothing(yax)
-            @info "       assuming values of ones for $(data_sub_field)"
+            @info "   $(data_sub_field) as ones"
             nc_sub = nc
             yax_sub = map(x -> one(x), yax)
             v_info_sub = default_info
@@ -59,9 +60,6 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
     return nc_sub, yax_sub, v_info_sub, bounds_sub
 end
 
-"""
-getObservation(info, forcing.helpers)
-"""
 
 """
     getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
@@ -119,7 +117,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         if !isnothing(yax_mask)
             yax_mask_v .= yax_mask .* yax_mask_v
         end
-        @debug "getObservation: harmonizing observations..."
+        @info "getObservation: harmonizing observations..."
         @debug "   harmonizing qflag"
         cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info, num_type; clean_data=false)
         @debug "   harmonizing data"
