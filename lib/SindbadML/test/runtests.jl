@@ -11,11 +11,11 @@ using Test
     @test length(batch_test[1]) == 2
 
     # test nn_dense
-    m1 = DenseNN(5, 2, 1)
+    m1 = denseNN(5, 2, 1)
     @test length(m1(rand(5))) == 1
-    m2 = DenseNN(5, 2, 2)
+    m2 = denseNN(5, 2, 2)
     @test size(m2(rand(Float32, 5))) == (2,)
-    dense_flat = DenseFlattened(m2)
+    dense_flat = denseFlattened(m2)
     @test typeof(dense_flat[1]) <: AbstractArray
     @test typeof(dense_flat[2]) <: SindbadML.Optimisers.Restructure
     @test typeof(dense_flat[3]) <: SindbadML.Optimisers.Leaf
