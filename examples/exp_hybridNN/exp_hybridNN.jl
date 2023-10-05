@@ -114,7 +114,7 @@ indices_sites_training = siteNameToID.(sites_training, Ref(sites_forcing));
 
 
 # NN 
-n_epochs = 20;
+n_epochs = 5;
 n_neurons = 32;
 n_params = sum(tbl_params.is_ml);
 shuffle_opt = true;
