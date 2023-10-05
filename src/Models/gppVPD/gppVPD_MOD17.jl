@@ -2,19 +2,19 @@ export gppVPD_MOD17
 
 #! format: off
 @bounds @describe @units @with_kw struct gppVPD_MOD17{T1,T2} <: gppVPD
-    VPDmax::T1 = 4.0 | (2.0, 8.0) | "Max VPD with GPP > 0" | "kPa"
-    VPDmin::T2 = 0.65 | (0.0, 1.0) | "Min VPD with GPP > 0" | "kPa"
+    VPD_max::T1 = 4.0 | (2.0, 8.0) | "Max VPD with GPP > 0" | "kPa"
+    VPD_min::T2 = 0.65 | (0.0, 1.0) | "Min VPD with GPP > 0" | "kPa"
 end
 #! format: on
 
 function compute(p_struct::gppVPD_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_MOD17 p_struct
-    @unpack_forcing VPDDay ∈ forcing
+    @unpack_forcing f_VPD_day ∈ forcing
     @unpack_land (z_zero, o_one) ∈ land.wCycleBase
 
     ## calculate variables
-    vsc = (VPDmax - VPDDay) / (VPDmax - VPDmin)
+    vsc = (VPD_max - f_VPD_day) / (VPD_max - VPD_min)
     gpp_f_vpd = clampZeroOne(vsc)
 
     ## pack land variables
@@ -33,7 +33,7 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - forcing.VPDDay: daytime vapor pressure deficit [kPa]
+ - forcing.f_VPD_day: daytime vapor pressure deficit [kPa]
 
 *Outputs*
  - land.gppVPD.gpp_f_vpd: VPD effect on GPP between 0-1

@@ -10,7 +10,7 @@ end
 function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_snowMelt_TairRn p_struct
-    @unpack_forcing (Rn, Tair) ∈ forcing
+    @unpack_forcing (f_rn, f_airT) ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -22,13 +22,13 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     end
 
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
-    # @show Tair, melt_T
-    tmp_T = Tair * melt_T
-    tmp_Rn = maxZero(Rn * melt_Rn)
+    # @show f_airT, melt_T
+    tmp_T = f_airT * melt_T
+    tmp_Rn = maxZero(f_rn * melt_Rn)
     potential_snow_melt = (tmp_T + tmp_Rn) * frac_snow
 
     # potential snow melt if T > 0.0 deg C
-    potential_snow_melt = Tair > z_zero ? potential_snow_melt : zero(potential_snow_melt)
+    potential_snow_melt = f_airT > z_zero ? potential_snow_melt : zero(potential_snow_melt)
     snow_melt = min(totalS(snowW, ΔsnowW), potential_snow_melt)
 
     # divide snowmelt loss equally from all layers
@@ -71,7 +71,7 @@ function update(p_struct::snowMelt_TairRn, forcing, land, helpers)
 end
 
 @doc """
-instantiate the potential snow melt based on temperature & net radiation on days with Tair > 0.0°C. instantiate the potential snow melt based on temperature & net radiation on days with Tair > 0.0 °C
+instantiate the potential snow melt based on temperature & net radiation on days with f_airT > 0.0°C. instantiate the potential snow melt based on temperature & net radiation on days with f_airT > 0.0 °C
 
 # Parameters
 $(SindbadParameters)
@@ -82,8 +82,8 @@ $(SindbadParameters)
 Calculate snowmelt and update s.w.wsnow using snowMelt_TairRn
 
 *Inputs*
- - forcing.Rn: net radiation [MJ/m2/day]
- - forcing.Tair: temperature [C]
+ - forcing.f_rn: net radiation [MJ/m2/day]
+ - forcing.f_airT: temperature [C]
  - info structure
  - land.fluxes.potential_snow_melt : potential snow melt based on temperature & net radiation [mm/time]
  - land.states.frac_snow : snow cover fraction []

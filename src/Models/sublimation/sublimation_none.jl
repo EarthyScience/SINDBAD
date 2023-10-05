@@ -5,7 +5,7 @@ struct sublimation_none <: sublimation end
 function define(p_struct::sublimation_none, forcing, land, helpers)
 
     ## calculate variables
-    sublimation = land.wCycleBase.z_zero
+    sublimation = zero(eltype(land.pools.snowW))
 
     ## pack land variables
     @pack_land sublimation => land.fluxes
