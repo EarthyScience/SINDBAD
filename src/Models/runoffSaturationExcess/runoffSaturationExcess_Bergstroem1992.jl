@@ -18,12 +18,12 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992, forcing, land,
         ΔsoilW ∈ land.states
     end
     # @show WBP
-    tmp_smaxVeg = sum(wSat)
-    tmp_SoilTotal = sum(soilW)
+    tmp_smax_veg = sum(wSat)
+    tmp_soilW_total = sum(soilW)
     # calculate land runoff from incoming water & current soil moisture
-    tmp_SatExFrac = clampZeroOne((tmp_SoilTotal / tmp_smaxVeg)^β)
+    tmp_sat_exc_frac = clampZeroOne((tmp_soilW_total / tmp_smax_veg)^β)
 
-    sat_excess_runoff = WBP * tmp_SatExFrac
+    sat_excess_runoff = WBP * tmp_sat_exc_frac
 
     # update water balance pool
     WBP = WBP - sat_excess_runoff

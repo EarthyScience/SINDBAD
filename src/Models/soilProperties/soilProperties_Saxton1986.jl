@@ -120,18 +120,18 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 """
 function unsatK(land, helpers, sl, ::kSaxton1986)
     @unpack_land begin
-        (st_CLAY, st_SAND) ∈ land.soilTexture
+        (st_clay, st_sand) ∈ land.soilTexture
         soil_layer_thickness ∈ land.soilWBase
         (n100, n1000, n2, n24, n3600, e1, e2, e3, e4, e5, e6, e7) ∈ land.soilProperties
         soilW ∈ land.pools
     end
 
     ## calculate variables
-    CLAY = st_CLAY[sl] * n100
-    SAND = st_SAND[sl] * n100
+    clay = st_clay[sl] * n100
+    sand = st_sand[sl] * n100
     soilD = soil_layer_thickness[sl]
     θ = soilW[sl] / soilD
-    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (o_one / θ))) * n1000 * n3600 * n24
+    K = e1 * (exp(e2 + e3 * sand + (e4 + e5 * sand + e6 * clay + e7 * clay^n2) * (o_one / θ))) * n1000 * n3600 * n24
 
     ## pack land variables
     return K
@@ -147,23 +147,23 @@ function calcPropsSaxton1986(p_struct::soilProperties_Saxton1986, land, helpers,
 
     @unpack_land begin
         (z_zero, o_one) ∈ land.wCycleBase
-        (st_CLAY, st_SAND) ∈ land.soilTexture
+        (st_clay, st_sand) ∈ land.soilTexture
     end
 
     ## calculate variables
-    # CONVERT SAND AND CLAY TO PERCENTAGES
-    CLAY = st_CLAY[sl] * n100
-    SAND = st_SAND[sl] * n100
+    # CONVERT sand AND clay TO PERCENTAGES
+    clay = st_clay[sl] * n100
+    sand = st_sand[sl] * n100
     # Equations
-    A = exp(a1 + a2 * CLAY + a3 * SAND^n2 + a4 * SAND^n2 * CLAY) * n100
-    B = b1 + b2 * CLAY^n2 + b3 * SAND^n2 * CLAY
+    A = exp(a1 + a2 * clay + a3 * sand^n2 + a4 * sand^n2 * clay) * n100
+    B = b1 + b2 * clay^n2 + b3 * sand^n2 * clay
     # soil matric potential; ψ; kPa
     ψ = WT
     # soil moisture content at saturation [m^3/m^3]
-    θ_s = c1 + c2 * SAND + c3 * log10(CLAY)
+    θ_s = c1 + c2 * sand + c3 * log10(clay)
     # air entry pressure [kPa]
     ψ_e = abs(n100 * (d1 + d2 * θ_s))
-    # θ = ones(typeof(CLAY), size(CLAY))
+    # θ = ones(typeof(clay), size(clay))
     θ = o_one
     if (ψ >= n10 & ψ <= n1500)
         θ = ψ / A^(o_one / B)
@@ -183,7 +183,7 @@ function calcPropsSaxton1986(p_struct::soilProperties_Saxton1986, land, helpers,
     end
     # clear ndx
     # hydraulic conductivity [mm/day]: original equation for mm/s
-    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (o_one / θ))) * n1000 * n3600 * n24
+    K = e1 * (exp(e2 + e3 * sand + (e4 + e5 * sand + e6 * clay + e7 * clay^n2) * (o_one / θ))) * n1000 * n3600 * n24
     α = A
     β = B
     ## pack land variables

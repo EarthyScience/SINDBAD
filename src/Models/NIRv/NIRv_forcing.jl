@@ -4,8 +4,10 @@ struct NIRv_forcing <: NIRv end
 
 function compute(p_struct::NIRv_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing NIRv ∈ forcing
+    @unpack_forcing f_NIRv ∈ forcing
 
+    NIRv = f_NIRv
+    
     ## pack land variables
     @pack_land NIRv => land.states
     return land
