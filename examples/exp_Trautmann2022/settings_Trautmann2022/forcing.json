@@ -162,7 +162,7 @@
       "source_variable": "smax_wang",
       "space_time_type": "spatial"
     },
-      "f_tair": {
+      "f_airT": {
       "bounds": [-80.0, 60.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Tair.2dim.opti904.nc",
       "standard_name": "Tair",
@@ -171,7 +171,7 @@
       "source_unit": "°C",
       "source_variable": "Tair"
     },
-    "f_tair_day": {
+    "f_airT_day": {
       "bounds": [-80.0, 60.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.tair_day.2dim.opti904.nc",
       "standard_name": "TairDay",

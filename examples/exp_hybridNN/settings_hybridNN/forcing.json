@@ -118,14 +118,14 @@
       "source_variable": "SLTPPT_SoilGrids",
       "space_time_type": "spatiovertical"
     },
-    "f_tair": {
+    "f_airT": {
       "bounds": [-80.0, 60.0],
       "standard_name": "Tair",
       "sindbad_unit": "°C",
       "source_unit": "°C",
       "source_variable": "TA_ERAIv2_gfld"
     },
-    "f_tair_day": {
+    "f_airT_day": {
       "bounds": [-80.0, 60.0],
       "standard_name": "TairDay",
       "sindbad_unit": "°C",
