@@ -111,7 +111,7 @@ end
 `shuffleList`(list; seed=123)
 """
 function shuffleList(list; seed=123)
-    Random.seed!(seed)
-    rand_indxs = randperm(length(list))
+    # Random.seed!(seed)
+    rand_indxs = randperm(MersenneTwister(seed), length(list))
     return list[rand_indxs]
 end
