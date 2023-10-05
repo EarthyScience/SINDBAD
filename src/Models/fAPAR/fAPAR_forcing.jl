@@ -4,7 +4,9 @@ struct fAPAR_forcing <: fAPAR end
 
 function compute(p_struct::fAPAR_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing fAPAR ∈ forcing
+    @unpack_forcing f_fAPAR ∈ forcing
+
+    fAPAR = f_fAPAR
 
     ## pack land variables
     @pack_land fAPAR => land.states

@@ -79,7 +79,7 @@ macro test_it(forc)
             :v)) #= none:1 =#
 end
 ts = 5
-@test_it :tair
+@test_it :airT
 function test_nt(out::NamedTuple, nt::Int64)
     for t ∈ 1:nt
         b = rand()#+out.fluxes.b

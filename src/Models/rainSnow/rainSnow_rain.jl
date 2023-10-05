@@ -4,11 +4,11 @@ struct rainSnow_rain <: rainSnow end
 
 function define(p_struct::rainSnow_rain, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_forcing Rain ∈ forcing
+    @unpack_forcing f_rain ∈ forcing
 
     ## calculate variables
-    snow = zero(Rain)
-    rain = Rain
+    snow = zero(f_rain)
+    rain = f_rain
     precip = rain
 
     ## pack land variables
@@ -20,10 +20,10 @@ end
 
 function compute(p_struct::rainSnow_rain, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_forcing Rain ∈ forcing
+    @unpack_forcing f_rain ∈ forcing
 
     ## calculate variables
-    rain = Rain
+    rain = f_rain
     precip = rain
 
     ## pack land variables
@@ -45,7 +45,7 @@ $(SindbadParameters)
 Set all precip to rain
 
 *Inputs*
- - forcing.Rain
+ - forcing.f_rain
 
 *Outputs*
  - land.fluxes.rain: liquid rainfall from forcing input

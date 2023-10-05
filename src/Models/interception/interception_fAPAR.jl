@@ -16,8 +16,8 @@ function compute(p_struct::interception_fAPAR, forcing, land, helpers)
         rain ∈ land.fluxes
     end
     # calculate interception loss
-    intCap = isp * fAPAR
-    interception = min(intCap, rain)
+    interception_capacity = isp * fAPAR
+    interception = min(interception_capacity, rain)
     # update the available water
     WBP = WBP - interception
 

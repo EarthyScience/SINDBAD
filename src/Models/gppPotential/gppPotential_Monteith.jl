@@ -9,11 +9,11 @@ end
 function compute(p_struct::gppPotential_Monteith, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppPotential_Monteith p_struct
-    @unpack_forcing PAR ∈ forcing
+    @unpack_forcing f_PAR ∈ forcing
 
     ## calculate variables
     # set rueGPP to a constant
-    gpp_potential = εmax * PAR
+    gpp_potential = εmax * f_PAR
 
     ## pack land variables
     @pack_land gpp_potential => land.gppPotential
@@ -51,7 +51,7 @@ Maximum instantaneous radiation use efficiency using gppPotential_Monteith
 
 *Notes*
  - no crontrols for fPAR | meteo factors
- - set the potential GPP as maxRUE * PAR [gC/m2/dat]
- - usually  GPP = e_max x f[clim] x FAPAR x PAR  here  GPP = GPPpot x f[clim] x FAPAR  GPPpot = e_max x PAR  f[clim] & FAPAR are [maybe] calculated dynamically
+ - set the potential GPP as maxRUE * f_PAR [gC/m2/dat]
+ - usually  GPP = e_max x f[clim] x FAPAR x f_PAR  here  GPP = GPPpot x f[clim] x FAPAR  GPPpot = e_max x f_PAR  f[clim] & FAPAR are [maybe] calculated dynamically
 """
 gppPotential_Monteith

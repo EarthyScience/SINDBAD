@@ -18,13 +18,13 @@ forcing, timesteps = getforcing()
     m1 = rainSnow()
     m2 = snowMelt()
     models = (m1, m2)
-    variables = [:rain, :Tair, :Rn]
+    variables = [:rain, :f_airT, :f_rn]
     values = [rand(100), rand(100), rand(100)]
     forcing = Table((; zip(variables, values)...))
     timesteps = length(forcing)
     outTime = computeTEM(forcing, models, timesteps)
 
-    @test m1.Tair_thres == 0.5
+    @test m1.airT_thres == 0.5
     @test m2.melt_T == 3.0
     @test size(outTime)[1] == n
 end

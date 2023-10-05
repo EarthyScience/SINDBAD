@@ -9,7 +9,7 @@ include("snowMelt_TairRn.jl")
 Calculate snowmelt and update s.w.wsnow
 
 # Approaches:
- - Tair: computes the snow melt term as function of air temperature.
- - TairRn: snowmelt based on temperature & net radiation on days with Tair > 0.0°C.
+ - f_airT: computes the snow melt term as function of air temperature.
+ - TairRn: snowmelt based on temperature & net radiation on days with f_airT > 0.0°C.
 """
 snowMelt

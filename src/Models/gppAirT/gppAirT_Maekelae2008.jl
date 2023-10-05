@@ -4,15 +4,15 @@ export gppAirT_Maekelae2008
 @bounds @describe @units @with_kw struct gppAirT_Maekelae2008{T1,T2,T3} <: gppAirT
     TimConst::T1 = 5.0 | (1.0, 20.0) | "time constant for temp delay" | "days"
     X0::T2 = -5.0 | (-15.0, 1.0) | "threshold of delay temperature" | "°C"
-    Smax::T3 = 20.0 | (10.0, 30.0) | "temperature at saturation" | "°C"
+    s_max::T3 = 20.0 | (10.0, 30.0) | "temperature at saturation" | "°C"
 end
 #! format: on
 
 function define(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_forcing TairDay ∈ forcing
+    @unpack_forcing f_airT_day ∈ forcing
 
-    X_prev = TairDay
+    X_prev = f_airT_day
 
     ## pack land variables
     @pack_land X_prev => land.gppAirT
@@ -22,7 +22,7 @@ end
 function compute(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_Maekelae2008 p_struct
-    @unpack_forcing TairDay ∈ forcing
+    @unpack_forcing f_airT_day ∈ forcing
     @unpack_land begin
         o_one ∈ land.wCycleBase
         X_prev ∈ land.gppAirT
@@ -30,11 +30,11 @@ function compute(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
 
     ## calculate variables
     # calculate temperature acclimation
-    X = X_prev + (o_one / TimConst) * (TairDay - X_prev)
+    X = X_prev + (o_one / TimConst) * (f_airT_day - X_prev)
 
     # calculate the stress & saturation
     S = maxZero(X - X0)
-    gpp_f_airT = clampZeroOne(S / Smax)
+    gpp_f_airT = clampZeroOne(S / s_max)
 
     # replace the previous X
     X_prev = X
@@ -56,7 +56,7 @@ $(SindbadParameters)
 Effect of temperature using gppAirT_Maekelae2008
 
 *Inputs*
- - forcing.TairDay: daytime temperature [°C]
+ - forcing.f_airT_day: daytime temperature [°C]
 
 *Outputs*
  - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
