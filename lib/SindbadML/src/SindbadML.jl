@@ -19,7 +19,6 @@ using Random
 using JLD2
 
 include("utilsML.jl")
-include("setupNeuralNetwork.jl")
 include("runSindbadML.jl")
 
 end # module SindbadML
