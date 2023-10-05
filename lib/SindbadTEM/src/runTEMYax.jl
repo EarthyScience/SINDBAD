@@ -15,35 +15,17 @@ export TEMYax
 - `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
 """
-function coreTEMYax(
-    selected_models,
-    forcing,
-    land_init,
-    tem_helpers,
-    tem_models,
-    tem_spinup)
+function coreTEMYax(selected_models, forcing, land_init, tem_helpers, tem_models, tem_spinup)
 
     forcing_one_timestep = getForcingForTimeStep(forcing, deepcopy(forcing), 1, tem_helpers.vals.forc_types)
+    
     spinup_forcing = getAllSpinupForcing(forcing, tem_spinup.sequence, tem_helpers);
 
     land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
-    land_spin = spinupTEM(
-        selected_models,
-        spinup_forcing,
-        forcing_one_timestep,
-        land_prec,
-        tem_helpers,
-        tem_models,
-        tem_spinup)
+    land_spin = spinupTEM(selected_models, spinup_forcing, forcing_one_timestep, land_prec, tem_helpers, tem_models, tem_spinup)
 
-    land_time_series = timeLoopTEM(
-        selected_models,
-        forcing,
-        forcing_one_timestep,
-        land_spin,
-        tem_helpers,
-        tem_helpers.run.debug_model)
+    land_time_series = timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_helpers.run.debug_model)
 
     return landWrapper(land_time_series)
 end
@@ -61,12 +43,7 @@ end
 - `selected_models`: a tuple of all models selected in the given model structure
 - `forcing_variables`: DESCRIPTION
 """
-function TEMYax(args...;
-    selected_models::Tuple,
-    forcing_variables::AbstractArray,
-    land_init::NamedTuple,
-    out_variables,
-    tem::NamedTuple)
+function TEMYax(args...;selected_models::Tuple, forcing_variables::AbstractArray, land_init::NamedTuple, out_variables, tem::NamedTuple)
     outputs, inputs = unpackYaxForward(args; out_variables, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
     land_out = coreTEMYax(selected_models, forcing, land_init, tem.helpers, tem.models, tem.spinup)
@@ -92,10 +69,7 @@ end
 - `selected_models`: a tuple of all models selected in the given model structure
 - `max_cache`: cache size to use for mapCube
 """
-function runTEMYax(
-    selected_models::Tuple,
-    forcing::NamedTuple,
-    info::NamedTuple)
+function runTEMYax(selected_models::Tuple, forcing::NamedTuple, info::NamedTuple)
 
     # forcing/input information
     incubes = forcing.data;

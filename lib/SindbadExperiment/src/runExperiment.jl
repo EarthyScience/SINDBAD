@@ -40,12 +40,14 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     println("-------------------Cost Calculation Mode---------------------------\n")
     @info "runExperiment: do forward run..."
     println("----------------------------------------------\n")
-    @time output_array = runTEM!(forcing, info)
+    output_array = runTEM!(forcing, info)
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------\n")
     forward_output = (; Pair.(getUniqueVarNames(info.tem.variables), output_array)...)
-    loss_vector = getLossVector(obs_array, forward_output, prepCostOptions(obs_array, info.optim.cost_options))
-    for _cp in Pair.(info.optim.observational_constraints,  loss_vector)
+    # @show size.(obs_array), Pair.(getUniqueVarNames(info.tem.variables), size.(output_array))
+    cost_options = prepCostOptions(obs_array, info.optim.cost_options)
+    loss_vector = getLossVector(forward_output, obs_array, cost_options)
+    for _cp in Pair.(Pair.(cost_options.variable, nameof.(typeof.(cost_options.cost_metric))),  loss_vector)
         println(_cp)
     end
     return loss_vector
@@ -194,7 +196,7 @@ function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::S
     
     run_helpers = prepTEM(optimized_models, forcing, info)
     
-    @time runTEM!(optimized_models,
+    runTEM!(optimized_models,
         run_helpers.loc_forcings,
         run_helpers.loc_spinup_forcings,
         run_helpers.forcing_one_timestep,

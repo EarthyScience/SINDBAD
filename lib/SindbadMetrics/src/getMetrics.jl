@@ -125,6 +125,7 @@ return model and obs data filtering for the common nan
 """
 function filterCommonNaN(y, yσ, ŷ, idxs)
     # idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because landWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
+    # @show "size y, yσ, ŷ", size(y), size(yσ), size(ŷ), size(idxs)
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
@@ -195,19 +196,20 @@ function getData(model_output::NamedTuple, observations, cost_option)
     mod_field = cost_option.mod_field
     mod_subfield = cost_option.mod_subfield
     ŷ = model_output
-    if hasproperty(model_output, mod_subfield)
-        ŷ = getproperty(model_output, mod_subfield)
-    else
-        sfname = Symbol(String(mod_field) * "__" * String(mod_subfield))
-        ŷ = getproperty(model_output, sfname)
+    sf_name = mod_subfield
+    if !hasproperty(model_output, sf_name)
+        sf_name = Symbol(String(mod_field) * "__" * String(mod_subfield))
     end
+    ŷ = getproperty(model_output, sf_name)
     y = observations[obs_ind]
     yσ = observations[obs_ind+1]
+    # @show "size y, yσ, ŷaaa", size(y), size(yσ), size(ŷ)
     if size(ŷ, 2) == 1
         ŷ = getModelOutputView(ŷ)
-        y = y[:]
-        yσ = yσ[:]
+        # y = y[:]
+        # yσ = yσ[:]
     end
+    # @show "size y, yσ, ŷbbb", size(y), size(yσ), size(ŷ)
     # ymask = observations[obs_ind + 2]
 
     ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
@@ -270,7 +272,7 @@ function getLossVector(model_output, observations, cost_options)
         @debug "$(cost_option.variable)"
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
+        # @show "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
         (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
         metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
