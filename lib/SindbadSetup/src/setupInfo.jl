@@ -668,7 +668,17 @@ end
 
 
 """
-function getParameters(selected_models, num_type; return_table=true)
+function getParameters(selected_models_in::LongTuple, num_type; return_table=true)
+    selected_models = getTupleFromLongTable(selected_models_in)
+    return getParameters(selected_models, num_type; return_table=return_table)
+end
+
+"""
+    getParameters(selected_models)
+
+
+"""
+function getParameters(selected_models::Tuple, num_type; return_table=true)
     model_names_list = nameof.(typeof.(selected_models));
     default = [flatten(selected_models)...]
     constrains = metaflatten(selected_models, Models.bounds)
@@ -951,32 +961,13 @@ function getSpinupAndForwardModels(info::NamedTuple)
     is_spinup = findall(is_spinup .== 1)
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
-    if hasproperty(info, :parameters)
-        if !isempty(info.parameters)
-            original_params_forward = getParameters(selected_approach_forward)
-            input_params = info.parameters
-            updated_params = setInputParameters(original_params_forward, input_params)
-            updated_approach_forward = updateModelParameters(updated_params, selected_approach_forward)
-
-            info = (;
-                info...,
-                tem=(;
-                    info.tem...,
-                    models=(;
-                        info.tem.models...,
-                        forward=updated_approach_forward,
-                        is_spinup=is_spinup)))
-        end
-    else
-        info = (;
-            info...,
-            tem=(;
-                info.tem...,
-                models=(;
-                    info.tem.models...,
-                    forward=selected_approach_forward,
-                    is_spinup=is_spinup)))
+    if hasproperty(info, :parameters) && !isempty(info.parameters)
+        original_params_forward = getParameters(selected_approach_forward)
+        input_params = info.parameters
+        updated_params = setInputParameters(original_params_forward, input_params)
+        selected_approach_forward = updateModelParameters(updated_params, selected_approach_forward)
     end
+    info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=selected_approach_forward, is_spinup=is_spinup))) 
     return info
 end
 
@@ -1486,6 +1477,10 @@ function setupInfo(info::NamedTuple)
     @info "SetupExperiment: setting Variable Helpers..."
     info = getVariablesToStore(info)
 
+    if !isnothing(info.experiment.exe_rules.longtuple_size)
+        selected_approach_forward = makeLongTuple(info.tem.models.forward, info.experiment.exe_rules.longtuple_size)
+        info = @set info.tem.models.forward = selected_approach_forward
+    end
     @info "\n----------------------------------------------\n"
     return info
 end

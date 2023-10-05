@@ -98,7 +98,7 @@ end
 l1(tbl_params.default)
 rand_m = rand()
 dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tbl_params.default);
-newmods = updateModelParametersType(tbl_params, mods, dualDefs);
+newmods = updateModelParameters(tbl_params, mods, dualDefs);
 
 function l2(p)
     return g_loss(p,
