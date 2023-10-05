@@ -18,14 +18,14 @@ function compute(p_struct::PET_PriestleyTaylor1972, forcing, land, helpers)
     ## unpack parameters
     @unpack_PET_PriestleyTaylor1972 p_struct
     ## unpack forcing
-    @unpack_forcing (Rn, Tair) ∈ forcing
+    @unpack_forcing (f_rn, f_airT) ∈ forcing
     @unpack_land z_zero ∈ land.wCycleBase
 
     ## calculate variables
-    Δ = Δ_1 * exp(Δ_2 * Tair / (Δ_3 + Tair))
-    Lhv = (Lhv_1 * exp(Lhv_2 * Tair) - Lhv_3) # MJ kg-1
+    Δ = Δ_1 * exp(Δ_2 * f_airT / (Δ_3 + f_airT))
+    Lhv = (Lhv_1 * exp(Lhv_2 * f_airT) - Lhv_3) # MJ kg-1
     γ = γ_1 / γ_2 # hPa C-1 [psychometric constant]
-    PET = PET_1 * Δ / (Δ + γ) * Rn / Lhv
+    PET = PET_1 * Δ / (Δ + γ) * f_rn / Lhv
     PET = maxZero(PET)
 
     ## pack land variables
@@ -45,8 +45,8 @@ $(SindbadParameters)
 Set potential evapotranspiration using PET_PriestleyTaylor1972
 
 *Inputs*
- - forcing.Rn: Net radiation
- - forcing.Tair: Air temperature
+ - forcing.f_rn: Net radiation
+ - forcing.f_airT: Air temperature
 
 *Outputs*
  - land.fluxes.PET: the value of PET for current time step

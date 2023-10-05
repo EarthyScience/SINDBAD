@@ -11,7 +11,7 @@ end
 function define(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI p_struct
-    @unpack_forcing Rg ∈ forcing
+    @unpack_forcing f_rg ∈ forcing
 
     gpp_f_cloud_prev = land.wCycleBase.o_one
     gpp_f_cloud = land.wCycleBase.o_one
@@ -25,7 +25,7 @@ end
 function compute(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI p_struct
-    @unpack_forcing Rg ∈ forcing
+    @unpack_forcing f_rg ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -34,8 +34,8 @@ function compute(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
     end
     ## calculate variables
     f_prev = gpp_f_cloud_prev
-    Rg = Rg * MJ_to_W # multiplied by a scalar to covert MJ/m2/day to W/m2
-    fR = (o_one - fR_τ) * f_prev + fR_τ * (o_one / (o_one + exp(-fR_slope * (Rg - fR_base))))
+    f_rg = f_rg * MJ_to_W # multiplied by a scalar to covert MJ/m2/day to W/m2
+    fR = (o_one - fR_τ) * f_prev + fR_τ * (o_one / (o_one + exp(-fR_slope * (f_rg - fR_base))))
     gpp_f_cloud = clampZeroOne(fR)
     gpp_f_cloud_prev = gpp_f_cloud
 
@@ -55,7 +55,7 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - Rg: shortwave radiation incoming
+ - f_rg: shortwave radiation incoming
  - fR_τ: contribution of current time step
 
 *Outputs*

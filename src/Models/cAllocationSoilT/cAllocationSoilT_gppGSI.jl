@@ -11,9 +11,9 @@ function define(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
     @unpack_cAllocationSoilT_gppGSI p_struct
 
     # assume initial prev as one (no stress)
-    fT_prev = land.wCycleBase.o_one
+    f_soilT_prev = land.wCycleBase.o_one
 
-    @pack_land fT_prev => land.cAllocationSoilT
+    @pack_land f_soilT_prev => land.cAllocationSoilT
     return land
 end
 
@@ -24,17 +24,17 @@ function compute(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         gpp_f_airT ∈ land.gppAirT
-        fT_prev ∈ land.cAllocationSoilT
+        f_soilT_prev ∈ land.cAllocationSoilT
     end
 
     # computation for the temperature effect on decomposition/mineralization
-    c_allocation_f_soilT = fT_prev + (gpp_f_airT - fT_prev) * τ_Tsoil
+    c_allocation_f_soilT = f_soilT_prev + (gpp_f_airT - f_soilT_prev) * τ_Tsoil
 
     # set the prev
-    fT_prev = c_allocation_f_soilT
+    f_soilT_prev = c_allocation_f_soilT
 
     ## pack land variables
-    @pack_land (c_allocation_f_soilT, fT_prev) => land.cAllocationSoilT
+    @pack_land (c_allocation_f_soilT, f_soilT_prev) => land.cAllocationSoilT
     return land
 end
 
@@ -49,7 +49,7 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - land.cAllocationSoilT.fT_prev: temperature stressor from previous time step
+ - land.cAllocationSoilT.f_soilT_prev: temperature stressor from previous time step
  - land.gppAirT.gpp_f_airT: temperature stressors on GPP
 
 *Outputs*

@@ -3,30 +3,30 @@ export gppVPD_PRELES
 #! format: off
 @bounds @describe @units @with_kw struct gppVPD_PRELES{T1,T2,T3,T4} <: gppVPD
     κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
-    Cκ::T2 = 0.4 | (-50.0, 10.0) | "" | ""
-    Ca0::T3 = 295.0 | (250.0, 500.0) | "" | "ppm"
-    Cm::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
+    c_κ::T2 = 0.4 | (-50.0, 10.0) | "" | ""
+    base_ambient_CO2::T3 = 295.0 | (250.0, 500.0) | "" | "ppm"
+    sat_ambient_CO2::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
 end
 #! format: on
 
 function compute(p_struct::gppVPD_PRELES, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_PRELES p_struct
-    @unpack_forcing VPDDay ∈ forcing
+    @unpack_forcing f_VPD_day ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
         ambient_CO2 ∈ land.states
         o_one ∈ land.wCycleBase
     end
-    # fVPD_VPD                    = exp(p.gppfVPD.kappa .* -f.VPDDay(:,tix) .* (p.gppfVPD.Ca0 ./ s.cd.ambCO2) .^ -p.gppfVPD.Ckappa);
-    # fCO2_CO2                    = 1 + (s.cd.ambCO2 - p.gppfVPD.Ca0) ./ (s.cd.ambCO2 - p.gppfVPD.Ca0 + p.gppfVPD.Cm);
+    # fVPD_VPD                    = exp(p.gppfVPD.kappa .* -f.f_VPD_day(:,tix) .* (p.gppfVPD.base_ambient_CO2 ./ s.cd.ambCO2) .^ -p.gppfVPD.Ckappa);
+    # fCO2_CO2                    = 1 + (s.cd.ambCO2 - p.gppfVPD.base_ambient_CO2) ./ (s.cd.ambCO2 - p.gppfVPD.base_ambient_CO2 + p.gppfVPD.sat_ambient_CO2);
     # VPDScGPP                    = max(0, min(1, fVPD_VPD .* fCO2_CO2));
     # d.gppfVPD.VPDScGPP(:,tix)	= VPDScGPP;
 
     ## calculate variables
-    fVPD_VPD = exp(-κ * VPDDay * (Ca0 / ambient_CO2)^-Cκ)
-    fCO2_CO2 = o_one + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
+    fVPD_VPD = exp(-κ * f_VPD_day * (base_ambient_CO2 / ambient_CO2)^-c_κ)
+    fCO2_CO2 = o_one + (ambient_CO2 - base_ambient_CO2) / (ambient_CO2 - base_ambient_CO2 + sat_ambient_CO2)
     gpp_f_vpd = clampZeroOne(fVPD_VPD * fCO2_CO2)
 
     ## pack land variables
@@ -48,7 +48,7 @@ Vpd effect using gppVPD_PRELES
 *Inputs*
  - Cam: parameter modulation mean co2 effect on GPP
  - cKappa: parameter modulating co2 effect on VPD response to GPP
- - forcing.VPDDay: daytime vapor pressure deficit [kPa]
+ - forcing.f_VPD_day: daytime vapor pressure deficit [kPa]
  - κ: parameter of the exponential decay function of GPP with  VPD [kPa-1] dimensionless [0.06 0.7]; median !0.4, same as k from  Maekaelae 2008
 
 *Outputs*
