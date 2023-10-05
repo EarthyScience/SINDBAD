@@ -30,9 +30,9 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
         end
     end
     if get_it_from_path
-        @info "   $(data_sub_field) from $(v_info_sub.source_variable)"
         v_info_var = getfield(v_info, data_sub_field)
         v_info_sub = getCombinedNamedTuple(default_info, v_info_var)
+        @info "   $(data_sub_field): $(v_info_sub.source_variable)"
         data_path_sub = getAbsDataPath(info, v_info_sub.data_path)
         nc_sub = nc
         nc_sub, yax_sub = getYaxFromSource(nc_sub, data_path, data_path_sub, v_info_sub.source_variable, info, data_backend)
@@ -48,7 +48,7 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
             @debug "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
         end
         if !isnothing(yax)
-            @info "   $(data_sub_field) as ones"
+            @info "   $(data_sub_field): ones(data)"
             nc_sub = nc
             yax_sub = map(x -> one(x), yax)
             v_info_sub = default_info
@@ -117,16 +117,16 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         if !isnothing(yax_mask)
             yax_mask_v .= yax_mask .* yax_mask_v
         end
-        @info "getObservation: harmonizing observations..."
-        @debug "   harmonizing qflag"
+        @info "   harmonizing..."
+        @debug "      qflag"
         cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info, num_type; clean_data=false)
-        @debug "   harmonizing data"
+        @debug "      data"
         cyax = subsetAndProcessYax(yax, yax_mask, tar_dims, vinfo_data, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
-        @debug "   harmonizing unc"
+        @debug "      unc"
         cyax_unc = subsetAndProcessYax(yax_unc, yax_mask, tar_dims, vinfo_unc, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
-        @debug "   harmonizing weight"
+        @debug "      weight"
         cyax_wgt = subsetAndProcessYax(yax_wgt, yax_mask, tar_dims, vinfo_wgt, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
-        @debug "   harmonizing mask"
+        @debug "      mask"
         yax_mask_v = subsetAndProcessYax(yax_mask_v, yax_mask_v, tar_dims, vinfo_mask, info, num_type_bool; clean_data=false)
 
         push!(obscubes, cyax)
