@@ -221,7 +221,7 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::B
         end
         rax
     end
-    yax = YAXArray(Tuple(ax), v[:])
+    yax = YAXArray(Tuple(ax), v |> Array)
     return nc, yax
 end
 
