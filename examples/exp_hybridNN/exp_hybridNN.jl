@@ -118,29 +118,34 @@ n_epochs = 20;
 n_neurons = 32;
 n_params = sum(tbl_params.is_ml);
 shuffle_opt = true;
-ml_baseline = DenseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=523);
+ml_baseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=batch_seed);
 parameters_sites = ml_baseline(xfeatures);
 
 ## test for gradients in batch
 fgrads_batch = zeros(Float32, n_params, length(sites_training));
 grads_batch = zeros(Float32, n_params, length(sites_training));
-sites_batch = sites_training#[1:n_sites_train];
+sites_batch = sites_training;#[1:n_sites_train];
 indices_sites_batch = indices_sites_training;
 params_batch = parameters_sites(; site=sites_batch);
 scaled_params_batch = getParamsAct(params_batch, tbl_params);
 
 gradient_lib = UseForwardDiff();
-gradient_lib = UseFiniteDiff();
+# gradient_lib = UseFiniteDiff();
 # gradient_lib = UseFiniteDifferences();
 
-@time gradientBatch!(
-    gradient_lib, lossSite, grads_batch, scaled_params_batch, models_lt, sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings,
-    forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
+@time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, models_lt,
+    sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings,
+    forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index,
+    cost_options, constraint_method)
 
 # machine learning parameters baseline
-@time sites_loss, re, flat = trainSindbadML(
-        gradient_lib, ml_baseline, lossSite, xfeatures, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; 
-        n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data, name="seq_training_output")
+@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures,
+    models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings,
+    forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, 
+    param_to_index, cost_options, constraint_method;
+    n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed,
+    batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data,
+    name="seq_training_output")
 
 using CairoMakie
 fig = Figure(; resolution = (2400,1200))
@@ -152,7 +157,7 @@ fig
 save(joinpath(info.output.figure, "epoch_loss.png"), fig)
 
 fig = Figure(; resolution = (2400,1200))
-ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
+ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site loss")
 foreach(axes(sites_loss,1)) do _cl
     obj = lines!(ax, sites_loss[_cl,:])
     fig
@@ -162,24 +167,7 @@ save(joinpath(info.output.figure, "epoch_lines.png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
-@time getLossForSites(
-    gradient_lib,
-    lossSite,
-    loss_array_sites,
-    2,
-    parameters_sites,
-    models_lt,
-    sites_training,
-    indices_sites_training,
-    loc_forcings,
-    loc_spinup_forcings,
-    forcing_one_timestep,
-    loc_outputs,
-    land_init,
-    loc_observations,
-    tem,
-    param_to_index,
-    cost_options,
-    constraint_method;
-    logging=false
-    )
+@time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, models_lt,
+    sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings,
+    forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index,
+    cost_options, constraint_method; logging=false )
