@@ -32,10 +32,10 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
     if get_it_from_path
         v_info_var = getfield(v_info, data_sub_field)
         v_info_sub = getCombinedNamedTuple(default_info, v_info_var)
-        @info "   $(data_sub_field): $(v_info_sub.source_variable)"
         data_path_sub = getAbsDataPath(info, v_info_sub.data_path)
         nc_sub = nc
         nc_sub, yax_sub = getYaxFromSource(nc_sub, data_path, data_path_sub, v_info_sub.source_variable, info, data_backend)
+        @info "     $(data_sub_field): $(v_info_sub.source_variable)"
         bounds_sub = v_info_sub.bounds
     else
         if data_sub_field == :qflag
@@ -48,7 +48,7 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
             @debug "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
         end
         if !isnothing(yax)
-            @info "   $(data_sub_field): ones(data)"
+            @info "     $(data_sub_field): ones(data)"
             nc_sub = nc
             yax_sub = map(x -> one(x), yax)
             v_info_sub = default_info
@@ -117,7 +117,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         if !isnothing(yax_mask)
             yax_mask_v .= yax_mask .* yax_mask_v
         end
-        @info "   harmonize/subset..."
+        @info "     harmonize/subset..."
         @debug "      qflag"
         cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info, num_type; clean_data=false)
         @debug "      data"
