@@ -77,8 +77,8 @@ new_params = getParamsAct(new_params, tbl_params)
 models = info.tem.models.forward;
 param_to_index = getParameterIndices(models, tbl_params);
 
-models = LongTuple(models...);
-new_models = updateModelParametersType(param_to_index, models, new_params)
+models = LongTuple{info.tem.exe_rules.longtuple_size}(models...);
+new_models = updateModelParameters(param_to_index, models, new_params)
 
 @time runTEM!(new_models,
     run_helpers.loc_forcings,

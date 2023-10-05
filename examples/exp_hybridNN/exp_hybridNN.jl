@@ -28,7 +28,7 @@ observations = getObservation(info, forcing.helpers);
 
 models = info.tem.models.forward;
 param_to_index = getParameterIndices(models, tbl_params);
-models_lt = LongTuple(models...);
+models_lt = makeLongTuple(models, 10);
 
 run_helpers = prepTEM(models_lt, forcing, observations, info);
 
