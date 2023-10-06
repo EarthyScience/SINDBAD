@@ -2,7 +2,7 @@ using Revise
 using SindbadTEM
 using SindbadData
 using Plots
-using Accessors
+# using Accessors
 toggleStackTraceNT()
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, model_array_type, out_path)
@@ -59,7 +59,7 @@ end
 experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 out_sp_exp = nothing
 model_array_type = "static_array"
-tjs = (1, 100, 1_000, 10_000)
+tjs = (1, 100, 1_000)
 # tjs = (1000,)
 # tjs = (10_000,)
 nLoop_pre_spin = 10
@@ -76,9 +76,6 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupInfo(info)
     forcing = getForcing(info)
-
-
-
 
     run_helpers = prepTEM(forcing, info);
 
@@ -112,22 +109,14 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
 
         xtname_c = get_xtick_names(info, land_for_s, :cEco)
         xtname_w = get_xtick_names(info, land_for_s, :TWS)
-        # spinup_models,
-        # spinup_forcing,
-        # forcing_one_timestep,
-        # land,
-        # Symbol(sel_pool),
-        # tem_helpers,
-        # tem_spinup)
 
         @time for nl ∈ 1:nLoop_pre_spin
-            land_for_s = SindbadTEM.runSpinup(
+            land_for_s = SindbadTEM.spinup(
                 spinup_models,
                 theforcing,
                 forcing_one_timestep,
                 land_for_s,
                 tem_with_types.helpers,
-                tem_with_types.spinup,
                 SelSpinupModels())
         end
 
@@ -135,7 +124,7 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
         # sel_pool = :TWS
         sp_method = getfield(SindbadSetup, toUpperCaseFirst("nlsolve_fixedpoint_trustregion_$(string(sel_pool))"))()
         @show "NL_solve"
-        @time out_sp_nl = SindbadTEM.runSpinup(
+        @time out_sp_nl = SindbadTEM.spinup(
             spinup_models,
             theforcing,
             forcing_one_timestep,
@@ -144,15 +133,13 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
             tem_with_types.spinup,
             sp_method)
 
-
         for tj ∈ tjs
             land = deepcopy(run_helpers.land_one)
-
             @show "Exp_Init"
             sp = SelSpinupModels()
             out_sp_exp = deepcopy(land_for_s)
             @time for nl ∈ 1:tj
-                out_sp_exp = SindbadTEM.runSpinup(
+                out_sp_exp = SindbadTEM.spinup(
                     spinup_models,
                     theforcing,
                     forcing_one_timestep,
@@ -165,7 +152,7 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
             @show "Exp_NL"
             out_sp_exp_nl = deepcopy(out_sp_nl)
             @time for nl ∈ 1:tj
-                out_sp_exp_nl = SindbadTEM.runSpinup(spinup_models,
+                out_sp_exp_nl = SindbadTEM.spinup(spinup_models,
                     theforcing,
                     forcing_one_timestep,
                     out_sp_exp_nl,

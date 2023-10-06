@@ -272,9 +272,8 @@ function getSpinupTemLite(tem_with_types)
         # ns = SpinSequence(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.options)
         push!(newseqs, ns)
     end
-    restart_file_in = tem_spinup.paths.restart_file_in
-    restart_file_out = tem_spinup.paths.restart_file_out
-    paths = (; restart_file_in = isnothing(restart_file_in) ? "./" : restart_file_in, restart_file_out = isnothing(restart_file_out) ? "./" : restart_file_out)
+    restart_file = tem_spinup.restart_file
+    paths = (; restart_file = isnothing(restart_file) ? "./" : restart_file)
     tem_spin_lite = (; paths, sequence = [_s for _s in newseqs])
     tem_with_types = (; tem_with_types..., spinup = tem_spin_lite)
     return tem_with_types
@@ -433,7 +432,7 @@ function runTEMOne(selected_models, loc_forcing, land_init, tem)
         tem.helpers.model_helpers)
     land_one = computeTEM(selected_models, forcing_one_timestep, land_one, tem.helpers.model_helpers)
     land_one = removeEmptyTupleFields(land_one)
-    land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
+    land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.store_spinup)
     # land_one = definePrecomputeTEM(selected_models, forcing_one_timestep, land_one,
         # tem.helpers.model_helpers)
     land_one = precomputeTEM(selected_models, forcing_one_timestep, land_one,

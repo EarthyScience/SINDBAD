@@ -14,10 +14,7 @@ land_init = createLandInit(info.pools, info.tem);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 obsv = getKeyedArray(observations);
-tbl_params = getParameters(info.tem.models.forward,
-    info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize,
-    info.tem.helpers.numbers.sNT);
+tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
 
 # covariates
 function yaxCubeToKeyedArray(c)
@@ -94,7 +91,6 @@ function pixel_run!(output_array,
         loc_forcing,
         tem_helpers,
         tem_spinup,
-        tem_models,
         land_init_site,
         forcing_one_timestep)
 end

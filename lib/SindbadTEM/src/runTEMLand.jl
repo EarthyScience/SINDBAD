@@ -39,11 +39,11 @@ end
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `DoSpinupTEM`: DESCRIPTION
 """
-function coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_init, tem_helpers, tem_models, tem_spinup, ::DoSpinupTEM) # with spinup
+function coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_init, tem_helpers, tem_spinup, ::DoSpinupTEM) # with spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
-    land_spin = spinupTEM(selected_models, spinup_forcing, forcing_one_timestep, land_prec, tem_helpers, tem_models, tem_spinup)
+    land_spin = spinupTEM(selected_models, spinup_forcing, forcing_one_timestep, land_prec, tem_helpers, tem_spinup)
 
     land_time_series = timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_helpers.run.debug_model)
     return land_time_series
@@ -66,7 +66,7 @@ end
 - `_`: unused argument
 - `::DoNotSpinupTEM`: DESCRIPTION
 """
-function coreTEM(selected_models, forcing, _, forcing_one_timestep, land_time_series, land_init, tem_helpers, _, _, ::DoNotSpinupTEM) # without spinup
+function coreTEM(selected_models, forcing, _, forcing_one_timestep, land_time_series, land_init, tem_helpers, _, ::DoNotSpinupTEM) # without spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
@@ -90,11 +90,11 @@ end
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `::DoSpinupTEM`: DESCRIPTION
 """
-function coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, tem_models, tem_spinup, ::DoSpinupTEM) # with spinup
+function coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, tem_spinup, ::DoSpinupTEM) # with spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
-    land_spin = spinupTEM(selected_models, spinup_forcing, forcing_one_timestep, land_prec, tem_helpers, tem_models, tem_spinup)
+    land_spin = spinupTEM(selected_models, spinup_forcing, forcing_one_timestep, land_prec, tem_helpers, tem_spinup)
 
     timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_spin, tem_helpers, tem_helpers.run.debug_model)
     return nothing
@@ -107,7 +107,7 @@ end
 """
 function runTEM(forcing::NamedTuple, info::NamedTuple)
     run_helpers = prepTEM(forcing, info)
-    land_time_series = coreTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types.helpers, run_helpers.tem_with_types.models, run_helpers.tem_with_types.spinup, run_helpers.tem_with_types.helpers.run.spinup.spinup_TEM)
+    land_time_series = coreTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types.helpers, run_helpers.tem_with_types.spinup, run_helpers.tem_with_types.helpers.run.spinup_TEM)
     return landWrapper(land_time_series)
 end
 
@@ -124,7 +124,7 @@ end
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 """
 function runTEM(selected_models::Tuple, forcing::NamedTuple, spinup_forcing, forcing_one_timestep, land_init::NamedTuple, tem::NamedTuple)
-    land_time_series = coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_init, tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
+    land_time_series = coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_init, tem.helpers, tem.spinup, tem.helpers.run.spinup_TEM)
     return landWrapper(land_time_series)
 end
 
@@ -142,7 +142,7 @@ end
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 """
 function runTEM(selected_models::Tuple, forcing::NamedTuple, spinup_forcing, forcing_one_timestep, land_time_series, land_init::NamedTuple, tem::NamedTuple)
-    coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_time_series, land_init, tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
+    coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_time_series, land_init, tem.helpers, tem.spinup, tem.helpers.run.spinup_TEM)
     return landWrapper(land_time_series)
 end
 
@@ -183,7 +183,7 @@ time loop of the model run where forcing for ONE time step is used to run model 
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::DoDebugModel`: a flag indicating that the models should be debugged and run for only one time step
 """
-function timeLoopTEM(selected_models, forcing, forcing_one_timestep, _, land, tem_helpers, ::DoDebugModel) # debug the models
+function timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, ::DoDebugModel) # debug the models
     timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_helpers.run.debug_model)
     return nothing
 end

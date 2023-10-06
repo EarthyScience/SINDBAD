@@ -32,12 +32,10 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => false,
-    "experiment.flags.spinup.save_spinup" => false,
     "experiment.flags.catch_model_errors" => true,
-    "experiment.flags.spinup.spinup_TEM" => true,
+    "experiment.flags.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
     "experiment.exe_rules.model_array_type" => model_array_type,
-    "experiment.flags.spinup.run_spinup" => true,
     "forcing.default_forcing.data_path" => path_input,
     "experiment.model_output.path" => path_output,
     "experiment.model_output.output_array_type" => "array",
@@ -105,23 +103,9 @@ forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
 # land_one = run_helpers.land_one;
-@time runTEM!(info.tem.models.forward,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
 
 
-# @time spinupTEM(
-#     info.tem.models.forward,
-#     run_helpers.loc_forcings[1],
-#     run_helpers.forcing_one_timestep,
-#     run_helpers.land_init_space[1],
-#     run_helpers.tem_with_types.helpers,
-#     run_helpers.tem_with_types.models,
-#     run_helpers.tem_with_types.spinup);
 
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
