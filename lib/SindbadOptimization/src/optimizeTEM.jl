@@ -150,7 +150,6 @@ function optimizeTEM(forcing::NamedTuple,
 
     param_to_index = getParameterIndices(tem.models.forward, tbl_params);
     
-    cost_options = prepCostOptions(observations, optim.cost_options)
 
     # get the default and bounds
     default_values = tbl_params.default
@@ -158,6 +157,9 @@ function optimizeTEM(forcing::NamedTuple,
     upper_bounds = tbl_params.upper
 
     run_helpers = prepTEM(forcing, info)
+
+    cost_options = prepCostOptions(observations, optim.cost_options)
+
     # param_model_id_val = info.optim.param_model_id_val
     cost_function =
         x -> getLoss(x,
