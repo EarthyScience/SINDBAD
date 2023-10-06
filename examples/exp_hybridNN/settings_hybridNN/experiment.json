@@ -27,12 +27,12 @@
     "yax_max_cache": 2e9
   },
   "flags": {
-    "calc_cost": true,
+    "calc_cost": false,
     "catch_model_errors": false,
     "debug_model": false,
     "inline_update": false,
     "run_forward": true,
-    "run_optimization": false,
+    "run_optimization": true,
     "save_info": true,
     "spinup_TEM": true,
     "store_spinup": false,

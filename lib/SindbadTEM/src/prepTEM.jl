@@ -137,7 +137,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, observations::NamedTu
 
 
     ## run the model for one time step
-    @info "     producing model output with one location and one time step"
+    @info "     model run for one location and time step"
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     output_array = output.data
@@ -216,7 +216,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 
 
     ## run the model for one time step
-    @info "     producing model output with one location and one time step"
+    @info "     model run for one location and time step"
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     output_array = output.data
@@ -267,14 +267,13 @@ function getSpinupTemLite(tem_with_types)
     tem_spinup = tem_with_types.spinup
     newseqs = []
     for seq in tem_spinup.sequence
-        SpinSequenceWithAggregator
         ns = (; forcing=seq.forcing, n_repeat= seq.n_repeat, n_timesteps=seq.n_timesteps, spinup_mode=seq.spinup_mode, options=seq.options)
         # ns = SpinSequence(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.options)
         push!(newseqs, ns)
     end
-    restart_file = tem_spinup.restart_file
-    paths = (; restart_file = isnothing(restart_file) ? "./" : restart_file)
-    tem_spin_lite = (; paths, sequence = [_s for _s in newseqs])
+    # restart_file = tem_spinup.restart_file
+    # paths = (; restart_file = isnothing(restart_file) ? "./" : restart_file)
+    tem_spin_lite = (; sequence = [_s for _s in newseqs])
     tem_with_types = (; tem_with_types..., spinup = tem_spin_lite)
     return tem_with_types
 
@@ -302,7 +301,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     tem_with_types = getTEMVals(forcing, output, tem, tem_helpers);
 
     ## run the model for one time step
-    @info "     producing model output with one location and one time step"
+    @info "     model run for one location and time step"
     land_init = output.land_init
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     loc_forcing = getLocForcingData(forcing_nt_array, loc_space_inds[1])
