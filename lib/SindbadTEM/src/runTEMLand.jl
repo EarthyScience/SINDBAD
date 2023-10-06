@@ -106,7 +106,7 @@ end
 function runTEM(forcing::NamedTuple, info::NamedTuple)
     run_helpers = prepTEM(forcing, info)
     land_time_series = coreTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types.helpers, run_helpers.tem_with_types.spinup, run_helpers.tem_with_types.helpers.run.spinup_TEM)
-    return landWrapper(land_time_series)
+    return LandWrapper(land_time_series)
 end
 
 """
@@ -123,7 +123,7 @@ end
 """
 function runTEM(selected_models::Tuple, forcing::NamedTuple, spinup_forcing, forcing_one_timestep, land_init::NamedTuple, tem::NamedTuple)
     land_time_series = coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_init, tem.helpers, tem.spinup, tem.helpers.run.spinup_TEM)
-    return landWrapper(land_time_series)
+    return LandWrapper(land_time_series)
 end
 
 """
@@ -141,7 +141,7 @@ end
 """
 function runTEM(selected_models::Tuple, forcing::NamedTuple, spinup_forcing, forcing_one_timestep, land_time_series, land_init::NamedTuple, tem::NamedTuple)
     coreTEM(selected_models, forcing, spinup_forcing, forcing_one_timestep, land_time_series, land_init, tem.helpers, tem.spinup, tem.helpers.run.spinup_TEM)
-    return landWrapper(land_time_series)
+    return LandWrapper(land_time_series)
 end
 
 """
