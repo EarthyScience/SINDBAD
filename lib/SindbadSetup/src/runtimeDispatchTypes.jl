@@ -57,16 +57,10 @@ export DoRunOptimization
 export DoNotRunOptimization
 export DoSaveInfo
 export DoNotSaveInfo
-export DoLoadSpinup
-export DoNotLoadSpinup
-export DoSaveSpinup
-export DoNotSaveSpinup
 export DoSpinupTEM
 export DoNotSpinupTEM
 export DoStoreSpinup
 export DoNotStoreSpinup
-export DoRunSpinup
-export DoNotRunSpinup
 
 struct DoCalcCost end
 struct DoNotCalcCost end
@@ -80,12 +74,6 @@ struct DoRunOptimization end
 struct DoNotRunOptimization end
 struct DoSaveInfo end
 struct DoNotSaveInfo end
-struct DoLoadSpinup end
-struct DoNotLoadSpinup end
-struct DoSaveSpinup end
-struct DoNotSaveSpinup end
-struct DoRunSpinup end
-struct DoNotRunSpinup end
 struct DoSpinupTEM end
 struct DoNotSpinupTEM end
 struct DoStoreSpinup end

@@ -34,13 +34,8 @@
     "run_forward": true,
     "run_optimization": true,
     "save_info": true,
-    "spinup": {
-      "load_spinup": false,
-      "run_spinup": true,
-      "save_spinup": false,
-      "spinup_TEM": true,
-      "store_spinup": false
-    },
+    "spinup_TEM": true,
+    "store_spinup": false,
     "use_forward_diff": false
   },
   "model_output": {
@@ -70,7 +65,7 @@
   },
   "model_spinup": {
     "paths": {
-      "restart_file_in": "exp_loadData/output_DE-Hai_WROASTED/restart.jld2",
+      "restart_file": "exp_loadData/output_DE-Hai_WROASTED/restart.jld2",
       "restart_file_out": "out.restart.jld2"
     },
     "sequence": [

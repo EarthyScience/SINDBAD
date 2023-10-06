@@ -33,13 +33,8 @@
     "run_forward": true,
     "run_optimization": false,
     "save_info": true,
-    "spinup": {
-      "load_spinup": false,
-      "run_spinup": true,
-      "save_spinup": false,
-      "spinup_TEM": true,
-      "store_spinup": false
-    },
+    "spinup_TEM": true,
+    "store_spinup": false,
     "use_forward_diff": false
   },
   "model_output": {
@@ -71,10 +66,7 @@
     }
   },
   "model_spinup": {
-    "paths": {
-      "restart_file_in": null,
-      "restart_file_out": null
-    },
+    "restart_file": null,
     "sequence": [
       {
         "forcing": "day_MSC",
