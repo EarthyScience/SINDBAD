@@ -44,10 +44,10 @@ function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
                 )
             end
             if order_changed_warn
-                @warn " changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
+                @warn "changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
                 order_changed_warn = false
             end
-            @warn "     $(sm) order:: old: $(findfirst(e->e==sm, all_sindbad_models)), new: $(model_info.order)"
+            @warn "$(sm) [$(Pair(findfirst(e->e==sm, all_sindbad_models), model_info.order))]"
         end
     end
 
