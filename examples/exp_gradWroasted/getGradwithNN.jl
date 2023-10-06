@@ -21,18 +21,9 @@ cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 run_helpers = prepTEM(forcing, info);
 
 
-@time runTEM!(info.tem.models.forward,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
 
-tbl_params = getParameters(info.tem.models.forward,
-    info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize,
-    info.tem.helpers.numbers.sNT);
+tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
 
 function g_loss(x,
     mods,

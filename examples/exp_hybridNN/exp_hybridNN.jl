@@ -18,10 +18,7 @@ experiment_json = "../exp_hybridNN/settings_hybridNN/experiment.json"
 
 info = getExperimentInfo(experiment_json);
 
-tbl_params = getParameters(info.tem.models.forward,
-    info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize,
-    info.tem.helpers.numbers.sNT);
+tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
@@ -36,9 +33,7 @@ forcing_one_timestep = run_helpers.forcing_one_timestep;
 land_init = run_helpers.land_one;
 tem = (;
     tem_helpers = run_helpers.tem_with_types.helpers,
-    tem_models = run_helpers.tem_with_types.models,
     tem_spinup = run_helpers.tem_with_types.spinup,
-    tem_run_spinup = run_helpers.tem_with_types.helpers.run.spinup.spinup_TEM,
 );
 
 # site specific variables
@@ -129,9 +124,9 @@ indices_sites_batch = indices_sites_training;
 params_batch = parameters_sites(; site=sites_batch);
 scaled_params_batch = getParamsAct(params_batch, tbl_params);
 
-gradient_lib = UseForwardDiff();
-gradient_lib = UseFiniteDiff();
-# gradient_lib = UseFiniteDifferences();
+gradient_lib = ForwardDiffGrad();
+gradient_lib = FiniteDiffGrad();
+# gradient_lib = FiniteDifferencesGrad();
 
 @time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, models_lt,
     sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings,

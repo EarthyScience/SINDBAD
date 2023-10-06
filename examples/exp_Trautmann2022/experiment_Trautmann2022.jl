@@ -11,9 +11,8 @@ optimize_it = false;
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => false,
-    "experiment.flags.spinup.spinup_TEM" => true,
-    "experiment.flags.debug_model" => false,
-    "experiment.flags.spinup.run_spinup" => true);
+    "experiment.flags.spinup_TEM" => true,
+    "experiment.flags.debug_model" => false);
 
 experiment_json = "../exp_Trautmann2022/settings_Trautmann2022/experiment.json";
 
@@ -24,13 +23,7 @@ GC.gc()
 
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
 
 for x ∈ 1:10
     @time runTEM!(info.tem.models.forward,
