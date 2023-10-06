@@ -5,15 +5,15 @@ export lossSite
 export trainSindbadML
 
 
-function getCacheFromOutput(loc_output, ::UseForwardDiff)
+function getCacheFromOutput(loc_output, ::ForwardDiffGrad)
     return DiffCache.(loc_output)
 end
 
-function getCacheFromOutput(loc_output, ::UseFiniteDiff)
+function getCacheFromOutput(loc_output, ::FiniteDiffGrad)
     return loc_output
 end
 
-function getCacheFromOutput(loc_output, ::UseFiniteDifferences)
+function getCacheFromOutput(loc_output, ::FiniteDifferencesGrad)
     return loc_output
 end
 
@@ -64,21 +64,21 @@ function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, epoch
 end
 
 
-function getOutputFromCache(loc_output, _, ::UseFiniteDiff)
+function getOutputFromCache(loc_output, _, ::FiniteDiffGrad)
     return loc_output
 end
 
-function getOutputFromCache(loc_output, _, ::UseFiniteDifferences)
+function getOutputFromCache(loc_output, _, ::FiniteDifferencesGrad)
     return loc_output
 end
 
-function getOutputFromCache(loc_output, new_params, ::UseForwardDiff)
+function getOutputFromCache(loc_output, new_params, ::ForwardDiffGrad)
     return get_tmp.(loc_output, (new_params,))
 end
 
 
 """
-    gradientSite(gradient_lib::UseForwardDiff, loss_function::F, vals::AbstractArray, args...
+    gradientSite(gradient_lib::ForwardDiffGrad, loss_function::F, vals::AbstractArray, args...
 
 Wraps a multi-input argument function to be used by ForwardDiff.
 
@@ -87,17 +87,17 @@ Wraps a multi-input argument function to be used by ForwardDiff.
     - vals: Gradient evaluation `values`
     - kwargs: keyword arguments needed by the loss_function
 """
-function gradientSite(gradient_lib::UseForwardDiff, loss_function::F, vals::AbstractArray, args...) where {F}
+function gradientSite(gradient_lib::ForwardDiffGrad, loss_function::F, vals::AbstractArray, args...) where {F}
     loss_tmp(x) = loss_function(x, gradient_lib, args...)
     return ForwardDiff.gradient(loss_tmp, vals)#::Vector{Float32}
 end
 
-function gradientSite(gradient_lib::UseFiniteDiff, loss_function::F, vals::AbstractArray, args...) where {F}
+function gradientSite(gradient_lib::FiniteDiffGrad, loss_function::F, vals::AbstractArray, args...) where {F}
     loss_tmp(x) = loss_function(x, gradient_lib, args...)
     return FiniteDiff.finite_difference_gradient(loss_tmp, vals)
 end
 
-function gradientSite(gradient_lib::UseFiniteDifferences, loss_function::F, vals::AbstractArray, args...) where {F}
+function gradientSite(gradient_lib::FiniteDifferencesGrad, loss_function::F, vals::AbstractArray, args...) where {F}
     loss_tmp(x) = loss_function(x, gradient_lib, args...)
     return FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1), loss_tmp, vals.data.data)
 end

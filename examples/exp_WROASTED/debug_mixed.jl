@@ -26,12 +26,10 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => true,
-    "experiment.flags.spinup.save_spinup" => false,
     "experiment.flags.catch_model_errors" => false,
-    "experiment.flags.spinup.spinup_TEM" => true,
+    "experiment.flags.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
     "experiment.exe_rules.model_array_type" => model_array_type,
-    "experiment.flags.spinup.run_spinup" => true,
     "experiment.model_output.path" => path_output,
     "experiment.model_output.format" => "nc",
     "experiment.model_output.save_single_file" => true,
@@ -45,13 +43,7 @@ forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
 
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
@@ -94,13 +86,7 @@ run_helpers_n = prepTEM(n_m, forcing, info);
     run_helpers_n.land_init_space,
     run_helpers_n.tem_with_types)
 
-@time runTEM!(info.tem.models.forward,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
 
 # some plots
 ds = forcing.data[1];

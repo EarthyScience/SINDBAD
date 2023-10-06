@@ -237,9 +237,6 @@ function prepTEMOutDirectory(infoTuple::NamedTuple)
     if infoTuple.experiment.flags.run_optimization || infoTuple.experiment.flags.calc_cost
         push!(sub_output, "optim")
     end
-    if infoTuple.experiment.flags.spinup.save_spinup
-        push!(sub_output, "spinup")
-    end
     for s_o ∈ sub_output
         if s_o == "root"
             infoTuple = setTupleSubfield(infoTuple, :output, (Symbol(s_o), path_output_new))

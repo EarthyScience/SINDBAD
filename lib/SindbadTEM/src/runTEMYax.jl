@@ -23,7 +23,7 @@ function coreTEMYax(selected_models, forcing, land_init, tem_helpers, tem_models
 
     land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
-    land_spin = spinupTEM(selected_models, spinup_forcing, forcing_one_timestep, land_prec, tem_helpers, tem_models, tem_spinup)
+    land_spin = spinupTEM(selected_models, spinup_forcing, forcing_one_timestep, land_prec, tem_helpers, tem_spinup)
 
     land_time_series = timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_helpers.run.debug_model)
 

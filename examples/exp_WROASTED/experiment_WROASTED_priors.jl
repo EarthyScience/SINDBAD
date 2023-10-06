@@ -25,11 +25,9 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => true,
-    "experiment.flags.spinup.save_spinup" => false,
     "experiment.flags.debug_model" => false,
-    "experiment.flags.spinup.spinup_TEM" => true,
+    "experiment.flags.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
-    "experiment.flags.spinup.run_spinup" => true,
     "forcing.default_forcing.data_path" => path_input,
     "experiment.model_output.path" => path_output,
     "experiment.exe_rules.parallelization" => parallelization_lib,
@@ -42,13 +40,7 @@ forcing = getForcing(info);
 #Sindbad.eval(:(error_catcher = []))    
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
 
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow

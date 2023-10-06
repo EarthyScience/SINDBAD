@@ -871,54 +871,21 @@ end
 Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
 """
 function getRestartFilePath(info::NamedTuple)
-    restart_file_in = info.experiment.model_spinup.paths.restart_file_in
-    restart_file_out = info.experiment.model_spinup.paths.restart_file_out
+    restart_file_in = info.experiment.model_spinup.restart_file
     restart_file = nothing
-    if info.experiment.flags.spinup.save_spinup
-        if isnothing(restart_file_out)
-            error(
-                "info.experiment.model_spinup.paths.restartFile is null, but info.experiment.flags.spinup.save_spinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false"
-            )
-        else
-            # ensure that the output file for spinup is jld2 format
-            if restart_file_out[(end-4):end] != ".jld2"
-                restart_file_out = restart_file_out * ".jld2"
-            end
-            if isabspath(restart_file_out)
-                restart_file = restart_file_out
-            else
-                restart_file = joinpath(info.output.spinup, restart_file_out)
-            end
-            info = (;
-                info...,
-                spinup=(;
-                    info.experiment.model_spinup...,
-                    paths=(; info.experiment.model_spinup.paths..., restart_file_out=restart_file)))
-        end
-    end
 
-    if info.experiment.flags.spinup.load_spinup
-        if isnothing(restart_file_in)
+    if !isnothing(restart_file_in)
+        if restart_file_in[(end-4):end] != ".jld2"
             error(
-                "info.experiment.model_spinup.paths.restartFile is null, but info.experiment.flags.spinup.load_spinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false"
+                "info.experiment.model_spinup.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.experiment.flags.load_spinup to false."
             )
-        else
-            if restart_file_in[(end-4):end] != ".jld2"
-                error(
-                    "info.experiment.model_spinup.paths.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.experiment.flags.spinup.load_spinup to false."
-                )
-            end
-            if isabspath(restart_file_in)
-                restart_file = restart_file_in
-            else
-                restart_file = joinpath(info.experiment_root, restart_file_in)
-            end
         end
-        info = (;
-            info...,
-            spinup=(;
-                info.experiment.model_spinup...,
-                paths=(; info.experiment.model_spinup.paths..., restart_file_in=restart_file)))
+        if isabspath(restart_file_in)
+            restart_file = restart_file_in
+        else
+            restart_file = joinpath(info.experiment_root, restart_file_in)
+        end
+        info = @set info.experiment.model_spinup.restart_file = restart_file
     end
     return info
 end

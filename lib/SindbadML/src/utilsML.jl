@@ -6,13 +6,13 @@ export partitionBatches
 export siteNameToID
 export shuffleBatches
 export shuffleList
-export UseFiniteDifferences
-export UseFiniteDiff
-export UseForwardDiff
+export FiniteDifferencesGrad
+export FiniteDiffGrad
+export ForwardDiffGrad
 
-struct UseFiniteDifferences end
-struct UseFiniteDiff end
-struct UseForwardDiff end
+struct FiniteDifferencesGrad end
+struct FiniteDiffGrad end
+struct ForwardDiffGrad end
 
 """
 `denseNN`(`in_dim::Int`, `n_neurons::Int`, `out_dim::Int`;

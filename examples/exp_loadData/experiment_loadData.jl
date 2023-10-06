@@ -18,8 +18,6 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => false,
-    "experiment.flags.spinup.save_spinup" => true,
-    "experiment.flags.spinup.load_spinup" => true,
     "forcing.default_forcing.data_path" => path_input,
     "experiment.model_output.path" => path_output,
     "optimization.observations.default_observation.data_path" => path_observation);
