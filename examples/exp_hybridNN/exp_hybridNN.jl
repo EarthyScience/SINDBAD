@@ -34,6 +34,7 @@ land_init = run_helpers.land_one;
 tem = (;
     tem_helpers = run_helpers.tem_with_types.helpers,
     tem_spinup = run_helpers.tem_with_types.spinup,
+    tem_run_spinup = run_helpers.tem_with_types.helpers.run.spinup_TEM,
 );
 
 # site specific variables
@@ -52,7 +53,7 @@ loc_spinup_forcing = loc_spinup_forcings[site_location];
 
 
 # run the model
-@time coreTEM!( models_lt, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem...)
+@time coreTEM!(models_lt, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem...)
 
 # cost related
 
@@ -75,7 +76,7 @@ xfeatures_all = xfeatures_o(; features = new_features);
 sites_feature_all = [s for s in xfeatures_all.site];
 sites_common_all = intersect(sites_feature_all, sites_forcing);
 
-test_grads = 16;
+test_grads = 32;
 test_grads = 0;
 if test_grads !== 0
     sites_common = sites_common_all[1:test_grads];
@@ -93,9 +94,10 @@ n_features = length(xfeatures.features);
 # get site splits 
 train_split = 0.8;
 valid_split = 0.1;
-batch_size = 16;
+batch_size = 32;
 batch_size = min(batch_size, trunc(Int, 1/3*length(sites_common)));
 batch_seed = 123;
+
 
 n_sites = length(sites_common);
 n_batches = trunc(Int, n_sites * train_split/batch_size);
@@ -117,7 +119,6 @@ ml_baseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=523
 parameters_sites = ml_baseline(xfeatures);
 
 ## test for gradients in batch
-fgrads_batch = zeros(Float32, n_params, length(sites_training));
 grads_batch = zeros(Float32, n_params, length(sites_training));
 sites_batch = sites_training;#[1:n_sites_train];
 indices_sites_batch = indices_sites_training;
@@ -128,20 +129,12 @@ gradient_lib = ForwardDiffGrad();
 gradient_lib = FiniteDiffGrad();
 # gradient_lib = FiniteDifferencesGrad();
 
-@time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, models_lt,
-    sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings,
-    forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index,
-    cost_options, constraint_method)
+@time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, models_lt, sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
 
 # machine learning parameters baseline
-@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures,
-    models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings,
-    forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, 
-    param_to_index, cost_options, constraint_method;
-    n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed,
-    batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data,
-    name="seq_training_output")
+@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data,name="seq_training_output")
 
+f_suffix = "_epoch-$(n_epochs)_batch-size-$(batch_size)-seed-$(batch_seed)_$(nameof(typeof(gradient_lib)))"
 using CairoMakie
 fig = Figure(; resolution = (2400,1200))
 ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site")
@@ -149,7 +142,7 @@ obj = plot!(ax, sites_loss';
     colorrange=(0,5))
 Colorbar(fig[1,2], obj)
 fig
-save(joinpath(info.output.figure, "epoch_loss.png"), fig)
+save(joinpath(info.output.figure, "epoch_loss$(f_suffix).png"), fig)
 
 fig = Figure(; resolution = (2400,1200))
 ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site loss")
@@ -158,11 +151,8 @@ foreach(axes(sites_loss,1)) do _cl
     fig
     obj = lines!(ax, mean(sites_loss, dims=1)[1,:], linewidth = 5, color = "black")
 end
-save(joinpath(info.output.figure, "epoch_lines.png"), fig)
+save(joinpath(info.output.figure, "epoch_lines$(f_suffix).png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
-@time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, models_lt,
-    sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings,
-    forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index,
-    cost_options, constraint_method; logging=false)
+@time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false)

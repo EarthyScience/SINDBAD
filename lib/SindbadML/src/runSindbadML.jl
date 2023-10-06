@@ -113,10 +113,10 @@ function gradientBatch!(gradient_lib, loss_function::F, grads_batch, scaled_para
     p = Progress(length(sites_batch); desc="Computing batch grads...", color=:yellow, enabled=logging)
     @sync begin
         for idx ∈ eachindex(indices_batch)
-           Threads.@spawn begin
+            Threads.@spawn begin
                 site_location = indices_batch[idx]
                 site_name = sites_batch[idx]
-                loc_params = scaled_params_batch(site=site_name)
+                loc_params = scaled_params_batch(site=site_name).data.data
                 loc_forcing = loc_forcings[site_location]
                 loc_obs = loc_observations[site_location]
                 loc_output = loc_outputs[site_location]

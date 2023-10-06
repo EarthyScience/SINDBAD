@@ -139,13 +139,7 @@ function getDeltaPool(pool_dat::AbstractArray, spinup_info, _)
     n_timesteps = spinup_info.n_timesteps
     land = setTupleSubfield(land, :pools, (spinup_info.pool, pool_dat))
 
-    land = timeLoopTEMSpinup(
-        spinup_models,
-        spinup_forcing,
-        forcing_one_timestep,
-        deepcopy(land),
-        tem_helpers,
-        n_timesteps)
+    land = timeLoopTEMSpinup(spinup_models, spinup_forcing, forcing_one_timestep, deepcopy(land), tem_helpers, n_timesteps)
     tmp = getfield(land.pools, spinup_info.pool)
     Δpool = tmp - pool_dat
     return Δpool
@@ -190,14 +184,7 @@ do/run the spinup and update the state using a simple timeloop through the input
 - `_`: unused argument
 - `::SelSpinupModels`: DESCRIPTION
 """
-function spinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::SelSpinupModels)
+function spinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::SelSpinupModels)
     land = timeLoopTEMSpinup(spinup_models,
         spinup_forcing,
         forcing_one_timestep,
@@ -226,14 +213,7 @@ do/run the spinup and update the state using a simple timeloop through the input
 - `_`: unused argument
 - `::AllForwardModels`: a dispatch type of run all models
 """
-function spinup(
-    all_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::AllForwardModels)
+function spinup(all_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::AllForwardModels)
     land = timeLoopTEMSpinup(all_models,
         spinup_forcing,
         forcing_one_timestep,
@@ -258,14 +238,7 @@ end
 - `_`: unused argument
 - `::NlsolveFixedpointTrustregionTWS`: DESCRIPTION
 """
-function spinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::NlsolveFixedpointTrustregionTWS)
+function spinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::NlsolveFixedpointTrustregionTWS)
     TWS_spin = Spinup_TWS(spinup_models, spinup_forcing, tem_helpers, land, forcing_one_timestep, n_timesteps)
     r = fixedpoint(TWS_spin, Vector(deepcopy(land.pools.TWS)); method=:trust_region)
     TWS = r.zero
@@ -289,14 +262,7 @@ end
 - `_`: unused argument
 - `::NlsolveFixedpointTrustregionCEcoTWS`: DESCRIPTION
 """
-function spinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::NlsolveFixedpointTrustregionCEcoTWS)
+function spinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::NlsolveFixedpointTrustregionCEcoTWS)
     cEco_TWS_spin = Spinup_cEco_TWS(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), forcing_one_timestep, n_timesteps, Vector(deepcopy(land.pools.TWS)))
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
     # r = fixedpoint(cEco_TWS_spin, p_init; method=:trust_region)
@@ -333,14 +299,7 @@ end
 - `_`: unused argument
 - `::NlsolveFixedpointTrustregionCEco`: DESCRIPTION
 """
-function spinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::NlsolveFixedpointTrustregionCEco)
+function spinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::NlsolveFixedpointTrustregionCEco)
     cEco_spin = Spinup_cEco(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), forcing_one_timestep, n_timesteps)
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
     r = fixedpoint(cEco_spin, p_init; method=:trust_region)
@@ -460,23 +419,9 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::ODEAutoTsit5Rodas5`: DESCRIPTION
 """
-function spinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::ODEAutoTsit5Rodas5)
+function spinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::ODEAutoTsit5Rodas5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(
-            spinup_models,
-            spinup_forcing,
-            forcing_one_timestep,
-            land,
-            Symbol(sel_pool),
-            tem_helpers,
-            n_timesteps)
+        p_info = getSpinupInfo(spinup_models, spinup_forcing, forcing_one_timestep, land, Symbol(sel_pool), tem_helpers, n_timesteps)
         tspan = (0.0, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
         init_pool = deepcopy(getfield(p_info.land[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
@@ -503,23 +448,9 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::ODEDP5`: DESCRIPTION
 """
-function spinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::ODEDP5)
+function spinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::ODEDP5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(
-            spinup_models,
-            spinup_forcing,
-            forcing_one_timestep,
-            land,
-            Symbol(sel_pool),
-            tem_helpers,
-            n_timesteps)
+        p_info = getSpinupInfo(spinup_models, spinup_forcing, forcing_one_timestep, land, Symbol(sel_pool), tem_helpers, n_timesteps)
         tspan = (0.0, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
         init_pool = deepcopy(getfield(p_info.land[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
@@ -547,23 +478,9 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::ODETsit5`: DESCRIPTION
 """
-function spinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::ODETsit5)
+function spinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::ODETsit5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(
-            spinup_models,
-            spinup_forcing,
-            forcing_one_timestep,
-            land,
-            Symbol(sel_pool),
-            tem_helpers,
-            n_timesteps)
+        p_info = getSpinupInfo(spinup_models, spinup_forcing, forcing_one_timestep, land, Symbol(sel_pool), tem_helpers, n_timesteps)
         tspan = (0.0, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
         init_pool = deepcopy(getfield(p_info.land[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
@@ -590,23 +507,9 @@ do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of Di
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::SSPDynamicSSTsit5`: DESCRIPTION
 """
-function spinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::SSPDynamicSSTsit5)
+function spinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::SSPDynamicSSTsit5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(
-            spinup_models,
-            spinup_forcing,
-            forcing_one_timestep,
-            land,
-            Symbol(sel_pool),
-            tem_helpers,
-            n_timesteps)
+        p_info = getSpinupInfo(spinup_models, spinup_forcing, forcing_one_timestep, land, Symbol(sel_pool), tem_helpers, n_timesteps)
         tspan = (0.0, tem_spinup.differential_eqn.time_jump)
         init_pool = deepcopy(getfield(p_info.land[:pools], p_info.pool))
         ssp_prob = SteadyStateProblem(getDeltaPool, init_pool, p_info)
@@ -630,23 +533,9 @@ do/run the spinup using SteadyState solver and SSRootfind method of Differential
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::SSPSSRootfind`: DESCRIPTION
 """
-function spinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    ::SSPSSRootfind)
+function spinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, ::SSPSSRootfind)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(
-            spinup_models,
-            spinup_forcing,
-            forcing_one_timestep,
-            land,
-            Symbol(sel_pool),
-            tem_helpers,
-            n_timesteps)
+        p_info = getSpinupInfo(spinup_models, spinup_forcing, forcing_one_timestep, land, Symbol(sel_pool), tem_helpers, n_timesteps)
         tspan = (0.0, tem_spinup.differential_eqn.time_jump)
         init_pool = deepcopy(getfield(p_info.land[:pools], p_info.pool))
         ssp_prob = SteadyStateProblem(getDeltaPool, init_pool, p_info)
@@ -663,15 +552,7 @@ function sequenceForcing(spinup_forcings::NamedTuple, forc_name::Symbol)
 end
 
 
-function sequenceLoop(spinup_models,
-    sel_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    log_loop,
-    n_repeat,
-    spinup_mode)
+function sequenceLoop(spinup_models, sel_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, log_loop, n_repeat, spinup_mode)
     for loop_index ∈ 1:n_repeat
         @debug "        Loop: $(loop_index)/$(n_repeat)"
         land = spinup(spinup_models,
@@ -717,25 +598,8 @@ function setSpinupLog(land, _, ::DoNotStoreSpinup)
     return land
 end
 
-function spinupSequence(
-    spinup_models,
-    sel_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps,
-    log_index,
-    n_repeat,
-    spinup_mode)
-    land = sequenceLoop(spinup_models,
-        sel_forcing,
-        forcing_one_timestep,
-        land,
-        tem_helpers,
-        n_timesteps,
-        log_index,
-        n_repeat,
-        spinup_mode)
+function spinupSequence(spinup_models, sel_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, log_index, n_repeat, spinup_mode)
+    land = sequenceLoop(spinup_models, sel_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, log_index, n_repeat, spinup_mode)
     # end
     return land
 end
@@ -754,14 +618,7 @@ The main spinup function that handles the spinup method based on inputs from spi
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
 """
-function spinupTEM(
-    selected_models,
-    spinup_forcings,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    tem_spinup)
-
+function spinupTEM(selected_models, spinup_forcings, forcing_one_timestep, land, tem_helpers, tem_spinup)
     log_index = 1
     for spin_seq ∈ tem_spinup.sequence
         forc_name = spin_seq.forcing
@@ -773,7 +630,6 @@ function spinupTEM(
         land = spinupSequence(selected_models, sel_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, log_index, n_repeat, spinup_mode)
         log_index += n_repeat
     end
-
     return land
 end
 
@@ -792,13 +648,7 @@ do/run the time loop of the spinup models to update the pool. Note that, in this
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `n_timesteps`: number of time steps
 """
-function timeLoopTEMSpinup(
-    spinup_models,
-    spinup_forcing,
-    forcing_one_timestep,
-    land,
-    tem_helpers,
-    n_timesteps)
+function timeLoopTEMSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps)
     for ts ∈ 1:n_timesteps
         f_ts = getForcingForTimeStep(spinup_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_types)
         land = computeTEM(spinup_models, f_ts, land, tem_helpers.model_helpers)
