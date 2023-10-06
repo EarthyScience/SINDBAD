@@ -27,7 +27,7 @@ function coreTEMYax(selected_models, forcing, land_init, tem_helpers, tem_models
 
     land_time_series = timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_helpers.run.debug_model)
 
-    return landWrapper(land_time_series)
+    return LandWrapper(land_time_series)
 end
 
 
