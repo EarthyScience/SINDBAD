@@ -144,7 +144,7 @@ end
 
 
 function trainSindbadML(gradient_lib, nn_model_params::Flux.Chain, loss_function::F, xfeatures,
-    models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings,
+    selected_models, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings,
     forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem,
     param_to_index, cost_options, constraint_method; n_epochs=2, optimizer=Optimisers.Adam(),
     batch_seed=123, batch_size=4, shuffle=true, local_root=nothing, name="seq_training_output",
@@ -176,7 +176,7 @@ function trainSindbadML(gradient_lib, nn_model_params::Flux.Chain, loss_function
             scaled_params_batch = getParamsAct(new_params, tbl_params)
             grads_batch .= zero(Float32)
             
-            gradientBatch!(gradient_lib, loss_function, grads_batch, scaled_params_batch, models_lt, sites_batch, indices_batch, loc_forcings, loc_spinup_forcings,
+            gradientBatch!(gradient_lib, loss_function, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_batch, loc_forcings, loc_spinup_forcings,
             forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=true)
 
             num_nans = sum(isnan.(grads_batch))
@@ -191,7 +191,7 @@ function trainSindbadML(gradient_lib, nn_model_params::Flux.Chain, loss_function
                     println("   site: ", site_name_tmp)
                     println("   parameter: ", Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp])))
                     println("   parameter_vector: ", p_vec_tmp)
-                    loss_function(p_vec_tmp, models_lt, loc_forcings[sii],
+                    loss_function(p_vec_tmp, selected_models, loc_forcings[sii],
                     loc_spinup_forcings[sii], forcing_one_timestep, loc_outputs[sii],
                     deepcopy(land_init), tem, param_to_index, loc_observations[sii],
                     cost_options[sii], constraint_method ; show_vec=true)
@@ -220,7 +220,7 @@ function trainSindbadML(gradient_lib, nn_model_params::Flux.Chain, loss_function
         scaled_params_epoch = getParamsAct(params_epoch, tbl_params)
         
         getLossForSites(gradient_lib, loss_function, loss_array_sites, epoch,
-        scaled_params_epoch, models_lt, sites_training, indices_sites_training, loc_forcings,
+        scaled_params_epoch, selected_models, sites_training, indices_sites_training, loc_forcings,
         loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations,
         tem, param_to_index, cost_options, constraint_method; logging=false)
 
