@@ -16,7 +16,7 @@ export runTEM
 - `_`: unused argument
 - `DoNotSpinupTEM`: DESCRIPTION
 """
-function coreTEM(selected_models, forcing, _, forcing_one_timestep, land_init, tem_helpers, _, _, ::DoNotSpinupTEM) # without spinup
+function coreTEM(selected_models, forcing, _, forcing_one_timestep, land_init, tem_helpers, _, ::DoNotSpinupTEM) # without spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
@@ -67,9 +67,7 @@ end
 - `::DoNotSpinupTEM`: DESCRIPTION
 """
 function coreTEM(selected_models, forcing, _, forcing_one_timestep, land_time_series, land_init, tem_helpers, _, ::DoNotSpinupTEM) # without spinup
-
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
-
     timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_prec, tem_helpers, tem_helpers.run.debug_model)
     return nothing
 end
@@ -183,8 +181,8 @@ time loop of the model run where forcing for ONE time step is used to run model 
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::DoDebugModel`: a flag indicating that the models should be debugged and run for only one time step
 """
-function timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, ::DoDebugModel) # debug the models
-    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_helpers.run.debug_model)
+function timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, _, tem_helpers, ::DoDebugModel) # debug the models
+    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, DoDebugModel())
     return nothing
 end
 
