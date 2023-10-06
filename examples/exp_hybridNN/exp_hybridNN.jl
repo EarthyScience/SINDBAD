@@ -23,11 +23,10 @@ tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_d
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 
-models = info.tem.models.forward;
-param_to_index = getParameterIndices(models, tbl_params);
-models_lt = makeLongTuple(models, 10);
+selected_models = info.tem.models.forward;
+param_to_index = getParameterIndices(selected_models, tbl_params);
 
-run_helpers = prepTEM(models_lt, forcing, observations, info);
+run_helpers = prepTEM(selected_models, forcing, observations, info);
 
 forcing_one_timestep = run_helpers.forcing_one_timestep;
 land_init = run_helpers.land_one;
@@ -53,7 +52,7 @@ loc_spinup_forcing = loc_spinup_forcings[site_location];
 
 
 # run the model
-@time coreTEM!(models_lt, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem...)
+@time coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem...)
 
 # cost related
 
@@ -129,10 +128,10 @@ gradient_lib = ForwardDiffGrad();
 gradient_lib = FiniteDiffGrad();
 # gradient_lib = FiniteDifferencesGrad();
 
-@time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, models_lt, sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
+@time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
 
 # machine learning parameters baseline
-@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data,name="seq_training_output")
+@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, selected_models, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data,name="seq_training_output")
 
 f_suffix = "_epoch-$(n_epochs)_batch-size-$(batch_size)-seed-$(batch_seed)_$(nameof(typeof(gradient_lib)))"
 using CairoMakie
@@ -155,4 +154,4 @@ save(joinpath(info.output.figure, "epoch_lines$(f_suffix).png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
-@time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, models_lt, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false)
+@time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, selected_models, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false)
