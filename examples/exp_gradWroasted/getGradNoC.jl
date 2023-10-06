@@ -73,10 +73,7 @@ end
 
 
 
-tbl_params = getParameters(info.tem.models.forward,
-    info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize,
-    info.tem.helpers.numbers.sNT);
+tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
 
 
 CHUNK_SIZE = 10

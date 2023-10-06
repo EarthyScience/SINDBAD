@@ -41,10 +41,10 @@ for (i, tj) ∈ enumerate(tjs)
     land_init = run_helpers.land_one
     sel_pool = :cEco
 
-    spinup_models = tem_with_types.models.forward[tem_with_types.models.is_spinup]
+    spinup_models = tem_with_types.models.forward
     sp = ODETsit5()
     @show "ODE_Init", tj
-    @time out_sp_ode = SindbadTEM.runSpinup(
+    @time out_sp_ode = SindbadTEM.spinup(
         spinup_models,
         sel_forcing,
         forcing_one_timestep,
@@ -57,8 +57,8 @@ for (i, tj) ∈ enumerate(tjs)
     @show "Exp_Init", tj
     sp = selSpinupModels()
     out_sp_exp = land_init
-    @time for nl ∈ 1:Int(tem_with_types.spinup.differential_eqn.time_jump)
-        out_sp_exp = SindbadTEM.runSpinup(
+    @time for nl ∈ 1:Int(tem_with_types.differential_eqn.time_jump)
+        out_sp_exp = SindbadTEM.spinup(
             spinup_models,
             sel_forcing,
             forcing_one_timestep,

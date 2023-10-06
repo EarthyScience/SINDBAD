@@ -9,8 +9,7 @@ optimize_it = false;
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => false,
-    "experiment.flags.spinup.spinup_TEM" => true,
-    "experiment.flags.spinup.run_spinup" => true);
+    "experiment.flags.spinup_TEM" => true);
 
 experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 
@@ -20,13 +19,7 @@ forcing = getForcing(info);
 GC.gc()
 
 run_helpers = prepTEM(forcing, info);
-@time runTEM!(info.tem.models.forward,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
 
 ds = forcing.data[1];
 plotdat = run_helpers.output_array;
