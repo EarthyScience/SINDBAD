@@ -658,6 +658,9 @@ end
 
 =#
 
+function sequenceForcing(spinup_forcings::NamedTuple, forc_name::Symbol)
+    return spinup_forcings[forc_name]::NamedTuple
+end
 
 
 function sequenceLoop(spinup_models,
@@ -714,7 +717,6 @@ function setSpinupLog(land, _, ::DoNotStoreSpinup)
     return land
 end
 
-
 function spinupSequence(
     spinup_models,
     sel_forcing,
@@ -740,7 +742,7 @@ end
 
 
 """
-    spinupTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup)
+    spinupTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_spinup)
 
 The main spinup function that handles the spinup method based on inputs from spinup.json. Either the spinup is loaded or/and run using spinup functions for different spinup methods.
 
@@ -750,7 +752,6 @@ The main spinup function that handles the spinup method based on inputs from spi
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
 """
 function spinupTEM(
@@ -768,7 +769,7 @@ function spinupTEM(
         n_repeat = spin_seq.n_repeat
         spinup_mode = spin_seq.spinup_mode
         @debug "Spinup: \n         spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name)"
-        sel_forcing = spinup_forcings[forc_name]
+        sel_forcing = sequenceForcing(spinup_forcings, forc_name)
         land = spinupSequence(selected_models, sel_forcing, forcing_one_timestep, land, tem_helpers, n_timesteps, log_index, n_repeat, spinup_mode)
         log_index += n_repeat
     end

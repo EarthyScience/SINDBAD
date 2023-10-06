@@ -37,7 +37,7 @@ end
 
 
 """
-    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, tem_models, tem_spinup, ::DoSpinupTEM)
+    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, tem_spinup, ::DoSpinupTEM)
 
 core SINDBAD function that includes the precompute, spinup, and time loop of the model run
 
@@ -72,7 +72,7 @@ end
 
 
 """
-    parallelizeTEM!(selected_models, loc_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_helpers, tem_models, tem_spinup, ::UseThreadsParallelization)
+    parallelizeTEM!(selected_models, loc_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_helpers, tem_spinup, ::UseThreadsParallelization)
 
 parallelize SINDBAD TEM using threads as backend
 
@@ -83,27 +83,18 @@ parallelize SINDBAD TEM using threads as backend
 - `loc_outputs`: a collection of copies of outputs for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `land_init_space`: a collection of initial SINDBAD land for each location. This (rather inefficient) approach is necessary to ensure that the subsequent locations do not overwrite the model pools and states (arrays) of preceding lcoations
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `::UseThreadsParallelization`: type defining dispatch for threads based parallelization
 """
 function parallelizeTEM!(selected_models, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_helpers, tem_spinup, ::UseThreadsParallelization)
-    @sync begin
-        for space_index ∈ eachindex(loc_forcings)
-            Threads.@spawn begin
-                coreTEM!(selected_models, loc_forcings[space_index], loc_spinup_forcings[space_index], forcing_one_timestep, loc_outputs[space_index], land_init_space[space_index], tem_helpers, tem_spinup, tem_helpers.run.spinup_TEM)
-            end
-        end
+    Threads.@threads for space_index ∈ eachindex(loc_forcings)
+        coreTEM!(selected_models, loc_forcings[space_index], loc_spinup_forcings[space_index], forcing_one_timestep, loc_outputs[space_index], land_init_space[space_index], tem_helpers, tem_spinup, tem_helpers.run.spinup_TEM)
     end
-
-    # Threads.@threads for space_index ∈ eachindex(loc_forcings)
-    #     coreTEM!(selected_models, loc_forcings[space_index], loc_spinup_forcings[space_index], forcing_one_timestep, loc_outputs[space_index], land_init_space[space_index], tem_helpers, tem_spinup, tem_helpers.run.spinup_TEM)
-    # end
     return nothing
 end
 
 """
-    parallelizeTEM!(selected_models, loc_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_helpers, tem_models, tem_spinup, ::UseQbmapParallelization)
+    parallelizeTEM!(selected_models, loc_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_helpers, tem_spinup, ::UseQbmapParallelization)
 
 parallelize SINDBAD TEM using qbmap as backend
 
@@ -114,12 +105,10 @@ parallelize SINDBAD TEM using qbmap as backend
 - `loc_outputs`: a collection of copies of outputs for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `land_init_space`: a collection of initial SINDBAD land for each location. This (rather inefficient) approach is necessary to ensure that the subsequent locations do not overwrite the model pools and states (arrays) of preceding lcoations
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `::UseQbmapParallelization`: type defining dispatch for qbmap based parallelization
 """
-function parallelizeTEM!(selected_models, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_helpers, tem_spinup,
-    ::UseQbmapParallelization)
+function parallelizeTEM!(selected_models, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_helpers, tem_spinup, ::UseQbmapParallelization)
     space_index = 1
     qbmap(loc_forcings) do _
         coreTEM!(selected_models, loc_forcings[space_index], loc_spinup_forcings[space_index], forcing_one_timestep, loc_outputs[space_index], land_init_space[space_index], tem_helpers, tem_spinup, tem_helpers.run.spinup_TEM)
@@ -156,14 +145,7 @@ a function to run SINDBAD Terrestrial Ecosystem Model that simulates all locatio
 - `land_init_space`: a collection of initial SINDBAD land for each location. This (rather inefficient) approach is necessary to ensure that the subsequent locations do not overwrite the model pools and states (arrays) of preceding lcoations
 - `tem_with_types`: a prepTEM revised info.tem where types are defined and added to the fields for dispatch based on types
 """
-function runTEM!(
-    selected_models,
-    loc_forcings,
-    loc_spinup_forcings,
-    forcing_one_timestep,
-    loc_outputs,
-    land_init_space,
-    tem_with_types::NamedTuple)
+function runTEM!(selected_models, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_with_types::NamedTuple)
     parallelizeTEM!(selected_models, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_with_types.helpers, tem_with_types.spinup, tem_with_types.helpers.run.parallelization)
     return nothing
 end
