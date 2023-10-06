@@ -110,11 +110,11 @@ indices_sites_training = siteNameToID.(sites_training, Ref(sites_forcing));
 
 
 # NN 
-n_epochs = 5;
+n_epochs = 25;
 n_neurons = 32;
 n_params = sum(tbl_params.is_ml);
 shuffle_opt = true;
-ml_baseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=523);
+ml_baseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=batch_seed * 2);
 parameters_sites = ml_baseline(xfeatures);
 
 ## test for gradients in batch
