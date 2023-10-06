@@ -1058,24 +1058,10 @@ sets info.tem.variables as the union of variables to write and store from model_
 """
 function getVariablesToStore(info::NamedTuple)
     out_vars = collect(propertynames(info.experiment.model_output.variables))
-
-    if info.experiment.flags.run_optimization
-        out_vars = map(info.optim.variables.obs) do vo
-            vn = getfield(info.optim.variables.optim, vo)
-            Symbol(string(vn[1]) * "." * string(vn[2]))
-        end
-    elseif info.experiment.flags.calc_cost
-        out_vars = union(String.(keys(info.experiment.model_output.variables)),
-                info.optim.variables.model)
-    end
-
     out_vars_pairs = Tuple(getVariablePair.(out_vars))
-
     info = (; info..., tem=(; info.tem..., variables=out_vars_pairs))
     return info
 end
-
-
 
 """
     parseSaveCode(info)
@@ -1437,12 +1423,14 @@ function setupInfo(info::NamedTuple)
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
     @info "SetupExperiment: setting Spinup Info..."
     info = setSpinupInfo(info)
+
+    @info "SetupExperiment: setting Variable Helpers..."
+    info = getVariablesToStore(info)
+
     if info.experiment.flags.run_optimization || info.experiment.flags.calc_cost
         @info "SetupExperiment: setting Optimization and Observation info..."
         info = setupOptimization(info)
     end
-    @info "SetupExperiment: setting Variable Helpers..."
-    info = getVariablesToStore(info)
 
     if !isnothing(info.experiment.exe_rules.longtuple_size)
         selected_approach_forward = makeLongTuple(info.tem.models.forward, info.experiment.exe_rules.longtuple_size)
