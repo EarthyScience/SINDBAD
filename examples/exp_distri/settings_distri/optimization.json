@@ -75,7 +75,7 @@
     "default_observation": {
       "additive_unit_conversion": false,
       "bounds": null,
-      "data_path": "../data//FLUXNET_v1.zarr",
+      "data_path": "../data/fluxnet_cube/FLUXNET_v1.zarr",
       "is_categorical": false,
       "standard_name": null,
       "sindbad_unit": null,
