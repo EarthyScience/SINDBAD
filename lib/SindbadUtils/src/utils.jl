@@ -2,7 +2,7 @@ export booleanizeArray
 export doNothing
 export getAbsDataPath
 export isInvalid
-export landWrapper
+export LandWrapper
 export nonUnique
 export replaceInvalid
 export setLogLevel
@@ -12,11 +12,11 @@ export toUpperCaseFirst
 export valToSymbol
 
 """
-    landWrapper{S}
+    LandWrapper{S}
 
 Wrap the nested fields of namedtuple output of sindbad land into a nested structure of views that can be easily accessed with a dot notation
 """
-struct landWrapper{S}
+struct LandWrapper{S}
     s::S
 end
 struct GroupView{S}
@@ -28,7 +28,7 @@ struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
     groupname::Symbol
     arrayname::Symbol
 end
-Base.getproperty(s::landWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfield(s, :s))
+Base.getproperty(s::LandWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfield(s, :s))
 """
     Base.getproperty(g::GroupView, aggr_func::Symbol)
 
@@ -43,9 +43,9 @@ end
 Base.size(a::ArrayView) = size(a.s)
 Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
 Base.getindex(a::ArrayView, i::Int) = a.s[i][a.groupname][a.arrayname]
-Base.propertynames(o::landWrapper) = propertynames(first(getfield(o, :s)))
-Base.keys(o::landWrapper) = propertynames(o)
-Base.getindex(o::landWrapper, s::Symbol) = getproperty(o, s)
+Base.propertynames(o::LandWrapper) = propertynames(first(getfield(o, :s)))
+Base.keys(o::LandWrapper) = propertynames(o)
+Base.getindex(o::LandWrapper, s::Symbol) = getproperty(o, s)
 
 """
     Base.propertynames(o::GroupView)
