@@ -26,13 +26,7 @@ run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 for x ∈ 1:10
-    @time runTEM!(info.tem.models.forward,
-        run_helpers.space_forcing,
-        run_helpers.space_spinup_forcing,
-        run_helpers.loc_forcing_t,
-        run_helpers.space_output,
-        run_helpers.space_land,
-        run_helpers.tem_with_types)
+    @time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 end
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
