@@ -29,35 +29,18 @@ run_helpers = prepTEM(forcing, info);
 @time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 
 for x ∈ 1:10
-    @time runTEM!(info.tem.models.forward,
-        run_helpers.space_forcing,
-        run_helpers.space_spinup_forcing,
-        run_helpers.loc_forcing_t,
-        run_helpers.space_output,
-        run_helpers.space_land,
-        run_helpers.tem_with_types)
+    @time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 end
 
-@time spinupTEM(
-    info.tem.models.forward,
-    run_helpers.space_spinup_forcing[1],
-    run_helpers.loc_forcing_t,
-    run_helpers.space_land[1],
-    run_helpers.tem_with_types.helpers,
-    run_helpers.tem_with_types.spinup);
+@time spinupTEM(info.tem.models.forward, run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.space_land[1], run_helpers.tem_with_types.helpers, run_helpers.tem_with_types.spinup);
 
 # setLogLevel(:debug)
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
-# opt_params = out_opti.out_params;
-# out_model = out_opti.out_forward;
-# @time out_cost = runExperimentCost(experiment_json; replace_info=replace_info_spatial);
-
-
 
 ds = forcing.data[1];
-plotdat = out_opti.output.default;
+plotdat = out_opti.output.optimized;
 plotdat = output_default.output;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 output_vars = keys(plotdat)
