@@ -5,11 +5,7 @@ toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "2000"
 end_year = "2017"
-function x(a, b)
-    c=a+b
-    d=a-b
-    return c; d
-end
+
 domain = "DE-Hai"
 # domain = "MY-PSO"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
@@ -61,7 +57,7 @@ costOpt = prepCostOptions(observation, info.optim.cost_options);
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 foreach(costOpt) do var_row
     v = var_row.variable
-    @show "plot obs", v
+    println("plot obs::", v)
     v = (var_row.mod_field, var_row.mod_subfield)
     vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     v = vinfo["standard_name"]

@@ -5,11 +5,7 @@ toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "2000"
 end_year = "2017"
-function x(a, b)
-    c=a+b
-    d=a-b
-    return c; d
-end
+
 domain = "DE-Hai"
 # domain = "MY-PSO"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
@@ -25,6 +21,7 @@ model_array_type = "static_array"
 replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
     "experiment.basics.config_files.forcing" => forcing_config,
     "experiment.basics.domain" => domain,
+    "experiment.basics.name" => "WROASTED_output_all",
     "forcing.default_forcing.data_path" => path_input,
     "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
@@ -35,61 +32,33 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.exe_rules.model_array_type" => model_array_type,
     "experiment.model_output.path" => path_output,
     "experiment.model_output.format" => "nc",
-    "experiment.model_output.save_single_file" => true,
+    "experiment.model_output.save_single_file" => false,
     "experiment.exe_rules.parallelization" => parallelization_lib,
     "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.observations.default_observation.data_path" => path_observation);
 
-info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
-forcing = getForcing(info);
-run_helpers = prepTEM(forcing, info);
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
-
-land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-
-@time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
-@time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
-@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
-
-observation = out_opti.observation
-
-# some plots
-def_dat = out_opti.output.default;
-opt_dat = out_opti.output.optimized;
-costOpt = prepCostOptions(observation, info.optim.cost_options);
+@time output_all = runExperimentFullOutput(experiment_json; replace_info=replace_info);
+output_data = values(output_all.output);
+info = output_all.info;
+output_vars = info.tem.variables;
+# plot the debug figures
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-foreach(costOpt) do var_row
-    v = var_row.variable
-    @show "plot obs", v
-    v = (var_row.mod_field, var_row.mod_subfield)
+fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
+for (o, v) in enumerate(output_vars)
+    def_var = output_data[o][:, :, 1, 1]
     vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     v = vinfo["standard_name"]
-    lossMetric = var_row.cost_metric
-    loss_name = nameof(typeof(lossMetric))
-    if loss_name in (:NNSEInv, :NSEInv)
-        lossMetric = NSE()
-    end
-    (obs_var, obs_σ, def_var) = getData(def_dat, observation, var_row)
-    (_, _, opt_var) = getData(opt_dat, observation, var_row)
-    obs_var_TMP = obs_var[:, 1, 1, 1]
-    non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
-    if length(non_nan_index) < 2
-        tspan = 1:length(obs_var_TMP)
+    println("plot debug::", v)
+    xdata = [info.tem.helpers.dates.range...]
+    if size(def_var, 2) == 1
+        plot(xdata, def_var[:, 1]; label="def ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+        ylabel!("$(vinfo["standard_name"])", font=(20, :green))
+        savefig(fig_prefix * "_$(v).png")
     else
-        tspan = first(non_nan_index):last(non_nan_index)
+        foreach(axes(def_var, 2)) do ll
+            plot(xdata, def_var[:, ll]; label="def ($(round(SindbadTEM.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
+            ylabel!("$(vinfo["standard_name"])", font=(20, :green))
+            savefig(fig_prefix * "_$(v)_$(ll).png")
+        end
     end
-    obs_σ = obs_σ[tspan]
-    obs_var = obs_var[tspan, 1, 1, 1]
-    def_var = def_var[tspan, 1, 1, 1]
-    opt_var = opt_var[tspan, 1, 1, 1]
-
-    xdata = [info.tem.helpers.dates.range[tspan]...]
-    obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
-    obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
-    metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
-    metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
-    plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
-    plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
-    savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
