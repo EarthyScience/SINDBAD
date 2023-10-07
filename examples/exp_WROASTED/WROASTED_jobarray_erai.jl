@@ -140,18 +140,18 @@ for o_set in opti_set
     run_helpers = prepTEM(forcing, info)
 
     @time runTEM!(optimized_models,
-        run_helpers.loc_forcings,
-        run_helpers.loc_spinup_forcings,
-        run_helpers.forcing_one_timestep,
-        run_helpers.loc_outputs,
-        run_helpers.land_init_space,
+        run_helpers.space_forcing,
+        run_helpers.space_spinup_forcing,
+        run_helpers.loc_forcing_t,
+        run_helpers.space_output,
+        run_helpers.space_land,
         run_helpers.tem_with_types)
 
     # some plots
     ds = forcing.data[1]
     opt_dat = run_helpers.output_array
     def_dat = output_default
-    out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+    output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
     costOpt = prepCostOptions(obs_array, info.optim.cost_options)
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 
@@ -218,11 +218,11 @@ for o_set in opti_set
 
     run_helpers = prepTEM(forcing, info)
     @time runTEM!(optimized_models,
-        run_helpers.loc_forcings,
-        run_helpers.loc_spinup_forcings,
-        run_helpers.forcing_one_timestep,
-        run_helpers.loc_outputs,
-        run_helpers.land_init_space,
+        run_helpers.space_forcing,
+        run_helpers.space_spinup_forcing,
+        run_helpers.loc_forcing_t,
+        run_helpers.space_output,
+        run_helpers.space_land,
         run_helpers.tem_with_types)
 
     # save the outcubes
@@ -237,9 +237,9 @@ for o_set in opti_set
 
     # plot the debug figures
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    out_vars = out_vars
+    output_vars = output_vars
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
-    for (o, v) in enumerate(out_vars)
+    for (o, v) in enumerate(output_vars)
         def_var = run_helpers.output_array[o][:, :, 1, 1]
         vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
         v = vinfo["standard_name"]

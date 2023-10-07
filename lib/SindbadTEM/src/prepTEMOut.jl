@@ -1,5 +1,6 @@
 export createLandInit
 export getOutDims
+export getOutDimsArrays
 export prepTEMOut
 export setupOptiOutput
 
@@ -56,7 +57,7 @@ a helper function to get the name and size of the depth dimension for a given va
 # Arguments:
 - `vname`: variable name
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `land`: initial SINDBAD land with all fields and subfields
+- `land`: SINDBAD land with all fields and subfields
 """
 function getDepthDimensionSizeName(v_full_pair, info::NamedTuple, land::NamedTuple)
     v_full_str = getVariableString(v_full_pair)
@@ -66,6 +67,8 @@ function getDepthDimensionSizeName(v_full_pair, info::NamedTuple, land::NamedTup
     tmp_vars = info.experiment.model_output.variables
     dim_size = 1
     dim_name = v_name * "_idx"
+    field_name_sym = Symbol(field_name)
+    v_name_sym = Symbol(v_name)
     if v_full_sym in keys(tmp_vars)
         v_dim = tmp_vars[v_full_sym]
         dim_size = 1
@@ -96,28 +99,37 @@ function getDepthDimensionSizeName(v_full_pair, info::NamedTuple, land::NamedTup
             )
         end
 
-    elseif field_name == "pools"
-        dim_name = v_name * "_idx"
-        dim_size = length(getfield(land.pools, Symbol(v_name)))
+    elseif hasproperty(land, field_name_sym)
+        land_field = getproperty(land, field_name_sym)
+        if hasproperty(land_field, v_name_sym)
+            land_subfield = getproperty(land_field, v_name_sym)
+            if isa(land_subfield, AbstractArray)
+                dim_size = length(land_subfield)
+            elseif isa(land_subfield, Number)
+                dim_size = 1
+            else
+                dim_size = 0
+            end
+        end
     end
     return dim_size, dim_name
 end
 
 
 """
-    getNumericArrays(out_vars, info, tem_helpers, land, forcing_sizes)
+    getNumericArrays(output_vars, info, tem_helpers, land, forcing_sizes)
 
 a helper function to define/instantiate arrays for output
 
 # Arguments:
-- `out_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `land`: initial SINDBAD land with all fields and subfields
+- `land`: SINDBAD land with all fields and subfields
 - `forcing_sizes`: a NT with forcing dimensions and their sizes
 """
-function getNumericArrays(out_vars, info, tem_helpers, land, forcing_sizes)
-    outarray = map(out_vars) do vname_full
+function getNumericArrays(output_vars, info, tem_helpers, land, forcing_sizes)
+    outarray = map(output_vars) do vname_full
         depth_size, _ = getDepthDimensionSizeName(vname_full, info, land)
         ar = nothing
         ax_vals = values(forcing_sizes)
@@ -134,19 +146,61 @@ end
 
 
 """
-    getOutDims(out_vars, info, land, forcing_helpers, ::OutputYaxArray)
+    getOutDims(output_vars, info, forcing_helpers)
+
+intermediary helper function to only get the the dimensions for SINDBAD output
+
+# Arguments:
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `forcing_helpers`: a NT with information on forcing sizes and dimensions
+"""
+function getOutDims(output_vars, info, forcing_helpers)
+    land = createLandInit(info.pools, info.tem.helpers, info.tem.models)
+    outdims = getOutDims(output_vars, info, land, forcing_helpers, info.tem.helpers.run.output_array_type)
+    return outdims
+end
+
+
+
+"""
+    getOutDims(output_vars, info, land, forcing_helpers, ::OutputArray)
+
+get the dimensions for SINDBAD output using base Array as array backend
+
+# Arguments:
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `land`: SINDBAD land with all fields and subfields
+- `forcing_helpers`: a NT with information on forcing sizes and dimensions
+- `::Union{OutputArray, OutputMArray, OutputSizedArray`: a type dispatch for using base Array, MArray or SizedArray as output data
+"""
+function getOutDims(output_vars, info, land, forcing_helpers, ::Union{OutputArray, OutputMArray, OutputSizedArray})
+    outdims_pairs = getOutDimsPairs(output_vars, info, land, forcing_helpers)
+    outdims = map(outdims_pairs) do dim_pairs
+        od = []
+        for _dim in dim_pairs
+            push!(od, Dim{first(_dim)}(last(_dim)))
+        end
+        Tuple(od)
+    end
+    return outdims
+end
+
+"""
+    getOutDims(output_vars, info, land, forcing_helpers, ::OutputYaxArray)
 
 get the dimensions for SINDBAD output using YAXArray as array backend
 
 # Arguments:
-- `out_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `land`: initial SINDBAD land with all fields and subfields
+- `land`: SINDBAD land with all fields and subfields
 - `forcing_helpers`: a NT with information on forcing sizes and dimensions
 - `::OutputYAXArray`: a type dispatch for using YAXArray as output data
 """
-function getOutDims(out_vars, info, land, forcing_helpers, ::OutputYAXArray)
-    outdims_pairs = getOutDimsPairs(out_vars, info, land, forcing_helpers);
+function getOutDims(output_vars, info, land, forcing_helpers, ::OutputYAXArray)
+    outdims_pairs = getOutDimsPairs(output_vars, info, land, forcing_helpers);
     info.forcing.data_dimension.time
     space_dims = Symbol.(info.forcing.data_dimension.space)
     var_dims = map(outdims_pairs) do dim_pairs
@@ -160,7 +214,7 @@ function getOutDims(out_vars, info, land, forcing_helpers, ::OutputYAXArray)
     end
     out_file_info = getOutputFileInfo(info);
     v_index = 1
-    outdims = map(out_vars) do vname_full
+    outdims = map(output_vars) do vname_full
         vname = string(last(vname_full))
         vdims = var_dims[v_index]
         outformat = info.experiment.model_output.format
@@ -177,123 +231,119 @@ function getOutDims(out_vars, info, land, forcing_helpers, ::OutputYAXArray)
 end
 
 
-
 """
-    getOutDimsArrays(out_vars, info, _, land, _, ::OutputYaxArray)
+    getOutDimsArrays(output_vars, info, land, forcing_helpers)
 
-get the dimensions and corresponding data for SINDBAD output using YAXArray as array backend
+intermediary function to get the dimensions and corresponding data for SINDBAD output
 
 # Arguments:
-- `out_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `_`: unused argument
-- `land`: initial SINDBAD land with all fields and subfields
+- `land`: SINDBAD land with all fields and subfields
 - `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `::OutputYAXArray`: a type dispatch for using YAXArray as output data
 """
-function getOutDimsArrays(out_vars, info, _, land, forcing_helpers, oayax::OutputYAXArray)
-    outdims = getOutDims(out_vars, info, land, forcing_helpers, oayax)
-    outarray = nothing
+function getOutDimsArrays(output_vars, info, land, forcing_helpers)
+    outdims, outarray = getOutDimsArrays(output_vars, info, info.tem.helpers, land, forcing_helpers, info.tem.helpers.run.output_array_type)
     return outdims, outarray
 end
 
-"""
-    getOutDims(out_vars, info, land, forcing_helpers, ::OutputArray)
-
-get the dimensions for SINDBAD output using base Array as array backend
-
-# Arguments:
-- `out_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `land`: initial SINDBAD land with all fields and subfields
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `::OutputArray`: a type dispatch for using base Array as output data
-"""
-function getOutDims(out_vars, info, land, forcing_helpers, ::OutputArray)
-    outdims_pairs = getOutDimsPairs(out_vars, info, land, forcing_helpers)
-    outdims = map(outdims_pairs) do dim_pairs
-        od = []
-        for _dim in dim_pairs
-            push!(od, Dim{first(_dim)}(last(_dim)))
-        end
-        Tuple(od)
-    end
-    return outdims
-end
 
 """
-    getOutDimsArrays(out_vars, info, tem_helpers, land, forcing_helpers, ::OutputArray)
+    getOutDimsArrays(output_vars, info, tem_helpers, land, forcing_helpers, ::OutputArray)
 
 get the dimensions and corresponding data for SINDBAD output using base Array as array backend
 
 # Arguments:
-- `out_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `land`: initial SINDBAD land with all fields and subfields
+- `land`: SINDBAD land with all fields and subfields
 - `forcing_helpers`: a NT with information on forcing sizes and dimensions
 - `::OutputArray`: a type dispatch for using base Array as output data
 """
-function getOutDimsArrays(out_vars, info, tem_helpers, land, forcing_helpers, oarr::OutputArray)
-    outdims = getOutDims(out_vars, info, land, forcing_helpers, oarr)
-    outarray = getNumericArrays(out_vars, info, tem_helpers, land, forcing_helpers.sizes)
+function getOutDimsArrays(output_vars, info, tem_helpers, land, forcing_helpers, oarr::OutputArray)
+    outdims = getOutDims(output_vars, info, land, forcing_helpers, oarr)
+    outarray = getNumericArrays(output_vars, info, tem_helpers, land, forcing_helpers.sizes)
     return outdims, outarray
 end
 
-"""
-    getOutDimsArrays(out_vars, info, tem_helpers, land, forcing_helpers, ::OutputSizedArray)
-
-get the dimensions and corresponding data for SINDBAD output using SizedArray as array backend
-
-# Arguments:
-- `out_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `land`: initial SINDBAD land with all fields and subfields
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `::OutputSizedArray`: a type dispatch for using SizedArray as output data
-"""
-function getOutDimsArrays(out_vars, info, tem_helpers, land, forcing_helpers, ::OutputSizedArray)
-    outdims, outarray = getOutDimsArrays(out_vars, info, tem_helpers, land, forcing_helpers, OutputArray())
-    sized_array = SizedArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
-    return outdims, sized_array
-end
 
 """
-    getOutDimsArrays(out_vars, info, tem_helpers, land, forcing_helpers, ::OutputMArray)
+    getOutDimsArrays(output_vars, info, tem_helpers, land, forcing_helpers, ::OutputMArray)
 
 get the dimensions and corresponding data for SINDBAD output using MArray as array backend
 
 # Arguments:
-- `out_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `land`: initial SINDBAD land with all fields and subfields
+- `land`: SINDBAD land with all fields and subfields
 - `forcing_helpers`: a NT with information on forcing sizes and dimensions
 - `::OutputMArray`: a type dispatch for using MArray as output data
 """
-function getOutDimsArrays(out_vars, info, tem_helpers, land, forcing_helpers, ::OutputMArray)
-    outdims, outarray = getOutDimsArrays(out_vars, info, tem_helpers, land, forcing_helpers, OutputArray())
+function getOutDimsArrays(output_vars, info, tem_helpers, land, forcing_helpers, omarr::OutputMArray)
+    outdims = getOutDims(output_vars, info, land, forcing_helpers, omarr)
+    outarray = getNumericArrays(output_vars, info, tem_helpers, land, forcing_helpers.sizes)
     marray = MArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
     return outdims, marray
 end
 
 
+"""
+    getOutDimsArrays(output_vars, info, tem_helpers, land, forcing_helpers, ::OutputSizedArray)
+
+get the dimensions and corresponding data for SINDBAD output using SizedArray as array backend
+
+# Arguments:
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `land`: SINDBAD land with all fields and subfields
+- `forcing_helpers`: a NT with information on forcing sizes and dimensions
+- `::OutputSizedArray`: a type dispatch for using SizedArray as output data
+"""
+function getOutDimsArrays(output_vars, info, tem_helpers, land, forcing_helpers, osarr::OutputSizedArray)
+    outdims = getOutDims(output_vars, info, land, forcing_helpers, osarr)
+    outarray = getNumericArrays(output_vars, info, tem_helpers, land, forcing_helpers.sizes)
+    sized_array = SizedArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
+    return outdims, sized_array
+end
+
 
 """
-    getOutDimsPairs(out_vars, info, land, forcing_helpers; dthres = 1)
+    getOutDimsArrays(output_vars, info, _, land, _, ::OutputYaxArray)
+
+get the dimensions and corresponding data for SINDBAD output using YAXArray as array backend
+
+# Arguments:
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `_`: unused argument
+- `land`: SINDBAD land with all fields and subfields
+- `forcing_helpers`: a NT with information on forcing sizes and dimensions
+- `::OutputYAXArray`: a type dispatch for using YAXArray as output data
+"""
+function getOutDimsArrays(output_vars, info, _, land, forcing_helpers, oayax::OutputYAXArray)
+    outdims = getOutDims(output_vars, info, land, forcing_helpers, oayax)
+    outarray = nothing
+    return outdims, outarray
+end
+
+
+"""
+    getOutDimsPairs(output_vars, info, land, forcing_helpers; dthres = 1)
 
 creates a pair for each dimension of output variables from the information of forcing dimensions
 
 # Arguments:
-- `out_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
+- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `land`: initial SINDBAD land with all fields and subfields
+- `land`: SINDBAD land with all fields and subfields
 - `forcing_helpers`: a NT with information on forcing sizes and dimensions
 - `dthres`: threshold for number of depth layers to define depth as a new dimension
 """
-function getOutDimsPairs(out_vars, info, land, forcing_helpers; dthres=1)
+function getOutDimsPairs(output_vars, info, land, forcing_helpers; dthres=1)
     forcing_axes = forcing_helpers.axes
     dim_loops = first.(forcing_axes)
     axes_dims_pairs = []
@@ -311,7 +361,7 @@ function getOutDimsPairs(out_vars, info, land, forcing_helpers; dthres=1)
     else
         axes_dims_pairs = map(x -> Pair(first(x), last(x)), forcing_axes)
     end
-    outdims_pairs = map(out_vars) do vname_full
+    outdims_pairs = map(output_vars) do vname_full
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land)
         od = []
         push!(od, axes_dims_pairs[1])
@@ -360,7 +410,7 @@ end
 """
     getVariableString(var_pair)
 
-return a vector of pairs with field and subfield of land from the list of variables (out_vars) in field.subfield convention
+return a vector of pairs with field and subfield of land from the list of variables (output_vars) in field.subfield convention
 """
 function getVariableString(var_pair::Tuple, sep=".")
     return string(first(var_pair)) * sep * string(last(var_pair))

@@ -2,6 +2,7 @@
 export CMAEvolutionStrategyCMAES
 export EvolutionaryCMAES
 export LandOutArray
+export LandOutArrayAll
 export LandOutArrayFD
 export LandOutStacked
 export LandOutTimeseries
@@ -19,6 +20,7 @@ export OptimizationNelderMead
 struct CMAEvolutionStrategyCMAES end
 struct EvolutionaryCMAES end
 struct LandOutArray end
+struct LandOutArrayAll end
 struct LandOutArrayFD end
 struct LandOutStacked end
 struct LandOutTimeseries end

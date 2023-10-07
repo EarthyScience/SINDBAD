@@ -168,11 +168,11 @@ for site_index in sites
 
         run_helpers = prepTEM(models_with_matlab_params, forcing, info)
         @time runTEM!(models_with_matlab_params,
-            run_helpers.loc_forcings,
-            run_helpers.loc_spinup_forcings,
-            run_helpers.forcing_one_timestep,
+            run_helpers.space_forcing,
+            run_helpers.space_spinup_forcing,
+            run_helpers.loc_forcing_t,
             run_helpers.output_array,
-            run_helpers.land_init_space,
+            run_helpers.space_land,
             run_helpers.tem_with_types)
 
         outcubes = run_helpers.output_array
@@ -183,9 +183,8 @@ for site_index in sites
         varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :soilW => "wSoil", :gpp_f_soilW => "SMScGPP", :gpp_f_vpd => "VPDScGPP", :gpp_climate_stressors => "scall", :WUE => "WUE", :eco_respiration => "cRECO", :c_allocation => "cAlloc", :fAPAR => "fAPAR", :cEco => "cEco", :PAW => "pawAct", :transpiration_supply => "tranSup", :c_eco_k => "p_cTauAct_k", :auto_respiration => "cRA", :hetero_respiration => "cRH", :runoff => "roTotal", :base_runoff => "roBase", :gw_recharge => "gwRec", :c_eco_k_f_soilT => "fT", :c_eco_k_f_soilW => "p_cTaufwSoil_fwSoil", :snow_melt => "snowMelt", :groundW => "wGW", :snowW => "wSnow", :frac_snow => "wSnowFrac", :c_eco_influx => "cEcoInflux", :c_eco_efflux => "cEcoEfflux", :c_eco_out => "cEcoOut", :c_eco_flow => "cEcoFlow", :leaf_to_reserve_frac => "L2ReF", :root_to_reserve_frac => "R2ReF", :reserve_to_leaf_frac => "Re2L", :reserve_to_root_frac => "Re2R", :k_shedding_leaf_frac => "k_LshedF", :k_shedding_root_frac => "k_RshedF", :root_water_efficiency => "p_rootFrac_fracRoot2SoilD")
 
         # some plots for model simulations from JL and matlab versions
-        ds = forcing.data[1]
         opt_dat = outcubes
-        out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+        output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
         costOpt = prepCostOptions(obs_array, info.optim.cost_options)
         default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
         foreach(costOpt) do var_row
@@ -246,16 +245,16 @@ for site_index in sites
                     forcing,
                     info)                                
             runTEM!(models_with_matlab_params,
-                run_helpers.loc_forcings,
-                run_helpers.loc_spinup_forcings,
-                run_helpers.forcing_one_timestep,
-                run_helpers.loc_outputs,
-                run_helpers.land_init_space,
+                run_helpers.space_forcing,
+                run_helpers.space_spinup_forcing,
+                run_helpers.loc_forcing_t,
+                run_helpers.space_output,
+                run_helpers.space_land,
                 run_helpers.tem_with_types)
 
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-            out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
-            for (o, v) in enumerate(out_vars)
+            output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+            for (o, v) in enumerate(output_vars)
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = run_helpers.output_array[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.range...][debug_span]
