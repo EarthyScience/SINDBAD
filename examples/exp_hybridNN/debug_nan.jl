@@ -47,7 +47,7 @@ forcing = getForcing(info);
 run_helpers = prepTEM(forcing, info);
 
 
-@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 
 
 # calculate the losses
@@ -66,7 +66,7 @@ p_vec_tmp = Float32[0.57369316, 0.13665639, 0.021589328, 0.50214106, 5.8623033, 
 
 @time getLossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 
-@time getLoss(tbl_params.default, info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.output_array, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(tbl_params.default, info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-@time getLoss(p_vec_tmp, info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.output_array, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(p_vec_tmp, info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 

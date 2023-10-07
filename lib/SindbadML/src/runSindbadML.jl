@@ -18,12 +18,12 @@ function getCacheFromOutput(loc_output, ::FiniteDifferencesGrad)
 end
 
 
-function getLoss(models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem, loc_obs, cost_options, constraint_method; show_vec=false)
+function getLoss(models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem, loc_obs, cost_options, constraint_method; show_vec=false)
     coreTEM!(
         models,
         loc_forcing,
         loc_spinup_forcing,
-        forcing_one_timestep,
+        loc_forcing_t,
         loc_output,
         land_init,
         tem...)
@@ -37,8 +37,8 @@ end
 
 
 function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, epoch_number,
-    scaled_params, models, sites_list, indices_sites, loc_forcings, loc_spinup_forcings,
-    forcing_one_timestep, loc_outputs, land_one, loc_observations, tem, param_to_index,
+    scaled_params, models, sites_list, indices_sites, space_forcing, space_spinup_forcing,
+    loc_forcing_t, space_output, loc_land, loc_observations, tem, param_to_index,
     cost_options, constraint_method; logging=true) where {F}
 
     # p = Progress(size(loss_array_sites,1); desc="Computing batch grads...", color=:yellow, enabled=logging)
@@ -48,14 +48,14 @@ function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, epoch
                 site_location = indices_sites[idx]
                 site_name = sites_list[idx]
                 loc_params = scaled_params(site=site_name)
-                loc_forcing = loc_forcings[site_location]
+                loc_forcing = space_forcing[site_location]
                 loc_obs = loc_observations[site_location]
-                loc_output = loc_outputs[site_location]
-                loc_spinup_forcing = loc_spinup_forcings[site_location]
+                loc_output = space_output[site_location]
+                loc_spinup_forcing = space_spinup_forcing[site_location]
                 loc_cost_option = cost_options[site_location]
 
                 gg = loss_function(
-                    loc_params, gradient_lib, models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, deepcopy(land_one), tem, param_to_index, loc_obs, loc_cost_option, constraint_method)
+                    loc_params, gradient_lib, models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, deepcopy(loc_land), tem, param_to_index, loc_obs, loc_cost_option, constraint_method)
                 loss_array_sites[idx, epoch_number] = gg
                 # next!(p)
            end
@@ -103,8 +103,8 @@ function gradientSite(gradient_lib::FiniteDifferencesGrad, loss_function::F, val
 end
 
 function gradientBatch!(gradient_lib, loss_function::F, grads_batch, scaled_params_batch,
-    models, sites_batch, indices_batch, loc_forcings, loc_spinup_forcings, forcing_one_timestep,
-    loc_outputs, land_one, loc_observations, tem, param_to_index, cost_options,
+    models, sites_batch, indices_batch, space_forcing, space_spinup_forcing, loc_forcing_t,
+    space_output, loc_land, loc_observations, tem, param_to_index, cost_options,
     constraint_method; logging=true) where {F}
     # Threads.@spawn allows dynamic scheduling instead of static scheduling
     # of Threads.@threads macro.
@@ -117,14 +117,14 @@ function gradientBatch!(gradient_lib, loss_function::F, grads_batch, scaled_para
                 site_location = indices_batch[idx]
                 site_name = sites_batch[idx]
                 loc_params = scaled_params_batch(site=site_name).data.data
-                loc_forcing = loc_forcings[site_location]
+                loc_forcing = space_forcing[site_location]
                 loc_obs = loc_observations[site_location]
-                loc_output = loc_outputs[site_location]
-                loc_spinup_forcing = loc_spinup_forcings[site_location]
+                loc_output = space_output[site_location]
+                loc_spinup_forcing = space_spinup_forcing[site_location]
                 loc_cost_option = cost_options[site_location]
                 gg = gradientSite(gradient_lib, loss_function, loc_params, models, loc_forcing,
-                loc_spinup_forcing, forcing_one_timestep, getCacheFromOutput(loc_output,
-                gradient_lib), deepcopy(land_one), tem, param_to_index, loc_obs,
+                loc_spinup_forcing, loc_forcing_t, getCacheFromOutput(loc_output,
+                gradient_lib), deepcopy(loc_land), tem, param_to_index, loc_obs,
                 loc_cost_option, constraint_method)
                 grads_batch[:, idx] = gg
                 next!(p)
@@ -135,17 +135,17 @@ end
 
 
 function lossSite(new_params, gradient_lib, models, loc_forcing, loc_spinup_forcing, 
-    forcing_one_timestep, loc_output, land_init, tem, param_to_index, loc_obs, cost_options,
+    loc_forcing_t, loc_output, land_init, tem, param_to_index, loc_obs, cost_options,
     constraint_method; show_vec=false)
     out_data = getOutputFromCache(loc_output, new_params, gradient_lib)
     new_models = updateModelParameters(param_to_index, models, new_params)
-    return getLoss(new_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, out_data, land_init, tem, loc_obs, cost_options, constraint_method; show_vec=show_vec)
+    return getLoss(new_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, out_data, land_init, tem, loc_obs, cost_options, constraint_method; show_vec=show_vec)
 end
 
 
 function trainSindbadML(gradient_lib, nn_model_params::Flux.Chain, loss_function::F, xfeatures,
-    selected_models, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings,
-    forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem,
+    selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing,
+    loc_forcing_t, space_output, land_init, loc_observations, tbl_params, tem,
     param_to_index, cost_options, constraint_method; n_epochs=2, optimizer=Optimisers.Adam(),
     batch_seed=123, batch_size=4, shuffle=true, local_root=nothing, name="seq_training_output",
     save_batch=false, save_epoch=true) where {F}
@@ -176,8 +176,8 @@ function trainSindbadML(gradient_lib, nn_model_params::Flux.Chain, loss_function
             scaled_params_batch = getParamsAct(new_params, tbl_params)
             grads_batch .= zero(Float32)
             
-            gradientBatch!(gradient_lib, loss_function, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_batch, loc_forcings, loc_spinup_forcings,
-            forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=true)
+            gradientBatch!(gradient_lib, loss_function, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_batch, space_forcing, space_spinup_forcing,
+            loc_forcing_t, space_output, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=true)
 
             num_nans = sum(isnan.(grads_batch))
             if num_nans > 0
@@ -191,8 +191,8 @@ function trainSindbadML(gradient_lib, nn_model_params::Flux.Chain, loss_function
                     println("   site: ", site_name_tmp)
                     println("   parameter: ", Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp])))
                     println("   parameter_vector: ", p_vec_tmp)
-                    loss_function(p_vec_tmp, selected_models, loc_forcings[sii],
-                    loc_spinup_forcings[sii], forcing_one_timestep, loc_outputs[sii],
+                    loss_function(p_vec_tmp, selected_models, space_forcing[sii],
+                    space_spinup_forcing[sii], loc_forcing_t, space_output[sii],
                     deepcopy(land_init), tem, param_to_index, loc_observations[sii],
                     cost_options[sii], constraint_method ; show_vec=true)
                     println("   ----------------------------------------------------- ")
@@ -220,8 +220,8 @@ function trainSindbadML(gradient_lib, nn_model_params::Flux.Chain, loss_function
         scaled_params_epoch = getParamsAct(params_epoch, tbl_params)
         
         getLossForSites(gradient_lib, loss_function, loss_array_sites, epoch,
-        scaled_params_epoch, selected_models, sites_training, indices_sites_training, loc_forcings,
-        loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations,
+        scaled_params_epoch, selected_models, sites_training, indices_sites_training, space_forcing,
+        space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations,
         tem, param_to_index, cost_options, constraint_method; logging=false)
 
         if save_epoch

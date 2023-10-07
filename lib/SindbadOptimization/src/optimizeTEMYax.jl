@@ -1,12 +1,12 @@
 export optimizeTEMYax
 
 """
-    unpackYaxOpti(args; forcing_variables::AbstractArray)
+    unpackYaxOpti(args; forcing_vars::AbstractArray)
 
 
 """
-function unpackYaxOpti(args; forcing_variables::AbstractArray)
-    nforc = length(forcing_variables)
+function unpackYaxOpti(args; forcing_vars::AbstractArray)
+    nforc = length(forcing_vars)
     outputs = first(args)
     forcings = args[2:(nforc+1)]
     observations = args[(nforc+2):end]
@@ -14,7 +14,7 @@ function unpackYaxOpti(args; forcing_variables::AbstractArray)
 end
 
 """
-    optimizeYax(args; out::NamedTuple, tem::NamedTuple, optim::NamedTuple, forcing_variables::AbstractArray, obs_variables::AbstractArray)
+    optimizeYax(args; out::NamedTuple, tem::NamedTuple, optim::NamedTuple, forcing_vars::AbstractArray, obs_vars::AbstractArray)
 
 
 
@@ -23,18 +23,18 @@ end
 - `out`: DESCRIPTION
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `optim`: DESCRIPTION
-- `forcing_variables`: DESCRIPTION
-- `obs_variables`: DESCRIPTION
+- `forcing_vars`: DESCRIPTION
+- `obs_vars`: DESCRIPTION
 """
 function optimizeYax(args...;
     out::NamedTuple,
     tem::NamedTuple,
     optim::NamedTuple,
-    forcing_variables::AbstractArray,
-    obs_variables::AbstractArray)
-    output, forcing, observation = unpackYaxOpti(args; forcing_variables)
-    forcing = (; Pair.(forcing_variables, forcing)...)
-    observation = (; Pair.(obs_variables, observation)...)
+    forcing_vars::AbstractArray,
+    obs_vars::AbstractArray)
+    output, forcing, observation = unpackYaxOpti(args; forcing_vars)
+    forcing = (; Pair.(forcing_vars, forcing)...)
+    observation = (; Pair.(obs_vars, observation)...)
     land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.exe_rules.land_output_type, "LandOut"))()
     params = optimizeTEM(forcing, observation, info, land_output_type)
     return output[:] = params.optim
@@ -61,18 +61,18 @@ function optimizeTEMYax(forcing::NamedTuple,
     max_cache=1e9)
     incubes = (forcing.data..., observations.data...)
     indims = (forcing.dims..., observations.dims...)
-    forcing_variables = collect(forcing.variables)
+    forcing_vars = collect(forcing.variables)
     outdims = output.paramdims
     out = output.land_init
-    obs_variables = collect(observations.variables)
+    obs_vars = collect(observations.variables)
 
     params = mapCube(optimizeYax,
         (incubes...,);
         out=out,
         tem=tem,
         optim=optim,
-        forcing_variables=forcing_variables,
-        obs_variables=obs_variables,
+        forcing_vars=forcing_vars,
+        obs_vars=obs_vars,
         indims=indims,
         outdims=outdims,
         max_cache=max_cache)
