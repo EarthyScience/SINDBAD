@@ -38,7 +38,7 @@ update models/parameters without mutating the table of parameters
 # Arguments:
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
 - `selected_models`: a tuple of all models selected in the given model structure
-- `param_vector`: DESCRIPTION
+- `param_vector`: a vector of parameter values to update the models
 """
 function updateModelParameters(tbl_params::Table, selected_models_in::LongTuple, param_vector::AbstractArray)
     selected_models = getTupleFromLongTable(selected_models_in)
@@ -54,7 +54,7 @@ update models/parameters without mutating the table of parameters
 # Arguments:
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
 - `selected_models`: a tuple of all models selected in the given model structure
-- `param_vector`: DESCRIPTION
+- `param_vector`: a vector of parameter values to update the models
 """
 function updateModelParameters(tbl_params::Table, selected_models::Tuple, param_vector::AbstractArray)
     updatedModels = Models.LandEcosystem[]
