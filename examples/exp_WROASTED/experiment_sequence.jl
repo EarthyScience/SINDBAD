@@ -133,20 +133,19 @@ domain = "FI-Sod"
     optimized_data = values(optimized_data)
     default_data = values(default_data)
 
-    output = prepTEMOut(info, out_opti.forcing.helpers)
-    out_vars = info.tem.variables
-    out_dims = getOutDims(out_vars, info, out_opti.forcing.helpers, info.tem.helpers.run.output_array_type)
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output.dims, out_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output.dims, out_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    output_vars = info.tem.variables
+    output_dims = getOutDims(output_vars, info, out_opti.forcing.helpers);
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output_dims, output_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output_dims, output_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output.dims, out_vars, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output.dims, out_vars, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output_dims, output_vars, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output_dims, output_vars, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
 
     # plot the debug figures
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
-    for (o, v) in enumerate(out_vars)
+    for (o, v) in enumerate(output_vars)
         def_var = default_data[o][:, :, 1, 1]
         opt_var = optimized_data[o][:, :, 1, 1]
         vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)

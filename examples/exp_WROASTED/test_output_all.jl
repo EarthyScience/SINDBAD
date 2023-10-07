@@ -16,10 +16,9 @@ path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
 
 path_observation = path_input
-optimize_it = true
-# optimize_it = false
+# optimize_it = true
+optimize_it = false
 path_output = nothing
-
 
 parallelization_lib = "threads"
 model_array_type = "static_array"

@@ -141,8 +141,8 @@ function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     run_output = runExperiment(info, forcing, info.tem.helpers.run.run_forward)
-    output = prepTEMOut(info, forcing.helpers);
-    saveOutCubes(info, values(run_output.output), output.dims, output.variables)
+    output_dims = getOutDims(info.tem.variables, info, forcing.helpers)
+    saveOutCubes(info, values(run_output.output), output_dims, info.tem.variables)
     return run_output
 end
 
@@ -159,11 +159,13 @@ function runExperimentFullOutput(sindbad_experiment::String; replace_info=nothin
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+    run_helpers = prepTEM(info.tem.models.forward, forcing, info)
+    runTEM!(selected_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+
     run_output = runExperiment(info, forcing, info.tem.helpers.run.run_forward)
-    @info "runExperimentForward: preparing output info for writing output..."
-    output = prepTEMOut(info, forcing.helpers);
-    saveOutCubes(info, run_output, output.dims, output.variables)
-    forward_output = (; Pair.(getUniqueVarNames(run_helpers.out_vars), run_output)...)
+    output_dims = getOutDims(info.tem.variables, info, forcing.helpers)
+    saveOutCubes(info, values(run_output.output), output_dims, info.tem.variables)
+    forward_output = (; Pair.(getUniqueVarNames(run_helpers.output_vars), run_output)...)
     return forward_output
 end
 
@@ -190,8 +192,8 @@ function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::S
     optimized_models = updateModelParameters(tbl_params, default_models, params_vector)
     optimized_output = runTEM!(optimized_models, forcing, info)
 
-    output = prepTEMOut(info, forcing.helpers);
-    saveOutCubes(info, optimized_output, output.dims, output.variables)
+    output_dims = getOutDims(info.tem.variables, info, forcing.helpers)
+    saveOutCubes(info, optimized_output, output_dims, info.tem.variables)
     
     forward_output = (; optimized=(; Pair.(getUniqueVarNames(info.tem.variables), optimized_output)...), default=(; Pair.(getUniqueVarNames(info.tem.variables), default_output)...))
     setLogLevel()

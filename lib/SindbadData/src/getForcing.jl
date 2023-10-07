@@ -62,7 +62,7 @@ function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @debug "     ::dimensions::"
     indims = getDataDims.(incubes, Ref(Symbol.(info.forcing.data_dimension.space)))
     @debug "     ::variable names::"
-    forcing_variables = keys(info.forcing.variables)
+    forcing_vars = keys(info.forcing.variables)
     f_helpers = collectForcingHelpers(info, f_sizes, f_dimensions)
     input_array_type = getfield(SindbadData, toUpperCaseFirst(info.experiment.exe_rules.input_array_type, "Input"))()
     typed_cubes = getInputArrayOfType(incubes, input_array_type)
@@ -75,12 +75,12 @@ function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
         end 
     end
     data_ts_type = [_dt for _dt in data_ts_type]
-    f_types =  Tuple(Tuple.(Pair.(forcing_variables, data_ts_type)))
+    f_types =  Tuple(Tuple.(Pair.(forcing_vars, data_ts_type)))
     @info "\n----------------------------------------------\n"
     forcing = (;
         data=typed_cubes,
         dims=indims,
-        variables=forcing_variables,
+        variables=forcing_vars,
         f_types = f_types,
         helpers=f_helpers)
     return forcing
@@ -112,14 +112,14 @@ function getForcing(info::NamedTuple)
     end
 
     default_info = info.forcing.default_forcing
-    forcing_variables = keys(info.forcing.variables)
+    forcing_vars = keys(info.forcing.variables)
     tar_dims = getTargetDimensionOrder(info)
     @info "getForcing: getting forcing variables..."
     vinfo = nothing
     f_sizes = nothing
     f_dimension = nothing
     num_type = Val{info.tem.helpers.numbers.num_type}()
-    incubes = map(forcing_variables) do k
+    incubes = map(forcing_vars) do k
         vinfo = getCombinedNamedTuple(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)

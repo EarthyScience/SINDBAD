@@ -24,18 +24,18 @@ end
 
 
 """
-    getForcingForTimeStep(forcing, forcing_t, ts, Val{forc_with_type})
+    getForcingForTimeStep(forcing, loc_forcing_t, ts, Val{forc_with_type})
 
 
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `forcing_t`: a forcing NT for a single timestep to be reused in every time step
+- `loc_forcing_t`: a forcing NT for a single timestep to be reused in every time step
 - `ts`: time step to get the forcing for
 - `::Val{forc_with_type`: a val dispatch with forcing names and types to generate the code for getting forcing
 """
 
-function getForcingForTimeStep(forcing, forcing_t, ts, ::Val{forc_with_type}) where {forc_with_type}
+function getForcingForTimeStep(forcing, loc_forcing_t, ts, ::Val{forc_with_type}) where {forc_with_type}
     if @generated
         output = quote end
         foreach(forc_with_type) do forc_pair
@@ -44,11 +44,11 @@ function getForcingForTimeStep(forcing, forcing_t, ts, ::Val{forc_with_type}) wh
             push!(output.args, Expr(:(=), :d, Expr(:call, :getForcingV, Expr(:., :forcing, QuoteNode(forc)), :ts, forc_type)))
             push!(output.args,
                 Expr(:(=),
-                    :forcing_t,
+                    :loc_forcing_t,
                     Expr(:macrocall,
                         Symbol("@set"),
                         :(),
-                        Expr(:(=), Expr(:., :forcing_t, QuoteNode(forc)), :d)))) #= none:1 =#
+                        Expr(:(=), Expr(:., :loc_forcing_t, QuoteNode(forc)), :d)))) #= none:1 =#
         end
         return output
     else
@@ -70,49 +70,49 @@ function getForcingV(v, _, ::ForcingWithoutTime)
 end
 
 """
-    getLocData(forcing, output_array, loc_space_ind)
+    getLocData(forcing, output_array, loc_ind)
 
 
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output_array`: an output array/view for ALL locations
-- `loc_space_ind`: a tuple with the spatial indices of the data for a gievn location
+- `loc_ind`: a tuple with the spatial indices of the data for a given location
 """
-function getLocData(forcing, output_array, loc_space_ind)
-    loc_forcing = getLocForcingData(forcing, loc_space_ind)
-    loc_output = getLocOutputData(output_array, loc_space_ind)
+function getLocData(forcing, output_array, loc_ind)
+    loc_forcing = getLocForcingData(forcing, loc_ind)
+    loc_output = getLocOutputData(output_array, loc_ind)
     return loc_forcing, loc_output
 end
 
 """
-    getLocForcingData(forcing, output_array, loc_space_ind)
+    getLocForcingData(forcing, output_array, loc_ind)
 
 
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `loc_space_ind`: a tuple with the spatial indices of the data for a gievn location
+- `loc_ind`: a tuple with the spatial indices of the data for a given location
 """
-function getLocForcingData(forcing, loc_space_ind)
+function getLocForcingData(forcing, loc_ind)
     loc_forcing = map(forcing) do a
-        getArrayView(Array(a), loc_space_ind)
+        getArrayView(Array(a), loc_ind)
     end
     return loc_forcing
 end
 
 """
-    getLocOutputData(forcing, output_array, loc_space_ind)
+    getLocOutputData(forcing, output_array, loc_ind)
 
 
 
 # Arguments:
 - `output_array`: an output array/view for ALL locations
-- `loc_space_ind`: a tuple with the spatial indices of the data for a gievn location
+- `loc_ind`: a tuple with the spatial indices of the data for a given location
 """
-function getLocOutputData(output_array, loc_space_ind)
+function getLocOutputData(output_array, loc_ind)
     loc_output = map(output_array) do a
-        getArrayView(a, loc_space_ind)
+        getArrayView(a, loc_ind)
     end
     return loc_output
 end

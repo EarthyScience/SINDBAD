@@ -28,8 +28,8 @@ param_to_index = getParameterIndices(selected_models, tbl_params);
 
 run_helpers = prepTEM(selected_models, forcing, observations, info);
 
-forcing_one_timestep = run_helpers.forcing_one_timestep;
-land_init = run_helpers.land_one;
+loc_forcing_t = run_helpers.loc_forcing_t;
+land_init = run_helpers.loc_land;
 tem = (;
     tem_helpers = run_helpers.tem_with_types.helpers,
     tem_spinup = run_helpers.tem_with_types.spinup,
@@ -37,22 +37,22 @@ tem = (;
 );
 
 # site specific variables
-loc_forcings = run_helpers.loc_forcings;
+space_forcing = run_helpers.space_forcing;
 loc_observations = run_helpers.loc_observations;
-loc_outputs = run_helpers.loc_outputs;
-loc_spinup_forcings = run_helpers.loc_spinup_forcings;
-loc_space_inds = run_helpers.loc_space_inds;
-site_location = loc_space_inds[1][1];
-loc_forcing = loc_forcings[site_location];
+space_output = run_helpers.space_output;
+space_spinup_forcing = run_helpers.space_spinup_forcing;
+space_ind = run_helpers.space_ind;
+site_location = space_ind[1][1];
+loc_forcing = space_forcing[site_location];
 
 loc_obs = loc_observations[site_location];
 
-loc_output = loc_outputs[site_location];
-loc_spinup_forcing = loc_spinup_forcings[site_location];
+loc_output = space_output[site_location];
+loc_spinup_forcing = space_spinup_forcing[site_location];
 
 
 # run the model
-@time coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem...)
+@time coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem...)
 
 # cost related
 
@@ -128,10 +128,10 @@ gradient_lib = ForwardDiffGrad();
 gradient_lib = FiniteDiffGrad();
 # gradient_lib = FiniteDifferencesGrad();
 
-@time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_sites_batch, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
+@time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_sites_batch, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
 
 # machine learning parameters baseline
-@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, selected_models, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data,name="seq_training_output")
+@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data,name="seq_training_output")
 
 f_suffix = "_epoch-$(n_epochs)_batch-size-$(batch_size)-seed-$(batch_seed)_$(nameof(typeof(gradient_lib)))"
 using CairoMakie
@@ -154,4 +154,4 @@ save(joinpath(info.output.figure, "epoch_lines$(f_suffix).png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
-@time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, selected_models, sites_training, indices_sites_training, loc_forcings, loc_spinup_forcings, forcing_one_timestep, loc_outputs, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false)
+@time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false)

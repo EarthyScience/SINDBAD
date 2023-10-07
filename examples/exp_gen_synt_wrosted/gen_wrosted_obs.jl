@@ -34,11 +34,11 @@ n_neurons = 32
 n_params = sum(tbl_params.is_ml)
 
 run_helpers = prepTEM(forcing, info);
-loc_forcings = run_helpers.loc_forcings;
-forcing_one_timestep = run_helpers.forcing_one_timestep;
+space_forcing = run_helpers.space_forcing;
+loc_forcing_t = run_helpers.loc_forcing_t;
 output_array = run_helpers.output_array;
-loc_outputs = run_helpers.loc_outputs;
-land_init_space = run_helpers.land_init_space;
+space_output = run_helpers.space_output;
+space_land = run_helpers.space_land;
 tem_with_types = run_helpers.tem_with_types;
 
 # neural network design
@@ -82,7 +82,7 @@ function pixel_run!(output_array,
     tem_spinup,
     tem_models,
     land_init_site,
-    forcing_one_timestep)
+    loc_forcing_t)
 
     loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
     up_apps = Tuple(updateModelParameters(tbl_params, forward, upVector))
@@ -92,7 +92,7 @@ function pixel_run!(output_array,
         tem_helpers,
         tem_spinup,
         land_init_site,
-        forcing_one_timestep)
+        loc_forcing_t)
 end
 
 tem_helpers = tem_with_types.helpers;
@@ -107,9 +107,9 @@ loc_forcing, loc_output, loc_obs =
     getLocDataObsN(output_array,
         forc, obs_array, site_location);
 
-loc_land_init = run_helpers.land_one;
-loc_output = loc_outputs[1];
-loc_forcing = run_helpers.loc_forcings[1];
+loc_land_init = run_helpers.loc_land;
+loc_output = space_output[1];
+loc_forcing = run_helpers.space_forcing[1];
 
 def_params = tbl_params.default .* rand()
 pixel_run!(output,
@@ -123,7 +123,7 @@ pixel_run!(output,
     tem_spinup,
     tem_models,
     loc_land_init,
-    forcing_one_timestep)
+    loc_forcing_t)
 
 
 loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
@@ -131,7 +131,7 @@ loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array,
 function space_run!(up_params,
     tbl_params,
     sites_f,
-    land_init_space,
+    space_land,
     cov_sites,
     output,
     forc,
@@ -140,13 +140,13 @@ function space_run!(up_params,
     tem_helpers,
     tem_spinup,
     tem_models,
-    forcing_one_timestep)
+    loc_forcing_t)
     #Threads.@threads for site_index ∈ eachindex(cov_sites)
     for site_index ∈ eachindex(cov_sites)
         site_name = cov_sites[site_index]
         x_params = up_params(; site=site_name)
         site_location = name_to_id(site_name, sites_f)
-        loc_land_init = land_init_space[site_location[1][2]]
+        loc_land_init = space_land[site_location[1][2]]
         pixel_run!(output,
             forc,
             obs_array,
@@ -158,13 +158,13 @@ function space_run!(up_params,
             tem_spinup,
             tem_models,
             loc_land_init,
-            forcing_one_timestep
+            loc_forcing_t
         )
     end
 end
 cov_sites = xfeatures.site
 
-#out_vars = Val(info.tem.variables)
+#output_vars = Val(info.tem.variables)
 #helpers = info.tem.helpers # helpers
 #spinup = info.tem.spinup # spinup
 #models = info.tem.models # models
@@ -179,7 +179,7 @@ end
 space_run!(params_bounded,
     tbl_params,
     sites_f,
-    land_init_space,
+    space_land,
     cov_sites,
     output,
     forc,
@@ -188,7 +188,7 @@ space_run!(params_bounded,
     tem_helpers,
     tem_spinup,
     tem_models,
-    forcing_one_timestep)
+    loc_forcing_t)
 
 
 

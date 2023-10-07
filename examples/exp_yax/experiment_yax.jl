@@ -12,14 +12,14 @@ forcing = getForcing(info);
 # forcing/input information
 incubes = forcing.data;
 indims = forcing.dims;
-forcing_variables = collect(forcing.variables);
+forcing_vars = collect(forcing.variables);
 
 # information for running model
 output = prepTEMOut(info, forcing.helpers);
 run_helpers = prepTEM(forcing, info);
-outdims = run_helpers.out_dims;
+outdims = run_helpers.output_dims;
 land_init = deepcopy(run_helpers.land_init);
-out_variables = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
+output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
 
 @time outcubes = runTEMYax(
     info.tem.models.forward,
