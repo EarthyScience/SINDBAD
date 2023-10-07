@@ -79,13 +79,13 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
 
     run_helpers = prepTEM(forcing, info);
 
-    loc_forcings = run_helpers.loc_forcings;
-    forcing_one_timestep = run_helpers.forcing_one_timestep;
+    space_forcing = run_helpers.space_forcing;
+    loc_forcing_t = run_helpers.loc_forcing_t;
     output_array = run_helpers.output_array;
-    loc_outputs = run_helpers.loc_outputs;
-    land_init_space = run_helpers.land_init_space;
+    space_output = run_helpers.space_output;
+    space_land = run_helpers.space_land;
     tem_with_types = run_helpers.tem_with_types;
-    spinup_forcing = run_helpers.loc_spinup_forcings[1]
+    spinup_forcing = run_helpers.space_spinup_forcing[1]
 
 
     spinupforc = :day_MSC
@@ -104,7 +104,7 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
         if sel_pool in (:cEco_TWS,)
             look_at = :cEco
         end
-        land_for_s = deepcopy(run_helpers.land_one)
+        land_for_s = deepcopy(run_helpers.loc_land)
         land_type = typeof(land_for_s)
 
         xtname_c = get_xtick_names(info, land_for_s, :cEco)
@@ -114,7 +114,7 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
             land_for_s = SindbadTEM.spinup(
                 spinup_models,
                 theforcing,
-                forcing_one_timestep,
+                loc_forcing_t,
                 land_for_s,
                 tem_with_types.helpers,
                 SelSpinupModels())
@@ -127,14 +127,14 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
         @time out_sp_nl = SindbadTEM.spinup(
             spinup_models,
             theforcing,
-            forcing_one_timestep,
+            loc_forcing_t,
             deepcopy(land_for_s),
             tem_with_types.helpers,
             tem_with_types.spinup,
             sp_method)
 
         for tj ∈ tjs
-            land = deepcopy(run_helpers.land_one)
+            land = deepcopy(run_helpers.loc_land)
             @show "Exp_Init"
             sp = SelSpinupModels()
             out_sp_exp = deepcopy(land_for_s)
@@ -142,7 +142,7 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
                 out_sp_exp = SindbadTEM.spinup(
                     spinup_models,
                     theforcing,
-                    forcing_one_timestep,
+                    loc_forcing_t,
                     out_sp_exp,
                     tem_with_types.helpers,
                     tem_with_types.spinup,
@@ -154,7 +154,7 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
             @time for nl ∈ 1:tj
                 out_sp_exp_nl = SindbadTEM.spinup(spinup_models,
                     theforcing,
-                    forcing_one_timestep,
+                    loc_forcing_t,
                     out_sp_exp_nl,
                     tem_with_types.helpers,
                     tem_with_types.spinup,

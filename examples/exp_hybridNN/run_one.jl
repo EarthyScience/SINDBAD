@@ -56,7 +56,7 @@ forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 
 tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT)
 
@@ -70,15 +70,15 @@ models = LongTuple{info.tem.exe_rules.longtuple_size}(models...);
 new_models = updateModelParameters(param_to_index, models, new_params)
 
 @time runTEM!(new_models,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
+    run_helpers.space_forcing,
+    run_helpers.space_spinup_forcing,
+    run_helpers.loc_forcing_t,
+    run_helpers.space_output,
+    run_helpers.space_land,
     run_helpers.tem_with_types)
 
 
-op = run_helpers.loc_outputs[1];
+op = run_helpers.space_output[1];
 ov = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
 
 lines(op[6][:,1])

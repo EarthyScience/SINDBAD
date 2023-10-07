@@ -40,7 +40,7 @@ forcing = getForcing(info);
 #Sindbad.eval(:(error_catcher = []))    
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
@@ -145,11 +145,11 @@ develop_f =
             # TODO run model with updated parameters
 
             @time runTEM!(updated_models,
-                run_helpers.loc_forcings,
-                run_helpers.loc_spinup_forcings,
-                run_helpers.forcing_one_timestep,
-                run_helpers.loc_outputs,
-                run_helpers.land_init_space,
+                run_helpers.space_forcing,
+                run_helpers.space_spinup_forcing,
+                run_helpers.loc_forcing_t,
+                run_helpers.space_output,
+                run_helpers.space_land,
                 run_helpers.tem_with_types)
         
             # get predictions and observations

@@ -256,17 +256,17 @@ end
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
 function updateVariablesToStore(info::NamedTuple)
-    out_vars = info.experiment.model_output.variables
+    output_vars = info.experiment.model_output.variables
     if info.experiment.flags.run_optimization
-        out_vars = map(info.optim.variables.obs) do vo
+        output_vars = map(info.optim.variables.obs) do vo
             vn = getfield(info.optim.variables.optim, vo)
             Symbol(string(vn[1]) * "." * string(vn[2]))
         end
     elseif info.experiment.flags.calc_cost
-        out_vars = union(String.(keys(info.experiment.model_output.variables)),
+        output_vars = union(String.(keys(info.experiment.model_output.variables)),
                 info.optim.variables.model)
     end
-    out_vars_pairs = Tuple(getVariablePair.(out_vars))
+    out_vars_pairs = Tuple(getVariablePair.(output_vars))
     info = (; info..., tem=(; info.tem..., variables=out_vars_pairs))
     return info
 end

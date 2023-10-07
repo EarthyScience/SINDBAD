@@ -46,13 +46,13 @@ forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 
-@time land_stacked_ts = runTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, deepcopy(run_helpers.land_one), run_helpers.tem_with_types);
+@time land_stacked_ts = runTEM(info.tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, deepcopy(run_helpers.loc_land), run_helpers.tem_with_types);
 
-land_stacked_prealloc = Vector{typeof(run_helpers.land_one)}(undef, info.tem.helpers.dates.size);
+land_stacked_prealloc = Vector{typeof(run_helpers.loc_land)}(undef, info.tem.helpers.dates.size);
 
-@time land_stacked_prealloc = runTEM(info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, land_stacked_prealloc, deepcopy(run_helpers.land_one), run_helpers.tem_with_types);
+@time land_stacked_prealloc = runTEM(info.tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, deepcopy(run_helpers.loc_land), run_helpers.tem_with_types);
 
 
 tbl_params = getParameters(info.tem.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
@@ -74,9 +74,9 @@ tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_d
 
 defaults = tbl_params.default;
 
-@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.output_array, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcings[1], run_helpers.loc_spinup_forcings[1], run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.loc_land, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
 
 

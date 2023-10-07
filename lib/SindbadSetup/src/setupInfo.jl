@@ -1032,7 +1032,7 @@ end
 """
     getVariablePair(out_var)
 
-return a vector of pairs with field and subfield of land from the list of variables (out_vars) in field.subfield convention
+return a vector of pairs with field and subfield of land from the list of variables (output_vars) in field.subfield convention
 """
 function getVariablePair(out_var::String)
     sep = "."
@@ -1046,7 +1046,7 @@ end
 """
     getVariablePair(out_var)
 
-return a vector of pairs with field and subfield of land from the list of variables (out_vars) in field.subfield convention
+return a vector of pairs with field and subfield of land from the list of variables (output_vars) in field.subfield convention
 """
 function getVariablePair(out_var::Symbol)
     getVariablePair(string(out_var))
@@ -1058,8 +1058,8 @@ end
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
 function getVariablesToStore(info::NamedTuple)
-    out_vars = collect(propertynames(info.experiment.model_output.variables))
-    out_vars_pairs = Tuple(getVariablePair.(out_vars))
+    output_vars = collect(propertynames(info.experiment.model_output.variables))
+    out_vars_pairs = Tuple(getVariablePair.(output_vars))
     info = (; info..., tem=(; info.tem..., variables=out_vars_pairs))
     return info
 end

@@ -15,9 +15,9 @@ module SindbadTEM
     include("prepTEMOut.jl")
     include("runModels.jl")
     include("prepTEM.jl")
-    include("runTEMLand.jl")
-    include("runTEMArray.jl")
-    include("runTEMYax.jl")
+    include("runTEMLoc.jl")
+    include("runTEMSpace.jl")
+    include("runTEMCube.jl")
     include("spinupTEM.jl")
     include("updateParameters.jl")
 

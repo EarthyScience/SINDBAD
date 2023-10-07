@@ -21,15 +21,15 @@ obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for p
 run_helpers = prepTEM(forcing, info);
 
 
-@time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 
 using GLMakie
 using Colors
 Makie.inline!(false)
 lines(1:10)
 
-out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
-names_pair = Dict(out_vars .=> 1:4)
+output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+names_pair = Dict(output_vars .=> 1:4)
 
 var_name = Observable(1)
 gpp = @lift(output_array[$var_name]);
@@ -38,7 +38,7 @@ gpp_site = @lift($gpp[:, 1, $s])
 
 fig = Figure(; resolution=(1200, 600))
 menu = Menu(fig;
-    options=out_vars,
+    options=output_vars,
     cell_color_hover=RGB(0.7, 0.3, 0.25),
     cell_color_active=RGB(0.2, 0.3, 0.5))
 ax = Axis(fig[1, 1])
