@@ -165,13 +165,11 @@ struct ModelArrayView end
 # ------------------------- output array types preallocated arrays -------------------------
 
 export OutputArray
-export OutputKeyedArray
 export OutputMArray
 export OutputSizedArray
 export OutputYAXArray
 
 struct OutputArray end
-struct OutputKeyedArray end
 struct OutputMArray end
 struct OutputSizedArray end
 struct OutputYAXArray end

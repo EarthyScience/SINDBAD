@@ -18,16 +18,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 - `_`: unused argument
 - `::DoNotSpinupTEM`: a type to dispatch without spinup
 """
-function coreTEM!(
-    selected_models,
-    loc_forcing,
-    _,
-    forcing_one_timestep,
-    loc_output,
-    land_init,
-    tem_helpers,
-    _,
-    ::DoNotSpinupTEM) # without spinup
+function coreTEM!(selected_models, loc_forcing, _, forcing_one_timestep, loc_output, land_init, tem_helpers, _, ::DoNotSpinupTEM) # without spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers.model_helpers)
 
@@ -51,16 +42,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `DoSpinupTEM`: a flag to indicate that spinup is included
 """
-function coreTEM!(
-    selected_models,
-    loc_forcing,
-    loc_spinup_forcing,
-    forcing_one_timestep,
-    loc_output,
-    land_init,
-    tem_helpers,
-    tem_spinup,
-    ::DoSpinupTEM) # with spinup
+function coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, tem_spinup, ::DoSpinupTEM) # with spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers.model_helpers) # tem_helpers.run.debug_model)
 
@@ -115,6 +97,21 @@ function parallelizeTEM!(selected_models, loc_forcings, loc_spinup_forcings, for
         space_index += 1
     end
     return nothing
+end
+
+"""
+    runTEM!(selected_models, forcing::NamedTuple, info::NamedTuple)
+
+a function to run SINDBAD Terrestrial Ecosystem Model that simulates all locations and time using preallocated array as model data backend, with with only info and forcing as input, and model simulation output as arrays 
+
+# Arguments:
+- `forcing`: a tuple of models selected for the given model structure
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment    
+"""
+function runTEM!(selected_models, forcing::NamedTuple, info::NamedTuple)
+    run_helpers = prepTEM(selected_models, forcing, info)
+    runTEM!(selected_models, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
+    return run_helpers.output_array
 end
 
 """

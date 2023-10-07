@@ -86,6 +86,22 @@ function getSpatialInfo(forcing, output)
 end
 
 
+function getSpinupTemLite(tem_with_types)
+    tem_spinup = tem_with_types.spinup
+    newseqs = []
+    for seq in tem_spinup.sequence
+        ns = (; forcing=seq.forcing, n_repeat= seq.n_repeat, n_timesteps=seq.n_timesteps, spinup_mode=seq.spinup_mode, options=seq.options)
+        # ns = SpinSequence(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.options)
+        push!(newseqs, ns)
+    end
+    # restart_file = tem_spinup.restart_file
+    # paths = (; restart_file = isnothing(restart_file) ? "./" : restart_file)
+    tem_spin_lite = (; sequence = [_s for _s in newseqs])
+    tem_with_types = (; tem_with_types..., spinup = tem_spin_lite)
+    return tem_with_types
+
+end
+
 """
 getTEMVals(forcing, output, tem_helpers)
 """
@@ -263,21 +279,6 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 end
 
 
-function getSpinupTemLite(tem_with_types)
-    tem_spinup = tem_with_types.spinup
-    newseqs = []
-    for seq in tem_spinup.sequence
-        ns = (; forcing=seq.forcing, n_repeat= seq.n_repeat, n_timesteps=seq.n_timesteps, spinup_mode=seq.spinup_mode, options=seq.options)
-        # ns = SpinSequence(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.options)
-        push!(newseqs, ns)
-    end
-    # restart_file = tem_spinup.restart_file
-    # paths = (; restart_file = isnothing(restart_file) ? "./" : restart_file)
-    tem_spin_lite = (; sequence = [_s for _s in newseqs])
-    tem_with_types = (; tem_with_types..., spinup = tem_spin_lite)
-    return tem_with_types
-
-end
 """
     helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
 

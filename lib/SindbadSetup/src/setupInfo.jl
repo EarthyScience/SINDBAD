@@ -593,7 +593,8 @@ function getModelRunInfo(info::NamedTuple)
         info = @set info.experiment.flags.catch_model_errors = false
     end
     run_vals = convertRunFlagsToTypes(info)
-    run_info = (; run_vals..., (output_all = getTypeInstanceForFlags(:output_all, info.experiment.model_output.all, "Do")))
+    output_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.model_output.output_array_type, "Output"))()
+    run_info = (; run_vals..., output_array_type = output_array_type)
     run_info = setTupleField(run_info, (:save_single_file, getTypeInstanceForFlags(:save_single_file, info.experiment.model_output.save_single_file, "Do")))
     run_info = setTupleField(run_info, (:use_forward_diff, run_vals.use_forward_diff))
     parallelization = titlecase(info.experiment.exe_rules.parallelization)
