@@ -2,6 +2,7 @@ export prepExperiment
 export runExperiment
 export runExperimentCost
 export runExperimentForward
+export runExperimentFullOutput
 export runExperimentOpti
 
 """
@@ -159,14 +160,14 @@ function runExperimentFullOutput(sindbad_experiment::String; replace_info=nothin
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+    info = @set info.tem.helpers.run.land_output_type = LandOutArrayAll()
     run_helpers = prepTEM(info.tem.models.forward, forcing, info)
-    runTEM!(selected_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
-
-    run_output = runExperiment(info, forcing, info.tem.helpers.run.run_forward)
-    output_dims = getOutDims(info.tem.variables, info, forcing.helpers)
-    saveOutCubes(info, values(run_output.output), output_dims, info.tem.variables)
-    forward_output = (; Pair.(getUniqueVarNames(run_helpers.output_vars), run_output)...)
-    return forward_output
+    info = @set info.tem.variables = run_helpers.output_vars
+    runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+    output_dims = run_helpers.output_dims
+    run_output = run_helpers.output_array
+    saveOutCubes(info, run_output, output_dims, run_helpers.output_vars)
+    return (; forcing, info, output=(; Pair.(getUniqueVarNames(run_helpers.output_vars), run_output)...))
 end
 
 

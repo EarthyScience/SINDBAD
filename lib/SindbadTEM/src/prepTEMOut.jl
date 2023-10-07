@@ -428,7 +428,7 @@ base function to prepare the output NT for the forward run
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
-    @info "  prepTEMOut: preparing output variables and helpers..."
+    @info "  prepTEMOut: preparing output and helpers..."
     @debug "     prepTEMOut: creating initial out/land..."
     land = createLandInit(info.pools, tem_helpers, info.tem.models)
     output_tuple = (;)
