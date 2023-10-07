@@ -44,13 +44,12 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------\n")
     forward_output = (; Pair.(getUniqueVarNames(info.tem.variables), output_array)...)
-    # @show size.(obs_array), Pair.(getUniqueVarNames(info.tem.variables), size.(output_array))
     cost_options = prepCostOptions(obs_array, info.optim.cost_options)
     loss_vector = getLossVector(forward_output, obs_array, cost_options)
     for _cp in Pair.(Pair.(cost_options.variable, nameof.(typeof.(cost_options.cost_metric))),  loss_vector)
         println(_cp)
     end
-    return loss_vector
+    return (; forcing, info, loss=loss_vector, observation=obs_array, output=forward_output)
 end
 
 
@@ -68,7 +67,6 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForward, DoNotRunOptimization})
     print("-------------------Forward Run Mode---------------------------\n")
-
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
     if isempty(additionaldims)
         run_output = runTEMYax(
@@ -77,8 +75,9 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForwa
             info.tem)
     else
         run_output = runTEM!(forcing, info)
+        run_output = (; Pair.(getUniqueVarNames(info.tem.variables), run_output)...)
     end
-    return run_output
+    return (; forcing, info, output=run_output)
 end
 
 
@@ -98,13 +97,10 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimizatio
     setLogLevel(:warn)
     observations = getObservation(info, forcing.helpers)
     additionaldims = setdiff(keys(forcing.helpers.sizes), info.forcing.data_dimension.time)
+    run_output = nothing
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."
-        run_output = optimizeTEMYax(forcing,
-            info.tem,
-            info.optim,
-            observations;
-            max_cache=info.experiment.exe_rules.yax_max_cache)
+        run_output = optimizeTEMYax(forcing, info.tem, info.optim, observations; max_cache=info.experiment.exe_rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
         obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
@@ -114,7 +110,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimizatio
         run_output = optim_params.optim
     end
     setLogLevel()
-    return run_output
+    return (; forcing, info, observation=obs_array, params=run_output)
 end
 
 
@@ -128,8 +124,8 @@ function runExperimentCost(sindbad_experiment::String; replace_info=nothing)
     replace_info["experiment.flags.calc_cost"] = true
     replace_info["experiment.flags.run_forward"] = true
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    loss_vector = runExperiment(info, forcing, info.tem.helpers.run.calc_cost)
-    return loss_vector
+    cost_output = runExperiment(info, forcing, info.tem.helpers.run.calc_cost)
+    return cost_output
 end
 
 
@@ -146,9 +142,8 @@ function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     run_output = runExperiment(info, forcing, info.tem.helpers.run.run_forward)
     output = prepTEMOut(info, forcing.helpers);
-    saveOutCubes(info, run_output, output.dims, output.variables)
-    forward_output = (; Pair.(getUniqueVarNames(output.variables), run_output)...)
-    return forward_output
+    saveOutCubes(info, values(run_output.output), output.dims, output.variables)
+    return run_output
 end
 
 
@@ -179,36 +174,28 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=nothing)
-    @info "runExperimentForwardParams: forward run of the model with optimized parameters..."
-    setLogLevel(:warn)
+    @info "runExperimentForwardParams: forward run of the model with default/settings and input/optimized parameters..."
+    setLogLevel(:error)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = true
     replace_info["experiment.flags.run_forward"] = true
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
 
-    optimized_models = info.tem.models.forward;
-    tbl_params = getParameters(info.tem.models.forward,
-        info.optimization.model_parameter_default,
-        info.optimization.model_parameters_to_optimize,
-        info.tem.helpers.numbers.sNT);
-    optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, params_vector)
-    
-    run_helpers = prepTEM(optimized_models, forcing, info)
-    
-    runTEM!(optimized_models,
-        run_helpers.loc_forcings,
-        run_helpers.loc_spinup_forcings,
-        run_helpers.forcing_one_timestep,
-        run_helpers.loc_outputs,
-        run_helpers.land_init_space,
-        run_helpers.tem_with_types)
-    run_output = run_helpers.output_array;
+    default_models = info.tem.models.forward;
+
+    default_output = runTEM!(default_models, forcing, info)
+
+    tbl_params = getParameters(default_models, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
+    optimized_models = updateModelParameters(tbl_params, default_models, params_vector)
+    optimized_output = runTEM!(optimized_models, forcing, info)
+
     output = prepTEMOut(info, forcing.helpers);
-    saveOutCubes(info, run_output, output.dims, output.variables)
-    forward_output = (; Pair.(getUniqueVarNames(run_helpers.out_vars), run_output)...)
+    saveOutCubes(info, optimized_output, output.dims, output.variables)
+    
+    forward_output = (; optimized=(; Pair.(getUniqueVarNames(info.tem.variables), optimized_output)...), default=(; Pair.(getUniqueVarNames(info.tem.variables), default_output)...))
     setLogLevel()
-    return forward_output
+    return (; forcing, info, output=forward_output)
 end
 
 """
@@ -221,8 +208,8 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     replace_info["experiment.flags.calc_cost"] = false
     replace_info["experiment.flags.run_forward"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    run_output = runExperiment(info, forcing, info.tem.helpers.run.run_optimization)
-    forward_output = runExperimentForwardParams(run_output, sindbad_experiment; replace_info=replace_info)
-    return (; out_params=run_output, out_forward=forward_output)
+    opti_output = runExperiment(info, forcing, info.tem.helpers.run.run_optimization)
+    fp_output = runExperimentForwardParams(opti_output.params, sindbad_experiment; replace_info=replace_info)
+    return (; forcing, info=fp_output.info, observation=opti_output.observation, output=fp_output.output, params=opti_output.params)
 end
 

@@ -5,8 +5,12 @@ toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "2000"
 end_year = "2017"
-
-domain = "SD-Dem"
+function x(a, b)
+    c=a+b
+    d=a-b
+    return c; d
+end
+domain = "DE-Hai"
 # domain = "MY-PSO"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
@@ -25,7 +29,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "forcing.default_forcing.data_path" => path_input,
     "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.calc_cost" => true,
+    "experiment.flags.calc_cost" => false,
     "experiment.flags.catch_model_errors" => false,
     "experiment.flags.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
@@ -45,7 +49,7 @@ run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward, run_helpers.loc_forcings, run_helpers.loc_spinup_forcings, run_helpers.forcing_one_timestep, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.tem_with_types)
 
-@time output_default = runExperimentCost(experiment_json; replace_info=replace_info);
+@time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
@@ -54,9 +58,8 @@ obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for p
 # opt_params = out_opti.out_params;
 
 # some plots
-ds = forcing.data[1];
-def_dat = output_default;
-opt_dat = out_opti.out_forward;
+def_dat = out_opti.output.default;
+opt_dat = out_opti.output.optimized;
 costOpt = prepCostOptions(obs_array, info.optim.cost_options);
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 foreach(costOpt) do var_row
