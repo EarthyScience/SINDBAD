@@ -88,7 +88,7 @@
       "states.fAPAR": null,
       "states.frac_snow": null,
       "states.PAW": "d_soil",
-      "states.root_water_efficiency": 1,
+      "states.root_water_efficiency": "d_soil",
       "states.transpiration_supply": null,
       "states.water_balance": null,
       "WUE.WUE": null

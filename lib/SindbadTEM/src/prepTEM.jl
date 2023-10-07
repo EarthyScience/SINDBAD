@@ -130,7 +130,7 @@ end
 
 
 """
-    helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
 
 
 
@@ -142,7 +142,7 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::LandOutArray`: a dispatch for preparing TEM for using preallocated array
 """
-function helpPrepTEM(selected_models, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayFD)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayFD)
 
     @info "     preparing spatial and tem helpers"
     space_ind = getSpatialInfo(forcing)
@@ -218,7 +218,7 @@ end
 
 
 """
-    helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayAll)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayAll)
 
 
 
@@ -230,7 +230,7 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::LandOutArrayAll`: a dispatch for preparing TEM for using preallocated array to output ALL LAND VARIABLES
 """
-function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayAll)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayAll)
 
     @info "     preparing spatial and tem helpers"
     space_ind = getSpatialInfo(forcing)
@@ -248,8 +248,10 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     debugModel(loc_land, tem.helpers.run.debug_model)
 
     output_vars = getAllLandVars(loc_land)
+    tem_with_types = @set tem_with_types.helpers.vals.output_vars = Val(output_vars)
 
-    output_dims, output_array = getOutDimsArrays(output_vars, info, run_helpers.loc_land, forcing.helpers);
+    output_dims, output_array = getOutDimsArrays(output_vars, info, loc_land, forcing.helpers)
+
 
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
@@ -275,7 +277,7 @@ end
 
 
 """
-    helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
 
 
 
@@ -287,7 +289,7 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::LandOutArray`: a dispatch for preparing TEM for using preallocated array
 """
-function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
 
     @info "     preparing spatial and tem helpers"
     space_ind = getSpatialInfo(forcing)
@@ -348,7 +350,7 @@ end
 
 
 """
-    helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
 
 
 
@@ -360,7 +362,7 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::LandOutStacked`: a dispatch for preparing TEM for using preallocated array
 """
-function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
     
     # get the output things
     @info "     preparing spatial and tem helpers"
@@ -386,7 +388,7 @@ end
 
 
 """
-    helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutTimeseries)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutTimeseries)
 
 
 
@@ -398,8 +400,8 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::LandOutTimeseries`: a dispatch for preparing TEM for using preallocated array
 """
-function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutTimeseries)
-    run_helpers = helpPrepTEM(selected_models, forcing, output, tem, tem_helpers, LandOutStacked())
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutTimeseries)
+    run_helpers = helpPrepTEM(selected_models, info, forcing, output, tem, tem_helpers, LandOutStacked())
     land_timeseries = Vector{typeof(run_helpers.loc_land)}(undef, tem.helpers.dates.size)
     run_helpers = setTupleField(run_helpers, (:land_timeseries, land_timeseries))
     return run_helpers
@@ -408,7 +410,7 @@ end
 
 
 """
-    helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
 
 
 
@@ -420,7 +422,7 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::LandOutYAXArray`: a dispatch for preparing TEM for using yax array for model output
 """
-function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
 
     # generate vals for dispatch of forcing and output
     tem_with_types = getTEMVals(forcing, output.variables, tem, tem_helpers);
@@ -461,7 +463,7 @@ function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
     tem_helpers = info.tem.helpers
     output = prepTEMOut(info, forcing.helpers)
     @info "  helpPrepTEM: preparing helpers for running model experiment"
-    run_helpers = helpPrepTEM(selected_models, forcing, output, info.tem, tem_helpers, tem_helpers.run.land_output_type)
+    run_helpers = helpPrepTEM(selected_models, info, forcing, output, info.tem, tem_helpers, tem_helpers.run.land_output_type)
     @info "\n----------------------------------------------\n"
     return run_helpers
 end
@@ -480,7 +482,7 @@ function prepTEM(selected_models, forcing::NamedTuple, observations::NamedTuple,
     @info "prepTEM: preparing to run terrestrial ecosystem model (TEM)"
     tem_helpers = info.tem.helpers
     output = prepTEMOut(info, forcing.helpers)
-    run_helpers = helpPrepTEM(selected_models, forcing, observations, output, info.tem, tem_helpers, tem_helpers.run.land_output_type)
+    run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, info.tem, tem_helpers, tem_helpers.run.land_output_type)
     @info "\n----------------------------------------------\n"
     return run_helpers
 end
