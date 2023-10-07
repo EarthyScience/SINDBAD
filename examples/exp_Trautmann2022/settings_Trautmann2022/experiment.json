@@ -39,7 +39,6 @@
     "use_forward_diff": false
   },
   "model_output": {
-    "all": true,
     "depth_dimensions": {
       "d_ground": "groundW",
       "d_snow": "snowW",
