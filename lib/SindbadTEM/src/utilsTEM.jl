@@ -225,6 +225,6 @@ function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {out
             data_o = outputs[i]
             fillLocOutput!(data_o, data_l, ts)
         end
+        return nothing
     end
-    return nothing
 end
