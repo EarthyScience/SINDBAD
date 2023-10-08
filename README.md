@@ -64,9 +64,16 @@ julia > run(`mkdir -p my_env`)
 julia > run(`cd my_env`)
 ```
 
-Create the julia environment, activate it, and instantiate all dev dependencies and packages by pasting the following in the package mode of Julia REPL,
+Create the julia environment, activate it, and instantiate all dev dependencies and packages by pasting the following in the package mode of Julia REPL.
+
+Sindbad Experiments:
 ```
-dev ../.. ../../lib/SindbadUtils ../../lib/SindbadData ../../lib/SindbadSetup ../../lib/SindbadTEM ../../lib/SindbadMetrics ../../lib/SindbadOptimization ../../lib/SindbadExperiment
+dev ../.. ../../lib/SindbadUtils ../../lib/SindbadData ../../lib/SindbadMetrics ../../lib/SindbadSetup ../../lib/SindbadTEM ../../lib/SindbadOptimization ../../lib/SindbadExperiment
+```
+
+Sindbad Hybrid:
+```
+dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadML
 ```
 
 Once the dev dependencies are built, run
