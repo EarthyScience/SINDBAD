@@ -121,8 +121,7 @@ for o_set in opti_set
 
     @time output_default = runExperimentForward(experiment_json; replace_info=replace_info)
     @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info)
-    opt_params = out_opti.out_params;
-    # out_model = out_opti.out_forward;
+    opt_params = out_opti.params;
 
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info

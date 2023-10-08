@@ -203,6 +203,9 @@ end
 - `::BackendNetcdf`: DESCRIPTION
 """
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::BackendNetcdf)
+    if endswith(data_path_v, ".zarr")
+        error("data path $(data_path_v) ends with .zarr (zarr data) but input data backend in experiment.exe_rules.input_data_backend is set as netcdf. Change input_data_backend or data_path.")
+    end
     nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     v = nc[source_variable]
     ax = map(NCDatasets.dimnames(v)) do dn
@@ -239,6 +242,10 @@ end
 - `::BackendZarr`: DESCRIPTION
 """
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::BackendZarr)
+    if endswith(data_path_v, ".nc")
+        error("data path $(data_path_v) ends with .nc (netCDF data) but input data backend in experiment.exe_rules.input_data_backend is set as zarr. Using zopen to open a nc data will crash the session. Change input_data_backend or data_path.")
+    end
+
     nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     yax = nc[source_variable]
     return nc, yax

@@ -1396,18 +1396,18 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function setupInfo(info::NamedTuple)
-    @info "SetupExperiment: setting Numeric Helpers..."
+    @info "  setupInfo: setting Numeric Helpers..."
     info = setNumericHelpers(info)
-    @info "SetupExperiment: setting Output Helpers..."
+    @info "  setupInfo: setting Output Helpers..."
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., output=info.output)))
-    @info "SetupExperiment: setting Pools Info..."
+    @info "  setupInfo: setting Pools Info..."
     info = generatePoolsInfo(info)
-    @info "SetupExperiment: setting Dates Helpers..."
+    @info "  setupInfo: setting Dates Helpers..."
     info = generateDatesInfo(info)
     selected_models = collect(propertynames(info.model_structure.models))
     # @show sel
     # selected_models = (selected_models..., :dummy)
-    @info "SetupExperiment: setting Model Structure..."
+    @info "  setupInfo: setting Model Structure..."
     selected_models = getOrderedSelectedModels(info, selected_models)
     info = (;
         info...,
@@ -1415,21 +1415,21 @@ function setupInfo(info::NamedTuple)
             info.tem...,
             models=(; selected_models=Table((; model=[selected_models...])))))
     info = getSpinupAndForwardModels(info)
-    @info "SetupExperiment:         ...saving Selected Models Code..."
+    @info "  setupInfo:         ...saving Selected Models Code..."
     _ = parseSaveCode(info)
 
     # add information related to model run
-    @info "SetupExperiment: setting Model Run Flags..."
+    @info "  setupInfo: setting Model Run Flags..."
     run_info = getModelRunInfo(info)
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
-    @info "SetupExperiment: setting Spinup Info..."
+    @info "  setupInfo: setting Spinup Info..."
     info = setSpinupInfo(info)
 
-    @info "SetupExperiment: setting Variable Helpers..."
+    @info "  setupInfo: setting Variable Helpers..."
     info = getVariablesToStore(info)
 
     if info.experiment.flags.run_optimization || info.experiment.flags.calc_cost
-        @info "SetupExperiment: setting Optimization and Observation info..."
+        @info "  setupInfo: setting Optimization and Observation info..."
         info = setupOptimization(info)
     end
 
@@ -1437,7 +1437,6 @@ function setupInfo(info::NamedTuple)
         selected_approach_forward = makeLongTuple(info.tem.models.forward, info.experiment.exe_rules.longtuple_size)
         info = @set info.tem.models.forward = selected_approach_forward
     end
-    @info "\n----------------------------------------------\n"
     return info
 end
 
