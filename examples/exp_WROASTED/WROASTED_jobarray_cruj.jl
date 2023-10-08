@@ -37,7 +37,7 @@ nrepeat = 200
 
 
 ## get the spinup sequence
-nc = SindbadData.NetCDF.open(path_input)
+nc = SindbadData.NetCDF.open(path_input);
 y_dist = nc.gatts["last_disturbance_on"]
 
 nrepeat_d = nothing
@@ -91,7 +91,7 @@ opti_sets = Dict(
 
 forcing_config = "forcing_$(forcing_set).json";
 parallelization_lib = "threads"
-exp_main = "wroasted_no_unc_nnse_np"
+exp_main = "wroasted_v202310"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)
@@ -119,38 +119,15 @@ for o_set in opti_set
         "optimization.observations.default_observation.data_path" => path_observation,
         "optimization.observational_constraints" => opti_sets[o_set],)
 
-    @time output_default = runExperimentForward(experiment_json; replace_info=replace_info)
     @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info)
-    opt_params = out_opti.params;
+
+    forcing = out_opti.forcing;
+    obs_array = out_opti.observation;
+    info = out_opti.info;
     
-
-    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
-
-    tbl_params = getParameters(info.tem.models.forward,
-        info.optim.model_parameter_default,
-        info.optim.model_parameters_to_optimize,
-        info.tem.helpers.numbers.sNT)
-    optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
-
-    forcing = getForcing(info)
-
-    observations = getObservation(info, forcing.helpers)
-    obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow.
-
-    run_helpers = prepTEM(forcing, info)
-
-    @time runTEM!(optimized_models,
-        run_helpers.space_forcing,
-        run_helpers.space_spinup_forcing,
-        run_helpers.loc_forcing_t,
-        run_helpers.space_output,
-        run_helpers.space_land,
-        run_helpers.tem_with_types)
-
     # some plots
-    ds = forcing.data[1]
-    opt_dat = run_helpers.output_array
-    def_dat = output_default
+    opt_dat = out_opti.output.optimized
+    def_dat = out_opti.output.default
     costOpt = prepCostOptions(obs_array, info.optim.cost_options)
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 
@@ -207,52 +184,41 @@ for o_set in opti_set
         savefig(fig_prefix * "_$(v)_$(forcing_set).png")
     end
 
-
-    ### redo the forward run to save all output variables
-    replace_info["experiment.flags.calc_cost"] = false
-    replace_info["experiment.flags.run_optimization"] = false
-    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
-    forcing = getForcing(info)
-
-
-    run_helpers = prepTEM(forcing, info)
-    @time runTEM!(optimized_models,
-        run_helpers.space_forcing,
-        run_helpers.space_spinup_forcing,
-        run_helpers.loc_forcing_t,
-        run_helpers.space_output,
-        run_helpers.space_land,
-        run_helpers.tem_with_types)
-
     # save the outcubes
-    output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
-    output = prepTEMOut(info, forcing.helpers)
     out_info = getOutputFileInfo(info)
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    output_array_opt = values(opt_dat)
+    output_array_def = values(def_dat)
+    output_vars = info.tem.variables
+    output_dims = getOutDims(output_vars, info, out_opti.forcing.helpers);
 
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output_array_opt, output_dims, output_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output_array_opt, output_dims, output_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output_array_opt, output_dims, output_vars, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output_array_opt, output_dims, output_vars, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
 
     # plot the debug figures
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    output_vars = output_vars
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
     for (o, v) in enumerate(output_vars)
-        def_var = run_helpers.output_array[o][:, :, 1, 1]
+        def_var = output_array_def[o][:, :, 1, 1]
+        opt_var = output_array_opt[o][:, :, 1, 1]
         vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
         v = vinfo["standard_name"]
+        println("plot debug::", v)
         xdata = [info.tem.helpers.dates.range...]
-        if size(def_var, 2) == 1
-            plot(xdata, def_var[:, 1]; label="optim_forw ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+        if size(opt_var, 2) == 1
+            plot(xdata, def_var[:, 1]; label="def ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+            plot!(xdata, opt_var[:, 1]; label="opt ($(round(SindbadTEM.mean(opt_var[:, 1]), digits=2)))")
             ylabel!("$(vinfo["standard_name"])", font=(20, :green))
-            savefig(fig_prefix * "_$(v)_$(forcing_set).png")
+            savefig(fig_prefix * "_$(v).png")
         else
-            foreach(axes(def_var, 2)) do ll
-                plot(xdata, def_var[:, ll]; label="optim_forw ($(round(SindbadTEM.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
+            foreach(axes(opt_var, 2)) do ll
+                plot(xdata, def_var[:, ll]; label="def ($(round(SindbadTEM.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
+                plot!(xdata, opt_var[:, ll]; label="opt ($(round(SindbadTEM.mean(opt_var[:, ll]), digits=2)))")
                 ylabel!("$(vinfo["standard_name"])", font=(20, :green))
-                savefig(fig_prefix * "_$(v)_$(ll)_$(forcing_set).png")
+                savefig(fig_prefix * "_$(v)_$(ll).png")
             end
         end
     end
