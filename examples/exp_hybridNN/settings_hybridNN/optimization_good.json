@@ -5,48 +5,6 @@
     "distribution": ["normal", [0.0, 1.0]],
     "is_ml": true
   },
-  "model_parameters_to_optimize_small": {
-    "autoRespiration,RMN": null,
-    "autoRespiration,YG": null,
-    "autoRespirationAirT,Q10": null,
-    "cCycleBase,c_τ_LitFast": null,
-    "cCycleBase,c_τ_LitSlow": null,
-    "cCycleBase,c_τ_Root": null,
-    "cCycleBase,c_τ_SoilOld": null,
-    "cCycleBase,c_τ_SoilSlow": null,
-    "cCycleBase,c_τ_Wood": null,
-    "cFlow,f_τ": {
-      "distribution": ["gaussian", [0, 1, 2]],
-      "is_ml": true
-    },
-    "cFlow,k_shedding": {
-      "is_ml": true
-    },
-    "cFlow,slope_leaf_root_to_reserve": {
-      "distribution": ["gaussian", [0, 1, 5]]
-    },
-    "cFlow,slope_reserve_to_leaf_root": null,
-    "cTauSoilT,Q10": null,
-    "cTauSoilW,opt_soilW": null,
-    "evaporation,k_evaporation": null,
-    "evaporation,α": null,
-    "fAPAR,k_extinction": null,
-    "gppAirT,opt_airT": null,
-    "gppAirT,opt_airT_A": null,
-    "gppAirT,opt_airT_B": null,
-    "gppDiffRadiation,μ": null,
-    "gppPotential,εmax": null,
-    "gppSoilW,q": null,
-    "gppSoilW,θstar": null,
-    "gppVPD,sat_ambient_CO2": null,
-    "gppVPD,c_κ": null,
-    "gppVPD,κ": null,
-    "groundWRecharge,dos_exp": null,
-    "rootWaterEfficiency,k_efficiency_cVegRoot": null,
-    "runoffSaturationExcess,β": null,
-    "WUE,WUE_one_hpa": null,
-    "WUE,κ": null
-  },
   "model_parameters_to_optimize": {
     "autoRespiration,RMN": null,
     "autoRespiration,YG": null,
@@ -59,16 +17,9 @@
     "cCycleBase,c_τ_SoilSlow": null,
     "cCycleBase,c_τ_Wood": null,
     "cCycleBase,ηH": null,
-    "cFlow,f_τ": {
-      "distribution": ["gaussian", [0, 1, 2]],
-      "is_ml": true
-    },
-    "cFlow,k_shedding": {
-      "is_ml": true
-    },
-    "cFlow,slope_leaf_root_to_reserve": {
-      "distribution": ["gaussian", [0, 1, 5]]
-    },
+    "cFlow,f_τ": null,
+    "cFlow,k_shedding": null,
+    "cFlow,slope_leaf_root_to_reserve": null,
     "cFlow,slope_reserve_to_leaf_root": null,
     "cTauSoilT,Q10": null,
     "cTauSoilW,opt_soilW": null,
@@ -89,7 +40,6 @@
     "groundWRecharge,dos_exp": null,
     "rootMaximumDepth,constant_frac_max_root_depth": null,
     "rootWaterEfficiency,k_efficiency_cVegRoot": null,
-    "runoffBase,bc": null,
     "runoffSaturationExcess,β": null,
     "snowMelt,melt_Rn": null,
     "snowMelt,melt_T": null,
