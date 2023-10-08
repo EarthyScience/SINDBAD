@@ -5,7 +5,7 @@ export TEMYax
 """
     coreTEMYax(selected_models, loc_forcing, loc_forcing_t, loc_land, tem_helpers, tem_spinup, ::DoSpinupTEM)
 
-
+run the SINBAD CORETEM for a given location
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -31,19 +31,19 @@ end
 
 
 """
-    TEMYax(args; loc_land::NamedTuple, tem::NamedTuple, selected_models::Tuple, forcing_vars::AbstractArray)
+    TEMYax(map_cubes; loc_land::NamedTuple, tem::NamedTuple, selected_models::Tuple, forcing_vars::AbstractArray)
 
 
 
 # Arguments:
-- `args`: DESCRIPTION
+- `map_cubes`: collection/tuple of all input and output cubes from mapCube
 - `loc_land`: initial SINDBAD land with all fields and subfields
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `selected_models`: a tuple of all models selected in the given model structure
-- `forcing_vars`: DESCRIPTION
+- `forcing_vars`: forcing variables
 """
-function TEMYax(args...;selected_models::Tuple, forcing_vars::AbstractArray, loc_land::NamedTuple, output_vars, tem::NamedTuple)
-    outputs, inputs = unpackYaxForward(args; output_vars, forcing_vars)
+function TEMYax(map_cubes...;selected_models::Tuple, forcing_vars::AbstractArray, loc_land::NamedTuple, output_vars, tem::NamedTuple)
+    outputs, inputs = unpackYaxForward(map_cubes; output_vars, forcing_vars)
     loc_forcing = (; Pair.(forcing_vars, inputs)...)
     land_out = coreTEMYax(selected_models, loc_forcing, loc_land, tem.helpers, tem.spinup)
 
@@ -51,7 +51,7 @@ function TEMYax(args...;selected_models::Tuple, forcing_vars::AbstractArray, loc
     foreach(output_vars) do var_pair
         # @show i, var_pair
         data = land_out[first(var_pair)][last(var_pair)]
-            viewCopyYax(outputs[i], data)
+            fillOutputYax(outputs[i], data)
             i += 1
     end
 end
@@ -81,7 +81,7 @@ function runTEMYax(selected_models::Tuple, forcing::NamedTuple, info::NamedTuple
         (incubes...,);
         selected_models=selected_models,
         forcing_vars=forcing.variables,
-        output_vars = run_helpers.output_variables,
+        output_vars = run_helpers.output_vars,
         loc_land=loc_land,
         tem=run_helpers.tem_with_types,
         indims=indims,
@@ -95,33 +95,33 @@ end
 """
     unpackYaxForward(args; tem::NamedTuple, forcing_vars::AbstractArray)
 
-
+unpack the input and output cubes from all cubes thrown by mapCube
 
 # Arguments:
-- `args`: DESCRIPTION
+- `all_cubes`: collection/tuple of all input and output cubes
 - `forcing_vars`: forcing variables
 - `output_vars`: output variables
 """
-function unpackYaxForward(args; output_vars, forcing_vars)
+function unpackYaxForward(all_cubes; output_vars, forcing_vars)
     nin = length(forcing_vars)
     nout = length(output_vars)
-    outputs = args[1:nout]
-    inputs = args[(nout+1):(nout+nin)]
+    outputs = all_cubes[1:nout]
+    inputs = all_cubes[(nout+1):(nout+nin)]
     return outputs, inputs
 end
 
 
 
 """
-    viewCopyYax(xout, xin)
+    fillOutputYax(xout, xin)
 
-
+fills the output array position with the input data/vector
 
 # Arguments:
-- `xout`: DESCRIPTION
-- `xin`: DESCRIPTION
+- `xout`: output array location
+- `xin`: input data/vector
 """
-function viewCopyYax(xout, xin)
+function fillOutputYax(xout, xin)
     if ndims(xout) == ndims(xin)
         for i ∈ eachindex(xin)
             xout[i] = xin[i][1]

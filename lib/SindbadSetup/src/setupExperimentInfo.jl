@@ -7,7 +7,7 @@ export getOutputFileInfo
 
 A helper function just to get info after experiment has been loaded and modified
 """
-function getExperimentInfo(sindbad_experiment::String; replace_info=nothing)
+function getExperimentInfo(sindbad_experiment::String; replace_info=Dict())
     @info "getExperimentInfo: load configurations..."
     info = getConfiguration(sindbad_experiment; replace_info=deepcopy(replace_info))
 
@@ -65,7 +65,7 @@ end
 
 
 function saveInfo(info, ::DoSaveInfo)
-    @info "saveInfo: saving info..."
+    @info "  saveInfo: saving info..."
     @save joinpath(info.tem.helpers.output.settings, "info.jld2") info
     return nothing
 end
@@ -76,7 +76,7 @@ end
 
 
 function setDebugErrorCatcher(::DoCatchModelErrors)
-    @info "setDebugErrorCatcher: setting error catcher..."
+    @info "  setDebugErrorCatcher: setting error catcher..."
     Sindbad.eval(:(error_catcher = []))
     return nothing
 end

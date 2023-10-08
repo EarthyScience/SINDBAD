@@ -1,38 +1,20 @@
 using Revise
-
 using SindbadExperiment
-#using AxisKeys: KeyedArray as KA
-#using Lux, Zygote, Optimisers, ComponentArrays, NNlib
-#using Random
 toggleStackTraceNT()
-#Random.seed!(7)
 
 experiment_json = "../exp_plots/settings_plots/experiment.json"
-info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify information from json with the replace_info
-
-forcing = getForcing(info);
-
-# Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-
-observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
-
-run_helpers = prepTEM(forcing, info);
-
-
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+@time output_default = runExperimentForward(experiment_json);
 
 using GLMakie
 using Colors
 Makie.inline!(false)
 lines(1:10)
 
-output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+output_vars = valToSymbol(output_default.output_vars)
 names_pair = Dict(output_vars .=> 1:4)
 
 var_name = Observable(1)
-gpp = @lift(output_array[$var_name]);
+gpp = @lift(output_default.output[$var_name]);
 s = Observable(9)
 gpp_site = @lift($gpp[:, 1, $s])
 

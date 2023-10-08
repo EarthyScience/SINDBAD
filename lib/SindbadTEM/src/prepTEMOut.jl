@@ -494,6 +494,6 @@ function setupOptiOutput(info::NamedTuple, output::NamedTuple)
         backend=backend,
         overwrite=true)
     # list of parameter
-    output = setTupleField(output, (:paramdims, od))
+    output = setTupleField(output, (:parameter_dim, od))
     return output
 end
