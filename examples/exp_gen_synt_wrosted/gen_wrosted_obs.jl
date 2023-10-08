@@ -14,20 +14,17 @@ land_init = createLandInit(info.pools, info.tem);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 obsv = getKeyedArray(observations);
-tbl_params = getParameters(info.tem.models.forward,
-    info.optim.model_parameter_default,
-    info.optim.model_parameters_to_optimize,
-    info.tem.helpers.numbers.sNT);
+tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
 
 # covariates
-function cube_to_KA(c)
+function yaxCubeToKeyedArray(c)
     namesCube = YAXArrayBase.dimnames(c)
     return KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
 end
 
-sites_f = forc.Tair.site;
+sites_f = forc.f_airT.site;
 c = Cube("examples/data/fluxnet_cube/fluxnet_covariates.zarr")
-xfeatures = cube_to_KA(c)
+xfeatures = yaxCubeToKeyedArray(c)
 # RU-Ha1, IT-PT1, US-Me5
 sites = xfeatures.site
 sites = [s for s ∈ sites]
@@ -37,11 +34,11 @@ n_neurons = 32
 n_params = sum(tbl_params.is_ml)
 
 run_helpers = prepTEM(forcing, info);
-loc_forcings = run_helpers.loc_forcings;
-forcing_one_timestep = run_helpers.forcing_one_timestep;
+space_forcing = run_helpers.space_forcing;
+loc_forcing_t = run_helpers.loc_forcing_t;
 output_array = run_helpers.output_array;
-loc_outputs = run_helpers.loc_outputs;
-land_init_space = run_helpers.land_init_space;
+space_output = run_helpers.space_output;
+space_land = run_helpers.space_land;
 tem_with_types = run_helpers.tem_with_types;
 
 # neural network design
@@ -53,12 +50,6 @@ function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=0, seed=1618) # ~ (
         Flux.Dense(n_neurons => n_params, Flux.sigmoid))
 end
 
-function getParamsAct(pNorm, tbl_params)
-    lb = oftype(tbl_params.default, tbl_params.lower)
-    ub = oftype(tbl_params.default, tbl_params.upper)
-    pVec = pNorm .* (ub .- lb) .+ lb
-    return pVec
-end
 
 ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
 
@@ -91,18 +82,17 @@ function pixel_run!(output_array,
     tem_spinup,
     tem_models,
     land_init_site,
-    forcing_one_timestep)
+    loc_forcing_t)
 
     loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
-    up_apps = Tuple(updateModelParametersType(tbl_params, forward, upVector))
+    up_apps = Tuple(updateModelParameters(tbl_params, forward, upVector))
     return coreTEM!(loc_output,
         up_apps,
         loc_forcing,
         tem_helpers,
         tem_spinup,
-        tem_models,
         land_init_site,
-        forcing_one_timestep)
+        loc_forcing_t)
 end
 
 tem_helpers = tem_with_types.helpers;
@@ -117,9 +107,9 @@ loc_forcing, loc_output, loc_obs =
     getLocDataObsN(output_array,
         forc, obs_array, site_location);
 
-loc_land_init = run_helpers.land_one;
-loc_output = loc_outputs[1];
-loc_forcing = run_helpers.loc_forcings[1];
+loc_land_init = run_helpers.loc_land;
+loc_output = space_output[1];
+loc_forcing = run_helpers.space_forcing[1];
 
 def_params = tbl_params.default .* rand()
 pixel_run!(output,
@@ -133,7 +123,7 @@ pixel_run!(output,
     tem_spinup,
     tem_models,
     loc_land_init,
-    forcing_one_timestep)
+    loc_forcing_t)
 
 
 loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
@@ -141,7 +131,7 @@ loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array,
 function space_run!(up_params,
     tbl_params,
     sites_f,
-    land_init_space,
+    space_land,
     cov_sites,
     output,
     forc,
@@ -150,13 +140,13 @@ function space_run!(up_params,
     tem_helpers,
     tem_spinup,
     tem_models,
-    forcing_one_timestep)
+    loc_forcing_t)
     #Threads.@threads for site_index ∈ eachindex(cov_sites)
     for site_index ∈ eachindex(cov_sites)
         site_name = cov_sites[site_index]
         x_params = up_params(; site=site_name)
         site_location = name_to_id(site_name, sites_f)
-        loc_land_init = land_init_space[site_location[1][2]]
+        loc_land_init = space_land[site_location[1][2]]
         pixel_run!(output,
             forc,
             obs_array,
@@ -168,13 +158,13 @@ function space_run!(up_params,
             tem_spinup,
             tem_models,
             loc_land_init,
-            forcing_one_timestep
+            loc_forcing_t
         )
     end
 end
 cov_sites = xfeatures.site
 
-#out_vars = Val(info.tem.variables)
+#output_vars = Val(info.tem.variables)
 #helpers = info.tem.helpers # helpers
 #spinup = info.tem.spinup # spinup
 #models = info.tem.models # models
@@ -189,7 +179,7 @@ end
 space_run!(params_bounded,
     tbl_params,
     sites_f,
-    land_init_space,
+    space_land,
     cov_sites,
     output,
     forc,
@@ -198,7 +188,7 @@ space_run!(params_bounded,
     tem_helpers,
     tem_spinup,
     tem_models,
-    forcing_one_timestep)
+    loc_forcing_t)
 
 
 

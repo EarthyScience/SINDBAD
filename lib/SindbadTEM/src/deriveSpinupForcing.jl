@@ -16,7 +16,7 @@ function getAllSpinupForcing(forcing, spin_sequences::Vector{SpinSequenceWithAgg
         forc = getfield(seq, :forcing)
         forc_name = forc
         if forc_name ∉ keys(spinup_forcing)
-            seq_forc = getSpinupForcing(forcing, seq, tem_helpers.vals.forc_types)
+            seq_forc = getSpinupForcing(forcing, seq, tem_helpers.vals.forcing_types)
             spinup_forcing = setTupleField(spinup_forcing, (forc_name, seq_forc))
         end
     end
@@ -24,17 +24,17 @@ function getAllSpinupForcing(forcing, spin_sequences::Vector{SpinSequenceWithAgg
 end
 
 """
-    getSpinupForcing(forcing, sequence, ::Val{forc_types})
+    getSpinupForcing(forcing, sequence, ::Val{forcing_types})
 
 prepare the spinup forcing set for a given spinup sequence
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for a location
 - `sequence`: a with all information needed to run a spinup sequence
-- `:Val{forc_types}`: a type dispatch with the tuple of pairs of forcing name and time/no time types
+- `:Val{forcing_types}`: a type dispatch with the tuple of pairs of forcing name and time/no time types
 """
-function getSpinupForcing(forcing, sequence::SpinSequenceWithAggregator, ::Val{forc_types}) where {forc_types}
-    seq_forcing = map(forc_types) do fnt
+function getSpinupForcing(forcing, sequence::SpinSequenceWithAggregator, ::Val{forcing_types}) where {forcing_types}
+    seq_forcing = map(forcing_types) do fnt
         f_name = first(fnt)
         f_type = last(fnt)
         v = getproperty(forcing, f_name)
@@ -74,7 +74,7 @@ function getSpinupForcingVariable(v, _, ::ForcingWithoutTime)
 end
 
 """
-    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeIndexed)
+    getSpinupForcing(forcing, loc_forcing_t, time_aggregator, tem_helpers, ::TimeIndexed)
 
 aggregate the forcing variable with time where an aggregation/collection is needed in time
 
@@ -89,7 +89,7 @@ function timeAggregateForcingV(v, _, aggregator, ag_type::TimeNoDiff)
 end
 
 """
-    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeIndexed)
+    getSpinupForcing(forcing, loc_forcing_t, time_aggregator, tem_helpers, ::TimeIndexed)
 
 aggregate the forcing variable with time where an aggregation/collection is needed in time
 

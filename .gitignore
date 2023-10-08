@@ -13,7 +13,9 @@
 *.out
 *.log
 *logs
+*.dat
 *.tmp
+*.txt
 *.csv
 *.CSV
 *.e

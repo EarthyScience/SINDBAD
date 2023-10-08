@@ -2,7 +2,7 @@ export vegFraction_scaledfAPAR
 
 #! format: off
 @bounds @describe @units @with_kw struct vegFraction_scaledfAPAR{T1} <: vegFraction
-    fAPARscale::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | ""
+    fAPAR_scalar::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | ""
 end
 #! format: on
 
@@ -16,7 +16,7 @@ function compute(p_struct::vegFraction_scaledfAPAR, forcing, land, helpers)
     end
 
     ## calculate variables
-    frac_vegetation = minOne(fAPAR * fAPARscale)
+    frac_vegetation = minOne(fAPAR * fAPAR_scalar)
 
     ## pack land variables
     @pack_land frac_vegetation => land.states

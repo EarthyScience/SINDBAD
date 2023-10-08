@@ -4,10 +4,10 @@ export cFlowSoilProperties_CASA
 @bounds @describe @units @with_kw struct cFlowSoilProperties_CASA{T1,T2,T3,T4,T5,T6} <: cFlowSoilProperties
     effA::T1 = 0.85 | (-Inf, Inf) | "" | ""
     effB::T2 = 0.68 | (-Inf, Inf) | "" | ""
-    effCLAY_cMicSoil_A::T3 = 0.003 | (-Inf, Inf) | "" | ""
-    effCLAY_cMicSoil_B::T4 = 0.032 | (-Inf, Inf) | "" | ""
-    effCLAY_cSoilSlow_A::T5 = 0.003 | (-Inf, Inf) | "" | ""
-    effCLAY_cSoilSlow_B::T6 = 0.009 | (-Inf, Inf) | "" | ""
+    effclay_cMicSoil_A::T3 = 0.003 | (-Inf, Inf) | "" | ""
+    effclay_cMicSoil_B::T4 = 0.032 | (-Inf, Inf) | "" | ""
+    effclay_cSoilSlow_A::T5 = 0.003 | (-Inf, Inf) | "" | ""
+    effclay_cSoilSlow_B::T6 = 0.009 | (-Inf, Inf) | "" | ""
 end
 #! format: on
 
@@ -33,23 +33,23 @@ function compute(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
     @unpack_land p_E_vec ∈ land.cFlowSoilProperties
 
     ## unpack land variables
-    @unpack_land (st_CLAY, st_SILT) ∈ land.soilTexture
+    @unpack_land (st_clay, st_silt) ∈ land.soilTexture
 
     ## calculate variables
     # p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
     # p_fSoil = zero(land.pools.cEco)
     # #sujan
     p_F_vec = p_E_vec
-    CLAY = mean(st_CLAY)
-    SILT = mean(st_SILT)
+    clay = mean(st_clay)
+    silt = mean(st_silt)
     # CONTROLS FOR C FLOW TRANSFERS EFFICIENCY [E] AND FRACTION [F] BASED ON PARTICULAR TEXTURE PARAMETERS.
     # SOURCE, TARGET, VALUE [increment in E & F caused by soil properties]
-    aME = [:cMicSoil :cSoilSlow effA-(effB*(SILT+CLAY))
-        :cMicSoil :cSoilOld effA-(effB*(SILT+CLAY))]
-    aMF = [:cSoilSlow :cMicSoil 1-(effCLAY_cSoilSlow_A+(effCLAY_cSoilSlow_B*CLAY))
-        :cSoilSlow :cSoilOld effCLAY_cSoilSlow_A+(effCLAY_cSoilSlow_B*CLAY)
-        :cMicSoil :cSoilSlow 1-(effCLAY_cMicSoil_A+(effCLAY_cMicSoil_B*CLAY))
-        :cMicSoil :cSoilOld effCLAY_cMicSoil_A+(effCLAY_cMicSoil_B*CLAY)]
+    aME = [:cMicSoil :cSoilSlow effA-(effB*(silt+clay))
+        :cMicSoil :cSoilOld effA-(effB*(silt+clay))]
+    aMF = [:cSoilSlow :cMicSoil 1-(effclay_cSoilSlow_A+(effclay_cSoilSlow_B*clay))
+        :cSoilSlow :cSoilOld effclay_cSoilSlow_A+(effclay_cSoilSlow_B*clay)
+        :cMicSoil :cSoilSlow 1-(effclay_cMicSoil_A+(effclay_cMicSoil_B*clay))
+        :cMicSoil :cSoilOld effclay_cMicSoil_A+(effclay_cMicSoil_B*clay)]
     for vn ∈ ("E", "F")
         eval(["aM = aM" vn " "])
         for ii ∈ 1:size(aM, 1)
@@ -80,8 +80,8 @@ $(SindbadParameters)
 Effect of soil properties on the c transfers between pools using cFlowSoilProperties_CASA
 
 *Inputs*
- - land.soilTexture.st_CLAY: soil hydraulic properties for clay layer
- - land.soilTexture.st_SILT: soil hydraulic properties for silt layer
+ - land.soilTexture.st_clay: soil hydraulic properties for clay layer
+ - land.soilTexture.st_silt: soil hydraulic properties for silt layer
 
 *Outputs*
  - land.cFlowSoilProperties.p_E_vec: effect of soil on transfer efficiency between pools

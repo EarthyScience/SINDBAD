@@ -6,21 +6,21 @@ export getObservation
 
 
 # Arguments:
-- `nc`: DESCRIPTION
-- `data_path`: DESCRIPTION
-- `default_info`: DESCRIPTION
-- `v_info`: DESCRIPTION
-- `data_sub_field`: DESCRIPTION
+- `nc`: file/nc object of the data
+- `data_path`: path for the data file
+- `default_info`: default variable info for constraints
+- `v_info`: info of the observation constraint that will overwrite default_info
+- `data_sub_field`: subfile of the observation
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `yax`: DESCRIPTION
-- `use_data_sub`: DESCRIPTION
+- `yax`: the base observation yax array
+- `use_data_sub`: flag to use the subfield of observation constraint
 """
 function getAllConstraintData(nc, data_backend, data_path, default_info, v_info, data_sub_field, info; yax=nothing, use_data_sub=true)
     nc_sub = nothing
     yax_sub = nothing
     v_info_sub = nothing
     bounds_sub = nothing
-    @info "   $(data_sub_field)"
+    @debug "   $(data_sub_field)"
     get_it_from_path = false
     if hasproperty(v_info, data_sub_field) && use_data_sub
         get_it_from_path = true
@@ -35,19 +35,20 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
         data_path_sub = getAbsDataPath(info, v_info_sub.data_path)
         nc_sub = nc
         nc_sub, yax_sub = getYaxFromSource(nc_sub, data_path, data_path_sub, v_info_sub.source_variable, info, data_backend)
+        @info "     $(data_sub_field): $(v_info_sub.source_variable)"
         bounds_sub = v_info_sub.bounds
     else
         if data_sub_field == :qflag
-            @info "     no \"$(data_sub_field)\" field OR use_quality_flag=false in optimization settings"
+            @debug "     no \"$(data_sub_field)\" field OR use_quality_flag=false in optimization settings"
         elseif data_sub_field == :unc
-            @info "     no \"$(data_sub_field)\" field OR use_uncertainty=false in optimization settings"
+            @debug "     no \"$(data_sub_field)\" field OR use_uncertainty=false in optimization settings"
         elseif data_sub_field == :weight
-            @info "     no \"$(data_sub_field)\" field OR use_spatial_weight=false in optimization settings"
+            @debug "     no \"$(data_sub_field)\" field OR use_spatial_weight=false in optimization settings"
         else
-            @info "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
+            @debug "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
         end
         if !isnothing(yax)
-            @info "       assuming values of ones"
+            @info "     $(data_sub_field): ones(data)"
             nc_sub = nc
             yax_sub = map(x -> one(x), yax)
             v_info_sub = default_info
@@ -59,9 +60,6 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
     return nc_sub, yax_sub, v_info_sub, bounds_sub
 end
 
-"""
-getObservation(info, forcing.helpers)
-"""
 
 """
     getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
@@ -119,15 +117,16 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         if !isnothing(yax_mask)
             yax_mask_v .= yax_mask .* yax_mask_v
         end
-        @info "   harmonizing qflag"
+        @info "     harmonize/subset..."
+        @debug "      qflag"
         cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info, num_type; clean_data=false)
-        @info "   harmonizing data"
+        @debug "      data"
         cyax = subsetAndProcessYax(yax, yax_mask, tar_dims, vinfo_data, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
-        @info "   harmonizing unc"
+        @debug "      unc"
         cyax_unc = subsetAndProcessYax(yax_unc, yax_mask, tar_dims, vinfo_unc, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
-        @info "   harmonizing weight"
+        @debug "      weight"
         cyax_wgt = subsetAndProcessYax(yax_wgt, yax_mask, tar_dims, vinfo_wgt, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
-        @info "   harmonizing mask"
+        @debug "      mask"
         yax_mask_v = subsetAndProcessYax(yax_mask_v, yax_mask_v, tar_dims, vinfo_mask, info, num_type_bool; clean_data=false)
 
         push!(obscubes, cyax)
@@ -136,11 +135,12 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(obscubes, cyax_wgt)
         @info " \n"
     end
-    @info "getObservation: getting observation dimensions..."
+    @info "getObservation: getting observation helpers..."
+    @debug "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(info.forcing.data_dimension.space))
-    @info "getObservation: getting number of time steps..."
+    @debug "getObservation: getting number of time steps..."
     nts = forcing_helpers.sizes
-    @info "getObservation: getting variable name..."
+    @debug "getObservation: getting variable name..."
     varnames_all = []
     for v ∈ varnames
         push!(varnames_all, v)

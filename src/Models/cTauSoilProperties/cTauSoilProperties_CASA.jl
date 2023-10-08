@@ -25,15 +25,15 @@ function compute(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
     @unpack_land c_eco_k_f_soil_props ∈ land.cTauSoilProperties
 
     ## unpack land variables
-    @unpack_land (st_CLAY, st_SILT) ∈ land.soilTexture
+    @unpack_land (st_clay, st_silt) ∈ land.soilTexture
 
     ## calculate variables
     #sujan: moving clay & silt from land.soilTexture to p_soilWBase.
-    CLAY = mean(st_CLAY)
-    SILT = mean(st_SILT)
+    clay = mean(st_clay)
+    silt = mean(st_silt)
     # TEXTURE EFFECT ON k OF cMicSoil
     zix = helpers.pools.zix.cMicSoil
-    c_eco_k_f_soil_props[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
+    c_eco_k_f_soil_props[zix] = (1.0 - (TEXTEFFA * (silt + clay)))
     # (ineficient, should be pix zix_mic)
 
     ## pack land variables
@@ -53,8 +53,8 @@ $(SindbadParameters)
 Effect of soil texture on soil decomposition rates using cTauSoilProperties_CASA
 
 *Inputs*
- - land.soilTexture.st_CLAY: values for clay soil texture
- - land.soilTexture.st_SILT: values for silt soil texture
+ - land.soilTexture.st_clay: values for clay soil texture
+ - land.soilTexture.st_silt: values for silt soil texture
 
 *Outputs*
  - land.cTauSoilProperties.c_eco_k_f_soil_props: Soil texture stressor values on the the turnover rates

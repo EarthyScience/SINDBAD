@@ -2,14 +2,14 @@ export rainSnow_forcing
 
 #! format: off
 @bounds @describe @units @with_kw struct rainSnow_forcing{T1} <: rainSnow
-    SF_scale::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | ""
+    snowfall_scalar::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | ""
 end
 #! format: on
 
 function compute(p_struct::rainSnow_forcing, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_rainSnow_forcing p_struct
-    @unpack_forcing (Rain, Snow) ∈ forcing
+    @unpack_forcing (f_rain, f_snow) ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -18,8 +18,8 @@ function compute(p_struct::rainSnow_forcing, forcing, land, helpers)
     end
 
     ## calculate variables
-    rain = Rain
-    snow = Snow * (SF_scale)
+    rain = f_rain
+    snow = f_snow * snowfall_scalar
     precip = rain + snow
 
     # add snowfall to snowpack of the first layer
@@ -54,7 +54,7 @@ function update(p_struct::rainSnow_forcing, forcing, land, helpers)
 end
 
 @doc """
-stores the time series of rainfall and snowfall from forcing & scale snowfall if SF_scale parameter is optimized
+stores the time series of rainfall and snowfall from forcing & scale snowfall if snowfall_scalar parameter is optimized
 
 # Parameters
 $(SindbadParameters)
@@ -65,13 +65,13 @@ $(SindbadParameters)
 Set rain and snow to fe.rainsnow. using rainSnow_forcing
 
 *Inputs*
- - forcing.Rain
+ - forcing.f_rain
  - forcing.Snow
  - info
 
 *Outputs*
  - land.fluxes.rain: liquid rainfall from forcing input
- - land.fluxes.snow: snowfall estimated as the rain when tair <  threshold
+ - land.fluxes.snow: snowfall estimated as the rain when airT <  threshold
 
 # update
 

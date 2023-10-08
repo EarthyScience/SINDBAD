@@ -27,7 +27,7 @@ end
 function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_sublimation_GLEAM p_struct
-    @unpack_forcing (PsurfDay, Rn, TairDay) ∈ forcing
+    @unpack_forcing (f_psurf_day, f_rn, f_airT_day) ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -38,7 +38,7 @@ function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
         n_snowW ∈ land.wCycleBase
     end
     # convert temperature to Kelvin
-    T = TairDay + deg_to_k
+    T = f_airT_day + deg_to_k
 
     # from Diego miralles: The majority of the parameters I use in GLEAM come from the equations in Murphy & Koop [2005] here attached. The slope of the vapour pressure over ice versus temperature curve (Δ) is obtained from eq. (7). You may want to do this derivative yourself because my calculus is not as good as it used to; what I get is:
     Δ = ( Δ_1 / (T^t_two) +  Δ_2/ (T - Δ_3)) * exp(Δ_4 - Δ_1 / T + Δ_2 * log(T) - Δ_3 * T)
@@ -55,10 +55,10 @@ function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
 
     # Then the psychrometer "constant" (γ) can be calculated in [kPa/K] according to Brunt [1952] as: Where P is the air pressure in [kPa], which I consider as a function of the elevation [DEM] but can otherwise be set to 101.3, & ca is the specific heat of air which I assume 0.001 MJ/kg/K.
     # ca = 101.3
-    γ = PsurfDay * γ_1 / (γ_2 * λ)
+    γ = f_psurf_day * γ_1 / (γ_2 * λ)
 
     #PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
-    tmp = α * Rn * (Δ / (Δ + γ)) / λ
+    tmp = α * f_rn * (Δ / (Δ + γ)) / λ
 
     PTtermSub = maxZero(tmp)
 
@@ -108,9 +108,9 @@ $(SindbadParameters)
 Calculate sublimation and update snow water equivalent using sublimation_GLEAM
 
 *Inputs*
- - forcing.PsurfDay : atmospheric pressure during the daytime [kPa]
- - forcing.Rn : net radiation [MJ/m2/time]
- - forcing.TairDay : daytime temperature [C]
+ - forcing.f_psurf_day : atmospheric pressure during the daytime [kPa]
+ - forcing.f_rn : net radiation [MJ/m2/time]
+ - forcing.f_airT_day : daytime temperature [C]
  - land.states.frac_snow: snow cover fraction []
  - land.sublimation.PTtermSub: Priestley-Taylor term [mm/MJ]
  - α: α coefficient for sublimation

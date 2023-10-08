@@ -64,7 +64,7 @@ end
 - `number_helpers`: DESCRIPTION
 - `dates_helpers`: DESCRIPTION
 """
-function getCostOptions(optim_info::NamedTuple, vars_info, number_helpers, dates_helpers)
+function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number_helpers, dates_helpers)
     varlist = Symbol.(optim_info.observational_constraints)
     agg_type = []
     time_aggrs = []
@@ -111,6 +111,13 @@ function getCostOptions(optim_info::NamedTuple, vars_info, number_helpers, dates
     mod_subfield = [Symbol(split(_a, ".")[2]) for _a in mod_vars]
     mod_ind = collect(1:length(varlist))
     obs_ind = [i + 3 * (i - 1) for i in mod_ind]
+
+    mod_ind = [findfirst(s -> first(s) === mf && last(s) === msf, tem_variables) for (mf, msf) in zip(mod_field, mod_subfield)]
+    # map(cost_option_table) do cost_option
+    #     # @show cost_option
+    #     new_mod_ind = findfirst(s -> first(s) === cost_option.mod_field && last(s) === cost_option.mod_subfield, tem_variables)
+    #     cost_option = Accessors.@set cost_option.mod_ind = new_mod_ind
+    # end
 
     agg_indices = []
     for (i, _aggr) in enumerate(time_aggrs)
@@ -235,7 +242,32 @@ function setupOptimization(info::NamedTuple)
     vars_info = setTupleField(vars_info, (:store, store_vars))
     vars_info = setTupleField(vars_info, (:model, model_vars))
     info = setTupleSubfield(info, :optim, (:variables, (vars_info)))
-    cost_options = getCostOptions(info.optimization, vars_info, info.tem.helpers.numbers, info.tem.helpers.dates)
+    info = updateVariablesToStore(info)
+    cost_options = getCostOptions(info.optimization, vars_info, info.tem.variables, info.tem.helpers.numbers, info.tem.helpers.dates)
     info = setTupleSubfield(info, :optim, (:cost_options, cost_options))
     return info
 end
+
+
+
+"""
+    updateVariablesToStore(info::NamedTuple)
+
+sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
+"""
+function updateVariablesToStore(info::NamedTuple)
+    output_vars = info.experiment.model_output.variables
+    if info.experiment.flags.run_optimization
+        output_vars = map(info.optim.variables.obs) do vo
+            vn = getfield(info.optim.variables.optim, vo)
+            Symbol(string(vn[1]) * "." * string(vn[2]))
+        end
+    elseif info.experiment.flags.calc_cost
+        output_vars = union(String.(keys(info.experiment.model_output.variables)),
+                info.optim.variables.model)
+    end
+    out_vars_pairs = Tuple(getVariablePair.(output_vars))
+    info = (; info..., tem=(; info.tem..., variables=out_vars_pairs))
+    return info
+end
+

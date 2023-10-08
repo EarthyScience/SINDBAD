@@ -2,8 +2,8 @@ export cAllocationNutrients_Friedlingstein1999
 
 #! format: off
 @bounds @describe @units @with_kw struct cAllocationNutrients_Friedlingstein1999{T1,T2} <: cAllocationNutrients
-    minL::T1 = 0.1 | (0.0, 1.0) | "" | ""
-    maxL::T2 = 1.0 | (0.0, 1.0) | "" | ""
+    min_L::T1 = 0.1 | (0.0, 1.0) | "" | ""
+    max_L::T2 = 1.0 | (0.0, 1.0) | "" | ""
 end
 #! format: on
 
@@ -22,11 +22,11 @@ function compute(p_struct::cAllocationNutrients_Friedlingstein1999, forcing, lan
     end
 
     # estimate NL
-    nl = clamp(c_allocation_f_soilT * c_allocation_f_soilW, minL, maxL)
+    nl = clamp(c_allocation_f_soilT * c_allocation_f_soilW, min_L, max_L)
     NL = PET > z_zero ? nl : one(nl) #@needscheck is the else value one or zero? In matlab version was set to ones.
 
     # water limitation calculation
-    WL = clamp(sum(PAW) / sum_wAWC, minL, maxL)
+    WL = clamp(sum(PAW) / sum_wAWC, min_L, max_L)
 
     # minimum of WL & NL
     c_allocation_f_W_N = min(WL, NL)
