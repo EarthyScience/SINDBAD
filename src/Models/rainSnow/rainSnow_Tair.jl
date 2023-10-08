@@ -2,26 +2,26 @@ export rainSnow_Tair
 
 #! format: off
 @bounds @describe @units @with_kw struct rainSnow_Tair{T1} <: rainSnow
-    Tair_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C"
+    airT_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C"
 end
 #! format: on
 
 function compute(p_struct::rainSnow_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_rainSnow_Tair p_struct
-    @unpack_forcing (Rain, Tair) ∈ forcing
+    @unpack_forcing (f_rain, f_airT) ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
     end
-    rain = Rain
-    snow = zero(Rain)
+    rain = f_rain
+    snow = zero(f_rain)
     ## calculate variables
-    if Tair < Tair_thres
-        snow = Rain
-        rain = zero(Rain)
+    if f_airT < airT_thres
+        snow = f_rain
+        rain = zero(f_rain)
     end
     precip = rain + snow
 
@@ -71,12 +71,12 @@ $(SindbadParameters)
 Set rain and snow to fe.rainsnow. using rainSnow_Tair
 
 *Inputs*
- - forcing.Rain
- - forcing.Tair
+ - forcing.f_rain
+ - forcing.f_airT
 
 *Outputs*
  - land.fluxes.rain: liquid rainfall from forcing input
- - land.fluxes.snow: snowfall estimated as the rain when tair <  threshold
+ - land.fluxes.snow: snowfall estimated as the rain when airT <  threshold
 
 # update
 

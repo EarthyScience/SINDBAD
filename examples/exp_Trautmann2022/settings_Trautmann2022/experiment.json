@@ -19,6 +19,7 @@
     "input_array_type": "keyed_array",
     "input_data_backend": "netcdf",
     "land_output_type": "array",
+    "longtuple_size": null,
     "model_array_type": "static_array",
     "model_number_type": "Float32",
     "parallelization": "threads",
@@ -33,17 +34,11 @@
     "run_forward": true,
     "run_optimization": false,
     "save_info": true,
-    "spinup": {
-      "load_spinup": false,
-      "run_spinup": true,
-      "save_spinup": false,
-      "spinup_TEM": true,
-      "store_spinup": false
-    },
+    "spinup_TEM": true,
+    "store_spinup": false,
     "use_forward_diff": false
   },
   "model_output": {
-    "all": true,
     "depth_dimensions": {
       "d_ground": "groundW",
       "d_snow": "snowW",
@@ -74,10 +69,7 @@
     }
   },
   "model_spinup": {
-    "paths": {
-      "restart_file_in": null,
-      "restart_file_out": null
-    },
+    "restart_file": null,
     "sequence": [
       {
         "forcing": "all_years",

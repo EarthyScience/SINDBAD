@@ -9,6 +9,7 @@ expSol = zeros(8, length(tjs))
 odeSol = zeros(8, length(tjs))
 times = zeros(2, length(tjs))
 cVeg_names = nothing
+info = nothing
 for (i, tj) ∈ enumerate(tjs)
     experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 
@@ -25,46 +26,35 @@ for (i, tj) ∈ enumerate(tjs)
     # linit= createLandInit(info.tem);
 
     run_helpers = prepTEM(forcing, info);
-    loc_forcings = run_helpers.loc_forcings;
-    spinup_forcing = run_helpers.loc_spinup_forcings;
-    forcing_one_timestep = run_helpers.forcing_one_timestep;
+    space_forcing = run_helpers.space_forcing;
+    spinup_forcing = run_helpers.space_spinup_forcing;
+    loc_forcing_t = run_helpers.loc_forcing_t;
     output_array = run_helpers.output_array;
-    loc_outputs = run_helpers.loc_outputs;
-    land_init_space = run_helpers.land_init_space;
+    space_output = run_helpers.space_output;
+    space_land = run_helpers.space_land;
     tem_with_types = run_helpers.tem_with_types;
 
 
     spinupforc = :day_MSC
     sel_forcing = getfield(spinup_forcing, spinupforc)
+    n_timesteps = getfield(run_helpers.tem_with_types.spinup.sequence[findfirst(x -> x.forcing === spinupforc, run_helpers.tem_with_types.spinup.sequence)], :n_timesteps)
 
 
-    land_init = run_helpers.land_one
+    land_init = run_helpers.loc_land
     sel_pool = :cEco
 
-    spinup_models = tem_with_types.models.forward[tem_with_types.models.is_spinup]
+    spinup_models = tem_with_types.models.forward
     sp = ODETsit5()
     @show "ODE_Init", tj
-    @time out_sp_ode = SindbadTEM.runSpinup(
-        spinup_models,
-        sel_forcing,
-        forcing_one_timestep,
-        tem_with_types.helpers,
-        tem_with_types.spinup,
-        deepcopy(land_init),
-        sp)
+
+    @time out_sp_ode = SindbadTEM.spinup(spinup_models, sel_forcing, loc_forcing_t, deepcopy(land_init), tem_with_types.helpers, n_timesteps, sp)
 
     out_sp_ode_init = deepcopy(out_sp_ode)
     @show "Exp_Init", tj
     sp = selSpinupModels()
     out_sp_exp = land_init
-    @time for nl ∈ 1:Int(tem_with_types.spinup.differential_eqn.time_jump)
-        out_sp_exp = SindbadTEM.runSpinup(
-            spinup_models,
-            sel_forcing,
-            forcing_one_timestep,
-            deepcopy(out_sp_exp),
-            tem_with_types.helpers,
-            tem_with_types.spinup)
+    @time for nl ∈ 1:Int(tem_with_types.differential_eqn.time_jump)
+        @time out_sp_exp = SindbadTEM.spinup(spinup_models, sel_forcing, loc_forcing_t, deepcopy(out_sp_exp), tem_with_types.helpers, n_timesteps, sp)
     end
     out_sp_exp_init = deepcopy(out_sp_exp)
     expSol[:, i] = getfield(out_sp_ode_init.pools, sel_pool)
@@ -88,7 +78,7 @@ x_lims = min.(minimum(expSol), minimum(odeSol)), max.(maximum(expSol), maximum(o
 xlims!(x_lims);
 plot!([x_lims...], [x_lims...]; color=:grey, label="1:1");
 plt
-savefig("scatter_allpool.png")
+savefig(joinpath(info.output.figure, "scatter_allpool.png"))
 
 # one subplot per pool
 pltall = [];
@@ -103,5 +93,4 @@ for (i, cp) ∈ enumerate(cVeg_names)
     push!(pltall, p)
 end
 plot(pltall...; layout=(4, 2))
-
-savefig("scatter_eachpool.png")
+savefig(joinpath(info.output.figure, "scatter_eachpool.png"))

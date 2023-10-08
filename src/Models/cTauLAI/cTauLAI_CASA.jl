@@ -2,8 +2,8 @@ export cTauLAI_CASA
 
 #! format: off
 @bounds @describe @units @with_kw struct cTauLAI_CASA{T1,T2} <: cTauLAI
-    maxMinLAI::T1 = 12.0 | (11.0, 13.0) | "maximum value for the minimum LAI for litter scalars" | "m2/m2"
-    kRTLAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter imputs" | ""
+    max_min_LAI::T1 = 12.0 | (11.0, 13.0) | "maximum value for the minimum LAI for litter scalars" | "m2/m2"
+    k_root_LAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter inputs" | ""
 end
 #! format: on
 
@@ -66,7 +66,7 @@ function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
     LAIsum = sum(LAI13_next)
     LAIave = LAIsum / size(LAI13_next, 2)
     LAImin = minimum(LAI13_next)
-    LAImin[LAImin>maxMinLAI] = maxMinLAI[LAImin>maxMinLAI]
+    LAImin[LAImin>max_min_LAI] = max_min_LAI[LAImin>max_min_LAI]
     # Calculate constant fraction of LAI [LTCON]
     LTCON = 0.0
     ndx = (LAIave > 0.0)
@@ -85,7 +85,7 @@ function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
     RTLAI = 0.0
     ndx = (LAIsum > 0.0)
     LAI131st = LAI13[1]
-    RTLAI[ndx] = (1.0 - kRTLAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + kRTLAI / TSPY
+    RTLAI[ndx] = (1.0 - k_root_LAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + k_root_LAI / TSPY
     # Feed the output fluxes to cCycle components
     zix_veg = p_cVegLeafZix
     c_eco_k_f_LAI[zix_veg] = c_τ_eco[zix_veg] * LTLAI / c_eco_k[zix_veg] # leaf litter scalar

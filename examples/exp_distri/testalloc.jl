@@ -72,14 +72,14 @@ macro test_it(forc)
     # @show forcing_nt_array, QuoteNode(forc)
     return Expr(Symbol("@set"),
         :(),
-        Expr(:., :forcing_t, forc),
+        Expr(:., :loc_forcing_t, forc),
         Expr(:if,
             Expr(:call, :in, :time, Expr(:call, Expr(:., :AxisKeys, :(:dimnames)), :v)),
             Expr(:ref, :v, :($(Expr(:kw, :time, ts)))),
             :v)) #= none:1 =#
 end
 ts = 5
-@test_it :tair
+@test_it :airT
 function test_nt(out::NamedTuple, nt::Int64)
     for t ∈ 1:nt
         b = rand()#+out.fluxes.b
