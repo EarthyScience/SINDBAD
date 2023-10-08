@@ -63,20 +63,14 @@ observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
-# setLogLevel(:debug)
-# @profview getLossVector(obs_array, run_helpers.output_array, cost_options) # |> sum
 @time getLossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 @time getLossVector(land_stacked_ts, obs_array, cost_options) # |> sum
 @time getLossVector(land_stacked_prealloc, obs_array, cost_options) # |> sum
 
 
 tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT)
-
 defaults = tbl_params.default;
 
 @time getLoss(defaults, info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
 @time getLoss(defaults, info.tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.loc_land, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
-
-
-

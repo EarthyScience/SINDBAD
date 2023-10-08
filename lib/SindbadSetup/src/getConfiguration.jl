@@ -75,7 +75,7 @@ deepMerge(d...) = d[end]
 
 get the experiment info from either json or load the named tuple
 """
-function getConfiguration(sindbad_experiment::String; replace_info=nothing)
+function getConfiguration(sindbad_experiment::String; replace_info=Dict())
     local_root = dirname(Base.active_project())
     if !isabspath(sindbad_experiment)
         sindbad_experiment = joinpath(local_root, sindbad_experiment)
@@ -93,7 +93,7 @@ function getConfiguration(sindbad_experiment::String; replace_info=nothing)
             "sindbad can only be run with either a json or a jld2 data file. Provide a correct experiment file"
         )
     end
-    if !isnothing(replace_info)
+    if !isempty(replace_info)
         non_exp_dict = filter(x -> !startswith(first(x), "experiment"), replace_info)
         if !isempty(non_exp_dict)
             info = replaceInfoFields(info, non_exp_dict)
@@ -108,8 +108,8 @@ function getConfiguration(sindbad_experiment::String; replace_info=nothing)
     infoTuple = (; infoTuple..., sindbad_root=sindbad_root)
     infoTuple = (; infoTuple..., settings_root=exp_base_path)
     infoTuple = prepTEMOutDirectory(infoTuple)
-    @info "Setup output directories in: $(infoTuple.output.root)"
-    @info "Saving a copy of json settings to: $(infoTuple.output.settings)"
+    @info "  getConfiguration:: Setup output directories in: $(infoTuple.output.root)"
+    @info "  getConfiguration:: Saving a copy of json settings to: $(infoTuple.output.settings)"
     cp(sindbad_experiment,
         joinpath(infoTuple.output.settings, split(sindbad_experiment, "/")[end]);
         force=true)
@@ -129,14 +129,14 @@ end
 
 get the basic configuration from experiment json
 """
-function getExperimentConfiguration(experiment_json::String; replace_info=nothing)
+function getExperimentConfiguration(experiment_json::String; replace_info=Dict())
     parseFile = parsefile(experiment_json; dicttype=DataStructures.OrderedDict)
     info = DataStructures.OrderedDict()
     info["experiment"] = DataStructures.OrderedDict()
     for (k, v) ∈ parseFile
         info["experiment"][k] = v
     end
-    if !isnothing(replace_info)
+    if !isempty(replace_info)
         exp_dict = filter(x -> startswith(first(x), "experiment"), replace_info)
         if !isempty(exp_dict)
             info = replaceInfoFields(info, exp_dict)
@@ -155,7 +155,7 @@ function readConfiguration(info_exp::AbstractDict, base_path::String)
     info = DataStructures.OrderedDict()
     for (k, v) ∈ info_exp["experiment"]["basics"]["config_files"]
         config_path = joinpath(base_path, v)
-        @info "getConfiguration: readConfiguration:: $(k) ::: $(config_path)"
+        @info "  readConfiguration:: $(k) ::: $(config_path)"
         info_exp["experiment"]["basics"]["config_files"][k] = config_path
         if endswith(v, ".json")
             tmp = parsefile(config_path; dicttype=DataStructures.OrderedDict)

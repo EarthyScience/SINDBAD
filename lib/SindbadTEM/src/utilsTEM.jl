@@ -37,12 +37,12 @@ end
 
 function getForcingForTimeStep(forcing, loc_forcing_t, ts, ::Val{forc_with_type}) where {forc_with_type}
     if @generated
-        output = quote end
+        gen_output = quote end
         foreach(forc_with_type) do forc_pair
             forc = first(forc_pair)
             forc_type=last(forc_pair)
-            push!(output.args, Expr(:(=), :d, Expr(:call, :getForcingV, Expr(:., :forcing, QuoteNode(forc)), :ts, forc_type)))
-            push!(output.args,
+            push!(gen_output.args, Expr(:(=), :d, Expr(:call, :getForcingV, Expr(:., :forcing, QuoteNode(forc)), :ts, forc_type)))
+            push!(gen_output.args,
                 Expr(:(=),
                     :loc_forcing_t,
                     Expr(:macrocall,
@@ -50,7 +50,7 @@ function getForcingForTimeStep(forcing, loc_forcing_t, ts, ::Val{forc_with_type}
                         :(),
                         Expr(:(=), Expr(:., :loc_forcing_t, QuoteNode(forc)), :d)))) #= none:1 =#
         end
-        return output
+        return gen_output
     else
         map(forc_with_type) do forc_pair
             forc = first(forc_pair)
@@ -205,18 +205,18 @@ end
 """
 function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {output_vars}
     if @generated
-        output = quote end
+        gen_output = quote end
         for (i, ov) in enumerate(output_vars)
             field = first(ov)
             subfield = last(ov)
-            push!(output.args,
+            push!(gen_output.args,
                 Expr(:(=), :data_l, Expr(:., Expr(:., :land, QuoteNode(field)), QuoteNode(subfield))))
-            push!(output.args, quote
+            push!(gen_output.args, quote
                 data_o = outputs[$i]
                 fillLocOutput!(data_o, data_l, ts)
             end)
         end
-        return output
+        return gen_output
     else
         for (i, ov) in enumerate(output_vars)
             field = first(ov)

@@ -101,7 +101,6 @@ function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, ::Land
 
     param_to_index = getParameterIndices(tem.models.forward, tbl_params);
     
-
     # get the default and bounds
     default_values = tbl_params.default
     lower_bounds = tbl_params.lower

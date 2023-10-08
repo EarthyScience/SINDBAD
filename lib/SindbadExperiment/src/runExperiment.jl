@@ -10,7 +10,7 @@ export runExperimentOpti
 
 prepares info, forcing and output NT for the experiment
 """
-function prepExperiment(sindbad_experiment::String; replace_info=nothing)
+function prepExperiment(sindbad_experiment::String; replace_info=Dict())
     @info "\n----------------------------------------------\n"
 
     info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
@@ -120,7 +120,7 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentCost(sindbad_experiment::String; replace_info=nothing)
+function runExperimentCost(sindbad_experiment::String; replace_info=Dict())
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = true
     replace_info["experiment.flags.run_forward"] = true
@@ -135,7 +135,7 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
+function runExperimentForward(sindbad_experiment::String; replace_info=Dict())
     setLogLevel()
     replace_info["experiment.flags.run_forward"] = true
     replace_info["experiment.flags.run_optimization"] = false
@@ -153,7 +153,7 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentFullOutput(sindbad_experiment::String; replace_info=nothing)
+function runExperimentFullOutput(sindbad_experiment::String; replace_info=Dict())
     setLogLevel()
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_forward"] = true
@@ -172,11 +172,11 @@ end
 
 
 """
-    runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=nothing)
+    runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=Dict())
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=nothing)
+function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=Dict())
     @info "runExperimentForwardParams: forward run of the model with default/settings and input/optimized parameters..."
     setLogLevel(:error)
     replace_info = deepcopy(replace_info)
@@ -206,7 +206,7 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
+function runExperimentOpti(sindbad_experiment::String; replace_info=Dict())
     replace_info["experiment.flags.run_optimization"] = true
     replace_info["experiment.flags.calc_cost"] = false
     replace_info["experiment.flags.run_forward"] = false

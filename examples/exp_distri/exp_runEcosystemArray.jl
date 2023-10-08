@@ -18,5 +18,5 @@ run_helpers = prepTEM(forcing, info);
 
 @time output_default = runExperimentForward(experiment_json);
 @time out_opti = runExperimentOpti(experiment_json);
-opt_params = out_opti.out_params;
-out_model = out_opti.out_forward;
+opt_params = out_opti.params;
+out_model = out_opti.output.forward;

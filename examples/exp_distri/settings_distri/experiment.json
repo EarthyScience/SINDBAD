@@ -32,7 +32,7 @@
     "debug_model": false,
     "inline_update": false,
     "run_forward": true,
-    "run_optimization": true,
+    "run_optimization": false,
     "save_info": true,
     "spinup_TEM": true,
     "store_spinup": false,
