@@ -42,8 +42,6 @@ forcing = getForcing(info);
 run_helpers = prepTEM(forcing, info);
 @time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 
-land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);

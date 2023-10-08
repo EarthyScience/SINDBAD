@@ -10,6 +10,6 @@ Set/get ambient co2 concentration
 
 # Approaches:
  - constant: sets the value of ambient_CO2 as a constant
- - forcing: sets the value of land.states.ambient_CO2 from the forcing in every time step
+ - forcing: sets the value of ambient_CO2 from the forcing in every time step
 """
 ambientCO2

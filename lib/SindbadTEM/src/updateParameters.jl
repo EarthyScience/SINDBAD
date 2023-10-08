@@ -94,12 +94,12 @@ end
 
 
 @generated function updateModelParameters(selected_models, param_vector::AbstractArray, ::Val{p_vals}) where p_vals
-    output = quote end
+    gen_output = quote end
     p_index = 1
     foreach(p_vals) do p
         param = Symbol(split(string(first(p)), "____")[end])
         mod_index = last(p)
-        push!(output.args,
+        push!(gen_output.args,
             Expr(:(=),
                 :selected_models,
                 Expr(:macrocall,
@@ -108,5 +108,5 @@ end
                     Expr(:(=), Expr(:., Expr(:ref, :selected_models, mod_index), QuoteNode(param)), Expr(:ref, :param_vector, p_index))))) #= none:1 =#
                     p_index += 1
     end
-    return output
+    return gen_output
 end

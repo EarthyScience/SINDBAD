@@ -8,11 +8,11 @@
 #SBATCH --mem=128GB
 #SBATCH --time=2-00:00:00
 
-module load julia/1.8.1
+module load julia
 
 export JULIA_NUM_THREADS=${SLURM_CPUS_PER_TASK}
 
-julia --project=../exp_distri pmap_tmp.jl
+julia --project=../exp_distri experiment_graf.jl
 
 
 # # SBATCH --ntasks=1
