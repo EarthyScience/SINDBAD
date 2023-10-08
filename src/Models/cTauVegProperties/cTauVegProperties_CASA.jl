@@ -46,7 +46,7 @@ function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
         # get average age from parameters
         AGE = z_zero #sujan
         for ij ∈ eachindex(pftVec)
-            AGE[p.vegProperties.PFT==pftVec[ij]] = p.cCycleBase.([cpN "_AGE_per_PFT"])(pftVec[ij])
+            AGE[p.vegProperties.PFT==pftVec[ij]] = p.cCycleBase.([cpN "_age_per_PFT"])(pftVec[ij])
         end
         # compute annk based on age
         annk[AGE>z_zero] = o_one / AGE[AGE>z_zero]

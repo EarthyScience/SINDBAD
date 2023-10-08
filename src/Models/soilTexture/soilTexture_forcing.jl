@@ -5,40 +5,40 @@ struct soilTexture_forcing <: soilTexture end
 function define(p_struct::soilTexture_forcing, forcing, land, helpers)
     #@needscheck
     ## unpack forcing
-    @unpack_forcing (CLAY, ORGM, SAND, SILT) ∈ forcing
+    @unpack_forcing (f_clay, f_orgm, f_sand, f_silt) ∈ forcing
 
     ## unpack land variables
 
-    st_CLAY_f = Tuple(CLAY)
-    st_SAND_f = Tuple(SAND)
-    st_SILT_f = Tuple(SILT)
-    st_ORGM_f = Tuple(ORGM)
+    st_clay_f = Tuple(f_clay)
+    st_sand_f = Tuple(f_sand)
+    st_silt_f = Tuple(f_silt)
+    st_orgm_f = Tuple(f_orgm)
 
     ## precomputations/check
-    st_CLAY = zero(land.pools.soilW)
-    st_ORGM = zero(land.pools.soilW)
-    st_SAND = zero(land.pools.soilW)
-    st_SILT = zero(land.pools.soilW)
+    st_clay = zero(land.pools.soilW)
+    st_orgm = zero(land.pools.soilW)
+    st_sand = zero(land.pools.soilW)
+    st_silt = zero(land.pools.soilW)
 
-    if length(st_CLAY_f) != length(st_CLAY)
+    if length(st_clay_f) != length(st_clay)
         @debug "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers."
-        for sl ∈ eachindex(st_CLAY)
-            @rep_elem mean(st_CLAY_f) => (st_CLAY, sl, :soilW)
-            @rep_elem mean(st_SAND_f) => (st_SAND, sl, :soilW)
-            @rep_elem mean(st_SILT_f) => (st_SILT, sl, :soilW)
-            @rep_elem mean(st_ORGM_f) => (st_ORGM, sl, :soilW)
+        for sl ∈ eachindex(st_clay)
+            @rep_elem mean(st_clay_f) => (st_clay, sl, :soilW)
+            @rep_elem mean(st_sand_f) => (st_sand, sl, :soilW)
+            @rep_elem mean(st_silt_f) => (st_silt, sl, :soilW)
+            @rep_elem mean(st_orgm_f) => (st_orgm, sl, :soilW)
         end
     else
-        for sl ∈ eachindex(st_CLAY)
-            @rep_elem st_CLAY_f[sl] => (st_CLAY, sl, :soilW)
-            @rep_elem st_SAND_f[sl] => (st_SAND, sl, :soilW)
-            @rep_elem st_SILT_f[sl] => (st_SILT, sl, :soilW)
-            @rep_elem st_ORGM_f[sl] => (st_ORGM, sl, :soilW)
+        for sl ∈ eachindex(st_clay)
+            @rep_elem st_clay_f[sl] => (st_clay, sl, :soilW)
+            @rep_elem st_sand_f[sl] => (st_sand, sl, :soilW)
+            @rep_elem st_silt_f[sl] => (st_silt, sl, :soilW)
+            @rep_elem st_orgm_f[sl] => (st_orgm, sl, :soilW)
         end
     end
 
     ## pack land variables
-    @pack_land (st_CLAY, st_ORGM, st_SAND, st_SILT) => land.soilTexture
+    @pack_land (st_clay, st_orgm, st_sand, st_silt) => land.soilTexture
     return land
 end
 
@@ -51,10 +51,10 @@ sets the soil texture properties from input
 Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_forcing
 
 *Inputs*
- - forcing.SAND/SILT/CLAY/ORGM
+ - forcing.sand/silt/clay/orgm
 
 *Outputs*
- - land.soilTexture.st_SAND/SILT/CLAY/ORGM
+ - land.soilTexture.st_sand/silt/clay/orgm
 
 # instantiate:
 instantiate/instantiate time-invariant variables for soilTexture_forcing

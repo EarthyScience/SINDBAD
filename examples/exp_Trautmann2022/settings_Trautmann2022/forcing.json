@@ -26,7 +26,7 @@
     "id": [1, 904]
   },
   "variables": {
-    "AWC": {
+    "f_AWC": {
       "bounds": [10.0, 10000.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.awc_tian.2dim.opti904.nc",
       "standard_name": "AWC",
@@ -36,7 +36,7 @@
       "source_variable": "awc_tian",
       "space_time_type": "spatial"
     },
-    "EVI": {
+    "f_EVI": {
       "bounds": [0.0, 1.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.EVI_smoothed.2dim.opti904.nc",
       "standard_name": "EVI",
@@ -45,7 +45,7 @@
       "source_unit": "-",
       "source_variable": "EVI_smoothed"
     },
-    "fAPAR": {
+    "f_fAPAR": {
       "bounds": [0.0, 1.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.fAPAR_MSC.2dim.opti904.nc",
       "standard_name": "fraction of absorbed photosynthetically active radiation",
@@ -54,7 +54,7 @@
       "source_unit": "-",
       "source_variable": "fAPAR_MSC"
     },
-    "frac_vegetation": {
+    "f_frac_vegetation": {
       "bounds": [0.0, 1.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.EVI.2dim.opti904.nc",
       "standard_name": "vegfrac_from_evi",
@@ -63,7 +63,7 @@
       "source_unit": "-",
       "source_variable": "EVI"
     },
-    "PAR": {
+    "f_PAR": {
       "bounds": [0.0, 600.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.SWdown.2dim.opti904.nc",
       "standard_name": "Photosynthetically active radiation (=Rg*.5)",
@@ -73,7 +73,7 @@
       "source_unit": "W m-2",
       "source_variable": "SWdown"
     },
-    "PET": {
+    "f_PET": {
       "bounds": [0.0, 100.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.PET.2dim.opti904.nc",
       "standard_name": "PET",
@@ -82,7 +82,7 @@
       "source_unit": "mm d-1",
       "source_variable": "PET"
     },
-    "PsurfDay": {
+    "f_psurf_day": {
       "bounds": [90.0, 600.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.sp.2dim.opti904.nc",
       "standard_name": "surface pressure",
@@ -92,7 +92,7 @@
       "source_unit": "pa",
       "source_variable": "sp"
     },
-    "Rain": {
+    "f_rain": {
       "bounds": [0.0, 1000.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Rain.2dim.opti904.nc",
       "standard_name": "Rain",
@@ -101,7 +101,7 @@
       "source_unit": "mm d-1",
       "source_variable": "Rain"
     },
-		"RDeff": {
+		"f_RDeff": {
 			"bounds": [10.0, 10000.0],
 			"data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.rdeff_yang.2dim.opti904.nc",
 			"standard_name": "RDeff",
@@ -112,7 +112,7 @@
 			"source_variable": "rdeff_yang",
 			"space_time_type": "spatial"
 		},
-		"RDmax": {
+		"f_RDmax": {
 			"bounds": [10.0, 10000.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.rdmax_fan.2dim.opti904.nc",
 			"standard_name": "RDmax",
@@ -123,7 +123,7 @@
 			"source_variable": "rdmax_fan",
 			"space_time_type": "spatial"
 		},
-    "Rg": {
+    "f_rg": {
       "bounds": [0.0, 600.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.SWdown.2dim.opti904.nc",
       "standard_name": "Global Radiation",
@@ -133,7 +133,7 @@
       "source_unit": "W m-2",
       "source_variable": "SWdown"
     },
-    "RgPot": {
+    "f_rg_pot": {
       "bounds": [0.0, 600.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Rpot.2dim.opti904.nc",
       "standard_name": "Potential Global Radiation",
@@ -142,7 +142,7 @@
       "source_unit": "MJ m-2",
       "source_variable": "Rpot"
     },
-    "Rn": {
+    "f_rn": {
       "bounds": [0.0, 500.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Rn.2dim.opti904.nc",
       "standard_name": "Net radiation",
@@ -152,7 +152,7 @@
       "source_unit": "W m-2",
       "source_variable": "Rn"
     },
-    "SWCmax": {
+    "f_SWCmax": {
       "bounds": [10.0, 10000.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.smax_wang.2dim.opti904.nc",
       "standard_name": "max_available_water_capacity",
@@ -162,7 +162,7 @@
       "source_variable": "smax_wang",
       "space_time_type": "spatial"
     },
-      "Tair": {
+      "f_airT": {
       "bounds": [-80.0, 60.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Tair.2dim.opti904.nc",
       "standard_name": "Tair",
@@ -171,7 +171,7 @@
       "source_unit": "°C",
       "source_variable": "Tair"
     },
-    "TairDay": {
+    "f_airT_day": {
       "bounds": [-80.0, 60.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.tair_day.2dim.opti904.nc",
       "standard_name": "TairDay",
@@ -180,7 +180,7 @@
       "source_unit": "°C",
       "source_variable": "tair_day"
     },
-    "VPD": {
+    "f_VPD": {
       "bounds": [0.0, 10.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.vpd_cf.2dim.opti904.nc",
       "standard_name": "Vapor pressure deficit Day",
@@ -190,7 +190,7 @@
       "source_unit": "hPa",
       "source_variable": "vpd_cf"
     },
-    "VPDDay": {
+    "f_VPD_day": {
       "bounds": [0.0, 100.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.vpd_daytime_mean.2dim.opti904.nc",
       "standard_name": "Vapor pressure deficit Day",

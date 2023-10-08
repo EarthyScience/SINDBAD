@@ -9,7 +9,7 @@ end
 function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_snowMelt_Tair p_struct
-    @unpack_forcing Tair ∈ forcing
+    @unpack_forcing f_airT ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -19,9 +19,9 @@ function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
         z_zero ∈ land.wCycleBase
         n_snowW ∈ land.wCycleBase
     end
-    # effect of temperature on snow melt = snowMeltRate * Tair
+    # effect of temperature on snow melt = snowMeltRate * f_airT
     pRate = (rate * helpers.dates.timesteps_in_day)
-    Tterm = maxZero(pRate * Tair)
+    Tterm = maxZero(pRate * f_airT)
 
     # snow melt [mm/day] is calculated as a simple function of temperature & scaled with the snow covered fraction
     snow_melt = min(totalS(snowW, ΔsnowW), Tterm * frac_snow)
@@ -77,7 +77,7 @@ $(SindbadParameters)
 Calculate snowmelt and update s.w.wsnow using snowMelt_Tair
 
 *Inputs*
- - forcing.Tair: temperature [C]
+ - forcing.f_airT: temperature [C]
  - helpers.dates.timesteps_in_day: model time steps per day
  - land.fluxes.Tterm: effect of temperature on snow melt [mm/time]
  - land.states.frac_snow: snow cover fraction [-]

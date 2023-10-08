@@ -3,7 +3,7 @@ using SindbadExperiment
 using Plots
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-begin_year = "1979"
+begin_year = "2000"
 end_year = "2017"
 
 domain = "DE-Hai"
@@ -25,13 +25,11 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "forcing.default_forcing.data_path" => path_input,
     "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.calc_cost" => true,
-    "experiment.flags.spinup.save_spinup" => false,
+    "experiment.flags.calc_cost" => false,
     "experiment.flags.catch_model_errors" => false,
-    "experiment.flags.spinup.spinup_TEM" => true,
+    "experiment.flags.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
     "experiment.exe_rules.model_array_type" => model_array_type,
-    "experiment.flags.spinup.run_spinup" => true,
     "experiment.model_output.path" => path_output,
     "experiment.model_output.format" => "nc",
     "experiment.model_output.save_single_file" => true,
@@ -40,37 +38,24 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "optimization.observations.default_observation.data_path" => path_observation);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
-
 forcing = getForcing(info);
-
 run_helpers = prepTEM(forcing, info);
-
-@time runTEM!(info.tem.models.forward,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
+@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
-
-observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
-
+@time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
-opt_params = out_opti.out_params;
-# out_model = out_opti.out_forward;
+
+observation = out_opti.observation
 
 # some plots
-ds = forcing.data[1];
-opt_dat = run_helpers.output_array;
-def_dat = output_default;
-costOpt = prepCostOptions(obs_array, info.optim.cost_options);
+def_dat = out_opti.output.default;
+opt_dat = out_opti.output.optimized;
+costOpt = prepCostOptions(observation, info.optim.cost_options);
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 foreach(costOpt) do var_row
     v = var_row.variable
-    @show "plot obs", v
+    println("plot obs::", v)
     v = (var_row.mod_field, var_row.mod_subfield)
     vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     v = vinfo["standard_name"]
@@ -79,8 +64,8 @@ foreach(costOpt) do var_row
     if loss_name in (:NNSEInv, :NSEInv)
         lossMetric = NSE()
     end
-    (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
-    (_, _, opt_var) = getData(opt_dat, obs_array, var_row)
+    (obs_var, obs_σ, def_var) = getData(def_dat, observation, var_row)
+    (_, _, opt_var) = getData(opt_dat, observation, var_row)
     obs_var_TMP = obs_var[:, 1, 1, 1]
     non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
     if length(non_nan_index) < 2

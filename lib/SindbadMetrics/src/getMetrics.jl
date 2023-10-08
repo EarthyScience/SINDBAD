@@ -121,10 +121,9 @@ return model and obs data filtering for the common nan
 - `y`: observation data
 - `yσ`: observational uncertainty data
 - `ŷ`: model simulation data/estimate
-- `idxs`: model simulation data/estimate
+- `idxs`: indices of valid data points
 """
 function filterCommonNaN(y, yσ, ŷ, idxs)
-    # idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because landWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
@@ -140,14 +139,14 @@ return model and obs data filtering for the common nan
 """
 function filterCommonNaN(y, yσ, ŷ)
     @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
-    idxs = (.!isInvalid.(y .* yσ .* ŷ))
+    idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because LandWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
 
 
 """
-    getData(model_output::landWrapper, observations, cost_option)
+    getData(model_output::LandWrapper, observations, cost_option)
 
 
 
@@ -156,7 +155,7 @@ end
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
 """
-function getData(model_output::landWrapper, observations, cost_option)
+function getData(model_output::LandWrapper, observations, cost_option)
     obs_ind = cost_option.obs_ind
     mod_field = cost_option.mod_field
     mod_subfield = cost_option.mod_subfield
@@ -170,10 +169,11 @@ function getData(model_output::landWrapper, observations, cost_option)
         yσ = yσ[:]
     end
     # ymask = observations[obs_ind + 2]
-
     ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
 
     y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
+
+    (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
 
     return (y, yσ, ŷ)
 end
@@ -181,7 +181,7 @@ end
 
 
 """
-    getData(model_output::landWrapper, observations, cost_option)
+    getData(model_output::LandWrapper, observations, cost_option)
 
 
 
@@ -195,24 +195,23 @@ function getData(model_output::NamedTuple, observations, cost_option)
     mod_field = cost_option.mod_field
     mod_subfield = cost_option.mod_subfield
     ŷ = model_output
-    if hasproperty(model_output, mod_subfield)
-        ŷ = getproperty(model_output, mod_subfield)
-    else
-        sfname = Symbol(String(mod_field) * "__" * String(mod_subfield))
-        ŷ = getproperty(model_output, sfname)
+    sf_name = mod_subfield
+    if !hasproperty(model_output, sf_name)
+        sf_name = Symbol(String(mod_field) * "__" * String(mod_subfield))
     end
+    ŷ = getproperty(model_output, sf_name)
     y = observations[obs_ind]
     yσ = observations[obs_ind+1]
     if size(ŷ, 2) == 1
         ŷ = getModelOutputView(ŷ)
-        y = y[:]
-        yσ = yσ[:]
     end
     # ymask = observations[obs_ind + 2]
 
     ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
 
     y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
+
+    (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
 
     return (y, yσ, ŷ)
 end
@@ -242,6 +241,8 @@ function getData(model_output::AbstractArray, observations, cost_option)
     ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
 
     y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
+
+    (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
     return (y, yσ, ŷ)
 end
 
@@ -265,13 +266,12 @@ returns a vector of losses for variables in info.cost_options.observational_cons
 - `model_output::AbstractArray`: a collection of SINDBAD model output time series as a preallocated array
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
-function getLossVector(observations, model_output::AbstractArray, cost_options)
+function getLossVector(model_output, observations, cost_options)
     loss_vector = map(cost_options) do cost_option
         @debug "$(cost_option.variable)"
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
         metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
@@ -284,25 +284,13 @@ function getLossVector(observations, model_output::AbstractArray, cost_options)
     return loss_vector
 end
 
-
-"""
-    getLossVector(observations, model_output::landWrapper, cost_options)
-
-returns a vector of losses for variables in info.cost_options.observational_constraints
-
-# Arguments:
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `model_output:::landWrapper`: a collection of SINDBAD model output as a time series of stacked land NT
-- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
-"""
-function getLossVector(observations, model_output::landWrapper, cost_options)
+function getLossVector(model_output::LandWrapper, observations, cost_options)
     loss_vector = map(cost_options) do cost_option
         @debug "$(cost_option.variable)"
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
+        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ), size(idxs)
+        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ) ## cannot use the valids because LandWrapper produces vector
         metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
             metr = oftype(metr, 1e19)

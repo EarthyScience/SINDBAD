@@ -9,7 +9,7 @@ end
 function define(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Wang2015 p_struct
-    @unpack_forcing (Rg, RgPot) ∈ forcing
+    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
 
     ## calculate variables
     CI = one(μ) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
@@ -24,7 +24,7 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Wang2015 p_struct
 
-    @unpack_forcing (Rg, RgPot) ∈ forcing
+    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
 
     @unpack_land begin
         (CI_min, CI_max) ∈ land.gppDiffRadiation
@@ -34,7 +34,7 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
 
     ## calculate variables
     ## FROM SHANNING
-    rg_frac = getFrac(Rg, RgPot)
+    rg_frac = getFrac(f_rg, f_rg_pot)
 
     CI = clampZeroOne(one(rg_frac) - rg_frac) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
 
@@ -46,7 +46,7 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
 
 
     cScGPP = one(μ) - μ * (one(μ) - CI_nor)
-    gpp_f_cloud = RgPot > zero(RgPot) ? cScGPP : zero(cScGPP)
+    gpp_f_cloud = f_rg_pot > zero(f_rg_pot) ? cScGPP : zero(cScGPP)
 
     ## pack land variables
     @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
@@ -64,9 +64,9 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - forcing.Rg: Global radiation [SW incoming] [MJ/m2/time]
- - forcing.RgPot: Potential radiation [MJ/m2/time]
- - rueRatio : ratio of clear sky LUE to max LUE  in turner et al., appendix A, e_[g_cs] / e_[g_max], should be between 0 & 1
+ - forcing.f_rg: Global radiation [SW incoming] [MJ/m2/time]
+ - forcing.f_rg_pot: Potential radiation [MJ/m2/time]
+ - rue_ratio : ratio of clear sky LUE to max LUE  in turner et al., appendix A, e_[g_cs] / e_[g_max], should be between 0 & 1
 
 *Outputs*
  - land.gppDiffRadiation.gpp_f_cloud: effect of cloudiness on potential GPP

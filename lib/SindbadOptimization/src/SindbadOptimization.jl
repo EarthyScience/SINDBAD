@@ -16,6 +16,6 @@ module SindbadOptimization
 
     include("optimizer.jl")
     include("optimizeTEM.jl")
-    include("optimizeTEMYax.jl")
+    include("optimizeTEMCube.jl")
 
 end # module SindbadOptimization

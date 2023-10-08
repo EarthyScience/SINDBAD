@@ -971,30 +971,30 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "soilProperties",
         :description => "name of the model used to calculate unsaturated hydraulic conductivity"
     ),
-    :soilTexture__st_CLAY => orD(
-        :standard_name => "st_CLAY",
-        :long_name => "soil_texture_CLAY",
+    :soilTexture__st_clay => orD(
+        :standard_name => "st_clay",
+        :long_name => "soil_texture_clay",
         :units => "fraction",
         :land_field => "soilTexture",
         :description => "fraction of clay content in the soil"
     ),
-    :soilTexture__st_ORGM => orD(
-        :standard_name => "st_ORGM",
-        :long_name => "soil_texture_ORGM",
+    :soilTexture__st_orgm => orD(
+        :standard_name => "st_orgm",
+        :long_name => "soil_texture_orgm",
         :units => "fraction",
         :land_field => "soilTexture",
         :description => "fraction of organic matter content in the soil per layer"
     ),
-    :soilTexture__st_SAND => orD(
-        :standard_name => "st_SAND",
-        :long_name => "soil_texture_SAND",
+    :soilTexture__st_sand => orD(
+        :standard_name => "st_sand",
+        :long_name => "soil_texture_sand",
         :units => "fraction",
         :land_field => "soilTexture",
         :description => "fraction of sand content in the soil per layer"
     ),
-    :soilTexture__st_SILT => orD(
-        :standard_name => "st_SILT",
-        :long_name => "soil_texture_SILT",
+    :soilTexture__st_silt => orD(
+        :standard_name => "st_silt",
+        :long_name => "soil_texture_silt",
         :units => "fraction",
         :land_field => "soilTexture",
         :description => "fraction of silt content in the soil per layer"

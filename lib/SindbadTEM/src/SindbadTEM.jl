@@ -1,13 +1,12 @@
 module SindbadTEM
-
-    using AxisKeys
     using ComponentArrays
+    using ConstructionBase
     using InteractiveUtils
     using NLsolve
     using ProgressMeter
     using SindbadSetup
-    @reexport using Pkg
     @reexport using SindbadSetup
+
     using ThreadPools
     using YAXArrays
 
@@ -16,9 +15,9 @@ module SindbadTEM
     include("prepTEMOut.jl")
     include("runModels.jl")
     include("prepTEM.jl")
-    include("runTEMLand.jl")
-    include("runTEMArray.jl")
-    include("runTEMYax.jl")
+    include("runTEMLoc.jl")
+    include("runTEMSpace.jl")
+    include("runTEMCube.jl")
     include("spinupTEM.jl")
     include("updateParameters.jl")
 

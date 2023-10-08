@@ -44,10 +44,10 @@ function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
                 )
             end
             if order_changed_warn
-                @warn " changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
+                @warn "changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
                 order_changed_warn = false
             end
-            @warn "     $(sm) order:: old: $(findfirst(e->e==sm, all_sindbad_models)), new: $(model_info.order)"
+            @warn "$(sm) [$(Pair(findfirst(e->e==sm, all_sindbad_models), model_info.order))]"
         end
     end
 
@@ -593,7 +593,8 @@ function getModelRunInfo(info::NamedTuple)
         info = @set info.experiment.flags.catch_model_errors = false
     end
     run_vals = convertRunFlagsToTypes(info)
-    run_info = (; run_vals..., (output_all = getTypeInstanceForFlags(:output_all, info.experiment.model_output.all, "Do")))
+    output_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.model_output.output_array_type, "Output"))()
+    run_info = (; run_vals..., output_array_type = output_array_type)
     run_info = setTupleField(run_info, (:save_single_file, getTypeInstanceForFlags(:save_single_file, info.experiment.model_output.save_single_file, "Do")))
     run_info = setTupleField(run_info, (:use_forward_diff, run_vals.use_forward_diff))
     parallelization = titlecase(info.experiment.exe_rules.parallelization)
@@ -624,6 +625,26 @@ end
 
 
 """
+    getOrderedOutputList(varlist, var_o::Symbol)
+
+return the corresponding variable from the full list
+
+# Arguments:
+- `varlist`: the full variable list 
+- `var_o`: the variable to find
+"""
+function getOrderedOutputList(varlist, var_o::Symbol)
+    for var ∈ varlist
+        vname = Symbol(split(string(var), '.')[end])
+        if vname === var_o
+            return var
+        end
+    end
+end
+
+
+
+"""
     getOrderedSelectedModels(info::NamedTuple, selected_models::AbstractArray)
 
 gets the ordered list of selected models from info.model_structure.models
@@ -648,7 +669,17 @@ end
 
 
 """
-function getParameters(selected_models, num_type; return_table=true)
+function getParameters(selected_models_in::LongTuple, num_type; return_table=true)
+    selected_models = getTupleFromLongTable(selected_models_in)
+    return getParameters(selected_models, num_type; return_table=return_table)
+end
+
+"""
+    getParameters(selected_models)
+
+
+"""
+function getParameters(selected_models::Tuple, num_type; return_table=true)
     model_names_list = nameof.(typeof.(selected_models));
     default = [flatten(selected_models)...]
     constrains = metaflatten(selected_models, Models.bounds)
@@ -841,54 +872,21 @@ end
 Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
 """
 function getRestartFilePath(info::NamedTuple)
-    restart_file_in = info.experiment.model_spinup.paths.restart_file_in
-    restart_file_out = info.experiment.model_spinup.paths.restart_file_out
+    restart_file_in = info.experiment.model_spinup.restart_file
     restart_file = nothing
-    if info.experiment.flags.spinup.save_spinup
-        if isnothing(restart_file_out)
-            error(
-                "info.experiment.model_spinup.paths.restartFile is null, but info.experiment.flags.spinup.save_spinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false"
-            )
-        else
-            # ensure that the output file for spinup is jld2 format
-            if restart_file_out[(end-4):end] != ".jld2"
-                restart_file_out = restart_file_out * ".jld2"
-            end
-            if isabspath(restart_file_out)
-                restart_file = restart_file_out
-            else
-                restart_file = joinpath(info.output.spinup, restart_file_out)
-            end
-            info = (;
-                info...,
-                spinup=(;
-                    info.experiment.model_spinup...,
-                    paths=(; info.experiment.model_spinup.paths..., restart_file_out=restart_file)))
-        end
-    end
 
-    if info.experiment.flags.spinup.load_spinup
-        if isnothing(restart_file_in)
+    if !isnothing(restart_file_in)
+        if restart_file_in[(end-4):end] != ".jld2"
             error(
-                "info.experiment.model_spinup.paths.restartFile is null, but info.experiment.flags.spinup.load_spinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false"
+                "info.experiment.model_spinup.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.experiment.flags.load_spinup to false."
             )
-        else
-            if restart_file_in[(end-4):end] != ".jld2"
-                error(
-                    "info.experiment.model_spinup.paths.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.experiment.flags.spinup.load_spinup to false."
-                )
-            end
-            if isabspath(restart_file_in)
-                restart_file = restart_file_in
-            else
-                restart_file = joinpath(info.experiment_root, restart_file_in)
-            end
         end
-        info = (;
-            info...,
-            spinup=(;
-                info.experiment.model_spinup...,
-                paths=(; info.experiment.model_spinup.paths..., restart_file_in=restart_file)))
+        if isabspath(restart_file_in)
+            restart_file = restart_file_in
+        else
+            restart_file = joinpath(info.experiment_root, restart_file_in)
+        end
+        info = @set info.experiment.model_spinup.restart_file = restart_file
     end
     return info
 end
@@ -931,32 +929,13 @@ function getSpinupAndForwardModels(info::NamedTuple)
     is_spinup = findall(is_spinup .== 1)
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
-    if hasproperty(info, :parameters)
-        if !isempty(info.parameters)
-            original_params_forward = getParameters(selected_approach_forward)
-            input_params = info.parameters
-            updated_params = setInputParameters(original_params_forward, input_params)
-            updated_approach_forward = updateModelParameters(updated_params, selected_approach_forward)
-
-            info = (;
-                info...,
-                tem=(;
-                    info.tem...,
-                    models=(;
-                        info.tem.models...,
-                        forward=updated_approach_forward,
-                        is_spinup=is_spinup)))
-        end
-    else
-        info = (;
-            info...,
-            tem=(;
-                info.tem...,
-                models=(;
-                    info.tem.models...,
-                    forward=selected_approach_forward,
-                    is_spinup=is_spinup)))
+    if hasproperty(info, :parameters) && !isempty(info.parameters)
+        original_params_forward = getParameters(selected_approach_forward)
+        input_params = info.parameters
+        updated_params = setInputParameters(original_params_forward, input_params)
+        selected_approach_forward = updateModelParameters(updated_params, selected_approach_forward)
     end
+    info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=selected_approach_forward, is_spinup=is_spinup))) 
     return info
 end
 
@@ -1049,18 +1028,41 @@ function getVariableGroups(var_list::AbstractArray)
     return varNT
 end
 
+
+"""
+    getVariablePair(out_var)
+
+return a vector of pairs with field and subfield of land from the list of variables (output_vars) in field.subfield convention
+"""
+function getVariablePair(out_var::String)
+    sep = "."
+    if occursin(",", out_var)
+        sep = ","
+    end
+    return Tuple(Symbol.(split(string(out_var), sep)))
+end
+
+
+"""
+    getVariablePair(out_var)
+
+return a vector of pairs with field and subfield of land from the list of variables (output_vars) in field.subfield convention
+"""
+function getVariablePair(out_var::Symbol)
+    getVariablePair(string(out_var))
+end
+
 """
     getVariablesToStore(info::NamedTuple)
 
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
 function getVariablesToStore(info::NamedTuple)
-    write_store_vars = getVariableGroups(collect(propertynames(info.experiment.model_output.variables)))
-    info = (; info..., tem=(; info.tem..., variables=write_store_vars))
+    output_vars = collect(propertynames(info.experiment.model_output.variables))
+    out_vars_pairs = Tuple(getVariablePair.(output_vars))
+    info = (; info..., tem=(; info.tem..., variables=out_vars_pairs))
     return info
 end
-
-
 
 """
     parseSaveCode(info)
@@ -1394,20 +1396,18 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function setupInfo(info::NamedTuple)
-    @info "SetupExperiment: setting Numeric Helpers..."
+    @info "  setupInfo: setting Numeric Helpers..."
     info = setNumericHelpers(info)
-    @info "SetupExperiment: setting Output Helpers..."
+    @info "  setupInfo: setting Output Helpers..."
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., output=info.output)))
-    @info "SetupExperiment: setting Variable Helpers..."
-    info = getVariablesToStore(info)
-    @info "SetupExperiment: setting Pools Info..."
+    @info "  setupInfo: setting Pools Info..."
     info = generatePoolsInfo(info)
-    @info "SetupExperiment: setting Dates Helpers..."
+    @info "  setupInfo: setting Dates Helpers..."
     info = generateDatesInfo(info)
     selected_models = collect(propertynames(info.model_structure.models))
     # @show sel
     # selected_models = (selected_models..., :dummy)
-    @info "SetupExperiment: setting Models..."
+    @info "  setupInfo: setting Model Structure..."
     selected_models = getOrderedSelectedModels(info, selected_models)
     info = (;
         info...,
@@ -1415,37 +1415,28 @@ function setupInfo(info::NamedTuple)
             info.tem...,
             models=(; selected_models=Table((; model=[selected_models...])))))
     info = getSpinupAndForwardModels(info)
-    @info "SetupExperiment:         ....saving selected models code..."
+    @info "  setupInfo:         ...saving Selected Models Code..."
     _ = parseSaveCode(info)
 
     # add information related to model run
-    @info "SetupExperiment: setting running flags..."
+    @info "  setupInfo: setting Model Run Flags..."
     run_info = getModelRunInfo(info)
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
-    @info "SetupExperiment: setting Spinup Info..."
+    @info "  setupInfo: setting Spinup Info..."
     info = setSpinupInfo(info)
+
+    @info "  setupInfo: setting Variable Helpers..."
+    info = getVariablesToStore(info)
+
     if info.experiment.flags.run_optimization || info.experiment.flags.calc_cost
-        @info "SetupExperiment: setting Optimization and Observation info..."
+        @info "  setupInfo: setting Optimization and Observation info..."
         info = setupOptimization(info)
     end
-    # adjust the model variable list for different model spinupTEM
-    sel_vars = nothing
-    if info.experiment.flags.run_optimization
-        sel_vars = info.optim.variables.store
-    elseif info.experiment.flags.calc_cost
-        if info.experiment.flags.run_forward
-            sel_vars = getVariableGroups(
-                union(String.(keys(info.experiment.model_output.variables)),
-                    info.optim.variables.model)
-            )
-        else
-            sel_vars = info.optim.variables.store
-        end
-    else
-        sel_vars = info.tem.variables
+
+    if !isnothing(info.experiment.exe_rules.longtuple_size)
+        selected_approach_forward = makeLongTuple(info.tem.models.forward, info.experiment.exe_rules.longtuple_size)
+        info = @set info.tem.models.forward = selected_approach_forward
     end
-    info = (; info..., tem=(; info.tem..., variables=sel_vars))
-    @info "\n----------------------------------------------\n"
     return info
 end
 

@@ -9,11 +9,11 @@ end
 function compute(p_struct::gppAirT_Wang2014, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_Wang2014 p_struct
-    @unpack_forcing TairDay ∈ forcing
+    @unpack_forcing f_airT_day ∈ forcing
     @unpack_land (z_zero, o_one) ∈ land.wCycleBase
 
     ## calculate variables
-    gpp_f_airT = clampZeroOne(TairDay / Tmax)
+    gpp_f_airT = clampZeroOne(f_airT_day / Tmax)
 
     ## pack land variables
     @pack_land gpp_f_airT => land.gppAirT
@@ -32,7 +32,7 @@ $(SindbadParameters)
 Effect of temperature using gppAirT_Wang2014
 
 *Inputs*
- - forcing.TairDay: daytime temperature [°C]
+ - forcing.f_airT_day: daytime temperature [°C]
 
 *Outputs*
  - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP

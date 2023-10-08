@@ -13,7 +13,7 @@ function compute(p_struct::runoffSurface_directIndirectFroSoil, forcing, land, h
 
     ## unpack land variables
     @unpack_land begin
-        fracFrozen ∈ land.runoffSaturationExcess
+        frac_frozen ∈ land.runoffSaturationExcess
         surfaceW ∈ land.pools
         ΔsurfaceW ∈ land.states
         overland_runoff ∈ land.fluxes
@@ -21,7 +21,7 @@ function compute(p_struct::runoffSurface_directIndirectFroSoil, forcing, land, h
         n_surfaceW ∈ land.wCycleBase
     end
     # fraction of overland runoff that flows out directly
-    fracFastQ = (o_one - rf) * (o_one - fracFrozen) + fracFrozen
+    fracFastQ = (o_one - rf) * (o_one - frac_frozen) + frac_frozen
 
     surface_runoff_direct = fracFastQ * overland_runoff
 
@@ -80,7 +80,7 @@ Runoff from surface water storages using runoffSurface_directIndirectFroSoil
 
 *Inputs*
  - land.fluxes.overland_runoff
- - land.runoffSaturationExcess.fracFrozen
+ - land.runoffSaturationExcess.frac_frozen
 
 *Outputs*
 

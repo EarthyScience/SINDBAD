@@ -64,7 +64,7 @@ function precompute(p_struct::cAllocation_fixed, forcing, land, helpers)
 end
 
 @doc """
-compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.frac_tree). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to Rf2Rc.
+compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.frac_tree). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to frac_fine_to_coarse.
 
 # Parameters
 $(SindbadParameters)

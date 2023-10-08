@@ -11,7 +11,7 @@ include("cAllocation_none.jl")
 Combine the different effects of carbon allocation
 
 # Approaches:
- - fixed: compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.frac_tree). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to Rf2Rc.
+ - fixed: compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.frac_tree). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to frac_fine_to_coarse.
  - Friedlingstein1999: compute the fraction of npp that is allocated to the different plant organs following the scheme of Friedlingstein et al 1999. Check cAlloc_Friedlingstein1999 for details.
  - GSI: compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is dynamic in time according to temperature; water & radiation stressors computed from GSI approach.
  - none: sets the carbon allocation to zero (nothing to allocated)

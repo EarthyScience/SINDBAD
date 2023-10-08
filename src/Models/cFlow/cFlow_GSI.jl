@@ -191,11 +191,11 @@ Actual transfers of c between pools (of diagonal components) using cFlow_GSI
 
 *Inputs*
  - land.cAllocationRadiation.c_allocation_f_cloud: radiation stressors for carbo allocation
- - land.cAllocationRadiation.fR_prev: previous radiation stressors for carbo allocation
+ - land.cAllocationRadiation.f_cloud_prev: previous radiation stressors for carbo allocation
  - land.cAllocationSoilT.c_allocation_f_soilT: temperature stressors for carbon allocation
- - land.cAllocationSoilT.fT_prev: previous temperature stressors for carbon allocation
+ - land.cAllocationSoilT.f_soilT_prev: previous temperature stressors for carbon allocation
  - land.cAllocationSoilW.c_allocation_f_soilW: water stressors for carbon allocation
- - land.cAllocationSoilW.fW_prev: previous water stressors for carbon allocation
+ - land.cAllocationSoilW.f_soilW_prev: previous water stressors for carbon allocation
  - land.cCycleBase.c_flow_A_array: transfer matrix for carbon at ecosystem level
 
 *Outputs*

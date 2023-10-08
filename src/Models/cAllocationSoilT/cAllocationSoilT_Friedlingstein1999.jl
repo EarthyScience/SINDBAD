@@ -2,8 +2,8 @@ export cAllocationSoilT_Friedlingstein1999
 
 #! format: off
 @bounds @describe @units @with_kw struct cAllocationSoilT_Friedlingstein1999{T1,T2} <: cAllocationSoilT
-    minL_fT::T1 = 0.5 | (0.0, 1.0) | "minimum allocation coefficient from temperature stress" | ""
-    maxL_fT::T2 = 1.0 | (0.0, 1.0) | "maximum allocation coefficient from temperature stress" | ""
+    min_f_soilT::T1 = 0.5 | (0.0, 1.0) | "minimum allocation coefficient from temperature stress" | ""
+    max_f_soilT::T2 = 1.0 | (0.0, 1.0) | "maximum allocation coefficient from temperature stress" | ""
 end
 #! format: on
 
@@ -14,7 +14,7 @@ function compute(p_struct::cAllocationSoilT_Friedlingstein1999, forcing, land, h
     ## unpack land variables
     @unpack_land c_allocation_f_soilT ∈ land.cTauSoilT
 
-    c_allocation_f_soilT = clamp(c_allocation_f_soilT, minL_fT, maxL_fT)
+    c_allocation_f_soilT = clamp(c_allocation_f_soilT, min_f_soilT, max_f_soilT)
 
     ## pack land variables
     @pack_land c_allocation_f_soilT => land.cAllocationSoilT

@@ -1,5 +1,6 @@
 using Revise
 @time using Sindbad
+@time using SindbadData
 @time using SindbadTEM
 @time using SindbadExperiment
 using Plots
@@ -11,9 +12,8 @@ optimize_it = false;
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => false,
-    "experiment.flags.spinup.spinup_TEM" => true,
-    "experiment.flags.debug_model" => false,
-    "experiment.flags.spinup.run_spinup" => true);
+    "experiment.flags.spinup_TEM" => true,
+    "experiment.flags.debug_model" => false);
 
 experiment_json = "../exp_Trautmann2022/settings_Trautmann2022/experiment.json";
 
@@ -24,22 +24,9 @@ GC.gc()
 
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward,
-    run_helpers.loc_forcings,
-    run_helpers.loc_spinup_forcings,
-    run_helpers.forcing_one_timestep,
-    run_helpers.loc_outputs,
-    run_helpers.land_init_space,
-    run_helpers.tem_with_types)
-
+@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 for x ∈ 1:10
-    @time runTEM!(info.tem.models.forward,
-        run_helpers.loc_forcings,
-        run_helpers.loc_spinup_forcings,
-        run_helpers.forcing_one_timestep,
-        run_helpers.loc_outputs,
-        run_helpers.land_init_space,
-        run_helpers.tem_with_types)
+    @time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
 end
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
@@ -48,9 +35,9 @@ end
 ds = forcing.data[1];
 plotdat = run_helpers.output_array;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
-for i ∈ eachindex(out_vars)
-    v = out_vars[i]
+output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+for i ∈ eachindex(output_vars)
+    v = output_vars[i]
     vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     vname = vinfo["standard_name"]
     println("plot output-model => domain: $domain, variable: $vname")
@@ -86,7 +73,3 @@ for (o, v) in enumerate(forc_vars)
     savefig(joinpath(info.output.figure, "forc_glob_$v.png"))
 end
 
-
-# @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
-# opt_params = out_opti.out_params;
-# out_model = out_opti.out_forward;
