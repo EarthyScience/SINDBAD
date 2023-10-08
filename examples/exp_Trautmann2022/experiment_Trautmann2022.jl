@@ -73,7 +73,3 @@ for (o, v) in enumerate(forc_vars)
     savefig(joinpath(info.output.figure, "forc_glob_$v.png"))
 end
 
-
-# @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
-# opt_params = out_opti.out_params;
-# out_model = out_opti.out_forward;

@@ -4,29 +4,23 @@ using SindbadTEM
 using ProgressMeter
 toggleStackTraceNT()
 
-info = getExperimentInfo("../exp_yax/settings_yax/experiment.json"); # note that this will modify information from json with the replace_info
 
+info = getExperimentInfo("../exp_yax/settings_yax/experiment.json");
 forcing = getForcing(info);
 
-
-# forcing/input information
-incubes = forcing.data;
-indims = forcing.dims;
-forcing_vars = collect(forcing.variables);
-
-# information for running model
-output = prepTEMOut(info, forcing.helpers);
-run_helpers = prepTEM(forcing, info);
-outdims = run_helpers.output_dims;
-land_init = deepcopy(run_helpers.land_init);
-output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
-
+## yax array run
 @time outcubes = runTEMYax(
     info.tem.models.forward,
     forcing,
     info);
 
-# optimization
+## normal array run
+replace_info = Dict("experiment.exe_rules.land_output_type" => "array");
+info = getExperimentInfo("../exp_yax/settings_yax/experiment.json"; replace_info=replace_info);
+runTEM!(forcing, info);
+
+
+### TODO the yax spatial optimization
 observations = getObservation(info, forcing.helpers);
 
 opt_params = optimizeTEMYax(forcing,

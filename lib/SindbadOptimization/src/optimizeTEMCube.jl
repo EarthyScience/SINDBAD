@@ -5,34 +5,34 @@ export optimizeTEMYax
 
 
 """
-function unpackYaxOpti(args; forcing_vars::AbstractArray)
+function unpackYaxOpti(all_cubes; forcing_vars::AbstractArray)
     nforc = length(forcing_vars)
-    outputs = first(args)
-    forcings = args[2:(nforc+1)]
-    observations = args[(nforc+2):end]
+    outputs = first(all_cubes)
+    forcings = all_cubes[2:(nforc+1)]
+    observations = all_cubes[(nforc+2):end]
     return outputs, forcings, observations
 end
 
 """
-    optimizeYax(args; out::NamedTuple, tem::NamedTuple, optim::NamedTuple, forcing_vars::AbstractArray, obs_vars::AbstractArray)
+    optimizeYax(map_cubes; out::NamedTuple, tem::NamedTuple, optim::NamedTuple, forcing_vars::AbstractArray, obs_vars::AbstractArray)
 
 
 
 # Arguments:
-- `args`: DESCRIPTION
+- `map_cubes`: collection/tuple of all input, observation and output cubes from mapCube
 - `out`: DESCRIPTION
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `optim`: DESCRIPTION
-- `forcing_vars`: DESCRIPTION
-- `obs_vars`: DESCRIPTION
+- `forcing_vars`: forcing variables
+- `obs_vars`: observation variables
 """
-function optimizeYax(args...;
+function optimizeYax(map_cubes...;
     out::NamedTuple,
     tem::NamedTuple,
     optim::NamedTuple,
     forcing_vars::AbstractArray,
     obs_vars::AbstractArray)
-    output, forcing, observation = unpackYaxOpti(args; forcing_vars)
+    output, forcing, observation = unpackYaxOpti(map_cubes; forcing_vars)
     forcing = (; Pair.(forcing_vars, forcing)...)
     observation = (; Pair.(obs_vars, observation)...)
     land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.exe_rules.land_output_type, "LandOut"))()
@@ -62,7 +62,7 @@ function optimizeTEMYax(forcing::NamedTuple,
     incubes = (forcing.data..., observations.data...)
     indims = (forcing.dims..., observations.dims...)
     forcing_vars = collect(forcing.variables)
-    outdims = output.paramdims
+    outdims = output.parameter_dim
     out = output.land_init
     obs_vars = collect(observations.variables)
 

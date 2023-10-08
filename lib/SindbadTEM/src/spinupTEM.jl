@@ -185,12 +185,7 @@ do/run the spinup and update the state using a simple timeloop through the input
 - `::SelSpinupModels`: DESCRIPTION
 """
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_helpers, n_timesteps, ::SelSpinupModels)
-    land = timeLoopTEMSpinup(spinup_models,
-        spinup_forcing,
-        loc_forcing_t,
-        land,
-        tem_helpers,
-        n_timesteps)
+    land = timeLoopTEMSpinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_helpers, n_timesteps)
     return land
 end
 
@@ -214,12 +209,7 @@ do/run the spinup and update the state using a simple timeloop through the input
 - `::AllForwardModels`: a dispatch type of run all models
 """
 function spinup(all_models, spinup_forcing, loc_forcing_t, land, tem_helpers, n_timesteps, ::AllForwardModels)
-    land = timeLoopTEMSpinup(all_models,
-        spinup_forcing,
-        loc_forcing_t,
-        land,
-        tem_helpers,
-        n_timesteps)
+    land = timeLoopTEMSpinup(all_models, spinup_forcing, loc_forcing_t, land, tem_helpers, n_timesteps)
     return land
 end
 
@@ -244,7 +234,7 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_helpers,
     TWS = r.zero
     TWS = oftype(land.pools.TWS, TWS)
     @pack_land TWS => land.pools
-    land = Sindbad.adjustPackPoolComponents(land, tem_helpers, land.wCycleBase.w_model)
+    land = Sindbad.adjustPackPoolComponents(land, tem_helpers.model_helpers, land.wCycleBase.w_model)
     return land
 end
 
@@ -279,8 +269,8 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_helpers,
     TWS_prev = cEco_TWS_spin.TWS
     TWS = oftype(land.pools.TWS, TWS_prev)
     @pack_land TWS => land.pools
-    land = Sindbad.adjustPackPoolComponents(land, tem_helpers, land.cCycleBase.c_model)
-    land = Sindbad.adjustPackPoolComponents(land, tem_helpers, land.wCycleBase.w_model)
+    land = Sindbad.adjustPackPoolComponents(land, tem_helpers.model_helpers, land.cCycleBase.c_model)
+    land = Sindbad.adjustPackPoolComponents(land, tem_helpers.model_helpers, land.wCycleBase.w_model)
     return land
 end
 
@@ -306,7 +296,7 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_helpers,
     cEco = exp.(r.zero)
     cEco = oftype(land.pools.cEco, cEco)
     @pack_land cEco => land.pools
-    land = Sindbad.adjustPackPoolComponents(land, tem_helpers, land.cCycleBase.c_model)
+    land = Sindbad.adjustPackPoolComponents(land, tem_helpers.model_helpers, land.cCycleBase.c_model)
     return land
 end
 
