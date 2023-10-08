@@ -26,7 +26,7 @@
     "id": [1, 476]
   },
   "variables": {
-    "CLAY": {
+    "f_clay": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.soilgrids.CLYPPT.mean.nc",
       "standard_name": "CLAY",
@@ -37,7 +37,7 @@
       "source_variable": "CLYPPT",
       "space_time_type": "spatiovertical"
     },
-    "fAPAR": {
+    "f_fAPAR": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.seviriMSC.FVC.2005-2013.nc",
       "standard_name": "fAPAR from ndvi",
@@ -47,7 +47,7 @@
       "source_variable": "FVC",
       "space_time_type": "spatiotemporal"
     },
-    "frac_vegetation": {
+    "f_frac_vegetation": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.seviri.FVC.2005-2013.nc",
       "standard_name": "vegFrac",
@@ -57,7 +57,7 @@
       "source_variable": "FVC",
       "space_time_type": "spatiotemporal"
     },
-    "ORGM": {
+    "f_orgm": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.soilgrids.OCSTHA.mean.nc",
       "standard_name": "CLAY",
@@ -68,7 +68,7 @@
       "source_variable": "OCSTHA",
       "space_time_type": "spatiovertical"
     },
-    "PAR": {
+    "f_PAR": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.ssrd.2005-2013.nc",
       "standard_name": "Photosynthetically active radiation (=Rg*.5)",
@@ -79,7 +79,7 @@
       "source_variable": "ssrd",
       "space_time_type": "spatiotemporal"
     },
-    "PET": {
+    "f_PET": {
       "bounds": [0.0, 100.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.PET_PT.2005-2013.nc",
       "standard_name": "PET",
@@ -89,7 +89,7 @@
       "source_variable": "PET_PT",
       "space_time_type": "spatiotemporal"
     },
-    "PsurfDay": {
+    "f_psurf_day": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.sp.2005-2013.nc",
       "standard_name": "surface pressure",
@@ -100,7 +100,7 @@
       "source_variable": "sp",
       "space_time_type": "spatiotemporal"
     },
-    "Rain": {
+    "f_rain": {
       "bounds": [0.0, 1000.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.tp.2005-2013.nc",
       "standard_name": "Rain",
@@ -110,7 +110,7 @@
       "source_variable": "tp",
       "space_time_type": "spatiotemporal"
     },
-    "Rg": {
+    "f_rg": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.ssrd.2005-2013.nc",
       "standard_name": "Global Radiation",
@@ -120,7 +120,7 @@
       "source_variable": "ssrd",
       "space_time_type": "spatiotemporal"
     },
-    "RgPot": {
+    "f_rg_pot": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.Rgpot.Rpot.2005-2013.nc",
       "standard_name": "Potential Global Radiation",
@@ -131,7 +131,7 @@
       "source_variable": "Rpot",
       "space_time_type": "spatiotemporal"
     },
-    "Rn": {
+    "f_rn": {
       "bounds": [0.0, 500.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.snr.2005-2013.nc",
       "standard_name": "Net radiation",
@@ -141,7 +141,7 @@
       "source_variable": "snr",
       "space_time_type": "spatiotemporal"
     },
-    "SAND": {
+    "f_sand": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.soilgrids.SNDPPT.mean.nc",
       "standard_name": "SAND",
@@ -152,7 +152,7 @@
       "source_variable": "SNDPPT",
       "space_time_type": "spatiovertical"
     },
-    "SILT": {
+    "f_silt": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.soilgrids.SLTPPT.mean.nc",
       "standard_name": "CLAY",
@@ -163,7 +163,7 @@
       "source_variable": "SLTPPT",
       "space_time_type": "spatiovertical"
     },
-    "Tair": {
+    "f_airT": {
       "additive_unit_conversion": true,
       "bounds": [-80.0, 60.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.t2m.2005-2013.nc",
@@ -175,7 +175,7 @@
       "source_variable": "t2m",
       "space_time_type": "spatiotemporal"
     },
-    "TairDay": {
+    "f_airT_day": {
       "additive_unit_conversion": true,
       "bounds": [-80.0, 60.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.t2m_daytime_mean.2005-2013.nc",
@@ -187,7 +187,7 @@
       "source_variable": "t2m_daytime_mean",
       "space_time_type": "spatiotemporal"
     },
-    "VPD": {
+    "f_VPD": {
       "bounds": [0.0, 10.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.vpd.2005-2013.nc",
       "standard_name": "Vapor pressure deficit Day",
@@ -198,7 +198,7 @@
       "source_variable": "vpd",
       "space_time_type": "spatiotemporal"
     },
-    "VPDDay": {
+    "f_VPD_day": {
       "bounds": [0.0, 100.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.vpd_daytime_mean.2005-2013.nc",
       "standard_name": "Vapor pressure deficit Day",

@@ -4,7 +4,9 @@ struct NDVI_forcing <: NDVI end
 
 function compute(p_struct::NDVI_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing NDVI ∈ forcing
+    @unpack_forcing f_NDVI ∈ forcing
+
+    NDVI = f_NDVI
 
     ## pack land variables
     @pack_land NDVI => land.states

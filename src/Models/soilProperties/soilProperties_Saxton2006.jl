@@ -64,7 +64,7 @@ function define(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 p_struct
 
     @unpack_land begin
-        (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
+        (st_clay, st_orgm, st_sand) ∈ land.soilTexture
     end
     ## instantiate variables
     sp_α = zero(land.pools.soilW)
@@ -131,7 +131,7 @@ Soil properties (hydraulic properties) using soilProperties_Saxton2006
  - : texture-based Saxton parameters
  - calcSoilParamsSaxton2006: function to calculate hydraulic properties
  - info
- - land.soilTexture.sp_[CLAY/SAND]
+ - land.soilTexture.sp_[clay/sand]
 
 *Outputs*
  - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [FC], & wilting point  ( wWP)
@@ -215,7 +215,7 @@ calculates the soil hydraulic properties based on Saxton 2006
 # Inputs:
  - : texture-based parameters
  - info
- - land.soilTexture.sp_[CLAY/SAND]: in fraction
+ - land.soilTexture.sp_[clay/sand]: in fraction
  - sl: soil layer to calculate property for
 
 # Outputs:
@@ -246,38 +246,38 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
 
     @unpack_soilProperties_Saxton2006 p_struct
     @unpack_land begin
-        (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
+        (st_clay, st_orgm, st_sand) ∈ land.soilTexture
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
-    CLAY = st_CLAY[sl]
-    SAND = st_SAND[sl]
-    ORGM = zero(st_ORGM[sl])
-    # ORGM = sp_ORGM[sl]
-    # ORGM = z_zero
-    # CLAY = CLAY
-    # SAND = SAND
-    # ORGM = ORGM
+    clay = st_clay[sl]
+    sand = st_sand[sl]
+    orgm = zero(st_orgm[sl])
+    # orgm = sp_orgm[sl]
+    # orgm = z_zero
+    # clay = clay
+    # sand = sand
+    # orgm = orgm
     ## Moisture regressions
     # θ_1500t: 1500 kPa moisture; first solution; #v
     # θ_1500: 1500 kPa moisture; #v
-    θ_1500t = a1 * SAND + a2 * CLAY + a3 * ORGM + a4 * (SAND * ORGM) - a5 * (CLAY * ORGM) + a6 * (SAND * CLAY) + a7
+    θ_1500t = a1 * sand + a2 * clay + a3 * orgm + a4 * (sand * orgm) - a5 * (clay * orgm) + a6 * (sand * clay) + a7
     θ_1500 = θ_1500t + (b1 * θ_1500t - b2)
     # θ_33t: 33 kPa moisture; first solution; #v
     # θ_33: 33 kPa moisture; normal density; #v
-    θ_33t = c1 * SAND + c2 * CLAY + c3 * ORGM + c4 * (SAND * ORGM) - c5 * (CLAY * ORGM) + c6 * (SAND * CLAY) + c7
+    θ_33t = c1 * sand + c2 * clay + c3 * orgm + c4 * (sand * orgm) - c5 * (clay * orgm) + c6 * (sand * clay) + c7
     θ_33 = θ_33t + (d1 * (θ_33t)^n2 - d2 * θ_33t - d3)
     # θ_s_33t: SAT-33 kPa moisture; first solution; #v
     # θ_s_33: SAT-33 kPa moisture; normal density #v
-    θ_s_33t = e1 * SAND + e2 * CLAY + e3 * ORGM - e4 * (SAND * ORGM) - e5 * (CLAY * ORGM) - e6 * (SAND * CLAY) + e7
+    θ_s_33t = e1 * sand + e2 * clay + e3 * orgm - e4 * (sand * orgm) - e5 * (clay * orgm) - e6 * (sand * clay) + e7
     θ_s_33 = θ_s_33t + (f1 * θ_s_33t - f2)
     # ψ_et: Tension at air entry; first solution; kPa
     # ψ_e: Tension at air entry [bubbling pressure], kPa
-    ψ_et = abs(g1 * SAND - g2 * CLAY - g3 * θ_s_33 + g4 * (SAND * θ_s_33) + g5 * (CLAY * θ_s_33) - g6 * (SAND * CLAY) + g7)
+    ψ_et = abs(g1 * sand - g2 * clay - g3 * θ_s_33 + g4 * (sand * θ_s_33) + g5 * (clay * θ_s_33) - g6 * (sand * clay) + g7)
     ψ_e = abs(ψ_et + (h1 * (ψ_et^n2) - h2 * ψ_et - h3))
     # θ_s: Saturated moisture [0 kPa], normal density, #v
     # rho_N: Normal density; g cm-3
-    θ_s = θ_33 + θ_s_33 - i1 * SAND + i2
+    θ_s = θ_33 + θ_s_33 - i1 * sand + i2
     rho_N = (o_one - θ_s) * gravelDensity
     ## Density effects
     # rho_DF: Adjusted density; g cm-3

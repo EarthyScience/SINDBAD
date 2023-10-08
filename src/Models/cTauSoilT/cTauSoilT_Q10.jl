@@ -3,7 +3,7 @@ export cTauSoilT_Q10
 #! format: off
 @bounds @describe @units @with_kw struct cTauSoilT_Q10{T1,T2,T3} <: cTauSoilT
     Q10::T1 = 1.4 | (1.05, 3.0) | "" | ""
-    Tref::T2 = 30.0 | (0.01, 40.0) | "" | "°C"
+    ref_airT::T2 = 30.0 | (0.01, 40.0) | "" | "°C"
     Q10_base::T3 = 10.0 | (-Inf, Inf) | "base temperature difference" | "°C"
 end
 #! format: on
@@ -11,11 +11,11 @@ end
 function compute(p_struct::cTauSoilT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_cTauSoilT_Q10 p_struct
-    @unpack_forcing Tair ∈ forcing
+    @unpack_forcing f_airT ∈ forcing
 
     ## calculate variables
     # CALCULATE EFFECT OF TEMPERATURE ON SOIL CARBON FLUXES
-    c_eco_k_f_soilT = Q10^((Tair - Tref) / Q10_base)
+    c_eco_k_f_soilT = Q10^((f_airT - ref_airT) / Q10_base)
 
     ## pack land variables
     @pack_land c_eco_k_f_soilT => land.cTauSoilT
@@ -34,7 +34,7 @@ $(SindbadParameters)
 Effect of soil temperature on decomposition rates using cTauSoilT_Q10
 
 *Inputs*
- - forcing.Tair: values for air temperature
+ - forcing.f_airT: values for air temperature
 
 *Outputs*
  - land.cTauSoilT.c_eco_k_f_soilT: air temperature stressor on turnover rates [k]

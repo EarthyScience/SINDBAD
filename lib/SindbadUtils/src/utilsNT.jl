@@ -1,11 +1,43 @@
 export dictToNamedTuple
 export dropFields
+export foldlLongTuple
+export foldlUnrolled
+export LongTuple
 export getCombinedNamedTuple
+export getTupleFromLongTable
+export makeLongTuple
 export makeNamedTuple
 export removeEmptyTupleFields
 export setTupleField
 export setTupleSubfield
 export tcPrint
+
+struct LongTuple{NSPLIT,T <: Tuple}
+    data::T
+    n::Val{NSPLIT}
+    function LongTuple{n}(arg::T) where {n,T<: Tuple}
+        return new{n,T}(arg,Val{n}())
+    end
+    function LongTuple{n}(args...) where n
+        s = length(args)
+        nt = s ÷ n
+        r = mod(s,n) # 5 for our current use case
+        nt = r == 0 ? nt : nt + 1
+        idx = 1
+        tup = ntuple(nt) do i
+            nn = r != 0 && i==nt ? r : n
+            t = ntuple(x -> args[x+idx-1], nn)
+            idx += nn
+            return t
+        end
+        return new{n,typeof(tup)}(tup)
+    end
+end
+
+Base.map(f, arg::LongTuple{N}) where N = LongTuple{N}(map(tup-> map(f, tup), arg.data))
+
+@inline Base.foreach(f, arg::LongTuple) = foreach(tup-> foreach(f, tup), arg.data)
+
 
 """
     collectColorForTypes(d; c_olor = true)
@@ -43,6 +75,37 @@ function dictToNamedTuple(d::AbstractDict)
     end
     dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
     return dTuple
+end
+
+
+@generated function foldlLongTuple(f, x::LongTuple{NSPL,T}; init) where {T,NSPL}
+    exes = []
+    N = length(T.parameters)
+    lastlength = length(last(T.parameters).parameters)
+    for i in 1:N
+        N2 = i==N ? lastlength : NSPL
+        for j in 1:N2
+            push!(exes, :(init = f(x.data[$i][$j], init)))
+        end
+    end
+    return Expr(:block, exes...)
+end
+
+
+
+"""
+    foldlUnrolled(f, x::Tuple{Vararg{Any, N}}; init)
+
+generate the expression to run the function for each element of a given Tuple to avoid complexity of for loops for compiler
+
+# Arguments:
+- `f`: a function call
+- `x`: the iterative to loop through
+- `init`: initial variable to overwrite
+"""
+@generated function foldlUnrolled(f, x::Tuple{Vararg{Any,N}}; init) where {N}
+    exes = Any[:(init = f(init, x[$i])) for i ∈ 1:N]
+    return Expr(:block, exes...)
 end
 
 
@@ -90,17 +153,13 @@ function getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
     return combined_nt
 end
 
-"""
-    makeNamedTuple(input_data, input_names)
-
-# Arguments:
-- `input_data`: a vector of data
-- `input_names`: a vector/tuple of names    
-"""
-function makeNamedTuple(input_data, input_names)
-    return (; Pair.(input_names, input_data)...)
+function getTupleFromLongTable(long_tuple)
+    emp_vec = []
+    foreach(long_tuple) do lt
+        push!(emp_vec, lt)
+    end
+    return Tuple(emp_vec)
 end
-
 
 """
     getTypes!(d, all_types)
@@ -119,6 +178,42 @@ function getTypes!(d, all_types)
     return unique(all_types)
 end
 
+
+
+"""
+    makeLongTuple(normal_tuple; longtuple_size=5)
+
+# Arguments:
+- `normal_tuple`: a normal tuple
+- `longtuple_size`: size to break down the tuple into
+"""
+function makeLongTuple(normal_tuple::Tuple, longtuple_size=5)
+    longtuple_size = min(length(normal_tuple), longtuple_size)
+    LongTuple{longtuple_size}(normal_tuple...)
+end
+
+
+"""
+    makeLongTuple(normal_tuple; longtuple_size=5)
+
+# Arguments:
+- `normal_tuple`: a normal tuple
+- `longtuple_size`: size to break down the tuple into
+"""
+function makeLongTuple(long_tuple::LongTuple, longtuple_size=5)
+    long_tuple
+end
+
+"""
+    makeNamedTuple(input_data, input_names)
+
+# Arguments:
+- `input_data`: a vector of data
+- `input_names`: a vector/tuple of names
+"""
+function makeNamedTuple(input_data, input_names)
+    return (; Pair.(input_names, input_data)...)
+end
 
 """
     removeEmptyTupleFields(tpl::NamedTuple)

@@ -1,0 +1,10 @@
+name = "SindbadVisuals"
+uuid = "49d56b06-c9ff-43e2-9c93-8639e8c3cbdc"
+authors = ["Lazaro Alonso <lazarus.alon@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
+GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"

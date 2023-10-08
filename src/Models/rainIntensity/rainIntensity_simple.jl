@@ -2,20 +2,20 @@ export rainIntensity_simple
 
 #! format: off
 @bounds @describe @units @with_kw struct rainIntensity_simple{T1} <: rainIntensity
-    rainIntFactor::T1 = 0.04167 | (0.0, 1.0) | "factor to convert daily rainfall to rainfall intensity" | ""
+    rain_init_factor::T1 = 0.04167 | (0.0, 1.0) | "factor to convert daily rainfall to rainfall intensity" | ""
 end
 #! format: on
 
 function compute(p_struct::rainIntensity_simple, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_rainIntensity_simple p_struct
-    @unpack_forcing Rain ∈ forcing
+    @unpack_forcing f_rain ∈ forcing
 
     ## calculate variables
-    rainInt = Rain * rainIntFactor
+    rain_int = f_rain * rain_init_factor
 
     ## pack land variables
-    @pack_land rainInt => land.states
+    @pack_land rain_int => land.states
     return land
 end
 
@@ -31,7 +31,7 @@ $(SindbadParameters)
 Set rainfall intensity using rainIntensity_simple
 
 *Inputs*
- - forcing.Rain
+ - forcing.f_rain
 
 *Outputs*
  - land.states.rainInt: Intesity of rainfall during the day

@@ -2,7 +2,7 @@ module SindbadData
 
     using SindbadUtils
     using AxisKeys: KeyedArray, AxisKeys
-    using AxisKeys, FillArrays
+    using FillArrays
     using DimensionalData
     using DiskArrayTools
     using NetCDF

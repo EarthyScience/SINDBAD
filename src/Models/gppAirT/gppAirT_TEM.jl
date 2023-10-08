@@ -4,7 +4,7 @@ export gppAirT_TEM
 @bounds @describe @units @with_kw struct gppAirT_TEM{T1,T2,T3} <: gppAirT
     Tmin::T1 = 5.0 | (-10.0, 15.0) | "minimum temperature at which GPP ceases" | "°C"
     Tmax::T2 = 20.0 | (10.0, 45.0) | "maximum temperature at which GPP ceases" | "°C"
-    Topt::T3 = 15.0 | (5.0, 30.0) | "optimal temperature for GPP" | "°C"
+    opt_airT::T3 = 15.0 | (5.0, 30.0) | "optimal temperature for GPP" | "°C"
 end
 #! format: on
 
@@ -19,17 +19,17 @@ end
 function compute(p_struct::gppAirT_TEM, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_TEM p_struct
-    @unpack_forcing TairDay ∈ forcing
+    @unpack_forcing f_airT_day ∈ forcing
     @unpack_land begin
         t_two ∈ land.gppAirT
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
-    pTmin = TairDay - Tmin
-    pTmax = TairDay - Tmax
-    pTScGPP = pTmin * pTmax / ((pTmin * pTmax) - (TairDay - Topt)^t_two)
-    TScGPP = (TairDay > Tmax) || (TairDay < Tmin) ? z_zero : pTScGPP
+    pTmin = f_airT_day - Tmin
+    pTmax = f_airT_day - Tmax
+    pTScGPP = pTmin * pTmax / ((pTmin * pTmax) - (f_airT_day - opt_airT)^t_two)
+    TScGPP = (f_airT_day > Tmax) || (f_airT_day < Tmin) ? z_zero : pTScGPP
     gpp_f_airT = clampZeroOne(TScGPP)
 
     ## pack land variables
@@ -49,7 +49,7 @@ $(SindbadParameters)
 Effect of temperature using gppAirT_TEM
 
 *Inputs*
- - forcing.TairDay: daytime temperature [°C]
+ - forcing.f_airT_day: daytime temperature [°C]
 
 *Outputs*
  - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
