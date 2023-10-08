@@ -118,10 +118,10 @@ saves the output variables from the run from the information in info
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `out_cubes`: a collection of output data to be written to file
-- `out_dims`: output dimensions with list of dimensions for each variable pair
-- `out_vars`: output variable name pairs with field and subfield
+- `output_dims`: output dimensions with list of dimensions for each variable pair
+- `output_vars`: output variable name pairs with field and subfield
 """
-function saveOutCubes(info, out_cubes, out_dims, out_vars)
+function saveOutCubes(info, out_cubes, output_dims, output_vars)
     out_file_info = getOutputFileInfo(info)
-    saveOutCubes(out_file_info.file_prefix, out_file_info.global_metadata, out_cubes, out_dims, out_vars, info.experiment.model_output.format, info.experiment.basics.time.temporal_resolution, info.tem.helpers.run.save_single_file)
+    saveOutCubes(out_file_info.file_prefix, out_file_info.global_metadata, out_cubes, output_dims, output_vars, info.experiment.model_output.format, info.experiment.basics.time.temporal_resolution, info.tem.helpers.run.save_single_file)
 end

@@ -2,7 +2,7 @@ export cAllocationTreeFraction_Friedlingstein1999
 
 #! format: off
 @bounds @describe @units @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1} <: cAllocationTreeFraction
-    Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction"
+    frac_fine_to_coarse::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction"
 end
 #! format: on
 
@@ -55,8 +55,8 @@ function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, 
     o_one = one(eltype(c_allocation))
     a_cVegWood = frac_tree
     a_cVegRoot = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
-    a_cVegRootF = a_cVegRoot * (Rf2Rc * frac_tree + (o_one - frac_tree))
-    a_cVegRootC = a_cVegRoot * (o_one - Rf2Rc) * frac_tree
+    a_cVegRootF = a_cVegRoot * (frac_fine_to_coarse * frac_tree + (o_one - frac_tree))
+    a_cVegRootC = a_cVegRoot * (o_one - frac_fine_to_coarse) * frac_tree
     # cVegRoot = cVegRootF + cVegRootC
     a_cVegLeaf = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
 

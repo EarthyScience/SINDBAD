@@ -4,7 +4,7 @@ export cAllocation_Friedlingstein1999
 @bounds @describe @units @with_kw struct cAllocation_Friedlingstein1999{T1,T2,T3} <: cAllocation
     so::T1 = 0.3 | (0.0, 1.0) | "" | ""
     ro::T2 = 0.3 | (0.0, 1.0) | "" | ""
-    RelY::T3 = 2.0 | (1.0, Inf) | "" | ""
+    rel_Y::T3 = 2.0 | (1.0, Inf) | "" | ""
 end
 #! format: on
 
@@ -47,8 +47,8 @@ function compute(p_struct::cAllocation_Friedlingstein1999, forcing, land, helper
     end
     ## unpack land variables
     # allocation to root; wood & leaf
-    a_cVegRoot = ro * (RelY + o_one) * c_allocation_f_LAI / (c_allocation_f_LAI + RelY * c_allocation_f_W_N)
-    a_cVegWood = so * (RelY + o_one) * c_allocation_f_W_N / (RelY * c_allocation_f_LAI + c_allocation_f_W_N)
+    a_cVegRoot = ro * (rel_Y + o_one) * c_allocation_f_LAI / (c_allocation_f_LAI + rel_Y * c_allocation_f_W_N)
+    a_cVegWood = so * (rel_Y + o_one) * c_allocation_f_W_N / (rel_Y * c_allocation_f_LAI + c_allocation_f_W_N)
     a_cVegLeaf = o_one - cVegRoot - cVegWood
 
     @rep_elem a_cVegRoot => (c_allocation_to_veg, 1, :cEco)

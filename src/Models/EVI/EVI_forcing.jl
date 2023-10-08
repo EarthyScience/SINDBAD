@@ -4,8 +4,9 @@ struct EVI_forcing <: EVI end
 
 function compute(p_struct::EVI_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing EVI ∈ forcing
+    @unpack_forcing f_EVI ∈ forcing
 
+    EVI = f_EVI
     ## pack land variables
     @pack_land EVI => land.states
     return land

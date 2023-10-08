@@ -2,11 +2,11 @@ export cTauSoilW_GSI
 
 #! format: off
 @bounds @describe @units @with_kw struct cTauSoilW_GSI{T1,T2,T3,T4,T5} <: cTauSoilW
-    Wopt::T1 = 90.0 | (60.0, 95.0) | "Optimal moisture for decomposition" | "percent degree of saturation"
-    WoptA::T2 = 0.2 | (0.1, 0.3) | "slope of increase" | "per percent"
-    WoptB::T3 = 0.3 | (0.15, 0.5) | "slope of decrease" | "per percent"
-    Wexp::T4 = 10.0 | (-Inf, Inf) | "reference for exponent of sensitivity" | "per percent"
-    frac2perc::T5 = 100.0 | (-Inf, Inf) | "unit converter for fraction to percent" | ""
+    opt_soilW::T1 = 90.0 | (60.0, 95.0) | "Optimal moisture for decomposition" | "percent degree of saturation"
+    opt_soilW_A::T2 = 0.2 | (0.1, 0.3) | "slope of increase" | "per percent"
+    opt_soilW_B::T3 = 0.3 | (0.15, 0.5) | "slope of decrease" | "per percent"
+    w_exp::T4 = 10.0 | (-Inf, Inf) | "reference for exponent of sensitivity" | "per percent"
+    frac_to_perc::T5 = 100.0 | (-Inf, Inf) | "unit converter for fraction to percent" | ""
 end
 #! format: on
 
@@ -35,16 +35,16 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     end
     w_one = one(eltype(soilW))
     ## for the litter pools; only use the top layer"s moisture
-    soilW_top = min(frac2perc * soilW[1] / wSat[1], frac2perc)
-    soilW_top_sc = fSoilW_cTau(w_one, WoptA, WoptB, Wexp, Wopt, soilW_top)
+    soilW_top = min(frac_to_perc * soilW[1] / wSat[1], frac_to_perc)
+    soilW_top_sc = fSoilW_cTau(w_one, opt_soilW_A, opt_soilW_B, w_exp, opt_soilW, soilW_top)
     cLitZix = getZix(land.pools.cLit, helpers.pools.zix.cLit)
     for l_zix ∈ cLitZix
         @rep_elem soilW_top_sc => (c_eco_k_f_soilW, l_zix, :cEco)
     end
 
     ## repeat for the soil pools; using all soil moisture layers
-    soilW_all = min(frac2perc * sum(soilW) / sum(wSat), frac2perc)
-    soilW_all_sc = fSoilW_cTau(w_one, WoptA, WoptB, Wexp, Wopt, soilW_all)
+    soilW_all = min(frac_to_perc * sum(soilW) / sum(wSat), frac_to_perc)
+    soilW_all_sc = fSoilW_cTau(w_one, opt_soilW_A, opt_soilW_B, w_exp, opt_soilW, soilW_all)
 
     cSoilZix = getZix(land.pools.cSoil, helpers.pools.zix.cSoil)
     for s_zix ∈ cSoilZix

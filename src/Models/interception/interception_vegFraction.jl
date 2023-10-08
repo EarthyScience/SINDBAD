@@ -2,7 +2,7 @@ export interception_vegFraction
 
 #! format: off
 @bounds @describe @units @with_kw struct interception_vegFraction{T1} <: interception
-    pInt::T1 = 1.0 | (0.01, 5.0) | "maximum interception storage" | "mm"
+    p_interception::T1 = 1.0 | (0.01, 5.0) | "maximum interception storage" | "mm"
 end
 #! format: on
 
@@ -16,8 +16,8 @@ function compute(p_struct::interception_vegFraction, forcing, land, helpers)
         rain ∈ land.fluxes
     end
     # calculate interception loss
-    intCap = pInt * frac_vegetation
-    interception = min(intCap, rain)
+    interception_capacity = p_interception * frac_vegetation
+    interception = min(interception_capacity, rain)
     # update the available water
     WBP = WBP - interception
 

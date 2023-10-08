@@ -28,12 +28,10 @@ for (i, model_array_type) in enumerate(("array", "view", "static_array"))
         "experiment.basics.time.date_end" => end_year * "-12-31",
         "experiment.flags.run_optimization" => false,
         "experiment.flags.calc_cost" => false,
-        "experiment.flags.spinup.save_spinup" => false,
         "experiment.flags.catch_model_errors" => true,
-        "experiment.flags.spinup.spinup_TEM" => false,
+        "experiment.flags.spinup_TEM" => false,
         "experiment.flags.debug_model" => false,
         "experiment.exe_rules.model_array_type" => model_array_type,
-        "experiment.flags.spinup.run_spinup" => true,
         "forcing.default_forcing.data_path" => path_input,
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
@@ -44,16 +42,16 @@ for (i, model_array_type) in enumerate(("array", "view", "static_array"))
     linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
     run_helpers = prepTEM(forcing, info)
     @time runTEM!(info.tem.models.forward,
-        run_helpers.loc_forcings,
-        run_helpers.loc_spinup_forcings,
-        run_helpers.forcing_one_timestep,
-        run_helpers.loc_outputs,
-        run_helpers.land_init_space,
+        run_helpers.space_forcing,
+        run_helpers.space_spinup_forcing,
+        run_helpers.loc_forcing_t,
+        run_helpers.space_output,
+        run_helpers.space_land,
         run_helpers.tem_with_types)
     ds = forcing.data[1]
     opt_dat = run_helpers.output_array
-    out_vars = run_helpers.out_vars
-    sel_var_index = findall(x->first(x) == first(var_select) && last(x) == last(var_select), out_vars)[1]
+    output_vars = run_helpers.output_vars
+    sel_var_index = findall(x->first(x) == first(var_select) && last(x) == last(var_select), output_vars)[1]
     plot!(opt_dat[sel_var_index][end, :, 1, 1];
         linewidth=5,
         ls=lt[i],

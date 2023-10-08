@@ -3,11 +3,11 @@ export soilWBase_smax2fRD4
 #! format: off
 @bounds @describe @units @with_kw struct soilWBase_smax2fRD4{T1,T2,T3,T4,T5,T6} <: soilWBase
     smax1::T1 = 1.0 | (0.001, 1.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
-    scaleFan::T2 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
-    scaleYang::T3 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
-    scaleWang::T4 = 0.05 | (0.0, 5.0) | "scaling for root zone storage capacity data to obtain smax2" | "fraction"
-    scaleTian::T5 = 0.05 | (0.0, 5.0) | "scaling for plant avaiable water capacity data to obtain smax2" | "fraction"
-    smaxTian::T6 = 50.0 | (0.0, 1000.0) | "value for plant avaiable water capacity data where this is NaN" | "mm"
+    scalar_Fan::T2 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
+    scalar_Yang::T3 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
+    scalar_Wang::T4 = 0.05 | (0.0, 5.0) | "scaling for root zone storage capacity data to obtain smax2" | "fraction"
+    scalar_Tian::T5 = 0.05 | (0.0, 5.0) | "scaling for plant avaiable water capacity data to obtain smax2" | "fraction"
+    smax_Tian::T6 = 50.0 | (0.0, 1000.0) | "value for plant avaiable water capacity data where this is NaN" | "mm"
 end
 #! format: on
 
@@ -47,15 +47,15 @@ function compute(p_struct::soilWBase_smax2fRD4, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land (soil_layer_thickness, wSat, wFC, wWP, rootwater_capacities) ∈ land.soilWBase
-    @unpack_forcing (AWC, RDeff, RDmax, SWCmax) ∈ forcing
+    @unpack_forcing (f_AWC, f_RDeff, f_RDmax, f_SWCmax) ∈ forcing
 
     ## calculate variables
     # get the rooting depth data & scale them
-    rootwater_capacities = repElem(rootwater_capacities, RDmax[1] * scaleFan, rootwater_capacities, rootwater_capacities, 1)
-    rootwater_capacities = repElem(rootwater_capacities, RDeff[1] * scaleYang, rootwater_capacities, rootwater_capacities, 2)
-    rootwater_capacities = repElem(rootwater_capacities, SWCmax[1] * scaleWang, rootwater_capacities, rootwater_capacities, 3)
-    AWC_tmp = isInvalid(AWC) ? smaxTian : AWC
-    rootwater_capacities = repElem(rootwater_capacities, AWC_tmp * scaleTian, rootwater_capacities, rootwater_capacities, 4)
+    rootwater_capacities = repElem(rootwater_capacities, f_RDmax[1] * scalar_Fan, rootwater_capacities, rootwater_capacities, 1)
+    rootwater_capacities = repElem(rootwater_capacities, f_RDeff[1] * scalar_Yang, rootwater_capacities, rootwater_capacities, 2)
+    rootwater_capacities = repElem(rootwater_capacities, f_SWCmax[1] * scalar_Wang, rootwater_capacities, rootwater_capacities, 3)
+    AWC_tmp = isInvalid(f_AWC) ? smax_Tian : f_AWC
+    rootwater_capacities = repElem(rootwater_capacities, AWC_tmp * scalar_Tian, rootwater_capacities, rootwater_capacities, 4)
 
     # set the properties for each soil layer
     # 1st layer

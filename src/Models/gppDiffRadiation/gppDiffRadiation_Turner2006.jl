@@ -2,17 +2,17 @@ export gppDiffRadiation_Turner2006
 
 #! format: off
 @bounds @describe @units @with_kw struct gppDiffRadiation_Turner2006{T1} <: gppDiffRadiation
-    rueRatio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
+    rue_ratio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
 end
 #! format: on
 
 function define(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Turner2006 p_struct
-    @unpack_forcing (Rg, RgPot) ∈ forcing
+    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
 
     ## calculate variables
-    CI = Rg / RgPot
+    CI = f_rg / f_rg_pot
     CI_min = CI
     CI_max = CI
     ## pack land variables
@@ -23,7 +23,7 @@ end
 function compute(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Turner2006 p_struct
-    @unpack_forcing (Rg, RgPot) ∈ forcing
+    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
     @unpack_land begin
         (CI_min, CI_max) ∈ land.gppDiffRadiation
         (z_zero, o_one) ∈ land.wCycleBase
@@ -31,16 +31,16 @@ function compute(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
     end
 
     ## calculate variables
-    CI = Rg / RgPot
+    CI = f_rg / f_rg_pot
 
     # update the minimum and maximum on the go
     CI_min = min(CI, CI_min)
     CI_max = min(CI, CI_max)
 
-    SCI = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were calculated in the instantiate using the full time series of Rg and RgPot. Now, this is not possible, and thus min and max need to be updated on the go, and once the simulation is complete in the first cycle of forcing, it will work...
+    SCI = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were calculated in the instantiate using the full time series of f_rg and f_rg_pot. Now, this is not possible, and thus min and max need to be updated on the go, and once the simulation is complete in the first cycle of forcing, it will work...
 
-    cScGPP = (o_one - rueRatio) * SCI + rueRatio
-    gpp_f_cloud = RgPot > z_zero ? cScGPP : zero(cScGPP)
+    cScGPP = (o_one - rue_ratio) * SCI + rue_ratio
+    gpp_f_cloud = f_rg_pot > z_zero ? cScGPP : zero(cScGPP)
 
     ## pack land variables
     @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
@@ -58,8 +58,8 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - forcing.Rg: Global radiation [SW incoming] [MJ/m2/time]
- - forcing.RgPot: Potential radiation [MJ/m2/time]
+ - forcing.f_rg: Global radiation [SW incoming] [MJ/m2/time]
+ - forcing.f_rg_pot: Potential radiation [MJ/m2/time]
 
 *Outputs*
  - land.gppDiffRadiation.gpp_f_cloud: effect of cloudiness on potential GPP

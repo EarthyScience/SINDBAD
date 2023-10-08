@@ -149,7 +149,7 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
   - the input datasets [f, fe, fx, s, d] have to have a full year (or cycle  of years) that will be used as the recycling dataset for the  determination of C pools at equilibrium
 """
 function spin_cCycle_CASA(forcing, land, helpers, NI2E)
-    @unpack_forcing Tair ∈ forcing
+    @unpack_forcing f_airT ∈ forcing
 
     @unpack_land begin
         cEco ∈ land.pools
@@ -267,7 +267,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
         # CASE SIGNIFICANT APPROXIMATION IS CALCULATED [CHECK NOTEBOOKS].
         piA1 = (prod(At, 2))^(NI2E)
         At2 = [At ones(size(At, 1), 1)]
-        sumB_piA = NaN(size(Tair))
+        sumB_piA = NaN(size(f_airT))
         for ii ∈ 1:nTix
             sumB_piA[ii] = Bt[ii] * prod(At2[(ii+1):(nTix+1)], 2)
         end

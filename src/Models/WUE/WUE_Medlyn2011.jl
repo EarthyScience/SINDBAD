@@ -4,7 +4,7 @@ export WUE_Medlyn2011
 @bounds @describe @units @with_kw struct WUE_Medlyn2011{T1,T2,T3} <: WUE
     g1::T1 = 3.0 | (0.5, 12.0) | "stomatal conductance parameter" | "kPa^0.5"
     ζ::T2 = 1.0 | (0.85, 3.5) | "sensitivity of WUE to ambient co2" | ""
-    DwDc::T3 = 1.6 | (-Inf, Inf) | "Ratio of the molecular diffusivities for water vapor and CO2" | ""
+    diffusivity_ratio::T3 = 1.6 | (-Inf, Inf) | "Ratio of the molecular diffusivities for water vapor and CO2" | ""
 end
 #! format: on
 
@@ -12,7 +12,7 @@ function define(p_struct::WUE_Medlyn2011, forcing, land, helpers)
     @unpack_WUE_Medlyn2011 p_struct
 
     # umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
-    umol_to_gC = oftype(DwDc, 6.6667e-004)
+    umol_to_gC = oftype(diffusivity_ratio, 6.6667e-004)
     ## pack land variables
     @pack_land umol_to_gC => land.WUE
     return land
@@ -21,7 +21,7 @@ end
 function compute(p_struct::WUE_Medlyn2011, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_WUE_Medlyn2011 p_struct
-    @unpack_forcing (PsurfDay, VPDDay) ∈ forcing
+    @unpack_forcing (f_psurf_day, f_VPD_day) ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -31,11 +31,11 @@ function compute(p_struct::WUE_Medlyn2011, forcing, land, helpers)
     end
 
     ## calculate variables
-    VPDDay = max(VPDDay, tolerance)
+    f_VPD_day = max(f_VPD_day, tolerance)
     # umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
     # umol_to_gC = 12 * 100/(18 * 1000)
-    ciNoCO2 = g1 / (g1 + sqrt(VPDDay)) # RHS eqn 13 in corrigendum
-    WUENoCO2 = umol_to_gC * PsurfDay / (DwDc * (VPDDay + g1 * sqrt(VPDDay))) # eqn 14 #? gC/mol of H2o?
+    ciNoCO2 = g1 / (g1 + sqrt(f_VPD_day)) # RHS eqn 13 in corrigendum
+    WUENoCO2 = umol_to_gC * f_psurf_day / (diffusivity_ratio * (f_VPD_day + g1 * sqrt(f_VPD_day))) # eqn 14 #? gC/mol of H2o?
     WUE = WUENoCO2 * ζ * ambient_CO2
     ci = ciNoCO2 * ambient_CO2
 
@@ -56,8 +56,8 @@ $(SindbadParameters)
 Estimate wue using WUE_Medlyn2011
 
 *Inputs*
- - forcing.PsurfDay: daytime mean atmospheric pressure [kPa]
- - forcing.VPDDay: daytime mean VPD [kPa]
+ - forcing.f_psurf_day: daytime mean atmospheric pressure [kPa]
+ - forcing.f_VPD_day: daytime mean VPD [kPa]
 
 *Outputs*
  - land.WUE.WUE: water use efficiency A/E [gC/mmH2O] with ambient co2

@@ -13,7 +13,7 @@ function define(p_struct::autoRespiration_none, forcing, land, helpers)
 end
 
 @doc """
-sets the outflow from all vegetation pools to zero
+sets the co2 efflux from all vegetation pools to zero
 
 # instantiate:
 instantiate/instantiate time-invariant variables for autoRespiration_none
