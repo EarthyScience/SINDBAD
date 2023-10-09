@@ -1,15 +1,19 @@
 export booleanizeArray
 export doNothing
+export entertainMe
 export getAbsDataPath
 export isInvalid
 export LandWrapper
 export nonUnique
 export replaceInvalid
 export setLogLevel
+export sindbadBanner
 export tabularizeList
 export toggleStackTraceNT
 export toUpperCaseFirst
 export valToSymbol
+
+figlet_fonts = ("3D Diagonal", "3D-ASCII", "3d", "4max", "5 Line Oblique", "5x7", "6x9", "AMC AAA01", "AMC Razor", "AMC Razor2", "AMC Slash", "AMC Slider", "AMC Thin", "AMC Tubes", "AMC Untitled", "ANSI Regular", "ANSI Shadow", "Big Money-ne", "Big Money-nw", "Big Money-se", "Big Money-sw", "Bloody", "Caligraphy2", "DOS Rebel", "Dancing Font", "Def Leppard", "Delta Corps Priest 1", "Electronic", "Elite", "Fire Font-k", "Fun Face", "Georgia11", "Larry 3D", "Lil Devil", "Line Blocks", "NT Greek", "NV Script", "Red Phoenix", "Rowan Cap", "S Blood", "THIS", "Two Point", "USA Flag", "Wet Letter", "acrobatic", "alligator", "alligator2", "alligator3", "alphabet", "arrows", "asc_____", "avatar", "banner", "banner3", "banner3-D", "banner4", "barbwire", "bell", "big", "bolger", "braced", "bright", "bulbhead", "caligraphy", "charact2", "charset_", "clb6x10", "colossal", "computer", "cosmic", "crawford", "crazy", "diamond", "doom", "fender", "fraktur", "georgi16", "ghoulish", "graffiti", "hollywood", "jacky", "jazmine", "maxiwi", "merlin1", "nancyj", "nancyj-improved", "nscript", "o8", "ogre", "pebbles", "reverse", "roman", "rounded", "rozzo", "script", "slant", "small", "soft", "speed", "standard", "stop", "tanja", "thick", "train", "univers", "whimsy");
 
 """
     LandWrapper{S}
@@ -82,6 +86,17 @@ function doNothing(_data)
     return _data
 end
 
+"""
+    entertainMe(n=100)
+
+display the SINDBAD banner n times
+"""
+function entertainMe(n=10)
+    for _x in 1:n
+        SindbadUtils.sindbadBanner()
+        sleep(0.1)
+    end
+end
 
 """
     getAbsDataPath(info, data_path)
@@ -165,6 +180,18 @@ function setLogLevel(log_level::Symbol)
 end
 
 """
+    sindbadBanner()
+
+displays the Sindbad.jl banner using Figlets
+"""
+function sindbadBanner()
+    print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
+    FIGlet.render("Sindbad.jl", rand(figlet_fonts))
+    return nothing
+end
+
+
+"""
     tabularizeList(_list)
 
 convert a list/tuple to a Table from TypedTables
@@ -210,4 +237,3 @@ returns the symbol from which val was created for a type dispatch based on name
 function valToSymbol(val)
     return typeof(val).parameters[1]
 end
-
