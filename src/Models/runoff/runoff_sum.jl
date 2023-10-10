@@ -4,10 +4,12 @@ struct runoff_sum <: runoff end
 
 function define(p_struct::runoff_sum, forcing, land, helpers)
 
+    @unpack_land z_zero ∈ land.wCycleBase
+
     ## set variables to zero
-    base_runoff = land.wCycleBase.z_zero
-    runoff = land.wCycleBase.z_zero
-    surface_runoff = land.wCycleBase.z_zero
+    base_runoff = z_zero
+    runoff = z_zero
+    surface_runoff = z_zero
 
     ## pack land variables
     @pack_land begin
