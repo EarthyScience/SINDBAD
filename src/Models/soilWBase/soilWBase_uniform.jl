@@ -14,10 +14,10 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
     end
 
     # instatiate variables 
-    soil_layer_thickness = zero(land.pools.soilW)
-    wFC = zero(land.pools.soilW)
-    wWP = zero(land.pools.soilW)
-    wSat = zero(land.pools.soilW)
+    soil_layer_thickness = zero(soilW)
+    wFC = zero(soilW)
+    wWP = zero(soilW)
+    wSat = zero(soilW)
 
     soilDepths = helpers.pools.layer_thickness.soilW
     # soilDepths = helpers.pools.layer_thickness.soilW

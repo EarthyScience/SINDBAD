@@ -12,7 +12,7 @@ function define(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
     @unpack_land begin
         soilW ∈ land.pools
     end
-    soil_capillary_flux = zero(land.pools.soilW)
+    soil_capillary_flux = zero(soilW)
 
     ## pack land variables
     @pack_land begin
@@ -35,7 +35,7 @@ function compute(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
-    for sl ∈ 1:(length(land.pools.soilW)-1)
+    for sl ∈ 1:(length(soilW)-1)
         dos_soilW = clampZeroOne((soilW[sl] + ΔsoilW[sl]) ./ wSat[sl])
         tmpCapFlow = sqrt(soil_kFC[sl+1] * soil_kFC[sl]) * (o_one - dos_soilW)
         holdCap = maxZero(wSat[sl] - (soilW[sl] + ΔsoilW[sl]))
