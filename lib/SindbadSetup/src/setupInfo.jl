@@ -1,5 +1,6 @@
 export getInitPools
 export getInitStates
+export getInOutVariables
 export getParameters
 export getTypeInstanceForFlags
 export getTypeInstanceForNamedOptions
@@ -580,6 +581,66 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
         end
     end
     return initial_states
+end
+
+
+"""
+    getInOutVariables(info::NamedTuple)
+
+get the input and output of variables of the given SINDBAD models
+"""
+function getInOutVariables(models)
+    mod_vars = Sindbad.DataStructures.OrderedDict{Symbol, Dict{Symbol, Vector}}()
+    for (mi, _mod) in enumerate(models)
+        in_v_str = ""
+        out_v_str = ""
+        mod_name = string(nameof(supertype(typeof(_mod))))
+        mod_name_sym=Symbol(mod_name)
+        appr_name = string(nameof(typeof(_mod)))
+        mod_vars[mod_name_sym] = Dict{Symbol, Vector}()
+        mod_code = SindbadSetup.@code_string Sindbad.Models.define(_mod, nothing, nothing, nothing)
+        mod_code_lines = split(mod_code, "\n")
+        # get the input vars
+        in_lines_index = findall(x -> (occursin("∈", x) && !occursin("for ", x) && !occursin("helpers.", x)), mod_code_lines)
+        in_all = map(in_lines_index) do in_in 
+            # in_in = in_lines_index[i]
+            in_line = strip(split(strip(mod_code_lines[in_in]), "∈")[1])
+            in_line_src = strip(split(strip(mod_code_lines[in_in]), "∈")[2])
+            if occursin("@unpack_land", in_line)
+                in_line=strip(split(in_line, "@unpack_land")[2])
+            end
+            if occursin("@unpack_forcing", in_line)
+                in_line=strip(split(in_line, "@unpack_forcing")[2])
+            end
+            if occursin("land.", in_line_src)
+                in_line_src=strip(split(in_line_src, "land.")[2])
+            end
+            if occursin("forcing.", in_line_src)
+                in_line_src="forcing"
+            end
+            in_v_str = replace(strip(in_line), "(" => "",  ")" => "")
+            in_v_list = [Symbol(strip(_v)) for _v in split(in_v_str, ",")[1:end]]
+            in_line_src = Symbol(in_line_src)
+            Pair.(Ref(in_line_src), in_v_list)
+        end
+        mod_vars[mod_name_sym][:I] = in_all
+
+        # get the output vars
+        out_lines_index = findall(x -> (occursin("=>", x) && !occursin("_elem", x) && !occursin("@rep_", x)), mod_code_lines)
+        out_all = map(out_lines_index) do out_in
+            out_line = strip(split(strip(mod_code_lines[out_in]), "=>")[1])
+            out_line_tar = Symbol(strip(split(split(strip(mod_code_lines[out_in]), "=>")[2], "land.")[2]))
+            if occursin("@pack_land", out_line)
+                out_line=strip(split(out_line, "@pack_land")[2])
+            end
+            out_v_str = replace(strip(out_line), "(" => "",  ")" => "")
+            out_v_list = [Symbol(strip(_v)) for _v in split(out_v_str, ",")[1:end]]
+            Pair.(out_v_list, Ref(out_line_tar))
+        end
+        mod_vars[mod_name_sym][:O] = out_all
+
+    end
+    return mod_vars
 end
 
 
