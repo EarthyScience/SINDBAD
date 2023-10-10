@@ -589,8 +589,11 @@ end
 
 get the input and output of variables of the given SINDBAD models
 """
-function getInOutVariables(models)
+function getInOutVariables(models, model_func = :compute)
     mod_vars = Sindbad.DataStructures.OrderedDict{Symbol, Dict{Symbol, Vector}}()
+    # function checkin(x)
+        # 
+    # end
     for (mi, _mod) in enumerate(models)
         in_v_str = ""
         out_v_str = ""
@@ -598,24 +601,59 @@ function getInOutVariables(models)
         mod_name_sym=Symbol(mod_name)
         appr_name = string(nameof(typeof(_mod)))
         mod_vars[mod_name_sym] = Dict{Symbol, Vector}()
-        mod_code = SindbadSetup.@code_string Sindbad.Models.define(_mod, nothing, nothing, nothing)
+        mod_code=nothing
+        if model_func == :compute
+            mod_code = SindbadSetup.@code_string Sindbad.Models.compute(_mod, nothing, nothing, nothing)
+        elseif model_func == :define
+            mod_code = SindbadSetup.@code_string Sindbad.Models.define(_mod, nothing, nothing, nothing)
+        elseif model_func == :precompute
+            mod_code = SindbadSetup.@code_string Sindbad.Models.compute(_mod, nothing, nothing, nothing)
+        elseif model_func == :update
+            mod_code = SindbadSetup.@code_string Sindbad.Models.update(_mod, nothing, nothing, nothing)
+        else
+            error("can only check consistency in compute, define, precompute, and update of SINDBAD models. $(model_func) is not a suggested or recommended method to add to a SINDAD model struct.")
+        end
+
         mod_code_lines = split(mod_code, "\n")
         # get the input vars
-        in_lines_index = findall(x -> (occursin("∈", x) && !occursin("for ", x) && !occursin("helpers.", x)), mod_code_lines)
+        in_lines_index = findall(x -> ((occursin("∈", x) || occursin("land.", x) || occursin("forcing.", x))&& !occursin("for ", x) && !occursin("helpers.", x)), mod_code_lines)
         in_all = map(in_lines_index) do in_in 
             # in_in = in_lines_index[i]
-            in_line = strip(split(strip(mod_code_lines[in_in]), "∈")[1])
-            in_line_src = strip(split(strip(mod_code_lines[in_in]), "∈")[2])
-            if occursin("@unpack_land", in_line)
-                in_line=strip(split(in_line, "@unpack_land")[2])
-            end
-            if occursin("@unpack_forcing", in_line)
-                in_line=strip(split(in_line, "@unpack_forcing")[2])
-            end
-            if occursin("land.", in_line_src)
-                in_line_src=strip(split(in_line_src, "land.")[2])
-            end
-            if occursin("forcing.", in_line_src)
+            mod_line = mod_code_lines[in_in]
+            in_line = ""
+            in_line_src=""
+            if occursin("∈", mod_line)
+                in_line = strip(split(strip(mod_line), "∈")[1])
+                in_line_src = strip(split(strip(mod_line), "∈")[2])
+                if occursin("@unpack_land", in_line)
+                    in_line=strip(split(in_line, "@unpack_land")[2])
+                end
+                if occursin("@unpack_forcing", in_line)
+                    in_line=strip(split(in_line, "@unpack_forcing")[2])
+                end
+                if occursin("land.", in_line_src)
+                    in_line_src=strip(split(in_line_src, "land.")[2])
+                end
+                if occursin("forcing.", in_line_src)
+                    in_line_src="forcing"
+                end
+            elseif occursin("land.", mod_line) && occursin("=", mod_line) && !occursin("=>", mod_line) 
+                in_line = strip(mod_line)
+                @warn "Using an unextracted variable from land in $(mod_name), $(appr_name) in line $(in_line). While this not necessarily a source of error, note that these variables are not used in consistency checks and may be prone to bugs and lead to cluttered code. Follow the convention of unpacking all variables to use locally using @unpack_land."
+                # in_line_locs=findall("land.", in_line)
+                # foreach(in_line_locs) do ill
+                #     eol = ill[end]+1
+                #     in_line=split(in_line[eol:end],".")[1:2]
+                #     in_line=in_line[1] * ',' * split(split(split(in_line[2]," ")[1], ")")[1],"[")[1]
+                #     @show in_line
+                # end
+
+                # rhs=strip(split(strip(mod_line), "=")[2])
+                # findall(x -> x)
+            elseif occursin("forcing.", mod_line) && occursin("=", mod_line) && !occursin("=>", mod_line) 
+                in_line = strip(mod_line)
+                # in_line=strip(split(strip(mod_line), "∈")[1])
+                @warn "Using an unextracted variable from forcing in $(mod_name), $(appr_name) in line $(in_line).  While this not necessarily a source of error, note that these variables are not used in consistency checks and may be prone to bugs and lead to cluttered code. Follow the convention of unpacking all variables to use locally using @unpack_forcing."
                 in_line_src="forcing"
             end
             in_v_str = replace(strip(in_line), "(" => "",  ")" => "")

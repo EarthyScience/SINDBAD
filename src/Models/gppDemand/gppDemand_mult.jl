@@ -3,10 +3,12 @@ export gppDemand_mult
 struct gppDemand_mult <: gppDemand end
 
 function define(p_struct::gppDemand_mult, forcing, land, helpers)
-    gpp_climate_stressors = ones(typeof(forcing.f_VPD_day), 4)
+    @unpack_forcing f_VPD_day ∈ forcing
+    gpp_climate_stressors = ones(typeof(f_VPD_day), 4)
 
     if hasproperty(land.pools, :soilW)
-        if land.pools.soilW isa SVector
+        @unpack_land soilW ∈ land.pools
+        if soilW isa SVector
             gpp_climate_stressors = SVector{4}(gpp_climate_stressors)
         end
     end

@@ -12,32 +12,36 @@ end
 function define(p_struct::wCycleBase_simple, forcing, land, helpers)
     @unpack_wCycleBase_simple p_struct
     if hasproperty(land.pools, :TWS)
-        n_TWS = oftype(first(land.pools.TWS), length(land.pools.TWS))
+        @unpack_land TWS ∈ land.pools
+        n_TWS = oftype(first(TWS), length(TWS))
         @pack_land n_TWS => land.wCycleBase
     end
     if hasproperty(land.pools, :groundW)
-        n_groundW = oftype(first(land.pools.groundW), length(land.pools.groundW))
+        @unpack_land groundW ∈ land.pools
+        n_groundW = oftype(first(groundW), length(groundW))
         @pack_land n_groundW => land.wCycleBase
     end
     if hasproperty(land.pools, :snowW)
-        n_snowW = oftype(first(land.pools.snowW), length(land.pools.snowW))
+        @unpack_land snowW ∈ land.pools
+        n_snowW = oftype(first(snowW), length(snowW))
         @pack_land n_snowW => land.wCycleBase
     end
     if hasproperty(land.pools, :soilW)
-        n_soilW = oftype(first(land.pools.soilW), length(land.pools.soilW))
+        @unpack_land soilW ∈ land.pools
+        o_one = oftype(first(soilW), 1.0)
+        z_zero = oftype(first(soilW), 0.0)
+        n_soilW = oftype(first(soilW), length(soilW))
         @pack_land n_soilW => land.wCycleBase
     end
     if hasproperty(land.pools, :surfaceW)
-        n_surfaceW = oftype(first(land.pools.surfaceW), length(land.pools.surfaceW))
+        @unpack_land surfaceW ∈ land.pools
+        n_surfaceW = oftype(first(surfaceW), length(surfaceW))
         @pack_land n_surfaceW => land.wCycleBase
     end
-
-    if hasproperty(land.pools, :soilW)
-        o_one = oftype(first(land.pools.soilW), 1)
-        z_zero = oftype(first(land.pools.soilW), 0)
-    elseif hasproperty(land.pools, :cEco)
-        o_one = oftype(first(land.pools.cEco), 1)
-        z_zero = oftype(first(land.pools.cEco), 0)
+    if hasproperty(land.pools, :cEco)
+        @unpack_land cEco ∈ land.pools
+        o_one = oftype(first(cEco), 1)
+        z_zero = oftype(first(cEco), 0)
     end
 
     w_model = WCycleBaseSimple()

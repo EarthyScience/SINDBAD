@@ -64,20 +64,21 @@ function define(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 p_struct
 
     @unpack_land begin
+        soilW ∈ land.pools
         (st_clay, st_orgm, st_sand) ∈ land.soilTexture
     end
     ## instantiate variables
-    sp_α = zero(land.pools.soilW)
-    sp_β = zero(land.pools.soilW)
-    sp_kFC = zero(land.pools.soilW)
-    sp_θFC = zero(land.pools.soilW)
-    sp_ψFC = zero(land.pools.soilW)
-    sp_kWP = zero(land.pools.soilW)
-    sp_θWP = zero(land.pools.soilW)
-    sp_ψWP = zero(land.pools.soilW)
-    sp_kSat = zero(land.pools.soilW)
-    sp_θSat = zero(land.pools.soilW)
-    sp_ψSat = zero(land.pools.soilW)
+    sp_α = zero(soilW)
+    sp_β = zero(soilW)
+    sp_kFC = zero(soilW)
+    sp_θFC = zero(soilW)
+    sp_ψFC = zero(soilW)
+    sp_kWP = zero(soilW)
+    sp_θWP = zero(soilW)
+    sp_ψWP = zero(soilW)
+    sp_kSat = zero(soilW)
+    sp_θSat = zero(soilW)
+    sp_ψSat = zero(soilW)
 
     # generate the function handle to calculate soil hydraulic property
     unsat_k_model = kSaxton2006()
