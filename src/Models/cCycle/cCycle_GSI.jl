@@ -16,8 +16,7 @@ function define(p_struct::cCycle_GSI, forcing, land, helpers)
     ## pack land variables
 
     @pack_land begin
-        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx, ΔcEco) =>
-            land.states
+        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx, ΔcEco) => land.states
     end
     return land
 end
