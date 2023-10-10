@@ -22,9 +22,12 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
     # setMainFromComponentPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 
     # always pack land tws before calling the adjust method
-    @pack_land (groundW, snowW, soilW, surfaceW, TWS) => land.pools
+    @pack_land begin
+        (groundW, snowW, soilW, surfaceW, TWS) => land.pools
+        w_model => land.wCycleBase
+    end
 
-    land = adjustPackMainPool(land, helpers, land.wCycleBase.w_model)
+    land = adjustPackMainPool(land, helpers, w_model)
 
     # reset moisture changes to zero
     for l in eachindex(ΔsnowW)

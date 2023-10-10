@@ -8,11 +8,15 @@ end
 
 function define(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
     @unpack_rootWaterEfficiency_constant p_struct
-    @unpack_land soil_layer_thickness ∈ land.soilWBase
-    @unpack_land soilW ∈ land.pools
+    
+    @unpack_land begin
+        soil_layer_thickness ∈ land.soilWBase
+        soilW ∈ land.pools            
+    end
+
     cumulative_soil_depths = cumsum(soil_layer_thickness)
     ## instantiate
-    root_water_efficiency = one.(land.pools.soilW)
+    root_water_efficiency = one.(soilW)
 
     ## pack land variables
     @pack_land begin
@@ -31,13 +35,14 @@ function precompute(p_struct::rootWaterEfficiency_constant, forcing, land, helpe
     @unpack_land begin
         cumulative_soil_depths ∈ land.rootWaterEfficiency
         root_water_efficiency ∈ land.states
+        soilW ∈ land.pools
         z_zero ∈ land.wCycleBase
         max_root_depth ∈ land.states
     end
     if max_root_depth >= z_zero
         @rep_elem constant_root_water_efficiency => (root_water_efficiency, 1, :soilW)
     end
-    for sl ∈ eachindex(land.pools.soilW)[2:end]
+    for sl ∈ eachindex(soilW)[2:end]
         soilcumuD = cumulative_soil_depths[sl-1]
         rootOver = max_root_depth - soilcumuD
         rootEff = rootOver >= z_zero ? constant_root_water_efficiency : zero(eltype(root_water_efficiency))

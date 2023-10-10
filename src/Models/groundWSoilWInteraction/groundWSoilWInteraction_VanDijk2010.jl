@@ -8,7 +8,7 @@ end
 
 function define(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
     ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
-    gw_recharge = land.wCycleBase.z_zero
+    gw_recharge = zero(max_fraction)
     ## pack land variables
     @pack_land gw_recharge => land.fluxes
     return land
@@ -34,7 +34,7 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
     dosSoilend = clampZeroOne((soilW[end] + ΔsoilW[end]) / wSat[end])
     k_sat = kSat[end] # assume GW is saturated
     k_fc = soil_kFC[end] # assume GW is saturated
-    k_unsat = unsatK(land, helpers, lastindex(land.pools.soilW), unsat_k_model)
+    k_unsat = unsatK(land, helpers, lastindex(soilW), unsat_k_model)
 
     # get the capillary flux
     c_flux = sqrt(k_unsat * k_sat) * (o_one - dosSoilend)
@@ -89,7 +89,7 @@ calculates the upward flow of water from groundwater to lowermost soil layer usi
 Groundwater soil moisture interactions (capilary flux) using groundWSoilWInteraction_VanDijk2010
 
 *Inputs*
- - land.pools.soilW: soil moisture in different layers
+ - soilW: soil moisture in different layers
  - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
 
 *Outputs*
@@ -101,8 +101,8 @@ Groundwater soil moisture interactions (capilary flux) using groundWSoilWInterac
 update pools and states in groundWSoilWInteraction_VanDijk2010
 
  - land.fluxes.gw_recharge
- - land.pools.groundW[1]
- - land.pools.soilW
+ - groundW[1]
+ - soilW
 
 ---
 
