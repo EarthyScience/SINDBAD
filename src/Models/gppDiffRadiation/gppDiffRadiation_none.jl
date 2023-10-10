@@ -3,10 +3,11 @@ export gppDiffRadiation_none
 struct gppDiffRadiation_none <: gppDiffRadiation end
 
 function define(p_struct::gppDiffRadiation_none, forcing, land, helpers)
+    @unpack_land o_one ∈ land.wCycleBase
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
-    gpp_f_cloud = land.wCycleBase.o_one
+    gpp_f_cloud = o_one
 
     ## pack land variables
     @pack_land gpp_f_cloud => land.gppDiffRadiation

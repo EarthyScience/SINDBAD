@@ -6,6 +6,7 @@ function define(p_struct::soilTexture_forcing, forcing, land, helpers)
     #@needscheck
     ## unpack forcing
     @unpack_forcing (f_clay, f_orgm, f_sand, f_silt) ∈ forcing
+    @unpack_land soilW ∈ land.pools
 
     ## unpack land variables
 
@@ -15,10 +16,10 @@ function define(p_struct::soilTexture_forcing, forcing, land, helpers)
     st_orgm_f = Tuple(f_orgm)
 
     ## precomputations/check
-    st_clay = zero(land.pools.soilW)
-    st_orgm = zero(land.pools.soilW)
-    st_sand = zero(land.pools.soilW)
-    st_silt = zero(land.pools.soilW)
+    st_clay = zero(soilW)
+    st_orgm = zero(soilW)
+    st_sand = zero(soilW)
+    st_silt = zero(soilW)
 
     if length(st_clay_f) != length(st_clay)
         @debug "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers."

@@ -3,9 +3,9 @@ export gppDirRadiation_none
 struct gppDirRadiation_none <: gppDirRadiation end
 
 function define(p_struct::gppDirRadiation_none, forcing, land, helpers)
-
+    @unpack_land o_one ∈ land.wCycleBase
     ## calculate variables
-    gpp_f_light = land.wCycleBase.o_one
+    gpp_f_light = o_one
 
     ## pack land variables
     @pack_land gpp_f_light => land.gppDirRadiation
