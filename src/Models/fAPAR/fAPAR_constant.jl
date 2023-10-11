@@ -6,9 +6,9 @@ export fAPAR_constant
 end
 #! format: on
 
-function define(p_struct::fAPAR_constant, forcing, land, helpers)
+function define(params::fAPAR_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_fAPAR_constant p_struct
+    @unpack_fAPAR_constant params
 
     ## calculate variables
     fAPAR = constant_fAPAR
@@ -18,9 +18,9 @@ function define(p_struct::fAPAR_constant, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::fAPAR_constant, forcing, land, helpers)
+function compute(params::fAPAR_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_fAPAR_constant p_struct
+    @unpack_fAPAR_constant params
 
     ## calculate variables
     fAPAR = constant_fAPAR

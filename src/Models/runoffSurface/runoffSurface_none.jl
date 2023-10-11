@@ -2,7 +2,7 @@ export runoffSurface_none
 
 struct runoffSurface_none <: runoffSurface end
 
-function define(p_struct::runoffSurface_none, forcing, land, helpers)
+function define(params::runoffSurface_none, forcing, land, helpers)
 
     ## calculate variables
     surface_runoff = land.wCycleBase.z_zero

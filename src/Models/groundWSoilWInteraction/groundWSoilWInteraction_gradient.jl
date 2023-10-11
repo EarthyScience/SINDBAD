@@ -8,7 +8,7 @@ end
 #! format: on
 
 
-function define(p_struct::groundWSoilWInteraction_gradient, forcing, land, helpers)
+function define(params::groundWSoilWInteraction_gradient, forcing, land, helpers)
     ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
     gw_recharge = land.wCycleBase.z_zero
     ## pack land variables
@@ -16,9 +16,9 @@ function define(p_struct::groundWSoilWInteraction_gradient, forcing, land, helpe
     return land
 end
 
-function compute(p_struct::groundWSoilWInteraction_gradient, forcing, land, helpers)
+function compute(params::groundWSoilWInteraction_gradient, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWSoilWInteraction_gradient p_struct
+    @unpack_groundWSoilWInteraction_gradient params
     ## unpack land variables
     @unpack_land begin
         wSat ∈ land.soilWBase
@@ -58,7 +58,7 @@ function compute(p_struct::groundWSoilWInteraction_gradient, forcing, land, help
     return land
 end
 
-function update(p_struct::groundWSoilWInteraction_gradient, forcing, land, helpers)
+function update(params::groundWSoilWInteraction_gradient, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (soilW, groundW) ∈ land.pools

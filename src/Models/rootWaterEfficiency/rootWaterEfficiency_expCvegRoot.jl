@@ -8,8 +8,8 @@ export rootWaterEfficiency_expCvegRoot
 end
 #! format: on
 
-function define(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
-    @unpack_rootWaterEfficiency_expCvegRoot p_struct
+function define(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
+    @unpack_rootWaterEfficiency_expCvegRoot params
     @unpack_land begin
         soil_layer_thickness ∈ land.soilWBase
     end
@@ -25,9 +25,9 @@ function define(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helper
     return land
 end
 
-function precompute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
+function precompute(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootWaterEfficiency_expCvegRoot p_struct
+    @unpack_rootWaterEfficiency_expCvegRoot params
     ## unpack land variables
     @unpack_land begin
         (root_over, cumulative_soil_depths) ∈ land.rootWaterEfficiency
@@ -48,9 +48,9 @@ function precompute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, he
     return land
 end
 
-function compute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
+function compute(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootWaterEfficiency_expCvegRoot p_struct
+    @unpack_rootWaterEfficiency_expCvegRoot params
     ## unpack land variables
     @unpack_land begin
         root_over ∈ land.rootWaterEfficiency

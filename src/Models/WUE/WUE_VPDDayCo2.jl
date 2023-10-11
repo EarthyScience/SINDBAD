@@ -9,9 +9,9 @@ export WUE_VPDDayCo2
 end
 #! format: on
 
-function compute(p_struct::WUE_VPDDayCo2, forcing, land, helpers)
+function compute(params::WUE_VPDDayCo2, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_WUE_VPDDayCo2 p_struct
+    @unpack_WUE_VPDDayCo2 params
     @unpack_forcing f_VPD_day ∈ forcing
 
     ## unpack land variables

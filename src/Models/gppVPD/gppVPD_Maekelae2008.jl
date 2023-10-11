@@ -6,9 +6,9 @@ export gppVPD_Maekelae2008
 end
 #! format: on
 
-function compute(p_struct::gppVPD_Maekelae2008, forcing, land, helpers)
+function compute(params::gppVPD_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppVPD_Maekelae2008 p_struct
+    @unpack_gppVPD_Maekelae2008 params
     @unpack_forcing f_VPD_day ∈ forcing
     @unpack_land o_one ∈ land.wCycleBase
 

@@ -2,7 +2,7 @@ export sublimation_none
 
 struct sublimation_none <: sublimation end
 
-function define(p_struct::sublimation_none, forcing, land, helpers)
+function define(params::sublimation_none, forcing, land, helpers)
 
     ## calculate variables
     sublimation = zero(eltype(land.pools.snowW))

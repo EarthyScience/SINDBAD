@@ -6,7 +6,7 @@ export gppSoilW_CASA
 end
 #! format: on
 
-function define(p_struct::gppSoilW_CASA, forcing, land, helpers)
+function define(params::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     ## unpack land variables
     @unpack_land begin
@@ -19,9 +19,9 @@ function define(p_struct::gppSoilW_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gppSoilW_CASA, forcing, land, helpers)
+function compute(params::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppSoilW_CASA p_struct
+    @unpack_gppSoilW_CASA params
     @unpack_forcing f_airT ∈ forcing
 
     ## unpack land variables

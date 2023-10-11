@@ -6,9 +6,9 @@ export rootMaximumDepth_fracSoilD
 end
 #! format: on
 
-function define(p_struct::rootMaximumDepth_fracSoilD, forcing, land, helpers)
+function define(params::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootMaximumDepth_fracSoilD p_struct
+    @unpack_rootMaximumDepth_fracSoilD params
     @unpack_land soil_layer_thickness ∈ land.soilWBase
     ## calculate variables
     sum_soil_depth = sum(soil_layer_thickness)
@@ -19,9 +19,9 @@ function define(p_struct::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     return land
 end
 
-function precompute(p_struct::rootMaximumDepth_fracSoilD, forcing, land, helpers)
+function precompute(params::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootMaximumDepth_fracSoilD p_struct
+    @unpack_rootMaximumDepth_fracSoilD params
     @unpack_land sum_soil_depth ∈ land.rootMaximumDepth
     ## calculate variables
     # get the soil thickness & root distribution information from input

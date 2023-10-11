@@ -2,7 +2,7 @@ export wCycle_combined
 
 struct wCycle_combined <: wCycle end
 
-function define(p_struct::wCycle_combined, forcing, land, helpers)
+function define(params::wCycle_combined, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         ΔTWS ∈ land.states
@@ -13,7 +13,7 @@ function define(p_struct::wCycle_combined, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::wCycle_combined, forcing, land, helpers)
+function compute(params::wCycle_combined, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         TWS ∈ land.pools

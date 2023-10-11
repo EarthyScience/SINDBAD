@@ -6,9 +6,9 @@ export interception_fAPAR
 end
 #! format: on
 
-function compute(p_struct::interception_fAPAR, forcing, land, helpers)
+function compute(params::interception_fAPAR, forcing, land, helpers)
     ## unpack parameters
-    @unpack_interception_fAPAR p_struct
+    @unpack_interception_fAPAR params
 
     ## unpack land variables
     @unpack_land begin

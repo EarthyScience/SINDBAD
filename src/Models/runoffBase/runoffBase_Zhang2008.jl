@@ -2,14 +2,14 @@ export runoffBase_Zhang2008
 
 #! format: off
 @bounds @describe @units @with_kw struct runoffBase_Zhang2008{T1} <: runoffBase
-    bc::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
+    k_baseflow::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
 end
 #! format: on
 
 
-function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
+function compute(params::runoffBase_Zhang2008, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffBase_Zhang2008 p_struct
+    @unpack_runoffBase_Zhang2008 params
 
     ## unpack land variables
     @unpack_land begin
@@ -20,7 +20,7 @@ function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
 
     ## calculate variables
     # simply assume that a fraction of the GWstorage is baseflow
-    base_runoff = bc * totalS(groundW, ΔgroundW)
+    base_runoff = k_baseflow * totalS(groundW, ΔgroundW)
 
     # update groundwater changes
 
@@ -34,8 +34,8 @@ function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
-    @unpack_runoffBase_Zhang2008 p_struct
+function update(params::runoffBase_Zhang2008, forcing, land, helpers)
+    @unpack_runoffBase_Zhang2008 params
 
     ## unpack variables
     @unpack_land begin

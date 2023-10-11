@@ -6,8 +6,8 @@ export rootWaterEfficiency_constant
 end
 #! format: on
 
-function define(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
-    @unpack_rootWaterEfficiency_constant p_struct
+function define(params::rootWaterEfficiency_constant, forcing, land, helpers)
+    @unpack_rootWaterEfficiency_constant params
     
     @unpack_land begin
         soil_layer_thickness ∈ land.soilWBase
@@ -28,9 +28,9 @@ function define(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
 end
 
 
-function precompute(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
+function precompute(params::rootWaterEfficiency_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootWaterEfficiency_constant p_struct
+    @unpack_rootWaterEfficiency_constant params
     ## unpack land variables
     @unpack_land begin
         cumulative_soil_depths ∈ land.rootWaterEfficiency

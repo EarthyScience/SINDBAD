@@ -6,9 +6,9 @@ export NDVI_constant
 end
 #! format: on
 
-function compute(p_struct::NDVI_constant, forcing, land, helpers)
+function compute(params::NDVI_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_NDVI_constant p_struct
+    @unpack_NDVI_constant params
 
     ## calculate variables
     NDVI = constant_NDVI

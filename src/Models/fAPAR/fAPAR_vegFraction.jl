@@ -6,8 +6,8 @@ export fAPAR_vegFraction
 end
 #! format: on
 
-function compute(p_struct::fAPAR_vegFraction, forcing, land, helpers)
-    @unpack_fAPAR_vegFraction p_struct
+function compute(params::fAPAR_vegFraction, forcing, land, helpers)
+    @unpack_fAPAR_vegFraction params
 
     ## unpack land variables
     @unpack_land frac_vegetation ∈ land.states

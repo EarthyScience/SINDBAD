@@ -2,7 +2,7 @@ export gppDemand_mult
 
 struct gppDemand_mult <: gppDemand end
 
-function define(p_struct::gppDemand_mult, forcing, land, helpers)
+function define(params::gppDemand_mult, forcing, land, helpers)
     @unpack_forcing f_VPD_day ∈ forcing
     gpp_climate_stressors = ones(typeof(f_VPD_day), 4)
 
@@ -18,7 +18,7 @@ function define(p_struct::gppDemand_mult, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gppDemand_mult, forcing, land, helpers)
+function compute(params::gppDemand_mult, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

@@ -2,7 +2,7 @@ export gppDiffRadiation_none
 
 struct gppDiffRadiation_none <: gppDiffRadiation end
 
-function define(p_struct::gppDiffRadiation_none, forcing, land, helpers)
+function define(params::gppDiffRadiation_none, forcing, land, helpers)
     @unpack_land o_one ∈ land.wCycleBase
 
     ## calculate variables

@@ -8,9 +8,9 @@ export cTauSoilT_Q10
 end
 #! format: on
 
-function compute(p_struct::cTauSoilT_Q10, forcing, land, helpers)
+function compute(params::cTauSoilT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_cTauSoilT_Q10 p_struct
+    @unpack_cTauSoilT_Q10 params
     @unpack_forcing f_airT ∈ forcing
 
     ## calculate variables

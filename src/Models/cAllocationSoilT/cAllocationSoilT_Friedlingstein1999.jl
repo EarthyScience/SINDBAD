@@ -7,9 +7,9 @@ export cAllocationSoilT_Friedlingstein1999
 end
 #! format: on
 
-function compute(p_struct::cAllocationSoilT_Friedlingstein1999, forcing, land, helpers)
+function compute(params::cAllocationSoilT_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilT_Friedlingstein1999 p_struct
+    @unpack_cAllocationSoilT_Friedlingstein1999 params
 
     ## unpack land variables
     @unpack_land c_allocation_f_soilT ∈ land.cTauSoilT

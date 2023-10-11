@@ -8,8 +8,8 @@ export cAllocation_Friedlingstein1999
 end
 #! format: on
 
-function define(p_struct::cAllocation_Friedlingstein1999, forcing, land, helpers)
-    @unpack_cAllocation_Friedlingstein1999 p_struct
+function define(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
+    @unpack_cAllocation_Friedlingstein1999 params
 
     ## instantiate variables
     c_allocation = zero(land.pools.cEco) #sujan
@@ -33,9 +33,9 @@ function define(p_struct::cAllocation_Friedlingstein1999, forcing, land, helpers
     return land
 end
 
-function compute(p_struct::cAllocation_Friedlingstein1999, forcing, land, helpers)
+function compute(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocation_Friedlingstein1999 p_struct
+    @unpack_cAllocation_Friedlingstein1999 params
 
     ## unpack land variables
     @unpack_land begin

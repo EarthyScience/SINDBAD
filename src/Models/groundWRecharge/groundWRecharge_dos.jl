@@ -6,7 +6,7 @@ export groundWRecharge_dos
 end
 #! format: on
 
-function define(p_struct::groundWRecharge_dos, forcing, land, helpers)
+function define(params::groundWRecharge_dos, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         z_zero ∈ land.wCycleBase
@@ -21,9 +21,9 @@ function define(p_struct::groundWRecharge_dos, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::groundWRecharge_dos, forcing, land, helpers)
+function compute(params::groundWRecharge_dos, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWRecharge_dos p_struct
+    @unpack_groundWRecharge_dos params
 
     ## unpack land variables
     @unpack_land begin
@@ -49,7 +49,7 @@ function compute(p_struct::groundWRecharge_dos, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::groundWRecharge_dos, forcing, land, helpers)
+function update(params::groundWRecharge_dos, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

@@ -2,7 +2,7 @@ export cAllocationNutrients_none
 
 struct cAllocationNutrients_none <: cAllocationNutrients end
 
-function define(p_struct::cAllocationNutrients_none, forcing, land, helpers)
+function define(params::cAllocationNutrients_none, forcing, land, helpers)
 
     ## calculate variables
     c_allocation_f_W_N = one(first(land.pools.cEco))

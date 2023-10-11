@@ -2,7 +2,7 @@ export cTauVegProperties_none
 
 struct cTauVegProperties_none <: cTauVegProperties end
 
-function define(p_struct::cTauVegProperties_none, forcing, land, helpers)
+function define(params::cTauVegProperties_none, forcing, land, helpers)
 
     ## calculate variables
     c_eco_k_f_veg_props = one.(land.pools.cEco)

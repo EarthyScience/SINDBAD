@@ -8,10 +8,10 @@ export runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
 end
 #! format: on
 
-function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land, helpers)
+function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
-    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionFroSoil p_struct
+    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionFroSoil params
     @unpack_forcing frac_frozen_soil ∈ forcing
 
     ## unpack land variables

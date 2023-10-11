@@ -10,8 +10,8 @@ export cTauSoilW_GSI
 end
 #! format: on
 
-function define(p_struct::cTauSoilW_GSI, forcing, land, helpers)
-    @unpack_cTauSoilW_GSI p_struct
+function define(params::cTauSoilW_GSI, forcing, land, helpers)
+    @unpack_cTauSoilW_GSI params
 
     ## instantiate variables
     c_eco_k_f_soilW = one.(land.pools.cEco)
@@ -21,9 +21,9 @@ function define(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
+function compute(params::cTauSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauSoilW_GSI p_struct
+    @unpack_cTauSoilW_GSI params
 
     ## unpack land variables
     @unpack_land c_eco_k_f_soilW ∈ land.cTauSoilW

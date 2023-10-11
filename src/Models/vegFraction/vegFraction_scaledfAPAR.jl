@@ -6,9 +6,9 @@ export vegFraction_scaledfAPAR
 end
 #! format: on
 
-function compute(p_struct::vegFraction_scaledfAPAR, forcing, land, helpers)
+function compute(params::vegFraction_scaledfAPAR, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledfAPAR p_struct
+    @unpack_vegFraction_scaledfAPAR params
 
     ## unpack land variables
     @unpack_land begin

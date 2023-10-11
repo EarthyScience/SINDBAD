@@ -7,8 +7,8 @@ export cTauLAI_CASA
 end
 #! format: on
 
-function define(p_struct::cTauLAI_CASA, forcing, land, helpers)
-    @unpack_cTauLAI_CASA p_struct
+function define(params::cTauLAI_CASA, forcing, land, helpers)
+    @unpack_cTauLAI_CASA params
 
     ## instantiate variables
     c_eco_k_f_LAI = one.(land.pools.cEco)
@@ -18,9 +18,9 @@ function define(p_struct::cTauLAI_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
+function compute(params::cTauLAI_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauLAI_CASA p_struct
+    @unpack_cTauLAI_CASA params
 
     ## unpack land variables
     @unpack_land c_eco_k_f_LAI ∈ land.cTauLAI

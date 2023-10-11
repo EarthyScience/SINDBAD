@@ -2,7 +2,7 @@ export vegAvailableWater_rootWaterEfficiency
 
 struct vegAvailableWater_rootWaterEfficiency <: vegAvailableWater end
 
-function define(p_struct::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
+function define(params::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -16,7 +16,7 @@ function define(p_struct::vegAvailableWater_rootWaterEfficiency, forcing, land, 
     return land
 end
 
-function compute(p_struct::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
+function compute(params::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

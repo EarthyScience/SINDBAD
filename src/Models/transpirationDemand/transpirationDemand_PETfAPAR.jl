@@ -6,9 +6,9 @@ export transpirationDemand_PETfAPAR
 end
 #! format: on
 
-function compute(p_struct::transpirationDemand_PETfAPAR, forcing, land, helpers)
+function compute(params::transpirationDemand_PETfAPAR, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationDemand_PETfAPAR p_struct
+    @unpack_transpirationDemand_PETfAPAR params
 
     ## unpack land variables
     @unpack_land begin

@@ -8,7 +8,7 @@ export autoRespiration_Thornley2000C
 end
 #! format: on
 
-function define(p_struct::autoRespiration_Thornley2000C, forcing, land, helpers)
+function define(params::autoRespiration_Thornley2000C, forcing, land, helpers)
     @unpack_land begin
         cEco ∈ land.pools
     end
@@ -27,9 +27,9 @@ function define(p_struct::autoRespiration_Thornley2000C, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::autoRespiration_Thornley2000C, forcing, land, helpers)
+function compute(params::autoRespiration_Thornley2000C, forcing, land, helpers)
     ## unpack parameters
-    @unpack_autoRespiration_Thornley2000C p_struct
+    @unpack_autoRespiration_Thornley2000C params
 
     ## unpack land variables
     @unpack_land begin

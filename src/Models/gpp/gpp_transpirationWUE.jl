@@ -2,7 +2,7 @@ export gpp_transpirationWUE
 
 struct gpp_transpirationWUE <: gpp end
 
-function compute(p_struct::gpp_transpirationWUE, forcing, land, helpers)
+function compute(params::gpp_transpirationWUE, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

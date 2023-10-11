@@ -12,8 +12,8 @@ export cTauVegProperties_CASA
 end
 #! format: on
 
-function define(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
-    @unpack_cTauVegProperties_CASA p_struct
+function define(params::cTauVegProperties_CASA, forcing, land, helpers)
+    @unpack_cTauVegProperties_CASA params
 
     ## instantiate variables
     c_eco_k_f_veg_props = one.(land.pools.cEco)
@@ -24,9 +24,9 @@ function define(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
+function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauVegProperties_CASA p_struct
+    @unpack_cTauVegProperties_CASA params
 
     ## unpack land variables
     @unpack_land begin

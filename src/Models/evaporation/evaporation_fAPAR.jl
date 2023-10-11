@@ -7,9 +7,9 @@ export evaporation_fAPAR
 end
 #! format: on
 
-function compute(p_struct::evaporation_fAPAR, forcing, land, helpers)
+function compute(params::evaporation_fAPAR, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_fAPAR p_struct
+    @unpack_evaporation_fAPAR params
 
     ## unpack land variables
     @unpack_land begin
@@ -37,8 +37,8 @@ function compute(p_struct::evaporation_fAPAR, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::evaporation_fAPAR, forcing, land, helpers)
-    @unpack_evaporation_bareFraction p_struct
+function update(params::evaporation_fAPAR, forcing, land, helpers)
+    @unpack_evaporation_bareFraction params
 
     ## unpack variables
     @unpack_land begin

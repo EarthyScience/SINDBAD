@@ -21,19 +21,19 @@ struct DoNotCatchModelErrors end
 
 ## fallback functions for instantiate, precompute, compute and update. 
 ## These functions here make the corresponding functions in the model (approaches) optional
-function precompute(p_struct::LandEcosystem, forcing, land, helpers)
+function compute(params::LandEcosystem, forcing, land, helpers)
     return land
 end
 
-function define(p_struct::LandEcosystem, forcing, land, helpers)
+function define(params::LandEcosystem, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::LandEcosystem, forcing, land, helpers)
+function precompute(params::LandEcosystem, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::LandEcosystem, forcing, land, helpers)
+function update(params::LandEcosystem, forcing, land, helpers)
     return land
 end
 
@@ -124,7 +124,7 @@ sindbad_models = (:wCycleBase,
 ## Import all models.
 for model_name_symbol ∈ sindbad_models
     model_name = string(model_name_symbol)
-    model_path = model_name * "/" * model_name * ".jl"
+    model_path = joinpath(model_name, model_name * ".jl")
     include(model_path)
 end
 

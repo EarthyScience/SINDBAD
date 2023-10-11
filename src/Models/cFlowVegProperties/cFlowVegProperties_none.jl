@@ -2,7 +2,7 @@ export cFlowVegProperties_none
 
 struct cFlowVegProperties_none <: cFlowVegProperties end
 
-function define(p_struct::cFlowVegProperties_none, forcing, land, helpers)
+function define(params::cFlowVegProperties_none, forcing, land, helpers)
 
     @unpack_land c_taker ∈ land.cCycleBase
 

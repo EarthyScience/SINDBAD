@@ -2,7 +2,7 @@ export NIRv_forcing
 
 struct NIRv_forcing <: NIRv end
 
-function compute(p_struct::NIRv_forcing, forcing, land, helpers)
+function compute(params::NIRv_forcing, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing f_NIRv ∈ forcing
 

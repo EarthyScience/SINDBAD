@@ -24,9 +24,9 @@ export sublimation_GLEAM
 end
 #! format: on
 
-function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
+function compute(params::sublimation_GLEAM, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_sublimation_GLEAM p_struct
+    @unpack_sublimation_GLEAM params
     @unpack_forcing (f_psurf_day, f_rn, f_airT_day) ∈ forcing
 
     ## unpack land variables
@@ -76,7 +76,7 @@ function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::sublimation_GLEAM, forcing, land, helpers)
+function update(params::sublimation_GLEAM, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         snowW ∈ land.pools

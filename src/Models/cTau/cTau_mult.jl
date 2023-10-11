@@ -2,7 +2,7 @@ export cTau_mult
 
 struct cTau_mult <: cTau end
 
-function define(p_struct::cTau_mult, forcing, land, helpers)
+function define(params::cTau_mult, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         cEco ∈ land.pools
@@ -14,7 +14,7 @@ function define(p_struct::cTau_mult, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cTau_mult, forcing, land, helpers)
+function compute(params::cTau_mult, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         c_eco_k_f_veg_props ∈ land.cTauVegProperties

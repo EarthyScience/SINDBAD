@@ -7,8 +7,8 @@ export gppSoilW_Stocker2020
 end
 #! format: on
 
-function define(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
-    @unpack_gppSoilW_Stocker2020 p_struct
+function define(params::gppSoilW_Stocker2020, forcing, land, helpers)
+    @unpack_gppSoilW_Stocker2020 params
     t_two = oftype(q, 2.0)
     gpp_f_soilW = oftype(q, 1.0)
 
@@ -17,9 +17,9 @@ function define(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
+function compute(params::gppSoilW_Stocker2020, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_Stocker2020 p_struct
+    @unpack_gppSoilW_Stocker2020 params
 
     ## unpack land variables
     @unpack_land begin

@@ -2,7 +2,7 @@ export gppSoilW_none
 
 struct gppSoilW_none <: gppSoilW end
 
-function define(p_struct::gppSoilW_none, forcing, land, helpers)
+function define(params::gppSoilW_none, forcing, land, helpers)
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]

@@ -7,8 +7,8 @@ export rootWaterEfficiency_k2fvegFraction
 end
 #! format: on
 
-function define(p_struct::rootWaterEfficiency_k2fvegFraction, forcing, land, helpers)
-    @unpack_rootWaterEfficiency_k2fvegFraction p_struct
+function define(params::rootWaterEfficiency_k2fvegFraction, forcing, land, helpers)
+    @unpack_rootWaterEfficiency_k2fvegFraction params
 
     ## precomputations/check
 
@@ -24,9 +24,9 @@ function define(p_struct::rootWaterEfficiency_k2fvegFraction, forcing, land, hel
     return land
 end
 
-function compute(p_struct::rootWaterEfficiency_k2fvegFraction, forcing, land, helpers)
+function compute(params::rootWaterEfficiency_k2fvegFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootWaterEfficiency_k2fvegFraction p_struct
+    @unpack_rootWaterEfficiency_k2fvegFraction params
 
     ## unpack land variables
     @unpack_land root_water_efficiency ∈ land.states

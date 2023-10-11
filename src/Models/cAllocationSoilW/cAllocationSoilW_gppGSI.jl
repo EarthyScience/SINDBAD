@@ -6,7 +6,7 @@ export cAllocationSoilW_gppGSI
 end
 #! format: on
 
-function define(p_struct::cAllocationSoilW_gppGSI, forcing, land, helpers)
+function define(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
     f_soilW_prev = sum(land.pools.soilW) / land.soilWBase.sum_wSat
 
     ## pack land variables
@@ -14,9 +14,9 @@ function define(p_struct::cAllocationSoilW_gppGSI, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cAllocationSoilW_gppGSI, forcing, land, helpers)
+function compute(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilW_gppGSI p_struct
+    @unpack_cAllocationSoilW_gppGSI params
 
     ## unpack land variables
     @unpack_land begin
