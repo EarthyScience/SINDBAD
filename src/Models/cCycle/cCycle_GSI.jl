@@ -3,16 +3,17 @@ export cCycle_GSI
 struct cCycle_GSI <: cCycle end
 
 function define(p_struct::cCycle_GSI, forcing, land, helpers)
+    @unpack_land cEco ∈ land.pools
     ## instantiate variables
-    c_eco_flow = zero(land.pools.cEco)
-    c_eco_out = zero(land.pools.cEco)
-    c_eco_influx = zero(land.pools.cEco)
+    c_eco_flow = zero(cEco)
+    c_eco_out = zero(cEco)
+    c_eco_influx = zero(cEco)
     zero_c_eco_flow = zero(c_eco_flow)
     zero_c_eco_influx = zero(c_eco_influx)
-    ΔcEco = zero(land.pools.cEco)
-    c_eco_npp = zero(land.pools.cEco)
+    ΔcEco = zero(cEco)
+    c_eco_npp = zero(cEco)
 
-    cEco_prev = land.pools.cEco
+    cEco_prev = cEco
     ## pack land variables
 
     @pack_land begin
@@ -36,10 +37,10 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
             c_flow_A_vec,
             zero_c_eco_flow,
             zero_c_eco_influx) ∈ land.states
-        cEco ∈ land.pools
+        (cEco, cVeg) ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
-        (c_flow_order, c_giver, c_taker) ∈ land.cCycleBase
+        (c_flow_order, c_giver, c_taker, c_model) ∈ land.cCycleBase
     end
     ## reset ecoflow and influx to be zero at every time step
     @rep_vec c_eco_flow => helpers.pools.zeros.cEco
@@ -53,7 +54,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     end
 
     ## gains to vegetation
-    for zv ∈ getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    for zv ∈ getZix(cVeg, helpers.pools.zix.cVeg)
         c_eco_npp_zv = gpp * c_allocation[zv] - c_eco_efflux[zv]
         @rep_elem c_eco_npp_zv => (c_eco_npp, zv, :cEco)
         @rep_elem c_eco_npp_zv => (c_eco_influx, zv, :cEco)
@@ -99,7 +100,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     @rep_vec cEco_prev => cEco
     @pack_land cEco => land.pools
 
-    land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
+    land = adjustPackPoolComponents(land, helpers, c_model)
     # setComponentFromMainPool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
 
     ## pack land variables

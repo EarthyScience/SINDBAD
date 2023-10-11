@@ -7,8 +7,9 @@ struct cCycleDisturbance_WROASTED <: cCycleDisturbance end
 function define(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
     @unpack_land begin
         (c_giver, c_taker) ∈ land.cCycleBase
+        cVeg ∈ land.pools
     end
-    zix_veg_all = Tuple(vcat(getZix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
+    zix_veg_all = Tuple(vcat(getZix(cVeg, helpers.pools.zix.cVeg)...))
     c_lose_to_zix_vec = Tuple{Int}[]
     for zixVeg ∈ zix_veg_all
         # make reserve pool flow to slow litter pool/woody debris
@@ -38,7 +39,7 @@ function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
     @unpack_land begin
         (zix_veg_all, c_lose_to_zix_vec) ∈ land.cCycleDisturbance
         cEco ∈ land.pools
-        (c_giver, c_taker, c_remain) ∈ land.cCycleBase
+        (c_giver, c_taker, c_remain, c_model) ∈ land.cCycleBase
     end
     for zixVeg ∈ zix_veg_all
         cLoss = maxZero(cEco[zixVeg] - c_remain) * f_dist_intensity
@@ -51,7 +52,7 @@ function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
         end
     end
     @pack_land cEco => land.pools
-    land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
+    land = adjustPackPoolComponents(land, helpers, c_model)
     ## pack land variables
     return land
 end

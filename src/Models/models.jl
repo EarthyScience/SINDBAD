@@ -13,13 +13,9 @@ export DoCatchModelErrors
 export DoNotCatchModelErrors
 
 export sindbad_models
-# export LandEcosystem
 # define dispatch structs for catching model errors
 struct DoCatchModelErrors end
 struct DoNotCatchModelErrors end
-
-## Define SINDBAD supertype
-abstract type LandEcosystem end
 
 
 
