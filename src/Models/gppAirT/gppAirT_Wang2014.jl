@@ -6,9 +6,9 @@ export gppAirT_Wang2014
 end
 #! format: on
 
-function compute(p_struct::gppAirT_Wang2014, forcing, land, helpers)
+function compute(params::gppAirT_Wang2014, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_Wang2014 p_struct
+    @unpack_gppAirT_Wang2014 params
     @unpack_forcing f_airT_day ∈ forcing
     @unpack_land (z_zero, o_one) ∈ land.wCycleBase
 

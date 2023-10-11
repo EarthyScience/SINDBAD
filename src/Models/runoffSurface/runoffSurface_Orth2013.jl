@@ -6,8 +6,8 @@ export runoffSurface_Orth2013
 end
 #! format: on
 
-function define(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
-    @unpack_runoffSurface_Orth2013 p_struct
+function define(params::runoffSurface_Orth2013, forcing, land, helpers)
+    @unpack_runoffSurface_Orth2013 params
 
     ## instantiate variables
     z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60) + 1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
@@ -18,10 +18,10 @@ function define(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
+function compute(params::runoffSurface_Orth2013, forcing, land, helpers)
     #@needscheck and redo
     ## unpack parameters
-    @unpack_runoffSurface_Orth2013 p_struct
+    @unpack_runoffSurface_Orth2013 params
 
     ## unpack land variables
     @unpack_land (z, Rdelay) ∈ land.surface_runoff
@@ -49,8 +49,8 @@ function compute(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
-    @unpack_runoffSurface_Orth2013 p_struct
+function update(params::runoffSurface_Orth2013, forcing, land, helpers)
+    @unpack_runoffSurface_Orth2013 params
 
     ## unpack variables
     @unpack_land begin

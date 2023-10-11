@@ -2,7 +2,7 @@ export gpp_coupled
 
 struct gpp_coupled <: gpp end
 
-function compute(p_struct::gpp_coupled, forcing, land, helpers)
+function compute(params::gpp_coupled, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

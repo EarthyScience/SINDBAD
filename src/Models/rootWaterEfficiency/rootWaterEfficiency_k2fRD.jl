@@ -7,8 +7,8 @@ export rootWaterEfficiency_k2fRD
 end
 #! format: on
 
-function define(p_struct::rootWaterEfficiency_k2fRD, forcing, land, helpers)
-    @unpack_rootWaterEfficiency_k2fRD p_struct
+function define(params::rootWaterEfficiency_k2fRD, forcing, land, helpers)
+    @unpack_rootWaterEfficiency_k2fRD params
 
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
     if length(land.pools.soilW) != 2
@@ -22,9 +22,9 @@ function define(p_struct::rootWaterEfficiency_k2fRD, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::rootWaterEfficiency_k2fRD, forcing, land, helpers)
+function compute(params::rootWaterEfficiency_k2fRD, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootWaterEfficiency_k2fRD p_struct
+    @unpack_rootWaterEfficiency_k2fRD params
 
     ## unpack land variables
     @unpack_land root_water_efficiency ∈ land.states

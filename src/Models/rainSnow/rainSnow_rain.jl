@@ -2,7 +2,7 @@ export rainSnow_rain
 
 struct rainSnow_rain <: rainSnow end
 
-function define(p_struct::rainSnow_rain, forcing, land, helpers)
+function define(params::rainSnow_rain, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing f_rain ∈ forcing
 
@@ -18,7 +18,7 @@ function define(p_struct::rainSnow_rain, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::rainSnow_rain, forcing, land, helpers)
+function compute(params::rainSnow_rain, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing f_rain ∈ forcing
 

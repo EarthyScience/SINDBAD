@@ -9,8 +9,8 @@ struct WCycleBaseSimple end
 end
 #! format: on
 
-function define(p_struct::wCycleBase_simple, forcing, land, helpers)
-    @unpack_wCycleBase_simple p_struct
+function define(params::wCycleBase_simple, forcing, land, helpers)
+    @unpack_wCycleBase_simple params
     if hasproperty(land.pools, :TWS)
         @unpack_land TWS ∈ land.pools
         n_TWS = oftype(first(TWS), length(TWS))

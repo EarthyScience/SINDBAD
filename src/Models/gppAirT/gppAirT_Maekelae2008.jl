@@ -8,7 +8,7 @@ export gppAirT_Maekelae2008
 end
 #! format: on
 
-function define(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
+function define(params::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing f_airT_day ∈ forcing
 
@@ -19,9 +19,9 @@ function define(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
+function compute(params::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_Maekelae2008 p_struct
+    @unpack_gppAirT_Maekelae2008 params
     @unpack_forcing f_airT_day ∈ forcing
     @unpack_land begin
         o_one ∈ land.wCycleBase

@@ -2,7 +2,7 @@ export runoff_sum
 
 struct runoff_sum <: runoff end
 
-function define(p_struct::runoff_sum, forcing, land, helpers)
+function define(params::runoff_sum, forcing, land, helpers)
 
     @unpack_land z_zero ∈ land.wCycleBase
 
@@ -18,7 +18,7 @@ function define(p_struct::runoff_sum, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::runoff_sum, forcing, land, helpers)
+function compute(params::runoff_sum, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land (base_runoff, surface_runoff) ∈ land.fluxes

@@ -2,7 +2,7 @@ export gppDemand_min
 
 struct gppDemand_min <: gppDemand end
 
-function define(p_struct::gppDemand_min, forcing, land, helpers)
+function define(params::gppDemand_min, forcing, land, helpers)
     gpp_climate_stressors = ones(typeof(land.gppPotential.gpp_potential), 4)
 
     if hasproperty(land.pools, :soilW)
@@ -16,7 +16,7 @@ function define(p_struct::gppDemand_min, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gppDemand_min, forcing, land, helpers)
+function compute(params::gppDemand_min, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

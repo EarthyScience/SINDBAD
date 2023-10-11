@@ -6,9 +6,9 @@ export fAPAR_cVegLeaf
 end
 #! format: on
 
-function compute(p_struct::fAPAR_cVegLeaf, forcing, land, helpers)
+function compute(params::fAPAR_cVegLeaf, forcing, land, helpers)
     ## unpack parameters
-    @unpack_fAPAR_cVegLeaf p_struct
+    @unpack_fAPAR_cVegLeaf params
 
     ## unpack land variables
     @unpack_land begin

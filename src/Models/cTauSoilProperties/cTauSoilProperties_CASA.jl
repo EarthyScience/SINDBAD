@@ -6,8 +6,8 @@ export cTauSoilProperties_CASA
 end
 #! format: on
 
-function define(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
-    @unpack_cTauSoilProperties_CASA p_struct
+function define(params::cTauSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cTauSoilProperties_CASA params
 
     ## instantiate variables
     c_eco_k_f_soil_props = one.(land.pools.cEco)
@@ -17,9 +17,9 @@ function define(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
+function compute(params::cTauSoilProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauSoilProperties_CASA p_struct
+    @unpack_cTauSoilProperties_CASA params
 
     ## unpack land variables
     @unpack_land c_eco_k_f_soil_props ∈ land.cTauSoilProperties

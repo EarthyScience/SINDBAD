@@ -2,7 +2,7 @@ export cAllocation_GSI
 
 struct cAllocation_GSI <: cAllocation end
 
-function define(p_struct::cAllocation_GSI, forcing, land, helpers)
+function define(params::cAllocation_GSI, forcing, land, helpers)
     ## instantiate variables
     c_allocation = zero(land.pools.cEco)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
@@ -28,7 +28,7 @@ function define(p_struct::cAllocation_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cAllocation_GSI, forcing, land, helpers)
+function compute(params::cAllocation_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

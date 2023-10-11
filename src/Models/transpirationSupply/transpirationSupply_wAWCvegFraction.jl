@@ -6,9 +6,9 @@ export transpirationSupply_wAWCvegFraction
 end
 #! format: on
 
-function compute(p_struct::transpirationSupply_wAWCvegFraction, forcing, land, helpers)
+function compute(params::transpirationSupply_wAWCvegFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationSupply_wAWCvegFraction p_struct
+    @unpack_transpirationSupply_wAWCvegFraction params
 
     ## unpack land variables
     @unpack_land (PAW, frac_vegetation) ∈ land.states

@@ -2,7 +2,7 @@ export cFlow_CASA
 
 struct cFlow_CASA <: cFlow end
 
-function compute(p_struct::cFlow_CASA, forcing, land, helpers)
+function compute(params::cFlow_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

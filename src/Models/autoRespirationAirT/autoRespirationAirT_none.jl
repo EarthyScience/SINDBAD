@@ -2,7 +2,7 @@ export autoRespirationAirT_none
 
 struct autoRespirationAirT_none <: autoRespirationAirT end
 
-function define(p_struct::autoRespirationAirT_none, forcing, land, helpers)
+function define(params::autoRespirationAirT_none, forcing, land, helpers)
 
     ## calculate variables
     auto_respiration_f_airT = one(first(land.pools.cEco))

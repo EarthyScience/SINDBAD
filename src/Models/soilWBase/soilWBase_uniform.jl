@@ -2,7 +2,7 @@ export soilWBase_uniform
 
 struct soilWBase_uniform <: soilWBase end
 
-function define(p_struct::soilWBase_uniform, forcing, land, helpers)
+function define(params::soilWBase_uniform, forcing, land, helpers)
     #@needscheck
     ## unpack land variables
     @unpack_land begin

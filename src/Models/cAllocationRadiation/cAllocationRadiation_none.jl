@@ -2,7 +2,7 @@ export cAllocationRadiation_none
 
 struct cAllocationRadiation_none <: cAllocationRadiation end
 
-function define(p_struct::cAllocationRadiation_none, forcing, land, helpers)
+function define(params::cAllocationRadiation_none, forcing, land, helpers)
 
     ## calculate variables
     c_allocation_f_cloud = one(first(land.pools.cEco))

@@ -2,7 +2,7 @@ export NDVI_forcing
 
 struct NDVI_forcing <: NDVI end
 
-function compute(p_struct::NDVI_forcing, forcing, land, helpers)
+function compute(params::NDVI_forcing, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing f_NDVI ∈ forcing
 

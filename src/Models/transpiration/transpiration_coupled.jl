@@ -2,7 +2,7 @@ export transpiration_coupled
 
 struct transpiration_coupled <: transpiration end
 
-function compute(p_struct::transpiration_coupled, forcing, land, helpers)
+function compute(params::transpiration_coupled, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

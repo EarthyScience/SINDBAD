@@ -2,7 +2,7 @@ export getPools_simple
 
 struct getPools_simple <: getPools end
 
-function define(p_struct::getPools_simple, forcing, land, helpers)
+function define(params::getPools_simple, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         z_zero ∈ land.wCycleBase
@@ -14,7 +14,7 @@ function define(p_struct::getPools_simple, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::getPools_simple, forcing, land, helpers)
+function compute(params::getPools_simple, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

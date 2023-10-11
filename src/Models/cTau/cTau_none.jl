@@ -2,7 +2,7 @@ export cTau_none
 
 struct cTau_none <: cTau end
 
-function define(p_struct::cTau_none, forcing, land, helpers)
+function define(params::cTau_none, forcing, land, helpers)
 
     ## calculate variables
     c_eco_k = one.(land.pools.cEco)

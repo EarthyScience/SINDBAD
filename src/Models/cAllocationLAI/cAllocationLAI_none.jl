@@ -2,7 +2,7 @@ export cAllocationLAI_none
 
 struct cAllocationLAI_none <: cAllocationLAI end
 
-function define(p_struct::cAllocationLAI_none, forcing, land, helpers)
+function define(params::cAllocationLAI_none, forcing, land, helpers)
 
     ## calculate variables
     c_allocation_f_LAI = one(first(land.pools.cEco))

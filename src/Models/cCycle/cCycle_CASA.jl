@@ -2,7 +2,7 @@ export cCycle_CASA, spin_cCycle_CASA
 
 struct cCycle_CASA <: cCycle end
 
-function define(p_struct::cCycle_CASA, forcing, land, helpers)
+function define(params::cCycle_CASA, forcing, land, helpers)
     @unpack_land cEco ∈ land.pools
     ## instantiate variables
     c_eco_efflux = zero(cEco) #sujan moved from get states
@@ -14,7 +14,7 @@ function define(p_struct::cCycle_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cCycle_CASA, forcing, land, helpers)
+function compute(params::cCycle_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

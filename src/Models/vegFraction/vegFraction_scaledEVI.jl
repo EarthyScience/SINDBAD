@@ -6,9 +6,9 @@ export vegFraction_scaledEVI
 end
 #! format: on
 
-function compute(p_struct::vegFraction_scaledEVI, forcing, land, helpers)
+function compute(params::vegFraction_scaledEVI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledEVI p_struct
+    @unpack_vegFraction_scaledEVI params
 
     ## unpack land variables
     @unpack_land begin

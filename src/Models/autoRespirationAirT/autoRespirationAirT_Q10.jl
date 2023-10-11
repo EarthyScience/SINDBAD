@@ -8,9 +8,9 @@ export autoRespirationAirT_Q10
 end
 #! format: on
 
-function compute(p_struct::autoRespirationAirT_Q10, forcing, land, helpers)
+function compute(params::autoRespirationAirT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_autoRespirationAirT_Q10 p_struct
+    @unpack_autoRespirationAirT_Q10 params
     @unpack_forcing f_airT ∈ forcing
 
     ## calculate variables

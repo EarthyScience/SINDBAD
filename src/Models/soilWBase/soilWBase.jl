@@ -3,7 +3,6 @@ export soilWBase
 abstract type soilWBase <: LandEcosystem end
 
 include("soilWBase_smax1Layer.jl")
-include("soilWBase_smax2fPFT.jl")
 include("soilWBase_smax2fRD4.jl")
 include("soilWBase_smax2Layer.jl")
 include("soilWBase_uniform.jl")

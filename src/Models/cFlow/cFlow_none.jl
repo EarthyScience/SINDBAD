@@ -2,7 +2,7 @@ export cFlow_none
 
 struct cFlow_none <: cFlow end
 
-function define(p_struct::cFlow_none, forcing, land, helpers)
+function define(params::cFlow_none, forcing, land, helpers)
 
     ## calculate variables
     tmp = repeat(zero(land.pools.cEco),

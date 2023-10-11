@@ -2,7 +2,7 @@ export transpiration_demandSupply
 
 struct transpiration_demandSupply <: transpiration end
 
-function compute(p_struct::transpiration_demandSupply, forcing, land, helpers)
+function compute(params::transpiration_demandSupply, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

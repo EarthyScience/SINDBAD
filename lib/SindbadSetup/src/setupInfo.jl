@@ -579,31 +579,6 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
     return initial_states
 end
 
-
-function getInOutModels(models)
-    mod_vars = Sindbad.DataStructures.OrderedDict{Symbol, Sindbad.DataStructures.OrderedDict{Symbol, Any}}()
-    for (mi, _mod) in enumerate(models)
-        mod_name = string(nameof(supertype(typeof(_mod))))
-        mod_name_sym=Symbol(mod_name)
-        dict_key_name = mod_name_sym
-        mod_vars[dict_key_name] = getInOutModel(_mod)
-    end
-    return mod_vars
-end
-
-
-function getInOutModels(models, model_func=:compute)
-    mod_vars = Sindbad.DataStructures.OrderedDict{Symbol, Sindbad.DataStructures.OrderedDict{Symbol, Any}}()
-    for (mi, _mod) in enumerate(models)
-        mod_name = string(nameof(supertype(typeof(_mod))))
-        mod_name_sym=Symbol(mod_name)
-        dict_key_name = mod_name_sym
-        mod_vars[dict_key_name] = getInOutModel(_mod, model_func)
-    end
-    return mod_vars
-end
-
-
 function getInOutModel(model::LandEcosystem)
     mo_in_out=Sindbad.DataStructures.OrderedDict()
     println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
@@ -615,12 +590,32 @@ function getInOutModel(model::LandEcosystem)
     return mo_in_out
 end
 
+
+function getInOutModel(model::LandEcosystem, model_funcs::Tuple)
+    mo_in_out=Sindbad.DataStructures.OrderedDict()
+    println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
+    for func in model_funcs
+        println("   ...$(func)...")
+        io_func = getInOutModel(model, func)
+        if length(model_funcs) == 2 && :params in model_funcs
+            if func !== :params
+                mo_in_out[:inp] = io_func[:inp]
+                mo_in_out[:out] = io_func[:out]
+            else
+                mo_in_out[func] = io_func
+            end
+        end
+    end
+    return mo_in_out
+end
+
+
 """
     getInOutModel(model, model_func = :compute)
 
 get the input and output of variables of the given SINDBAD models
 """
-function getInOutModel(model, model_func=:compute)
+function getInOutModel(model, model_func::Symbol)
     model_name = string(nameof(typeof(model)))
     mod_vars = Sindbad.DataStructures.OrderedDict{Symbol, Any}()
     if model_func == :compute
@@ -628,6 +623,7 @@ function getInOutModel(model, model_func=:compute)
     elseif model_func == :define
         mod_code = SindbadSetup.@code_string Sindbad.Models.define(model, nothing, nothing, nothing)
     elseif model_func == :params
+        # mod_vars = showParamsOfAModel(model, false)
         return showParamsOfAModel(model, false)
     elseif model_func == :precompute
         mod_code = SindbadSetup.@code_string Sindbad.Models.compute(model, nothing, nothing, nothing)
@@ -638,6 +634,7 @@ function getInOutModel(model, model_func=:compute)
     end
 
     mod_code_lines = strip.(split(mod_code, "\n"))
+
     # get the input vars
     in_lines_index = findall(x -> ((occursin("∈", x) || occursin("land.", x) || occursin("forcing.", x))&& !occursin("for ", x) && !occursin("helpers.", x) && !startswith(x, "#")), mod_code_lines)
     in_all = map(in_lines_index) do in_in 
@@ -647,8 +644,8 @@ function getInOutModel(model, model_func=:compute)
             mod_line = strip(mod_line)
             in_line_src=""
             if occursin("∈", mod_line)
-                in_line = strip(split(strip(mod_line), "∈")[1])
-                in_line_src = strip(split(strip(mod_line), "∈")[2])
+                in_line = strip(split(mod_line, "∈")[1])
+                in_line_src = strip(split(mod_line, "∈")[2])
                 if occursin("@unpack_land", in_line)
                     in_line=strip(split(in_line, "@unpack_land")[2])
                 end
@@ -669,7 +666,7 @@ function getInOutModel(model, model_func=:compute)
             elseif occursin("forcing.", mod_line) && occursin("=", mod_line) && !occursin("=>", mod_line) 
                 in_line = strip(mod_line)
                 # in_line=strip(split(strip(mod_line), "∈")[1])
-                @warn "Using an unextracted variable from forcing in  $model_func function of $(model_name).jl in line $(in_line). While this is not necessarily a source of error, these variables are NOT used in consistency checks and may be prone to bugs and lead to cluttered code. Follow the convention of unpacking all variables to use locally using @unpack_forcing."
+                @warn "Using an unextracted variable from forcing in  $model_func function of $(model_name).jl in line $(in_line).\nWhile this is not necessarily a source of error, these variables are NOT used in consistency checks and may be prone to bugs and lead to cluttered code. Follow the convention of unpacking all variables to use locally using @unpack_forcing."
                 in_line_src="forcing"
             end
             in_v_str = replace(strip(in_line), "(" => "",  ")" => "")
@@ -679,18 +676,18 @@ function getInOutModel(model, model_func=:compute)
             in_line_src = Symbol(in_line_src)
             Pair.(Ref(in_line_src), in_v_list)
         catch e
-            @error "Error extracting input information from $model_func function of $(model_name).jl in line $(in_line). Possibly due to line break in call of @unpack_land macro"
+            @error "Error extracting input information from $model_func function of $(model_name).jl in line $(in_line). Possibly due to a line break in call of @unpack_land macro."
             error(e)
         end
     end
-    mod_vars[:inp] = vcat(in_all...)
+    mod_vars[:inp] = Tuple(vcat(in_all...))
 
     # get the output vars
     out_lines_index = findall(x -> (occursin("=>", x) && !occursin("_elem", x) && !occursin("@rep_", x) && !startswith(x, "#")), mod_code_lines)
     out_all = map(out_lines_index) do out_in
-        out_line = strip(split(strip(mod_code_lines[out_in]), "=>")[1])
+        out_line = strip(split(mod_code_lines[out_in], "=>")[1])
         try
-        out_line_tar = Symbol(strip(split(split(strip(mod_code_lines[out_in]), "=>")[2], "land.")[2]))
+        out_line_tar = Symbol(strip(split(split(mod_code_lines[out_in], "=>")[2], "land.")[2]))
             if occursin("@pack_land", out_line)
                 out_line=strip(split(out_line, "@pack_land")[2])
             end
@@ -701,11 +698,11 @@ function getInOutModel(model, model_func=:compute)
             out_v_list = Symbol.(out_v_list[(!isempty).(out_v_list)])
             Pair.(Ref(out_line_tar), out_v_list)
         catch e
-            @error "Error extracting output information from $model_func function of $(model_name).jl in line $(out_line). Possibly due to line break in call of @pack_land macro"
+            @error "Error extracting output information from $model_func function of $(model_name).jl in line $(out_line). Possibly due to a line break in call of @pack_land macro."
             error(e)
         end
     end
-    mod_vars[:out] = vcat(out_all...)
+    mod_vars[:out] = Tuple(vcat(out_all...))
     return mod_vars
 end
 
@@ -730,6 +727,43 @@ function getInOutSinbadModels()
     end
     return sm_io
 end
+
+
+function getInOutModels(models)
+    mod_vars = Sindbad.DataStructures.OrderedDict()
+    for (mi, _mod) in enumerate(models)
+        mod_name = string(nameof(supertype(typeof(_mod))))
+        mod_name_sym=Symbol(mod_name)
+        mod_vars[mod_name_sym] = getInOutModel(_mod, (:compute, :params))
+    end
+    return mod_vars
+end
+
+
+
+function getInOutModels(models, model_funcs::Tuple)
+    mod_vars = Sindbad.DataStructures.OrderedDict()
+    for (mi, _mod) in enumerate(models)
+        mod_name = string(nameof(supertype(typeof(_mod))))
+        mod_name_sym=Symbol(mod_name)
+        mod_vars[mod_name_sym] = getInOutModel(_mod, model_funcs)
+    end
+    return mod_vars
+end
+
+
+function getInOutModels(models, model_func::Symbol)
+    mod_vars = Sindbad.DataStructures.OrderedDict()
+    for (mi, _mod) in enumerate(models)
+        mod_name = string(nameof(supertype(typeof(_mod))))
+        mod_name_sym=Symbol(mod_name)
+        dict_key_name = mod_name_sym
+        mod_vars[dict_key_name] = getInOutModel(_mod, model_func)
+    end
+    return mod_vars
+end
+
+
 """
     getModelRunInfo(info::NamedTuple)
 

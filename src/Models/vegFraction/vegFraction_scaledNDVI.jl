@@ -6,9 +6,9 @@ export vegFraction_scaledNDVI
 end
 #! format: on
 
-function compute(p_struct::vegFraction_scaledNDVI, forcing, land, helpers)
+function compute(params::vegFraction_scaledNDVI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledNDVI p_struct
+    @unpack_vegFraction_scaledNDVI params
 
     ## unpack land variables
     @unpack_land begin

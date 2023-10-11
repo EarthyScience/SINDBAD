@@ -2,7 +2,7 @@ export evaporation_none
 
 struct evaporation_none <: evaporation end
 
-function define(p_struct::evaporation_none, forcing, land, helpers)
+function define(params::evaporation_none, forcing, land, helpers)
 
     ## calculate variables
     evaporation = land.wCycleBase.z_zero

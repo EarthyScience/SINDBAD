@@ -2,7 +2,7 @@ export snowFraction_none
 
 struct snowFraction_none <: snowFraction end
 
-function define(p_struct::snowFraction_none, forcing, land, helpers)
+function define(params::snowFraction_none, forcing, land, helpers)
 
     ## calculate variables
     frac_snow = land.wCycleBase.z_zero

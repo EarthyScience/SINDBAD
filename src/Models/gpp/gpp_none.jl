@@ -2,7 +2,7 @@ export gpp_none
 
 struct gpp_none <: gpp end
 
-function define(p_struct::gpp_none, forcing, land, helpers)
+function define(params::gpp_none, forcing, land, helpers)
 
     ## calculate variables
     gpp = land.wCycleBase.z_zero

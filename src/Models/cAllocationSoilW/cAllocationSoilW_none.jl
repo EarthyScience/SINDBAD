@@ -2,7 +2,7 @@ export cAllocationSoilW_none
 
 struct cAllocationSoilW_none <: cAllocationSoilW end
 
-function define(p_struct::cAllocationSoilW_none, forcing, land, helpers)
+function define(params::cAllocationSoilW_none, forcing, land, helpers)
 
     ## calculate variables
     c_allocation_f_soilW = one(first(land.pools.cEco))

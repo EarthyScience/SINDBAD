@@ -6,9 +6,9 @@ export NDWI_constant
 end
 #! format: on
 
-function compute(p_struct::NDWI_constant, forcing, land, helpers)
+function compute(params::NDWI_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_NDWI_constant p_struct
+    @unpack_NDWI_constant params
 
     ## calculate variables
     NDWI = constant_NDWI

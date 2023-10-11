@@ -2,7 +2,7 @@ export rootWaterUptake_proportion
 
 struct rootWaterUptake_proportion <: rootWaterUptake end
 
-function define(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
+function define(params::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -17,7 +17,7 @@ function define(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
+function compute(params::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -47,7 +47,7 @@ function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
+function update(params::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

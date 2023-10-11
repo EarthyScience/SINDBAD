@@ -6,9 +6,9 @@ export gppPotential_Monteith
 end
 #! format: on
 
-function compute(p_struct::gppPotential_Monteith, forcing, land, helpers)
+function compute(params::gppPotential_Monteith, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppPotential_Monteith p_struct
+    @unpack_gppPotential_Monteith params
     @unpack_forcing f_PAR ∈ forcing
 
     ## calculate variables

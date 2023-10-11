@@ -2,7 +2,7 @@ export snowFraction_binary
 
 struct snowFraction_binary <: snowFraction end
 
-function compute(p_struct::snowFraction_binary, forcing, land, helpers)
+function compute(params::snowFraction_binary, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
