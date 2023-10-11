@@ -6,9 +6,9 @@ export runoffSaturationExcess_Zhang2008
 end
 #! format: on
 
-function compute(p_struct::runoffSaturationExcess_Zhang2008, forcing, land, helpers)
+function compute(params::runoffSaturationExcess_Zhang2008, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffSaturationExcess_Zhang2008 p_struct
+    @unpack_runoffSaturationExcess_Zhang2008 params
 
     ## unpack land variables
     @unpack_land begin

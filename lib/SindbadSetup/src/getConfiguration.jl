@@ -4,6 +4,7 @@ export getConfiguration
 export getExperimentConfiguration
 export readConfiguration
 
+const path_separator = Sys.iswindows() ? "\\" : "/"
 
 """
     convertToAbsolutePath(; inputDict = inputDict)
@@ -104,18 +105,18 @@ function getConfiguration(sindbad_experiment::String; replace_info=Dict())
         infoTuple = dictToNamedTuple(info)
     end
     infoTuple = (; infoTuple..., experiment_root=local_root)
-    sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-2)], "/")
+    sindbad_root = join(split(infoTuple.experiment_root, path_separator)[1:(end-2)], path_separator)
     infoTuple = (; infoTuple..., sindbad_root=sindbad_root)
     infoTuple = (; infoTuple..., settings_root=exp_base_path)
     infoTuple = prepTEMOutDirectory(infoTuple)
     @info "  getConfiguration:: Setup output directories in: $(infoTuple.output.root)"
     @info "  getConfiguration:: Saving a copy of json settings to: $(infoTuple.output.settings)"
     cp(sindbad_experiment,
-        joinpath(infoTuple.output.settings, split(sindbad_experiment, "/")[end]);
+        joinpath(infoTuple.output.settings, split(sindbad_experiment, path_separator)[end]);
         force=true)
     for k ∈ keys(infoTuple.experiment.basics.config_files)
         v = getfield(infoTuple.experiment.basics.config_files, k)
-        cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]); force=true)
+        cp(v, joinpath(infoTuple.output.settings, split(v, path_separator)[end]); force=true)
     end
     @info "\n----------------------------------------------\n"
     return infoTuple
@@ -206,26 +207,26 @@ function prepTEMOutDirectory(infoTuple::NamedTuple)
     path_output = infoTuple[:experiment][:model_output][:path]
     if isnothing(path_output)
         path_output_new = "output_"
-        path_output_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
+        path_output_new = joinpath(join(split(infoTuple.settings_root, path_separator)[1:(end-1)], path_separator),
             path_output_new)
     elseif !isabspath(path_output)
-        if !occursin("/", path_output)
+        if !occursin(path_separator, path_output)
             path_output_new = "output_" * path_output
         else
-            path_output_new = "output_" * replace(path_output, "/" => "_")
+            path_output_new = "output_" * replace(path_output, path_separator => "_")
         end
-        path_output_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
+        path_output_new = joinpath(join(split(infoTuple.settings_root, path_separator)[1:(end-1)], path_separator),
             path_output_new)
     else
-        sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-1)], "/")
+        sindbad_root = join(split(infoTuple.experiment_root, path_separator)[1:(end-1)], path_separator)
         if occursin(sindbad_root, path_output)
             error(
                 "You cannot specify output.path: $(path_output) in model_run.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to null or a relative path or set output directory outside sindbad."
             )
         else
             path_output_new = path_output
-            if !endswith(path_output_new, "/")
-                path_output_new = path_output_new * "/"
+            if !endswith(path_output_new, path_separator)
+                path_output_new = path_output_new * path_separator
             end
         end
     end

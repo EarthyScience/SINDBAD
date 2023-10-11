@@ -11,9 +11,9 @@ export gppAirT_GSI
 end
 #! format: on
 
-function define(p_struct::gppAirT_GSI, forcing, land, helpers)
+function define(params::gppAirT_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppAirT_GSI p_struct
+    @unpack_gppAirT_GSI params
     @unpack_land o_one ∈ land.wCycleBase
 
     gpp_f_airT_c = o_one
@@ -27,9 +27,9 @@ function define(p_struct::gppAirT_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gppAirT_GSI, forcing, land, helpers)
+function compute(params::gppAirT_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_GSI p_struct
+    @unpack_gppAirT_GSI params
     @unpack_forcing f_airT ∈ forcing
 
     ## unpack land variables

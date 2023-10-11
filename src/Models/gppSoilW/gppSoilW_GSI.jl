@@ -9,9 +9,9 @@ export gppSoilW_GSI
 end
 #! format: on
 
-function define(p_struct::gppSoilW_GSI, forcing, land, helpers)
+function define(params::gppSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_GSI p_struct
+    @unpack_gppSoilW_GSI params
 
     gpp_f_soilW_prev = one(f_soilW_τ)
 
@@ -20,9 +20,9 @@ function define(p_struct::gppSoilW_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gppSoilW_GSI, forcing, land, helpers)
+function compute(params::gppSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_GSI p_struct
+    @unpack_gppSoilW_GSI params
 
     ## unpack land variables
     @unpack_land begin

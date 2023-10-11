@@ -8,7 +8,7 @@ export cAllocationRadiation_GSI
 end
 #! format: on
 
-function define(p_struct::cAllocationRadiation_GSI, forcing, land, helpers)
+function define(params::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack helper
 
     ## calculate variables
@@ -20,9 +20,9 @@ function define(p_struct::cAllocationRadiation_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cAllocationRadiation_GSI, forcing, land, helpers)
+function compute(params::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_cAllocationRadiation_GSI p_struct
+    @unpack_cAllocationRadiation_GSI params
     @unpack_forcing f_PAR ∈ forcing
 
     ## unpack land variables

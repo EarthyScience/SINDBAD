@@ -2,7 +2,7 @@ export EVI_forcing
 
 struct EVI_forcing <: EVI end
 
-function compute(p_struct::EVI_forcing, forcing, land, helpers)
+function compute(params::EVI_forcing, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing f_EVI ∈ forcing
 

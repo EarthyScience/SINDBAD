@@ -8,8 +8,8 @@ export cAllocation_fixed
 end
 #! format: on
 
-function define(p_struct::cAllocation_fixed, forcing, land, helpers)
-    @unpack_cAllocation_fixed p_struct
+function define(params::cAllocation_fixed, forcing, land, helpers)
+    @unpack_cAllocation_fixed params
     ## instantiate variables
     c_allocation = zero(land.pools.cEco) #sujan
     c_allocation_to_veg = zero(land.pools.cEco)
@@ -33,9 +33,9 @@ function define(p_struct::cAllocation_fixed, forcing, land, helpers)
     return land
 end
 
-function precompute(p_struct::cAllocation_fixed, forcing, land, helpers)
+function precompute(params::cAllocation_fixed, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_cAllocation_fixed p_struct
+    @unpack_cAllocation_fixed params
 
     @unpack_land begin
         c_allocation ∈ land.states

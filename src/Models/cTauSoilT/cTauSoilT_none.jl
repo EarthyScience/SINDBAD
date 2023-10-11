@@ -2,7 +2,7 @@ export cTauSoilT_none
 
 struct cTauSoilT_none <: cTauSoilT end
 
-function define(p_struct::cTauSoilT_none, forcing, land, helpers)
+function define(params::cTauSoilT_none, forcing, land, helpers)
 
     ## calculate variables
     c_eco_k_f_soilT = one(eltype(land.pools.cEco))

@@ -2,7 +2,7 @@ export transpirationDemand_CASA
 
 struct transpirationDemand_CASA <: transpirationDemand end
 
-function compute(p_struct::transpirationDemand_CASA, forcing, land, helpers)
+function compute(params::transpirationDemand_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

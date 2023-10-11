@@ -6,9 +6,9 @@ export transpirationSupply_wAWC
 end
 #! format: on
 
-function compute(p_struct::transpirationSupply_wAWC, forcing, land, helpers)
+function compute(params::transpirationSupply_wAWC, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationSupply_wAWC p_struct
+    @unpack_transpirationSupply_wAWC params
 
     ## unpack land variables
     @unpack_land PAW ∈ land.states

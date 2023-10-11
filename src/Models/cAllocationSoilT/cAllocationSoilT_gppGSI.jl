@@ -6,9 +6,9 @@ export cAllocationSoilT_gppGSI
 end
 #! format: on
 
-function define(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
+function define(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilT_gppGSI p_struct
+    @unpack_cAllocationSoilT_gppGSI params
 
     # assume initial prev as one (no stress)
     f_soilT_prev = land.wCycleBase.o_one
@@ -17,9 +17,9 @@ function define(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
+function compute(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilT_gppGSI p_struct
+    @unpack_cAllocationSoilT_gppGSI params
 
     ## unpack land variables
     @unpack_land begin

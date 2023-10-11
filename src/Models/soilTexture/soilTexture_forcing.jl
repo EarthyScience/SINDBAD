@@ -2,7 +2,7 @@ export soilTexture_forcing
 
 struct soilTexture_forcing <: soilTexture end
 
-function define(p_struct::soilTexture_forcing, forcing, land, helpers)
+function define(params::soilTexture_forcing, forcing, land, helpers)
     #@needscheck
     ## unpack forcing
     @unpack_forcing (f_clay, f_orgm, f_sand, f_silt) ∈ forcing

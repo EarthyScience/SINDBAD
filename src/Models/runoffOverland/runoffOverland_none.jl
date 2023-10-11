@@ -2,7 +2,7 @@ export runoffOverland_none
 
 struct runoffOverland_none <: runoffOverland end
 
-function define(p_struct::runoffOverland_none, forcing, land, helpers)
+function define(params::runoffOverland_none, forcing, land, helpers)
 
     ## calculate variables
     overland_runoff = land.wCycleBase.z_zero

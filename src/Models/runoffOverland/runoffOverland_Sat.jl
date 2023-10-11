@@ -2,7 +2,7 @@ export runoffOverland_Sat
 
 struct runoffOverland_Sat <: runoffOverland end
 
-function compute(p_struct::runoffOverland_Sat, forcing, land, helpers)
+function compute(params::runoffOverland_Sat, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land sat_excess_runoff ∈ land.fluxes

@@ -7,9 +7,9 @@ export gppVPD_MOD17
 end
 #! format: on
 
-function compute(p_struct::gppVPD_MOD17, forcing, land, helpers)
+function compute(params::gppVPD_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppVPD_MOD17 p_struct
+    @unpack_gppVPD_MOD17 params
     @unpack_forcing f_VPD_day ∈ forcing
     @unpack_land (z_zero, o_one) ∈ land.wCycleBase
 

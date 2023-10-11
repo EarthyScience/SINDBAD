@@ -2,7 +2,7 @@ export transpiration_none
 
 struct transpiration_none <: transpiration end
 
-function define(p_struct::transpiration_none, forcing, land, helpers)
+function define(params::transpiration_none, forcing, land, helpers)
 
     ## calculate variables
     transpiration = land.wCycleBase.z_zero

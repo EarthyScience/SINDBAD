@@ -6,9 +6,9 @@ export LAI_cVegLeaf
 end
 #! format: on
 
-function compute(p_struct::LAI_cVegLeaf, forcing, land, helpers)
+function compute(params::LAI_cVegLeaf, forcing, land, helpers)
     ## unpack parameters
-    @unpack_LAI_cVegLeaf p_struct
+    @unpack_LAI_cVegLeaf params
 
     @unpack_land cVegLeaf ∈ land.pools
 

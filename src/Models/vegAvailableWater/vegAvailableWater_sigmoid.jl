@@ -6,9 +6,9 @@ export vegAvailableWater_sigmoid
 end
 #! format: on
 
-function define(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
+function define(params::vegAvailableWater_sigmoid, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegAvailableWater_sigmoid p_struct
+    @unpack_vegAvailableWater_sigmoid params
 
     ## unpack land variables
     @unpack_land begin
@@ -26,9 +26,9 @@ function define(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
+function compute(params::vegAvailableWater_sigmoid, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegAvailableWater_sigmoid p_struct
+    @unpack_vegAvailableWater_sigmoid params
 
     ## unpack land variables
     @unpack_land begin

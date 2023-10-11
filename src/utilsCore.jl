@@ -839,7 +839,7 @@ shows the current parameters of a given model instance of type LandEcosystem
 """
 function showParamsOfAModel(mod::Sindbad.LandEcosystem, show=true)
     pnames = fieldnames(typeof(mod))
-    p_dict = Sindbad.DataStructures.OrderedDict()
+    p_vec = []
     if show
         println("parameters:")
     end
@@ -848,14 +848,14 @@ function showParamsOfAModel(mod::Sindbad.LandEcosystem, show=true)
             println("   non-parametric model")
         end
     else
-        foreach(pnames) do fn
-            p_dict[fn] = (getproperty(mod, fn), typeof(getproperty(mod, fn)), )
+        p_vec = map(pnames) do fn
             if show
                 println("   $fn => $(getproperty(mod, fn))")
             end
+            Pair(fn, getproperty(mod, fn))
         end
     end
-    return p_dict
+    return p_vec
 end
 const SindbadParameters = BoundFields(false)
 

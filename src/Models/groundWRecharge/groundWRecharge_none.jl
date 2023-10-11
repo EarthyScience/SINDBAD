@@ -2,7 +2,7 @@ export groundWRecharge_none
 
 struct groundWRecharge_none <: groundWRecharge end
 
-function define(p_struct::groundWRecharge_none, forcing, land, helpers)
+function define(params::groundWRecharge_none, forcing, land, helpers)
 
     ## calculate variables
     gw_recharge = land.wCycleBase.z_zero

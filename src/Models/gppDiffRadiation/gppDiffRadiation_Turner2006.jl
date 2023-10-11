@@ -6,9 +6,9 @@ export gppDiffRadiation_Turner2006
 end
 #! format: on
 
-function define(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
+function define(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Turner2006 p_struct
+    @unpack_gppDiffRadiation_Turner2006 params
     @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
 
     ## calculate variables
@@ -20,9 +20,9 @@ function define(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
+function compute(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Turner2006 p_struct
+    @unpack_gppDiffRadiation_Turner2006 params
     @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
     @unpack_land begin
         (CI_min, CI_max) ∈ land.gppDiffRadiation

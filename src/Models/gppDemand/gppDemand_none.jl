@@ -2,7 +2,7 @@ export gppDemand_none
 
 struct gppDemand_none <: gppDemand end
 
-function define(p_struct::gppDemand_none, forcing, land, helpers)
+function define(params::gppDemand_none, forcing, land, helpers)
     o_one = land.wCycleBase.o_one
     z_zero = land.wCycleBase.z_zero
 

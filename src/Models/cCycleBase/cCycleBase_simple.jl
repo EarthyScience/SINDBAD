@@ -23,8 +23,8 @@ export cCycleBase_simple
 end
 #! format: on
 
-function define(p_struct::cCycleBase_simple, forcing, land, helpers)
-    @unpack_cCycleBase_simple p_struct
+function define(params::cCycleBase_simple, forcing, land, helpers)
+    @unpack_cCycleBase_simple params
 
     @unpack_land begin
         cEco ∈ land.pools
@@ -39,9 +39,9 @@ function define(p_struct::cCycleBase_simple, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cCycleBase_simple, forcing, land, helpers)
+function compute(params::cCycleBase_simple, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cCycleBase_simple p_struct
+    @unpack_cCycleBase_simple params
 
     ## unpack land variables
     @unpack_land begin

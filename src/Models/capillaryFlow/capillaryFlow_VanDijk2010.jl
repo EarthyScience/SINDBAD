@@ -6,7 +6,7 @@ export capillaryFlow_VanDijk2010
 end
 #! format: on
 
-function define(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
+function define(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -21,9 +21,9 @@ function define(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
+function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
     ## unpack parameters
-    @unpack_capillaryFlow_VanDijk2010 p_struct
+    @unpack_capillaryFlow_VanDijk2010 params
 
     ## unpack land variables
     @unpack_land begin
@@ -55,7 +55,7 @@ function compute(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
+function update(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

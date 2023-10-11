@@ -6,8 +6,8 @@ export fAPAR_LAI
 end
 #! format: on
 
-function compute(p_struct::fAPAR_LAI, forcing, land, helpers)
-    @unpack_fAPAR_LAI p_struct
+function compute(params::fAPAR_LAI, forcing, land, helpers)
+    @unpack_fAPAR_LAI params
 
     ## unpack land variables
     @unpack_land begin

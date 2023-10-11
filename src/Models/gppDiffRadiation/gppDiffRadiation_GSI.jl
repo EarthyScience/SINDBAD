@@ -8,9 +8,9 @@ export gppDiffRadiation_GSI
 end
 #! format: on
 
-function define(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
+function define(params::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_GSI p_struct
+    @unpack_gppDiffRadiation_GSI params
     @unpack_forcing f_rg ∈ forcing
 
     gpp_f_cloud_prev = land.wCycleBase.o_one
@@ -22,9 +22,9 @@ function define(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
+function compute(params::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_GSI p_struct
+    @unpack_gppDiffRadiation_GSI params
     @unpack_forcing f_rg ∈ forcing
 
     ## unpack land variables

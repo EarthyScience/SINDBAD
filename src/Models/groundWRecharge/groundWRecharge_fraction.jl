@@ -6,9 +6,9 @@ export groundWRecharge_fraction
 end
 #! format: on
 
-function compute(p_struct::groundWRecharge_fraction, forcing, land, helpers)
+function compute(params::groundWRecharge_fraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWRecharge_fraction p_struct
+    @unpack_groundWRecharge_fraction params
 
     ## unpack land variables
     @unpack_land begin
@@ -32,8 +32,8 @@ function compute(p_struct::groundWRecharge_fraction, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::groundWRecharge_fraction, forcing, land, helpers)
-    @unpack_groundWRecharge_fraction p_struct
+function update(params::groundWRecharge_fraction, forcing, land, helpers)
+    @unpack_groundWRecharge_fraction params
 
     ## unpack variables
     @unpack_land begin

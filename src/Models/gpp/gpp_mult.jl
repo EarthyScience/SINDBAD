@@ -2,7 +2,7 @@ export gpp_mult
 
 struct gpp_mult <: gpp end
 
-function define(p_struct::gpp_mult, forcing, land, helpers)
+function define(params::gpp_mult, forcing, land, helpers)
     @unpack_land begin
         z_zero ∈ land.wCycleBase
     end
@@ -17,7 +17,7 @@ function define(p_struct::gpp_mult, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::gpp_mult, forcing, land, helpers)
+function compute(params::gpp_mult, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

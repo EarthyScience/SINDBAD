@@ -2,7 +2,7 @@ export cCycleConsistency_simple
 
 struct cCycleConsistency_simple <: cCycleConsistency end
 
-function define(p_struct::cCycleConsistency_simple, forcing, land, helpers)
+function define(params::cCycleConsistency_simple, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -43,7 +43,7 @@ function throwError(land, msg)
     error(msg)
 end
 
-function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::DoCatchModelErrors) #when check is on
+function checkCcycleErrors(params::cCycleConsistency_simple, forcing, land, helpers, ::DoCatchModelErrors) #when check is on
     ## unpack land variables
     @unpack_land begin
         c_allocation ∈ land.states
@@ -111,12 +111,12 @@ function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, he
     return nothing
 end
 
-function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::DoNotCatchModelErrors) #when check is off/false
+function checkCcycleErrors(params::cCycleConsistency_simple, forcing, land, helpers, ::DoNotCatchModelErrors) #when check is off/false
     return nothing
 end
 
-function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
-    checkCcycleErrors(p_struct, forcing, land, helpers, helpers.run.catch_model_errors)
+function compute(params::cCycleConsistency_simple, forcing, land, helpers)
+    checkCcycleErrors(params, forcing, land, helpers, helpers.run.catch_model_errors)
     return land
 end
 

@@ -2,7 +2,7 @@ export deriveVariables_simple
 
 struct deriveVariables_simple <: deriveVariables end
 
-function compute(p_struct::deriveVariables_simple, forcing, land, helpers)
+function compute(params::deriveVariables_simple, forcing, land, helpers)
     @unpack_land cVegWood ∈ land.pools
     ## calculate variables
     aboveground_biomass = cVegWood[1]

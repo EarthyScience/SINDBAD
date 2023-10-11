@@ -2,7 +2,7 @@ export cCycle_GSI
 
 struct cCycle_GSI <: cCycle end
 
-function define(p_struct::cCycle_GSI, forcing, land, helpers)
+function define(params::cCycle_GSI, forcing, land, helpers)
     @unpack_land cEco ∈ land.pools
     ## instantiate variables
     c_eco_flow = zero(cEco)
@@ -22,7 +22,7 @@ function define(p_struct::cCycle_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cCycle_GSI, forcing, land, helpers)
+function compute(params::cCycle_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

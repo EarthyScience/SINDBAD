@@ -2,7 +2,7 @@ export groundWRecharge_kUnsat
 
 struct groundWRecharge_kUnsat <: groundWRecharge end
 
-function compute(p_struct::groundWRecharge_kUnsat, forcing, land, helpers)
+function compute(params::groundWRecharge_kUnsat, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -28,7 +28,7 @@ function compute(p_struct::groundWRecharge_kUnsat, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::groundWRecharge_kUnsat, forcing, land, helpers)
+function update(params::groundWRecharge_kUnsat, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

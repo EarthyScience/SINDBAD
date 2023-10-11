@@ -2,7 +2,7 @@ export runoffInterflow_none
 
 struct runoffInterflow_none <: runoffInterflow end
 
-function define(p_struct::runoffInterflow_none, forcing, land, helpers)
+function define(params::runoffInterflow_none, forcing, land, helpers)
 
     ## calculate variables
     interflow_runoff = land.wCycleBase.z_zero

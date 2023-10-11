@@ -46,7 +46,7 @@
     "groundWRecharge,dos_exp": null,
     "rootMaximumDepth,constant_frac_max_root_depth": null,
     "rootWaterEfficiency,k_efficiency_cVegRoot": null,
-    "runoffBase,bc": null,
+    "runoffBase,k_baseflow": null,
     "runoffSaturationExcess,β": null,
     "snowMelt,melt_Rn": null,
     "snowMelt,melt_T": null,

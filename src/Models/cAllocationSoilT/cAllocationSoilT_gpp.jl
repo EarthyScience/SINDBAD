@@ -2,7 +2,7 @@ export cAllocationSoilT_gpp
 
 struct cAllocationSoilT_gpp <: cAllocationSoilT end
 
-function compute(p_struct::cAllocationSoilT_gpp, forcing, land, helpers)
+function compute(params::cAllocationSoilT_gpp, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land gpp_f_airT ∈ land.gppAirT

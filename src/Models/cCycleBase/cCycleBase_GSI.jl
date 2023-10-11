@@ -28,8 +28,8 @@ struct CCycleBaseGSI end
 end
 #! format: on
 
-function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
-    @unpack_cCycleBase_GSI p_struct
+function define(params::cCycleBase_GSI, forcing, land, helpers)
+    @unpack_cCycleBase_GSI params
     @unpack_land begin
         cEco ∈ land.pools
         (z_zero, o_one) ∈ land.wCycleBase
@@ -55,8 +55,8 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
-function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
-    @unpack_cCycleBase_GSI p_struct
+function precompute(params::cCycleBase_GSI, forcing, land, helpers)
+    @unpack_cCycleBase_GSI params
     @unpack_land begin
         (C_to_N_cVeg, c_eco_k_base, c_τ_eco) ∈ land.cCycleBase
         (z_zero, o_one) ∈ land.wCycleBase

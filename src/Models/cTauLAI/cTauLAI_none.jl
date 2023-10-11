@@ -2,7 +2,7 @@ export cTauLAI_none
 
 struct cTauLAI_none <: cTauLAI end
 
-function define(p_struct::cTauLAI_none, forcing, land, helpers)
+function define(params::cTauLAI_none, forcing, land, helpers)
 
     ## calculate variables
     c_eco_k_f_LAI = one.(land.pools.cEco)

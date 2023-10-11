@@ -6,9 +6,9 @@ export vegFraction_scaledLAI
 end
 #! format: on
 
-function compute(p_struct::vegFraction_scaledLAI, forcing, land, helpers)
+function compute(params::vegFraction_scaledLAI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledLAI p_struct
+    @unpack_vegFraction_scaledLAI params
 
     ## unpack land variables
     @unpack_land begin

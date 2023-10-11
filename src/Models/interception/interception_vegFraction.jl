@@ -6,9 +6,9 @@ export interception_vegFraction
 end
 #! format: on
 
-function compute(p_struct::interception_vegFraction, forcing, land, helpers)
+function compute(params::interception_vegFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_interception_vegFraction p_struct
+    @unpack_interception_vegFraction params
 
     ## unpack land variables
     @unpack_land begin

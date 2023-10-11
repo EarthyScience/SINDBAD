@@ -2,7 +2,7 @@ export runoffInfiltrationExcess_none
 
 struct runoffInfiltrationExcess_none <: runoffInfiltrationExcess end
 
-function define(p_struct::runoffInfiltrationExcess_none, forcing, land, helpers)
+function define(params::runoffInfiltrationExcess_none, forcing, land, helpers)
 
     ## calculate variables
     inf_excess_runoff = land.wCycleBase.z_zero

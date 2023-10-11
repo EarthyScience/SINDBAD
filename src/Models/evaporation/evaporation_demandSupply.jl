@@ -7,9 +7,9 @@ export evaporation_demandSupply
 end
 #! format: on
 
-function compute(p_struct::evaporation_demandSupply, forcing, land, helpers)
+function compute(params::evaporation_demandSupply, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_demandSupply p_struct
+    @unpack_evaporation_demandSupply params
 
     ## unpack land variables
     @unpack_land begin
@@ -36,8 +36,8 @@ function compute(p_struct::evaporation_demandSupply, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::evaporation_demandSupply, forcing, land, helpers)
-    @unpack_evaporation_demandSupply p_struct
+function update(params::evaporation_demandSupply, forcing, land, helpers)
+    @unpack_evaporation_demandSupply params
 
     ## unpack variables
     @unpack_land begin
