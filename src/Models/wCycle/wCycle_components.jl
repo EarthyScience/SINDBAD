@@ -9,7 +9,7 @@ function compute(params::wCycle_components, forcing, land, helpers)
         (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
         (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.states
         zix ∈ helpers.pools
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one, w_model) ∈ land.wCycleBase
     end
     total_water_prev = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
@@ -24,7 +24,6 @@ function compute(params::wCycle_components, forcing, land, helpers)
     # always pack land tws before calling the adjust method
     @pack_land begin
         (groundW, snowW, soilW, surfaceW, TWS) => land.pools
-        w_model => land.wCycleBase
     end
 
     land = adjustPackMainPool(land, helpers, w_model)
