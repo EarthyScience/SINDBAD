@@ -14,7 +14,7 @@ function compute(p_struct::groundWRecharge_kUnsat, forcing, land, helpers)
     end
 
     # calculate recharge
-    k_unsat = unsatK(land, helpers, lastindex(land.pools.soilW), unsat_k_model)
+    k_unsat = unsatK(land, helpers, lastindex(soilW), unsat_k_model)
     gw_recharge = min(k_unsat, soilW[end] + ΔsoilW[end])
 
     ΔgroundW .= ΔgroundW .+ gw_recharge / n_groundW
