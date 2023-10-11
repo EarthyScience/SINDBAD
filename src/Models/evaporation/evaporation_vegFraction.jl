@@ -7,9 +7,9 @@ export evaporation_vegFraction
 end
 #! format: on
 
-function compute(p_struct::evaporation_vegFraction, forcing, land, helpers)
+function compute(params::evaporation_vegFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_vegFraction p_struct
+    @unpack_evaporation_vegFraction params
 
     ## unpack land variables
     @unpack_land begin
@@ -39,8 +39,8 @@ function compute(p_struct::evaporation_vegFraction, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::evaporation_vegFraction, forcing, land, helpers)
-    @unpack_evaporation_bareFraction p_struct
+function update(params::evaporation_vegFraction, forcing, land, helpers)
+    @unpack_evaporation_bareFraction params
 
     ## unpack variables
     @unpack_land begin

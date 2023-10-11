@@ -6,9 +6,9 @@ export runoffInterflow_residual
 end
 #! format: on
 
-function compute(p_struct::runoffInterflow_residual, forcing, land, helpers)
+function compute(params::runoffInterflow_residual, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffInterflow_residual p_struct
+    @unpack_runoffInterflow_residual params
 
     ## unpack land variables
     @unpack_land WBP ∈ land.states

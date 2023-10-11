@@ -2,7 +2,7 @@ export treeFraction_forcing
 
 struct treeFraction_forcing <: treeFraction end
 
-function compute(p_struct::treeFraction_forcing, forcing, land, helpers)
+function compute(params::treeFraction_forcing, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing frac_tree ∈ forcing
 

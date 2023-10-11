@@ -9,8 +9,8 @@ export soilTexture_constant
 end
 #! format: on
 
-function define(p_struct::soilTexture_constant, forcing, land, helpers)
-    @unpack_soilTexture_constant p_struct
+function define(params::soilTexture_constant, forcing, land, helpers)
+    @unpack_soilTexture_constant params
 
     ## set parameter variables
     @debug "soilTexture_constant: distributing the constant texture properties over the soil layers."
@@ -24,8 +24,8 @@ function define(p_struct::soilTexture_constant, forcing, land, helpers)
     return land
 end
 
-function precompute(p_struct::soilTexture_constant, forcing, land, helpers)
-    @unpack_soilTexture_constant p_struct
+function precompute(params::soilTexture_constant, forcing, land, helpers)
+    @unpack_soilTexture_constant params
     @unpack_land (st_clay, st_sand, st_silt, st_orgm) ∈ land.soilTexture
 
     for sl ∈ eachindex(st_clay)

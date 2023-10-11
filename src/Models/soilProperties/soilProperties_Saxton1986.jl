@@ -37,8 +37,8 @@ struct kSaxton1986 end
 
 end
 
-function define(p_struct::soilProperties_Saxton1986, forcing, land, helpers)
-    @unpack_soilProperties_Saxton1986 p_struct
+function define(params::soilProperties_Saxton1986, forcing, land, helpers)
+    @unpack_soilProperties_Saxton1986 params
 
     ## instantiate variables
     sp_α = zero(land.pools.soilW)
@@ -63,9 +63,9 @@ function define(p_struct::soilProperties_Saxton1986, forcing, land, helpers)
     return land
 end
 
-function precompute(p_struct::soilProperties_Saxton1986, forcing, land, helpers)
+function precompute(params::soilProperties_Saxton1986, forcing, land, helpers)
     ## unpack parameters
-    @unpack_soilProperties_Saxton1986 p_struct
+    @unpack_soilProperties_Saxton1986 params
 
     ## unpack land variables
     @unpack_land (sp_α, sp_β, sp_kFC, sp_θFC, sp_ψFC, sp_kWP, sp_θWP, sp_ψWP, sp_kSat, sp_θSat, sp_ψSat) ∈ land.soilProperties
@@ -74,9 +74,9 @@ function precompute(p_struct::soilProperties_Saxton1986, forcing, land, helpers)
     # number of layers & creation of arrays
     # calculate & set the soil hydraulic properties for each layer
     for sl in eachindex(land.pools.soilW)
-        (α, β, kFC, θFC, ψFC) = calcPropsSaxton1986(p_struct, land, helpers, sl, ψFC)
-        (_, _, kWP, θWP, ψWP) = calcPropsSaxton1986(p_struct, land, helpers, sl, ψWP)
-        (_, _, kSat, θSat, ψSat) = calcPropsSaxton1986(p_struct, land, helpers, sl, ψSat)
+        (α, β, kFC, θFC, ψFC) = calcPropsSaxton1986(params, land, helpers, sl, ψFC)
+        (_, _, kWP, θWP, ψWP) = calcPropsSaxton1986(params, land, helpers, sl, ψWP)
+        (_, _, kSat, θSat, ψSat) = calcPropsSaxton1986(params, land, helpers, sl, ψSat)
         @rep_elem α => (sp_α, sl, :soilW)
         @rep_elem β => (sp_β, sl, :soilW)
         @rep_elem kFC => (sp_kFC, sl, :soilW)
@@ -142,8 +142,8 @@ calculates the soil hydraulic properties based on Saxton 1986
 
 # Extended help
 """
-function calcPropsSaxton1986(p_struct::soilProperties_Saxton1986, land, helpers, sl, WT)
-    @unpack_soilProperties_Saxton1986 p_struct
+function calcPropsSaxton1986(params::soilProperties_Saxton1986, land, helpers, sl, WT)
+    @unpack_soilProperties_Saxton1986 params
 
     @unpack_land begin
         (z_zero, o_one) ∈ land.wCycleBase

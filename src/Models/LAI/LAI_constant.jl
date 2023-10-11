@@ -6,9 +6,9 @@ export LAI_constant
 end
 #! format: on
 
-function compute(p_struct::LAI_constant, forcing, land, helpers)
+function compute(params::LAI_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_LAI_constant p_struct
+    @unpack_LAI_constant params
 
     ## calculate variables
     LAI = constant_LAI

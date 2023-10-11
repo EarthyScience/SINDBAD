@@ -2,7 +2,7 @@ export evapotranspiration_sum
 
 struct evapotranspiration_sum <: evapotranspiration end
 
-function define(p_struct::evapotranspiration_sum, forcing, land, helpers)
+function define(params::evapotranspiration_sum, forcing, land, helpers)
     @unpack_land z_zero ∈ land.wCycleBase
 
     ## set variables to zero
@@ -19,7 +19,7 @@ function define(p_struct::evapotranspiration_sum, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::evapotranspiration_sum, forcing, land, helpers)
+function compute(params::evapotranspiration_sum, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land (evaporation, interception, sublimation, transpiration) ∈ land.fluxes

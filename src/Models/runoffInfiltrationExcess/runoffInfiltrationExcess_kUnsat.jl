@@ -2,7 +2,7 @@ export runoffInfiltrationExcess_kUnsat
 
 struct runoffInfiltrationExcess_kUnsat <: runoffInfiltrationExcess end
 
-function compute(p_struct::runoffInfiltrationExcess_kUnsat, forcing, land, helpers)
+function compute(params::runoffInfiltrationExcess_kUnsat, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

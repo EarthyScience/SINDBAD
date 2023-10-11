@@ -9,8 +9,8 @@ export cFlow_GSI
 end
 #! format: on
 
-function define(p_struct::cFlow_GSI, forcing, land, helpers)
-    @unpack_cFlow_GSI p_struct
+function define(params::cFlow_GSI, forcing, land, helpers)
+    @unpack_cFlow_GSI params
     @unpack_land begin
         (c_giver, c_taker, c_flow_A_array) ∈ land.cCycleBase
     end
@@ -75,9 +75,9 @@ function adjust_pk(c_eco_k, kValue, flowValue, maxValue, zix, helpers)
     return c_eco_k, c_eco_k_f_sum
 end
 
-function compute(p_struct::cFlow_GSI, forcing, land, helpers)
+function compute(params::cFlow_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cFlow_GSI p_struct
+    @unpack_cFlow_GSI params
     ## unpack land variables
     @unpack_land begin
         (eco_stressor_prev, c_flow_A_vec_ind, aSrc, aTrg) ∈ land.cFlow

@@ -6,9 +6,9 @@ export groundWSurfaceWInteraction_fracGradient
 end
 #! format: on
 
-function compute(p_struct::groundWSurfaceWInteraction_fracGradient, forcing, land, helpers)
+function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWSurfaceWInteraction_fracGradient p_struct
+    @unpack_groundWSurfaceWInteraction_fracGradient params
 
     ## unpack land variables
     @unpack_land begin
@@ -34,7 +34,7 @@ function compute(p_struct::groundWSurfaceWInteraction_fracGradient, forcing, lan
     return land
 end
 
-function update(p_struct::groundWSurfaceWInteraction_fracGradient, forcing, land, helpers)
+function update(params::groundWSurfaceWInteraction_fracGradient, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, surfaceW) ∈ land.pools

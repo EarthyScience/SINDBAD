@@ -4,7 +4,7 @@ export cCycleDisturbance_WROASTED
 struct cCycleDisturbance_WROASTED <: cCycleDisturbance end
 #! format: on
 
-function define(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
+function define(params::cCycleDisturbance_WROASTED, forcing, land, helpers)
     @unpack_land begin
         (c_giver, c_taker) ∈ land.cCycleBase
         cVeg ∈ land.pools
@@ -31,7 +31,7 @@ function define(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
+function compute(params::cCycleDisturbance_WROASTED, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing f_dist_intensity ∈ forcing
 

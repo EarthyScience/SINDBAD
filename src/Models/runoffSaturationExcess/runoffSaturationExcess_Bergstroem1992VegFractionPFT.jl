@@ -18,10 +18,10 @@ export runoffSaturationExcess_Bergstroem1992VegFractionPFT
 end
 #! format: on
 
-function define(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
+function define(params::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
-    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT p_struct
+    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT params
 
     # get the PFT data & assign parameters
     β_veg = eval("β_PFT" * string(PFT))
@@ -36,10 +36,10 @@ function define(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionPFT, f
     return land
 end
 
-function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
+function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
-    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT p_struct
+    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT params
     @unpack_forcing PFT ∈ forcing
 
     ## unpack land variables

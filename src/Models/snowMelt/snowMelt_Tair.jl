@@ -6,9 +6,9 @@ export snowMelt_Tair
 end
 #! format: on
 
-function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
+function compute(params::snowMelt_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_snowMelt_Tair p_struct
+    @unpack_snowMelt_Tair params
     @unpack_forcing f_airT ∈ forcing
 
     ## unpack land variables
@@ -42,8 +42,8 @@ function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::snowMelt_Tair, forcing, land, helpers)
-    @unpack_snowMelt_Tair p_struct
+function update(params::snowMelt_Tair, forcing, land, helpers)
+    @unpack_snowMelt_Tair params
 
     ## unpack variables
     @unpack_land begin

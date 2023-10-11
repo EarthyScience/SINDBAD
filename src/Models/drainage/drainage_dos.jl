@@ -6,7 +6,7 @@ export drainage_dos
 end
 #! format: on
 
-function define(p_struct::drainage_dos, forcing, land, helpers)
+function define(params::drainage_dos, forcing, land, helpers)
     ## unpack parameters
 
     ## unpack land variables
@@ -22,9 +22,9 @@ function define(p_struct::drainage_dos, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::drainage_dos, forcing, land, helpers)
+function compute(params::drainage_dos, forcing, land, helpers)
     ## unpack parameters
-    @unpack_drainage_dos p_struct
+    @unpack_drainage_dos params
 
     ## unpack land variables
     @unpack_land begin
@@ -59,7 +59,7 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::drainage_dos, forcing, land, helpers)
+function update(params::drainage_dos, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

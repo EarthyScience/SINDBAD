@@ -6,9 +6,9 @@ export evaporation_Snyder2000
     β::T2 = 3.0 | (1.0, 5.0) | "soil moisture resistance factor for soil evapotranspiration" | "mm^0.5"
 end
 #! format: on
-function define(p_struct::evaporation_Snyder2000, forcing, land, helpers)
+function define(params::evaporation_Snyder2000, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_Snyder2000 p_struct
+    @unpack_evaporation_Snyder2000 params
 
     ## unpack land variables
     @unpack_land z_zero ∈ land.wCycleBase
@@ -22,10 +22,10 @@ function define(p_struct::evaporation_Snyder2000, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::evaporation_Snyder2000, forcing, land, helpers)
+function compute(params::evaporation_Snyder2000, forcing, land, helpers)
     #@needscheck
     ## unpack parameters
-    @unpack_evaporation_Snyder2000 p_struct
+    @unpack_evaporation_Snyder2000 params
 
     ## unpack land variables
     @unpack_land begin
@@ -71,8 +71,8 @@ function compute(p_struct::evaporation_Snyder2000, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::evaporation_Snyder2000, forcing, land, helpers)
-    @unpack_evaporation_bareFraction p_struct
+function update(params::evaporation_Snyder2000, forcing, land, helpers)
+    @unpack_evaporation_bareFraction params
 
     ## unpack variables
     @unpack_land begin

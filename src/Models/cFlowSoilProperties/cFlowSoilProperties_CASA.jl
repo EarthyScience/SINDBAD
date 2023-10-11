@@ -11,8 +11,8 @@ export cFlowSoilProperties_CASA
 end
 #! format: on
 
-function define(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
-    @unpack_cFlowSoilProperties_CASA p_struct
+function define(params::cFlowSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cFlowSoilProperties_CASA params
 
     ## instantiate variables
     p_E_vec = repeat(zero(land.pools.cEco),
@@ -25,9 +25,9 @@ function define(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
+function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cFlowSoilProperties_CASA p_struct
+    @unpack_cFlowSoilProperties_CASA params
 
     ## unpack land variables
     @unpack_land p_E_vec ∈ land.cFlowSoilProperties

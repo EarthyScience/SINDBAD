@@ -2,7 +2,7 @@ export cAllocationSoilW_gpp
 
 struct cAllocationSoilW_gpp <: cAllocationSoilW end
 
-function compute(p_struct::cAllocationSoilW_gpp, forcing, land, helpers)
+function compute(params::cAllocationSoilW_gpp, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land gpp_f_soilW ∈ land.gppSoilW

@@ -6,9 +6,9 @@ export evaporation_bareFraction
 end
 #! format: on
 
-function compute(p_struct::evaporation_bareFraction, forcing, land, helpers)
+function compute(params::evaporation_bareFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_bareFraction p_struct
+    @unpack_evaporation_bareFraction params
 
     ## unpack land variables
     @unpack_land begin
@@ -35,8 +35,8 @@ function compute(p_struct::evaporation_bareFraction, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::evaporation_bareFraction, forcing, land, helpers)
-    @unpack_evaporation_bareFraction p_struct
+function update(params::evaporation_bareFraction, forcing, land, helpers)
+    @unpack_evaporation_bareFraction params
 
     ## unpack variables
     @unpack_land begin

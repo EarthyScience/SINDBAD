@@ -2,7 +2,7 @@ export gppAirT_none
 
 struct gppAirT_none <: gppAirT end
 
-function define(p_struct::gppAirT_none, forcing, land, helpers)
+function define(params::gppAirT_none, forcing, land, helpers)
 
     ## calculate variables
     # set scalar to a constant o_one [no effect on potential GPP]

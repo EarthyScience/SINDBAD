@@ -8,9 +8,9 @@ export gppSoilW_Keenan2009
 end
 #! format: on
 
-function compute(p_struct::gppSoilW_Keenan2009, forcing, land, helpers)
+function compute(params::gppSoilW_Keenan2009, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_Keenan2009 p_struct
+    @unpack_gppSoilW_Keenan2009 params
 
     ## unpack land variables
     @unpack_land begin

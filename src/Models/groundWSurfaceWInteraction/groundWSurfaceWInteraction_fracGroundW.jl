@@ -6,9 +6,9 @@ export groundWSurfaceWInteraction_fracGroundW
 end
 #! format: on
 
-function compute(p_struct::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
+function compute(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWSurfaceWInteraction_fracGroundW p_struct
+    @unpack_groundWSurfaceWInteraction_fracGroundW params
 
     ## unpack land variables
     @unpack_land begin
@@ -32,7 +32,7 @@ function compute(p_struct::groundWSurfaceWInteraction_fracGroundW, forcing, land
     return land
 end
 
-function update(p_struct::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
+function update(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, surfaceW) ∈ land.pools
