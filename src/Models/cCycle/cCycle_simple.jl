@@ -5,19 +5,20 @@ struct cCycle_simple <: cCycle end
 function define(p_struct::cCycle_simple, forcing, land, helpers)
     @unpack_land begin
         (z_zero, o_one) ∈ land.wCycleBase
+        (cEco, cVeg) ∈ land.pools
     end
-    n_cEco = length(land.pools.cEco)
-    n_cVeg = length(land.pools.cVeg)
+    n_cEco = length(cEco)
+    n_cVeg = length(cVeg)
     ## instantiate variables
-    c_eco_flow = zero(land.pools.cEco)
-    c_eco_out = zero(land.pools.cEco)
-    c_eco_influx = zero(land.pools.cEco)
+    c_eco_flow = zero(cEco)
+    c_eco_out = zero(cEco)
+    c_eco_influx = zero(cEco)
     zero_c_eco_flow = zero(c_eco_flow)
     zero_c_eco_influx = zero(c_eco_influx)
-    c_eco_npp = zero(land.pools.cEco)
+    c_eco_npp = zero(cEco)
 
-    cEco_prev = copy(land.pools.cEco)
-    zixVeg = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    cEco_prev = copy(cEco)
+    zixVeg = getZix(cVeg, helpers.pools.zix.cVeg)
     ## pack land variables
     nee = z_zero
     npp = z_zero
@@ -26,8 +27,7 @@ function define(p_struct::cCycle_simple, forcing, land, helpers)
     hetero_respiration = z_zero
 
     @pack_land begin
-        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zixVeg, zero_c_eco_flow, zero_c_eco_influx) =>
-            land.states
+        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zixVeg, zero_c_eco_flow, zero_c_eco_influx) => land.states
         (nee, npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
     end
     return land
