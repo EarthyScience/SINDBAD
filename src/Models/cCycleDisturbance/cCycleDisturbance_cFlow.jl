@@ -8,8 +8,9 @@ function define(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
     @unpack_land begin
         (c_giver, c_taker) ∈ land.cCycleBase
         (z_zero, o_one) ∈ land.wCycleBase
+        cVeg ∈ land.pools
     end
-    zix_veg_all = Tuple(vcat(getZix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
+    zix_veg_all = Tuple(vcat(getZix(cVeg, helpers.pools.zix.cVeg)...))
     c_lose_to_zix_vec = []
     for zixVeg ∈ zix_veg_all
         c_lose_to_zix = c_taker[[(c_giver .== zixVeg)...]]
@@ -34,7 +35,7 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
     @unpack_land begin
         (zix_veg_all, c_lose_to_zix_vec) ∈ land.cCycleDisturbance
         cEco ∈ land.pools
-        (c_giver, c_taker, c_remain) ∈ land.cCycleBase
+        (c_giver, c_taker, c_remain, c_model) ∈ land.cCycleBase
     end
     if f_dist_intensity > z_zero
         for zixVeg ∈ zix_veg_all
@@ -52,7 +53,7 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
         end
         ## pack land variables
         @pack_land cEco => land.pools
-        land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
+        land = adjustPackPoolComponents(land, helpers, c_model)
     end
     return land
 end

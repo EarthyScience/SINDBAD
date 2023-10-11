@@ -808,7 +808,7 @@ end
 """
     showParamsOfAModel(models, model::Symbol)
 
-shows the current parameters of a given model (Symboll) [NOT APPRAOCH] based on the list of models provided
+shows the current parameters of a given model (Symbol) [NOT APPRAOCH] based on the list of models provided
 """
 function showParamsOfAModel(models, model::Symbol)
     model_names = Symbol.(supertype.(typeof.(models)))
@@ -818,17 +818,45 @@ function showParamsOfAModel(models, model::Symbol)
     println("model: $(model_names[m_index])")
     println("approach: $(approach_names[m_index])")
     pnames = fieldnames(typeof(mod))
+    p_dict = Sindbad.DataStructures.OrderedDict()
     if length(pnames) == 0
         println("parameters: none")
     else
         println("parameters:")
         foreach(pnames) do fn
+            p_dict[fn] = getproperty(mod, fn)
             println("   $fn => $(getproperty(mod, fn))")
         end
     end
-    return nothing
+    return p_dict
 end
 
+
+"""
+    showParamsOfAModel(model::LandEcosystem)
+
+shows the current parameters of a given model instance of type LandEcosystem
+"""
+function showParamsOfAModel(mod::Sindbad.LandEcosystem, show=true)
+    pnames = fieldnames(typeof(mod))
+    p_dict = Sindbad.DataStructures.OrderedDict()
+    if show
+        println("parameters:")
+    end
+    if length(pnames) == 0
+        if show
+            println("   non-parametric model")
+        end
+    else
+        foreach(pnames) do fn
+            p_dict[fn] = (getproperty(mod, fn), typeof(getproperty(mod, fn)), )
+            if show
+                println("   $fn => $(getproperty(mod, fn))")
+            end
+        end
+    end
+    return p_dict
+end
 const SindbadParameters = BoundFields(false)
 
 """

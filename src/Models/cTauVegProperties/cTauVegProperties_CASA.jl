@@ -81,8 +81,7 @@ function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         c_τ_eco => land.cCycleBase
-        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN, c_eco_k_f_veg_props) =>
-            land.cTauVegProperties
+        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN, c_eco_k_f_veg_props) => land.cTauVegProperties
     end
     return land
 end
