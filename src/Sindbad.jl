@@ -8,6 +8,10 @@ using Parameters
 @reexport using Reexport
 @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
 
+## Define SINDBAD supertype
+export LandEcosystem
+abstract type LandEcosystem end
+
 include("utilsCore.jl")
 include("sindbadVariableCatalog.jl")
 include("Models/models.jl")

@@ -3,11 +3,11 @@ export cCycle_CASA, spin_cCycle_CASA
 struct cCycle_CASA <: cCycle end
 
 function define(p_struct::cCycle_CASA, forcing, land, helpers)
-
+    @unpack_land cEco ∈ land.pools
     ## instantiate variables
-    c_eco_efflux = zero(land.pools.cEco) #sujan moved from get states
-    c_eco_influx = zero(land.pools.cEco)
-    c_eco_flow = zero(land.pools.cEco)
+    c_eco_efflux = zero(cEco) #sujan moved from get states
+    c_eco_influx = zero(cEco)
+    c_eco_flow = zero(cEco)
 
     ## pack land variables
     @pack_land (c_eco_efflux, c_eco_influx, c_eco_flow) => land.cCycle
@@ -17,12 +17,10 @@ end
 function compute(p_struct::cCycle_CASA, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land (c_eco_efflux, c_eco_influx, c_eco_flow) ∈ land.cCycle
-
-    ## unpack land variables
     @unpack_land begin
+        (c_eco_efflux, c_eco_influx, c_eco_flow) ∈ land.cCycle
         (c_allocation, c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ∈ land.states
-        cEco ∈ land.pools
+        (cEco, cVeg) ∈ land.pools
         gpp ∈ land.fluxes
         c_eco_k ∈ land.cTau
         (p_E_vec, p_F_vec, p_giver, p_taker) ∈ land.cFlow
@@ -34,7 +32,7 @@ function compute(p_struct::cCycle_CASA, forcing, land, helpers)
     ## compute losses
     c_eco_out = min.(cEco, cEco * c_eco_k)
     ## gains to vegetation
-    zix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    zix = getZix(cVeg, helpers.pools.zix.cVeg)
     c_eco_npp = gpp .* c_allocation[zix] .- c_eco_efflux[zix]
     c_eco_influx[zix] .= c_eco_npp
     ## flows & losses
