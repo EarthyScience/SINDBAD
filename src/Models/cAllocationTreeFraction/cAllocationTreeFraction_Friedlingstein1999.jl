@@ -6,7 +6,7 @@ export cAllocationTreeFraction_Friedlingstein1999
 end
 #! format: on
 
-function define(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
+function define(params::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
     ## calculate variables
     # check if there are fine & coarse root pools
@@ -26,9 +26,9 @@ function setCAlloc(c_allocation, cAllocValue, landPool, zixPools, helpers)
     return c_allocation
 end
 
-function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
+function compute(params::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationTreeFraction_Friedlingstein1999 p_struct
+    @unpack_cAllocationTreeFraction_Friedlingstein1999 params
 
     ## unpack land variables
     @unpack_land begin

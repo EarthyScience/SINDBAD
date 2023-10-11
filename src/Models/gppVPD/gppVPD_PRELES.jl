@@ -9,9 +9,9 @@ export gppVPD_PRELES
 end
 #! format: on
 
-function compute(p_struct::gppVPD_PRELES, forcing, land, helpers)
+function compute(params::gppVPD_PRELES, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppVPD_PRELES p_struct
+    @unpack_gppVPD_PRELES params
     @unpack_forcing f_VPD_day ∈ forcing
 
     ## unpack land variables

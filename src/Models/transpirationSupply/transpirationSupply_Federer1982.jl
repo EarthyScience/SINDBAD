@@ -6,9 +6,9 @@ export transpirationSupply_Federer1982
 end
 #! format: on
 
-function compute(p_struct::transpirationSupply_Federer1982, forcing, land, helpers)
+function compute(params::transpirationSupply_Federer1982, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationSupply_Federer1982 p_struct
+    @unpack_transpirationSupply_Federer1982 params
 
     ## unpack land variables
     @unpack_land begin

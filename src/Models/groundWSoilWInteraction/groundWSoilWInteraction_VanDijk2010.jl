@@ -6,7 +6,7 @@ export groundWSoilWInteraction_VanDijk2010
 end
 #! format: on
 
-function define(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+function define(params::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
     ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
     gw_recharge = zero(max_fraction)
     ## pack land variables
@@ -14,9 +14,9 @@ function define(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, he
     return land
 end
 
-function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+function compute(params::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWSoilWInteraction_VanDijk2010 p_struct
+    @unpack_groundWSoilWInteraction_VanDijk2010 params
 
     ## unpack land variables
     @unpack_land begin
@@ -56,7 +56,7 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
     return land
 end
 
-function update(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+function update(params::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

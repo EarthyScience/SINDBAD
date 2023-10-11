@@ -6,9 +6,9 @@ export gppDirRadiation_Maekelae2008
 end
 #! format: on
 
-function compute(p_struct::gppDirRadiation_Maekelae2008, forcing, land, helpers)
+function compute(params::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDirRadiation_Maekelae2008 p_struct
+    @unpack_gppDirRadiation_Maekelae2008 params
     @unpack_forcing f_PAR ∈ forcing
 
     ## unpack land variables

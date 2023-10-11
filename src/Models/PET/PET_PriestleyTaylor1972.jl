@@ -14,9 +14,9 @@ export PET_PriestleyTaylor1972
 end
 #! format: on
 
-function compute(p_struct::PET_PriestleyTaylor1972, forcing, land, helpers)
+function compute(params::PET_PriestleyTaylor1972, forcing, land, helpers)
     ## unpack parameters
-    @unpack_PET_PriestleyTaylor1972 p_struct
+    @unpack_PET_PriestleyTaylor1972 params
     ## unpack forcing
     @unpack_forcing (f_rn, f_airT) ∈ forcing
     @unpack_land z_zero ∈ land.wCycleBase

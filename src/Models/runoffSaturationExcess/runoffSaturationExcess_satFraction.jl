@@ -2,7 +2,7 @@ export runoffSaturationExcess_satFraction
 
 struct runoffSaturationExcess_satFraction <: runoffSaturationExcess end
 
-function compute(p_struct::runoffSaturationExcess_satFraction, forcing, land, helpers)
+function compute(params::runoffSaturationExcess_satFraction, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land (WBP, satFrac) ∈ land.states

@@ -7,9 +7,9 @@ export runoffSurface_directIndirect
 end
 #! format: on
 
-function compute(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
+function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffSurface_directIndirect p_struct
+    @unpack_runoffSurface_directIndirect params
 
     ## unpack land variables
     @unpack_land begin
@@ -42,8 +42,8 @@ function compute(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
     return land
 end
 
-function update(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
-    @unpack_runoffSurface_directIndirect p_struct
+function update(params::runoffSurface_directIndirect, forcing, land, helpers)
+    @unpack_runoffSurface_directIndirect params
 
     ## unpack variables
     @unpack_land begin

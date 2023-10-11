@@ -7,9 +7,9 @@ export cAllocationNutrients_Friedlingstein1999
 end
 #! format: on
 
-function compute(p_struct::cAllocationNutrients_Friedlingstein1999, forcing, land, helpers)
+function compute(params::cAllocationNutrients_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationNutrients_Friedlingstein1999 p_struct
+    @unpack_cAllocationNutrients_Friedlingstein1999 params
 
     ## unpack land variables
     @unpack_land begin

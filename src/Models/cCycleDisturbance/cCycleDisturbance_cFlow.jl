@@ -4,7 +4,7 @@ export cCycleDisturbance_cFlow
 struct cCycleDisturbance_cFlow <: cCycleDisturbance end
 #! format: on
 
-function define(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
+function define(params::cCycleDisturbance_cFlow, forcing, land, helpers)
     @unpack_land begin
         (c_giver, c_taker) ∈ land.cCycleBase
         (z_zero, o_one) ∈ land.wCycleBase
@@ -27,7 +27,7 @@ function define(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
+function compute(params::cCycleDisturbance_cFlow, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing f_dist_intensity ∈ forcing
 

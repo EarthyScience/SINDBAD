@@ -2,7 +2,7 @@ export cFlow_simple
 
 struct cFlow_simple <: cFlow end
 
-function compute(p_struct::cFlow_simple, forcing, land, helpers)
+function compute(params::cFlow_simple, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land c_flow_A_array ∈ land.cCycleBase

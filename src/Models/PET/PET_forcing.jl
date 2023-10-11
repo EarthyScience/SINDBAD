@@ -2,7 +2,7 @@ export PET_forcing
 
 struct PET_forcing <: PET end
 
-function compute(p_struct::PET_forcing, forcing, land, helpers)
+function compute(params::PET_forcing, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing f_PET ∈ forcing
 

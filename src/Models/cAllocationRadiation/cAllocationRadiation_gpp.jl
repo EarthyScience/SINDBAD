@@ -2,7 +2,7 @@ export cAllocationRadiation_gpp
 
 struct cAllocationRadiation_gpp <: cAllocationRadiation end
 
-function compute(p_struct::cAllocationRadiation_gpp, forcing, land, helpers)
+function compute(params::cAllocationRadiation_gpp, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land gpp_f_cloud ∈ land.gppDiffRadiation

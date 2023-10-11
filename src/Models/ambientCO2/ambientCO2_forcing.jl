@@ -2,7 +2,7 @@ export ambientCO2_forcing
 
 struct ambientCO2_forcing <: ambientCO2 end
 
-function define(p_struct::ambientCO2_forcing, forcing, land, helpers)
+function define(params::ambientCO2_forcing, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing f_ambient_CO2 ∈ forcing
     ## pack land variables
@@ -10,7 +10,7 @@ function define(p_struct::ambientCO2_forcing, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::ambientCO2_forcing, forcing, land, helpers)
+function compute(params::ambientCO2_forcing, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing f_ambient_CO2 ∈ forcing
 

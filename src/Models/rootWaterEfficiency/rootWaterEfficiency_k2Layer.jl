@@ -7,8 +7,8 @@ export rootWaterEfficiency_k2Layer
 end
 #! format: on
 
-function define(p_struct::rootWaterEfficiency_k2Layer, forcing, land, helpers)
-    @unpack_rootWaterEfficiency_k2Layer p_struct
+function define(params::rootWaterEfficiency_k2Layer, forcing, land, helpers)
+    @unpack_rootWaterEfficiency_k2Layer params
 
     ## precomputations/check
 
@@ -24,9 +24,9 @@ function define(p_struct::rootWaterEfficiency_k2Layer, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::rootWaterEfficiency_k2Layer, forcing, land, helpers)
+function compute(params::rootWaterEfficiency_k2Layer, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootWaterEfficiency_k2Layer p_struct
+    @unpack_rootWaterEfficiency_k2Layer params
 
     ## unpack land variables
     @unpack_land root_water_efficiency ∈ land.states

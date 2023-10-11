@@ -8,9 +8,9 @@ export gppVPD_expco2
 end
 #! format: on
 
-function compute(p_struct::gppVPD_expco2, forcing, land, helpers)
+function compute(params::gppVPD_expco2, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppVPD_expco2 p_struct
+    @unpack_gppVPD_expco2 params
     @unpack_forcing f_VPD_day ∈ forcing
 
     ## unpack land variables

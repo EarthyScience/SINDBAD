@@ -6,9 +6,9 @@ export ambientCO2_constant
 end
 #! format: on
 
-function compute(p_struct::ambientCO2_constant, forcing, land, helpers)
+function compute(params::ambientCO2_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_ambientCO2_constant p_struct
+    @unpack_ambientCO2_constant params
 
     ## calculate variables
     ambient_CO2 = constant_ambient_CO2

@@ -9,9 +9,9 @@ export gppAirT_CASA
 end
 #! format: on
 
-function compute(p_struct::gppAirT_CASA, forcing, land, helpers)
+function compute(params::gppAirT_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_CASA p_struct
+    @unpack_gppAirT_CASA params
     @unpack_forcing f_airT_day ∈ forcing
     @unpack_land o_one ∈ land.wCycleBase
 

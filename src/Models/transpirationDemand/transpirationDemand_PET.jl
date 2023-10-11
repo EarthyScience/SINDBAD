@@ -6,9 +6,9 @@ export transpirationDemand_PET
 end
 #! format: on
 
-function compute(p_struct::transpirationDemand_PET, forcing, land, helpers)
+function compute(params::transpirationDemand_PET, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationDemand_PET p_struct
+    @unpack_transpirationDemand_PET params
 
     ## unpack land variables
     @unpack_land PET ∈ land.fluxes

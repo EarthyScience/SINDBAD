@@ -2,7 +2,7 @@ export cCycle_simple
 
 struct cCycle_simple <: cCycle end
 
-function define(p_struct::cCycle_simple, forcing, land, helpers)
+function define(params::cCycle_simple, forcing, land, helpers)
     @unpack_land begin
         (z_zero, o_one) ∈ land.wCycleBase
         (cEco, cVeg) ∈ land.pools
@@ -33,7 +33,7 @@ function define(p_struct::cCycle_simple, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cCycle_simple, forcing, land, helpers)
+function compute(params::cCycle_simple, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

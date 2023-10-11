@@ -8,17 +8,17 @@ export gppAirT_TEM
 end
 #! format: on
 
-function define(p_struct::gppAirT_TEM, forcing, land, helpers)
-    @unpack_gppAirT_TEM p_struct
+function define(params::gppAirT_TEM, forcing, land, helpers)
+    @unpack_gppAirT_TEM params
     t_two = oftype(Tmin, 2)
     ## pack land variables
     @pack_land t_two => land.gppAirT
     return land
 end
 
-function compute(p_struct::gppAirT_TEM, forcing, land, helpers)
+function compute(params::gppAirT_TEM, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_TEM p_struct
+    @unpack_gppAirT_TEM params
     @unpack_forcing f_airT_day ∈ forcing
     @unpack_land begin
         t_two ∈ land.gppAirT

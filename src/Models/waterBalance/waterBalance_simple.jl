@@ -39,7 +39,7 @@ function checkWaterBalanceError(forcing, land, water_balance, tolerance, total_w
     return nothing
 end
 
-function compute(p_struct::waterBalance_simple, forcing, land, helpers)
+function compute(params::waterBalance_simple, forcing, land, helpers)
     @unpack_land begin
         precip ∈ land.fluxes
         (total_water_prev, total_water, WBP) ∈ land.states

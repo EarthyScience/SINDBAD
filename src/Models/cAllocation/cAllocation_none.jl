@@ -2,7 +2,7 @@ export cAllocation_none
 
 struct cAllocation_none <: cAllocation end
 
-function define(p_struct::cAllocation_none, forcing, land, helpers)
+function define(params::cAllocation_none, forcing, land, helpers)
 
     ## calculate variables
     c_allocation = zero(land.pools.cEco)

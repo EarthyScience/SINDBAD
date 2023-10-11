@@ -8,9 +8,9 @@ export runoffSaturationExcess_Bergstroem1992MixedVegFraction
 end
 #! format: on
 
-function compute(p_struct::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, helpers)
+function compute(params::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction p_struct
+    @unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction params
 
     ## unpack land variables
     @unpack_land begin

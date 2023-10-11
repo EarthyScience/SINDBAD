@@ -2,7 +2,7 @@ export groundWSoilWInteraction_none
 
 struct groundWSoilWInteraction_none <: groundWSoilWInteraction end
 
-function define(p_struct::groundWSoilWInteraction_none, forcing, land, helpers)
+function define(params::groundWSoilWInteraction_none, forcing, land, helpers)
 
     ## calculate variables
     gw_capillary_flux = land.wCycleBase.z_zero

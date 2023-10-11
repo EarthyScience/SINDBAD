@@ -7,9 +7,9 @@ export gppAirT_MOD17
 end
 #! format: on
 
-function compute(p_struct::gppAirT_MOD17, forcing, land, helpers)
+function compute(params::gppAirT_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_MOD17 p_struct
+    @unpack_gppAirT_MOD17 params
     @unpack_forcing f_airT_day ∈ forcing
     @unpack_land o_one ∈ land.wCycleBase
 

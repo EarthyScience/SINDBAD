@@ -6,9 +6,9 @@ export vegProperties_PFT
 end
 #! format: on
 
-function compute(p_struct::vegProperties_PFT, forcing, land, helpers)
+function compute(params::vegProperties_PFT, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegProperties_PFT p_struct
+    @unpack_vegProperties_PFT params
 
     ## pack land variables
     @pack_land PFT => land.vegProperties

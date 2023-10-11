@@ -8,9 +8,9 @@ export cAllocationLAI_Friedlingstein1999
 end
 #! format: on
 
-function compute(p_struct::cAllocationLAI_Friedlingstein1999, forcing, land, helpers)
+function compute(params::cAllocationLAI_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationLAI_Friedlingstein1999 p_struct
+    @unpack_cAllocationLAI_Friedlingstein1999 params
 
     ## unpack land variables
     @unpack_land LAI ∈ land.states

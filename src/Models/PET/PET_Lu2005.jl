@@ -20,9 +20,9 @@ export PET_Lu2005
 end
 #! format: on
 
-function define(p_struct::PET_Lu2005, forcing, land, helpers)
+function define(params::PET_Lu2005, forcing, land, helpers)
     ## unpack forcing
-    @unpack_PET_Lu2005 p_struct
+    @unpack_PET_Lu2005 params
     @unpack_forcing f_airT ∈ forcing
     PET = zero(f_airT)
     ## calculate variables
@@ -36,9 +36,9 @@ function define(p_struct::PET_Lu2005, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::PET_Lu2005, forcing, land, helpers)
+function compute(params::PET_Lu2005, forcing, land, helpers)
     ## unpack parameters
-    @unpack_PET_Lu2005 p_struct
+    @unpack_PET_Lu2005 params
     ## unpack forcing
     @unpack_forcing (f_rn, f_airT) ∈ forcing
 

@@ -7,8 +7,8 @@ export fAPAR_EVI
 end
 #! format: on
 
-function compute(p_struct::fAPAR_EVI, forcing, land, helpers)
-    @unpack_fAPAR_EVI p_struct
+function compute(params::fAPAR_EVI, forcing, land, helpers)
+    @unpack_fAPAR_EVI params
 
     ## unpack land variables
     @unpack_land EVI ∈ land.states

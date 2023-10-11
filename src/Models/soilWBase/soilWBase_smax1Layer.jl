@@ -6,8 +6,8 @@ export soilWBase_smax1Layer
 end
 #! format: on
 
-function define(p_struct::soilWBase_smax1Layer, forcing, land, helpers)
-    @unpack_soilWBase_smax1Layer p_struct
+function define(params::soilWBase_smax1Layer, forcing, land, helpers)
+    @unpack_soilWBase_smax1Layer params
 
     @unpack_land begin
         soilW ∈ land.pools
@@ -31,9 +31,9 @@ function define(p_struct::soilWBase_smax1Layer, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::soilWBase_smax1Layer, forcing, land, helpers)
+function compute(params::soilWBase_smax1Layer, forcing, land, helpers)
     ## unpack parameters
-    @unpack_soilWBase_smax1Layer p_struct
+    @unpack_soilWBase_smax1Layer params
 
     ## unpack land variables
     @unpack_land (soil_layer_thickness, wSat, wFC, wWP) ∈ land.soilWBase

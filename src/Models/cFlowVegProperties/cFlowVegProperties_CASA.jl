@@ -6,8 +6,8 @@ export cFlowVegProperties_CASA
 end
 #! format: on
 
-function define(p_struct::cFlowVegProperties_CASA, forcing, land, helpers)
-    @unpack_cFlowVegProperties_CASA p_struct
+function define(params::cFlowVegProperties_CASA, forcing, land, helpers)
+    @unpack_cFlowVegProperties_CASA params
     c_taker ∈ land.cCycleBase
 
     ## instantiate variables
@@ -21,9 +21,9 @@ function define(p_struct::cFlowVegProperties_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::cFlowVegProperties_CASA, forcing, land, helpers)
+function compute(params::cFlowVegProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cFlowVegProperties_CASA p_struct
+    @unpack_cFlowVegProperties_CASA params
 
     ## unpack land variables
     @unpack_land p_F_vec ∈ land.cFlowVegProperties
