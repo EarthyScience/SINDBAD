@@ -72,6 +72,6 @@ instantiate/instantiate time-invariant variables for cTau_mult
 *Created by:*
  - ncarvalhais
 
-Noteswe are multiplying [nPix, nZix]x[nPix, 1] should be OK!
+*Notes:*
 """
 cTau_mult
