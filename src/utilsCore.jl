@@ -16,8 +16,6 @@ export @pack_land, @unpack_land, @unpack_forcing
 export repElem, @rep_elem, repVec, @rep_vec
 export setComponents
 export setComponentFromMainPool, setMainFromComponentPool
-export showParamsOfAModel
-export showParamsOfAllModels
 export SindbadParameters
 export totalS
 
@@ -412,8 +410,8 @@ end
 
 """
 function processPackLand(ex)
-    rename, ex = if ex.args[1] == :(=)
-        ex.args[2], ex.args[3]
+    rename, ex = if ex.head == :(=)
+        ex.args[1], ex.args[2]
     else
         nothing, ex
     end
@@ -791,72 +789,6 @@ end
     return gen_output
 end
 
-"""
-    showParamsOfAllModels(models)
-
-shows the current parameters of all given models
-"""
-function showParamsOfAllModels(models)
-    for mn in sort([nameof.(supertype.(typeof.(models)))...])
-        showParamsOfAModel(models, mn)
-        println("------------------------------------------------------------------")
-    end
-    return nothing
-end
-
-
-"""
-    showParamsOfAModel(models, model::Symbol)
-
-shows the current parameters of a given model (Symbol) [NOT APPRAOCH] based on the list of models provided
-"""
-function showParamsOfAModel(models, model::Symbol)
-    model_names = Symbol.(supertype.(typeof.(models)))
-    approach_names = nameof.(typeof.(models))
-    m_index = findall(m -> m == model, model_names)[1]
-    mod = models[m_index]
-    println("model: $(model_names[m_index])")
-    println("approach: $(approach_names[m_index])")
-    pnames = fieldnames(typeof(mod))
-    p_dict = Sindbad.DataStructures.OrderedDict()
-    if length(pnames) == 0
-        println("parameters: none")
-    else
-        println("parameters:")
-        foreach(pnames) do fn
-            p_dict[fn] = getproperty(mod, fn)
-            println("   $fn => $(getproperty(mod, fn))")
-        end
-    end
-    return p_dict
-end
-
-
-"""
-    showParamsOfAModel(model::LandEcosystem)
-
-shows the current parameters of a given model instance of type LandEcosystem
-"""
-function showParamsOfAModel(mod::Sindbad.LandEcosystem, show=true)
-    pnames = fieldnames(typeof(mod))
-    p_vec = []
-    if show
-        println("parameters:")
-    end
-    if length(pnames) == 0
-        if show
-            println("   non-parametric model")
-        end
-    else
-        p_vec = map(pnames) do fn
-            if show
-                println("   $fn => $(getproperty(mod, fn))")
-            end
-            Pair(fn, getproperty(mod, fn))
-        end
-    end
-    return p_vec
-end
 const SindbadParameters = BoundFields(false)
 
 """
