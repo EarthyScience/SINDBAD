@@ -3,7 +3,6 @@ module SindbadSetup
     using Sindbad
     @reexport using Accessors
     @reexport using ForwardDiff
-    using CodeTracking
     @reexport using CSV: CSV
     @reexport using Dates
     @reexport using Infiltrator
@@ -16,7 +15,12 @@ module SindbadSetup
     include("runtimeDispatchTypes.jl")
     include("getConfiguration.jl")
     include("setupExperimentInfo.jl")
-    include("setupOptimInfo.jl")
+    include("setupTypes.jl")
+    include("setupPools.jl")
+    include("setupParameters.jl")
+    include("setupModels.jl")
+    include("setupOutput.jl")
+    include("setupOptimization.jl")
     include("setupInfo.jl")
 
 end # module SindbadSetup

@@ -1,6 +1,6 @@
 export getConstraintNames
 export getCostOptions
-export setupOptimization
+export setOptim
 
 
 """
@@ -163,18 +163,6 @@ function getConstraintNames(optim::NamedTuple)
     return obs_vars, optim_vars, store_vars, model_vars
 end
 
-
-"""
-    getTypeInstanceForNamedOptions(mode_name)
-
-a helper function to get the type for spinup mode
-"""
-function getTypeInstanceForCostMetric(option_name::String)
-    opt_ss = toUpperCaseFirst(option_name)
-    struct_instance = getfield(SindbadMetrics, opt_ss)()
-    return struct_instance
-end
-
 function getParamModelIDVal(tbl_params)
     param_names = Symbol.(replace.(tbl_params.name_full, "." => "____"))
     model_id = tbl_params.model_id;
@@ -187,11 +175,11 @@ end
 
 
 """
-    setupOptimization(info::NamedTuple)
+    setOptim(info::NamedTuple)
 
 
 """
-function setupOptimization(info::NamedTuple)
+function setOptim(info::NamedTuple)
     info = setTupleField(info, (:optim, (;)))
 
     # set information related to cost metrics for each variable
@@ -248,26 +236,4 @@ function setupOptimization(info::NamedTuple)
     return info
 end
 
-
-
-"""
-    updateVariablesToStore(info::NamedTuple)
-
-sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
-"""
-function updateVariablesToStore(info::NamedTuple)
-    output_vars = info.experiment.model_output.variables
-    if info.experiment.flags.run_optimization
-        output_vars = map(info.optim.variables.obs) do vo
-            vn = getfield(info.optim.variables.optim, vo)
-            Symbol(string(vn[1]) * "." * string(vn[2]))
-        end
-    elseif info.experiment.flags.calc_cost
-        output_vars = union(String.(keys(info.experiment.model_output.variables)),
-                info.optim.variables.model)
-    end
-    out_vars_pairs = Tuple(getVariablePair.(output_vars))
-    info = (; info..., tem=(; info.tem..., variables=out_vars_pairs))
-    return info
-end
 
