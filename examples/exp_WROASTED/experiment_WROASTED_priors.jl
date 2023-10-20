@@ -40,7 +40,7 @@ forcing = getForcing(info);
 #Sindbad.eval(:(error_catcher = []))    
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
@@ -100,11 +100,11 @@ end
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
 opt_params = out_opti.params;
-pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optim)
+pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optimization)
 
 develop_f =
     () -> begin
-        #tbl = getParameters(info.tem.models.forward, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
+        #tbl = getParameters(info.models.forward, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type);
         #code run from @infiltrate in optimizeTEM
         # d = shifloNormal(2,5)
         # using StatsPlots
@@ -112,11 +112,11 @@ develop_f =
 
         tbl_params = getParameters(tem.models.forward, optim.model_parameter_default,
             optim.model_parameters_to_optimize,
-            info.tem.helpers.numbers.sNT)
+            info.helpers.numbers.num_type)
         # get the default and bounds
-        default_values = tem.helpers.numbers.sNT.(tbl_params.default)
-        lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
-        upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
+        default_values = tem.helpers.numbers.num_type.(tbl_params.default)
+        lower_bounds = tem.helpers.numbers.num_type.(tbl_params.lower)
+        upper_bounds = tem.helpers.numbers.num_type.(tbl_params.upper)
 
         run_helpers = prepTEM(forcing, info)
 
@@ -148,7 +148,7 @@ develop_f =
                 run_helpers.loc_forcing_t,
                 run_helpers.space_output,
                 run_helpers.space_land,
-                run_helpers.tem_with_types)
+                run_helpers.tem_info)
         
             # get predictions and observations
             model_output = (; Pair.(output_variables, output)...)

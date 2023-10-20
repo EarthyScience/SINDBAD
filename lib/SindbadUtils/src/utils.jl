@@ -105,7 +105,7 @@ end
 """
 function getAbsDataPath(info, data_path)
     if !isabspath(data_path)
-        data_path = joinpath(info.experiment_root, data_path)
+        data_path = joinpath(info.experiment.dirs.experiment, data_path)
     end
     return data_path
 end

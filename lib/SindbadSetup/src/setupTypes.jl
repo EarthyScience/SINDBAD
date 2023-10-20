@@ -13,7 +13,7 @@ converts the model running related flags to types for dispatch
 """
 function convertRunFlagsToTypes(info)
     new_run = (;)
-    dr = deepcopy(info.experiment.flags)
+    dr = deepcopy(info.settings.experiment.flags)
     for pr in propertynames(dr)
         prf = getfield(dr, pr)
         prtoset = nothing

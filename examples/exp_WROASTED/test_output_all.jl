@@ -40,16 +40,16 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 @time output_all = runExperimentFullOutput(experiment_json; replace_info=replace_info);
 output_data = values(output_all.output);
 info = output_all.info;
-output_vars = info.tem.variables;
+output_vars = info.output.variables;
 # plot the debug figures
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
+fig_prefix = joinpath(info.output.dirs.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
 for (o, v) in enumerate(output_vars)
     def_var = output_data[o][:, :, 1, 1]
-    vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+    vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
     v = vinfo["standard_name"]
     println("plot debug::", v)
-    xdata = [info.tem.helpers.dates.range...]
+    xdata = [info.helpers.dates.range...]
     if size(def_var, 2) == 1
         plot(xdata, def_var[:, 1]; label="def ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
         ylabel!("$(vinfo["standard_name"])", font=(20, :green))

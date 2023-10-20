@@ -8,16 +8,16 @@ parse and save the code and structs of selected model structure for the given ex
 """
 function parseSaveCode(info)
     models = info.tem.models.forward
-    outfile_define = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_definitions.jl")
-    outfile_code = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_functions.jl")
-    outfile_struct = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_structs.jl")
+    outfile_define = joinpath(info.output.dirs.code, info.tem.experiment.basics.name * "_" * info.tem.experiment.basics.domain * "_model_definitions.jl")
+    outfile_code = joinpath(info.output.dirs.code, info.tem.experiment.basics.name * "_" * info.tem.experiment.basics.domain * "_model_functions.jl")
+    outfile_struct = joinpath(info.output.dirs.code, info.tem.experiment.basics.name * "_" * info.tem.experiment.basics.domain * "_model_structs.jl")
     fallback_code_define = nothing
     fallback_code_precompute = nothing
     fallback_code_compute = nothing
 
     # write define
     open(outfile_define, "w") do o_file
-        mod_string = "# code for define functions (variable definition) in models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain. These functions are called just ONCE for variable/array definitions\n"
+        mod_string = "# code for define functions (variable definition) in models of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain. These functions are called just ONCE for variable/array definitions\n"
         write(o_file, mod_string)
         mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in define functions of model approaches in src/Models/[model]/[approach].jl\n"
         write(o_file, mod_string)
@@ -26,7 +26,7 @@ function parseSaveCode(info)
             appr_name = string(nameof(typeof(_mod)))
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
-            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
+            mod_file = joinpath(info.tem.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
             write(o_file, "# " * mod_file * "\n")
             mod_string = "# call order: $mi\n\n"
             write(o_file, mod_string)
@@ -54,8 +54,8 @@ function parseSaveCode(info)
 
     #write precompute and compute
     open(outfile_code, "w") do o_file
-        mod_string = "# code for precompute and compute functions in models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
-        mod_string = "# code for models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain\n"
+        mod_string = "# code for precompute and compute functions in models of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
+        mod_string = "# code for models of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain\n"
         write(o_file, mod_string)
         mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
         write(o_file, mod_string)
@@ -64,7 +64,7 @@ function parseSaveCode(info)
             appr_name = string(nameof(typeof(_mod)))
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
-            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
+            mod_file = joinpath(info.tem.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
             write(o_file, "# " * mod_file * "\n")
             mod_string = "# call order: $mi\n\n"
             write(o_file, mod_string)
@@ -102,7 +102,7 @@ function parseSaveCode(info)
 
     # write structs
     open(outfile_struct, "w") do o_file
-        mod_string = "# code for parameter structs of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain\n"
+        mod_string = "# code for parameter structs of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain\n"
         write(o_file, mod_string)
         mod_string = "# based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
         write(o_file, mod_string)
@@ -111,7 +111,7 @@ function parseSaveCode(info)
         for (mi, _mod) in enumerate(models)
             mod_name = string(nameof(supertype(typeof(_mod))))
             appr_name = string(nameof(typeof(_mod)))
-            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
+            mod_file = joinpath(info.tem.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
             write(o_file, "# " * mod_file * "\n")
@@ -162,18 +162,18 @@ fills info.tem.helpers.dates with date and time related fields needed in the mod
 """
 function setDatesInfo(info::NamedTuple)
     tmp_dates = (;)
-    time_info = getfield(info.experiment.basics, :time)
+    time_info = getfield(info.settings.experiment.basics, :time)
     time_props = propertynames(time_info)
     for time_prop ∈ time_props
         prop_val = getfield(time_info, time_prop)
         if prop_val isa Number
-            prop_val = info.tem.helpers.numbers.sNT(prop_val)
+            prop_val = info.tem.helpers.numbers.num_type(prop_val)
         end
         tmp_dates = setTupleField(tmp_dates, (time_prop, prop_val))
     end
-    timestep = getfield(Dates, Symbol(titlecase(info.experiment.basics.time.temporal_resolution)))(1)
-    time_range = Date(info.experiment.basics.time.date_begin):timestep:Date(info.experiment.basics.time.date_end)
-    tmp_dates = setTupleField(tmp_dates, (:temporal_resolution, info.experiment.basics.time.temporal_resolution))
+    timestep = getfield(Dates, Symbol(titlecase(info.settings.experiment.basics.time.temporal_resolution)))(1)
+    time_range = Date(info.settings.experiment.basics.time.date_begin):timestep:Date(info.settings.experiment.basics.time.date_end)
+    tmp_dates = setTupleField(tmp_dates, (:temporal_resolution, info.settings.experiment.basics.time.temporal_resolution))
     tmp_dates = setTupleField(tmp_dates, (:timestep, timestep))
     tmp_dates = setTupleField(tmp_dates, (:range, time_range))
     tmp_dates = setTupleField(tmp_dates, (:size, length(time_range)))
@@ -185,25 +185,27 @@ end
 """
     setModelRunInfo(info::NamedTuple)
 
-sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
+sets info.tem.output.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
 function setModelRunInfo(info::NamedTuple)
-    if info.experiment.flags.run_optimization
-        info = @set info.experiment.flags.catch_model_errors = false
+    if info.settings.experiment.flags.run_optimization
+        info = @set info.settings.experiment.flags.catch_model_errors = false
     end
     run_vals = convertRunFlagsToTypes(info)
-    output_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.model_output.output_array_type, "Output"))()
+    output_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.model_output.output_array_type, "Output"))()
     run_info = (; run_vals..., output_array_type = output_array_type)
-    run_info = setTupleField(run_info, (:save_single_file, getTypeInstanceForFlags(:save_single_file, info.experiment.model_output.save_single_file, "Do")))
+    run_info = setTupleField(run_info, (:save_single_file, getTypeInstanceForFlags(:save_single_file, info.settings.experiment.model_output.save_single_file, "Do")))
     run_info = setTupleField(run_info, (:use_forward_diff, run_vals.use_forward_diff))
-    parallelization = titlecase(info.experiment.exe_rules.parallelization)
+    run_info = setTupleField(run_info, (:input_data_backend, info.settings.experiment.exe_rules.input_data_backend))
+    run_info = setTupleField(run_info, (:input_array_type, info.settings.experiment.exe_rules.input_array_type))
+
+    parallelization = titlecase(info.settings.experiment.exe_rules.parallelization)
     run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol("Use"*parallelization*"Parallelization"))()))
-    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.exe_rules.land_output_type, "LandOut"))()
+    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "LandOut"))()
     run_info = setTupleField(run_info, (:land_output_type, land_output_type))
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
     return info
 end
-
 
 
 """
@@ -211,39 +213,12 @@ end
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run
 """
-function setNumericHelpers(info::NamedTuple, ttype=info.experiment.exe_rules.model_number_type)
+function setNumericHelpers(info::NamedTuple, ttype=info.settings.experiment.exe_rules.model_number_type)
     num_type = getNumberType(ttype)
-    𝟘 = num_type(0.0)
-    𝟙 = num_type(1.0)
 
-    tolerance = num_type(info.experiment.exe_rules.tolerance)
-    info = (; info..., tem=(;))
-    sNT = (a) -> num_type(a)
-    if occursin("ForwardDiff.Dual", info.experiment.exe_rules.model_number_type)
-        tag_type = ForwardDiff.tagtype(𝟘)
-        @show tag_type, num_type
-        try
-            sNT = (a) -> num_type(tag_type(a))
-            𝟘 = sNT(0.0)
-            𝟙 = sNT(1.0)
-            tolerance = sNT(info.experiment.exe_rules.tolerance)
-        catch
-            sNT = (a) -> num_type(a)
-            𝟘 = sNT(0.0)
-            𝟙 = sNT(1.0)
-            tolerance = sNT(info.experiment.exe_rules.tolerance)
-        end
-    end
-    num_helpers = (;
-        𝟘=𝟘,
-        𝟙=𝟙,
-        tolerance=tolerance,
-        num_type=num_type,
-        sNT=sNT
-    )
-    info = (;
-        info...,
-        tem=(; helpers=(; numbers=num_helpers)))
+    tolerance = num_type(info.settings.experiment.exe_rules.tolerance)
+    num_helpers = (; tolerance=tolerance, num_type=num_type)
+    info = (; info..., tem=(; info.tem..., helpers=(; numbers=num_helpers)))
     return info
 end
 
@@ -251,24 +226,24 @@ end
 """
     setRestartFilePath(info::NamedTuple)
 
-Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
+Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses roots.experiment as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
 """
 function setRestartFilePath(info::NamedTuple)
-    restart_file_in = info.experiment.model_spinup.restart_file
+    restart_file_in = info.settings.experiment.model_spinup.restart_file
     restart_file = nothing
 
     if !isnothing(restart_file_in)
         if restart_file_in[(end-4):end] != ".jld2"
             error(
-                "info.experiment.model_spinup.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.experiment.flags.load_spinup to false."
+                "info.settings.experiment.model_spinup.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.settings.experiment.flags.load_spinup to false."
             )
         end
         if isabspath(restart_file_in)
             restart_file = restart_file_in
         else
-            restart_file = joinpath(info.experiment_root, restart_file_in)
+            restart_file = joinpath(info.tem.experiment.dirs.experiment, restart_file_in)
         end
-        info = @set info.experiment.model_spinup.restart_file = restart_file
+        info = @set info.settings.experiment.model_spinup.restart_file = restart_file
     end
     return info
 end
@@ -281,7 +256,7 @@ uses the configuration info and processes information for spinup
 """
 function setSpinupInfo(info)
     info = setRestartFilePath(info)
-    infospin = info.experiment.model_spinup
+    infospin = info.settings.experiment.model_spinup
     # change spinup sequence dispatch variables to Val, get the temporal aggregators
     seqq = infospin.sequence
     seqq_typed = []
@@ -319,25 +294,46 @@ function setSpinupInfo(info)
     return info
 end
 
+
 """
     setupInfo(info::NamedTuple)
 
-uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
+uses the configuration read from the json files, and copies a set of useful basic experiment info into the tem.experiment
+"""
+function setExperimentBasics(info)
+    ex_basics = info.settings.experiment.basics
+    ex_basics_sel = (;)
+    for k in propertynames(ex_basics)
+        if k !== :config_files
+            if k == :time
+                ex_basics_sel = setTupleField(ex_basics_sel, (:temporal_resolution, getfield(ex_basics[:time], :temporal_resolution)))
+            else
+                ex_basics_sel = setTupleField(ex_basics_sel, (k, getfield(ex_basics, k)))
+            end 
+        end
+    end
+    info = (; info..., tem=(; info.tem..., experiment=(; info.tem.experiment..., basics=ex_basics_sel)))
+    return info
+end
+
+"""
+    setupInfo(info::NamedTuple)
+
+uses the configuration read from the json files, and consolidates and sets info tem fields needed for model simulation
 """
 function setupInfo(info::NamedTuple)
+    @info "  setupInfo: setting basic experiment info..."
+    info = setExperimentBasics(info)
+    @info "  setupInfo: setting Output info..."
+    info = setExperimentOutput(info)
     @info "  setupInfo: setting Numeric Helpers..."
     info = setNumericHelpers(info)
-    @info "  setupInfo: setting Output Helpers..."
-    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., output=info.output)))
     @info "  setupInfo: setting Pools Info..."
     info = setPoolsInfo(info)
     @info "  setupInfo: setting Dates Helpers..."
     info = setDatesInfo(info)
-    selected_models = collect(propertynames(info.model_structure.models))
-    # @show sel
-    # selected_models = (selected_models..., :dummy)
     @info "  setupInfo: setting Model Structure..."
-    info = setOrderedSelectedModels(info, selected_models)
+    info = setOrderedSelectedModels(info)
     info = setSpinupAndForwardModels(info)
 
     @info "  setupInfo:         ...saving Selected Models Code..."
@@ -349,18 +345,24 @@ function setupInfo(info::NamedTuple)
     @info "  setupInfo: setting Spinup Info..."
     info = setSpinupInfo(info)
 
-    @info "  setupInfo: setting Variable Helpers..."
+    @info "  setupInfo: setting Output Variable Helpers..."
     info = setVariablesToStore(info)
 
-    if info.experiment.flags.run_optimization || info.experiment.flags.calc_cost
+    if info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost
         @info "  setupInfo: setting Optimization and Observation info..."
-        info = setOptim(info)
+        info = setOptimization(info)
     end
 
-    if !isnothing(info.experiment.exe_rules.longtuple_size)
-        selected_approach_forward = makeLongTuple(info.tem.models.forward, info.experiment.exe_rules.longtuple_size)
+    if !isnothing(info.settings.experiment.exe_rules.longtuple_size)
+        selected_approach_forward = makeLongTuple(info.tem.models.forward, info.settings.experiment.exe_rules.longtuple_size)
         info = @set info.tem.models.forward = selected_approach_forward
     end
+
+    @info "  setupInfo: cleaning info fields...."
+    info = dropFields(info, (:model_structure, :experiment, :output, :pools))
+
+    info = (; info..., info.tem...)
+    info = dropFields(info, (:tem,))
     return info
 end
 
