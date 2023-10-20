@@ -38,7 +38,7 @@ function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
                 )
             end
             if order_changed_warn
-                @warn "changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
+                @warn "changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.temp.models.selected_models and comparing it with sindbad_models"
                 order_changed_warn = false
             end
             @warn "$(sm) [$(Pair(findfirst(e->e==sm, all_sindbad_models), model_info.order))]"
@@ -137,9 +137,9 @@ function setOrderedSelectedModels(info::NamedTuple)
     end
     @debug "     setupInfo: creating initial out/land..."
 
-    info = (; info..., tem=(; info.tem..., models=(; selected_models=Table((; model=[order_selected_models...])))))
-    land_init = createLandInit(info.pools,info.tem)
-    info = (; info..., tem=(; info.tem..., land_init, models=(; selected_models=Table((; model=[order_selected_models...])))))
+    info = (; info..., temp=(; info.temp..., models=(; selected_models=Table((; model=[order_selected_models...])))))
+    land_init = createLandInit(info.pools, info.temp)
+    info = (; info..., temp=(; info.temp..., land_init, models=(; selected_models=Table((; model=[order_selected_models...])))))
     return info
 end
 
@@ -147,7 +147,7 @@ end
 """
     setSpinupAndForwardModels(info::NamedTuple)
 
-sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run.
+sets the spinup and forward subfields of info.temp.models to select a separated set of model for spinup and forward run.
 
   - allows for a faster spinup if some models can be turned off
   - relies on use_in_spinup flag in model_structure
@@ -157,13 +157,13 @@ function setSpinupAndForwardModels(info::NamedTuple)
     selected_approach_forward = ()
     selected_approach_spinup = ()
     is_spinup = Int64[]
-    order_selected_models = info.tem.models.selected_models.model
+    order_selected_models = info.temp.models.selected_models.model
     default_model = getfield(info.settings.model_structure, :default_model)
     for sm ∈ order_selected_models
         model_info = getfield(info.settings.model_structure.models, sm)
         selected_approach = model_info.approach
         selected_approach = String(sm) * "_" * selected_approach
-        selected_approach_func = getTypedModel(Symbol(selected_approach), info.tem.helpers.numbers.num_type)
+        selected_approach_func = getTypedModel(Symbol(selected_approach), info.temp.helpers.numbers.num_type)
         # selected_approach_func = getfield(Sindbad.Models, Symbol(selected_approach))()
         selected_approach_forward = (selected_approach_forward..., selected_approach_func)
         if :use_in_spinup in propertynames(model_info)
@@ -187,6 +187,6 @@ function setSpinupAndForwardModels(info::NamedTuple)
         updated_params = setInputParameters(original_params_forward, input_params)
         selected_approach_forward = updateModelParameters(updated_params, selected_approach_forward)
     end
-    info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=selected_approach_forward, is_spinup=is_spinup))) 
+    info = (; info..., temp=(; info.temp..., models=(; info.temp.models..., forward=selected_approach_forward, is_spinup=is_spinup))) 
     return info
 end

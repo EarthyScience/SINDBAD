@@ -1,7 +1,73 @@
 export getDepthDimensionSizeName
+export getDepthInfoAndVariables
 export setVariablesToStore
 export updateVariablesToStore
 
+"""
+    getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land::NamedTuple)
+
+a helper function to get the name and size of the depth dimension for a given variable
+
+# Arguments:
+- `vname`: variable name
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `land`: SINDBAD land with all fields and subfields
+"""
+function getDepthDimensionSizeName(v_full_pair, info::NamedTuple)
+    v_full_str = getVariableString(v_full_pair)
+    v_full_sym = Symbol(v_full_str)
+    v_name = split(v_full_str, '.')[end]
+    dim_size = 1
+    dim_name = v_name * "_idx"
+    tmp_vars = nothing
+    tmp_vars = info.settings.experiment.model_output.variables
+    if v_full_sym in keys(tmp_vars)
+        v_dim = tmp_vars[v_full_sym]
+        dim_size = 1
+        dim_name = v_name * "_idx"
+        if !isnothing(v_dim) && isa(v_dim, String)
+            dim_name = v_dim
+        end
+        if isnothing(v_dim)
+            dim_size = dim_size
+        elseif isa(v_dim, Int64)
+            dim_size = v_dim
+        elseif isa(v_dim, String)
+            if Symbol(v_dim) in keys(info.settings.experiment.model_output.depth_dimensions)
+                dim_size_K = getfield(info.settings.experiment.model_output.depth_dimensions, Symbol(v_dim))
+                if isa(dim_size_K, Int64)
+                    dim_size = dim_size_K
+                elseif isa(dim_size_K, String)
+                    dim_size = getPoolSize(info.temp.helpers.pools, Symbol(dim_size_K))
+                end
+            else
+                error(
+                    "The output depth dimension for $(v_name) is specified as $(v_dim) but this key does not exist in depth_dimensions. Either add it to depth_dimensions or add a numeric value."
+                )
+            end
+        else
+            error(
+                "The depth dimension for $(v_name) is specified as $(typeof(v_dim)). Only null, integers, or string keys to depth_dimensions are accepted."
+            )
+        end
+    end
+    return dim_size, dim_name
+end
+
+
+"""
+    getDepthInfo(output_vars)
+
+return a vector of tuple with size and name as the first and the second element
+"""
+function getDepthInfoAndVariables(info, output_vars)
+    out_vars_pairs = Tuple(getVariablePair.(output_vars))
+    depth_info = map(out_vars_pairs) do vname_full
+        getDepthDimensionSizeName(vname_full, info)
+    end
+    output_info=(; info.output..., depth_info, variables=out_vars_pairs)
+    return output_info
+end
 
 """
     getPoolSize(info_pools::NamedTuple, pool_name::Symbol)
@@ -86,7 +152,6 @@ function getVariablePair(out_var::String)
     return Tuple(Symbol.(split(string(out_var), sep)))
 end
 
-
 """
     getVariablePair(out_var)
 
@@ -107,97 +172,15 @@ function getVariableString(var_pair::Tuple, sep=".")
 end
 
 
-"""
-    getDepthInfo(output_vars)
 
-return a vector of tuple with size and name as the first and the second element
 """
-function getDepthInfoAndVariables(info, output_vars)
-    out_vars_pairs = Tuple(getVariablePair.(output_vars))
-    depth_info = map(out_vars_pairs) do vname_full
-        getDepthDimensionSizeName(vname_full, info, nothing)
-    end
-    output_info=(; info.output..., depth_info, variables=out_vars_pairs)
-    return output_info
-end
-"""
-    getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land::NamedTuple)
+    setExperimentOutput(info)
 
-a helper function to get the name and size of the depth dimension for a given variable
-
-# Arguments:
-- `vname`: variable name
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `land`: SINDBAD land with all fields and subfields
-"""
-function getDepthDimensionSizeName(v_full_pair, info::NamedTuple, land)
-    v_full_str = getVariableString(v_full_pair)
-    v_full_sym = Symbol(v_full_str)
-    field_name = first(split(v_full_str, '.'))
-    v_name = split(v_full_str, '.')[end]
-    dim_size = 1
-    dim_name = v_name * "_idx"
-    tmp_vars = nothing
-    if hasproperty(info, :settings) && hasproperty(info, :tem)
-        tmp_vars = info.settings.experiment.model_output.variables
-        field_name_sym = Symbol(field_name)
-        v_name_sym = Symbol(v_name)
-        @show field_name_sym, v_name_sym
-        if v_full_sym in keys(tmp_vars)
-            v_dim = tmp_vars[v_full_sym]
-            dim_size = 1
-            dim_name = v_name * "_idx"
-            if !isnothing(v_dim) && isa(v_dim, String)
-                dim_name = v_dim
-            end
-            if isnothing(v_dim)
-                dim_size = dim_size
-            elseif isa(v_dim, Int64)
-                dim_size = v_dim
-            elseif isa(v_dim, String)
-                if Symbol(v_dim) in keys(info.settings.experiment.model_output.depth_dimensions)
-                    dim_size_K = getfield(info.settings.experiment.model_output.depth_dimensions, Symbol(v_dim))
-                    if isa(dim_size_K, Int64)
-                        dim_size = dim_size_K
-                    elseif isa(dim_size_K, String)
-                        dim_size = getPoolSize(info.tem.helpers.pools, Symbol(dim_size_K))
-                    end
-                else
-                    error(
-                        "The output depth dimension for $(v_name) is specified as $(v_dim) but this key does not exist in depth_dimensions. Either add it to depth_dimensions or add a numeric value."
-                    )
-                end
-            else
-                error(
-                    "The depth dimension for $(v_name) is specified as $(typeof(v_dim)). Only null, integers, or string keys to depth_dimensions are accepted."
-                )
-            end
+save a copy of experiment settings to the output folder
     
-        elseif !isnothing(land) && hasproperty(land, field_name_sym)
-            land_field = getproperty(land, field_name_sym)
-            if hasproperty(land_field, v_name_sym)
-                land_subfield = getproperty(land_field, v_name_sym)
-                if isa(land_subfield, AbstractArray)
-                    dim_size = length(land_subfield)
-                elseif isa(land_subfield, Number)
-                    dim_size = 1
-                else
-                    dim_size = 0
-                end
-            end
-        end
-    else
-        v_index = findfirst(x -> first(x) === first(v_full_pair) && last(x) === last(v_full_pair), info.output.variables)
-        return first(info.output.depth_info[v_index]), last(info.output.depth_info[v_index])
-    end
-
-    return dim_size, dim_name
-end
-
-
-
+"""
 function saveExperimentSettings(info)
-    sindbad_experiment = info.tem.experiment.dirs.sindbad_experiment
+    sindbad_experiment = info.temp.experiment.dirs.sindbad_experiment
     @info "  saveExperimentSettings:: Saving a copy of json settings to: $(info.output.dirs.settings)"
     cp(sindbad_experiment,
         joinpath(info.output.dirs.settings, split(sindbad_experiment, path_separator)[end]);
@@ -219,7 +202,7 @@ function setExperimentOutput(info)
     path_output = info[:settings][:experiment][:model_output][:path]
     if isnothing(path_output)
         path_output_new = "output_"
-        path_output_new = joinpath(join(split(info.tem.experiment.dirs.settings, path_separator)[1:(end-1)], path_separator),
+        path_output_new = joinpath(join(split(info.temp.experiment.dirs.settings, path_separator)[1:(end-1)], path_separator),
             path_output_new)
     elseif !isabspath(path_output)
         if !occursin(path_separator, path_output)
@@ -227,12 +210,12 @@ function setExperimentOutput(info)
         else
             path_output_new = "output_" * replace(path_output, path_separator => "_")
         end
-        path_output_new = joinpath(join(split(info.tem.experiment.dirs.settings, path_separator)[1:(end-1)], path_separator),
+        path_output_new = joinpath(join(split(info.temp.experiment.dirs.settings, path_separator)[1:(end-1)], path_separator),
             path_output_new)
     else
-        if occursin(info.tem.experiment.dirs.sindbad, path_output)
+        if occursin(info.temp.experiment.dirs.sindbad, path_output)
             error(
-                "You cannot specify output.path: $(path_output) in model_run.json as the absolute path within the sindbad_root: $(info.tem.experiment.dirs.sindbad). Change it to null or a relative path or set output directory outside sindbad."
+                "You cannot specify output.path: $(path_output) in model_run.json as the absolute path within the sindbad_root: $(info.temp.experiment.dirs.sindbad). Change it to null or a relative path or set output directory outside sindbad."
             )
         else
             path_output_new = path_output
@@ -241,7 +224,7 @@ function setExperimentOutput(info)
             end
         end
     end
-    path_output_new = path_output_new * info.tem.experiment.basics.domain * "_" * info.tem.experiment.basics.name
+    path_output_new = path_output_new * info.temp.experiment.basics.domain * "_" * info.temp.experiment.basics.name
 
     # create output and subdirectories
     sub_output = ["code", "data", "figure", "root", "settings"]
@@ -259,7 +242,7 @@ function setExperimentOutput(info)
         end
     end
     global_metadata = getGlobalAttributesForOutCubes(info)
-    file_prefix = joinpath(out_info.dirs.data, info.tem.experiment.basics.name * "_" * info.tem.experiment.basics.domain)
+    file_prefix = joinpath(out_info.dirs.data, info.temp.experiment.basics.name * "_" * info.temp.experiment.basics.domain)
     out_file_info = (; global_metadata=global_metadata, file_prefix=file_prefix)
     out_info = (; out_info..., file_info=out_file_info)  
     info = setTupleField(info, (:output, out_info))
@@ -272,11 +255,11 @@ end
 """
     setVariablesToStore(info::NamedTuple)
 
-sets info.tem.output.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
+sets info.temp.output.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
 function setVariablesToStore(info::NamedTuple)
     output_vars = collect(propertynames(info.settings.experiment.model_output.variables))
-    info = (; info..., tem=(; info.tem..., output=getDepthInfoAndVariables(info, output_vars)))
+    info = (; info..., temp=(; info.temp..., output=getDepthInfoAndVariables(info, output_vars)))
     return info
 end
 
@@ -285,7 +268,7 @@ end
 """
     updateVariablesToStore(info::NamedTuple)
 
-sets info.tem.output.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
+updates the output variables in case of optimization or cost run
 """
 function updateVariablesToStore(info::NamedTuple)
     output_vars = info.settings.experiment.model_output.variables
@@ -298,6 +281,6 @@ function updateVariablesToStore(info::NamedTuple)
         output_vars = union(String.(keys(info.settings.experiment.model_output.variables)),
                 info.optimization.variables.model)
     end
-    info = (; info..., tem=(; info.tem..., output=getDepthInfoAndVariables(info, output_vars)))
+    info = (; info..., temp=(; info.temp..., output=getDepthInfoAndVariables(info, output_vars)))
     return info
 end

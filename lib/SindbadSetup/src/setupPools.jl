@@ -5,7 +5,7 @@ export setPoolsInfo
 """
     setPoolsInfo(info::NamedTuple)
 
-generates the info.tem.helpers.pools and info.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
+generates the info.temp.helpers.pools and info.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
 
 """
 function setPoolsInfo(info::NamedTuple)
@@ -27,10 +27,10 @@ function setPoolsInfo(info::NamedTuple)
         pool_info = getfield(getfield(info.settings.model_structure.pools, element), :components)
         nlayers = Int64[]
         # layer_thicknesses = []
-        layer_thicknesses = info.tem.helpers.numbers.num_type[]
+        layer_thicknesses = info.temp.helpers.numbers.num_type[]
         layer = Int64[]
         inits = []
-        # inits = info.tem.helpers.numbers.num_type[]
+        # inits = info.temp.helpers.numbers.num_type[]
         sub_pool_name = Symbol[]
         main_pool_name = Symbol[]
         main_pools =
@@ -63,7 +63,7 @@ function setPoolsInfo(info::NamedTuple)
         for main_pool ∈ main_pool_name
             zix = Int[]
             initial_values = []
-            # initial_values = info.tem.helpers.numbers.num_type[]
+            # initial_values = info.temp.helpers.numbers.num_type[]
             components = Symbol[]
             for (ind, par) ∈ enumerate(sub_pool_name)
                 if startswith(String(par), String(main_pool))
@@ -74,7 +74,7 @@ function setPoolsInfo(info::NamedTuple)
             end
             initial_values = createArrayofType(initial_values,
                 Nothing[],
-                info.tem.helpers.numbers.num_type,
+                info.temp.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -88,7 +88,7 @@ function setPoolsInfo(info::NamedTuple)
             hlp_elem = setTupleSubfield(hlp_elem, :components, (main_pool, Tuple(components)))
             onetyped = createArrayofType(ones(size(initial_values)),
                 Nothing[],
-                info.tem.helpers.numbers.num_type,
+                info.temp.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -110,9 +110,9 @@ function setPoolsInfo(info::NamedTuple)
         for sub_pool ∈ unique_sub_pools
             zix = Int[]
             initial_values = []
-            # initial_values = info.tem.helpers.numbers.num_type[]
+            # initial_values = info.temp.helpers.numbers.num_type[]
             components = Symbol[]
-            ltck = info.tem.helpers.numbers.num_type[]
+            ltck = info.temp.helpers.numbers.num_type[]
             # ltck = []
             for (ind, par) ∈ enumerate(sub_pool_name)
                 if par == sub_pool
@@ -125,7 +125,7 @@ function setPoolsInfo(info::NamedTuple)
             zix = Tuple(zix)
             initial_values = createArrayofType(initial_values,
                 Nothing[],
-                info.tem.helpers.numbers.num_type,
+                info.temp.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -138,7 +138,7 @@ function setPoolsInfo(info::NamedTuple)
             hlp_elem = setTupleSubfield(hlp_elem, :components, (sub_pool, Tuple(components)))
             onetyped = createArrayofType(ones(size(initial_values)),
                 Nothing[],
-                info.tem.helpers.numbers.num_type,
+                info.temp.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -165,7 +165,7 @@ function setPoolsInfo(info::NamedTuple)
             initial_values = inits
             initial_values = createArrayofType(initial_values,
                 Nothing[],
-                info.tem.helpers.numbers.num_type,
+                info.temp.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -178,7 +178,7 @@ function setPoolsInfo(info::NamedTuple)
             hlp_elem = setTupleSubfield(hlp_elem, :zix, (combined_pool_name, zix))
             onetyped = createArrayofType(ones(size(initial_values)),
                 Nothing[],
-                info.tem.helpers.numbers.num_type,
+                info.temp.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -241,9 +241,9 @@ function setPoolsInfo(info::NamedTuple)
     end
     # hlt_new = setTupleField(hlp_new, (:vals, hlp_states.vals))
     # info = (; info..., pools=tmp_states)
-    # info = (; info..., tem=(; info.tem..., pools=tmp_states))
-    info = (; info..., pools=tmp_states, tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_new)))
-    # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_states)))
+    # info = (; info..., temp=(; info.temp..., pools=tmp_states))
+    info = (; info..., pools=tmp_states, temp=(; info.temp..., helpers=(; info.temp.helpers..., pools=hlp_new)))
+    # info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., pools=hlp_states)))
     return info
 end
 
