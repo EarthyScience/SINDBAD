@@ -188,7 +188,7 @@ for o_set in opti_set
     output_array_opt = values(opt_dat)
     output_array_def = values(def_dat)
     output_vars = info.output.variables
-    output_dims = getOutDims(output_vars, info, out_opti.forcing.helpers);
+    output_dims = getOutDims(info, out_opti.forcing.helpers);
 
     saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, output_array_opt, output_dims, output_vars, "zarr", info.experiment.basics.temporal_resolution, DoSaveSingleFile())
     saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, output_array_opt, output_dims, output_vars, "zarr", info.experiment.basics.temporal_resolution, DoNotSaveSingleFile())

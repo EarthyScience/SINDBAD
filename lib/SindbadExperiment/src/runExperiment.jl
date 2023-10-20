@@ -73,7 +73,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForwa
         run_output = runTEMYax(
             info.models.forward,
             forcing,
-            info.tem)
+            info)
     else
         run_output = runTEM!(forcing, info)
         run_output = (; Pair.(getUniqueVarNames(info.output.variables), run_output)...)

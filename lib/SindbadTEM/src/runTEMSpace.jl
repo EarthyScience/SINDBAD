@@ -16,7 +16,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 - `loc_land`: initial SINDBAD land with all fields and subfields
 - `tem_info`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
-- `::DoNotSpinupTEM`: a type to dispatch without spinup
+- `::DoNotSpinupTEM`: a type dispatch to indicate that spinup is excluded
 """
 function coreTEM!(selected_models, loc_forcing, _, loc_forcing_t, loc_output, loc_land, tem_info,::DoNotSpinupTEM) # without spinup
 
@@ -40,7 +40,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 - `loc_land`: initial SINDBAD land with all fields and subfields
 - `tem_info`: helper NT with necessary objects for model run and type consistencies
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `DoSpinupTEM`: a flag to indicate that spinup is included
+- `::DoSpinupTEM`: a type dispatch to indicate that spinup is included
 """
 function coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, loc_land, tem_info, ::DoSpinupTEM) # with spinup
 
