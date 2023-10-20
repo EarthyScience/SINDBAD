@@ -10,10 +10,10 @@ checks if the parameters listed in model_parameters_to_optimize of optimization.
 """
 function checkOptimizedParametersInModels(info::NamedTuple)
     # @show info.settings.optimization.observations, info.settings.optimization.model_parameters_to_optimize
-    tbl_params = getParameters(info.tem.models.forward,
+    tbl_params = getParameters(info.temp.models.forward,
         info.settings.optimization.model_parameter_default,
         info.settings.optimization.model_parameters_to_optimize,
-        info.tem.helpers.numbers.num_type)
+        info.temp.helpers.numbers.num_type)
     model_parameters = tbl_params.name_full
     # @show model_parameters
     optim_parameters = info.settings.optimization.model_parameters_to_optimize
@@ -200,7 +200,7 @@ function setOptimization(info::NamedTuple)
     if endswith(optim_algorithm, ".json")
         options_path = optim_algorithm
         if !isabspath(options_path)
-            options_path = joinpath(info.tem.experiment.dirs.settings, options_path)
+            options_path = joinpath(info.temp.experiment.dirs.settings, options_path)
         end
         options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
         options = dictToNamedTuple(options)
@@ -214,10 +214,10 @@ function setOptimization(info::NamedTuple)
     end
     info = setTupleSubfield(info, :optimization, (:algorithm, tmp_algorithm))
 
-    tbl_params = getParameters(info.tem.models.forward,
+    tbl_params = getParameters(info.temp.models.forward,
     info.settings.optimization.model_parameter_default,
     info.settings.optimization.model_parameters_to_optimize,
-    info.tem.helpers.numbers.num_type);
+    info.temp.helpers.numbers.num_type);
 
     param_model_id_val = getParamModelIDVal(tbl_params)
     info = setTupleSubfield(info, :optimization, (:param_model_id_val, param_model_id_val))
@@ -231,7 +231,7 @@ function setOptimization(info::NamedTuple)
     vars_info = setTupleField(vars_info, (:model, model_vars))
     info = setTupleSubfield(info, :optimization, (:variables, (vars_info)))
     info = updateVariablesToStore(info)
-    cost_options = getCostOptions(info.settings.optimization, vars_info, info.tem.output.variables, info.tem.helpers.numbers, info.tem.helpers.dates)
+    cost_options = getCostOptions(info.settings.optimization, vars_info, info.temp.output.variables, info.temp.helpers.numbers, info.temp.helpers.dates)
     info = setTupleSubfield(info, :optimization, (:cost_options, cost_options))
     return info
 end

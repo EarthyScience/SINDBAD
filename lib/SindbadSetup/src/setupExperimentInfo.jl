@@ -37,8 +37,8 @@ function getGlobalAttributesForOutCubes(info)
     # sindbad_version = String(take!(io))
     global_attr = Dict(
         "simulation_by" => ENV["USER"],
-        "experiment" => info.tem.experiment.basics.name,
-        "domain" => info.tem.experiment.basics.domain,
+        "experiment" => info.temp.experiment.basics.name,
+        "domain" => info.temp.experiment.basics.domain,
         "date" => string(Date(now())),
         # "SINDBAD" => sindbad_version,
         "machine" => Sys.MACHINE,
