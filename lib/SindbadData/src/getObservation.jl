@@ -67,9 +67,9 @@ end
 
 """
 function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
-    data_path = info.optimization.observations.default_observation.data_path
-    data_backend = getfield(SindbadData, toUpperCaseFirst(info.experiment.exe_rules.input_data_backend, "Backend"))()
-    default_info = info.optimization.observations.default_observation
+    data_path = info.settings.optimization.observations.default_observation.data_path
+    data_backend = getfield(SindbadData, toUpperCaseFirst(info.settings.experiment.exe_rules.input_data_backend, "Backend"))()
+    default_info = info.settings.optimization.observations.default_observation
     tar_dims = getTargetDimensionOrder(info)
 
     nc = nothing
@@ -80,37 +80,37 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         nc = loadDataFile(data_path)
     end
 
-    varnames = Symbol.(info.optimization.observational_constraints)
+    varnames = Symbol.(info.settings.optimization.observational_constraints)
 
     yax_mask = nothing
-    if :one_sel_mask ∈ keys(info.optimization.observations)
-        if !isnothing(info.optimization.observations.one_sel_mask)
-            mask_path = getAbsDataPath(info, info.optimization.observations.one_sel_mask)
+    if :one_sel_mask ∈ keys(info.settings.optimization.observations)
+        if !isnothing(info.settings.optimization.observations.one_sel_mask)
+            mask_path = getAbsDataPath(info, info.settings.optimization.observations.one_sel_mask)
             _, yax_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, data_backend)
             yax_mask = booleanizeArray(yax_mask)
         end
     end
     obscubes = []
-    num_type = Val{info.tem.helpers.numbers.num_type}()
+    num_type = Val{info.helpers.numbers.num_type}()
     num_type_bool = Val{Bool}()
 
     @info "getObservation: getting observation variables..."
     map(varnames) do k
         @info " constraint: $k"
 
-        vinfo = getproperty(info.optimization.observations.variables, k)
+        vinfo = getproperty(info.settings.optimization.observations.variables, k)
 
         src_var = vinfo.data.source_variable
 
         nc, yax, vinfo_data, bounds_data = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :data, info)
 
-        # get quality flags data and use it later to mask observations. Set to value of 1 when :qflag field is not given for a data stream or all are turned off by setting info.optimization.observations.use_quality_flag to false
-        nc_qc, yax_qc, vinfo_qc, bounds_qc = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :qflag, info; yax=yax, use_data_sub=info.optimization.observations.use_quality_flag)
+        # get quality flags data and use it later to mask observations. Set to value of 1 when :qflag field is not given for a data stream or all are turned off by setting info.settings.optimization.observations.use_quality_flag to false
+        nc_qc, yax_qc, vinfo_qc, bounds_qc = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :qflag, info; yax=yax, use_data_sub=info.settings.optimization.observations.use_quality_flag)
 
-        # get uncertainty data and add to observations. Set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.optimization.observations.use_uncertainty to false
-        nc_unc, yax_unc, vinfo_unc, bounds_unc = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :unc, info; yax=yax, use_data_sub=info.optimization.observations.use_uncertainty)
+        # get uncertainty data and add to observations. Set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.settings.optimization.observations.use_uncertainty to false
+        nc_unc, yax_unc, vinfo_unc, bounds_unc = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :unc, info; yax=yax, use_data_sub=info.settings.optimization.observations.use_uncertainty)
 
-        nc_wgt, yax_wgt, vinfo_wgt, bounds_wgt = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :weight, info; yax=yax, use_data_sub=info.optimization.observations.use_spatial_weight)
+        nc_wgt, yax_wgt, vinfo_wgt, bounds_wgt = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :weight, info; yax=yax, use_data_sub=info.settings.optimization.observations.use_spatial_weight)
 
         _, yax_mask_v, vinfo_mask, bounds_mask = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :sel_mask, info; yax=yax)
         yax_mask_v = booleanizeArray(yax_mask_v)
@@ -137,7 +137,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     end
     @info "getObservation: getting observation helpers..."
     @debug "getObservation: getting observation dimensions..."
-    indims = getDataDims.(obscubes, Ref(info.forcing.data_dimension.space))
+    indims = getDataDims.(obscubes, Ref(info.settings.forcing.data_dimension.space))
     @debug "getObservation: getting number of time steps..."
     nts = forcing_helpers.sizes
     @debug "getObservation: getting variable name..."
@@ -148,7 +148,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(varnames_all, Symbol(string(v) * "_mask"))
         push!(varnames_all, Symbol(string(v) * "_weight"))
     end
-    input_array_type = getfield(SindbadData, toUpperCaseFirst(info.experiment.exe_rules.input_array_type, "Input"))()
+    input_array_type = getfield(SindbadData, toUpperCaseFirst(info.settings.experiment.exe_rules.input_array_type, "Input"))()
     @info "\n----------------------------------------------\n"
     return (; data=getInputArrayOfType(obscubes, input_array_type), dims=indims, variables=Tuple(varnames_all))
 end
