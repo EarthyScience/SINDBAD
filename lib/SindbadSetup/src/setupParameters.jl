@@ -1,17 +1,17 @@
 export getParameters
 
 """
-    getParameters(selected_models)
+    getParameters(selected_models, num_type; return_table=true)
 
 
 """
-function getParameters(selected_models_in::LongTuple, num_type; return_table=true)
-    selected_models = getTupleFromLongTable(selected_models_in)
+function getParameters(selected_models::LongTuple, num_type; return_table=true)
+    selected_models = getTupleFromLongTable(selected_models)
     return getParameters(selected_models, num_type; return_table=return_table)
 end
 
 """
-    getParameters(selected_models)
+    getParameters(selected_models, num_type; return_table=true)
 
 
 """
@@ -56,7 +56,7 @@ end
 
 
 """
-    getParameters(selected_models, model_parameter_default)
+    getParameters(selected_models, model_parameter_default, num_type)
 
 retrieve all model parameters
 """
@@ -72,7 +72,7 @@ function getParameters(selected_models, model_parameter_default, num_type)
 end
 
 """
-    getParameters(selected_models, model_parameter_default, opt_parameter::Vector)
+    getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type)
 
 
 
@@ -88,7 +88,7 @@ function getParameters(selected_models, model_parameter_default, opt_parameter::
 end
 
 """
-    getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple)
+    getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type)
 
 
 

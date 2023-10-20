@@ -9,10 +9,10 @@ generates the info.tem.helpers.pools and info.pools. The first one is used in th
 
 """
 function setPoolsInfo(info::NamedTuple)
-    elements = keys(info.model_structure.pools)
+    elements = keys(info.settings.model_structure.pools)
     tmp_states = (;)
     hlp_states = (;)
-    model_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.exe_rules.model_array_type, "ModelArray"))()
+    model_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.model_array_type, "ModelArray"))()
 
     for element ∈ elements
         vals_tuple = (;)
@@ -24,7 +24,7 @@ function setPoolsInfo(info::NamedTuple)
         hlp_elem = (;)
         tmp_states = setTupleField(tmp_states, (elSymbol, (;)))
         hlp_states = setTupleField(hlp_states, (elSymbol, (;)))
-        pool_info = getfield(getfield(info.model_structure.pools, element), :components)
+        pool_info = getfield(getfield(info.settings.model_structure.pools, element), :components)
         nlayers = Int64[]
         # layer_thicknesses = []
         layer_thicknesses = info.tem.helpers.numbers.num_type[]
@@ -34,7 +34,7 @@ function setPoolsInfo(info::NamedTuple)
         sub_pool_name = Symbol[]
         main_pool_name = Symbol[]
         main_pools =
-            Symbol.(keys(getfield(getfield(info.model_structure.pools, element),
+            Symbol.(keys(getfield(getfield(info.settings.model_structure.pools, element),
                 :components)))
         layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name =
             getPoolInformation(main_pools,
@@ -74,7 +74,7 @@ function setPoolsInfo(info::NamedTuple)
             end
             initial_values = createArrayofType(initial_values,
                 Nothing[],
-                info.tem.helpers.numbers.sNT,
+                info.tem.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -88,14 +88,14 @@ function setPoolsInfo(info::NamedTuple)
             hlp_elem = setTupleSubfield(hlp_elem, :components, (main_pool, Tuple(components)))
             onetyped = createArrayofType(ones(size(initial_values)),
                 Nothing[],
-                info.tem.helpers.numbers.sNT,
+                info.tem.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
             # onetyped = ones(length(initial_values))
             hlp_elem = setTupleSubfield(hlp_elem,
                 :zeros,
-                (main_pool, onetyped .* info.tem.helpers.numbers.𝟘))
+                (main_pool, zero(onetyped)))
             hlp_elem = setTupleSubfield(hlp_elem, :ones, (main_pool, onetyped))
             # hlp_elem = setTupleSubfield(hlp_elem, :zeros, (main_pool, zeros(initial_values)))
         end
@@ -125,7 +125,7 @@ function setPoolsInfo(info::NamedTuple)
             zix = Tuple(zix)
             initial_values = createArrayofType(initial_values,
                 Nothing[],
-                info.tem.helpers.numbers.sNT,
+                info.tem.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -138,18 +138,18 @@ function setPoolsInfo(info::NamedTuple)
             hlp_elem = setTupleSubfield(hlp_elem, :components, (sub_pool, Tuple(components)))
             onetyped = createArrayofType(ones(size(initial_values)),
                 Nothing[],
-                info.tem.helpers.numbers.sNT,
+                info.tem.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
             # onetyped = ones(length(initial_values))
             hlp_elem = setTupleSubfield(hlp_elem, :zeros,
-                (sub_pool, onetyped .* info.tem.helpers.numbers.𝟘))
+                (sub_pool, zero(onetyped)))
             hlp_elem = setTupleSubfield(hlp_elem, :ones, (sub_pool, onetyped))
         end
 
         ## combined pools
-        combine_pools = (getfield(getfield(info.model_structure.pools, element), :combine))
+        combine_pools = (getfield(getfield(info.settings.model_structure.pools, element), :combine))
         do_combine = true
         tmp_elem = setTupleField(tmp_elem, (:combine, (; docombine=true, pool=Symbol(combine_pools))))
         if do_combine
@@ -165,7 +165,7 @@ function setPoolsInfo(info::NamedTuple)
             initial_values = inits
             initial_values = createArrayofType(initial_values,
                 Nothing[],
-                info.tem.helpers.numbers.sNT,
+                info.tem.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -178,7 +178,7 @@ function setPoolsInfo(info::NamedTuple)
             hlp_elem = setTupleSubfield(hlp_elem, :zix, (combined_pool_name, zix))
             onetyped = createArrayofType(ones(size(initial_values)),
                 Nothing[],
-                info.tem.helpers.numbers.sNT,
+                info.tem.helpers.numbers.num_type,
                 nothing,
                 true,
                 model_array_type)
@@ -192,20 +192,20 @@ function setPoolsInfo(info::NamedTuple)
             # onetyped = ones(length(initial_values))
             hlp_elem = setTupleSubfield(hlp_elem,
                 :zeros,
-                (combined_pool_name, onetyped .* info.tem.helpers.numbers.𝟘))
+                (combined_pool_name, zero(onetyped)))
             hlp_elem = setTupleSubfield(hlp_elem, :ones, (combined_pool_name, onetyped))
         else
             create = Symbol.(unique_sub_pools)
         end
 
         # check if additional variables exist
-        if hasproperty(getfield(info.model_structure.pools, element), :state_variables)
-            state_variables = getfield(getfield(info.model_structure.pools, element), :state_variables)
+        if hasproperty(getfield(info.settings.model_structure.pools, element), :state_variables)
+            state_variables = getfield(getfield(info.settings.model_structure.pools, element), :state_variables)
             tmp_elem = setTupleField(tmp_elem, (:state_variables, state_variables))
         end
         arraytype = :view
-        if hasproperty(info.experiment.exe_rules, :model_array_type)
-            arraytype = Symbol(info.experiment.exe_rules.model_array_type)
+        if hasproperty(info.settings.experiment.exe_rules, :model_array_type)
+            arraytype = Symbol(info.settings.experiment.exe_rules.model_array_type)
         end
         tmp_elem = setTupleField(tmp_elem, (:arraytype, arraytype))
         tmp_elem = setTupleField(tmp_elem, (:create, create))
@@ -240,9 +240,9 @@ function setPoolsInfo(info::NamedTuple)
         hlp_new = hlp_states
     end
     # hlt_new = setTupleField(hlp_new, (:vals, hlp_states.vals))
-    info = (; info..., pools=tmp_states)
+    # info = (; info..., pools=tmp_states)
     # info = (; info..., tem=(; info.tem..., pools=tmp_states))
-    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_new)))
+    info = (; info..., pools=tmp_states, tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_new)))
     # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_states)))
     return info
 end
@@ -272,7 +272,7 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                 (tocr,
                     createArrayofType(input_values,
                         Nothing[],
-                        tem_helpers.numbers.sNT,
+                        tem_helpers.numbers.num_type,
                         nothing,
                         true,
                         model_array_type)))
@@ -289,7 +289,7 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                     input_values = deepcopy(getfield(initial_values, component))
                     compdat = createArrayofType(input_values,
                         pool_array,
-                        tem_helpers.numbers.sNT,
+                        tem_helpers.numbers.num_type,
                         indx,
                         false,
                         model_array_type)
@@ -319,11 +319,11 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                 avv = getproperty(additional_state_vars, avk)
                 Δtocr = Symbol(string(avk) * string(tocr))
                 vals =
-                    zero(getfield(initial_values, tocr)) .+ tem_helpers.numbers.𝟙 *
-                                                      tem_helpers.numbers.sNT(avv)
+                    one.(getfield(initial_values, tocr)) *
+                                                      tem_helpers.numbers.num_type(avv)
                 newvals = createArrayofType(vals,
                     Nothing[],
-                    tem_helpers.numbers.sNT,
+                    tem_helpers.numbers.num_type,
                     nothing,
                     true,
                     model_array_type)
@@ -343,10 +343,10 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                     if component != combined_pool_name
                         Δ_component = Symbol(string(avk) * string(component))
                         indx = getfield(zix_pool, component)
-                        Δ_compdat = createArrayofType((zero(getfield(initial_values, component)) .+ tem_helpers.numbers.𝟙) .*
-                                                     tem_helpers.numbers.sNT(avv),
+                        Δ_compdat = createArrayofType((one.(getfield(initial_values, component))) .*
+                                                     tem_helpers.numbers.num_type(avv),
                             Δ_pool_array,
-                            tem_helpers.numbers.sNT,
+                            tem_helpers.numbers.num_type,
                             indx,
                             false,
                             model_array_type)
@@ -364,7 +364,7 @@ end
 """
     getPoolInformation(main_pools, pool_info, layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name; prename = "")
 
-A helper function to get the information of each pools from info.model_structure.pools and puts them into arrays of information needed to instantiate pool variables.
+A helper function to get the information of each pools from info.settings.model_structure.pools and puts them into arrays of information needed to instantiate pool variables.
 
 # Arguments:
 - `main_pools`: list of the main storage pools

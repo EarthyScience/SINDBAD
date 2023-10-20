@@ -47,7 +47,7 @@ for domain ∈ sites
     if y_dist !== "undisturbed"
         y_disturb = year(Date(y_dist))
         y_start = Meta.parse(begin_year)
-        # y_start = year(Date(info.tem.helpers.dates.date_begin))
+        # y_start = year(Date(info.helpers.dates.date_begin))
         nrepeat_d = y_start - y_disturb
     end
     sequence = nothing
@@ -76,7 +76,7 @@ for domain ∈ sites
         error("cannot determine the repeat for disturbance")
     end
 
-    replace_info["experiment.model_spinup.sequence"] = sequence
+    replace_info["experiment.model_spinup_sequence"] = sequence
     @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info)
 
     info = out_opti.info;
@@ -85,15 +85,15 @@ for domain ∈ sites
     # some plots
     optimized_data = out_opti.output.optimized
     default_data = out_opti.output.default
-    costOpt = prepCostOptions(out_opti.observation, info.optim.cost_options)
+    costOpt = prepCostOptions(out_opti.observation, info.optimization.cost_options)
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    fig_prefix = joinpath(info.output.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
+    fig_prefix = joinpath(info.output.dirs.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
 
     foreach(costOpt) do var_row
         v = var_row.variable
         println("plot obs::", v)
         v = (var_row.mod_field, var_row.mod_subfield)
-        vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+        vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
         v = vinfo["standard_name"]
         lossMetric = var_row.cost_metric
         loss_name = nameof(typeof(lossMetric))
@@ -114,7 +114,7 @@ for domain ∈ sites
         def_var = def_var[tspan, 1, 1, 1]
         opt_var = opt_var[tspan, 1, 1, 1]
     
-        xdata = [info.tem.helpers.dates.range[tspan]...]
+        xdata = [info.helpers.dates.range[tspan]...]
         obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
         obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
         metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
@@ -128,30 +128,29 @@ for domain ∈ sites
 
     # save the outcubes
 
-    out_info = getOutputFileInfo(info)
 
     optimized_data = values(optimized_data)
     default_data = values(default_data)
 
-    output_vars = info.tem.variables
+    output_vars = info.output.variables
     output_dims = getOutDims(output_vars, info, out_opti.forcing.helpers);
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output_dims, output_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output_dims, output_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, optimized_data, output_dims, output_vars, "zarr", info.experiment.basics.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, optimized_data, output_dims, output_vars, "zarr", info.experiment.basics.temporal_resolution, DoNotSaveSingleFile())
 
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output_dims, output_vars, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, optimized_data, output_dims, output_vars, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, optimized_data, output_dims, output_vars, "nc", info.experiment.basics.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, optimized_data, output_dims, output_vars, "nc", info.experiment.basics.temporal_resolution, DoNotSaveSingleFile())
 
 
     # plot the debug figures
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
+    fig_prefix = joinpath(info.output.dirs.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
     for (o, v) in enumerate(output_vars)
         def_var = default_data[o][:, :, 1, 1]
         opt_var = optimized_data[o][:, :, 1, 1]
-        vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+        vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
         v = vinfo["standard_name"]
         println("plot debug::", v)
-        xdata = [info.tem.helpers.dates.range...]
+        xdata = [info.helpers.dates.range...]
         if size(opt_var, 2) == 1
             plot(xdata, def_var[:, 1]; label="def ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
             plot!(xdata, opt_var[:, 1]; label="opt ($(round(SindbadTEM.mean(opt_var[:, 1]), digits=2)))")

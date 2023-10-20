@@ -10,7 +10,7 @@ forcing = getForcing(info);
 
 ## yax array run
 @time outcubes = runTEMYax(
-    info.tem.models.forward,
+    info.models.forward,
     forcing,
     info);
 
@@ -26,6 +26,6 @@ observations = getObservation(info, forcing.helpers);
 opt_params = optimizeTEMYax(forcing,
     output,
     info.tem,
-    info.optim,
+    info.optimization,
     observations,
-    max_cache=info.experiment.exe_rules.yax_max_cache)
+    max_cache=info.settings.experiment.exe_rules.yax_max_cache)

@@ -18,7 +18,7 @@ function coreTEMYax(selected_models, loc_forcing, loc_land, tem_helpers, tem_spi
 
     loc_forcing_t = getForcingForTimeStep(loc_forcing, deepcopy(loc_forcing), 1, tem_helpers.vals.forcing_types)
     
-    spinup_forcing = getAllSpinupForcing(loc_forcing, tem_spinup.sequence, tem_helpers);
+    spinup_forcing = getAllSpinupForcing(loc_forcing, tem_spinup_sequence, tem_helpers);
 
     land_prec = definePrecomputeTEM(selected_models, loc_forcing_t, loc_land, tem_helpers)
 
@@ -83,10 +83,10 @@ function runTEMYax(selected_models::Tuple, forcing::NamedTuple, info::NamedTuple
         forcing_vars=forcing.variables,
         output_vars = run_helpers.output_vars,
         loc_land=loc_land,
-        tem=run_helpers.tem_with_types,
+        tem=run_helpers.tem_info,
         indims=indims,
         outdims=run_helpers.output_dims,
-        max_cache=info.experiment.exe_rules.yax_max_cache,
+        max_cache=info.settings.experiment.exe_rules.yax_max_cache,
         ispar=true)
     return outcubes
 end
