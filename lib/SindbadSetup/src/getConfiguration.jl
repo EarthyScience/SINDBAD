@@ -123,7 +123,7 @@ function getConfiguration(sindbad_experiment::String; replace_info=Dict())
     if !endswith(sindbad_experiment, ".jld2")
         infoTuple = dictToNamedTuple(new_info)
     end
-    infoTuple = (; infoTuple..., tem=(; experiment=(; dirs=roots)))
+    infoTuple = (; infoTuple..., temp=(; experiment=(; dirs=roots)))
 
     @info "\n----------------------------------------------\n"
     return infoTuple

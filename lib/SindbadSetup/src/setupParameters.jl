@@ -1,8 +1,13 @@
 export getParameters
 
 """
-    getParameters(selected_models, num_type; return_table=true)
+    getParameters(selected_models::LongTuple, num_type; return_table=true)
 
+prepare a NT/Table of the SINDBAD models from a longtuple which is converted to tuple before parameters are retrieved
+
+# Arguments:
+- `selected_models`: a tuple of all models selected in the given model structure
+- `num_type`: a type to set the values to
 
 """
 function getParameters(selected_models::LongTuple, num_type; return_table=true)
@@ -11,9 +16,13 @@ function getParameters(selected_models::LongTuple, num_type; return_table=true)
 end
 
 """
-    getParameters(selected_models, num_type; return_table=true)
+    getParameters(selected_models::Tuple, num_type; return_table=true)
 
+prepare a NT/Table of the SINDBAD models from a tuple
 
+# Arguments:
+- `selected_models`: a tuple of all models selected in the given model structure
+- `num_type`: a type to set the values to
 """
 function getParameters(selected_models::Tuple, num_type; return_table=true)
     model_names_list = nameof.(typeof.(selected_models));
@@ -58,7 +67,11 @@ end
 """
     getParameters(selected_models, model_parameter_default, num_type)
 
-retrieve all model parameters
+prepare a Table of the SINDBAD models from a tuple
+
+# Arguments:
+- `selected_models`: a tuple of all models selected in the given model structure
+- `num_type`: a type to set the values to
 """
 function getParameters(selected_models, model_parameter_default, num_type)
     models_tuple = getParameters(selected_models, num_type; return_table=false)
@@ -93,7 +106,7 @@ end
 
 
 # Arguments:
-- `selected_models`: DESCRIPTION
+- `selected_models`: a
 - `model_parameter_default`: DESCRIPTION
 - `opt_parameter`: DESCRIPTION
 """
@@ -128,7 +141,7 @@ end
 """
     replaceCommaSeparatorParams(p_names_list)
 
-
+get a list/vector of parameters in which each parameter string is split with comma to separate model name and parameter name
 """
 function replaceCommaSeparatorParams(p_names_list)
     o_p_names_list = []
@@ -142,7 +155,7 @@ end
 """
     splitRenameParam(_p::Symbol, _splitter)
 
-
+split a symbol after converting it to a string with a given splitter
 """
 function splitRenameParam(_p::Symbol, _splitter)
     p_string = String(_p)
@@ -152,7 +165,7 @@ end
 """
     splitRenameParam(p_string::String, _splitter)
 
-
+split a string with a given splitter
 """
 function splitRenameParam(p_string::String, _splitter)
     p_name = strip(p_string)
@@ -166,19 +179,10 @@ function splitRenameParam(p_string::String, _splitter)
 end
 
 
-
 """
     setInputParameters(original_table::Table, updated_table::Table)
 
 updates the model parameters based on input from params.json
-
-  - new table with the optimised/modified values from params.json.
-"""
-
-"""
-    setInputParameters(original_table::Table, updated_table::Table)
-
-
 """
 function setInputParameters(original_table::Table, updated_table::Table)
     upoTable = copy(original_table)

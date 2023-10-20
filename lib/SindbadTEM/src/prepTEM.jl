@@ -245,11 +245,10 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     debugModel(loc_land, tem_helpers.run.debug_model)
 
-    output_vars = getAllLandVars(loc_land)
-    tem_info = @set tem_info.vals.output_vars = Val(output_vars)
+    info = setAllLandOutput(info, loc_land)
 
-    output_dims, output_array = getOutDimsArrays(output_vars, info, loc_land, forcing.helpers)
-
+    tem_info = @set tem_info.vals.output_vars = Val(info.output.variables)
+    output_dims, output_array = getOutDimsArrays(info, forcing.helpers)
 
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
@@ -257,7 +256,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
         getLocForcingData(forcing_nt_array, lsi)
     end
     space_spinup_forcing = map(space_forcing) do loc_forcing
-        getAllSpinupForcing(loc_forcing, tem_info.spinup_sequence, tem_info.model_helpers);
+        getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
     end
 
     space_output = map([space_ind...]) do lsi
@@ -268,7 +267,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     forcing_nt_array = nothing
 
-    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_info)
+    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars=info.output.variables, tem_info)
     return run_helpers
 end
 
@@ -307,21 +306,6 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     output_array = output.data
     output_vars = output.variables
     output_dims = output.dims
-
-    # ovars = output.variables;
-    # i = 1
-    # output_array = map(output_array) do od
-    #     ov = ovars[i]
-    #     mod_field = first(ov)
-    #     mod_subfield = last(ov)
-    #     lvar = getproperty(getproperty(loc_land, mod_field), mod_subfield)
-    #     if lvar isa AbstractArray
-    #         eltype(lvar).(od)
-    #     else
-    #         typeof(lvar).(od)
-    #     end
-    # end
-
 
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
@@ -418,7 +402,7 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `::LandOutYAXArray`: a dispatch for preparing TEM for using yax array for model output
 """
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTemInfo(info, forcing);
@@ -511,4 +495,36 @@ function runTEMOne(selected_models, loc_forcing, land_init, tem)
         tem.model_helpers)
     loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
     return loc_forcing_t, loc_land
+end
+
+function setAllLandOutput(info, land)
+    output_vars = getAllLandVars(land)
+    depth_info = map(output_vars) do v_full_pair
+        v_index = findfirst(x -> first(x) === first(v_full_pair) && last(x) === last(v_full_pair), info.output.variables)
+        dim_name = nothing
+        dim_size = nothing
+        if ~isnothing(v_index)
+            dim_name = last(info.output.depth_info[v_index])
+            dim_size = first(info.output.depth_info[v_index])
+        else
+            field_name = first(v_full_pair)
+            v_name = last(v_full_pair)
+            dim_name = string(v_name) * "_idx"
+            land_field = getproperty(land, field_name)
+            if hasproperty(land_field, v_name)
+                land_subfield = getproperty(land_field, v_name)
+                if isa(land_subfield, AbstractArray)
+                    dim_size = length(land_subfield)
+                elseif isa(land_subfield, Number)
+                    dim_size = 1
+                else
+                    dim_size = 0
+                end
+            end
+        end
+        dim_size, dim_name
+    end
+    info = @set info.output.variables = output_vars
+    info = @set info.output.depth_info = depth_info
+    return info
 end

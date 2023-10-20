@@ -7,10 +7,10 @@ export setupInfo
 parse and save the code and structs of selected model structure for the given experiment
 """
 function parseSaveCode(info)
-    models = info.tem.models.forward
-    outfile_define = joinpath(info.output.dirs.code, info.tem.experiment.basics.name * "_" * info.tem.experiment.basics.domain * "_model_definitions.jl")
-    outfile_code = joinpath(info.output.dirs.code, info.tem.experiment.basics.name * "_" * info.tem.experiment.basics.domain * "_model_functions.jl")
-    outfile_struct = joinpath(info.output.dirs.code, info.tem.experiment.basics.name * "_" * info.tem.experiment.basics.domain * "_model_structs.jl")
+    models = info.temp.models.forward
+    outfile_define = joinpath(info.output.dirs.code, info.temp.experiment.basics.name * "_" * info.temp.experiment.basics.domain * "_model_definitions.jl")
+    outfile_code = joinpath(info.output.dirs.code, info.temp.experiment.basics.name * "_" * info.temp.experiment.basics.domain * "_model_functions.jl")
+    outfile_struct = joinpath(info.output.dirs.code, info.temp.experiment.basics.name * "_" * info.temp.experiment.basics.domain * "_model_structs.jl")
     fallback_code_define = nothing
     fallback_code_precompute = nothing
     fallback_code_compute = nothing
@@ -26,7 +26,7 @@ function parseSaveCode(info)
             appr_name = string(nameof(typeof(_mod)))
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
-            mod_file = joinpath(info.tem.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
+            mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
             write(o_file, "# " * mod_file * "\n")
             mod_string = "# call order: $mi\n\n"
             write(o_file, mod_string)
@@ -64,7 +64,7 @@ function parseSaveCode(info)
             appr_name = string(nameof(typeof(_mod)))
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
-            mod_file = joinpath(info.tem.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
+            mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
             write(o_file, "# " * mod_file * "\n")
             mod_string = "# call order: $mi\n\n"
             write(o_file, mod_string)
@@ -111,7 +111,7 @@ function parseSaveCode(info)
         for (mi, _mod) in enumerate(models)
             mod_name = string(nameof(supertype(typeof(_mod))))
             appr_name = string(nameof(typeof(_mod)))
-            mod_file = joinpath(info.tem.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
+            mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
             write(o_file, "# " * mod_file * "\n")
@@ -157,7 +157,7 @@ end
 """
     setDatesInfo(info::NamedTuple)
 
-fills info.tem.helpers.dates with date and time related fields needed in the models.
+fills info.temp.helpers.dates with date and time related fields needed in the models.
 
 """
 function setDatesInfo(info::NamedTuple)
@@ -167,7 +167,7 @@ function setDatesInfo(info::NamedTuple)
     for time_prop ∈ time_props
         prop_val = getfield(time_info, time_prop)
         if prop_val isa Number
-            prop_val = info.tem.helpers.numbers.num_type(prop_val)
+            prop_val = info.temp.helpers.numbers.num_type(prop_val)
         end
         tmp_dates = setTupleField(tmp_dates, (time_prop, prop_val))
     end
@@ -177,7 +177,7 @@ function setDatesInfo(info::NamedTuple)
     tmp_dates = setTupleField(tmp_dates, (:timestep, timestep))
     tmp_dates = setTupleField(tmp_dates, (:range, time_range))
     tmp_dates = setTupleField(tmp_dates, (:size, length(time_range)))
-    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmp_dates)))
+    info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., dates=tmp_dates)))
     return info
 end
 
@@ -185,7 +185,7 @@ end
 """
     setModelRunInfo(info::NamedTuple)
 
-sets info.tem.output.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
+sets info.temp.output.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
 function setModelRunInfo(info::NamedTuple)
     if info.settings.experiment.flags.run_optimization
@@ -203,7 +203,7 @@ function setModelRunInfo(info::NamedTuple)
     run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol("Use"*parallelization*"Parallelization"))()))
     land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "LandOut"))()
     run_info = setTupleField(run_info, (:land_output_type, land_output_type))
-    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
+    info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., run=run_info)))
     return info
 end
 
@@ -218,7 +218,7 @@ function setNumericHelpers(info::NamedTuple, ttype=info.settings.experiment.exe_
 
     tolerance = num_type(info.settings.experiment.exe_rules.tolerance)
     num_helpers = (; tolerance=tolerance, num_type=num_type)
-    info = (; info..., tem=(; info.tem..., helpers=(; numbers=num_helpers)))
+    info = (; info..., temp=(; info.temp..., helpers=(; numbers=num_helpers)))
     return info
 end
 
@@ -241,7 +241,7 @@ function setRestartFilePath(info::NamedTuple)
         if isabspath(restart_file_in)
             restart_file = restart_file_in
         else
-            restart_file = joinpath(info.tem.experiment.dirs.experiment, restart_file_in)
+            restart_file = joinpath(info.temp.experiment.dirs.experiment, restart_file_in)
         end
         info = @set info.settings.experiment.model_spinup.restart_file = restart_file
     end
@@ -264,10 +264,10 @@ function setSpinupInfo(info)
         for kk in keys(seq)
             if kk == "forcing"
                 skip_aggregation = false
-                if startswith(kk, info.tem.helpers.dates.temporal_resolution)
+                if startswith(kk, info.temp.helpers.dates.temporal_resolution)
                     skip_aggregation = true
                 end
-                aggregator = createTimeAggregator(info.tem.helpers.dates.range, seq[kk], mean, skip_aggregation)
+                aggregator = createTimeAggregator(info.temp.helpers.dates.range, seq[kk], mean, skip_aggregation)
                 seq["aggregator"] = aggregator
                 seq["aggregator_type"] = TimeNoDiff()
                 seq["aggregator_indices"] = [_ind for _ind in vcat(aggregator[1].indices...)]
@@ -290,7 +290,7 @@ function setSpinupInfo(info)
     end
     
     infospin = setTupleField(infospin, (:sequence, [_s for _s in seqq_typed]))
-    info = setTupleSubfield(info, :tem, (:spinup, infospin))
+    info = setTupleSubfield(info, :temp, (:spinup, infospin))
     return info
 end
 
@@ -312,7 +312,7 @@ function setExperimentBasics(info)
             end 
         end
     end
-    info = (; info..., tem=(; info.tem..., experiment=(; info.tem.experiment..., basics=ex_basics_sel)))
+    info = (; info..., temp=(; info.temp..., experiment=(; info.temp.experiment..., basics=ex_basics_sel)))
     return info
 end
 
@@ -354,15 +354,14 @@ function setupInfo(info::NamedTuple)
     end
 
     if !isnothing(info.settings.experiment.exe_rules.longtuple_size)
-        selected_approach_forward = makeLongTuple(info.tem.models.forward, info.settings.experiment.exe_rules.longtuple_size)
-        info = @set info.tem.models.forward = selected_approach_forward
+        selected_approach_forward = makeLongTuple(info.temp.models.forward, info.settings.experiment.exe_rules.longtuple_size)
+        info = @set info.temp.models.forward = selected_approach_forward
     end
 
     @info "  setupInfo: cleaning info fields...."
     info = dropFields(info, (:model_structure, :experiment, :output, :pools))
-
-    info = (; info..., info.tem...)
-    info = dropFields(info, (:tem,))
+    info = (; info..., info.temp...)
+    info = dropFields(info, (:temp,))
     return info
 end
 
