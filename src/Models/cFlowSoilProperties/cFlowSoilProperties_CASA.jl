@@ -36,7 +36,7 @@ function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     @unpack_land (st_clay, st_silt) ∈ land.soilTexture
 
     ## calculate variables
-    # p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
+    # p_fSoil = zeros(length(info.model.nPix), length(info.model.nZix))
     # p_fSoil = zero(land.pools.cEco)
     # #sujan
     p_F_vec = p_E_vec

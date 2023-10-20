@@ -9,12 +9,11 @@ using GLMakie
 experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);
 forcing = getForcing(info);
-land_init = createLandInit(info.pools, info.tem);
 
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 obsv = getKeyedArray(observations);
-tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
+tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type);
 
 # covariates
 function yaxCubeToKeyedArray(c)
@@ -39,7 +38,7 @@ loc_forcing_t = run_helpers.loc_forcing_t;
 output_array = run_helpers.output_array;
 space_output = run_helpers.space_output;
 space_land = run_helpers.space_land;
-tem_with_types = run_helpers.tem_with_types;
+tem_info = run_helpers.tem_info;
 
 # neural network design
 
@@ -95,12 +94,12 @@ function pixel_run!(output_array,
         loc_forcing_t)
 end
 
-tem_helpers = tem_with_types.helpers;
-tem_spinup = tem_with_types.spinup;
-tem_models = tem_with_types.models;
-tem_variables = tem_with_types.variables;
-tem_optim = info.optim;
-forward = tem_with_types.models.forward;
+tem_helpers = tem_info.model_helpers;
+tem_spinup = tem_info.spinup_sequence;
+tem_models = tem_info.models;
+tem_variables = tem_info.variables;
+tem_optim = info.optimization;
+forward = tem_info.models.forward;
 
 site_location = loc_space_maps[1];
 loc_forcing, loc_output, loc_obs =
@@ -164,11 +163,11 @@ function space_run!(up_params,
 end
 cov_sites = xfeatures.site
 
-#output_vars = Val(info.tem.variables)
-#helpers = info.tem.helpers # helpers
-#spinup = info.tem.spinup # spinup
-#models = info.tem.models # models
-#forward = info.tem.models.forward # forward
+#output_vars = Val(info.output.variables)
+#helpers = info.helpers # helpers
+#spinup = info.spinup # spinup
+#models = info.models # models
+#forward = info.models.forward # forward
 
 function name_to_id(site_name, sites_forcing)
     site_id_forc = findall(x -> x == site_name, sites_forcing)
@@ -193,7 +192,7 @@ space_run!(params_bounded,
 
 
 gppOut = run_helpers.output_array[1]
-t_steps = info.tem.helpers.dates.size
+t_steps = info.helpers.dates.size
 
 gpp_synt = reshape(gppOut, (t_steps, 205));
 gppKA = KeyedArray(Float32.(gpp_synt); time=obs.gpp.time, site=obs.gpp.site)

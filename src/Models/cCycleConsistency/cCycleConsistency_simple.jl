@@ -94,7 +94,7 @@ function checkCcycleErrors(params::cCycleConsistency_simple, forcing, land, help
             s = s + c_flow_A_vec[ind]
         end
         if (s - one(s)) > helpers.numbers.tolerance
-            throwError(land, "sum of giver flow greater than one in upper cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
+            throwError(land, "sum of giver flow greater than one in upper cFlow vector for $(info.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
         end
     end
 
@@ -104,7 +104,7 @@ function checkCcycleErrors(params::cCycleConsistency_simple, forcing, land, help
             s = s + c_flow_A_vec[ind]
         end
         if (s - one(s)) > helpers.numbers.tolerance
-            throwError(land, "sum of giver flow greater than one in lower cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
+            throwError(land, "sum of giver flow greater than one in lower cFlow vector for $(info.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
         end
     end
 

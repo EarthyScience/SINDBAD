@@ -167,7 +167,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     fxT = fx
     # helpers
     nPix = 1
-    nTix = info.tem.helpers.sizes.nTix
+    nTix = info.helpers.sizes.nTix
     # matrices for the calculations
     cLossRate = zero(cEco)
     cGain = cLossRate
