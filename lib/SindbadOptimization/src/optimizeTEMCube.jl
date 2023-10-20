@@ -35,7 +35,7 @@ function optimizeYax(map_cubes...;
     output, forcing, observation = unpackYaxOpti(map_cubes; forcing_vars)
     forcing = (; Pair.(forcing_vars, forcing)...)
     observation = (; Pair.(obs_vars, observation)...)
-    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.exe_rules.land_output_type, "LandOut"))()
+    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "LandOut"))()
     params = optimizeTEM(forcing, observation, info, land_output_type)
     return output[:] = params.optim
 end

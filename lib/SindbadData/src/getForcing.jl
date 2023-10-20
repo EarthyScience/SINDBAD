@@ -6,7 +6,7 @@ export getForcing
 
 """
 function collectForcingSizes(info, in_yax)
-    time_dim_name = Symbol(info.forcing.data_dimension.time)
+    time_dim_name = Symbol(info.settings.forcing.data_dimension.time)
     dnames = Symbol[]
     dsizes = []
     push!(dnames, time_dim_name)
@@ -15,7 +15,7 @@ function collectForcingSizes(info, in_yax)
     else
         push!(dsizes, length(DimensionalData.lookup(in_yax, time_dim_name)))
     end
-    for space ∈ info.forcing.data_dimension.space
+    for space ∈ info.settings.forcing.data_dimension.space
         push!(dnames, Symbol(space))
         push!(dsizes, length(getproperty(in_yax, Symbol(space))))
     end
@@ -35,10 +35,10 @@ end
 """
 function collectForcingHelpers(info, f_sizes, f_dimensions)
     f_helpers = (;)
-    f_helpers = setTupleField(f_helpers, (:dimensions, info.forcing.data_dimension))
+    f_helpers = setTupleField(f_helpers, (:dimensions, info.settings.forcing.data_dimension))
     f_helpers = setTupleField(f_helpers, (:axes, f_dimensions))
-    if hasproperty(info.forcing, :subset)
-        f_helpers = setTupleField(f_helpers, (:subset, info.forcing.subset))
+    if hasproperty(info.settings.forcing, :subset)
+        f_helpers = setTupleField(f_helpers, (:subset, info.settings.forcing.subset))
     else
         f_helpers = setTupleField(f_helpers, (:subset, nothing))
     end
@@ -60,11 +60,11 @@ end
 function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @info "getForcing: processing forcing helpers..."
     @debug "     ::dimensions::"
-    indims = getDataDims.(incubes, Ref(Symbol.(info.forcing.data_dimension.space)))
+    indims = getDataDims.(incubes, Ref(Symbol.(info.settings.forcing.data_dimension.space)))
     @debug "     ::variable names::"
-    forcing_vars = keys(info.forcing.variables)
+    forcing_vars = keys(info.settings.forcing.variables)
     f_helpers = collectForcingHelpers(info, f_sizes, f_dimensions)
-    input_array_type = getfield(SindbadData, toUpperCaseFirst(info.experiment.exe_rules.input_array_type, "Input"))()
+    input_array_type = getfield(SindbadData, toUpperCaseFirst(info.helpers.run.input_array_type, "Input"))()
     typed_cubes = getInputArrayOfType(incubes, input_array_type)
     data_ts_type=[]
     for incube in typed_cubes
@@ -94,33 +94,33 @@ end
 """
 function getForcing(info::NamedTuple)
     nc = nothing
-    data_path = info.forcing.default_forcing.data_path
+    data_path = info.settings.forcing.default_forcing.data_path
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
         @info "getForcing: default_data_path: $(data_path)"
         nc = loadDataFile(data_path)
     end
-    data_backend = getfield(SindbadData, toUpperCaseFirst(info.experiment.exe_rules.input_data_backend, "Backend"))()
+    data_backend = getfield(SindbadData, toUpperCaseFirst(info.helpers.run.input_data_backend, "Backend"))()
 
     forcing_mask = nothing
-    if :sel_mask ∈ keys(info.forcing)
-        if !isnothing(info.forcing.forcing_mask.data_path)
-            mask_path = getAbsDataPath(info, info.forcing.forcing_mask.data_path)
-            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, info.forcing.forcing_mask.source_variable, info, data_backend)
+    if :sel_mask ∈ keys(info.settings.forcing)
+        if !isnothing(info.settings.forcing.forcing_mask.data_path)
+            mask_path = getAbsDataPath(info, info.settings.forcing.forcing_mask.data_path)
+            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, info.settings.forcing.forcing_mask.source_variable, info, data_backend)
             forcing_mask = booleanizeArray(forcing_mask)
         end
     end
 
-    default_info = info.forcing.default_forcing
-    forcing_vars = keys(info.forcing.variables)
+    default_info = info.settings.forcing.default_forcing
+    forcing_vars = keys(info.settings.forcing.variables)
     tar_dims = getTargetDimensionOrder(info)
     @info "getForcing: getting forcing variables..."
     vinfo = nothing
     f_sizes = nothing
     f_dimension = nothing
-    num_type = Val{info.tem.helpers.numbers.num_type}()
+    num_type = Val{info.helpers.numbers.num_type}()
     incubes = map(forcing_vars) do k
-        vinfo = getCombinedNamedTuple(default_info, info.forcing.variables[k])
+        vinfo = getCombinedNamedTuple(default_info, info.settings.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)

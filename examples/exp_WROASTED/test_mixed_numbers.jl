@@ -42,23 +42,23 @@ forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
 
-optimized_models = info.tem.models.forward;
-tbl_params = getParameters(info.tem.models.forward,
+optimized_models = info.models.forward;
+tbl_params = getParameters(info.models.forward,
     info.optimization.model_parameter_default,
     info.optimization.model_parameters_to_optimize,
-    info.tem.helpers.numbers.sNT);
-selected_models = info.tem.models.forward;
+    info.helpers.numbers.num_type);
+selected_models = info.models.forward;
 
 rand_m = rand()
-# param_vector = tbl_params.default .* info.tem.helpers.numbers.sNT(rand_m);
+# param_vector = tbl_params.default .* info.helpers.numbers.num_type(rand_m);
 param_vector = tbl_params.default .* rand_m;
 param_vector = ForwardDiff.Dual.(tbl_params.default .* rand_m);
-@time selected_models = updateModelParameters(info.tem.models.forward, param_vector, info.optim.param_model_id_val);
-n_m = updateModelParameters(tbl_params, info.tem.models.forward, param_vector);
-# updateModelParameters(selected_models, param_vector, info.optim.param_model_id_val)
+@time selected_models = updateModelParameters(info.models.forward, param_vector, info.optimization.param_model_id_val);
+n_m = updateModelParameters(tbl_params, info.models.forward, param_vector);
+# updateModelParameters(selected_models, param_vector, info.optimization.param_model_id_val)
 run_helpers_s = prepTEM(selected_models, forcing, info);
 @time runTEM!(selected_models,
     run_helpers_s.space_forcing,
@@ -66,7 +66,7 @@ run_helpers_s = prepTEM(selected_models, forcing, info);
     run_helpers_s.loc_forcing_t,
     run_helpers_s.space_output,
     run_helpers_s.space_land,
-    run_helpers_s.tem_with_types)
+    run_helpers_s.tem_info)
 
 run_helpers_n = prepTEM(n_m, forcing, info);
 @time runTEM!(n_m,
@@ -75,6 +75,6 @@ run_helpers_n = prepTEM(n_m, forcing, info);
     run_helpers_n.loc_forcing_t,
     run_helpers_n.space_output,
     run_helpers_n.space_land,
-    run_helpers_n.tem_with_types)
+    run_helpers_n.tem_info)
 
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)

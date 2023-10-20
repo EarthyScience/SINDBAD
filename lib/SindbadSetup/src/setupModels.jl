@@ -1,3 +1,4 @@
+export createLandInit
 export setOrderedSelectedModels
 export setSpinupAndForwardModels
 
@@ -22,7 +23,7 @@ function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
     new_models = (;)
     order_changed_warn = true
     for sm ∈ selected_models
-        model_info = getfield(info.model_structure.models, sm)
+        model_info = getfield(info.settings.model_structure.models, sm)
         if :order in propertynames(model_info)
             push!(new_orders, model_info.order)
             new_models = setTupleField(new_models, (sm, model_info.order))
@@ -98,13 +99,34 @@ end
 
 
 """
-    setOrderedSelectedModels(info::NamedTuple, selected_models::AbstractArray)
+    createLandInit(tem)
 
-gets the ordered list of selected models from info.model_structure.models
+create the initial out named tuple with subfields for pools, states, and all selected models.
+
+# Arguments:
+- `tem`: a helper NT with necessary objects for pools and numbers
+"""
+function createLandInit(pool_info, tem)
+    init_pools = getInitPools(pool_info, tem.helpers)
+    initial_states = getInitStates(pool_info, tem.helpers)
+    out = (; fluxes=(;), pools=init_pools, states=initial_states)::NamedTuple
+    sortedModels = sort([_sm for _sm ∈ tem.models.selected_models.model])
+    for model ∈ sortedModels
+        out = setTupleField(out, (model, (;)))
+    end
+    return out
+end
+
+
+"""
+    setOrderedSelectedModels(info::NamedTuple)
+
+gets the ordered list of selected models from info.settings.model_structure.models
 - orders them as given in sindbad_models in models.jl.
 - consistency check using checkSelectedModels for the existence of user-provided model.
 """
-function setOrderedSelectedModels(info::NamedTuple, selected_models::AbstractArray)
+function setOrderedSelectedModels(info::NamedTuple)
+    selected_models = collect(propertynames(info.settings.model_structure.models))
     all_sindbad_models_reordered = changeModelOrder(info, selected_models)
     checkSelectedModels(all_sindbad_models_reordered, selected_models)
     order_selected_models = []
@@ -113,7 +135,11 @@ function setOrderedSelectedModels(info::NamedTuple, selected_models::AbstractArr
             push!(order_selected_models, msm)
         end
     end
-    info = (; info..., tem=(; info.tem..., models=(; selected_models=Table((; model=[selected_models...])))))
+    @debug "     setupInfo: creating initial out/land..."
+
+    info = (; info..., tem=(; info.tem..., models=(; selected_models=Table((; model=[order_selected_models...])))))
+    land_init = createLandInit(info.pools,info.tem)
+    info = (; info..., tem=(; info.tem..., land_init, models=(; selected_models=Table((; model=[order_selected_models...])))))
     return info
 end
 
@@ -132,12 +158,12 @@ function setSpinupAndForwardModels(info::NamedTuple)
     selected_approach_spinup = ()
     is_spinup = Int64[]
     order_selected_models = info.tem.models.selected_models.model
-    default_model = getfield(info.model_structure, :default_model)
+    default_model = getfield(info.settings.model_structure, :default_model)
     for sm ∈ order_selected_models
-        model_info = getfield(info.model_structure.models, sm)
+        model_info = getfield(info.settings.model_structure.models, sm)
         selected_approach = model_info.approach
         selected_approach = String(sm) * "_" * selected_approach
-        selected_approach_func = getTypedModel(Symbol(selected_approach), info.tem.helpers.numbers.sNT)
+        selected_approach_func = getTypedModel(Symbol(selected_approach), info.tem.helpers.numbers.num_type)
         # selected_approach_func = getfield(Sindbad.Models, Symbol(selected_approach))()
         selected_approach_forward = (selected_approach_forward..., selected_approach_func)
         if :use_in_spinup in propertynames(model_info)
