@@ -133,7 +133,7 @@ for domain ∈ sites
     default_data = values(default_data)
 
     output_vars = info.output.variables
-    output_dims = getOutDims(output_vars, info, out_opti.forcing.helpers);
+    output_dims = getOutDims(info, out_opti.forcing.helpers);
     saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, optimized_data, output_dims, output_vars, "zarr", info.experiment.basics.temporal_resolution, DoSaveSingleFile())
     saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, optimized_data, output_dims, output_vars, "zarr", info.experiment.basics.temporal_resolution, DoNotSaveSingleFile())
 
