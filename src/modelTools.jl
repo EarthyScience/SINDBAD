@@ -141,14 +141,13 @@ function getInOutModels()
         s_apr = sind_m_dict[s]
         if !isempty(s_apr)
             s_apr_s = join(s_apr, ".jl, ") * ".jl"
-            # @info "collecting variables for approaches [$(s_apr_s)] of $(s).jl model processes"
             sm_io[s]=Sindbad.DataStructures.OrderedDict()
             map(s_apr) do s_a
+                s_a_name = Symbol(strip(last(split(string(s_a), string(s) * "_"))))
                 s_a_t = getTypedModel(s_a)
-                sm_io[s][s_a]=Sindbad.DataStructures.OrderedDict()
                 println("Model::: $s")
                 io_model = getInOutModel(s_a_t)
-                sm_io[s][s_a] = io_model
+                sm_io[s][s_a_name] = io_model
             end
         end
         println("-------------------------------------------")
