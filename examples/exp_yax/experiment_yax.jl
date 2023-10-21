@@ -7,6 +7,7 @@ toggleStackTraceNT()
 
 info = getExperimentInfo("../exp_yax/settings_yax/experiment.json");
 forcing = getForcing(info);
+# run_helpers = prepTEM(forcing, info);
 
 ## yax array run
 @time outcubes = runTEMYax(
