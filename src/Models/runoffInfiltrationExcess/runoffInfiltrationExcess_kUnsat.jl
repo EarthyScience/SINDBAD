@@ -7,8 +7,8 @@ function compute(params::runoffInfiltrationExcess_kUnsat, forcing, land, helpers
     ## unpack land variables
     @unpack_land begin
         WBP ∈ land.states
-        unsat_k_model ∈ land.soilProperties
-        (z_zero, o_one) ∈ land.wCycleBase
+        unsat_k_model ∈ land.models
+        (z_zero, o_one) ∈ land.constants
     end
     # get the unsaturated hydraulic conductivity based on soil properties for the first soil layer
     k_unsat = unsatK(land, helpers, 1, unsat_k_model)
@@ -19,8 +19,8 @@ function compute(params::runoffInfiltrationExcess_kUnsat, forcing, land, helpers
 
     ## pack land variables
     @pack_land begin
-        inf_excess_runoff => land.fluxes
-        WBP => land.states
+        inf_excess_runoff → land.fluxes
+        WBP → land.states
     end
     return land
 end

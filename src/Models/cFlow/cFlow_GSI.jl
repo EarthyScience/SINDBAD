@@ -53,12 +53,13 @@ function define(params::cFlow_GSI, forcing, land, helpers)
         c_flow_A_vec = SVector{length(c_flow_A_vec)}(c_flow_A_vec)
     end
 
-    eco_stressor_prev = totalS(land.pools.soilW) / land.soilWBase.sum_wSat
+    eco_stressor_prev = totalS(land.pools.soilW) / land.properties.sum_wSat
 
 
     @pack_land begin
-        (c_flow_A_vec_ind, eco_stressor_prev, aSrc, aTrg) => land.cFlow
-        c_flow_A_vec => land.states
+        (c_flow_A_vec_ind, aSrc, aTrg) → land.cFlow
+        eco_stressor_prev → land.diagnostics
+        c_flow_A_vec → land.fluxes
     end
 
     return land
@@ -69,7 +70,7 @@ function adjust_pk(c_eco_k, kValue, flowValue, maxValue, zix, helpers)
     for ix ∈ zix
         # @show ix, c_eco_k[ix]
         tmp = min(c_eco_k[ix] + kValue + flowValue, maxValue)
-        @rep_elem tmp => (c_eco_k, ix, :cEco)
+        @rep_elem tmp → (c_eco_k, ix, :cEco)
         c_eco_k_f_sum = c_eco_k_f_sum + tmp
     end
     return c_eco_k, c_eco_k_f_sum
@@ -80,12 +81,10 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI params
     ## unpack land variables
     @unpack_land begin
-        (eco_stressor_prev, c_flow_A_vec_ind, aSrc, aTrg) ∈ land.cFlow
-        c_allocation_f_soilW ∈ land.cAllocationSoilW
-        c_allocation_f_soilT ∈ land.cAllocationSoilT
-        c_allocation_f_cloud ∈ land.cAllocationRadiation
-        (c_flow_A_vec, c_eco_k) ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
+        (c_flow_A_vec_ind, aSrc, aTrg) ∈ land.cFlow
+        (c_allocation_f_soilW, c_allocation_f_soilT, c_allocation_f_cloud, eco_stressor_prev)  ∈ land.diagnostics
+        c_eco_k ∈ land.diagnostics
+        (c_flow_A_vec, ) ∈ land.fluxes
     end
 
     # Compute sigmoid functions
@@ -113,7 +112,7 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
     Re2L_i = zero(slope_leaf_root_to_reserve)
-    if c_allocation_f_soilW + c_allocation_f_cloud !== z_zero
+    if c_allocation_f_soilW + c_allocation_f_cloud !== Re2L_i
         Re2L_i = reserve_to_leaf_root * (c_allocation_f_soilW / (c_allocation_f_cloud + c_allocation_f_soilW)) # if water stressor is high, , larger fraction of reserve goes to the leaves for light acquisition
     end
     Re2R_i = reserve_to_leaf_root * (one(Re2L_i) - Re2L_i) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
@@ -158,22 +157,9 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (leaf_to_reserve,
-            leaf_to_reserve_frac,
-            root_to_reserve,
-            root_to_reserve_frac,
-            reserve_to_leaf,
-            reserve_to_leaf_frac,
-            reserve_to_root,
-            reserve_to_root_frac,
-            eco_stressor,
-            k_shedding_leaf,
-            k_shedding_leaf_frac,
-            k_shedding_root,
-            k_shedding_root_frac,
-            slope_eco_stressor,
-            eco_stressor_prev) => land.cFlow
-        (c_flow_A_vec, c_eco_k) => land.states
+        (leaf_to_reserve, leaf_to_reserve_frac, root_to_reserve, root_to_reserve_frac, reserve_to_leaf, reserve_to_leaf_frac, reserve_to_root, reserve_to_root_frac, eco_stressor, k_shedding_leaf, k_shedding_leaf_frac, k_shedding_root, k_shedding_root_frac, slope_eco_stressor, eco_stressor_prev) → land.diagnostics
+        (c_eco_k,) → land.states
+        c_flow_A_vec → land.fluxes
     end
     return land
 end
@@ -190,12 +176,12 @@ $(SindbadParameters)
 Actual transfers of c between pools (of diagonal components) using cFlow_GSI
 
 *Inputs*
- - land.cAllocationRadiation.c_allocation_f_cloud: radiation stressors for carbo allocation
- - land.cAllocationRadiation.f_cloud_prev: previous radiation stressors for carbo allocation
- - land.cAllocationSoilT.c_allocation_f_soilT: temperature stressors for carbon allocation
- - land.cAllocationSoilT.f_soilT_prev: previous temperature stressors for carbon allocation
- - land.cAllocationSoilW.c_allocation_f_soilW: water stressors for carbon allocation
- - land.cAllocationSoilW.f_soilW_prev: previous water stressors for carbon allocation
+ - land.diagnostics.c_allocation_f_cloud: radiation stressors for carbo allocation
+ - land.diagnostics.f_cloud_prev: previous radiation stressors for carbo allocation
+ - land.diagnostics.c_allocation_f_soilT: temperature stressors for carbon allocation
+ - land.diagnostics.f_soilT_prev: previous temperature stressors for carbon allocation
+ - land.diagnostics.c_allocation_f_soilW: water stressors for carbon allocation
+ - land.diagnostics.f_soilW_prev: previous water stressors for carbon allocation
  - land.cCycleBase.c_flow_A_array: transfer matrix for carbon at ecosystem level
 
 *Outputs*

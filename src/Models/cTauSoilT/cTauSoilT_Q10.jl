@@ -18,7 +18,7 @@ function compute(params::cTauSoilT_Q10, forcing, land, helpers)
     c_eco_k_f_soilT = Q10^((f_airT - ref_airT) / Q10_base)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soilT => land.cTauSoilT
+    @pack_land c_eco_k_f_soilT → land.diagnostics
     return land
 end
 
@@ -37,7 +37,7 @@ Effect of soil temperature on decomposition rates using cTauSoilT_Q10
  - forcing.f_airT: values for air temperature
 
 *Outputs*
- - land.cTauSoilT.c_eco_k_f_soilT: air temperature stressor on turnover rates [k]
+ - land.diagnostics.c_eco_k_f_soilT: air temperature stressor on turnover rates [k]
 
 ---
 

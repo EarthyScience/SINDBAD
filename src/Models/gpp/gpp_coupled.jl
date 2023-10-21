@@ -6,16 +6,16 @@ function compute(params::gpp_coupled, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        transpiration_supply ∈ land.states
-        gpp_f_soilW ∈ land.gppSoilW
-        gpp_demand ∈ land.gppDemand
-        WUE ∈ land.WUE
+        transpiration_supply ∈ land.diagnostics
+        gpp_f_soilW ∈ land.diagnostics
+        gpp_demand ∈ land.diagnostics
+        WUE ∈ land.diagnostics
     end
 
     gpp = min(transpiration_supply * WUE, gpp_demand * gpp_f_soilW)
 
     ## pack land variables
-    @pack_land gpp => land.fluxes
+    @pack_land gpp → land.fluxes
     return land
 end
 
@@ -28,9 +28,9 @@ calculate GPP based on transpiration supply & water use efficiency [coupled]
 Combine effects as multiplicative or minimum; if coupled, uses transup using gpp_coupled
 
 *Inputs*
- - land.WUE.WUE: water use efficiency in gC/mmH2O
- - land.gppDemand.gpp_demand: Demand-driven GPP with stressors except soilW applied
- - land.gppSoilW.gpp_f_soilW: soil moisture stress on photosynthetic capacity
+ - land.diagnostics.WUE: water use efficiency in gC/mmH2O
+ - land.diagnostics.gpp_demand: Demand-driven GPP with stressors except soilW applied
+ - land.diagnostics.gpp_f_soilW: soil moisture stress on photosynthetic capacity
  - land.states.transpiration_supply: supply limited transpiration
 
 *Outputs*

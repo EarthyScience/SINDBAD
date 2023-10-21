@@ -65,7 +65,7 @@
       "pools.surfaceW": "d_surface",
       "states.fAPAR": null,
       "states.EVI": null,
-      "states.water_balance": null
+      "diagnostics.water_balance": null
     }
   },
   "model_spinup": {

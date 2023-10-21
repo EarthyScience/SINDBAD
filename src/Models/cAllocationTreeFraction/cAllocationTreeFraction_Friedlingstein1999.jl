@@ -14,14 +14,14 @@ function define(params::cAllocationTreeFraction_Friedlingstein1999, forcing, lan
     if hasproperty(land.pools, :cVegWoodC) && hasproperty(land.pools, :cVegWoodF)
         cVeg_names_for_c_allocation_frac_tree = (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)::Tuple
     end
-    @pack_land cVeg_names_for_c_allocation_frac_tree => land.cAllocationTreeFraction
+    @pack_land cVeg_names_for_c_allocation_frac_tree → land.cAllocationTreeFraction
     return land
 end
 
 function setCAlloc(c_allocation, cAllocValue, landPool, zixPools, helpers)
     zix = getZix(landPool, zixPools)
     for ix ∈ eachindex(zix)
-        @rep_elem cAllocValue * c_allocation[zix[ix]] => (c_allocation, zix[ix], :cEco)
+        @rep_elem cAllocValue * c_allocation[zix[ix]] → (c_allocation, zix[ix], :cEco)
     end
     return c_allocation
 end
@@ -32,9 +32,10 @@ function compute(params::cAllocationTreeFraction_Friedlingstein1999, forcing, la
 
     ## unpack land variables
     @unpack_land begin
-        (c_allocation, frac_tree) ∈ land.states
+        frac_tree ∈ land.states
+        c_allocation ∈ land.diagnostics
         cVeg_names_for_c_allocation_frac_tree ∈ land.cAllocationTreeFraction
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
     end
     # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
     r0 = z_zero
@@ -73,7 +74,7 @@ function compute(params::cAllocationTreeFraction_Friedlingstein1999, forcing, la
 
     c_allocation = setCAlloc(c_allocation, a_cVegLeaf, land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf, helpers)
 
-    @pack_land c_allocation => land.states
+    @pack_land c_allocation → land.diagnostics
 
     return land
 end
@@ -89,11 +90,11 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - land.states.c_allocation: the fraction of npp that is allocated to the different plant organs
+ - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
  - land.states.frac_tree: tree cover
 
 *Outputs*
- - land.states.c_allocation: adjusted fraction of npp that is allocated to the different plant organs
+ - land.diagnostics.c_allocation: adjusted fraction of npp that is allocated to the different plant organs
 
 ---
 

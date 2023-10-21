@@ -17,10 +17,9 @@ function define(params::cTauVegProperties_CASA, forcing, land, helpers)
 
     ## instantiate variables
     c_eco_k_f_veg_props = one.(land.pools.cEco)
-    annk = z_zero #sujan ones(size(AGE))
 
     ## pack land variables
-    @pack_land (c_eco_k_f_veg_props, annk) => land.cTauVegProperties
+    @pack_land c_eco_k_f_veg_props → land.diagnostics
     return land
 end
 
@@ -30,9 +29,9 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        PFT ∈ land.vegProperties
-        (c_eco_k_f_veg_props, annk) ∈ land.cTauVegProperties
-        (z_zero, o_one) ∈ land.wCycleBase
+        PFT ∈ land.properties
+        c_eco_k_f_veg_props ∈ land.diagnostics
+        (z_zero, o_one) ∈ land.constants
     end
 
     ## calculate variables
@@ -80,8 +79,9 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        c_τ_eco => land.cCycleBase
-        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN, c_eco_k_f_veg_props) => land.cTauVegProperties
+        c_τ_eco → land.cCycleBase
+        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN) → land.properties
+        c_eco_k_f_veg_props → land.diagnostics
     end
     return land
 end
@@ -98,15 +98,15 @@ $(SindbadParameters)
 Effect of vegetation properties on soil decomposition rates using cTauVegProperties_CASA
 
 *Inputs*
- - land.vegProperties.PFT:
+ - land.properties.PFT:
 
 *Outputs*
- - land.cTauVegProperties.LIGEFF:
- - land.cTauVegProperties.LIGNIN:
- - land.cTauVegProperties.LITC2N:
- - land.cTauVegProperties.MTF:
- - land.cTauVegProperties.SCLIGNIN:
- - land.cTauVegProperties.c_eco_k_f_veg_props:
+ - land.properties.LIGEFF:
+ - land.properties.LIGNIN:
+ - land.properties.LITC2N:
+ - land.properties.MTF:
+ - land.properties.SCLIGNIN:
+ - land.diagnostics.c_eco_k_f_veg_props:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauVegProperties_CASA

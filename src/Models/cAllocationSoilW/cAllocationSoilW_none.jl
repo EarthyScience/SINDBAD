@@ -8,7 +8,7 @@ function define(params::cAllocationSoilW_none, forcing, land, helpers)
     c_allocation_f_soilW = one(first(land.pools.cEco))
 
     ## pack land variables
-    @pack_land c_allocation_f_soilW => land.cAllocationSoilW
+    @pack_land c_allocation_f_soilW → land.diagnostics
     return land
 end
 
@@ -20,7 +20,7 @@ sets the moisture effect on allocation to one (no effect)
 *Inputs*
 
 *Outputs*
-- land.cAllocationSoilW.c_allocation_f_soilW: moisture effect on cAllocation (0-1)
+- land.diagnostics.c_allocation_f_soilW: moisture effect on cAllocation (0-1)
 
 ---
 

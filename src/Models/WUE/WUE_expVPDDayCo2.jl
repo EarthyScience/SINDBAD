@@ -26,7 +26,8 @@ function compute(params::WUE_expVPDDayCo2, forcing, land, helpers)
     WUE = WUENoCO2 * fCO2_CO2
 
     ## pack land variables
-    @pack_land (WUE, WUENoCO2) => land.WUE
+    @pack_land WUENoCO2 → land.WUE
+    @pack_land WUE → land.diagnostics
     return land
 end
 

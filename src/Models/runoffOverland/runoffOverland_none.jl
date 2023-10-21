@@ -5,10 +5,10 @@ struct runoffOverland_none <: runoffOverland end
 function define(params::runoffOverland_none, forcing, land, helpers)
 
     ## calculate variables
-    overland_runoff = land.wCycleBase.z_zero
+    overland_runoff = land.constants.z_zero
 
     ## pack land variables
-    @pack_land overland_runoff => land.fluxes
+    @pack_land overland_runoff → land.fluxes
     return land
 end
 

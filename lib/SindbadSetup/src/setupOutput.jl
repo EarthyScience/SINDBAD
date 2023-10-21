@@ -1,6 +1,6 @@
 export getDepthDimensionSizeName
 export getDepthInfoAndVariables
-export setVariablesToStore
+export setModelOutput
 export updateVariablesToStore
 
 """
@@ -181,7 +181,7 @@ save a copy of experiment settings to the output folder
 """
 function saveExperimentSettings(info)
     sindbad_experiment = info.temp.experiment.dirs.sindbad_experiment
-    @info "  saveExperimentSettings:: Saving a copy of json settings to: $(info.output.dirs.settings)"
+    @info "         ...saving a copy of json settings to: $(info.output.dirs.settings)"
     cp(sindbad_experiment,
         joinpath(info.output.dirs.settings, split(sindbad_experiment, path_separator)[end]);
         force=true)
@@ -246,18 +246,18 @@ function setExperimentOutput(info)
     out_file_info = (; global_metadata=global_metadata, file_prefix=file_prefix)
     out_info = (; out_info..., file_info=out_file_info)  
     info = setTupleField(info, (:output, out_info))
+    @info "         ...output directories set in: $(info.output.dirs.root)"
     saveExperimentSettings(info)
-    @info "  setExperimentOutput:: Setup output directories in: $(info.output.dirs.root)"
     return info
 end
 
 
 """
-    setVariablesToStore(info::NamedTuple)
+    setModelOutput(info::NamedTuple)
 
 sets info.temp.output.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
-function setVariablesToStore(info::NamedTuple)
+function setModelOutput(info::NamedTuple)
     output_vars = collect(propertynames(info.settings.experiment.model_output.variables))
     info = (; info..., temp=(; info.temp..., output=getDepthInfoAndVariables(info, output_vars)))
     return info

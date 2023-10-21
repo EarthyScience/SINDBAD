@@ -7,7 +7,7 @@ function compute(params::treeFraction_forcing, forcing, land, helpers)
     @unpack_forcing frac_tree ∈ forcing
 
     ## pack land variables
-    @pack_land frac_tree => land.states
+    @pack_land frac_tree → land.states
     return land
 end
 

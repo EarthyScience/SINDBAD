@@ -12,7 +12,7 @@ function define(params::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        root_water_uptake => land.states
+        root_water_uptake → land.fluxes
     end
     return land
 end
@@ -22,8 +22,8 @@ function compute(params::rootWaterUptake_topBottom, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         PAW ∈ land.states
-        soilW ∈ land.pools
-        (ΔsoilW, root_water_uptake) ∈ land.states
+        (soilW, ΔsoilW) ∈ land.pools
+        root_water_uptake ∈ land.fluxes
         transpiration ∈ land.fluxes
     end
     # get the transpiration
@@ -36,8 +36,8 @@ function compute(params::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        root_water_uptake => land.states
-        ΔsoilW => land.states
+        root_water_uptake → land.fluxes
+        ΔsoilW → land.pools
     end
     return land
 end
@@ -47,7 +47,7 @@ function update(params::rootWaterUptake_topBottom, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        ΔsoilW ∈ land.pools
     end
 
     ## update variables
@@ -59,8 +59,7 @@ function update(params::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        soilW => land.pools
-        ΔsoilW => land.states
+        (soilW, ΔsoilW) → land.pools
     end
     return land
 end

@@ -5,12 +5,12 @@ struct getPools_simple <: getPools end
 function define(params::getPools_simple, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
-        z_zero ∈ land.wCycleBase
+        z_zero ∈ land.constants
     end
     ## calculate variables
     WBP = z_zero
 
-    @pack_land WBP => land.states
+    @pack_land WBP → land.states
     return land
 end
 
@@ -24,7 +24,7 @@ function compute(params::getPools_simple, forcing, land, helpers)
     ## calculate variables
     WBP = oftype(WBP, rain)
 
-    @pack_land WBP => land.states
+    @pack_land WBP → land.states
     return land
 end
 

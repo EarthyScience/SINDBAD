@@ -20,7 +20,7 @@ function compute(params::cAllocationLAI_Friedlingstein1999, forcing, land, helpe
     c_allocation_f_LAI = clamp(exp(-kext * LAI), min_f_LAI, max_f_LAI)
 
     ## pack land variables
-    @pack_land c_allocation_f_LAI => land.cAllocationLAI
+    @pack_land c_allocation_f_LAI → land.diagnostics
     return land
 end
 
@@ -39,8 +39,7 @@ Effect of lai on carbon allocation using cAllocationLAI_Friedlingstein1999
  - land.states.LAI: values for leaf area index
 
 *Outputs*
- - land.cAllocationLAI.c_allocation_f_LAI: values for light limitation
- - land.cAllocationLAI.c_allocation_f_LAI
+ - land.diagnostics.c_allocation_f_LAI: values for light limitation
 
 ---
 

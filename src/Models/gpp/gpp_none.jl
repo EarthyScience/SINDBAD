@@ -5,10 +5,10 @@ struct gpp_none <: gpp end
 function define(params::gpp_none, forcing, land, helpers)
 
     ## calculate variables
-    gpp = land.wCycleBase.z_zero
+    gpp = land.constants.z_zero
 
     ## pack land variables
-    @pack_land gpp => land.fluxes
+    @pack_land gpp → land.fluxes
     return land
 end
 

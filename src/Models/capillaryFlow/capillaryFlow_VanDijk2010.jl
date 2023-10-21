@@ -16,7 +16,7 @@ function define(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        soil_capillary_flux => land.fluxes
+        soil_capillary_flux → land.fluxes
     end
     return land
 end
@@ -27,12 +27,11 @@ function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (soil_kFC, wSat) ∈ land.soilWBase
+        (soil_kFC, wSat) ∈ land.properties
         soil_capillary_flux ∈ land.fluxes
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        (soilW, ΔsoilW) ∈ land.pools
         tolerance ∈ helpers.numbers
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
     end
 
     for sl ∈ 1:(length(soilW)-1)
@@ -42,15 +41,15 @@ function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
         lossCap = maxZero(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]))
         minFlow = min(tmpCapFlow, holdCap, lossCap)
         tmp = minFlow > tolerance ? minFlow : zero(minFlow)
-        @rep_elem tmp => (soil_capillary_flux, sl, :soilW)
-        @add_to_elem soil_capillary_flux[sl] => (ΔsoilW, sl, :soilW)
-        @add_to_elem -soil_capillary_flux[sl] => (ΔsoilW, sl + 1, :soilW)
+        @rep_elem tmp → (soil_capillary_flux, sl, :soilW)
+        @add_to_elem soil_capillary_flux[sl] → (ΔsoilW, sl, :soilW)
+        @add_to_elem -soil_capillary_flux[sl] → (ΔsoilW, sl + 1, :soilW)
     end
 
     ## pack land variables
     @pack_land begin
-        soil_capillary_flux => land.fluxes
-        ΔsoilW => land.states
+        soil_capillary_flux → land.fluxes
+        ΔsoilW → land.pools
     end
     return land
 end
@@ -59,8 +58,7 @@ function update(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        (soilW, ΔsoilW) ∈ land.pools
     end
 
     ## update variables
@@ -72,8 +70,7 @@ function update(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        soilW => land.pools
-        # ΔsoilW => land.states
+        (soilW, ΔsoilW) → land.pools
     end
     return land
 end

@@ -12,13 +12,13 @@ function compute(params::fAPAR_LAI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         LAI ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
     end
     ## calculate variables
     fAPAR = o_one - exp(-(LAI * k_extinction))
 
     ## pack land variables
-    @pack_land fAPAR => land.states
+    @pack_land fAPAR → land.states
     return land
 end
 

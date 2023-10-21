@@ -8,7 +8,7 @@ function define(params::sublimation_none, forcing, land, helpers)
     sublimation = zero(eltype(land.pools.snowW))
 
     ## pack land variables
-    @pack_land sublimation => land.fluxes
+    @pack_land sublimation → land.fluxes
     return land
 end
 

@@ -5,10 +5,10 @@ struct saturatedFraction_none <: saturatedFraction end
 function define(params::saturatedFraction_none, forcing, land, helpers)
 
     ## calculate variables
-    satFrac = land.wCycleBase.z_zero
+    satFrac = land.constants.z_zero
 
     ## pack land variables
-    @pack_land satFrac => land.states
+    @pack_land satFrac → land.states
     return land
 end
 

@@ -21,8 +21,8 @@ function compute(params::runoffInterflow_residual, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        interflow_runoff => land.fluxes
-        WBP => land.states
+        interflow_runoff → land.fluxes
+        WBP → land.states
     end
     return land
 end

@@ -7,9 +7,10 @@ function compute(params::wCycle_components, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
-        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.states
+        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.pools
         zix ∈ helpers.pools
-        (z_zero, o_one, w_model) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
+        w_model ∈ land.models
     end
     total_water_prev = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
@@ -23,30 +24,31 @@ function compute(params::wCycle_components, forcing, land, helpers)
 
     # always pack land tws before calling the adjust method
     @pack_land begin
-        (groundW, snowW, soilW, surfaceW, TWS) => land.pools
+        (groundW, snowW, soilW, surfaceW, TWS) → land.pools
     end
 
     land = adjustPackMainPool(land, helpers, w_model)
 
     # reset moisture changes to zero
     for l in eachindex(ΔsnowW)
-        @rep_elem zero(eltype(ΔsnowW)) => (ΔsnowW, l, :snowW)
+        @rep_elem zero(eltype(ΔsnowW)) → (ΔsnowW, l, :snowW)
     end
     for l in eachindex(ΔsoilW)
-        @rep_elem zero(eltype(ΔsoilW)) => (ΔsoilW, l, :soilW)
+        @rep_elem zero(eltype(ΔsoilW)) → (ΔsoilW, l, :soilW)
     end
     for l in eachindex(ΔgroundW)
-        @rep_elem zero(eltype(ΔgroundW)) => (ΔgroundW, l, :groundW)
+        @rep_elem zero(eltype(ΔgroundW)) → (ΔgroundW, l, :groundW)
     end
     for l in eachindex(ΔsurfaceW)
-        @rep_elem zero(eltype(ΔsurfaceW)) => (ΔsurfaceW, l, :surfaceW)
+        @rep_elem zero(eltype(ΔsurfaceW)) → (ΔsurfaceW, l, :surfaceW)
     end
 
     total_water = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
     ## pack land variables
     @pack_land begin
-        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, total_water, total_water_prev) => land.states
+        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW) → land.pools
+        (total_water, total_water_prev) → land.states
     end
     return land
 end
@@ -64,7 +66,7 @@ update the water cycle pools per component
 *Inputs*
 - land.pools.storages: water storages
 - land.states.Δstorages: water storage changes
-- land.soilWBase.wSat: water holding capacity
+- land.properties.wSat: water holding capacity
 
 *Outputs*
  - land.states.Δstorages: soil percolation
