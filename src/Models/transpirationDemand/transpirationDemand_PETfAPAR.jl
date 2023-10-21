@@ -18,7 +18,7 @@ function compute(params::transpirationDemand_PETfAPAR, forcing, land, helpers)
     transpiration_demand = PET * α * fAPAR
 
     ## pack land variables
-    @pack_land transpiration_demand => land.transpirationDemand
+    @pack_land transpiration_demand → land.diagnostics
     return land
 end
 
@@ -39,7 +39,7 @@ Demand-driven transpiration using transpirationDemand_PETfAPAR
  - α: α parameter for potential transpiration
 
 *Outputs*
- - land.transpirationDemand.transpiration_demand: demand driven transpiration
+ - land.diagnostics.transpiration_demand: demand driven transpiration
 
 ---
 

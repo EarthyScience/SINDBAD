@@ -4,15 +4,15 @@ struct gpp_mult <: gpp end
 
 function define(params::gpp_mult, forcing, land, helpers)
     @unpack_land begin
-        z_zero ∈ land.wCycleBase
+        z_zero ∈ land.constants
     end
 
     AllScGPP = z_zero
     gpp = z_zero
     ## pack land variables
     @pack_land begin
-        AllScGPP => land.gpp
-        gpp => land.fluxes
+        AllScGPP → land.gpp
+        gpp → land.fluxes
     end
     return land
 end
@@ -21,10 +21,10 @@ function compute(params::gpp_mult, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        gpp_f_climate ∈ land.gppDemand
+        gpp_f_climate ∈ land.diagnostics
         fAPAR ∈ land.states
-        gpp_potential ∈ land.gppPotential
-        gpp_f_soilW ∈ land.gppSoilW
+        gpp_potential ∈ land.diagnostics
+        gpp_f_soilW ∈ land.diagnostics
     end
 
     AllScGPP = gpp_f_climate * gpp_f_soilW #sujan
@@ -33,8 +33,8 @@ function compute(params::gpp_mult, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        gpp => land.fluxes
-        AllScGPP => land.gpp
+        gpp → land.fluxes
+        AllScGPP → land.gpp
     end
     return land
 end
@@ -48,9 +48,9 @@ compute the actual GPP with potential scaled by multiplicative stress scalar of 
 Combine effects as multiplicative or minimum; if coupled, uses transup using gpp_mult
 
 *Inputs*
- - land.gppDemand.gpp_f_climate: effective demand scalars; between 0-1
- - land.gppPotential.gpp_potential: maximum potential GPP based on radiation use efficiency
- - land.gppSoilW.gpp_f_soilW: soil moisture stress scalar; between 0-1
+ - land.diagnostics.gpp_f_climate: effective demand scalars; between 0-1
+ - land.diagnostics.gpp_potential: maximum potential GPP based on radiation use efficiency
+ - land.diagnostics.gpp_f_soilW: soil moisture stress scalar; between 0-1
  - land.states.fAPAR: fraction of absorbed photosynthetically active radiation  [-] (equivalent to "canopy cover" in Gash & Miralles)
 
 *Outputs*

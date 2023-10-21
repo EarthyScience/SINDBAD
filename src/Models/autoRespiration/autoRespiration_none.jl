@@ -8,8 +8,8 @@ function define(params::autoRespiration_none, forcing, land, helpers)
     c_eco_efflux = zero(land.pools.cEco)
 
     ## pack land variables
-    @pack_land c_eco_efflux => land.states
-    return land
+    @pack_land c_eco_efflux → land.states
+    return fluxes
 end
 
 @doc """

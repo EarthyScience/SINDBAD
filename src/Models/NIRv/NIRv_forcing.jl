@@ -9,7 +9,7 @@ function compute(params::NIRv_forcing, forcing, land, helpers)
     NIRv = f_NIRv
     
     ## pack land variables
-    @pack_land NIRv => land.states
+    @pack_land NIRv → land.states
     return land
 end
 

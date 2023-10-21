@@ -16,7 +16,7 @@ function define(params::gppSoilW_GSI, forcing, land, helpers)
     gpp_f_soilW_prev = one(f_soilW_τ)
 
     ## pack land variables
-    @pack_land (gpp_f_soilW_prev) => land.gppSoilW
+    @pack_land (gpp_f_soilW_prev) → land.diagnostics
     return land
 end
 
@@ -26,9 +26,9 @@ function compute(params::gppSoilW_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (sum_wAWC, sum_WP) ∈ land.soilWBase
+        (sum_wAWC, sum_WP) ∈ land.properties
         soilW ∈ land.pools
-        (gpp_f_soilW_prev) ∈ land.gppSoilW
+        (gpp_f_soilW_prev) ∈ land.diagnostics
     end
 
     actAWC = maxZero(totalS(soilW) - sum_WP)
@@ -39,7 +39,7 @@ function compute(params::gppSoilW_GSI, forcing, land, helpers)
     gpp_f_soilW_prev = gpp_f_soilW
 
     ## pack land variables
-    @pack_land (gpp_f_soilW, gpp_f_soilW_prev) => land.gppSoilW
+    @pack_land (gpp_f_soilW, gpp_f_soilW_prev) → land.diagnostics
     return land
 end
 
@@ -56,10 +56,10 @@ $(SindbadParameters)
 *Inputs*
  - f_soilW_τ: contribution of current time step
  - land.pools.soilW: values of soil moisture current time step
- - land.soilWBase.WP: wilting point
+ - land.properties.WP: wilting point
 
 *Outputs*
- - land.gppSoilW.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
+ - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
 
 ---
 

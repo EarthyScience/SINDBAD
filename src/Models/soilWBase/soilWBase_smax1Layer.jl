@@ -11,7 +11,7 @@ function define(params::soilWBase_smax1Layer, forcing, land, helpers)
 
     @unpack_land begin
         soilW ∈ land.pools
-        n_soilW ∈ land.wCycleBase
+        n_soilW ∈ land.constants
     end
     ## precomputations/check
     # get the soil thickness & root distribution information from input
@@ -27,7 +27,7 @@ function define(params::soilWBase_smax1Layer, forcing, land, helpers)
     wWP = zero(land.pools.soilW)
 
     ## pack land variables
-    @pack_land (soil_layer_thickness, wSat, wFC, wWP) => land.soilWBase
+    @pack_land (soil_layer_thickness, wSat, wFC, wWP) → land.properties
     return land
 end
 
@@ -36,7 +36,7 @@ function compute(params::soilWBase_smax1Layer, forcing, land, helpers)
     @unpack_soilWBase_smax1Layer params
 
     ## unpack land variables
-    @unpack_land (soil_layer_thickness, wSat, wFC, wWP) ∈ land.soilWBase
+    @unpack_land (soil_layer_thickness, wSat, wFC, wWP) ∈ land.properties
 
     ## calculate variables
 
@@ -49,7 +49,7 @@ function compute(params::soilWBase_smax1Layer, forcing, land, helpers)
     wAWC = wSat
 
     ## pack land variables
-    @pack_land (wAWC, wFC, wSat, wWP, n_soilW) => land.soilWBase
+    @pack_land (wAWC, wFC, wSat, wWP, n_soilW) → land.properties
     return land
 end
 
@@ -68,11 +68,11 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax1Layer
  - helpers.pools.: soil layers & depths
 
 *Outputs*
- - land.soilWBase.p_nsoilLayers
- - land.soilWBase.soil_layer_thickness
- - land.soilWBase.wAWC: = land.soilWBase.wSat
- - land.soilWBase.wFC : = land.soilWBase.wSat
- - land.soilWBase.WP: wilting point set to zero for all layers
+ - land.properties.p_nsoilLayers
+ - land.properties.soil_layer_thickness
+ - land.properties.wAWC: = land.properties.wSat
+ - land.properties.wFC : = land.properties.wSat
+ - land.properties.WP: wilting point set to zero for all layers
 
 # instantiate:
 instantiate/instantiate time-invariant variables for soilWBase_smax1Layer

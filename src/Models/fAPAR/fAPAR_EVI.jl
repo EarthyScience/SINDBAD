@@ -18,7 +18,7 @@ function compute(params::fAPAR_EVI, forcing, land, helpers)
     fAPAR = clampZeroOne(fAPAR)
 
     ## pack land variables
-    @pack_land fAPAR => land.states
+    @pack_land fAPAR → land.states
     return land
 end
 

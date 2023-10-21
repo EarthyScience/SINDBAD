@@ -8,7 +8,7 @@ function compute(params::NDWI_forcing, forcing, land, helpers)
 
     NDWI = f_NDWI
     ## pack land variables
-    @pack_land NDWI => land.states
+    @pack_land NDWI → land.states
     return land
 end
 

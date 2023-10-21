@@ -8,7 +8,7 @@ function define(params::cTau_none, forcing, land, helpers)
     c_eco_k = one.(land.pools.cEco)
 
     ## pack land variables
-    @pack_land c_eco_k => land.cTau
+    @pack_land c_eco_k → land.diagnostics
     return land
 end
 

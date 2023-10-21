@@ -11,7 +11,7 @@ function compute(params::transpirationSupply_CASA, forcing, land, helpers)
     transpiration_supply = sum(PAW)
 
     ## pack land variables
-    @pack_land transpiration_supply => land.states
+    @pack_land transpiration_supply → land.diagnostics
     return land
 end
 
@@ -25,8 +25,8 @@ Supply-limited transpiration using transpirationSupply_CASA
 
 *Inputs*
  - land.pools.soilW : total soil moisture
- - land.soilWBase.soil_[α/β]: moisture retention characteristics
- - land.soilWBase.wAWC: total maximum plant available water [FC-WP]
+ - land.properties.soil_[α/β]: moisture retention characteristics
+ - land.properties.wAWC: total maximum plant available water [FC-WP]
  - land.states.PAW: actual extractable water
 
 *Outputs*

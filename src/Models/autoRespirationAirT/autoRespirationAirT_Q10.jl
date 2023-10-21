@@ -18,7 +18,7 @@ function compute(params::autoRespirationAirT_Q10, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        auto_respiration_f_airT => land.autoRespirationAirT
+        auto_respiration_f_airT → land.diagnostics
     end
     return land
 end
@@ -38,7 +38,7 @@ Temperature effect on autotrophic maintenance respiration using autoRespirationA
  - forcing.f_airT: air temperature [°C]
 
 *Outputs*
- - land.autoRespirationAirT.auto_respiration_f_airT: autotrophic respiration rate [gC.m-2.δT-1]
+ - land.diagnostics.auto_respiration_f_airT: autotrophic respiration rate [gC.m-2.δT-1]
 
 ---
 

@@ -8,7 +8,7 @@ function compute(params::vegFraction_forcing, forcing, land, helpers)
     frac_vegetation = f_frac_vegetation
 
     ## pack land variables
-    @pack_land frac_vegetation => land.states
+    @pack_land frac_vegetation → land.states
     return land
 end
 

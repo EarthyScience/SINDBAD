@@ -12,7 +12,7 @@ function compute(params::runoffSurface_all, forcing, land, helpers)
     surface_runoff = overland_runoff
 
     ## pack land variables
-    @pack_land surface_runoff => land.fluxes
+    @pack_land surface_runoff → land.fluxes
     return land
 end
 

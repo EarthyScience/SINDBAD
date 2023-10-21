@@ -16,7 +16,7 @@ function define(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     CI_min = CI
     CI_max = CI
     ## pack land variables
-    @pack_land (CI_min, CI_max) => land.gppDiffRadiation
+    @pack_land (CI_min, CI_max) → land.diagnostics
     return land
 end
 
@@ -25,8 +25,8 @@ function compute(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     @unpack_gppDiffRadiation_Turner2006 params
     @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
     @unpack_land begin
-        (CI_min, CI_max) ∈ land.gppDiffRadiation
-        z_zero ∈ land.wCycleBase
+        (CI_min, CI_max) ∈ land.diagnostics
+        z_zero ∈ land.constants
         tolerance ∈ helpers.numbers
     end
 
@@ -43,7 +43,7 @@ function compute(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     gpp_f_cloud = f_rg_pot > z_zero ? cScGPP : zero(cScGPP)
 
     ## pack land variables
-    @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
+    @pack_land (gpp_f_cloud, CI_min, CI_max) → land.diagnostics
     return land
 end
 
@@ -62,7 +62,7 @@ $(SindbadParameters)
  - forcing.f_rg_pot: Potential radiation [MJ/m2/time]
 
 *Outputs*
- - land.gppDiffRadiation.gpp_f_cloud: effect of cloudiness on potential GPP
+ - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
 
 ---
 

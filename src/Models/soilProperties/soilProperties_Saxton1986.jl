@@ -57,8 +57,9 @@ function define(params::soilProperties_Saxton1986, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP, unsat_k_model) => land.soilProperties
-        (n100, n1000, n2, n24, n3600, e1, e2, e3, e4, e5, e6, e7) => land.soilProperties
+        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) → land.properties
+        (n100, n1000, n2, n24, n3600, e1, e2, e3, e4, e5, e6, e7) → land.soilProperties
+        unsat_k_model → land.models
     end
     return land
 end
@@ -68,7 +69,7 @@ function precompute(params::soilProperties_Saxton1986, forcing, land, helpers)
     @unpack_soilProperties_Saxton1986 params
 
     ## unpack land variables
-    @unpack_land (sp_α, sp_β, sp_kFC, sp_θFC, sp_ψFC, sp_kWP, sp_θWP, sp_ψWP, sp_kSat, sp_θSat, sp_ψSat) ∈ land.soilProperties
+    @unpack_land (sp_α, sp_β, sp_kFC, sp_θFC, sp_ψFC, sp_kWP, sp_θWP, sp_ψWP, sp_kSat, sp_θSat, sp_ψSat) ∈ land.properties
 
     ## calculate variables
     # number of layers & creation of arrays
@@ -77,22 +78,22 @@ function precompute(params::soilProperties_Saxton1986, forcing, land, helpers)
         (α, β, kFC, θFC, ψFC) = calcPropsSaxton1986(params, land, helpers, sl, ψFC)
         (_, _, kWP, θWP, ψWP) = calcPropsSaxton1986(params, land, helpers, sl, ψWP)
         (_, _, kSat, θSat, ψSat) = calcPropsSaxton1986(params, land, helpers, sl, ψSat)
-        @rep_elem α => (sp_α, sl, :soilW)
-        @rep_elem β => (sp_β, sl, :soilW)
-        @rep_elem kFC => (sp_kFC, sl, :soilW)
-        @rep_elem θFC => (sp_θFC, sl, :soilW)
-        @rep_elem ψFC => (sp_ψFC, sl, :soilW)
-        @rep_elem kWP => (sp_kWP, sl, :soilW)
-        @rep_elem θWP => (sp_θWP, sl, :soilW)
-        @rep_elem ψWP => (sp_ψWP, sl, :soilW)
-        @rep_elem kSat => (sp_kSat, sl, :soilW)
-        @rep_elem θSat => (sp_θSat, sl, :soilW)
-        @rep_elem ψSat => (sp_ψSat, sl, :soilW)
+        @rep_elem α → (sp_α, sl, :soilW)
+        @rep_elem β → (sp_β, sl, :soilW)
+        @rep_elem kFC → (sp_kFC, sl, :soilW)
+        @rep_elem θFC → (sp_θFC, sl, :soilW)
+        @rep_elem ψFC → (sp_ψFC, sl, :soilW)
+        @rep_elem kWP → (sp_kWP, sl, :soilW)
+        @rep_elem θWP → (sp_θWP, sl, :soilW)
+        @rep_elem ψWP → (sp_ψWP, sl, :soilW)
+        @rep_elem kSat → (sp_kSat, sl, :soilW)
+        @rep_elem θSat → (sp_θSat, sl, :soilW)
+        @rep_elem ψSat → (sp_ψSat, sl, :soilW)
     end
 
     ## pack land variables
     @pack_land begin
-        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) => land.soilProperties
+        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) → land.properties
     end
     return land
 end
@@ -120,8 +121,8 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 """
 function unsatK(land, helpers, sl, ::kSaxton1986)
     @unpack_land begin
-        (st_clay, st_sand) ∈ land.soilTexture
-        soil_layer_thickness ∈ land.soilWBase
+        (st_clay, st_sand) ∈ land.properties
+        soil_layer_thickness ∈ land.properties
         (n100, n1000, n2, n24, n3600, e1, e2, e3, e4, e5, e6, e7) ∈ land.soilProperties
         soilW ∈ land.pools
     end
@@ -146,8 +147,8 @@ function calcPropsSaxton1986(params::soilProperties_Saxton1986, land, helpers, s
     @unpack_soilProperties_Saxton1986 params
 
     @unpack_land begin
-        (z_zero, o_one) ∈ land.wCycleBase
-        (st_clay, st_sand) ∈ land.soilTexture
+        (z_zero, o_one) ∈ land.constants
+        (st_clay, st_sand) ∈ land.properties
     end
 
     ## calculate variables

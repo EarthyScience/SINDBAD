@@ -26,8 +26,8 @@ function compute(params::cFlow_simple, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        c_flow_order => land.cCycleBase
-        (c_flow_A_vec, p_giver, p_taker) => land.cFlow
+        c_flow_order → land.cCycleBase
+        (c_flow_A_vec, p_giver, p_taker) → land.cFlow
     end
     return land
 end

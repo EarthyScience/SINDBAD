@@ -15,10 +15,10 @@ function compute(params::runoffSurface_directIndirectFroSoil, forcing, land, hel
     @unpack_land begin
         frac_frozen ∈ land.runoffSaturationExcess
         surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.states
+        ΔsurfaceW ∈ land.pools
         overland_runoff ∈ land.fluxes
-        (z_zero, o_one) ∈ land.wCycleBase
-        n_surfaceW ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
+        n_surfaceW ∈ land.diagnostics
     end
     # fraction of overland runoff that flows out directly
     fracFastQ = (o_one - rf) * (o_one - frac_frozen) + frac_frozen
@@ -38,8 +38,8 @@ function compute(params::runoffSurface_directIndirectFroSoil, forcing, land, hel
 
     ## pack land variables
     @pack_land begin
-        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) => land.fluxes
-        ΔsurfaceW => land.states
+        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) → land.fluxes
+        ΔsurfaceW → land.pools
     end
     return land
 end
@@ -50,7 +50,7 @@ function update(params::runoffSurface_directIndirectFroSoil, forcing, land, help
     ## unpack variables
     @unpack_land begin
         surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.states
+        ΔsurfaceW ∈ land.pools
     end
 
     ## update storage pools
@@ -61,8 +61,8 @@ function update(params::runoffSurface_directIndirectFroSoil, forcing, land, help
 
     ## pack land variables
     @pack_land begin
-        surfaceW => land.pools
-        ΔsurfaceW => land.states
+        surfaceW → land.pools
+        ΔsurfaceW → land.pools
     end
     return land
 end

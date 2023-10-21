@@ -5,10 +5,10 @@ struct evaporation_none <: evaporation end
 function define(params::evaporation_none, forcing, land, helpers)
 
     ## calculate variables
-    evaporation = land.wCycleBase.z_zero
+    evaporation = land.constants.z_zero
 
     ## pack land variables
-    @pack_land evaporation => land.fluxes
+    @pack_land evaporation → land.fluxes
     return land
 end
 

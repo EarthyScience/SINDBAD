@@ -14,7 +14,7 @@ function compute(params::NDVI_constant, forcing, land, helpers)
     NDVI = constant_NDVI
 
     ## pack land variables
-    @pack_land NDVI => land.states
+    @pack_land NDVI → land.states
     return land
 end
 

@@ -14,7 +14,7 @@ function compute(params::EVI_constant, forcing, land, helpers)
     EVI = constant_EVI
 
     ## pack land variables
-    @pack_land EVI => land.states
+    @pack_land EVI → land.states
     return land
 end
 

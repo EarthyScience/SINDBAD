@@ -9,7 +9,7 @@ function compute(params::fAPAR_forcing, forcing, land, helpers)
     fAPAR = f_fAPAR
 
     ## pack land variables
-    @pack_land fAPAR => land.states
+    @pack_land fAPAR → land.states
     return land
 end
 

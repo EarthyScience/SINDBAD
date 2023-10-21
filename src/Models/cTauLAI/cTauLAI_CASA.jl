@@ -14,7 +14,7 @@ function define(params::cTauLAI_CASA, forcing, land, helpers)
     c_eco_k_f_LAI = one.(land.pools.cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_LAI => land.cTauLAI
+    @pack_land c_eco_k_f_LAI → land.diagnostics
     return land
 end
 
@@ -23,7 +23,7 @@ function compute(params::cTauLAI_CASA, forcing, land, helpers)
     @unpack_cTauLAI_CASA params
 
     ## unpack land variables
-    @unpack_land c_eco_k_f_LAI ∈ land.cTauLAI
+    @unpack_land c_eco_k_f_LAI ∈ land.diagnostics
 
     ## unpack land variables
     @unpack_land begin
@@ -93,7 +93,7 @@ function compute(params::cTauLAI_CASA, forcing, land, helpers)
     c_eco_k_f_LAI[zix_root] = c_τ_eco[zix_root] * RTLAI / c_eco_k[zix_root] # root litter scalar
 
     ## pack land variables
-    @pack_land (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_f_LAI) => land.cTauLAI
+    @pack_land (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_f_LAI) → land.diagnostics
     return land
 end
 
@@ -114,8 +114,8 @@ Calculate litterfall scalars (that affect the changes in the vegetation k) using
  - helpers.dates.timesteps_in_year: number of years of simulations
 
 *Outputs*
- - land.cTauLAI.c_eco_k_f_LAI:
- - land.cTauLAI.c_eco_k_f_LAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
+ - land.diagnostics.c_eco_k_f_LAI:
+ - land.diagnostics.c_eco_k_f_LAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauLAI_CASA

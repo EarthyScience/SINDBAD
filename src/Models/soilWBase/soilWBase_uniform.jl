@@ -7,10 +7,10 @@ function define(params::soilWBase_uniform, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈
-        land.soilProperties
-        (st_clay, st_orgm, st_sand, st_silt) ∈ land.soilTexture
+        land.properties
+        (st_clay, st_orgm, st_sand, st_silt) ∈ land.properties
         soilW ∈ land.pools
-        n_soilW ∈ land.wCycleBase
+        n_soilW ∈ land.constants
     end
 
     # instatiate variables 
@@ -36,15 +36,15 @@ function define(params::soilWBase_uniform, forcing, land, helpers)
 
     for sl ∈ eachindex(soilW)
         sd_sl = soilDepths[sl]
-        @rep_elem sd_sl => (soil_layer_thickness, sl, :soilW)
+        @rep_elem sd_sl → (soil_layer_thickness, sl, :soilW)
         p_wFC_sl = θFC[sl] * sd_sl
-        @rep_elem p_wFC_sl => (wFC, sl, :soilW)
+        @rep_elem p_wFC_sl → (wFC, sl, :soilW)
         wWP_sl = θWP[sl] * sd_sl
-        @rep_elem wWP_sl => (wWP, sl, :soilW)
+        @rep_elem wWP_sl → (wWP, sl, :soilW)
         p_wSat_sl = θSat[sl] * sd_sl
-        @rep_elem p_wSat_sl => (wSat, sl, :soilW)
+        @rep_elem p_wSat_sl → (wSat, sl, :soilW)
         soilW_sl = min(soilW[sl], wSat[sl])
-        @rep_elem soilW_sl => (soilW, sl, :soilW)
+        @rep_elem soilW_sl → (soilW, sl, :soilW)
     end
 
     # get the plant available water capacity
@@ -76,8 +76,8 @@ function define(params::soilWBase_uniform, forcing, land, helpers)
             θWP,
             ψFC,
             ψSat,
-            ψWP) => land.soilWBase
-        soilW => land.pools
+            ψWP) → land.properties
+        soilW → land.pools
     end
     return land
 end
@@ -96,10 +96,10 @@ Distribution of soil hydraulic properties over depth using soilWBase_uniform
 *Inputs*
  - helpers.pools.: soil layers & depths
  - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
- - land.soilTexture.p_[sand/silt/clay/orgm]: texture properties [nZix]
+ - land.properties.p_[sand/silt/clay/orgm]: texture properties [nZix]
 
 *Outputs*
- - all soil hydraulic properties in land.soilWBase.p_[parameterName]
+ - all soil hydraulic properties in land.properties.p_[parameterName]
  - makeLookup: to switch on/off the creation of lookup table of  unsaturated hydraulic conductivity
 
 # instantiate:

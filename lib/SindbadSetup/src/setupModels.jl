@@ -1,4 +1,3 @@
-export createLandInit
 export setOrderedSelectedModels
 export setSpinupAndForwardModels
 
@@ -99,26 +98,6 @@ end
 
 
 """
-    createLandInit(tem)
-
-create the initial out named tuple with subfields for pools, states, and all selected models.
-
-# Arguments:
-- `tem`: a helper NT with necessary objects for pools and numbers
-"""
-function createLandInit(pool_info, tem)
-    init_pools = getInitPools(pool_info, tem.helpers)
-    initial_states = getInitStates(pool_info, tem.helpers)
-    out = (; fluxes=(;), pools=init_pools, states=initial_states)::NamedTuple
-    sortedModels = sort([_sm for _sm ∈ tem.models.selected_models.model])
-    for model ∈ sortedModels
-        out = setTupleField(out, (model, (;)))
-    end
-    return out
-end
-
-
-"""
     setOrderedSelectedModels(info::NamedTuple)
 
 gets the ordered list of selected models from info.settings.model_structure.models
@@ -138,8 +117,7 @@ function setOrderedSelectedModels(info::NamedTuple)
     @debug "     setupInfo: creating initial out/land..."
 
     info = (; info..., temp=(; info.temp..., models=(; selected_models=Table((; model=[order_selected_models...])))))
-    land_init = createLandInit(info.pools, info.temp)
-    info = (; info..., temp=(; info.temp..., land_init, models=(; selected_models=Table((; model=[order_selected_models...])))))
+    info = (; info..., temp=(; info.temp..., models=(; selected_models=Table((; model=[order_selected_models...])))))
     return info
 end
 
