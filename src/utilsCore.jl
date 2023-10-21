@@ -41,7 +41,7 @@ macro add_to_elem(outparams::Expr)
                 tar,
                 lhs,
                 esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
-                # esc(:(land.wCycleBase.z_zero)),
+                # esc(:(land.constants.z_zero)),
                 esc(indx)))
     ]
     return Expr(:block, outCode...)
@@ -661,8 +661,8 @@ function setComponents(
                     Expr(:ref, s_main, ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
-                    :(land.wCycleBase.z_zero),
-                    :(land.wCycleBase.o_one),
+                    :(land.constants.z_zero),
+                    :(land.constants.o_one),
                     c_ix)))
 
             c_ix += 1
@@ -717,8 +717,8 @@ end
                     Expr(:ref, s_main, ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
-                    :(land.wCycleBase.z_zero),
-                    :(land.wCycleBase.o_one),
+                    :(land.constants.z_zero),
+                    :(land.constants.o_one),
                     c_ix)))
 
             c_ix += 1
@@ -771,8 +771,8 @@ end
                     Expr(:ref, s_comp, c_ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_main)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_main)),
-                    :(land.wCycleBase.z_zero),
-                    :(land.wCycleBase.o_one),
+                    :(land.constants.z_zero),
+                    :(land.constants.o_one),
                     ix)))
             c_ix += 1
         end
