@@ -97,7 +97,7 @@ function getInOutModel(model, model_func::Symbol)
                 @warn "Using an unextracted variable from forcing in  $model_func function of $(model_name).jl in line $(in_line).\nWhile this is not necessarily a source of error, these variables are NOT used in consistency checks and may be prone to bugs and lead to cluttered code. Follow the convention of unpacking all variables to use locally using @unpack_forcing."
                 in_line_src="forcing"
             end
-            in_v_str = replace(strip(in_line), "("→"",  ")" → "")
+            in_v_str = replace(strip(in_line), "(" => "",  ")" => "")
             in_v_list = [(strip(_v)) for _v in split(in_v_str, ",")[1:end]]
             in_v_list = Symbol.(in_v_list[(!isempty).(in_v_list)])
 
@@ -119,7 +119,7 @@ function getInOutModel(model, model_func::Symbol)
             if occursin("@pack_land", out_line)
                 out_line=strip(split(out_line, "@pack_land")[2])
             end
-            out_v_str = replace(strip(out_line), "(" → "",  ")" → "")
+            out_v_str = replace(strip(out_line), "(" => "",  ")" => "")
             out_v_list = [(strip(_v)) for _v in split(out_v_str, ",")[1:end]]
 
             # @show out_v_list, (!isempty).(out_v_list)
