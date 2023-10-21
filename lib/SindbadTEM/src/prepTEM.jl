@@ -186,7 +186,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
     end
 
     space_spinup_forcing = map(space_forcing) do loc_forcing
-        getAllSpinupForcing(loc_forcing, tem_info.spinup_sequence, tem_info.model_helpers);
+        getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
     end
 
     space_output = map([space_ind...]) do lsi
@@ -406,6 +406,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTemInfo(info, forcing);
+    tem_info = @set tem_info.spinup = info.spinup.sequence
 
     loc_land = output.land_init
     output_vars = output.variables
