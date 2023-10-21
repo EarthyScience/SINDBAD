@@ -74,7 +74,10 @@ function compute(params::PET_Lu2005, forcing, land, helpers)
     Tair_prev = f_airT
 
     ## pack land variables
-    @pack_land (PET, Tair_prev) => land.fluxes
+    @pack_land begin 
+        PET => land.fluxes
+        Tair_prev => land.states
+    end
     return land
 end
 

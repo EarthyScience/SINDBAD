@@ -90,7 +90,7 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
 
 *Outputs*
  - initiates land.states.root_water_efficiency as ones
- - land.states.root_water_efficiency as nPix;nZix for soilW
+ - land.states.root_water_efficiency as nZix for soilW
  - land.states.root_water_efficiency
 
 # instantiate:
