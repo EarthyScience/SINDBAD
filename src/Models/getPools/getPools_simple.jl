@@ -9,10 +9,10 @@ function define(params::getPools_simple, forcing, land, helpers)
     end
     ## calculate variables
     WBP = z_zero
-
     @pack_land WBP → land.states
     return land
 end
+
 
 function compute(params::getPools_simple, forcing, land, helpers)
 
