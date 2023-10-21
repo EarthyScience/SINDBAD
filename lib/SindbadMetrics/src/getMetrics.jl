@@ -303,7 +303,7 @@ function getLossVector(model_output::LandWrapper, observations, cost_options)
 end
 
 """
-    getModelOutputView(mod_dat::AbstractArray{T, 2})
+     getModelOutputView(_dat::AbstractArray{<:Any,N}) where N
 
 
 """

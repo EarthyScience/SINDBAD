@@ -1,13 +1,15 @@
 using Revise
 using SindbadData
 using SindbadTEM
+using SindbadExperiment
+using SindbadExperiment.YAXArrays
 using ProgressMeter
 toggleStackTraceNT()
 
 
 info = getExperimentInfo("../exp_yax/settings_yax/experiment.json");
 forcing = getForcing(info);
-# run_helpers = prepTEM(forcing, info);
+run_helpers = prepTEM(forcing, info);
 
 ## yax array run
 @time outcubes = runTEMYax(
@@ -15,10 +17,21 @@ forcing = getForcing(info);
     forcing,
     info);
 
-## normal array run
-replace_info = Dict("experiment.exe_rules.land_output_type" => "array");
-info = getExperimentInfo("../exp_yax/settings_yax/experiment.json"; replace_info=replace_info);
-runTEM!(forcing, info);
+var_pairs = info.output.variables;
+data_path_base = info.output.file_info.file_prefix;
+catalog_names = getVarFull.(var_pairs);
+variable_names = getUniqueVarNames(var_pairs);
+out_format = info.output.format;
+for vn ∈ eachindex(var_pairs)
+    catalog_name = catalog_names[vn]
+    variable_name = variable_names[vn]
+    data_yax = outcubes[vn]
+    data_path = data_path_base * "_$(variable_name).$(out_format)"
+    @info "saving $(data_path)"
+    backend = out_format == "nc" ? :netcdf : :zarr
+    savecube(outcubes[vn],data_path,driver=backend, overwrite=true)
+end
+
 
 
 ### TODO the yax spatial optimization

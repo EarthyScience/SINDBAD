@@ -24,6 +24,7 @@ function coreTEMYax(selected_models, loc_forcing, loc_land, tem_info)
 
     land_spin = spinupTEM(selected_models, spinup_forcing, loc_forcing_t, land_prec, tem_info)
 
+    # land_spin = land_prec
     land_time_series = timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land_spin, tem_info, tem_info.run.debug_model)
 
     return LandWrapper(land_time_series)
@@ -77,6 +78,7 @@ function runTEMYax(selected_models::Tuple, forcing::NamedTuple, info::NamedTuple
     # information for running model
     run_helpers = prepTEM(forcing, info);
     loc_land = deepcopy(run_helpers.loc_land);
+
     outcubes = mapCube(TEMYax,
         (incubes...,);
         selected_models=selected_models,
