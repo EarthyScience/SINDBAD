@@ -111,7 +111,7 @@ for o_set in opti_set
         "experiment.flags.catch_model_errors" => true,
         "experiment.flags.spinup_TEM" => true,
         "experiment.flags.debug_model" => false,
-        "experiment.model_spinup.sequence" => sequence,
+        "experiment.model_spinup_sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
@@ -128,7 +128,7 @@ for o_set in opti_set
     # some plots
     opt_dat = out_opti.output.optimized
     def_dat = out_opti.output.default
-    costOpt = prepCostOptions(obs_array, info.optim.cost_options)
+    costOpt = prepCostOptions(obs_array, info.optimization.cost_options)
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 
     # load matlab wroasted results
@@ -136,7 +136,7 @@ for o_set in opti_set
 
     varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :nirv => "gpp")
 
-    fig_prefix = joinpath(info.output.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
+    fig_prefix = joinpath(info.output.dirs.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
 
     foreach(costOpt) do var_row
         v = var_row.variable
@@ -148,7 +148,7 @@ for o_set in opti_set
             ml_dat = ml_dat .- mean(ml_dat)
         end
         v = (var_row.mod_field, var_row.mod_subfield)
-        vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+        vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
         v = vinfo["standard_name"]
         lossMetric = var_row.cost_metric
         loss_name = nameof(typeof(lossMetric))
@@ -170,7 +170,7 @@ for o_set in opti_set
         def_var = def_var[tspan, 1, 1, 1]
         opt_var = opt_var[tspan, 1, 1, 1]
 
-        xdata = [info.tem.helpers.dates.range[tspan]...]
+        xdata = [info.helpers.dates.range[tspan]...]
         obs_var_n, obs_σ_n, ml_dat_n = filterCommonNaN(obs_var, obs_σ, ml_dat)
         obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
         obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
@@ -185,29 +185,28 @@ for o_set in opti_set
     end
 
     # save the outcubes
-    out_info = getOutputFileInfo(info)
     output_array_opt = values(opt_dat)
     output_array_def = values(def_dat)
-    output_vars = info.tem.variables
-    output_dims = getOutDims(output_vars, info, out_opti.forcing.helpers);
+    output_vars = info.output.variables
+    output_dims = getOutDims(info, out_opti.forcing.helpers);
 
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output_array_opt, output_dims, output_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output_array_opt, output_dims, output_vars, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, output_array_opt, output_dims, output_vars, "zarr", info.experiment.basics.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, output_array_opt, output_dims, output_vars, "zarr", info.experiment.basics.temporal_resolution, DoNotSaveSingleFile())
 
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output_array_opt, output_dims, output_vars, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output_array_opt, output_dims, output_vars, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, output_array_opt, output_dims, output_vars, "nc", info.experiment.basics.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, output_array_opt, output_dims, output_vars, "nc", info.experiment.basics.temporal_resolution, DoNotSaveSingleFile())
 
 
     # plot the debug figures
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
+    fig_prefix = joinpath(info.output.dirs.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
     for (o, v) in enumerate(output_vars)
         def_var = output_array_def[o][:, :, 1, 1]
         opt_var = output_array_opt[o][:, :, 1, 1]
-        vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+        vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
         v = vinfo["standard_name"]
         println("plot debug::", v)
-        xdata = [info.tem.helpers.dates.range...]
+        xdata = [info.helpers.dates.range...]
         if size(opt_var, 2) == 1
             plot(xdata, def_var[:, 1]; label="def ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
             plot!(xdata, opt_var[:, 1]; label="opt ($(round(SindbadTEM.mean(opt_var[:, 1]), digits=2)))")

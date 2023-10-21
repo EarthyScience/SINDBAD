@@ -56,22 +56,22 @@ forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
-tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT)
+tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type)
 
 # new_params = tbl_params.default;
 new_params = getParamsAct(new_params, tbl_params)
 
-models = info.tem.models.forward;
+models = info.models.forward;
 param_to_index = getParameterIndices(models, tbl_params);
 
 new_models = updateModelParameters(param_to_index, models, new_params)
 
-@time runTEM!(new_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+@time runTEM!(new_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
 
 op = run_helpers.space_output[1];
-ov = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+ov = valToSymbol(run_helpers.tem_info.vals.output_vars)
 
 lines(op[6][:,1])

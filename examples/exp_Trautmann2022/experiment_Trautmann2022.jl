@@ -24,9 +24,9 @@ GC.gc()
 
 run_helpers = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 for x ∈ 1:10
-    @time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+    @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 end
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
@@ -35,22 +35,22 @@ end
 ds = forcing.data[1];
 plotdat = run_helpers.output_array;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+output_vars = valToSymbol(run_helpers.tem_info.vals.output_vars)
 for i ∈ eachindex(output_vars)
     v = output_vars[i]
-    vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+    vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
     vname = vinfo["standard_name"]
     println("plot output-model => domain: $domain, variable: $vname")
     pd = plotdat[i]
     if size(pd, 2) == 1
         heatmap(pd[:, 1, :]; title="$(vname)" , size=(2000, 1000))
         # Colorbar(fig[1, 2], obj)
-        savefig(joinpath(info.output.figure, "glob_$(vname).png"))
+        savefig(joinpath(info.output.dirs.figure, "glob_$(vname).png"))
     else
         foreach(axes(pd, 2)) do ll
             heatmap(pd[:, ll, :]; title="$(vname)" , size=(2000, 1000))
             # Colorbar(fig[1, 2], obj)
-            savefig(joinpath(info.output.figure, "glob_$(vname)_$(ll).png"))
+            savefig(joinpath(info.output.dirs.figure, "glob_$(vname)_$(ll).png"))
         end
     end
 end
@@ -61,7 +61,7 @@ for (o, v) in enumerate(forc_vars)
     println("plot forc-model => domain: $domain, variable: $v")
     def_var = forcing.data[o]
     plot_data=nothing
-    xdata = [info.tem.helpers.dates.range...]
+    xdata = [info.helpers.dates.range...]
     if size(def_var, 1) !== length(xdata)
         xdata = 1:size(def_var, 1)
         plot_data =  def_var[:]
@@ -70,6 +70,6 @@ for (o, v) in enumerate(forc_vars)
         plot_data =  def_var[:,:]
     end
     heatmap(plot_data; title="$(v):: mean = $(round(SindbadTEM.mean(def_var), digits=2)), nans=$(sum(isnan.(plot_data)))", size=(2000, 1000))
-    savefig(joinpath(info.output.figure, "forc_glob_$v.png"))
+    savefig(joinpath(info.output.dirs.figure, "forc_glob_$v.png"))
 end
 

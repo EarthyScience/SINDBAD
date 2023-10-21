@@ -69,7 +69,7 @@ Plant available water using vegAvailableWater_sigmoid
  - land.pools.soilW
 
 *Outputs*
- - land.states.root_water_efficiency as nPix;nZix for soilW
+ - land.states.root_water_efficiency as nZix for soilW
 
 ---
 
