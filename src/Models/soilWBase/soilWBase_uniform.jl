@@ -96,10 +96,10 @@ Distribution of soil hydraulic properties over depth using soilWBase_uniform
 *Inputs*
  - helpers.pools.: soil layers & depths
  - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
- - land.soilTexture.p_[sand/silt/clay/orgm]: texture properties [nPix, nZix]
+ - land.soilTexture.p_[sand/silt/clay/orgm]: texture properties [nZix]
 
 *Outputs*
- - all soil hydraulic properties in land.soilWBase.p_[parameterName] (nPix, nTix)
+ - all soil hydraulic properties in land.soilWBase.p_[parameterName]
  - makeLookup: to switch on/off the creation of lookup table of  unsaturated hydraulic conductivity
 
 # instantiate:

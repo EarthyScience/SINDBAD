@@ -122,6 +122,5 @@ saves the output variables from the run from the information in info
 - `output_vars`: output variable name pairs with field and subfield
 """
 function saveOutCubes(info, out_cubes, output_dims, output_vars)
-    out_file_info = getOutputFileInfo(info)
-    saveOutCubes(out_file_info.file_prefix, out_file_info.global_metadata, out_cubes, output_dims, output_vars, info.experiment.model_output.format, info.experiment.basics.time.temporal_resolution, info.tem.helpers.run.save_single_file)
+    saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, out_cubes, output_dims, output_vars, info.output.format, info.experiment.basics.temporal_resolution, info.helpers.run.save_single_file)
 end

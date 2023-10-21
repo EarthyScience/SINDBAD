@@ -94,10 +94,10 @@ end
 """
 function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, ::LandOutArray)
 
-    tem = info.tem
-    optim = info.optim
+    tem = info
+    optim = info.optimization
     # get the subset of parameters table that consists of only optimized parameters
-    tbl_params = getParameters(tem.models.forward, optim.model_parameter_default, optim.model_parameters_to_optimize, tem.helpers.numbers.sNT)
+    tbl_params = getParameters(tem.models.forward, optim.model_parameter_default, optim.model_parameters_to_optimize, tem.helpers.numbers.num_type)
 
     param_to_index = getParameterIndices(tem.models.forward, tbl_params);
     
@@ -110,8 +110,8 @@ function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, ::Land
 
     cost_options = prepCostOptions(observations, optim.cost_options)
 
-    # param_model_id_val = info.optim.param_model_id_val
-    cost_function = x -> getLoss(x, tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types, observations, tbl_params, cost_options, optim.multi_constraint_method)
+    # param_model_id_val = info.optimization.param_model_id_val
+    cost_function = x -> getLoss(x, tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, observations, tbl_params, cost_options, optim.multi_constraint_method)
 
     
     # run the optimizer
@@ -140,9 +140,9 @@ function optimizeTEM(forcing::NamedTuple,
     ::LandOutStacked)
 
     tem = info.tem
-    optim = info.optim
+    optim = info.optimization
     # get the subset of parameters table that consists of only optimized parameters
-    tbl_params = getParameters(tem.models.forward, optim.model_parameter_default, optim.model_parameters_to_optimize, tem.helpers.numbers.sNT)
+    tbl_params = getParameters(tem.models.forward, optim.model_parameter_default, optim.model_parameters_to_optimize, tem.helpers.numbers.num_type)
 
     cost_options = prepCostOptions(observations, optim.cost_options)
 
@@ -154,7 +154,7 @@ function optimizeTEM(forcing::NamedTuple,
     run_helpers = prepTEM(forcing, info)
 
 
-    cost_function = x -> getLoss(x, tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], loc_forcing_t, run_helpers.loc_land, tem_with_types, observations, tbl_params, cost_options, optim.multi_constraint_method)
+    cost_function = x -> getLoss(x, tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], loc_forcing_t, run_helpers.loc_land, tem_info, observations, tbl_params, cost_options, optim.multi_constraint_method)
 
     # run the optimizer
     optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, optim.algorithm.options, optim.algorithm.method)
@@ -182,10 +182,10 @@ function optimizeTEM(forcing::NamedTuple,
     ::LandOutTimeseries)
 
     tem = info.tem
-    optim = info.optim
+    optim = info.optimization
     # get the subset of parameters table that consists of only optimized parameters
     tbl_params = getParameters(tem.models.forward, optim.model_parameter_default, optim.model_parameters_to_optimize,
-        tem.helpers.numbers.sNT)
+        tem.helpers.numbers.num_type)
 
     cost_options = prepCostOptions(observations, optim.cost_options)
 
@@ -197,7 +197,7 @@ function optimizeTEM(forcing::NamedTuple,
     run_helpers = prepTEM(forcing, info)
 
 
-    cost_function = x -> getLoss(x, tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.land_timeseries, run_helpers.loc_land, tem_with_types, observations, tbl_params, cost_options, optim.multi_constraint_method)
+    cost_function = x -> getLoss(x, tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.land_timeseries, run_helpers.loc_land, tem_info, observations, tbl_params, cost_options, optim.multi_constraint_method)
 
     # run the optimizer
     optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, optim.algorithm.options, optim.algorithm.method)

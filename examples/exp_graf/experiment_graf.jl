@@ -22,17 +22,17 @@ observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
 GC.gc()
-
+info = dropFields(info, (:settings,));
 run_helpers = prepTEM(forcing, info);
 
 
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
 for x ∈ 1:10
-    @time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+    @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 end
 
-@time spinupTEM(info.tem.models.forward, run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.space_land[1], run_helpers.tem_with_types.helpers, run_helpers.tem_with_types.spinup);
+@time spinupTEM(info.models.forward, run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.space_land[1], run_helpers.tem_info);
 
 # setLogLevel(:debug)
 
@@ -46,7 +46,7 @@ default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 output_vars = keys(plotdat)
 for i ∈ eachindex(output_vars)
     v = output_vars[i]
-    # vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+    # vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
     vname = v
     # vname = vinfo["standard_name"]
     println("plot output-model => domain: $domain, variable: $vname")
@@ -54,12 +54,12 @@ for i ∈ eachindex(output_vars)
     if size(pd, 2) == 1
         heatmap(pd[:, 1, :]; title="$(vname)" , size=(2000, 1000))
         # Colorbar(fig[1, 2], obj)
-        savefig(joinpath(info.output.figure, "afr2d_$(vname).png"))
+        savefig(joinpath(info.output.dirs.figure, "afr2d_$(vname).png"))
     else
         foreach(axes(pd, 2)) do ll
             heatmap(pd[:, ll, :]; title="$(vname)" , size=(2000, 1000))
             # Colorbar(fig[1, 2], obj)
-            savefig(joinpath(info.output.figure, "afr2d_$(vname)_$(ll).png"))
+            savefig(joinpath(info.output.dirs.figure, "afr2d_$(vname)_$(ll).png"))
         end
     end
 end
@@ -70,7 +70,7 @@ for (o, v) in enumerate(forc_vars)
     println("plot forc-model => domain: $domain, variable: $v")
     def_var = forcing.data[o]
     plot_data=nothing
-    xdata = [info.tem.helpers.dates.range...]
+    xdata = [info.helpers.dates.range...]
     if size(def_var, 1) !== length(xdata)
         xdata = 1:size(def_var, 1)
         plot_data =  def_var[:]
@@ -79,5 +79,5 @@ for (o, v) in enumerate(forc_vars)
         plot_data =  def_var[:,:]
     end
     heatmap(plot_data; title="$(v):: mean = $(round(SindbadTEM.mean(def_var), digits=2)), nans=$(sum(isInvalid.(plot_data)))", size=(2000, 1000))
-    savefig(joinpath(info.output.figure, "forc_afr2d_$v.png"))
+    savefig(joinpath(info.output.dirs.figure, "forc_afr2d_$v.png"))
 end
