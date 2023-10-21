@@ -17,7 +17,7 @@ function define(params::cFlowVegProperties_CASA, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land p_F_vec => land.cFlowVegProperties
+    @pack_land p_F_vec → land.cFlowVegProperties
     return land
 end
 
@@ -45,7 +45,7 @@ function compute(params::cFlowVegProperties_CASA, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (p_E_vec, p_F_vec) => land.cFlowVegProperties
+    @pack_land (p_E_vec, p_F_vec) → land.cFlowVegProperties
     return land
 end
 
@@ -61,8 +61,8 @@ $(SindbadParameters)
 Effect of vegetation properties on the c transfers between pools using cFlowVegProperties_CASA
 
 *Inputs*
- - land.cTauVegProperties.MTF: fraction of C in structural litter pools  that will be metabolic from lignin:N ratio
- - land.cTauVegProperties.SCLIGNIN: fraction of C in structural litter pools from lignin
+ - land.properties.MTF: fraction of C in structural litter pools  that will be metabolic from lignin:N ratio
+ - land.properties.SCLIGNIN: fraction of C in structural litter pools from lignin
 
 *Outputs*
  - land.cFlowVegProperties.p_E_vec: effect of vegetation on transfer efficiency between pools

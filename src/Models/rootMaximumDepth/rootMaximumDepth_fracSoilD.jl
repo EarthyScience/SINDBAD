@@ -9,12 +9,12 @@ end
 function define(params::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     ## unpack parameters
     @unpack_rootMaximumDepth_fracSoilD params
-    @unpack_land soil_layer_thickness ∈ land.soilWBase
+    @unpack_land soil_layer_thickness ∈ land.properties
     ## calculate variables
     sum_soil_depth = sum(soil_layer_thickness)
     ## pack land variables
     @pack_land begin
-        sum_soil_depth => land.rootMaximumDepth
+        sum_soil_depth → land.properties
     end
     return land
 end
@@ -22,14 +22,14 @@ end
 function precompute(params::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     ## unpack parameters
     @unpack_rootMaximumDepth_fracSoilD params
-    @unpack_land sum_soil_depth ∈ land.rootMaximumDepth
+    @unpack_land sum_soil_depth ∈ land.properties
     ## calculate variables
     # get the soil thickness & root distribution information from input
     max_root_depth = sum_soil_depth * constant_frac_max_root_depth
     # disp(["the maxRootD scalar: " constant_frac_max_root_depth])
 
     ## pack land variables
-    @pack_land max_root_depth => land.states
+    @pack_land max_root_depth → land.properties
     return land
 end
 

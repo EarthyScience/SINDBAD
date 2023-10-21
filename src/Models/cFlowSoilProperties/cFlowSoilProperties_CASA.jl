@@ -21,7 +21,7 @@ function define(params::cFlowSoilProperties_CASA, forcing, land, helpers)
         length(land.pools.cEco))
 
     ## pack land variables
-    @pack_land p_E_vec => land.cFlowSoilProperties
+    @pack_land p_E_vec → land.cFlowSoilProperties
     return land
 end
 
@@ -33,7 +33,7 @@ function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     @unpack_land p_E_vec ∈ land.cFlowSoilProperties
 
     ## unpack land variables
-    @unpack_land (st_clay, st_silt) ∈ land.soilTexture
+    @unpack_land (st_clay, st_silt) ∈ land.properties
 
     ## calculate variables
     # p_fSoil = zeros(length(info.model.nPix), length(info.model.nZix))
@@ -64,7 +64,7 @@ function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (p_E_vec, p_F_vec) => land.cFlowSoilProperties
+    @pack_land (p_E_vec, p_F_vec) → land.cFlowSoilProperties
     return land
 end
 
@@ -80,8 +80,8 @@ $(SindbadParameters)
 Effect of soil properties on the c transfers between pools using cFlowSoilProperties_CASA
 
 *Inputs*
- - land.soilTexture.st_clay: soil hydraulic properties for clay layer
- - land.soilTexture.st_silt: soil hydraulic properties for silt layer
+ - land.properties.st_clay: soil hydraulic properties for clay layer
+ - land.properties.st_silt: soil hydraulic properties for silt layer
 
 *Outputs*
  - land.cFlowSoilProperties.p_E_vec: effect of soil on transfer efficiency between pools

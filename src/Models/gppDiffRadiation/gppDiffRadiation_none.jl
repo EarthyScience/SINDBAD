@@ -3,14 +3,14 @@ export gppDiffRadiation_none
 struct gppDiffRadiation_none <: gppDiffRadiation end
 
 function define(params::gppDiffRadiation_none, forcing, land, helpers)
-    @unpack_land o_one ∈ land.wCycleBase
+    @unpack_land o_one ∈ land.constants
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
     gpp_f_cloud = o_one
 
     ## pack land variables
-    @pack_land gpp_f_cloud => land.gppDiffRadiation
+    @pack_land gpp_f_cloud → land.diagnostics
     return land
 end
 
@@ -26,7 +26,7 @@ Effect of diffuse radiation using gppDiffRadiation_none
  - helpers
 
 *Outputs*
- - land.gppDiffRadiation.gpp_f_cloud: effect of cloudiness on potential GPP
+ - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
 
 # instantiate:
 instantiate/instantiate time-invariant variables for gppDiffRadiation_none

@@ -8,7 +8,7 @@ function define(params::autoRespirationAirT_none, forcing, land, helpers)
     auto_respiration_f_airT = one(first(land.pools.cEco))
 
     ## pack land variables
-    @pack_land auto_respiration_f_airT => land.autoRespirationAirT
+    @pack_land auto_respiration_f_airT → land.diagnostics
     return land
 end
 

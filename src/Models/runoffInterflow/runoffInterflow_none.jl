@@ -5,10 +5,10 @@ struct runoffInterflow_none <: runoffInterflow end
 function define(params::runoffInterflow_none, forcing, land, helpers)
 
     ## calculate variables
-    interflow_runoff = land.wCycleBase.z_zero
+    interflow_runoff = land.constants.z_zero
 
     ## pack land variables
-    @pack_land interflow_runoff => land.fluxes
+    @pack_land interflow_runoff → land.fluxes
     return land
 end
 

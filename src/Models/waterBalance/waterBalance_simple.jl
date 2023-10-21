@@ -54,7 +54,7 @@ function compute(params::waterBalance_simple, forcing, land, helpers)
     checkWaterBalanceError(forcing, land, water_balance, tolerance, total_water, total_water_prev, WBP, precip, runoff, evapotranspiration, helpers.run.catch_model_errors)
 
     ## pack land variables
-    @pack_land water_balance => land.states
+    @pack_land water_balance → land.diagnostics
     return land
 end
 
@@ -71,7 +71,7 @@ Calculate the water balance using waterBalance_simple
  - TWS and TWS_prev
 
 *Outputs*
- - land.states.water_balance
+ - land.diagnostics.water_balance
 
 ---
 

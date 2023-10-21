@@ -15,8 +15,8 @@ function compute(params::runoffSaturationExcess_satFraction, forcing, land, help
 
     ## pack land variables
     @pack_land begin
-        sat_excess_runoff => land.fluxes
-        WBP => land.states
+        sat_excess_runoff → land.fluxes
+        WBP → land.states
     end
     return land
 end

@@ -13,7 +13,7 @@ function compute(params::gppAirT_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_CASA params
     @unpack_forcing f_airT_day ∈ forcing
-    @unpack_land o_one ∈ land.wCycleBase
+    @unpack_land o_one ∈ land.constants
 
     ## calculate variables
     # CALCULATE T1: account for effects of temperature stress reflects the empirical observation that plants in very cold habitats typically have low maximum rates
@@ -37,7 +37,7 @@ function compute(params::gppAirT_CASA, forcing, land, helpers)
     gpp_f_airT = f_airT_day >= opt_airT ? T2 : T1
 
     ## pack land variables
-    @pack_land gpp_f_airT => land.gppAirT
+    @pack_land gpp_f_airT → land.diagnostics
     return land
 end
 
@@ -56,7 +56,7 @@ Effect of temperature using gppAirT_CASA
  - forcing.f_airT_day: daytime temperature [°C]
 
 *Outputs*
- - land.gppDirRadiation.gpp_f_light: effect of light saturation on potential GPP
+ - land.diagnostics.gpp_f_light: effect of light saturation on potential GPP
 
 ---
 

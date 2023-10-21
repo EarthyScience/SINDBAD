@@ -14,7 +14,7 @@ function compute(params::runoffSurface_indirect, forcing, land, helpers)
     @unpack_land begin
         surfaceW ∈ land.pools
         overland_runoff ∈ land.fluxes
-        n_surfaceW ∈ land.wCycleBase
+        n_surfaceW ∈ land.diagnostics
     end
 
     # fraction of overland runoff that recharges the surface water & the fraction that flows out directly
@@ -29,8 +29,8 @@ function compute(params::runoffSurface_indirect, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (surface_runoff, suw_recharge) => land.fluxes
-        ΔsurfaceW => land.states
+        (surface_runoff, suw_recharge) → land.fluxes
+        ΔsurfaceW → land.pools
     end
     return land
 end
@@ -41,7 +41,7 @@ function update(params::runoffSurface_indirect, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.states
+        ΔsurfaceW ∈ land.pools
     end
 
     ## update storage pools
@@ -52,8 +52,8 @@ function update(params::runoffSurface_indirect, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        surfaceW => land.pools
-        ΔsurfaceW => land.states
+        surfaceW → land.pools
+        ΔsurfaceW → land.pools
     end
     return land
 end

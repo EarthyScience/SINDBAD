@@ -11,14 +11,14 @@ function compute(params::gppVPD_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_MOD17 params
     @unpack_forcing f_VPD_day ∈ forcing
-    @unpack_land (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_land (z_zero, o_one) ∈ land.diagnostics
 
     ## calculate variables
     vsc = (VPD_max - f_VPD_day) / (VPD_max - VPD_min)
     gpp_f_vpd = clampZeroOne(vsc)
 
     ## pack land variables
-    @pack_land gpp_f_vpd => land.gppVPD
+    @pack_land gpp_f_vpd → land.diagnostics
     return land
 end
 
@@ -36,7 +36,7 @@ $(SindbadParameters)
  - forcing.f_VPD_day: daytime vapor pressure deficit [kPa]
 
 *Outputs*
- - land.gppVPD.gpp_f_vpd: VPD effect on GPP between 0-1
+ - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
 
 ---
 

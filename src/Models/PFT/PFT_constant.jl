@@ -1,17 +1,17 @@
-export vegProperties_PFT
+export PFT_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct vegProperties_PFT{T1} <: vegProperties
+@bounds @describe @units @with_kw struct PFT_constant{T1} <: PFT
     PFT::T1 = 1.0 | (1.0, 13.0) | "Plant functional type" | "class"
 end
 #! format: on
 
-function compute(params::vegProperties_PFT, forcing, land, helpers)
+function compute(params::PFT_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegProperties_PFT params
+    @unpack_PFT_constant params
 
     ## pack land variables
-    @pack_land PFT => land.vegProperties
+    @pack_land PFT → land.PFT
     return land
 end
 
@@ -24,10 +24,9 @@ $(SindbadParameters)
 ---
 
 # compute:
-Vegetation/structural properties using vegProperties_PFT
+Vegetation PFT using PFT_constant
 
 *Inputs*
- -
  - info structure
 
 *Outputs*
@@ -44,4 +43,4 @@ Vegetation/structural properties using vegProperties_PFT
 *Created by:*
  - unknown [xxx]
 """
-vegProperties_PFT
+PFT_constant

@@ -25,7 +25,7 @@ end
 
 macro add_to_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
-    @assert outparams.args[1] == :(=>)
+    @assert outparams.args[1] == :(→)
     @assert length(outparams.args) == 3
     lhs = esc(outparams.args[2])
     rhs = outparams.args[3]
@@ -416,7 +416,7 @@ function processPackLand(ex)
         nothing, ex
     end
     @assert ex.head == :call
-    @assert ex.args[1] == :(=>)
+    @assert ex.args[1] == :(→)
     @assert length(ex.args) == 3
     lhs = ex.args[2]
     rhs = ex.args[3]
@@ -534,7 +534,7 @@ end
 
 macro rep_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
-    @assert outparams.args[1] == :(=>)
+    @assert outparams.args[1] == :(→)
     @assert length(outparams.args) == 3
     lhs = esc(outparams.args[2])
     rhs = outparams.args[3]
@@ -599,7 +599,7 @@ end
 
 macro rep_vec(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
-    @assert outparams.args[1] == :(=>)
+    @assert outparams.args[1] == :(→)
     @assert length(outparams.args) == 3
     lhs = esc(outparams.args[2])
     rhs = esc(outparams.args[3])

@@ -8,7 +8,7 @@ function define(params::cAllocationRadiation_none, forcing, land, helpers)
     c_allocation_f_cloud = one(first(land.pools.cEco))
 
     ## pack land variables
-    @pack_land c_allocation_f_cloud => land.cAllocationRadiation
+    @pack_land c_allocation_f_cloud → land.diagnostics
     return land
 end
 
@@ -20,7 +20,7 @@ sets the radiation effect on allocation to one (no effect)
 *Inputs*
 
 *Outputs*
-- land.Radiation.c_allocation_f_cloud: radiation effect on cAllocation (0-1)
+- land.diagnostics.c_allocation_f_cloud: radiation effect on cAllocation (0-1)
 
 
 ---

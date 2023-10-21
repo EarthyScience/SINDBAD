@@ -49,9 +49,9 @@ function (cEco_spin::Spinup_cEco)(pout, p)
 
     cEco = land.pools.cEco
     for (lc, l) in enumerate(zix.cEco)
-        @rep_elem pout[l] => (cEco, lc, :cEco)
+        @rep_elem pout[l] → (cEco, lc, :cEco)
     end
-    @pack_land cEco => land.pools
+    @pack_land cEco → land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
     update_init = timeLoopTEMSpinup(cEco_spin.models, cEco_spin.forcing, cEco_spin.loc_forcing_t, land, cEco_spin.tem_info, n_timesteps)
 
@@ -75,18 +75,18 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
 
     cEco = land.pools.cEco
     for (lc, l) in enumerate(zix.cEco)
-        @rep_elem pout[l] => (cEco, lc, :cEco)
+        @rep_elem pout[l] → (cEco, lc, :cEco)
     end
-    @pack_land cEco => land.pools
+    @pack_land cEco → land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
 
     TWS = land.pools.TWS
     TWS_prev = cEco_TWS_spin.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem TWS_prev[l] => (TWS, lc, :TWS)
+        @rep_elem TWS_prev[l] → (TWS, lc, :TWS)
     end
 
-    @pack_land TWS => land.pools
+    @pack_land TWS → land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.wCycleBase.w_model)
 
     update_init = timeLoopTEMSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, cEco_TWS_spin.loc_forcing_t, land, cEco_TWS_spin.tem_info, n_timesteps)
@@ -109,9 +109,9 @@ function (TWS_spin::Spinup_TWS)(pout, p)
 
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem maxZero(p[l]) => (TWS, lc, :TWS)
+        @rep_elem maxZero(p[l]) → (TWS, lc, :TWS)
     end
-    @pack_land TWS => land.pools
+    @pack_land TWS → land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.wCycleBase.w_model)
     update_init = timeLoopTEMSpinup(TWS_spin.models, TWS_spin.forcing, TWS_spin.loc_forcing_t, land, TWS_spin.tem_info, n_timesteps)
     pout .= update_init.pools.TWS
@@ -233,7 +233,7 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
     r = fixedpoint(TWS_spin, Vector(deepcopy(land.pools.TWS)); method=:trust_region)
     TWS = r.zero
     TWS = oftype(land.pools.TWS, TWS)
-    @pack_land TWS => land.pools
+    @pack_land TWS → land.pools
     land = Sindbad.adjustPackPoolComponents(land, tem_info.model_helpers, land.wCycleBase.w_model)
     return land
 end
@@ -265,10 +265,10 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
         cEco = land.pools.cEco
     end
     cEco = oftype(land.pools.cEco, cEco)
-    @pack_land cEco => land.pools
+    @pack_land cEco → land.pools
     TWS_prev = cEco_TWS_spin.TWS
     TWS = oftype(land.pools.TWS, TWS_prev)
-    @pack_land TWS => land.pools
+    @pack_land TWS → land.pools
     land = Sindbad.adjustPackPoolComponents(land, tem_info.model_helpers, land.cCycleBase.c_model)
     land = Sindbad.adjustPackPoolComponents(land, tem_info.model_helpers, land.wCycleBase.w_model)
     return land
@@ -295,7 +295,7 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
     r = fixedpoint(cEco_spin, p_init; method=:trust_region)
     cEco = exp.(r.zero)
     cEco = oftype(land.pools.cEco, cEco)
-    @pack_land cEco => land.pools
+    @pack_land cEco → land.pools
     land = Sindbad.adjustPackPoolComponents(land, tem_info.model_helpers, land.cCycleBase.c_model)
     return land
 end
@@ -330,19 +330,19 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleAH)
     end
     for cSoilZix ∈ helpers.pools.zix.cSoil
         cSoilNew = cEco[cSoilZix] * ηH
-        @rep_elem cSoilNew => (cEco, cSoilZix, :cEco)
+        @rep_elem cSoilNew → (cEco, cSoilZix, :cEco)
     end
     for cLitZix ∈ helpers.pools.zix.cLit
         cLitNew = cEco[cLitZix] * ηH
-        @rep_elem cLitNew => (cEco, cLitZix, :cEco)
+        @rep_elem cLitNew → (cEco, cLitZix, :cEco)
     end
     for cVegZix ∈ helpers.pools.zix.cVeg
         cVegNew = cEco[cVegZix] * ηA
-        @rep_elem cVegNew => (cEco, cVegZix, :cEco)
+        @rep_elem cVegNew → (cEco, cVegZix, :cEco)
     end
-    @pack_land cEco => land.pools
+    @pack_land cEco → land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
-    @pack_land cEco_prev => land.states
+    @pack_land cEco_prev → land.states
     return land
 end
 
@@ -373,23 +373,23 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     end
     for cSoilZix ∈ helpers.pools.zix.cSoil
         cSoilNew = cEco[cSoilZix] * ηH
-        @rep_elem cSoilNew => (cEco, cSoilZix, :cEco)
+        @rep_elem cSoilNew → (cEco, cSoilZix, :cEco)
     end
 
     for cLitZix ∈ helpers.pools.zix.cLit
         cLitNew = cEco[cLitZix] * ηH
-        @rep_elem cLitNew => (cEco, cLitZix, :cEco)
+        @rep_elem cLitNew → (cEco, cLitZix, :cEco)
     end
 
     for cVegZix ∈ helpers.pools.zix.cVeg
         cLoss = maxZero(cEco[cVegZix] - c_remain)
         cVegNew = cEco[cVegZix] - cLoss
-        @rep_elem cVegNew => (cEco, cVegZix, :cEco)
+        @rep_elem cVegNew → (cEco, cVegZix, :cEco)
     end
 
-    @pack_land cEco => land.pools
+    @pack_land cEco → land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
-    @pack_land cEco_prev => land.states
+    @pack_land cEco_prev → land.states
     return land
 end
 

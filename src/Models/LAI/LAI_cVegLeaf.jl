@@ -17,7 +17,7 @@ function compute(params::LAI_cVegLeaf, forcing, land, helpers)
     LAI = cVegLeafTotal * SLA
 
     ## pack land variables
-    @pack_land LAI => land.states
+    @pack_land LAI → land.states
     return land
 end
 

@@ -30,8 +30,8 @@ function define(params::PET_Lu2005, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin 
-        PET => land.fluxes
-        Tair_prev => land.states
+        PET → land.fluxes
+        Tair_prev → land.states
     end
     return land
 end
@@ -75,8 +75,8 @@ function compute(params::PET_Lu2005, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin 
-        PET => land.fluxes
-        Tair_prev => land.states
+        PET → land.fluxes
+        Tair_prev → land.states
     end
     return land
 end

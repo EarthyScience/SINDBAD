@@ -14,7 +14,7 @@ function compute(params::rainSnow_Tair, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+        ΔsnowW ∈ land.pools
     end
     rain = f_rain
     snow = zero(f_rain)
@@ -26,11 +26,11 @@ function compute(params::rainSnow_Tair, forcing, land, helpers)
     precip = rain + snow
 
     # add snowfall to snowpack of the first layer
-    @add_to_elem snow => (ΔsnowW, 1, :snowW)
+    @add_to_elem snow → (ΔsnowW, 1, :snowW)
     ## pack land variables
     @pack_land begin
-        (precip, rain, snow) => land.fluxes
-        ΔsnowW => land.states
+        (precip, rain, snow) → land.fluxes
+        ΔsnowW → land.pools
     end
     return land
 end
@@ -41,7 +41,7 @@ function update(params::rainSnow_Tair, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+        ΔsnowW ∈ land.pools
     end
 
     ## update variables
@@ -53,8 +53,8 @@ function update(params::rainSnow_Tair, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        snowW => land.pools
-        # ΔsnowW => land.states
+        snowW → land.pools
+        # ΔsnowW → land.pools
     end
     return land
 end
