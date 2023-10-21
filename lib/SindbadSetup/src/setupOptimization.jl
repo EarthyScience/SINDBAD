@@ -1,6 +1,6 @@
 export getConstraintNames
 export getCostOptions
-export setupOptimization
+export setOptimization
 
 
 """
@@ -9,14 +9,14 @@ export setupOptimization
 checks if the parameters listed in model_parameters_to_optimize of optimization.json exists in the selected model structure of model_structure.json
 """
 function checkOptimizedParametersInModels(info::NamedTuple)
-    # @show info.optimization.observations, info.optimization.model_parameters_to_optimize
-    tbl_params = getParameters(info.tem.models.forward,
-        info.optimization.model_parameter_default,
-        info.optimization.model_parameters_to_optimize,
-        info.tem.helpers.numbers.sNT)
+    # @show info.settings.optimization.observations, info.settings.optimization.model_parameters_to_optimize
+    tbl_params = getParameters(info.temp.models.forward,
+        info.settings.optimization.model_parameter_default,
+        info.settings.optimization.model_parameters_to_optimize,
+        info.temp.helpers.numbers.num_type)
     model_parameters = tbl_params.name_full
     # @show model_parameters
-    optim_parameters = info.optimization.model_parameters_to_optimize
+    optim_parameters = info.settings.optimization.model_parameters_to_optimize
     op_names = nothing
     if typeof(optim_parameters) <: Vector
         op_names = replaceCommaSeparatorParams(optim_parameters)
@@ -82,7 +82,7 @@ function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number
             sel_opt=all_costs[vn]
             sel_value = sel_opt[prop]
             if (sel_value isa Number) && !(sel_value isa Bool)
-                sel_value = number_helpers.sNT(sel_value)
+                sel_value = number_helpers.num_type(sel_value)
             elseif sel_value isa Bool
                 sel_value=getTypeInstanceForFlags(prop, sel_value, "Do")
             elseif sel_value isa String && (prop ∉ (:aggr_func, :temporal_data_aggr))
@@ -163,18 +163,6 @@ function getConstraintNames(optim::NamedTuple)
     return obs_vars, optim_vars, store_vars, model_vars
 end
 
-
-"""
-    getTypeInstanceForNamedOptions(mode_name)
-
-a helper function to get the type for spinup mode
-"""
-function getTypeInstanceForCostMetric(option_name::String)
-    opt_ss = toUpperCaseFirst(option_name)
-    struct_instance = getfield(SindbadMetrics, opt_ss)()
-    return struct_instance
-end
-
 function getParamModelIDVal(tbl_params)
     param_names = Symbol.(replace.(tbl_params.name_full, "." => "____"))
     model_id = tbl_params.model_id;
@@ -187,32 +175,32 @@ end
 
 
 """
-    setupOptimization(info::NamedTuple)
+    setOptimization(info::NamedTuple)
 
 
 """
-function setupOptimization(info::NamedTuple)
-    info = setTupleField(info, (:optim, (;)))
+function setOptimization(info::NamedTuple)
+    info = setTupleField(info, (:optimization, (;)))
 
     # set information related to cost metrics for each variable
-    info = setTupleSubfield(info, :optim, (:model_parameter_default, info.optimization.model_parameter_default))
-    info = setTupleSubfield(info, :optim, (:observational_constraints, info.optimization.observational_constraints))
+    info = setTupleSubfield(info, :optimization, (:model_parameter_default, info.settings.optimization.model_parameter_default))
+    info = setTupleSubfield(info, :optimization, (:observational_constraints, info.settings.optimization.observational_constraints))
     info = setTupleSubfield(info,
-        :optim,
-        (:multi_constraint_method, getTypeInstanceForNamedOptions(info.optimization.multi_constraint_method)))
+        :optimization,
+        (:multi_constraint_method, getTypeInstanceForNamedOptions(info.settings.optimization.multi_constraint_method)))
 
     # check and set the list of parameters to be optimized
     checkOptimizedParametersInModels(info)
-    info = setTupleSubfield(info, :optim, (:model_parameters_to_optimize, info.optimization.model_parameters_to_optimize))
+    info = setTupleSubfield(info, :optimization, (:model_parameters_to_optimize, info.settings.optimization.model_parameters_to_optimize))
 
     # set algorithm related options
     tmp_algorithm = (;)
-    tmp_algorithm = setTupleField(tmp_algorithm, (:multi_objective_algorithm, getTypeInstanceForFlags(:multi_objective_algorithm, info.optimization.multi_objective_algorithm, "Is")))
-    optim_algorithm = info.optimization.algorithm
+    tmp_algorithm = setTupleField(tmp_algorithm, (:multi_objective_algorithm, getTypeInstanceForFlags(:multi_objective_algorithm, info.settings.optimization.multi_objective_algorithm, "Is")))
+    optim_algorithm = info.settings.optimization.algorithm
     if endswith(optim_algorithm, ".json")
         options_path = optim_algorithm
         if !isabspath(options_path)
-            options_path = joinpath(info.settings_root, options_path)
+            options_path = joinpath(info.temp.experiment.dirs.settings, options_path)
         end
         options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
         options = dictToNamedTuple(options)
@@ -221,53 +209,31 @@ function setupOptimization(info::NamedTuple)
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options.options))
     else
         options = (;)
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(info.optimization.algorithm)))
+        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(info.settings.optimization.algorithm)))
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     end
-    info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))
+    info = setTupleSubfield(info, :optimization, (:algorithm, tmp_algorithm))
 
-    tbl_params = getParameters(info.tem.models.forward,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.tem.helpers.numbers.sNT);
+    tbl_params = getParameters(info.temp.models.forward,
+    info.settings.optimization.model_parameter_default,
+    info.settings.optimization.model_parameters_to_optimize,
+    info.temp.helpers.numbers.num_type);
 
     param_model_id_val = getParamModelIDVal(tbl_params)
-    info = setTupleSubfield(info, :optim, (:param_model_id_val, param_model_id_val))
+    info = setTupleSubfield(info, :optimization, (:param_model_id_val, param_model_id_val))
 
     # get the variables to be used during optimization
-    obs_vars, optim_vars, store_vars, model_vars = getConstraintNames(info.optimization)
+    obs_vars, optim_vars, store_vars, model_vars = getConstraintNames(info.settings.optimization)
     vars_info = (;)
     vars_info = setTupleField(vars_info, (:obs, obs_vars))
-    vars_info = setTupleField(vars_info, (:optim, optim_vars))
+    vars_info = setTupleField(vars_info, (:optimization, optim_vars))
     vars_info = setTupleField(vars_info, (:store, store_vars))
     vars_info = setTupleField(vars_info, (:model, model_vars))
-    info = setTupleSubfield(info, :optim, (:variables, (vars_info)))
+    info = setTupleSubfield(info, :optimization, (:variables, (vars_info)))
     info = updateVariablesToStore(info)
-    cost_options = getCostOptions(info.optimization, vars_info, info.tem.variables, info.tem.helpers.numbers, info.tem.helpers.dates)
-    info = setTupleSubfield(info, :optim, (:cost_options, cost_options))
+    cost_options = getCostOptions(info.settings.optimization, vars_info, info.temp.output.variables, info.temp.helpers.numbers, info.temp.helpers.dates)
+    info = setTupleSubfield(info, :optimization, (:cost_options, cost_options))
     return info
 end
 
-
-
-"""
-    updateVariablesToStore(info::NamedTuple)
-
-sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
-"""
-function updateVariablesToStore(info::NamedTuple)
-    output_vars = info.experiment.model_output.variables
-    if info.experiment.flags.run_optimization
-        output_vars = map(info.optim.variables.obs) do vo
-            vn = getfield(info.optim.variables.optim, vo)
-            Symbol(string(vn[1]) * "." * string(vn[2]))
-        end
-    elseif info.experiment.flags.calc_cost
-        output_vars = union(String.(keys(info.experiment.model_output.variables)),
-                info.optim.variables.model)
-    end
-    out_vars_pairs = Tuple(getVariablePair.(output_vars))
-    info = (; info..., tem=(; info.tem..., variables=out_vars_pairs))
-    return info
-end
 

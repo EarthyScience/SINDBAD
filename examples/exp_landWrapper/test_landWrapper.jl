@@ -43,34 +43,36 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 forcing = getForcing(info);
-
-run_helpers = prepTEM(forcing, info);
-
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
-
-@time land_stacked_ts = runTEM(info.tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, deepcopy(run_helpers.loc_land), run_helpers.tem_with_types);
-
-land_stacked_prealloc = Vector{typeof(run_helpers.loc_land)}(undef, info.tem.helpers.dates.size);
-
-@time land_stacked_prealloc = runTEM(info.tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, deepcopy(run_helpers.loc_land), run_helpers.tem_with_types);
-
-
-tbl_params = getParameters(info.tem.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
-
-
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
-cost_options = prepCostOptions(obs_array, info.optim.cost_options);
+
+info = dropFields(info, (:settings,));
+
+run_helpers = prepTEM(forcing, info);
+
+@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
+
+@time land_stacked_ts = runTEM(info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, deepcopy(run_helpers.loc_land), run_helpers.tem_info);
+
+land_stacked_prealloc = Vector{typeof(run_helpers.loc_land)}(undef, info.helpers.dates.size);
+
+@time land_stacked_prealloc = runTEM(info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, deepcopy(run_helpers.loc_land), run_helpers.tem_info);
+
+
+tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type);
+
+
+cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
 
 @time getLossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 @time getLossVector(land_stacked_ts, obs_array, cost_options) # |> sum
 @time getLossVector(land_stacked_prealloc, obs_array, cost_options) # |> sum
 
 
-tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT)
+tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type)
 defaults = tbl_params.default;
 
-@time getLoss(defaults, info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, obs_array, tbl_params, cost_options, info.optimization.multi_constraint_method)
 
-@time getLoss(defaults, info.tem.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.loc_land, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.loc_land, run_helpers.tem_info, obs_array, tbl_params, cost_options, info.optimization.multi_constraint_method)
