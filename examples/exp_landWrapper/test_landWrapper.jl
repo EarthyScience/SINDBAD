@@ -5,7 +5,7 @@ using SindbadMetrics
 using SindbadExperiment
 using Plots
 toggleStackTraceNT()
-experiment_json = "../exp_LandWrapper/settings_LandWrapper/experiment.json"
+experiment_json = "../exp_landWrapper/settings_landWrapper/experiment.json"
 begin_year = "1979"
 end_year = "2017"
 
