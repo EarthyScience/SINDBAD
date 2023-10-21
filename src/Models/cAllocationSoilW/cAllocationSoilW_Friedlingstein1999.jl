@@ -12,14 +12,14 @@ function compute(params::cAllocationSoilW_Friedlingstein1999, forcing, land, hel
     @unpack_cAllocationSoilW_Friedlingstein1999 params
 
     ## unpack land variables
-    @unpack_land c_eco_k_f_soilW ∈ land.cTauSoilW
+    @unpack_land c_eco_k_f_soilW ∈ land.diagnostics
 
     ## calculate variables
     # computation for the moisture effect on decomposition/mineralization
     c_allocation_f_soilW = clamp(mean(c_eco_k_f_soilW), min_f_soilW, max_f_soilW)
 
     ## pack land variables
-    @pack_land c_allocation_f_soilW => land.cAllocationSoilW
+    @pack_land c_allocation_f_soilW → land.diagnostics
     return land
 end
 
@@ -34,10 +34,10 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - land.cTauSoilW.c_allocation_f_soilW: moisture effect on soil decomposition rate
+ - land.diagnostics.c_allocation_f_soilW: moisture effect on soil decomposition rate
 
 *Outputs*
- - land.cAllocationSoilW.c_allocation_f_soilW: moisture stressor on C allocation
+ - land.diagnostics.c_allocation_f_soilW: moisture stressor on C allocation
 
 ---
 

@@ -11,13 +11,13 @@ function define(params::evaporation_Snyder2000, forcing, land, helpers)
     @unpack_evaporation_Snyder2000 params
 
     ## unpack land variables
-    @unpack_land z_zero ∈ land.wCycleBase
+    @unpack_land z_zero ∈ land.constants
 
     sPET_prev = z_zero
 
     ## pack land variables
     @pack_land begin
-        sPET_prev => land.fluxes
+        sPET_prev → land.fluxes
     end
     return land
 end
@@ -31,10 +31,10 @@ function compute(params::evaporation_Snyder2000, forcing, land, helpers)
     @unpack_land begin
         fAPAR ∈ land.states
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        ΔsoilW ∈ land.pools
         PET ∈ land.fluxes
         sPET_prev ∈ land.fluxes
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
     end
     # set the PET and ET values as precomputation; because they are needed in the first time step & updated every time
     PET = PET * α * (o_one - fAPAR)
@@ -56,7 +56,7 @@ function compute(params::evaporation_Snyder2000, forcing, land, helpers)
     evaporation = min(ETsoil, soilWAvail)
 
     # update soil moisture changes
-    @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
+    @add_to_elem -evaporation → (ΔsoilW, 1, :soilW)
 
     # storing the ET & PET of the current time step
     sPET_prev = sPET
@@ -64,9 +64,9 @@ function compute(params::evaporation_Snyder2000, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (sET, sPET_prev) => land.fluxes
-        evaporation => land.fluxes
-        ΔsoilW => land.states
+        (sET, sPET_prev) → land.fluxes
+        evaporation → land.fluxes
+        ΔsoilW → land.pools
     end
     return land
 end
@@ -77,7 +77,7 @@ function update(params::evaporation_Snyder2000, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        ΔsoilW ∈ land.pools
     end
 
     ## update variables
@@ -89,8 +89,8 @@ function update(params::evaporation_Snyder2000, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        soilW => land.pools
-        # ΔsoilW => land.states
+        soilW → land.pools
+        # ΔsoilW → land.pools
     end
     return land
 end

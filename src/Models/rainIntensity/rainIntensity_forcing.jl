@@ -9,7 +9,7 @@ function compute(params::rainIntensity_forcing, forcing, land, helpers)
     rain_int = f_rain_int
 
     ## pack land variables
-    @pack_land rain_int => land.states
+    @pack_land rain_int → land.states
     return land
 end
 

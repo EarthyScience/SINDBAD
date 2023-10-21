@@ -13,7 +13,7 @@ function define(params::rainSnow_rain, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (precip, rain, snow) => land.fluxes
+        (precip, rain, snow) → land.fluxes
     end
     return land
 end
@@ -28,7 +28,7 @@ function compute(params::rainSnow_rain, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (precip, rain) => land.fluxes
+        (precip, rain) → land.fluxes
     end
     return land
 end

@@ -16,7 +16,7 @@ function addSpinupLog(land, seq, ::DoStoreSpinup) # when history is true
         n_repeat = n_repeat + _seq.n_repeat
     end
     spinuplog = Vector{typeof(land.pools)}(undef, n_repeat)
-    @pack_land spinuplog => land.states
+    @pack_land spinuplog → land.states
     return land
 end
 

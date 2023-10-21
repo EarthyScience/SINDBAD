@@ -14,10 +14,10 @@ function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.states
+        ΔsurfaceW ∈ land.pools
         overland_runoff ∈ land.fluxes
-        (z_zero, o_one) ∈ land.wCycleBase
-        n_surfaceW ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
+        n_surfaceW ∈ land.diagnostics
     end
     # fraction of overland runoff that recharges the surface water & the
     # fraction that flows out directly
@@ -31,13 +31,13 @@ function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
     surface_runoff = surface_runoff_direct + surface_runoff_indirect
 
     # update the delta storage
-    @add_to_elem suw_recharge => (ΔsurfaceW, 1, :surfaceW) # assumes all the recharge supplies the first surface water layer
+    @add_to_elem suw_recharge → (ΔsurfaceW, 1, :surfaceW) # assumes all the recharge supplies the first surface water layer
     ΔsurfaceW = addToEachElem(ΔsurfaceW, - surface_runoff_indirect / n_surfaceW)
 
     ## pack land variables
     @pack_land begin
-        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) => land.fluxes
-        ΔsurfaceW => land.states
+        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) → land.fluxes
+        ΔsurfaceW → land.pools
     end
     return land
 end
@@ -48,7 +48,7 @@ function update(params::runoffSurface_directIndirect, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.states
+        ΔsurfaceW ∈ land.pools
     end
 
     ## update storage pools
@@ -59,8 +59,8 @@ function update(params::runoffSurface_directIndirect, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        surfaceW => land.pools
-        ΔsurfaceW => land.states
+        surfaceW → land.pools
+        ΔsurfaceW → land.pools
     end
     return land
 end

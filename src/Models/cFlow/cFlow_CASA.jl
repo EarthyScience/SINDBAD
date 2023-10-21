@@ -9,7 +9,7 @@ function compute(params::cFlow_CASA, forcing, land, helpers)
         (p_E_vec, p_F_vec) ∈ land.cFlowVegProperties
         (p_E_vec, p_F_vec) ∈ land.cFlowSoilProperties
         c_flow_E_array ∈ land.cCycleBase
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
     end
     #@nc : this needs to go in the full.
     # effects of soil & veg on the [microbial] efficiency of c flows between carbon pools
@@ -40,8 +40,8 @@ function compute(params::cFlow_CASA, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        c_flow_order => land.cCycleBase
-        (c_flow_A_vec, p_E_vec, p_F_vec, p_giver, p_taker) => land.cFlow
+        c_flow_order → land.cCycleBase
+        (c_flow_A_vec, p_E_vec, p_F_vec, p_giver, p_taker) → land.cFlow
     end
     return land
 end

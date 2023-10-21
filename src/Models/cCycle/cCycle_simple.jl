@@ -4,7 +4,7 @@ struct cCycle_simple <: cCycle end
 
 function define(params::cCycle_simple, forcing, land, helpers)
     @unpack_land begin
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
         (cEco, cVeg) ∈ land.pools
     end
     n_cEco = length(cEco)
@@ -27,8 +27,8 @@ function define(params::cCycle_simple, forcing, land, helpers)
     hetero_respiration = z_zero
 
     @pack_land begin
-        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zixVeg, zero_c_eco_flow, zero_c_eco_influx) => land.states
-        (nee, npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
+        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zixVeg, zero_c_eco_flow, zero_c_eco_influx) → land.states
+        (nee, npp, auto_respiration, eco_respiration, hetero_respiration) → land.fluxes
     end
     return land
 end
@@ -44,16 +44,16 @@ function compute(params::cCycle_simple, forcing, land, helpers)
             cEco_prev,
             c_eco_out,
             c_eco_npp,
-            c_eco_k,
             zixVeg,
             zero_c_eco_flow,
             zero_c_eco_influx) ∈ land.states
         cEco ∈ land.pools
+        c_eco_k ∈ land.diagnostics
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (c_flow_A_vec, c_giver, c_taker) ∈ land.cFlow
         (c_flow_order) ∈ land.cCycleBase
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
     end
     ## reset ecoflow and influx to be zero at every time step
     c_eco_flow = zero_c_eco_flow .* z_zero
@@ -63,8 +63,8 @@ function compute(params::cCycle_simple, forcing, land, helpers)
 
     ## gains to vegetation
     for zv ∈ zixVeg
-        @rep_elem gpp * c_allocation[zv] - c_eco_efflux[zv] => (c_eco_npp, zv, :cEco)
-        @rep_elem c_eco_npp[zv] => (c_eco_influx, zv, :cEco)
+        @rep_elem gpp * c_allocation[zv] - c_eco_efflux[zv] → (c_eco_npp, zv, :cEco)
+        @rep_elem c_eco_npp[zv] → (c_eco_influx, zv, :cEco)
     end
 
     # flows & losses
@@ -77,7 +77,7 @@ function compute(params::cCycle_simple, forcing, land, helpers)
         take_r = c_taker[fO]
         give_r = c_giver[fO]
         tmp_flow = c_eco_flow[take_r] + c_eco_out[give_r] * c_flow_A_vec[take_r, give_r]
-        @rep_elem tmp_flow => (c_eco_flow, take_r, :cEco)
+        @rep_elem tmp_flow → (c_eco_flow, take_r, :cEco)
     end
     # for jix = 1:length(p_taker)
     # c_taker = p_taker[jix]
@@ -103,9 +103,9 @@ function compute(params::cCycle_simple, forcing, land, helpers)
     land = upd_c(land, cEco, helpers)
     ## pack land variables
     @pack_land begin
-        cEco => land.pools
-        (nee, npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
-        (ΔcEco, c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, cEco_prev) => land.states
+        cEco → land.pools
+        (nee, npp, auto_respiration, eco_respiration, hetero_respiration) → land.fluxes
+        (ΔcEco, c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, cEco_prev) → land.states
     end
     return land
 end
@@ -136,7 +136,7 @@ Allocate carbon to vegetation components using cCycle_simple
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
  - land.fluxes.gpp: values for gross primary productivity
- - land.states.c_allocation: carbon allocation matrix
+ - land.diagnostics.c_allocation: carbon allocation matrix
 
 *Outputs*
  - land.cCycleBase.c_eco_k: decay rates for the carbon pool at each time step

@@ -8,7 +8,7 @@ function compute(params::LAI_forcing, forcing, land, helpers)
 
     LAI = f_LAI
     ## pack land variables
-    @pack_land LAI => land.states
+    @pack_land LAI → land.states
     return land
 end
 

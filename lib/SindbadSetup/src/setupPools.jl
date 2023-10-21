@@ -1,5 +1,5 @@
-export getInitPools
-export getInitStates
+export createInitPools
+export createInitStates
 export setPoolsInfo
 
 """
@@ -249,17 +249,17 @@ end
 
 
 """
-    getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
+    createInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
 returns a named tuple with initial pool variables as subfields that is used in out.pools. Uses @view to create components of pools as a view of main pool that just references the original array.
 """
 
 """
-    getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
+    createInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
 
 """
-function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
+function createInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
     init_pools = (;)
     for element ∈ propertynames(info_pools)
         props = getfield(info_pools, element)
@@ -293,7 +293,9 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                         indx,
                         false,
                         model_array_type)
+                    # Δcomponent = Symbol("Δ" * string(component))
                     init_pools = setTupleField(init_pools, (component, compdat))
+                    # init_pools = setTupleField(init_pools, (Δcomponent, zero(compdat)))
                 end
             end
         end
@@ -302,11 +304,11 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
 end
 
 """
-    getInitStates(info)
+    createInitStates(info)
 
-returns a named tuple with initial state variables as subfields that is used in out.states. Extended from getInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from state_variables in model_structure.json. The entries their are prefix to parent pool, when the state variables are created.
+returns a named tuple with initial state variables as subfields that is used in out.states. Extended from createInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from state_variables in model_structure.json. The entries their are prefix to parent pool, when the state variables are created.
 """
-function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
+function createInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
     initial_states = (;)
     for element ∈ propertynames(info_pools)
         props = getfield(info_pools, element)

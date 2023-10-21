@@ -8,7 +8,7 @@ function compute(params::PET_forcing, forcing, land, helpers)
 
     PET = f_PET
     ## pack land variables
-    @pack_land PET => land.fluxes
+    @pack_land PET → land.fluxes
     return land
 end
 

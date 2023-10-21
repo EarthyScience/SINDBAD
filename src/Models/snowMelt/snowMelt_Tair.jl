@@ -15,9 +15,9 @@ function compute(params::snowMelt_Tair, forcing, land, helpers)
     @unpack_land begin
         (WBP, frac_snow) ∈ land.states
         snowW ∈ land.pools
-        ΔsnowW ∈ land.states
-        z_zero ∈ land.wCycleBase
-        n_snowW ∈ land.wCycleBase
+        ΔsnowW ∈ land.pools
+        z_zero ∈ land.constants
+        n_snowW ∈ land.constants
     end
     # effect of temperature on snow melt = snowMeltRate * f_airT
     pRate = (rate * helpers.dates.timesteps_in_day)
@@ -34,10 +34,10 @@ function compute(params::snowMelt_Tair, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        snow_melt => land.fluxes
-        Tterm => land.fluxes
-        WBP => land.states
-        ΔsnowW => land.states
+        snow_melt → land.fluxes
+        Tterm → land.fluxes
+        WBP → land.states
+        ΔsnowW → land.pools
     end
     return land
 end
@@ -48,7 +48,7 @@ function update(params::snowMelt_Tair, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+        ΔsnowW ∈ land.pools
     end
 
     # update snow pack
@@ -59,8 +59,8 @@ function update(params::snowMelt_Tair, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        snowW => land.pools
-        ΔsnowW => land.states
+        snowW → land.pools
+        ΔsnowW → land.pools
     end
     return land
 end

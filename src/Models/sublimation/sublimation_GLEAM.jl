@@ -5,7 +5,6 @@ export sublimation_GLEAM
     α::T1 = 0.95 | (0.0, 3.0) | "Priestley Taylor Coefficient for Sublimation" | "none"
     deg_to_k::T2 = 273.15 | (-Inf, Inf) | "degree to Kelvin conversion" | "none"
     Δ_1::T3 = 5723.265 | (-Inf, Inf) | "first parameter of Δ from Murphy & Koop [2005]" | "none"
-    t_two::T4 = 2.0 | (-Inf, Inf) | "type stable 2" | ""
     Δ_2::T5 = 3.53068 | (-Inf, Inf) | "second parameter of Δ from Murphy & Koop [2005]" | "none"
     Δ_3::T6 = 0.00728332 | (-Inf, Inf) | "third parameter of Δ from Murphy & Koop [2005]" | "none"
     Δ_4::T7 = 9.550426 | (-Inf, Inf) | "fourth parameter of Δ from Murphy & Koop [2005]" | "none"
@@ -33,9 +32,9 @@ function compute(params::sublimation_GLEAM, forcing, land, helpers)
     @unpack_land begin
         frac_snow ∈ land.states
         snowW ∈ land.pools
-        ΔsnowW ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
-        n_snowW ∈ land.wCycleBase
+        ΔsnowW ∈ land.pools
+        (z_zero, o_one, t_two) ∈ land.constants
+        n_snowW ∈ land.constants
     end
     # convert temperature to Kelvin
     T = f_airT_day + deg_to_k
@@ -65,13 +64,13 @@ function compute(params::sublimation_GLEAM, forcing, land, helpers)
     # Then sublimation [mm/day] is calculated in GLEAM using a P.T. equation
     sublimation = min(snowW[1] + ΔsnowW[1], PTtermSub * frac_snow) # assumes that sublimation occurs from the 1st snow layer if there is multilayered snow model
 
-    @add_to_elem -sublimation => (ΔsnowW, 1, :snowW)
+    @add_to_elem -sublimation → (ΔsnowW, 1, :snowW)
 
     ## pack land variables
     @pack_land begin
-        sublimation => land.fluxes
-        PTtermSub => land.sublimation
-        ΔsnowW => land.states
+        sublimation → land.fluxes
+        PTtermSub → land.sublimation
+        ΔsnowW → land.pools
     end
     return land
 end
@@ -80,7 +79,7 @@ function update(params::sublimation_GLEAM, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+        ΔsnowW ∈ land.pools
     end
     # update snow pack
     snowW[1] = snowW[1] + ΔsnowW[1]
@@ -90,8 +89,8 @@ function update(params::sublimation_GLEAM, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        snowW => land.pools
-        ΔsnowW => land.states
+        snowW → land.pools
+        ΔsnowW → land.pools
     end
     return land
 end

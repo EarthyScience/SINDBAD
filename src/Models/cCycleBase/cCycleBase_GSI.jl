@@ -32,7 +32,7 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI params
     @unpack_land begin
         cEco ∈ land.pools
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
     end
     ## instantiate variables
     C_to_N_cVeg = zero(cEco) #sujan
@@ -50,7 +50,9 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (C_to_N_cVeg, c_flow_A_array, c_eco_k_base, c_τ_eco, c_flow_order, c_taker, c_giver, c_remain, c_model) => land.cCycleBase
+        (c_flow_A_array, c_flow_order, c_taker, c_giver, c_remain) → land.cCycleBase
+        (C_to_N_cVeg, c_τ_eco, c_eco_k_base) → land.diagnostics
+        c_model → land.models
     end
     return land
 end
@@ -58,33 +60,33 @@ end
 function precompute(params::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI params
     @unpack_land begin
-        (C_to_N_cVeg, c_eco_k_base, c_τ_eco) ∈ land.cCycleBase
-        (z_zero, o_one) ∈ land.wCycleBase
+        (C_to_N_cVeg, c_eco_k_base, c_τ_eco) ∈ land.diagnostics
+        (z_zero, o_one) ∈ land.constants
     end
 
     ## replace values
-    @rep_elem c_τ_Root => (c_τ_eco, 1, :cEco)
-    @rep_elem c_τ_Wood => (c_τ_eco, 2, :cEco)
-    @rep_elem c_τ_Leaf => (c_τ_eco, 3, :cEco)
-    @rep_elem c_τ_Reserve => (c_τ_eco, 4, :cEco)
-    @rep_elem c_τ_LitSlow => (c_τ_eco, 5, :cEco)
-    @rep_elem c_τ_LitFast => (c_τ_eco, 6, :cEco)
-    @rep_elem c_τ_SoilSlow => (c_τ_eco, 7, :cEco)
-    @rep_elem c_τ_SoilOld => (c_τ_eco, 8, :cEco)
+    @rep_elem c_τ_Root → (c_τ_eco, 1, :cEco)
+    @rep_elem c_τ_Wood → (c_τ_eco, 2, :cEco)
+    @rep_elem c_τ_Leaf → (c_τ_eco, 3, :cEco)
+    @rep_elem c_τ_Reserve → (c_τ_eco, 4, :cEco)
+    @rep_elem c_τ_LitSlow → (c_τ_eco, 5, :cEco)
+    @rep_elem c_τ_LitFast → (c_τ_eco, 6, :cEco)
+    @rep_elem c_τ_SoilSlow → (c_τ_eco, 7, :cEco)
+    @rep_elem c_τ_SoilOld → (c_τ_eco, 8, :cEco)
 
     vegZix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
     for ix ∈ eachindex(vegZix)
-        @rep_elem p_C_to_N_cVeg[ix] => (C_to_N_cVeg, vegZix[ix], :cEco)
+        @rep_elem p_C_to_N_cVeg[ix] → (C_to_N_cVeg, vegZix[ix], :cEco)
     end
     c_one = one(eltype(c_eco_k_base))
     for i ∈ eachindex(c_eco_k_base)
         tmp = c_one - (exp(-c_τ_eco[i])^(c_one / helpers.dates.timesteps_in_year))
-        @rep_elem tmp => (c_eco_k_base, i, :cEco)
+        @rep_elem tmp → (c_eco_k_base, i, :cEco)
     end
 
     ## pack land variables
     @pack_land begin
-        (C_to_N_cVeg, c_τ_eco, c_eco_k_base, ηA, ηH) => land.cCycleBase
+        (C_to_N_cVeg, c_τ_eco, c_eco_k_base, ηA, ηH) → land.diagnostics
     end
     return land
 end
@@ -105,47 +107,47 @@ function adjustPackPoolComponents(land, helpers, ::CCycleBaseGSI)
 
     zix = helpers.pools.zix
     for (lc, l) in enumerate(zix.cVeg)
-        @rep_elem cEco[l] => (cVeg, lc, :cVeg)
+        @rep_elem cEco[l] → (cVeg, lc, :cVeg)
     end
 
     for (lc, l) in enumerate(zix.cVegRoot)
-        @rep_elem cEco[l] => (cVegRoot, lc, :cVegRoot)
+        @rep_elem cEco[l] → (cVegRoot, lc, :cVegRoot)
     end
 
     for (lc, l) in enumerate(zix.cVegWood)
-        @rep_elem cEco[l] => (cVegWood, lc, :cVegWood)
+        @rep_elem cEco[l] → (cVegWood, lc, :cVegWood)
     end
 
     for (lc, l) in enumerate(zix.cVegLeaf)
-        @rep_elem cEco[l] => (cVegLeaf, lc, :cVegLeaf)
+        @rep_elem cEco[l] → (cVegLeaf, lc, :cVegLeaf)
     end
 
     for (lc, l) in enumerate(zix.cVegReserve)
-        @rep_elem cEco[l] => (cVegReserve, lc, :cVegReserve)
+        @rep_elem cEco[l] → (cVegReserve, lc, :cVegReserve)
     end
 
     for (lc, l) in enumerate(zix.cLit)
-        @rep_elem cEco[l] => (cLit, lc, :cLit)
+        @rep_elem cEco[l] → (cLit, lc, :cLit)
     end
 
     for (lc, l) in enumerate(zix.cLitFast)
-        @rep_elem cEco[l] => (cLitFast, lc, :cLitFast)
+        @rep_elem cEco[l] → (cLitFast, lc, :cLitFast)
     end
 
     for (lc, l) in enumerate(zix.cLitSlow)
-        @rep_elem cEco[l] => (cLitSlow, lc, :cLitSlow)
+        @rep_elem cEco[l] → (cLitSlow, lc, :cLitSlow)
     end
 
     for (lc, l) in enumerate(zix.cSoil)
-        @rep_elem cEco[l] => (cSoil, lc, :cSoil)
+        @rep_elem cEco[l] → (cSoil, lc, :cSoil)
     end
 
     for (lc, l) in enumerate(zix.cSoilSlow)
-        @rep_elem cEco[l] => (cSoilSlow, lc, :cSoilSlow)
+        @rep_elem cEco[l] → (cSoilSlow, lc, :cSoilSlow)
     end
 
     for (lc, l) in enumerate(zix.cSoilOld)
-        @rep_elem cEco[l] => (cSoilOld, lc, :cSoilOld)
+        @rep_elem cEco[l] → (cSoilOld, lc, :cSoilOld)
     end
     @pack_land (cVeg,
         cLit,
@@ -158,7 +160,7 @@ function adjustPackPoolComponents(land, helpers, ::CCycleBaseGSI)
         cLitSlow,
         cSoilSlow,
         cSoilOld,
-        cEco) => land.pools
+        cEco) → land.pools
     return land
 end
 @doc """

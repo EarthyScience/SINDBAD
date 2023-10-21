@@ -12,7 +12,7 @@ function define(params::vegAvailableWater_rootWaterEfficiency, forcing, land, he
     PAW = zero(soilW)
 
     ## pack land variables
-    @pack_land PAW => land.states
+    @pack_land PAW → land.states
     return land
 end
 
@@ -20,18 +20,18 @@ function compute(params::vegAvailableWater_rootWaterEfficiency, forcing, land, h
 
     ## unpack land variables
     @unpack_land begin
-        wWP ∈ land.soilWBase
-        root_water_efficiency ∈ land.states
+        wWP ∈ land.properties
+        root_water_efficiency ∈ land.diagnostics
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        ΔsoilW ∈ land.pools
         PAW ∈ land.states
     end
     for sl ∈ eachindex(soilW)
         PAW_sl = root_water_efficiency[sl] * (maxZero(soilW[sl] + ΔsoilW[sl] - wWP[sl]))
-        @rep_elem PAW_sl => (PAW, sl, :soilW)
+        @rep_elem PAW_sl → (PAW, sl, :soilW)
     end
 
-    @pack_land PAW => land.states
+    @pack_land PAW → land.states
     return land
 end
 

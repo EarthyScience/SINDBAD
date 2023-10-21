@@ -6,7 +6,7 @@ function define(params::drainage_wFC, forcing, land, helpers)
     ## instantiate drainage
     drainage = zero(land.pools.soilW)
     ## pack land variables
-    @pack_land drainage => land.fluxes
+    @pack_land drainage → land.fluxes
     return land
 end
 
@@ -15,10 +15,10 @@ function compute(params::drainage_wFC, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         drainage ∈ land.fluxes
-        (p_nsoilLayers, wFC) ∈ land.soilWBase
+        (p_nsoilLayers, wFC) ∈ land.properties
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        z_zero ∈ land.wCycleBase
+        ΔsoilW ∈ land.pools
+        z_zero ∈ land.constants
     end
 
     ## calculate drainage
@@ -33,8 +33,8 @@ function compute(params::drainage_wFC, forcing, land, helpers)
 
     ## pack land variables
     # @pack_land begin
-    # 	drainage => land.fluxes
-    # 	# ΔsoilW => land.states
+    # 	drainage → land.fluxes
+    # 	# ΔsoilW → land.pools
     # end
     return land
 end
@@ -43,7 +43,7 @@ function update(params::drainage_wFC, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        ΔsoilW ∈ land.pools
     end
 
     ## update variables
@@ -55,8 +55,8 @@ function update(params::drainage_wFC, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        # soilW => land.pools
-        # ΔsoilW => land.states
+        # soilW → land.pools
+        # ΔsoilW → land.pools
     end
     return land
 end
@@ -71,7 +71,7 @@ Recharge the soil using drainage_wFC
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilWBase.wFC: field capacity of soil in mm
+ - land.properties.wFC: field capacity of soil in mm
  - land.states.WBP amount of water that can potentially drain
 
 *Outputs*

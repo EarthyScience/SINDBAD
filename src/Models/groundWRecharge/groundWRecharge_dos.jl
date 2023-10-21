@@ -9,14 +9,14 @@ end
 function define(params::groundWRecharge_dos, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
-        z_zero ∈ land.wCycleBase
+        z_zero ∈ land.constants
     end
 
     gw_recharge = z_zero
 
     ## pack land variables
     @pack_land begin
-        gw_recharge => land.fluxes
+        gw_recharge → land.fluxes
     end
     return land
 end
@@ -27,11 +27,10 @@ function compute(params::groundWRecharge_dos, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (wSat, soil_β) ∈ land.soilWBase
-        (groundW, soilW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
-        n_groundW ∈ land.wCycleBase
+        (wSat, soil_β) ∈ land.properties
+        (ΔsoilW, soilW, ΔgroundW, groundW) ∈ land.pools
+        (z_zero, o_one) ∈ land.constants
+        n_groundW ∈ land.constants
     end
     # calculate recharge
     dosSoilEnd = clampZeroOne((soilW[end] + ΔsoilW[end]) / wSat[end])
@@ -39,12 +38,12 @@ function compute(params::groundWRecharge_dos, forcing, land, helpers)
     gw_recharge = recharge_fraction * (soilW[end] + ΔsoilW[end])
 
     ΔgroundW = addToEachElem(ΔgroundW, gw_recharge / n_groundW)
-    @add_to_elem -gw_recharge => (ΔsoilW, lastindex(ΔsoilW), :soilW)
+    @add_to_elem -gw_recharge → (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     ## pack land variables
     @pack_land begin
-        gw_recharge => land.fluxes
-        (ΔsoilW, ΔgroundW) => land.states
+        gw_recharge → land.fluxes
+        (ΔsoilW, ΔgroundW) → land.pools
     end
     return land
 end
@@ -67,8 +66,8 @@ function update(params::groundWRecharge_dos, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (groundW, soilW) => land.pools
-        (ΔsoilW, ΔgroundW) => land.states
+        (groundW, soilW) → land.pools
+        (ΔsoilW, ΔgroundW) → land.pools
     end
     return land
 end

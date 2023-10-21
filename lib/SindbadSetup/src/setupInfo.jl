@@ -1,4 +1,26 @@
 export setupInfo
+export createInitLand
+
+
+"""
+    createInitLand(tem)
+
+create the initial out named tuple with subfields for pools, states, and all selected models.
+
+# Arguments:
+- `tem`: a helper NT with necessary objects for pools and numbers
+"""
+function createInitLand(pool_info, tem)
+    init_pools = createInitPools(pool_info, tem.helpers)
+    initial_states = createInitStates(pool_info, tem.helpers)
+    # out = (; fluxes=(;), pools=init_pools, states=initial_states)::NamedTuple
+    out = (; fluxes=(;), pools=(; init_pools..., initial_states...), states=(;), diagnostics=(;), properties=(;), models=(;), constants=(;))
+    sortedModels = sort([_sm for _sm ∈ tem.models.selected_models.model])
+    for model ∈ sortedModels
+        out = setTupleField(out, (model, (;)))
+    end
+    return out
+end
 
 
 """
@@ -322,9 +344,9 @@ end
 uses the configuration read from the json files, and consolidates and sets info tem fields needed for model simulation
 """
 function setupInfo(info::NamedTuple)
-    @info "  setupInfo: setting basic experiment info..."
+    @info "  setupInfo: setting Basic Experiment Info..."
     info = setExperimentBasics(info)
-    @info "  setupInfo: setting Output info..."
+    @info "  setupInfo: setting Output Basics..."
     info = setExperimentOutput(info)
     @info "  setupInfo: setting Numeric Helpers..."
     info = setNumericHelpers(info)
@@ -345,8 +367,12 @@ function setupInfo(info::NamedTuple)
     @info "  setupInfo: setting Spinup Info..."
     info = setSpinupInfo(info)
 
-    @info "  setupInfo: setting Output Variable Helpers..."
-    info = setVariablesToStore(info)
+    @info "  setupInfo: setting Model Output Info..."
+    info = setModelOutput(info)
+
+    @info "  setupInfo: creating Initial Land..."
+    land_init = createInitLand(info.pools, info.temp)
+    info = setTupleField(info, (:land_init, land_init)) 
 
     if info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost
         @info "  setupInfo: setting Optimization and Observation info..."
@@ -358,7 +384,7 @@ function setupInfo(info::NamedTuple)
         info = @set info.temp.models.forward = selected_approach_forward
     end
 
-    @info "  setupInfo: cleaning info fields...."
+    @info "  setupInfo: Cleaning Info Fields..."
     info = dropFields(info, (:model_structure, :experiment, :output, :pools))
     info = (; info..., info.temp...)
     info = dropFields(info, (:temp,))

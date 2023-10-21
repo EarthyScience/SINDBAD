@@ -7,10 +7,10 @@ end
 #! format: on
 
 function define(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
-    f_soilW_prev = sum(land.pools.soilW) / land.soilWBase.sum_wSat
+    c_allocation_f_soilW_prev = sum(land.pools.soilW) / land.properties.sum_wSat
 
     ## pack land variables
-    @pack_land f_soilW_prev => land.cAllocationSoilW
+    @pack_land c_allocation_f_soilW_prev → land.diagnostics
     return land
 end
 
@@ -20,17 +20,17 @@ function compute(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        gpp_f_soilW ∈ land.gppSoilW
-        f_soilW_prev ∈ land.cAllocationSoilW
+        gpp_f_soilW ∈ land.diagnostics
+        c_allocation_f_soilW_prev ∈ land.diagnostics
     end
     # computation for the moisture effect on decomposition/mineralization
-    c_allocation_f_soilW = f_soilW_prev + (gpp_f_soilW - f_soilW_prev) * τ_soilW
+    c_allocation_f_soilW = c_allocation_f_soilW_prev + (gpp_f_soilW - c_allocation_f_soilW_prev) * τ_soilW
 
     # set the prev
-    f_soilW_prev = c_allocation_f_soilW
+    c_allocation_f_soilW_prev = c_allocation_f_soilW
 
     ## pack land variables
-    @pack_land (c_allocation_f_soilW, f_soilW_prev) => land.cAllocationSoilW
+    @pack_land (c_allocation_f_soilW, c_allocation_f_soilW_prev) → land.diagnostics
     return land
 end
 
@@ -45,11 +45,11 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - land.cAllocationSoilW.f_soilW_prev: moisture stressor from previous time step
- - land.gppSoilW.gpp_f_soilW: moisture stressors on GPP
+ - land.diagnostics.f_soilW_prev: moisture stressor from previous time step
+ - land.diagnostics.gpp_f_soilW: moisture stressors on GPP
 
 *Outputs*
- - land.cAllocationSoilW.c_allocation_f_soilW: moisture effect on allocation
+ - land.diagnostics.c_allocation_f_soilW: moisture effect on allocation
 
 ---
 

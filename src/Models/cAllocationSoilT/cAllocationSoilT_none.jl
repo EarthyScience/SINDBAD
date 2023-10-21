@@ -8,7 +8,7 @@ function define(params::cAllocationSoilT_none, forcing, land, helpers)
     c_allocation_f_soilT = one(first(land.pools.cEco)) #sujan fsoilW was changed to fTSoil
 
     ## pack land variables
-    @pack_land c_allocation_f_soilT => land.cAllocationSoilT
+    @pack_land c_allocation_f_soilT → land.diagnostics
     return land
 end
 

@@ -68,8 +68,8 @@ function compute(params::interception_Miralles2010, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        interception => land.fluxes
-        WBP => land.states
+        interception → land.fluxes
+        WBP → land.states
     end
     return land
 end

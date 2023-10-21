@@ -13,12 +13,12 @@ function define(params::gppDiffRadiation_GSI, forcing, land, helpers)
     @unpack_gppDiffRadiation_GSI params
     @unpack_forcing f_rg ∈ forcing
 
-    gpp_f_cloud_prev = land.wCycleBase.o_one
-    gpp_f_cloud = land.wCycleBase.o_one
+    gpp_f_cloud_prev = land.constants.o_one
+    gpp_f_cloud = land.constants.o_one
     MJ_to_W = oftype(fR_base, 11.57407)
 
     ## pack land variables
-    @pack_land (gpp_f_cloud, gpp_f_cloud_prev, MJ_to_W) => land.gppDiffRadiation
+    @pack_land (gpp_f_cloud, gpp_f_cloud_prev, MJ_to_W) → land.diagnostics
     return land
 end
 
@@ -29,8 +29,8 @@ function compute(params::gppDiffRadiation_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (gpp_f_cloud_prev, MJ_to_W) ∈ land.gppDiffRadiation
-        (z_zero, o_one) ∈ land.wCycleBase
+        (gpp_f_cloud_prev, MJ_to_W) ∈ land.diagnostics
+        (z_zero, o_one) ∈ land.constants
     end
     ## calculate variables
     f_prev = gpp_f_cloud_prev
@@ -40,7 +40,7 @@ function compute(params::gppDiffRadiation_GSI, forcing, land, helpers)
     gpp_f_cloud_prev = gpp_f_cloud
 
     ## pack land variables
-    @pack_land (gpp_f_cloud, gpp_f_cloud_prev) => land.gppDiffRadiation
+    @pack_land (gpp_f_cloud, gpp_f_cloud_prev) → land.diagnostics
     return land
 end
 
@@ -59,7 +59,7 @@ $(SindbadParameters)
  - fR_τ: contribution of current time step
 
 *Outputs*
- - land.gppDiffRadiation.gpp_f_cloud: light effect on GPP between 0-1
+ - land.diagnostics.gpp_f_cloud: light effect on GPP between 0-1
 
 ---
 

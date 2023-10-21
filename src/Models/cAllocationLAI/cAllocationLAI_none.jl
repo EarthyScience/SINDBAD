@@ -8,7 +8,7 @@ function define(params::cAllocationLAI_none, forcing, land, helpers)
     c_allocation_f_LAI = one(first(land.pools.cEco))
 
     ## pack land variables
-    @pack_land c_allocation_f_LAI => land.cAllocationLAI
+    @pack_land c_allocation_f_LAI → land.diagnostics
     return land
 end
 
@@ -20,7 +20,7 @@ sets the LAI effect on allocation to one (no effect)
 *Inputs*
 
 *Outputs*
-- land.cAllocationLAI.c_allocation_f_LAI: LAI effect on cAllocation (0-1)
+- land.diagnostics.c_allocation_f_LAI: LAI effect on cAllocation (0-1)
 
 ---
 
