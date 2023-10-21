@@ -1,6 +1,21 @@
 export saveOutCubes
 
 
+# """
+#      getModelDataArray(_dat::AbstractArray{<:Any,N}) where N
+
+
+# """
+# function getModelDataArray(_dat::AbstractArray{<:Any,N}) where N
+#     dim = 1
+#     inds = map(size(_dat)) do _
+#         ind = dim == 2 ? 1 : Colon()
+#         dim += 1
+#         ind
+#     end
+#     _dat[Colon(), inds...]
+# end
+
 """
     getModelDataArray(model_data::AbstractArray{T, 2})
 
