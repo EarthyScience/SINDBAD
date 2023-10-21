@@ -107,7 +107,7 @@ function getOutDims(info, forcing_helpers, ::OutputYAXArray)
         outformat = info.settings.experiment.model_output.format
         backend = outformat == "nc" ? :netcdf : :zarr
         out_dim = OutDims(vdims...;
-        path=joinpath(info.output.file_info.file_prefix, "$(vname).$(outformat)"),
+        path=info.output.file_info.file_prefix * "_$(vname).$(outformat)",
         backend=backend,
         overwrite=true)
         v_index += 1
