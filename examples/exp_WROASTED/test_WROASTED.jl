@@ -40,7 +40,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 forcing = getForcing(info);
 run_helpers = prepTEM(forcing, info);
-@time runTEM!(info.tem.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_with_types)
+@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
@@ -51,13 +51,13 @@ observation = out_opti.observation
 # some plots
 def_dat = out_opti.output.default;
 opt_dat = out_opti.output.optimized;
-costOpt = prepCostOptions(observation, info.optim.cost_options);
+costOpt = prepCostOptions(observation, info.optimization.cost_options);
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 foreach(costOpt) do var_row
     v = var_row.variable
     println("plot obs::", v)
     v = (var_row.mod_field, var_row.mod_subfield)
-    vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+    vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
     v = vinfo["standard_name"]
     lossMetric = var_row.cost_metric
     loss_name = nameof(typeof(lossMetric))
@@ -78,7 +78,7 @@ foreach(costOpt) do var_row
     def_var = def_var[tspan, 1, 1, 1]
     opt_var = opt_var[tspan, 1, 1, 1]
 
-    xdata = [info.tem.helpers.dates.range[tspan]...]
+    xdata = [info.helpers.dates.range[tspan]...]
     obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
     obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
     metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
@@ -86,5 +86,5 @@ foreach(costOpt) do var_row
     plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
     plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
     plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
-    savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
+    savefig(joinpath(info.output.dirs.figure, "wroasted_$(domain)_$(v).png"))
 end
