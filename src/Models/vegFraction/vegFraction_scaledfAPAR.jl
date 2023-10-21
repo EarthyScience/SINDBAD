@@ -19,7 +19,7 @@ function compute(params::vegFraction_scaledfAPAR, forcing, land, helpers)
     frac_vegetation = minOne(fAPAR * fAPAR_scalar)
 
     ## pack land variables
-    @pack_land frac_vegetation => land.states
+    @pack_land frac_vegetation → land.states
     return land
 end
 

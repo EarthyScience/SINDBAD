@@ -11,7 +11,7 @@ function compute(params::runoffOverland_Inf, forcing, land, helpers)
     overland_runoff = inf_excess_runoff
 
     ## pack land variables
-    @pack_land overland_runoff => land.fluxes
+    @pack_land overland_runoff → land.fluxes
     return land
 end
 

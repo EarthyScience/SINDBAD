@@ -5,10 +5,10 @@ struct groundWSoilWInteraction_none <: groundWSoilWInteraction end
 function define(params::groundWSoilWInteraction_none, forcing, land, helpers)
 
     ## calculate variables
-    gw_capillary_flux = land.wCycleBase.z_zero
+    gw_capillary_flux = land.constants.z_zero
 
     ## pack land variables
-    @pack_land gw_capillary_flux => land.fluxes
+    @pack_land gw_capillary_flux → land.fluxes
     return land
 end
 

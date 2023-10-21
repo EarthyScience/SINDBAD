@@ -12,11 +12,11 @@ function define(params::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack helper
 
     ## calculate variables
-    # assume the initial c_allocation_f_cloud as one
-    f_cloud_prev = one(slope_rad)
+    # assume the initial c_allocation_c_allocation_f_cloud as one
+    c_allocation_f_cloud_prev = one(slope_rad)
 
     ## pack land variables
-    @pack_land f_cloud_prev => land.cAllocationRadiation
+    @pack_land c_allocation_f_cloud_prev → land.diagnostics
     return land
 end
 
@@ -27,18 +27,18 @@ function compute(params::cAllocationRadiation_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        f_cloud_prev ∈ land.cAllocationRadiation
-        (z_zero, o_one) ∈ land.wCycleBase
+        c_allocation_f_cloud_prev ∈ land.diagnostics
+        (z_zero, o_one) ∈ land.constants
     end
     ## calculate variables
     # computation for the radiation effect on decomposition/mineralization
-    c_allocation_f_cloud = (one(slope_rad) / (one(slope_rad) + exp(-slope_rad * (f_PAR - base_rad))))
-    c_allocation_f_cloud = f_cloud_prev + (c_allocation_f_cloud - f_cloud_prev) * τ_rad
+    c_allocation_c_allocation_f_cloud = (one(slope_rad) / (one(slope_rad) + exp(-slope_rad * (f_PAR - base_rad))))
+    c_allocation_c_allocation_f_cloud = c_allocation_f_cloud_prev + (c_allocation_c_allocation_f_cloud - c_allocation_f_cloud_prev) * τ_rad
     # set the prev
-    f_cloud_prev = c_allocation_f_cloud
+    c_allocation_f_cloud_prev = c_allocation_c_allocation_f_cloud
 
     ## pack land variables
-    @pack_land (c_allocation_f_cloud, f_cloud_prev) => land.cAllocationRadiation
+    @pack_land (c_allocation_c_allocation_f_cloud, c_allocation_f_cloud_prev) → land.diagnostics
     return land
 end
 
@@ -54,10 +54,10 @@ $(SindbadParameters)
 
 *Inputs*
  - forcing.f_PAR: Photosynthetically Active Radiation
- - land.cAllocationRadiation.f_cloud_prev: radiation effect on decomposition/mineralization from the previous time step
+ - land.diagnostics.c_allocation_f_cloud_prev: radiation effect on decomposition/mineralization from the previous time step
 
 *Outputs*
- - land.cAllocationRadiation.c_allocation_f_cloud: radiation effect on decomposition/mineralization
+ - land.diagnostics.c_allocation_c_allocation_f_cloud: radiation effect on decomposition/mineralization
 
 ---
 

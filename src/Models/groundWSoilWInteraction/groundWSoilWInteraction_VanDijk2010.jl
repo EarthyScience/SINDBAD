@@ -11,7 +11,7 @@ function define(params::groundWSoilWInteraction_VanDijk2010, forcing, land, help
     @unpack_groundWSoilWInteraction_VanDijk2010 params
     gw_recharge = zero(max_fraction)
     ## pack land variables
-    @pack_land gw_recharge => land.fluxes
+    @pack_land gw_recharge → land.fluxes
     return land
 end
 
@@ -21,12 +21,11 @@ function compute(params::groundWSoilWInteraction_VanDijk2010, forcing, land, hel
 
     ## unpack land variables
     @unpack_land begin
-        (soil_kFC, kSat, wSat) ∈ land.soilWBase
-        (groundW, soilW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
-        unsat_k_model ∈ land.soilProperties
-        (z_zero, o_one) ∈ land.wCycleBase
-        n_groundW ∈ land.wCycleBase
+        (soil_kFC, kSat, wSat) ∈ land.properties
+        (ΔsoilW, ΔgroundW, groundW, soilW) ∈ land.pools
+        unsat_k_model ∈ land.models
+        (z_zero, o_one) ∈ land.constants
+        n_groundW ∈ land.constants
         gw_recharge ∈ land.fluxes
     end
 
@@ -44,15 +43,15 @@ function compute(params::groundWSoilWInteraction_VanDijk2010, forcing, land, hel
 
     # adjust the delta storages
     ΔgroundW = addToEachElem(ΔgroundW, -gw_capillary_flux / n_groundW)
-    @add_to_elem gw_capillary_flux => (ΔsoilW, lastindex(ΔsoilW), :soilW)
+    @add_to_elem gw_capillary_flux → (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     # adjust the gw_recharge as net flux between soil and groundwater. positive from soil to gw
     gw_recharge = gw_recharge - gw_capillary_flux
 
     ## pack land variables
     @pack_land begin
-        (gw_capillary_flux, gw_recharge) => land.fluxes
-        (ΔsoilW, ΔgroundW) => land.states
+        (gw_capillary_flux, gw_recharge) → land.fluxes
+        (ΔsoilW, ΔgroundW) → land.pools
     end
     return land
 end
@@ -75,8 +74,7 @@ function update(params::groundWSoilWInteraction_VanDijk2010, forcing, land, help
 
     ## pack land variables
     @pack_land begin
-        (groundW, soilW) => land.pools
-        (ΔsoilW, ΔgroundW) => land.states
+        (soilW, ΔsoilW, groundW, ΔgroundW) → land.pools
     end
     return land
 end

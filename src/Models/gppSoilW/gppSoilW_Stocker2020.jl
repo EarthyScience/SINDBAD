@@ -9,11 +9,10 @@ end
 
 function define(params::gppSoilW_Stocker2020, forcing, land, helpers)
     @unpack_gppSoilW_Stocker2020 params
-    t_two = oftype(q, 2.0)
-    gpp_f_soilW = oftype(q, 1.0)
+    gpp_f_soilW = one(q)
 
     ## pack land variables
-    @pack_land (t_two, gpp_f_soilW) => land.gppSoilW
+    @pack_land gpp_f_soilW → land.diagnostics
     return land
 end
 
@@ -23,10 +22,9 @@ function compute(params::gppSoilW_Stocker2020, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (sum_wFC, sum_WP) ∈ land.soilWBase
+        (sum_wFC, sum_WP) ∈ land.properties
         soilW ∈ land.pools
-        t_two ∈ land.gppSoilW
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one, t_two) ∈ land.constants
     end
     ## calculate variables
     SM = sum(soilW)
@@ -38,7 +36,7 @@ function compute(params::gppSoilW_Stocker2020, forcing, land, helpers)
     gpp_f_soilW = clampZeroOne(c_allocation_f_soilW)
 
     ## pack land variables
-    @pack_land gpp_f_soilW => land.gppSoilW
+    @pack_land gpp_f_soilW → land.diagnostics
     return land
 end
 
@@ -55,11 +53,11 @@ Gpp as a function of soilW; should be set to none if coupled with transpiration 
 
 *Inputs*
  - land.pools.soilW: values of soil moisture current time step
- - land.soilWBase.sum_WP: sum of wilting point
- - land.soilWBase.sum_wFC: sum of field capacity
+ - land.properties.sum_WP: sum of wilting point
+ - land.properties.sum_wFC: sum of field capacity
 
 *Outputs*
- - land.gppSoilW.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
+ - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
 
 ---
 

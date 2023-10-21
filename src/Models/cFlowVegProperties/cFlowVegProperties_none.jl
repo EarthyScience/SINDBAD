@@ -19,7 +19,7 @@ function define(params::cFlowVegProperties_none, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (p_E_vec, p_F_vec) => land.cFlowVegProperties
+    @pack_land (p_E_vec, p_F_vec) → land.cFlowVegProperties
     return land
 end
 

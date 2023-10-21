@@ -8,21 +8,12 @@ export gppAirT_TEM
 end
 #! format: on
 
-function define(params::gppAirT_TEM, forcing, land, helpers)
-    @unpack_gppAirT_TEM params
-    t_two = oftype(Tmin, 2)
-    ## pack land variables
-    @pack_land t_two => land.gppAirT
-    return land
-end
-
 function compute(params::gppAirT_TEM, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_TEM params
     @unpack_forcing f_airT_day ∈ forcing
     @unpack_land begin
-        t_two ∈ land.gppAirT
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one, t_two) ∈ land.constants
     end
 
     ## calculate variables
@@ -33,7 +24,7 @@ function compute(params::gppAirT_TEM, forcing, land, helpers)
     gpp_f_airT = clampZeroOne(TScGPP)
 
     ## pack land variables
-    @pack_land gpp_f_airT => land.gppAirT
+    @pack_land gpp_f_airT → land.diagnostics
     return land
 end
 
@@ -52,7 +43,7 @@ Effect of temperature using gppAirT_TEM
  - forcing.f_airT_day: daytime temperature [°C]
 
 *Outputs*
- - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
+ - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
 
 ---
 

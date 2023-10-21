@@ -16,7 +16,7 @@ function define(params::gppDiffRadiation_Wang2015, forcing, land, helpers)
     CI_min = CI
     CI_max = CI
     ## pack land variables
-    @pack_land (CI_min, CI_max) => land.gppDiffRadiation
+    @pack_land (CI_min, CI_max) → land.gppDiffRadiation
     return land
 end
 
@@ -28,7 +28,7 @@ function compute(params::gppDiffRadiation_Wang2015, forcing, land, helpers)
 
     @unpack_land begin
         (CI_min, CI_max) ∈ land.gppDiffRadiation
-        (z_zero) ∈ land.wCycleBase
+        z_zero ∈ land.constants
         tolerance ∈ helpers.numbers
     end
 
@@ -49,7 +49,8 @@ function compute(params::gppDiffRadiation_Wang2015, forcing, land, helpers)
     gpp_f_cloud = f_rg_pot > zero(f_rg_pot) ? cScGPP : zero(cScGPP)
 
     ## pack land variables
-    @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
+    @pack_land gpp_f_cloud → land.diagnostics
+    @pack_land (CI_min, CI_max) → land.gppDiffRadiation
     return land
 end
 
@@ -69,7 +70,7 @@ $(SindbadParameters)
  - rue_ratio : ratio of clear sky LUE to max LUE  in turner et al., appendix A, e_[g_cs] / e_[g_max], should be between 0 & 1
 
 *Outputs*
- - land.gppDiffRadiation.gpp_f_cloud: effect of cloudiness on potential GPP
+ - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
 
 ---
 

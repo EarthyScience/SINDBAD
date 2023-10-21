@@ -14,9 +14,9 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFraction, forci
     ## unpack land variables
     @unpack_land begin
         (WBP, frac_vegetation) ∈ land.states
-        wSat ∈ land.soilWBase
+        wSat ∈ land.properties
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        ΔsoilW ∈ land.pools
     end
     tmp_smax_veg = sum(wSat)
     tmp_soilW_total = sum(soilW + ΔsoilW)
@@ -30,9 +30,9 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFraction, forci
 
     ## pack land variables
     @pack_land begin
-        sat_excess_runoff => land.fluxes
-        β_veg => land.runoffSaturationExcess
-        WBP => land.states
+        sat_excess_runoff → land.fluxes
+        β_veg → land.runoffSaturationExcess
+        WBP → land.states
     end
     return land
 end

@@ -6,7 +6,7 @@ function define(params::drainage_kUnsat, forcing, land, helpers)
     ## instantiate drainage
     drainage = zero(land.pools.soilW)
     ## pack land variables
-    @pack_land drainage => land.fluxes
+    @pack_land drainage → land.fluxes
     return land
 end
 
@@ -15,11 +15,11 @@ function compute(params::drainage_kUnsat, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         drainage ∈ land.fluxes
-        unsat_k_model ∈ land.soilProperties
-        (wSat, wFC, soil_β, soil_kFC, kSat) ∈ land.soilWBase
+        unsat_k_model ∈ land.models
+        (wSat, wFC, soil_β, soil_kFC, kSat) ∈ land.properties
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
+        ΔsoilW ∈ land.pools
+        (z_zero, o_one) ∈ land.constants
         tolerance ∈ helpers.numbers
     end
 
@@ -37,8 +37,8 @@ function compute(params::drainage_kUnsat, forcing, land, helpers)
 
     ## pack land variables
     # @pack_land begin
-    # 	drainage => land.fluxes
-    # 	# ΔsoilW => land.states
+    # 	drainage → land.fluxes
+    # 	# ΔsoilW → land.pools
     # end
     return land
 end
@@ -48,7 +48,7 @@ function update(params::drainage_kUnsat, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        ΔsoilW ∈ land.pools
     end
 
     ## update variables
@@ -60,8 +60,8 @@ function update(params::drainage_kUnsat, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        soilW => land.pools
-        # ΔsoilW => land.states
+        soilW → land.pools
+        # ΔsoilW → land.pools
     end
     return land
 end

@@ -5,10 +5,10 @@ struct transpiration_none <: transpiration end
 function define(params::transpiration_none, forcing, land, helpers)
 
     ## calculate variables
-    transpiration = land.wCycleBase.z_zero
+    transpiration = land.constants.z_zero
 
     ## pack land variables
-    @pack_land transpiration => land.fluxes
+    @pack_land transpiration → land.fluxes
     return land
 end
 

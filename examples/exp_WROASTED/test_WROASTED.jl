@@ -16,7 +16,6 @@ optimize_it = true
 # optimize_it = false
 path_output = nothing
 
-
 parallelization_lib = "threads"
 model_array_type = "static_array"
 replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",

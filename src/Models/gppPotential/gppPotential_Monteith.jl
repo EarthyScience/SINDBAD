@@ -16,7 +16,7 @@ function compute(params::gppPotential_Monteith, forcing, land, helpers)
     gpp_potential = εmax * f_PAR
 
     ## pack land variables
-    @pack_land gpp_potential => land.gppPotential
+    @pack_land gpp_potential → land.diagnostics
     return land
 end
 
@@ -34,7 +34,7 @@ Maximum instantaneous radiation use efficiency using gppPotential_Monteith
 *Inputs*
 
 *Outputs*
- - land.gppPotential.rueGPP: potential GPP based on RUE
+ - land.diagnostics.rueGPP: potential GPP based on RUE
 
 ---
 

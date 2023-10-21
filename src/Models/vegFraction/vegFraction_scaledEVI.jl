@@ -19,7 +19,7 @@ function compute(params::vegFraction_scaledEVI, forcing, land, helpers)
     frac_vegetation = minOne(EVI * EVIscale)
 
     ## pack land variables
-    @pack_land frac_vegetation => land.states
+    @pack_land frac_vegetation → land.states
     return land
 end
 

@@ -16,9 +16,9 @@ function compute(params::snowMelt_TairRn, forcing, land, helpers)
     @unpack_land begin
         (WBP, frac_snow) ∈ land.states
         snowW ∈ land.pools
-        ΔsnowW ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
-        n_snowW ∈ land.wCycleBase
+        ΔsnowW ∈ land.pools
+        (z_zero, o_one) ∈ land.constants
+        n_snowW ∈ land.constants
     end
 
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
@@ -39,10 +39,10 @@ function compute(params::snowMelt_TairRn, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        snow_melt => land.fluxes
-        potential_snow_melt => land.fluxes
-        WBP => land.states
-        ΔsnowW => land.states
+        snow_melt → land.fluxes
+        potential_snow_melt → land.fluxes
+        WBP → land.states
+        ΔsnowW → land.pools
     end
     return land
 end
@@ -53,7 +53,7 @@ function update(params::snowMelt_TairRn, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+        ΔsnowW ∈ land.pools
     end
 
     # update snow pack
@@ -64,8 +64,8 @@ function update(params::snowMelt_TairRn, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        snowW => land.pools
-        ΔsnowW => land.states
+        snowW → land.pools
+        ΔsnowW → land.pools
     end
     return land
 end

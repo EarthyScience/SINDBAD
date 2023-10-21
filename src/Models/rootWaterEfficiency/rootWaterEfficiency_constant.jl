@@ -10,7 +10,7 @@ function define(params::rootWaterEfficiency_constant, forcing, land, helpers)
     @unpack_rootWaterEfficiency_constant params
     
     @unpack_land begin
-        soil_layer_thickness ∈ land.soilWBase
+        soil_layer_thickness ∈ land.properties
         soilW ∈ land.pools            
     end
 
@@ -20,8 +20,8 @@ function define(params::rootWaterEfficiency_constant, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        root_water_efficiency => land.states
-        cumulative_soil_depths => land.rootWaterEfficiency
+        root_water_efficiency → land.diagnostics
+        cumulative_soil_depths → land.properties
     end
 
     return land
@@ -33,23 +33,23 @@ function precompute(params::rootWaterEfficiency_constant, forcing, land, helpers
     @unpack_rootWaterEfficiency_constant params
     ## unpack land variables
     @unpack_land begin
-        cumulative_soil_depths ∈ land.rootWaterEfficiency
-        root_water_efficiency ∈ land.states
+        cumulative_soil_depths ∈ land.properties
+        root_water_efficiency ∈ land.diagnostics
         soilW ∈ land.pools
-        z_zero ∈ land.wCycleBase
-        max_root_depth ∈ land.states
+        z_zero ∈ land.constants
+        max_root_depth ∈ land.properties
     end
     if max_root_depth >= z_zero
-        @rep_elem constant_root_water_efficiency => (root_water_efficiency, 1, :soilW)
+        @rep_elem constant_root_water_efficiency → (root_water_efficiency, 1, :soilW)
     end
     for sl ∈ eachindex(soilW)[2:end]
         soilcumuD = cumulative_soil_depths[sl-1]
         rootOver = max_root_depth - soilcumuD
         rootEff = rootOver >= z_zero ? constant_root_water_efficiency : zero(eltype(root_water_efficiency))
-        @rep_elem rootEff => (root_water_efficiency, sl, :soilW)
+        @rep_elem rootEff → (root_water_efficiency, sl, :soilW)
     end
     ## pack land variables
-    @pack_land root_water_efficiency => land.states
+    @pack_land root_water_efficiency → land.diagnostics
     return land
 end
 

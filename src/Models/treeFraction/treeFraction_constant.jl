@@ -15,7 +15,7 @@ function compute(params::treeFraction_constant, forcing, land, helpers)
     frac_tree = constant_frac_tree
 
     ## pack land variables
-    @pack_land frac_tree => land.states
+    @pack_land frac_tree → land.states
     return land
 end
 

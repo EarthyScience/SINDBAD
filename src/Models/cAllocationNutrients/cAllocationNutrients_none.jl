@@ -8,7 +8,7 @@ function define(params::cAllocationNutrients_none, forcing, land, helpers)
     c_allocation_f_W_N = one(first(land.pools.cEco))
 
     ## pack land variables
-    @pack_land c_allocation_f_W_N => land.cAllocationNutrients
+    @pack_land c_allocation_f_W_N → land.diagnostics
     return land
 end
 
@@ -20,7 +20,7 @@ sets the pseudo-nutrient limitation to one (no effect)
 *Inputs*
 
 *Outputs*
-- land.cAllocationNutrients.c_allocation_f_W_N: Nutrient effect on cAllocation (0-1)
+- land.diagnostics.c_allocation_f_W_N: Nutrient effect on cAllocation (0-1)
 ---
 
 # Extended help

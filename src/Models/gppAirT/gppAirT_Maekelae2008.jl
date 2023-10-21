@@ -15,7 +15,7 @@ function define(params::gppAirT_Maekelae2008, forcing, land, helpers)
     X_prev = f_airT_day
 
     ## pack land variables
-    @pack_land X_prev => land.gppAirT
+    @pack_land X_prev → land.diagnostics
     return land
 end
 
@@ -24,8 +24,8 @@ function compute(params::gppAirT_Maekelae2008, forcing, land, helpers)
     @unpack_gppAirT_Maekelae2008 params
     @unpack_forcing f_airT_day ∈ forcing
     @unpack_land begin
-        o_one ∈ land.wCycleBase
-        X_prev ∈ land.gppAirT
+        o_one ∈ land.constants
+        X_prev ∈ land.diagnostics
     end
 
     ## calculate variables
@@ -40,7 +40,7 @@ function compute(params::gppAirT_Maekelae2008, forcing, land, helpers)
     X_prev = X
 
     ## pack land variables
-    @pack_land (gpp_f_airT, X_prev) => land.gppAirT
+    @pack_land (gpp_f_airT, X_prev) → land.diagnostics
     return land
 end
 
@@ -59,7 +59,7 @@ Effect of temperature using gppAirT_Maekelae2008
  - forcing.f_airT_day: daytime temperature [°C]
 
 *Outputs*
- - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
+ - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
 
 ---
 

@@ -27,7 +27,7 @@ function define(params::cCycleConsistency_simple, forcing, land, helpers)
     end
     giver_lower_indices = Tuple(giver_lower_indices)
     giver_upper_indices = Tuple(giver_upper_indices)
-    @pack_land (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) => land.cCycleConsistency
+    @pack_land (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) → land.cCycleConsistency
     return land
 end
 
@@ -46,8 +46,8 @@ end
 function checkCcycleErrors(params::cCycleConsistency_simple, forcing, land, helpers, ::DoCatchModelErrors) #when check is on
     ## unpack land variables
     @unpack_land begin
-        c_allocation ∈ land.states
-        c_flow_A_vec ∈ land.states
+        c_allocation ∈ land.diagnostics
+        c_flow_A_vec ∈ land.fluxes
         (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) ∈ land.cCycleConsistency
         tolerance ∈ helpers.numbers
     end
@@ -130,7 +130,7 @@ Consistency checks on the c allocation and transfers between pools using cCycleC
 
 *Inputs*
  - flow_vector: carbon flow vector
- - land.states.c_allocation: carbon allocation vector
+ - land.diagnostics.c_allocation: carbon allocation vector
 
 *Outputs*
 

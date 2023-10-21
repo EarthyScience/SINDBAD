@@ -8,7 +8,7 @@ function define(params::cTauSoilProperties_none, forcing, land, helpers)
     c_eco_k_f_soil_props = one.(land.pools.cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soil_props => land.cTauSoilProperties
+    @pack_land c_eco_k_f_soil_props → land.diagnostics
     return land
 end
 

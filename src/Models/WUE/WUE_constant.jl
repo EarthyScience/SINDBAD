@@ -14,7 +14,7 @@ function compute(params::WUE_constant, forcing, land, helpers)
     WUE = constant_WUE
 
     ## pack land variables
-    @pack_land WUE => land.WUE
+    @pack_land WUE → land.diagnostics
     return land
 end
 
@@ -32,7 +32,7 @@ Estimate wue using WUE_constant
 *Inputs*
 
 *Outputs*
- - land.WUE.WUE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
+ - land.diagnostics.WUE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
 
 ---
 

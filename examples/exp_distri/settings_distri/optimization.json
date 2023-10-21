@@ -100,7 +100,7 @@
           "source_unit": "gC m-2",
           "source_variable": "agb_merged"
         },
-        "model_full_var": "deriveVariables.aboveground_biomass",
+        "model_full_var": "pools.aboveground_biomass",
         "unc": {
           "bounds": [0.0, 400.0],
           "data_path": null,

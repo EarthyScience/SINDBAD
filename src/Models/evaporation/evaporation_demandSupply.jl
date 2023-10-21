@@ -14,9 +14,9 @@ function compute(params::evaporation_demandSupply, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        ΔsoilW ∈ land.pools
         PET ∈ land.fluxes
-        z_zero ∈ land.wCycleBase
+        z_zero ∈ land.constants
     end
     # calculate potential soil evaporation
     PET_evaporation = maxZero(PET * α)
@@ -26,12 +26,12 @@ function compute(params::evaporation_demandSupply, forcing, land, helpers)
     evaporation = min(PET_evaporation, evaporationSupply)
 
     # update soil moisture changes
-    @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
+    @add_to_elem -evaporation → (ΔsoilW, 1, :soilW)
     ## pack land variables
     @pack_land begin
-        (PET_evaporation, evaporationSupply) => land.fluxes
-        evaporation => land.fluxes
-        ΔsoilW => land.states
+        (PET_evaporation, evaporationSupply) → land.fluxes
+        evaporation → land.fluxes
+        ΔsoilW → land.pools
     end
     return land
 end
@@ -42,7 +42,7 @@ function update(params::evaporation_demandSupply, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        ΔsoilW ∈ land.pools
     end
 
     ## update variables
@@ -54,8 +54,8 @@ function update(params::evaporation_demandSupply, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        soilW => land.pools
-        # ΔsoilW => land.states
+        soilW → land.pools
+        # ΔsoilW → land.pools
     end
     return land
 end

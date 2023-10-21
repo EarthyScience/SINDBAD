@@ -10,7 +10,7 @@ function define(params::cCycle_CASA, forcing, land, helpers)
     c_eco_flow = zero(cEco)
 
     ## pack land variables
-    @pack_land (c_eco_efflux, c_eco_influx, c_eco_flow) => land.cCycle
+    @pack_land (c_eco_efflux, c_eco_influx, c_eco_flow) → land.cCycle
     return land
 end
 
@@ -19,10 +19,10 @@ function compute(params::cCycle_CASA, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (c_eco_efflux, c_eco_influx, c_eco_flow) ∈ land.cCycle
-        (c_allocation, c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ∈ land.states
+        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ∈ land.fluxes
         (cEco, cVeg) ∈ land.pools
         gpp ∈ land.fluxes
-        c_eco_k ∈ land.cTau
+        (c_eco_k, c_allocation) ∈ land.diagnostics
         (p_E_vec, p_F_vec, p_giver, p_taker) ∈ land.cFlow
         (c_flow_order, c_τ_eco) ∈ land.cCycleBase
     end
@@ -55,8 +55,8 @@ function compute(params::cCycle_CASA, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (nee, c_eco_npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
-        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) => land.states
+        (nee, c_eco_npp, auto_respiration, eco_respiration, hetero_respiration) → land.fluxes
+        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) → land.states
     end
     return land
 end
@@ -76,7 +76,7 @@ Allocate carbon to vegetation components using cCycle_CASA
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
  - land.fluxes.gpp: values for gross primary productivity
- - land.states.c_allocation: carbon allocation matrix
+ - land.diagnostics.c_allocation: carbon allocation matrix
 
 *Outputs*
  - land.cCycleBase.c_eco_k: decay rates for the carbon pool at each time step
@@ -155,7 +155,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
         gpp ∈ land.fluxes
         (p_giver, p_taker) ∈ land.cFlow
         YG ∈ land.autoRespiration
-        (z_zero, o_one) ∈ land.wCycleBase
+        (z_zero, o_one) ∈ land.constants
     end
 
     ## calculate variables
@@ -291,6 +291,6 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     out = runForward(selected_models, forcing, out, modelnames, helpers)
 
     ## pack land variables
-    @pack_land cEco => land.pools
+    @pack_land cEco → land.pools
     return land
 end

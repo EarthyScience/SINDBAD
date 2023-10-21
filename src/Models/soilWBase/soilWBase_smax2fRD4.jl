@@ -16,7 +16,7 @@ function define(params::soilWBase_smax2fRD4, forcing, land, helpers)
 
     @unpack_land begin
         soilW ∈ land.pools
-        n_soilW ∈ land.wCycleBase
+        n_soilW ∈ land.constants
     end
     rootwater_capacities = ones(typeof(smax1), 4)
     if soilW isa SVector
@@ -37,7 +37,7 @@ function define(params::soilWBase_smax2fRD4, forcing, land, helpers)
     wWP = zero(soilW)
 
     ## pack land variables
-    @pack_land (soil_layer_thickness, wSat, wFC, wWP, n_soilW, rootwater_capacities) => land.soilWBase
+    @pack_land (soil_layer_thickness, wSat, wFC, wWP, n_soilW, rootwater_capacities) → land.properties
     return land
 end
 
@@ -46,7 +46,7 @@ function compute(params::soilWBase_smax2fRD4, forcing, land, helpers)
     @unpack_soilWBase_smax2fRD4 params
 
     ## unpack land variables
-    @unpack_land (soil_layer_thickness, wSat, wFC, wWP, rootwater_capacities) ∈ land.soilWBase
+    @unpack_land (soil_layer_thickness, wSat, wFC, wWP, rootwater_capacities) ∈ land.properties
     @unpack_forcing (f_AWC, f_RDeff, f_RDmax, f_SWCmax) ∈ forcing
 
     ## calculate variables
@@ -59,18 +59,18 @@ function compute(params::soilWBase_smax2fRD4, forcing, land, helpers)
 
     # set the properties for each soil layer
     # 1st layer
-    @rep_elem smax1 * soil_layer_thickness[1] => (wSat, 1, :soilW)
-    @rep_elem smax1 * soil_layer_thickness[1] => (wFC, 1, :soilW)
+    @rep_elem smax1 * soil_layer_thickness[1] → (wSat, 1, :soilW)
+    @rep_elem smax1 * soil_layer_thickness[1] → (wFC, 1, :soilW)
 
     # 2nd layer - fill in by linaer combination of the RD data
-    @rep_elem sum(rootwater_capacities) => (wSat, 2, :soilW)
-    @rep_elem sum(rootwater_capacities) => (wFC, 2, :soilW)
+    @rep_elem sum(rootwater_capacities) → (wSat, 2, :soilW)
+    @rep_elem sum(rootwater_capacities) → (wFC, 2, :soilW)
 
     # get the plant available water available (all the water is plant available)
     wAWC = wSat
 
     ## pack land variables
-    @pack_land (wAWC, wFC, wSat, rootwater_capacities) => land.soilWBase
+    @pack_land (wAWC, wFC, wSat, rootwater_capacities) → land.properties
     return land
 end
 
@@ -93,13 +93,13 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fRD4
  - helpers.pools.: soil layers & depths
 
 *Outputs*
- - land.soilWBase.rootwater_capacities: the 4 scaled RD datas
- - land.soilWBase.p_nsoilLayers
- - land.soilWBase.soil_layer_thickness
- - land.soilWBase.wAWC: = land.soilWBase.wSat
- - land.soilWBase.wFC : = land.soilWBase.wSat
- - land.soilWBase.wSat: wSat = smax for 2 soil layers
- - land.soilWBase.WP: wilting point set to zero for all layers
+ - land.properties.rootwater_capacities: the 4 scaled RD datas
+ - land.properties.p_nsoilLayers
+ - land.properties.soil_layer_thickness
+ - land.properties.wAWC: = land.properties.wSat
+ - land.properties.wFC : = land.properties.wSat
+ - land.properties.wSat: wSat = smax for 2 soil layers
+ - land.properties.WP: wilting point set to zero for all layers
 
 # instantiate:
 instantiate/instantiate time-invariant variables for soilWBase_smax2fRD4

@@ -12,10 +12,8 @@ function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land,
 
     ## unpack land variables
     @unpack_land begin
-        (groundW, surfaceW) ∈ land.pools
-        (ΔsurfaceW, ΔgroundW) ∈ land.states
-        (n_surfaceW, n_groundW) ∈ land.wCycleBase
-
+        (ΔsurfaceW, ΔgroundW, groundW, surfaceW) ∈ land.pools
+        (n_surfaceW, n_groundW) ∈ land.diagnostics
     end
 
     ## calculate variables
@@ -27,8 +25,8 @@ function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land,
 
     ## pack land variables
     @pack_land begin
-        groundW_to_surfaceW => land.fluxes
-        (ΔsurfaceW, ΔgroundW) => land.states
+        groundW_to_surfaceW → land.fluxes
+        (ΔsurfaceW, ΔgroundW) → land.pools
     end
 
     return land
@@ -51,8 +49,7 @@ function update(params::groundWSurfaceWInteraction_fracGradient, forcing, land, 
 
     ## pack land variables
     @pack_land begin
-        (groundW, surfaceW) => land.pools
-        (ΔgroundW, ΔsurfaceW) => land.states
+        (groundW, ΔgroundW, surfaceW, ΔsurfaceW) → land.pools
     end
     return land
 end

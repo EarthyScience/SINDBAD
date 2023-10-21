@@ -9,9 +9,9 @@ end
 
 function define(params::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
     ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
-    gw_recharge = land.wCycleBase.z_zero
+    gw_recharge = land.constants.z_zero
     ## pack land variables
-    @pack_land gw_recharge => land.fluxes
+    @pack_land gw_recharge → land.fluxes
     return land
 end
 
@@ -20,10 +20,9 @@ function compute(params::groundWSoilWInteraction_gradientNeg, forcing, land, hel
     @unpack_groundWSoilWInteraction_gradientNeg params
     ## unpack land variables
     @unpack_land begin
-        wSat ∈ land.soilWBase
-        (groundW, soilW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
-        (n_groundW, z_zero) ∈ land.wCycleBase
+        wSat ∈ land.properties
+        (ΔsoilW, soilW, ΔgroundW, groundW) ∈ land.pools
+        (n_groundW, z_zero) ∈ land.diagnostics
         gw_recharge ∈ land.fluxes
     end
     # maximum groundwater storage
@@ -47,15 +46,15 @@ function compute(params::groundWSoilWInteraction_gradientNeg, forcing, land, hel
 
     # adjust the delta storages
     ΔgroundW = addToEachElem(ΔgroundW, -gw_capillary_flux / n_groundW)
-    @add_to_elem gw_capillary_flux => (ΔsoilW, lastindex(ΔsoilW), :soilW)
+    @add_to_elem gw_capillary_flux → (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     # adjust the gw_recharge as net flux between soil and groundwater. positive from soil to gw
     gw_recharge = gw_recharge - gw_capillary_flux
 
     ## pack land variables
     @pack_land begin
-        (gw_capillary_flux, gw_recharge) => land.fluxes
-        (ΔsoilW, ΔgroundW) => land.states
+        (gw_capillary_flux, gw_recharge) → land.fluxes
+        (ΔsoilW, ΔgroundW) → land.pools
     end
     return land
 end
@@ -78,8 +77,8 @@ function update(params::groundWSoilWInteraction_gradientNeg, forcing, land, help
 
     ## pack land variables
     @pack_land begin
-        (groundW, soilW) => land.pools
-        (ΔsoilW, ΔgroundW) => land.states
+        (groundW, soilW) → land.pools
+        (ΔsoilW, ΔgroundW) → land.pools
     end
     return land
 end
@@ -98,7 +97,7 @@ Groundwater soil moisture interactions (capilary flux) using groundWSoilWInterac
 *Inputs*
  - info : length(land.pools.soilW) = number of soil layers
  - land.groundWSoilWInteraction.p_gwmax : maximum storage capacity of the groundwater
- - land.soilWBase.wSat : maximum storage capacity of soil [mm]
+ - land.properties.wSat : maximum storage capacity of soil [mm]
 
 *Outputs*
  - land.fluxes.gw_capillary_flux : flux between groundW & soilW
