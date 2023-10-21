@@ -406,7 +406,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTemInfo(info, forcing);
-    tem_info = @set tem_info.spinup = info.spinup.sequence
+    # tem_info = @set tem_info.spinup = info.spinup.sequence
 
     loc_land = output.land_init
     output_vars = output.variables
