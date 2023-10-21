@@ -18,7 +18,7 @@ function coreTEMYax(selected_models, loc_forcing, loc_land, tem_info)
 
     loc_forcing_t = getForcingForTimeStep(loc_forcing, deepcopy(loc_forcing), 1, tem_info.vals.forcing_types)
     
-    spinup_forcing = getAllSpinupForcing(loc_forcing, tem_spinup_sequence, tem_info.model_helpers);
+    spinup_forcing = getAllSpinupForcing(loc_forcing, tem_info.spinup_sequence, tem_info.model_helpers);
 
     land_prec = definePrecomputeTEM(selected_models, loc_forcing_t, loc_land, tem_info.model_helpers)
 
