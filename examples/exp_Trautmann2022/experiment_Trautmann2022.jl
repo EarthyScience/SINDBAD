@@ -10,6 +10,7 @@ optimize_it = true;
 optimize_it = false;
 
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
+    "experiment.basics.config_files.forcing" => "forcing.json",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => false,
     "experiment.flags.spinup_TEM" => true,
@@ -34,9 +35,14 @@ end
 @time output_all = runExperimentFullOutput(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];
+
 plotdat = run_helpers.output_array;
-default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 output_vars = valToSymbol(run_helpers.tem_info.vals.output_vars)
+
+plotdat = output_all.output;
+output_vars = output_all.info.output.variables;
+
+default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 for i ∈ eachindex(output_vars)
     v = output_vars[i]
     vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
