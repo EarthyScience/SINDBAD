@@ -13,12 +13,13 @@ end
 
 function define(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     @unpack_cFlowSoilProperties_CASA params
+    @unpack_land cEco ∈ land.pools
 
     ## instantiate variables
-    p_E_vec = repeat(zero(land.pools.cEco),
+    p_E_vec = repeat(zero(cEco),
         1,
         1,
-        length(land.pools.cEco))
+        length(cEco))
 
     ## pack land variables
     @pack_land p_E_vec → land.cFlowSoilProperties
@@ -37,7 +38,7 @@ function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
 
     ## calculate variables
     # p_fSoil = zeros(length(info.model.nPix), length(info.model.nZix))
-    # p_fSoil = zero(land.pools.cEco)
+    # p_fSoil = zero(cEco)
     # #sujan
     p_F_vec = p_E_vec
     clay = mean(st_clay)

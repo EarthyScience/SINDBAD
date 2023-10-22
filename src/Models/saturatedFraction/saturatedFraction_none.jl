@@ -3,9 +3,10 @@ export saturatedFraction_none
 struct saturatedFraction_none <: saturatedFraction end
 
 function define(params::saturatedFraction_none, forcing, land, helpers)
+    @unpack_land z_zero ∈ land.constants
 
     ## calculate variables
-    satFrac = land.constants.z_zero
+    satFrac = z_zero
 
     ## pack land variables
     @pack_land satFrac → land.states

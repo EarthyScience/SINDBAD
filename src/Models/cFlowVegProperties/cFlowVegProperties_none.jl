@@ -3,18 +3,19 @@ export cFlowVegProperties_none
 struct cFlowVegProperties_none <: cFlowVegProperties end
 
 function define(params::cFlowVegProperties_none, forcing, land, helpers)
+    @unpack_land cEco ∈ land.pools
 
     @unpack_land c_taker ∈ land.constants
 
     ## calculate variables
-    p_E_vec = eltype(land.pools.cEco).(zero([c_taker...]))
+    p_E_vec = eltype(cEco).(zero([c_taker...]))
 
-    if land.pools.cEco isa SVector
+    if cEco isa SVector
         p_E_vec = SVector{length(p_E_vec)}(p_E_vec)
     end
 
-    p_F_vec = eltype(land.pools.cEco).(zero([c_taker...]))
-    if land.pools.cEco isa SVector
+    p_F_vec = eltype(cEco).(zero([c_taker...]))
+    if cEco isa SVector
         p_F_vec = SVector{length(p_F_vec)}(p_F_vec)
     end
 

@@ -3,9 +3,10 @@ export cAllocationLAI_none
 struct cAllocationLAI_none <: cAllocationLAI end
 
 function define(params::cAllocationLAI_none, forcing, land, helpers)
+    @unpack_land cEco ∈ land.pools
 
     ## calculate variables
-    c_allocation_f_LAI = one(first(land.pools.cEco))
+    c_allocation_f_LAI = one(first(cEco))
 
     ## pack land variables
     @pack_land c_allocation_f_LAI → land.diagnostics

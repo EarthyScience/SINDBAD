@@ -8,8 +8,9 @@ end
 #! format: on
 
 function define(params::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
+    @unpack_land z_zero ∈ land.constants
     ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
-    gw_recharge = land.constants.z_zero
+    gw_recharge = z_zero
     ## pack land variables
     @pack_land gw_recharge → land.fluxes
     return land
