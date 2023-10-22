@@ -37,17 +37,23 @@ function define(params::soilWBase_smax2fRD4, forcing, land, helpers)
     wWP = zero(soilW)
 
     ## pack land variables
-    @pack_land (soil_layer_thickness, wSat, wFC, wWP, n_soilW, rootwater_capacities) → land.properties
+    @pack_land begin
+        (soil_layer_thickness, wSat, wFC, wWP) → land.properties
+        rootwater_capacities → land.soilWBase
+    end
     return land
 end
 
 function compute(params::soilWBase_smax2fRD4, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_soilWBase_smax2fRD4 params
+    @unpack_forcing (f_AWC, f_RDeff, f_RDmax, f_SWCmax) ∈ forcing
 
     ## unpack land variables
-    @unpack_land (soil_layer_thickness, wSat, wFC, wWP, rootwater_capacities) ∈ land.properties
-    @unpack_forcing (f_AWC, f_RDeff, f_RDmax, f_SWCmax) ∈ forcing
+    @unpack_land begin
+        (soil_layer_thickness, wSat, wFC, wWP) ∈ land.properties
+        rootwater_capacities ∈ land.soilWBase
+    end
 
     ## calculate variables
     # get the rooting depth data & scale them
@@ -70,7 +76,11 @@ function compute(params::soilWBase_smax2fRD4, forcing, land, helpers)
     wAWC = wSat
 
     ## pack land variables
-    @pack_land (wAWC, wFC, wSat, rootwater_capacities) → land.properties
+    @pack_land begin
+        (wSat, wFC, wWP) → land.properties
+        rootwater_capacities → land.soilWBase
+    end
+
     return land
 end
 
@@ -93,7 +103,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fRD4
  - helpers.pools.: soil layers & depths
 
 *Outputs*
- - land.properties.rootwater_capacities: the 4 scaled RD datas
+ - land.soilWBase.rootwater_capacities: the 4 scaled RD datas
  - land.properties.p_nsoilLayers
  - land.properties.soil_layer_thickness
  - land.properties.wAWC: = land.properties.wSat
