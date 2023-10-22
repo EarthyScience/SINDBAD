@@ -1,7 +1,32 @@
 export getDepthDimensionSizeName
 export getDepthInfoAndVariables
 export setModelOutput
+export setModelOutputLandAll
 export updateVariablesToStore
+
+
+"""
+    getAllLandVars(land)
+
+a helper to collect model variable fields and subfields from land
+
+# Arguments:
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+"""
+function getAllLandVars(land)
+    av=[]
+    for f in propertynames(land)
+        lf = getproperty(land,f)
+        for sf in propertynames(lf)
+            pv = getproperty(lf, sf)
+            if (isa(pv, AbstractArray) && ndims(pv) < 2)  || isa(pv, Number)
+                push!(av, (f, sf))
+            end
+        end
+    end
+    return Tuple(av)
+end
+
 
 """
     getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land::NamedTuple)
@@ -264,6 +289,47 @@ function setModelOutput(info::NamedTuple)
 end
 
 
+
+"""
+    setModelOutputLandAll(info, land)
+
+get all model variables from land amd overwrite output information in info
+
+# Arguments:
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+"""
+function setModelOutputLandAll(info, land)
+    output_vars = getAllLandVars(land)
+    depth_info = map(output_vars) do v_full_pair
+        v_index = findfirst(x -> first(x) === first(v_full_pair) && last(x) === last(v_full_pair), info.output.variables)
+        dim_name = nothing
+        dim_size = nothing
+        if ~isnothing(v_index)
+            dim_name = last(info.output.depth_info[v_index])
+            dim_size = first(info.output.depth_info[v_index])
+        else
+            field_name = first(v_full_pair)
+            v_name = last(v_full_pair)
+            dim_name = string(v_name) * "_idx"
+            land_field = getproperty(land, field_name)
+            if hasproperty(land_field, v_name)
+                land_subfield = getproperty(land_field, v_name)
+                if isa(land_subfield, AbstractArray)
+                    dim_size = length(land_subfield)
+                elseif isa(land_subfield, Number)
+                    dim_size = 1
+                else
+                    dim_size = 0
+                end
+            end
+        end
+        dim_size, dim_name
+    end
+    info = @set info.output.variables = output_vars
+    info = @set info.output.depth_info = depth_info
+    return info
+end
 
 """
     updateVariablesToStore(info::NamedTuple)

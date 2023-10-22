@@ -13,6 +13,8 @@ prepares info, forcing and output NT for the experiment
 function prepExperiment(sindbad_experiment::String; replace_info=Dict())
     @info "\n----------------------------------------------\n"
     sindbadBanner()
+    @info "\n----------------------------------------------\n"
+    @info "\n----------------------------------------------\n"
     info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
 
     @info "\n----------------------------------------------\n"
