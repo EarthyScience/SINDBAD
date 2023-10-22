@@ -5,6 +5,15 @@ export getTypedModel
 export modelParameter
 export modelParameters
 
+
+"""
+    getInOutModel(model::LandEcosystem)
+
+helper/wrapper function to parse all the input/output/parameter of a given SINDBAD model and ALL functions
+
+# Arguments:
+- `model`: a SINDBAD model instance
+"""
 function getInOutModel(model::LandEcosystem)
     mo_in_out=Sindbad.DataStructures.OrderedDict()
     println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
@@ -17,6 +26,15 @@ function getInOutModel(model::LandEcosystem)
 end
 
 
+"""
+    getInOutModel(model::LandEcosystem, model_funcs::Tuple)
+
+helper/wrapper function to parse the input/output/parameter of a given SINDBAD model and a tuple of functions
+
+# Arguments:
+- `model`: a SINDBAD model instance
+- `model_funcs`: a tuple of symbol for the model functions, e.g. (:precompute, :parameters) , to parse
+"""
 function getInOutModel(model::LandEcosystem, model_funcs::Tuple)
     mo_in_out=Sindbad.DataStructures.OrderedDict()
     println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
@@ -36,11 +54,14 @@ function getInOutModel(model::LandEcosystem, model_funcs::Tuple)
     return mo_in_out
 end
 
-
 """
-    getInOutModel(model, model_func = :compute)
+    getInOutModel(model, model_func::Symbol)
 
-get the input and output of variables of the given SINDBAD models
+parse the input/output/parameter of a given SINDBAD model function
+
+# Arguments:
+- `model`: a SINDBAD model instance
+- `model_func`: a symbol for the model function, e.g. :precompute or :parameters, to parse
 """
 function getInOutModel(model, model_func::Symbol)
     model_name = string(nameof(typeof(model)))
@@ -58,7 +79,7 @@ function getInOutModel(model, model_func::Symbol)
     elseif model_func == :update
         mod_code = @code_string Sindbad.Models.update(model, nothing, nothing, nothing)
     else
-        error("can only check consistency in compute, define, params, precompute, and update of SINDBAD models. $(model_func) is not a suggested or recommended method to add to a SINDAD model struct.")
+        error("can only check consistency in compute, define, params, precompute, and update of SINDBAD models. $(model_func) is not a suggested or recommended method to add to a SINDBAD model struct.")
     end
 
     mod_code_lines = strip.(split(mod_code, "\n"))
@@ -134,7 +155,15 @@ function getInOutModel(model, model_func::Symbol)
     return mod_vars
 end
 
-function getInOutModels(ind_range=1:10000)
+"""
+    getInOutModels(ind_range=1:10000::UnitRange{Int64})
+
+parse the input and output of ALL SINDBAD models
+
+# Arguments:
+- `ind_range`: a range to select the models from all possible SINDBAD models. By default, all models are parsed, but a subset can be parsed by passing a range, e.g., 1:10
+"""
+function getInOutModels(ind_range=1:10000::UnitRange{Int64})
     sind_m_dict = getSindbadModels();
     sm_list = keys(sind_m_dict) |> collect
     s_ind = max(1, first(ind_range))
@@ -159,18 +188,34 @@ function getInOutModels(ind_range=1:10000)
 end
 
 
-function getInOutModels(models)
+"""
+    getInOutModels(models::Tuple)
+
+parse the input and output of SINDBAD model compute functions and parameters
+
+# Arguments:
+- `models`: a list/collection of instantiated SINDBAD models
+"""
+function getInOutModels(models::Tuple)
     mod_vars = Sindbad.DataStructures.OrderedDict()
     for (mi, _mod) in enumerate(models)
         mod_name = string(nameof(supertype(typeof(_mod))))
         mod_name_sym=Symbol(mod_name)
-        # @show getInOutModel(_mod, (:compute, :parameters))
         mod_vars[mod_name_sym] = getInOutModel(_mod, (:compute, :parameters))
     end
     return mod_vars
 end
 
 
+"""
+    getInOutModels(models, model_funcs::Tuple)
+
+parse the input and output of SINDBAD model functions
+
+# Arguments:
+- `models`: a list/collection of instantiated SINDBAD models
+- `model_funcs`: a tuple of symbols for the model functions, e.g. (:precompute, :compute, ), to parse
+"""
 function getInOutModels(models, model_funcs::Tuple)
     mod_vars = Sindbad.DataStructures.OrderedDict()
     for (mi, _mod) in enumerate(models)
@@ -182,6 +227,15 @@ function getInOutModels(models, model_funcs::Tuple)
 end
 
 
+"""
+    getInOutModels(models, model_func::Symbol)
+
+parse the input and output of SINDBAD model functions
+
+# Arguments:
+- `models`: a list/collection of instantiated SINDBAD models
+- `model_func`: a symbol for the model function, e.g. :precompute, to parse
+"""
 function getInOutModels(models, model_func::Symbol)
     mod_vars = Sindbad.DataStructures.OrderedDict()
     for (mi, _mod) in enumerate(models)
@@ -195,12 +249,30 @@ end
 
 
 """
-    getTypedModel(model, sNT)
+    getTypedModel(model::String, num_type=Float64)
 
-get Sindbad model, and instatiate them with the datatype set in model_run
+get SINDBAD model, and instatiate it with the given datatype
+
+# Arguments:
+- `model`: a string SINDBAD model name
+- `num_type`: a number type to use for model parameters
 """
-function getTypedModel(model, sNT=Float64)
-    model_obj = getfield(Sindbad.Models, Symbol(model))
+function getTypedModel(model::String, num_type=Float64)
+    getTypedModel(Symbol(model), num_type)
+end
+
+
+"""
+    getTypedModel(model::Symbol, num_type=Float64)
+
+get SINDBAD model, and instatiate it with the given datatype
+
+# Arguments:
+- `model::Symbol`: a SINDBAD model name
+- `num_type`: a number type to use for model parameters
+"""
+function getTypedModel(model::Symbol, num_type=Float64)
+    model_obj = getfield(Sindbad.Models, model)
     model_instance = model_obj()
     param_names = fieldnames(model_obj)
     if length(param_names) > 0
@@ -208,9 +280,9 @@ function getTypedModel(model, sNT=Float64)
         for pn ∈ param_names
             param = getfield(model_obj(), pn)
             param_typed = if typeof(param) <: Array
-                sNT.(param)
+                num_type.(param)
             else
-                sNT(param)
+                num_type(param)
             end
             push!(param_vals, param_typed)
         end
@@ -223,6 +295,9 @@ end
     modelParameters(models)
 
 shows the current parameters of all given models
+
+# Arguments:
+- `models`: a list/collection of SINDBAD models
 """
 function modelParameters(models)
     for mn in sort([nameof.(supertype.(typeof.(models)))...])
@@ -233,10 +308,15 @@ function modelParameters(models)
 end
 
 
+
 """
     modelParameter(models, model::Symbol)
 
-shows the current parameters of a given model (Symbol) [NOT APPRAOCH] based on the list of models provided
+returns/shows the current parameters of a given model (Symbol) [NOT APPRAOCH] from the list of models provided
+
+# Arguments:
+- `models`: a list/collection of SINDBAD models
+- `model`: a SINDBAD model name
 """
 function modelParameter(models, model::Symbol)
     model_names = Symbol.(supertype.(typeof.(models)))
@@ -261,12 +341,16 @@ end
 
 
 """
-    modelParameter(model::LandEcosystem)
+    modelParameter(model::LandEcosystem, show=true)
 
-shows the current parameters of a given model instance of type LandEcosystem
+returns and shows the current parameters of a given model instance of type LandEcosystem
+
+# Arguments:
+- `model`: a SINDBAD model instance
+- `show`: a flag to print parameter in the screen
 """
-function modelParameter(mod::Sindbad.LandEcosystem, show=true)
-    pnames = fieldnames(typeof(mod))
+function modelParameter(model::LandEcosystem, show=true)
+    pnames = fieldnames(typeof(model))
     p_vec = []
     if show
         println("parameters:")
@@ -280,7 +364,7 @@ function modelParameter(mod::Sindbad.LandEcosystem, show=true)
             if show
                 println("   $fn => $(getproperty(mod, fn))")
             end
-            Pair(fn, getproperty(mod, fn))
+            Pair(fn, getproperty(model, fn))
         end
     end
     return p_vec
