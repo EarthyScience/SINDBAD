@@ -3,9 +3,10 @@ export cAllocationNutrients_none
 struct cAllocationNutrients_none <: cAllocationNutrients end
 
 function define(params::cAllocationNutrients_none, forcing, land, helpers)
+    @unpack_land cEco ∈ land.pools
 
     ## calculate variables
-    c_allocation_f_W_N = one(first(land.pools.cEco))
+    c_allocation_f_W_N = one(first(cEco))
 
     ## pack land variables
     @pack_land c_allocation_f_W_N → land.diagnostics

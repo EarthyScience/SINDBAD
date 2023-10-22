@@ -3,8 +3,7 @@ export gppDemand_none
 struct gppDemand_none <: gppDemand end
 
 function define(params::gppDemand_none, forcing, land, helpers)
-    o_one = land.constants.o_one
-    z_zero = land.constants.z_zero
+    @unpack_land (o_one, z_zero) ∈ land.constants
 
     gpp_f_climate = o_one
 

@@ -3,10 +3,11 @@ export gppAirT_none
 struct gppAirT_none <: gppAirT end
 
 function define(params::gppAirT_none, forcing, land, helpers)
+    @unpack_land o_one ∈ land.constants
 
     ## calculate variables
     # set scalar to a constant o_one [no effect on potential GPP]
-    gpp_f_airT = land.constants.o_one
+    gpp_f_airT = o_one
 
     ## pack land variables
     @pack_land gpp_f_airT → land.diagnostics

@@ -3,8 +3,9 @@ export drainage_kUnsat
 struct drainage_kUnsat <: drainage end
 
 function define(params::drainage_kUnsat, forcing, land, helpers)
+    @unpack_land soilW ∈ land.pools
     ## instantiate drainage
-    drainage = zero(land.pools.soilW)
+    drainage = zero(soilW)
     ## pack land variables
     @pack_land drainage → land.fluxes
     return land
@@ -24,7 +25,7 @@ function compute(params::drainage_kUnsat, forcing, land, helpers)
     end
 
     ## calculate drainage
-    for sl ∈ 1:(length(land.pools.soilW)-1)
+    for sl ∈ 1:(length(soilW)-1)
         holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         max_drain = wSat[sl] - wFC[sl]
         lossCap = min(soilW[sl] + ΔsoilW[sl], max_drain)

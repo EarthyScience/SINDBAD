@@ -8,11 +8,13 @@ end
 
 function define(params::cFlowVegProperties_CASA, forcing, land, helpers)
     @unpack_cFlowVegProperties_CASA params
-    c_taker ∈ land.constants
-
+    @unpack_land begin 
+        c_taker ∈ land.constants
+        cEco ∈ land.pools
+    end
     ## instantiate variables
-    p_F_vec = eltype(land.pools.cEco).(zero([c_taker...]))
-    if land.pools.cEco isa SVector
+    p_F_vec = eltype(cEco).(zero([c_taker...]))
+    if cEco isa SVector
         p_F_vec = SVector{length(p_F_vec)}(p_F_vec)
     end
 
@@ -26,11 +28,13 @@ function compute(params::cFlowVegProperties_CASA, forcing, land, helpers)
     @unpack_cFlowVegProperties_CASA params
 
     ## unpack land variables
-    @unpack_land p_F_vec ∈ land.cFlowVegProperties
-
+    @unpack_land begin 
+        p_F_vec ∈ land.cFlowVegProperties
+        cEco ∈ land.pools
+    end
     ## calculate variables
     # p_fVeg = zeros(nPix, length(info.model.c.nZix)); #sujan
-    #p_fVeg = zero(land.pools.cEco)
+    #p_fVeg = zero(cEco)
     p_E_vec = p_F_vec
     # ADJUST cFlow BASED ON PARTICULAR PARAMETERS # SOURCE, TARGET, INCREMENT aM = (:cVegLeaf, :cLitLeafM, MTF;, :cVegLeaf, :cLitLeafS, 1, -, MTF;, :cVegWood, :cLitWood, 1;, :cVegRootF, :cLitRootFM, MTF;, :cVegRootF, :cLitRootFS, 1, -, MTF;, :cVegRootC, :cLitRootC, 1;, :cLitLeafS, :cSoilSlow, SCLIGNIN;, :cLitLeafS, :cMicSurf, 1, -, SCLIGNIN;, :cLitRootFS, :cSoilSlow, SCLIGNIN;, :cLitRootFS, :cMicSoil, 1, -, SCLIGNIN;, :cLitWood, :cSoilSlow, frac_lignin_wood;, :cLitWood, :cMicSurf, 1, -, frac_lignin_wood;, :cLitRootC, :cSoilSlow, frac_lignin_wood;, :cLitRootC, :cMicSoil, 1, -, frac_lignin_wood;, :cSoilOld, :cMicSoil, 1;, :cLitLeafM, :cMicSurf, 1;, :cLitRootFM, :cMicSoil, 1;, :cMicSurf, :cSoilSlow, 1;)
     for ii ∈ 1:size(aM, 1)

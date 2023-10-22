@@ -12,9 +12,10 @@ function define(params::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI params
     @unpack_forcing f_rg ∈ forcing
+    @unpack_land o_one ∈ land.constants
 
-    gpp_f_cloud_prev = land.constants.o_one
-    gpp_f_cloud = land.constants.o_one
+    gpp_f_cloud_prev = o_one
+    gpp_f_cloud = o_one
     MJ_to_W = oftype(fR_base, 11.57407)
 
     ## pack land variables

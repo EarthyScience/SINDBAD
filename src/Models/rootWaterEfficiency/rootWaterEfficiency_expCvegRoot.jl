@@ -12,11 +12,12 @@ function define(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
     @unpack_rootWaterEfficiency_expCvegRoot params
     @unpack_land begin
         soil_layer_thickness ∈ land.properties
+        soilW ∈ land.pools
     end
     ## instantiate variables
-    root_water_efficiency = one.(land.pools.soilW)
+    root_water_efficiency = one.(soilW)
     cumulative_soil_depths = cumsum(soil_layer_thickness)
-    root_over = one.(land.pools.soilW)
+    root_over = one.(soilW)
     ## pack land variables
     @pack_land begin
         root_over → land.rootWaterEfficiency
@@ -35,11 +36,12 @@ function precompute(params::rootWaterEfficiency_expCvegRoot, forcing, land, help
         cumulative_soil_depths ∈ land.properties
         z_zero ∈ land.constants
         max_root_depth ∈ land.diagnostics
+        soilW ∈ land.pools
     end
     if max_root_depth > z_zero
         @rep_elem one(eltype(root_over)) → (root_over, 1, :soilW)
     end
-    for sl ∈ eachindex(land.pools.soilW)[2:end]
+    for sl ∈ eachindex(soilW)[2:end]
         soilcumuD = cumulative_soil_depths[sl-1]
         rootOver = max_root_depth - soilcumuD
         rootEff = rootOver >= z_zero ? one(eltype(root_over)) : zero(eltype(root_over))
@@ -57,13 +59,13 @@ function compute(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers
     @unpack_land begin
         root_over ∈ land.rootWaterEfficiency
         root_water_efficiency ∈ land.diagnostics
-        cVegRoot ∈ land.pools
+        (cVegRoot, soilW) ∈ land.pools
     end
     ## calculate variables
     tmp_rootEff = max_root_water_efficiency -
                   (max_root_water_efficiency - min_root_water_efficiency) * (exp(-k_efficiency_cVegRoot * totalS(cVegRoot))) # root fraction/efficiency as a function of total carbon in root pools
 
-    for sl ∈ eachindex(land.pools.soilW)
+    for sl ∈ eachindex(soilW)
         root_water_efficiency_sl = root_over[sl] * tmp_rootEff
         @rep_elem root_water_efficiency_sl → (root_water_efficiency, sl, :soilW)
     end

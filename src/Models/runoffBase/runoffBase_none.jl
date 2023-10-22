@@ -3,9 +3,10 @@ export runoffBase_none
 struct runoffBase_none <: runoffBase end
 
 function define(params::runoffBase_none, forcing, land, helpers)
+    @unpack_land z_zero ∈ land.constants
 
     ## calculate variables
-    base_runoff = land.constants.z_zero
+    base_runoff = z_zero
 
     ## pack land variables
     @pack_land base_runoff → land.fluxes
