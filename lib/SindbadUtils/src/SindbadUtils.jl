@@ -17,7 +17,5 @@ module SindbadUtils
     include("utilsNT.jl")
     include("utilsSpatial.jl")
     include("utilsTemporal.jl")
-
-    sindbadBanner()
     
 end # module SindbadUtils

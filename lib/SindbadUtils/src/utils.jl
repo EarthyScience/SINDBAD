@@ -93,7 +93,7 @@ display the SINDBAD banner n times
 """
 function entertainMe(n=10)
     for _x in 1:n
-        SindbadUtils.sindbadBanner()
+        sindbadBanner()
         sleep(0.1)
     end
 end
@@ -186,7 +186,9 @@ displays the Sindbad.jl banner using Figlets
 """
 function sindbadBanner()
     print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
+    println("######################################################################################################\n")
     FIGlet.render("Sindbad.jl", rand(figlet_fonts))
+    println("######################################################################################################")
     return nothing
 end
 
