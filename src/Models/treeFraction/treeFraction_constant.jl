@@ -7,7 +7,7 @@ end
 #! format: on
 
 
-function compute(params::treeFraction_constant, forcing, land, helpers)
+function precompute(params::treeFraction_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_treeFraction_constant params
 

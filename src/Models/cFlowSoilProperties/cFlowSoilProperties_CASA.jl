@@ -22,7 +22,7 @@ function define(params::cFlowSoilProperties_CASA, forcing, land, helpers)
         length(cEco))
 
     ## pack land variables
-    @pack_land p_E_vec → land.cFlowSoilProperties
+    @pack_land p_E_vec → land.diagnostics
     return land
 end
 
@@ -31,7 +31,7 @@ function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     @unpack_cFlowSoilProperties_CASA params
 
     ## unpack land variables
-    @unpack_land p_E_vec ∈ land.cFlowSoilProperties
+    @unpack_land p_E_vec ∈ land.diagnostics
 
     ## unpack land variables
     @unpack_land (st_clay, st_silt) ∈ land.properties
@@ -65,7 +65,7 @@ function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (p_E_vec, p_F_vec) → land.cFlowSoilProperties
+    @pack_land (p_E_vec, p_F_vec) → land.diagnostics
     return land
 end
 
@@ -85,10 +85,10 @@ Effect of soil properties on the c transfers between pools using cFlowSoilProper
  - land.properties.st_silt: soil hydraulic properties for silt layer
 
 *Outputs*
- - land.cFlowSoilProperties.p_E_vec: effect of soil on transfer efficiency between pools
- - land.cFlowSoilProperties.p_F_vec: effect of soil on transfer fraction between pools
- - land.cFlowSoilProperties.p_E_vec
- - land.cFlowSoilProperties.p_F_vec
+ - land.diagnostics.p_E_vec: effect of soil on transfer efficiency between pools
+ - land.diagnostics.p_F_vec: effect of soil on transfer fraction between pools
+ - land.diagnostics.p_E_vec
+ - land.diagnostics.p_F_vec
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cFlowSoilProperties_CASA

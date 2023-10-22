@@ -6,7 +6,7 @@ export NIRv_constant
 end
 #! format: on
 
-function compute(params::NIRv_constant, forcing, land, helpers)
+function precompute(params::NIRv_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_NIRv_constant params
 
