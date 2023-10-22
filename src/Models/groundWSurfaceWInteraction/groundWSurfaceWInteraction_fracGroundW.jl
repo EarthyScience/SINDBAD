@@ -13,8 +13,8 @@ function compute(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, 
     ## unpack land variables
     @unpack_land begin
         (groundW, surfaceW) ∈ land.pools
-        (ΔsurfaceW, ΔgroundW) ∈ land.states
-        (n_surfaceW, n_groundW) ∈ land.diagnostics
+        (ΔsurfaceW, ΔgroundW) ∈ land.pools
+        (n_surfaceW, n_groundW) ∈ land.constants
     end
 
     ## calculate variables
