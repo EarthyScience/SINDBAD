@@ -40,8 +40,8 @@ function compute(params::WUE_Medlyn2011, forcing, land, helpers)
     ci = ciNoCO2 * ambient_CO2
 
     ## pack land variables
-    @pack_land (WUENoCO2, ci, ciNoCO2) → land.WUE
-    @pack_land WUE → land.diagnostics
+    @pack_land (ci, ciNoCO2) → land.states
+    @pack_land (WUENoCO2, WUE) → land.diagnostics
     return land
 end
 
@@ -62,9 +62,9 @@ Estimate wue using WUE_Medlyn2011
 
 *Outputs*
  - land.diagnostics.WUE: water use efficiency A/E [gC/mmH2O] with ambient co2
- - land.WUE.ci: internal co2 with ambient co2
- - land.WUE.WUENoCO2: instantiated A/E [gC/mmH2O] without ambient co2
- - land.WUE.ciNoCO2: instantiated internal co2 scalar without ambient co2
+ - land.states.ci: internal co2 with ambient co2
+ - land.diagnostics.WUENoCO2: instantiated A/E [gC/mmH2O] without ambient co2
+ - land.states.ciNoCO2: instantiated internal co2 scalar without ambient co2
 
 ---
 

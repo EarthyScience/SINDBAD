@@ -3,15 +3,10 @@ export wCycleBase_simple, adjustPackPoolComponents
 struct WCycleBaseSimple end
 
 #! format: off
-@bounds @describe @units @with_kw struct wCycleBase_simple{T1,T2} <: wCycleBase
-    o_one::T1 = 1.0 | (-Inf, Inf) | "type stable one" | ""
-    t_two::T2 = 2.0 | (-Inf, Inf) | "type stable two" | ""
-    z_zero::T2 = 0.0 | (-Inf, Inf) | "type stable zero" | ""
-end
+struct wCycleBase_simple <: wCycleBase end
 #! format: on
 
 function define(params::wCycleBase_simple, forcing, land, helpers)
-    @unpack_wCycleBase_simple params
     if hasproperty(land.pools, :TWS)
         @unpack_land TWS ∈ land.pools
         n_TWS = oftype(first(TWS), length(TWS))
@@ -29,9 +24,10 @@ function define(params::wCycleBase_simple, forcing, land, helpers)
     end
     if hasproperty(land.pools, :soilW)
         @unpack_land soilW ∈ land.pools
-        t_two = oftype(first(soilW), 1.0)
-        o_one = oftype(first(soilW), 1.0)
         z_zero = oftype(first(soilW), 0.0)
+        o_one = oftype(first(soilW), 1.0)
+        t_two = oftype(first(soilW), 2.0)
+        t_three = oftype(first(soilW), 3.0)
         n_soilW = oftype(first(soilW), length(soilW))
         @pack_land n_soilW → land.constants
     end
@@ -42,14 +38,15 @@ function define(params::wCycleBase_simple, forcing, land, helpers)
     end
     if hasproperty(land.pools, :cEco)
         @unpack_land cEco ∈ land.pools
-        t_two = oftype(first(cEco), 2.0)
-        o_one = oftype(first(cEco), 1.0)
         z_zero = oftype(first(cEco), 0.0)
+        o_one = oftype(first(cEco), 1.0)
+        t_two = oftype(first(cEco), 2.0)
+        t_three = oftype(first(cEco), 3.0)
     end
 
     w_model = WCycleBaseSimple()
     @pack_land begin
-        (o_one, z_zero, t_two) → land.constants
+        (z_zero, o_one, t_two, t_three) → land.constants
         w_model → land.models
     end
     return land

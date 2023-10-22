@@ -27,7 +27,9 @@ function define(params::cCycle_simple, forcing, land, helpers)
     hetero_respiration = z_zero
 
     @pack_land begin
-        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zixVeg, zero_c_eco_flow, zero_c_eco_influx) → land.states
+        zixVeg → land.cCycle
+        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx) → land.fluxes
+        cEco_prev → land.states
         (nee, npp, auto_respiration, eco_respiration, hetero_respiration) → land.fluxes
     end
     return land
@@ -37,22 +39,15 @@ function compute(params::cCycle_simple, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (c_allocation,
-            c_eco_efflux,
-            c_eco_flow,
-            c_eco_influx,
-            cEco_prev,
-            c_eco_out,
-            c_eco_npp,
-            zixVeg,
-            zero_c_eco_flow,
-            zero_c_eco_influx) ∈ land.states
+        zixVeg ∈ land.cCycle
+        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx) ∈ land.fluxes
+        cEco_prev ∈ land.states
         cEco ∈ land.pools
-        c_eco_k ∈ land.diagnostics
-        ΔcEco ∈ land.states
+        (c_flow_A_vec, c_eco_k) ∈ land.diagnostics
+        ΔcEco ∈ land.pools
         gpp ∈ land.fluxes
-        (c_flow_A_vec, c_giver, c_taker) ∈ land.cFlow
-        (c_flow_order) ∈ land.cCycleBase
+        (c_giver, c_taker) ∈ land.constants
+        (c_flow_order) ∈ land.constants
         (z_zero, o_one) ∈ land.constants
     end
     ## reset ecoflow and influx to be zero at every time step
@@ -100,23 +95,13 @@ function compute(params::cCycle_simple, forcing, land, helpers)
     nee = eco_respiration - gpp
     cEco_prev = cEco
 
-    land = upd_c(land, cEco, helpers)
     ## pack land variables
     @pack_land begin
         cEco → land.pools
         (nee, npp, auto_respiration, eco_respiration, hetero_respiration) → land.fluxes
-        (ΔcEco, c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, cEco_prev) → land.states
-    end
-    return land
-end
-
-function upd_c(land, cEco, tem_helpers)
-    foreach(propertynames(tem_helpers.pools.zix)) do cv
-        cp = getfield(land.pools, cv)
-        cz = getfield(tem_helpers.pools.zix, cv)
-        cp = cEco[cz]
-        return land = Sindbad.setTupleSubfield(land, :pools, (cv, cp))
-        # @show cv, cp, cz
+        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) → land.fluxes
+        cEco_prev → land.states
+        ΔcEco → land.pools
     end
     return land
 end
@@ -131,7 +116,7 @@ Allocate carbon to vegetation components using cCycle_simple
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.cCycleBase.c_τ_eco: carbon allocation matrix
+ - land.diagnostics.c_eco_τ: carbon allocation matrix
  - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
@@ -139,7 +124,7 @@ Allocate carbon to vegetation components using cCycle_simple
  - land.diagnostics.c_allocation: carbon allocation matrix
 
 *Outputs*
- - land.cCycleBase.c_eco_k: decay rates for the carbon pool at each time step
+ - land.diagnostics.c_eco_k: decay rates for the carbon pool at each time step
  - land.fluxes.c_eco_npp: values for net primary productivity
  - land.fluxes.auto_respiration: values for autotrophic respiration
  - land.fluxes.eco_respiration: values for ecosystem respiration

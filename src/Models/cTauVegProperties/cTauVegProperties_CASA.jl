@@ -35,7 +35,7 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
     end
 
     ## calculate variables
-    # c_τ_eco = annk; #sujan
+    # c_eco_τ = annk; #sujan
     # initialize the outputs to ones
     C2LIGNIN = C2LIGNIN #sujan
     ## adjust the annk that are pft dependent directly on the p matrix
@@ -51,8 +51,8 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
         annk[AGE>z_zero] = o_one / AGE[AGE>z_zero]
         # feed it to the new annual turnover rates
         zix = helpers.pools.zix.(cpN)
-        c_τ_eco[zix] = annk #sujan
-        # c_τ_eco[zix] = annk[zix]
+        c_eco_τ[zix] = annk #sujan
+        # c_eco_τ[zix] = annk[zix]
     end
     # feed the parameters that are pft dependent.
     pftVec = unique(PFT)
@@ -79,7 +79,7 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        c_τ_eco → land.cCycleBase
+        c_eco_τ → land.diagnostics
         (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN) → land.properties
         c_eco_k_f_veg_props → land.diagnostics
     end

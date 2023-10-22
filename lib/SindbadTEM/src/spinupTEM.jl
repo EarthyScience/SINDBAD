@@ -369,7 +369,7 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     c_remain = one(eltype(cEco))
     if :ηH ∈ propertynames(land.diagnostics)
         ηH = land.diagnostics.ηH
-        c_remain = land.diagnostics.c_remain
+        c_remain = land.states.c_remain
     end
     for cSoilZix ∈ helpers.pools.zix.cSoil
         cSoilNew = cEco[cSoilZix] * ηH
