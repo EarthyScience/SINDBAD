@@ -2,7 +2,7 @@ export groundWSurfaceWInteraction_fracGradient
 
 #! format: off
 @bounds @describe @units @with_kw struct groundWSurfaceWInteraction_fracGradient{T1} <: groundWSurfaceWInteraction
-    k_groundW_to_surfaceW::T1 = 0.001 | (0.0001, 0.01) | "maximum transfer rate between GW and surface water" | "/d"
+    k_gw_to_suw::T1 = 0.001 | (0.0001, 0.01) | "maximum transfer rate between GW and surface water" | "/d"
 end
 #! format: on
 
@@ -17,15 +17,15 @@ function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land,
     end
 
     ## calculate variables
-    tmp = k_groundW_to_surfaceW * (totalS(groundW, ΔgroundW) - totalS(surfaceW, ΔsurfaceW))
+    tmp = k_gw_to_suw * (totalS(groundW, ΔgroundW) - totalS(surfaceW, ΔsurfaceW))
 
     # update the delta storages
-    ΔgroundW = addToEachElem(ΔgroundW, -groundW_to_surfaceW / n_groundW)
-    ΔsurfaceW = addToEachElem(ΔsurfaceW, groundW_to_surfaceW / n_surfaceW)
+    ΔgroundW = addToEachElem(ΔgroundW, -gw_to_suw_flux / n_groundW)
+    ΔsurfaceW = addToEachElem(ΔsurfaceW, gw_to_suw_flux / n_surfaceW)
 
     ## pack land variables
     @pack_land begin
-        groundW_to_surfaceW → land.fluxes
+        gw_to_suw_flux → land.fluxes
         (ΔsurfaceW, ΔgroundW) → land.pools
     end
 
