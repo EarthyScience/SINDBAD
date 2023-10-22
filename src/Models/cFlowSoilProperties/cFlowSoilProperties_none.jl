@@ -20,7 +20,7 @@ function define(params::cFlowSoilProperties_none, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (p_E_vec, p_F_vec) → land.cFlowSoilProperties
+    @pack_land (p_E_vec, p_F_vec) → land.diagnostics
     return land
 end
 

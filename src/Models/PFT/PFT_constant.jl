@@ -6,7 +6,7 @@ export PFT_constant
 end
 #! format: on
 
-function compute(params::PFT_constant, forcing, land, helpers)
+function precompute(params::PFT_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_PFT_constant params
 
