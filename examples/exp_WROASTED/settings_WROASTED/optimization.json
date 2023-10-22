@@ -99,7 +99,7 @@
           "source_unit": "gC m-2",
           "source_variable": "agb_merged"
         },
-        "model_full_var": "pools.aboveground_biomass"
+        "model_full_var": "states.aboveground_biomass"
       },
       "evapotranspiration": {
         "cost_options": {

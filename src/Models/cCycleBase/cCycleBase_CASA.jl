@@ -39,7 +39,7 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (C_to_N_cVeg, c_flow_A_array, c_flow_E_array) → land.cCycleBase
+        (C_to_N_cVeg, c_flow_A_array, c_flow_E_array) → land.diagnostics
     end
     return land
 end
@@ -63,8 +63,7 @@ function compute(params::cCycleBase_CASA, forcing, land, helpers)
     c_eco_k_base = o_one .- (exp.(-o_one .* annk) .^ (o_one / TSPY))
 
     ## pack land variables
-    @pack_land (c_eco_k_base) → land.cCycleBase
-    # @pack_land (C_to_N_cVeg, c_eco_k_base, c_flow_E_array) → land.cCycleBase
+    @pack_land (c_eco_k_base) → land.diagnostics
     return land
 end
 

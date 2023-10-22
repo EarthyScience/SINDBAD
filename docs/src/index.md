@@ -17,10 +17,10 @@ Documentation for [Sindbad](https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl).
 
 In the Julia REPL type:
 
-```julia
+````julia
 julia> ]
 pkg > add https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl.git
-```
+````
 
 The ] character starts the Julia package manager. Hit backspace key to return to Julia prompt.
 
@@ -28,13 +28,13 @@ The ] character starts the Julia package manager. Hit backspace key to return to
 
 Check Sindbad.jl version with:
 
-```julia
+````julia
 julia> ]
 pkg > st Sindbad
-```
+````
 
 ## Start using Sindbad
 
-```julia
+````julia
 julia> using Sindbad
-```
+````
