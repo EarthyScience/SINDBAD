@@ -3,9 +3,10 @@ export groundWRecharge_none
 struct groundWRecharge_none <: groundWRecharge end
 
 function define(params::groundWRecharge_none, forcing, land, helpers)
+    @unpack_land z_zero ∈ land.constants
 
     ## calculate variables
-    gw_recharge = land.constants.z_zero
+    gw_recharge = z_zero
 
     ## pack land variables
     @pack_land gw_recharge → land.fluxes

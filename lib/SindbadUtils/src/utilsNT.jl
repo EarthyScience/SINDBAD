@@ -258,7 +258,7 @@ setTupleField(out, vals) = (; out..., first(vals) => last(vals))
 - `t_ype`: DESCRIPTION
 - `istop`: DESCRIPTION
 """
-function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
+function tcPrint(d, df=1; c_olor=true, t_ype=true, v_alue=true, istop=true)
     colors_types = collectColorForTypes(d; c_olor=c_olor)
     lc = nothing
     tt = "\t"
@@ -276,7 +276,7 @@ function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
                 tt = repeat("\t", df)
             end
             print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt) $(k)$(tp)\n")
-            tcPrint(d[k], df; c_olor=c_olor, t_ype=t_ype, istop=false)
+            tcPrint(d[k], df; c_olor=c_olor, t_ype=t_ype, v_alue=v_alue, istop=false)
         else
             tt = repeat("\t", df)
             if t_ype == true
@@ -289,11 +289,19 @@ function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
                 tp = ""
             end
             if typeof(d[k]) <: Float32
+                to_print = "$(tt) $(k) = $(d[k])f0$(tp),\n"
+                if !v_alue
+                    to_print = "$(tt) $(k)$(tp),\n"
+                end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = $(d[k])f0$(tp),\n")
+                    to_print)
             elseif typeof(d[k]) <: SVector
+                to_print = "$(tt) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n"
+                if !v_alue
+                    to_print = "$(tt) $(k)$(tp),\n"
+                end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n")
+                to_print)
             elseif typeof(d[k]) <: Matrix
                 print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt) $(k) = [\n")
                 tt_row = repeat(tt[1], length(tt) + 1)
@@ -309,8 +317,12 @@ function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
                 end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt_row) ]$(tp),\n")
             else
+                to_print = "$(tt) $(k) = $(d[k])$(tp),\n"
+                if !v_alue
+                    to_print = "$(tt) $(k)$(tp),\n"
+                end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = $(d[k])$(tp),\n")
+                    to_print)
             end
             lc = colors_types[typeof(d[k])]
         end

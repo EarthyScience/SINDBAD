@@ -12,12 +12,14 @@ end
 function define(params::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI params
     @unpack_land begin
+        (cEco, soilW) ∈ land.pools
         (c_giver, c_taker) ∈ land.constants
+        cEco_comps = cEco ∈ helpers.pools.components
+        sum_wSat ∈ land.properties
     end
     ## instantiate variables
 
     # transfers
-    cEco_comps = helpers.pools.components.cEco
     aTrg = []
     for t_rg in c_taker
         push!(aTrg, cEco_comps[t_rg])
@@ -47,13 +49,13 @@ function define(params::cFlow_GSI, forcing, land, helpers)
         k_shedding_root=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
     # tcPrint(c_flow_A_vec_ind)
-    c_flow_A_vec = one.(eltype(land.pools.cEco).(zero([c_taker...])))
+    c_flow_A_vec = one.(eltype(cEco).(zero([c_taker...])))
 
-    if land.pools.cEco isa SVector
+    if cEco isa SVector
         c_flow_A_vec = SVector{length(c_flow_A_vec)}(c_flow_A_vec)
     end
 
-    eco_stressor_prev = totalS(land.pools.soilW) / land.properties.sum_wSat
+    eco_stressor_prev = totalS(soilW) / sum_wSat
 
 
     @pack_land begin

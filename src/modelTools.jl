@@ -134,10 +134,13 @@ function getInOutModel(model, model_func::Symbol)
     return mod_vars
 end
 
-function getInOutModels()
+function getInOutModels(ind_range=1:10000)
     sind_m_dict = getSindbadModels();
+    sm_list = keys(sind_m_dict) |> collect
+    s_ind = max(1, first(ind_range))
+    e_ind = min(last(ind_range), length(sm_list))
     sm_io = Sindbad.DataStructures.OrderedDict()
-    for s in keys(sind_m_dict)
+    for s in sm_list[s_ind:e_ind]
         s_apr = sind_m_dict[s]
         if !isempty(s_apr)
             s_apr_s = join(s_apr, ".jl, ") * ".jl"

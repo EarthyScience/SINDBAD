@@ -8,9 +8,10 @@ end
 
 function define(params::cTauSoilProperties_CASA, forcing, land, helpers)
     @unpack_cTauSoilProperties_CASA params
+    @unpack_land cEco ∈ land.pools
 
     ## instantiate variables
-    c_eco_k_f_soil_props = one.(land.pools.cEco)
+    c_eco_k_f_soil_props = one.(cEco)
 
     ## pack land variables
     @pack_land c_eco_k_f_soil_props → land.diagnostics

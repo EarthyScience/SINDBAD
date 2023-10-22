@@ -3,9 +3,10 @@ export runoffSaturationExcess_none
 struct runoffSaturationExcess_none <: runoffSaturationExcess end
 
 function define(params::runoffSaturationExcess_none, forcing, land, helpers)
+    @unpack_land z_zero ∈ land.constants
 
     ## calculate variables
-    sat_excess_runoff = land.constants.z_zero
+    sat_excess_runoff = z_zero
 
     ## pack land variables
     @pack_land sat_excess_runoff → land.fluxes
