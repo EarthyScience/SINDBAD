@@ -11,7 +11,7 @@ function compute(params::gppVPD_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_MOD17 params
     @unpack_forcing f_VPD_day ∈ forcing
-    @unpack_land (z_zero, o_one) ∈ land.diagnostics
+    @unpack_land (z_zero, o_one) ∈ land.constants
 
     ## calculate variables
     vsc = (VPD_max - f_VPD_day) / (VPD_max - VPD_min)
