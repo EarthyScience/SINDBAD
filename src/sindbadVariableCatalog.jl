@@ -5,83 +5,6 @@ export whatIs
 
 orD = DataStructures.OrderedDict
 sindbad_variables = orD{Symbol,orD{Symbol,String}}(
-    :states__Tair_prev => orD(
-        :standard_name => "Tair_prev",
-        :long_name => "Tair_previous_timestep",
-        :units => "degree_C",
-        :land_field => "states",
-        :description => "air temperature in the previous time step"
-    ),
-    :diagnostics__WUE => orD(
-        :standard_name => "WUE",
-        :long_name => "ecosystem_water_use_efficiency",
-        :units => "gC/mmH2O",
-        :land_field => "diagnostics",
-        :description => "water use efficiency of the ecosystem"
-    ),
-    :WUE__WUENoCO2 => orD(
-        :standard_name => "WUENoCO2",
-        :long_name => "ecosystem_water_use_efficiency_without_co2_effect",
-        :units => "gC/mmH2O",
-        :land_field => "WUE",
-        :description => "water use efficiency of the ecosystem without CO2 effect"
-    ),
-    :diagnostics__auto_respiration_f_airT => orD(
-        :standard_name => "auto_respiration_f_airT",
-        :long_name => "air_temperature_effect_autotrophic_respiration",
-        :units => "scalar",
-        :land_field => "diagnostics",
-        :description => "effect of air temperature on autotrophic respiration. 0: no decomposition, >1 increase in decomposition rate"
-    ),
-    :autoRespiration__k_respiration_maintain => orD(
-        :standard_name => "k_respiration_maintain",
-        :long_name => "loss_rate_maintenance_respiration",
-        :units => "/time",
-        :land_field => "autoRespiration",
-        :description => "metabolism rate for maintenance respiration"
-    ),
-    :autoRespiration__k_respiration_maintain_su => orD(
-        :standard_name => "k_respiration_maintain_su",
-        :long_name => "loss_rate_maintenance_respiration_spinup",
-        :units => "/time",
-        :land_field => "autoRespiration",
-        :description => "metabolism rate for maintenance respiration to be used in old analytical solution to steady state"
-    ),
-    :diagnostics__c_allocation_f_LAI => orD(
-        :standard_name => "c_allocation_f_LAI",
-        :long_name => "LAI_effect_carbon_allocation",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of LAI on carbon allocation. 1: no stress, 0: complete stress"
-    ),
-    :diagnostics__c_allocation_f_W_N => orD(
-        :standard_name => "c_allocation_f_W_N",
-        :long_name => "W_N_effect_carbon_allocation",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of water and nutrient on carbon allocation. 1: no stress, 0: complete stress"
-    ),
-    :diagnostics__c_allocation_f_cloud => orD(
-        :standard_name => "c_allocation_f_cloud",
-        :long_name => "cloud_effect_carbon_allocation",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of cloud on carbon allocation. 1: no stress, 0: complete stress"
-    ),
-    :diagnostics__c_allocation_f_soilT => orD(
-        :standard_name => "c_allocation_f_soilT",
-        :long_name => "soil_temperature_effect_carbon_allocation",
-        :units => "scalar",
-        :land_field => "diagnostics",
-        :description => "effect of soil temperature on carbon allocation. 1: no stress, 0: complete stress"
-    ),
-    :diagnostics__c_allocation_f_soilW => orD(
-        :standard_name => "c_allocation_f_soilW",
-        :long_name => "soil_moisture_effect_carbon_allocation",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of soil moisture on carbon allocation. 1: no stress, 0: complete stress"
-    ),
     :cAllocationTreeFraction__cVeg_names_for_c_allocation_frac_tree => orD(
         :standard_name => "cVeg_names_for_c_allocation_frac_tree",
         :long_name => "veg_pools_corrected_for_tree_cover",
@@ -116,83 +39,6 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :units => "fraction",
         :land_field => "cAllocation",
         :description => "carbon allocation to each vvegetation pool"
-    ),
-    :diagnostics__C_to_N_cVeg => orD(
-        :standard_name => "C_to_N_cVeg",
-        :long_name => "carbon_to_nitrogen_ratio",
-        :units => "ratio",
-        :land_field => "diagnostics",
-        :description => "carbon to nitrogen ratio in the vegetation pools"
-    ),
-    :diagnostics__c_eco_k_base => orD(
-        :standard_name => "c_eco_k_base",
-        :long_name => "c eco k base",
-        :units => "/time",
-        :land_field => "diagnostics",
-        :description => "base carbon decomposition rate of the carbon pools"
-    ),
-    :diagnostics__c_flow_A_array => orD(
-        :standard_name => "c_flow_A_array",
-        :long_name => "carbon_flow_array",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "an array indicating the flow direction and connections across different pools, with elements larger than 0 indicating flow from column pool to row pool"
-    ),
-    :cCycleBase__c_flow_order => orD(
-        :standard_name => "c_flow_order",
-        :long_name => "carbon_flow_order",
-        :units => "number",
-        :land_field => "cCycleBase",
-        :description => "order of pooling while calculating the carbon flow"
-    ),
-    :cCycleBase__c_giver => orD(
-        :standard_name => "c_giver",
-        :long_name => "carbon_giver_pool",
-        :units => "number",
-        :land_field => "cCycleBase",
-        :description => "index of the source carbon pool for a given flow"
-    ),
-    :models__c_model => orD(
-        :standard_name => "c_model",
-        :long_name => "base_carbon_model",
-        :units => "symbol",
-        :land_field => "models",
-        :description => "a base carbon cycle model to loop through the pools and fill the main or component pools needed for using static arrays. A mandatory field for every carbon model realization"
-    ),
-    :states__c_remain => orD(
-        :standard_name => "c_remain",
-        :long_name => "carbon_remain",
-        :units => "gC/m2",
-        :land_field => "states",
-        :description => "amount of carbon to keep in the ecosystem vegetation pools in case of disturbances"
-    ),
-    :cCycleBase__c_taker => orD(
-        :standard_name => "c_taker",
-        :long_name => "carbon_taker_pool",
-        :units => "number",
-        :land_field => "cCycleBase",
-        :description => "index of the source carbon pool for a given flow"
-    ),
-    :diagnostics__c_eco_τ => orD(
-        :standard_name => "c_eco_τ",
-        :long_name => "carbon_turnover_per_pool",
-        :units => "years",
-        :land_field => "diagnostics",
-        :description => "number of years needed for carbon turnover per carbon pool"
-    ),
-    :diagnostics__ηA => orD(
-        :standard_name => "ηA",
-        :long_name => "eta_autotrophic_pools",
-        :units => "number",
-        :land_field => "diagnostics",
-        :description => "scalar of autotrophic carbon pool for steady state guess"
-    ),
-    :diagnostics__ηH => orD(
-        :standard_name => "ηH",
-        :long_name => "eta_heterotrophic_pools",
-        :units => "number",
-        :land_field => "diagnostics",
-        :description => "scalar of heterotrophic carbon pool for steady state guess"
     ),
     :cCycleConsistency__giver_lower_indices => orD(
         :standard_name => "giver_lower_indices",
@@ -236,34 +82,6 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "cCycleDisturbance",
         :description => ""
     ),
-    :cFlowSoilProperties__p_E_vec => orD(
-        :standard_name => "p_E_vec",
-        :long_name => "p E vec",
-        :units => "",
-        :land_field => "cFlowSoilProperties",
-        :description => ""
-    ),
-    :cFlowSoilProperties__p_F_vec => orD(
-        :standard_name => "p_F_vec",
-        :long_name => "p F vec",
-        :units => "",
-        :land_field => "cFlowSoilProperties",
-        :description => ""
-    ),
-    :cFlowVegProperties__p_E_vec => orD(
-        :standard_name => "p_E_vec",
-        :long_name => "p E vec",
-        :units => "",
-        :land_field => "cFlowVegProperties",
-        :description => "carbon flow efficiency"
-    ),
-    :cFlowVegProperties__p_F_vec => orD(
-        :standard_name => "p_F_vec",
-        :long_name => "p F vec",
-        :units => "fraction",
-        :land_field => "cFlowVegProperties",
-        :description => "carbon flow efficiency fraction"
-    ),
     :cFlow__aSrc => orD(
         :standard_name => "aSrc",
         :long_name => "carbon_source_pool_name",
@@ -285,6 +103,216 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "cFlow",
         :description => "indices of flow from giver to taker for carbon flow vector"
     ),
+    :constants__c_flow_order => orD(
+        :standard_name => "c_flow_order",
+        :long_name => "carbon_flow_order",
+        :units => "number",
+        :land_field => "constants",
+        :description => "order of pooling while calculating the carbon flow"
+    ),
+    :constants__c_giver => orD(
+        :standard_name => "c_giver",
+        :long_name => "carbon_giver_pool",
+        :units => "number",
+        :land_field => "constants",
+        :description => "index of the source carbon pool for a given flow"
+    ),
+    :constants__c_taker => orD(
+        :standard_name => "c_taker",
+        :long_name => "carbon_taker_pool",
+        :units => "number",
+        :land_field => "constants",
+        :description => "index of the source carbon pool for a given flow"
+    ),
+    :constants__n_groundW => orD(
+        :standard_name => "n_groundW",
+        :long_name => "num_layers_groundW",
+        :units => "number",
+        :land_field => "constants",
+        :description => "total number of layers in groundwater pool"
+    ),
+    :constants__n_snowW => orD(
+        :standard_name => "n_snowW",
+        :long_name => "num_layers_snowW",
+        :units => "number",
+        :land_field => "constants",
+        :description => "total number of layers in snow pool"
+    ),
+    :constants__n_soilW => orD(
+        :standard_name => "n_soilW",
+        :long_name => "num_layers_soilW",
+        :units => "number",
+        :land_field => "constants",
+        :description => "total number of layers in soil moisture pool"
+    ),
+    :constants__n_surfaceW => orD(
+        :standard_name => "n_surfaceW",
+        :long_name => "num_layers_surfaceW",
+        :units => "number",
+        :land_field => "constants",
+        :description => "total number of layers in surface water pool"
+    ),
+    :constants__n_TWS => orD(
+        :standard_name => "n_TWS",
+        :long_name => "num_layers_TWS",
+        :units => "number",
+        :land_field => "constants",
+        :description => "total number of water pools"
+    ),
+    :constants__o_one => orD(
+        :standard_name => "o_one",
+        :long_name => "type_stable_one",
+        :units => "numver",
+        :land_field => "constants",
+        :description => "a helper type stable 1 to be used across all models"
+    ),
+    :constants__t_three => orD(
+        :standard_name => "t_three",
+        :long_name => "t three",
+        :units => "number",
+        :land_field => "constants",
+        :description => "a type stable 3"
+    ),
+    :constants__t_two => orD(
+        :standard_name => "t_two",
+        :long_name => "t two",
+        :units => "number",
+        :land_field => "constants",
+        :description => "a type stable 2"
+    ),
+    :constants__z_zero => orD(
+        :standard_name => "z_zero",
+        :long_name => "type_stable_zero",
+        :units => "number",
+        :land_field => "constants",
+        :description => "a helper type stable 0 to be used across all models"
+    ),
+    :diagnostics__auto_respiration_f_airT => orD(
+        :standard_name => "auto_respiration_f_airT",
+        :long_name => "air_temperature_effect_autotrophic_respiration",
+        :units => "scalar",
+        :land_field => "diagnostics",
+        :description => "effect of air temperature on autotrophic respiration. 0: no decomposition, >1 increase in decomposition rate"
+    ),
+    :diagnostics__c_allocation => orD(
+        :standard_name => "c_allocation",
+        :long_name => "cabon_allocation",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "fraction of gpp allocated to different (live) carbon pools"
+    ),
+    :diagnostics__c_allocation_f_LAI => orD(
+        :standard_name => "c_allocation_f_LAI",
+        :long_name => "LAI_effect_carbon_allocation",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of LAI on carbon allocation. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__c_allocation_f_W_N => orD(
+        :standard_name => "c_allocation_f_W_N",
+        :long_name => "W_N_effect_carbon_allocation",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of water and nutrient on carbon allocation. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__c_allocation_f_cloud => orD(
+        :standard_name => "c_allocation_f_cloud",
+        :long_name => "cloud_effect_carbon_allocation",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of cloud on carbon allocation. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__c_allocation_f_soilT => orD(
+        :standard_name => "c_allocation_f_soilT",
+        :long_name => "soil_temperature_effect_carbon_allocation",
+        :units => "scalar",
+        :land_field => "diagnostics",
+        :description => "effect of soil temperature on carbon allocation. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__c_allocation_f_soilW => orD(
+        :standard_name => "c_allocation_f_soilW",
+        :long_name => "soil_moisture_effect_carbon_allocation",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of soil moisture on carbon allocation. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__c_eco_k => orD(
+        :standard_name => "c_eco_k",
+        :long_name => "carbon_decomposition_rate",
+        :units => "/time",
+        :land_field => "diagnostics",
+        :description => "decomposition rate of carbon per pool"
+    ),
+    :diagnostics__c_eco_k_base => orD(
+        :standard_name => "c_eco_k_base",
+        :long_name => "c eco k base",
+        :units => "/time",
+        :land_field => "diagnostics",
+        :description => "base carbon decomposition rate of the carbon pools"
+    ),
+    :diagnostics__c_eco_k_f_LAI => orD(
+        :standard_name => "c_eco_k_f_LAI",
+        :long_name => "LAI_effect_carbon_decomposition_rate",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of LAI on carbon decomposition rate. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__c_eco_k_f_soil_props => orD(
+        :standard_name => "c_eco_k_f_soil_props",
+        :long_name => "soil_property_effect_carbon_decomposition_rate",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of soil_props on carbon decomposition rate. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__c_eco_k_f_soilT => orD(
+        :standard_name => "c_eco_k_f_soilT",
+        :long_name => "soil_temperature_effect_carbon_decomposition_rate",
+        :units => "scalar",
+        :land_field => "diagnostics",
+        :description => "effect of soil temperature on heterotrophic respiration respiration. 0: no decomposition, >1 increase in decomposition"
+    ),
+    :diagnostics__c_eco_k_f_soilW => orD(
+        :standard_name => "c_eco_k_f_soilW",
+        :long_name => "soil_moisture_effect_carbon_decomposition_rate",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of soil moisture on carbon decomposition rate. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__c_eco_k_f_veg_props => orD(
+        :standard_name => "c_eco_k_f_veg_props",
+        :long_name => "vegetation_property_effect_carbon_decomposition_rate",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of veg_props on carbon decomposition rate. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__c_eco_τ => orD(
+        :standard_name => "c_eco_τ",
+        :long_name => "carbon_turnover_per_pool",
+        :units => "years",
+        :land_field => "diagnostics",
+        :description => "number of years needed for carbon turnover per carbon pool"
+    ),
+    :diagnostics__c_flow_A_array => orD(
+        :standard_name => "c_flow_A_array",
+        :long_name => "carbon_flow_array",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "an array indicating the flow direction and connections across different pools, with elements larger than 0 indicating flow from column pool to row pool"
+    ),
+    :diagnostics__c_flow_A_vec => orD(
+        :standard_name => "c_flow_A_vec",
+        :long_name => "carbon_flow_vector",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "fraction of the carbon loss fron a (giver) pool that flows to a (taker) pool"
+    ),
+    :diagnostics__C_to_N_cVeg => orD(
+        :standard_name => "C_to_N_cVeg",
+        :long_name => "carbon_to_nitrogen_ratio",
+        :units => "ratio",
+        :land_field => "diagnostics",
+        :description => "carbon to nitrogen ratio in the vegetation pools"
+    ),
     :diagnostics__eco_stressor => orD(
         :standard_name => "eco_stressor",
         :long_name => "carbon_flow_ecosystem_stressor",
@@ -298,6 +326,83 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :units => "fraction",
         :land_field => "diagnostics",
         :description => "ecosystem stress on carbon flow in the previous time step"
+    ),
+    :diagnostics__gpp_f_airT => orD(
+        :standard_name => "gpp_f_airT",
+        :long_name => "air_temperature_effect_gpp",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of air temperature on gpp. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__gpp_climate_stressors => orD(
+        :standard_name => "gpp_climate_stressors",
+        :long_name => "climate_effect_per_factor_gpp",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "a collection of all gpp climate stressors including light, temperature, radiation, and vpd"
+    ),
+    :diagnostics__gpp_demand => orD(
+        :standard_name => "gpp_demand",
+        :long_name => "demand_driven_gpp",
+        :units => "gC/m2/time",
+        :land_field => "diagnostics",
+        :description => "demand driven gross primary prorDuctivity"
+    ),
+    :diagnostics__gpp_f_climate => orD(
+        :standard_name => "gpp_f_climate",
+        :long_name => "net_climate_effect_gpp",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of climate on gpp. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__gpp_f_cloud => orD(
+        :standard_name => "gpp_f_cloud",
+        :long_name => "cloudiness_index_effect_gpp",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of cloud on gpp. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__gpp_f_light => orD(
+        :standard_name => "gpp_f_light",
+        :long_name => "light_effect_gpp",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of light on gpp. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__gpp_f_soilW => orD(
+        :standard_name => "gpp_f_soilW",
+        :long_name => "soil_moisture_effect_gpp",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of soil moisture on gpp. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__gpp_f_vpd => orD(
+        :standard_name => "gpp_f_vpd",
+        :long_name => "vapor_pressure_deficit_effect_gpp",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "effect of vpd on gpp. 1: no stress, 0: complete stress"
+    ),
+    :diagnostics__gpp_potential => orD(
+        :standard_name => "gpp_potential",
+        :long_name => "potential_productivity",
+        :units => "gC/m2/time",
+        :land_field => "diagnostics",
+        :description => "potential gross primary prorDcutivity"
+    ),
+    :diagnostics__k_respiration_maintain => orD(
+        :standard_name => "k_respiration_maintain",
+        :long_name => "loss_rate_maintenance_respiration",
+        :units => "/time",
+        :land_field => "diagnostics",
+        :description => "metabolism rate for maintenance respiration"
+    ),
+    :diagnostics__k_respiration_maintain_su => orD(
+        :standard_name => "k_respiration_maintain_su",
+        :long_name => "loss_rate_maintenance_respiration_spinup",
+        :units => "/time",
+        :land_field => "diagnostics",
+        :description => "metabolism rate for maintenance respiration to be used in old analytical solution to steady state"
     ),
     :diagnostics__k_shedding_leaf => orD(
         :standard_name => "k_shedding_leaf",
@@ -341,6 +446,55 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "diagnostics",
         :description => "fraction of carbon loss from leaf that flows to leaf"
     ),
+    :diagnostics__max_root_depth => orD(
+        :standard_name => "max_root_depth",
+        :long_name => "maximum_rooting_depth",
+        :units => "mm",
+        :land_field => "diagnostics",
+        :description => "maximum depth of root"
+    ),
+    :diagnostics__ηA => orD(
+        :standard_name => "ηA",
+        :long_name => "eta_autotrophic_pools",
+        :units => "number",
+        :land_field => "diagnostics",
+        :description => "scalar of autotrophic carbon pool for steady state guess"
+    ),
+    :diagnostics__ηH => orD(
+        :standard_name => "ηH",
+        :long_name => "eta_heterotrophic_pools",
+        :units => "number",
+        :land_field => "diagnostics",
+        :description => "scalar of heterotrophic carbon pool for steady state guess"
+    ),
+    :diagnostics__p_E_vec => orD(
+        :standard_name => "p_E_vec",
+        :long_name => "p E vec",
+        :units => "",
+        :land_field => "diagnostics",
+        :description => ""
+    ),
+    :diagnostics__p_F_vec => orD(
+        :standard_name => "p_F_vec",
+        :long_name => "p F vec",
+        :units => "",
+        :land_field => "diagnostics",
+        :description => ""
+    ),
+    :diagnostics__p_E_vec => orD(
+        :standard_name => "p_E_vec",
+        :long_name => "p E vec",
+        :units => "",
+        :land_field => "diagnostics",
+        :description => "carbon flow efficiency"
+    ),
+    :diagnostics__p_F_vec => orD(
+        :standard_name => "p_F_vec",
+        :long_name => "p F vec",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "carbon flow efficiency fraction"
+    ),
     :diagnostics__reserve_to_leaf => orD(
         :standard_name => "reserve_to_leaf",
         :long_name => "carbon_flow_rate_reserve_to_leaf",
@@ -383,6 +537,13 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "diagnostics",
         :description => "fraction of carbon loss from root that flows to reserve"
     ),
+    :diagnostics__root_water_efficiency => orD(
+        :standard_name => "root_water_efficiency",
+        :long_name => "root_water_efficiency",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "a efficiency like number that indicates the ease/fraction of soil water that can extracted by the root per layer"
+    ),
     :diagnostics__slope_eco_stressor => orD(
         :standard_name => "slope_eco_stressor",
         :long_name => "slope_carbon_flow_ecosystem_stressor",
@@ -390,82 +551,33 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "diagnostics",
         :description => "potential rate of change in ecosystem stress on carbon flow"
     ),
-    :diagnostics__c_eco_k_f_LAI => orD(
-        :standard_name => "c_eco_k_f_LAI",
-        :long_name => "LAI_effect_carbon_decomposition_rate",
-        :units => "fraction",
+    :diagnostics__transpiration_supply => orD(
+        :standard_name => "transpiration_supply",
+        :long_name => "supply_moisture_for_transpiration",
+        :units => "mm",
         :land_field => "diagnostics",
-        :description => "effect of LAI on carbon decomposition rate. 1: no stress, 0: complete stress"
+        :description => "total amount of water available in soil for transpiration"
     ),
-    :diagnostics__c_eco_k_f_soil_props => orD(
-        :standard_name => "c_eco_k_f_soil_props",
-        :long_name => "soil_property_effect_carbon_decomposition_rate",
-        :units => "fraction",
+    :diagnostics__water_balance => orD(
+        :standard_name => "water_balance",
+        :long_name => "water_balance_error",
+        :units => "mm",
         :land_field => "diagnostics",
-        :description => "effect of soil_props on carbon decomposition rate. 1: no stress, 0: complete stress"
+        :description => "misbalance of the water for the given time step calculated as the differences between total input, output and change in storages"
     ),
-    :diagnostics__c_eco_k_f_soilT => orD(
-        :standard_name => "c_eco_k_f_soilT",
-        :long_name => "soil_temperature_effect_carbon_decomposition_rate",
-        :units => "scalar",
+    :diagnostics__WUE => orD(
+        :standard_name => "WUE",
+        :long_name => "ecosystem_water_use_efficiency",
+        :units => "gC/mmH2O",
         :land_field => "diagnostics",
-        :description => "effect of soil temperature on heterotrophic respiration respiration. 0: no decomposition, >1 increase in decomposition"
+        :description => "water use efficiency of the ecosystem"
     ),
-    :diagnostics__c_eco_k_f_soilW => orD(
-        :standard_name => "c_eco_k_f_soilW",
-        :long_name => "soil_moisture_effect_carbon_decomposition_rate",
-        :units => "fraction",
+    :diagnostics__WUENoCO2 => orD(
+        :standard_name => "WUENoCO2",
+        :long_name => "ecosystem_water_use_efficiency_without_co2_effect",
+        :units => "gC/mmH2O",
         :land_field => "diagnostics",
-        :description => "effect of soil moisture on carbon decomposition rate. 1: no stress, 0: complete stress"
-    ),
-    :properties__LIGEFF => orD(
-        :standard_name => "LIGEFF",
-        :long_name => "LIGEFF",
-        :units => "fraction",
-        :land_field => "properties",
-        :description => ""
-    ),
-    :properties__LIGNIN => orD(
-        :standard_name => "LIGNIN",
-        :long_name => "LIGNIN",
-        :units => "fraction",
-        :land_field => "properties",
-        :description => ""
-    ),
-    :properties__LITC2N => orD(
-        :standard_name => "LITC2N",
-        :long_name => "LITC2N",
-        :units => "fraction",
-        :land_field => "properties",
-        :description => ""
-    ),
-    :properties__MTF => orD(
-        :standard_name => "MTF",
-        :long_name => "MTF",
-        :units => "fraction",
-        :land_field => "properties",
-        :description => ""
-    ),
-    :properties__SCLIGNIN => orD(
-        :standard_name => "SCLIGNIN",
-        :long_name => "SCLIGNIN",
-        :units => "fraction",
-        :land_field => "properties",
-        :description => ""
-    ),
-    :diagnostics__c_eco_k_f_veg_props => orD(
-        :standard_name => "c_eco_k_f_veg_props",
-        :long_name => "vegetation_property_effect_carbon_decomposition_rate",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of veg_props on carbon decomposition rate. 1: no stress, 0: complete stress"
-    ),
-    :states__aboveground_biomass => orD(
-        :standard_name => "aboveground_biomass",
-        :long_name => "aboveground_woody_biomass",
-        :units => "gC/m2",
-        :land_field => "states",
-        :description => "carbon content on the cVegWood component",
+        :description => "water use efficiency of the ecosystem without CO2 effect"
     ),
     :fluxes__auto_respiration => orD(
         :standard_name => "auto_respiration",
@@ -474,12 +586,61 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "fluxes",
         :description => "carbon loss due to autotrophic respiration"
     ),
+    :fluxes__auto_respiration_growth => orD(
+        :standard_name => "auto_respiration_growth",
+        :long_name => "growth_respiration",
+        :units => "gC/m2/time",
+        :land_field => "fluxes",
+        :description => "growth respiration per vegetation pool"
+    ),
+    :fluxes__auto_respiration_maintain => orD(
+        :standard_name => "auto_respiration_maintain",
+        :long_name => "maintenance_respiration",
+        :units => "gC/m2/time",
+        :land_field => "fluxes",
+        :description => "maintenance respiration per vegetation pool"
+    ),
     :fluxes__base_runoff => orD(
         :standard_name => "base_runoff",
         :long_name => "base_runoff",
         :units => "mm/time",
         :land_field => "fluxes",
         :description => "base runoff"
+    ),
+    :fluxes__c_eco_efflux => orD(
+        :standard_name => "c_eco_efflux",
+        :long_name => "autotrophic_carbon_loss",
+        :units => "gC/m2/time",
+        :land_field => "fluxes",
+        :description => "losss of carbon from (live) vegetation pools due to autotrophic respiration"
+    ),
+    :fluxes__c_eco_flow => orD(
+        :standard_name => "c_eco_flow",
+        :long_name => "net_carbon_flow",
+        :units => "gC/m2/time",
+        :land_field => "fluxes",
+        :description => "flow of carbon to a given carbon pool from other carbon pools"
+    ),
+    :fluxes__c_eco_influx => orD(
+        :standard_name => "c_eco_influx",
+        :long_name => "net_carbon_influx",
+        :units => "gC/m2/time",
+        :land_field => "fluxes",
+        :description => "net influx from allocation and efflux (npp) to each (live) carbon pool"
+    ),
+    :fluxes__c_eco_npp => orD(
+        :standard_name => "c_eco_npp",
+        :long_name => "carbon_net_primary_productivity",
+        :units => "gC/m2/time",
+        :land_field => "fluxes",
+        :description => "npp of each carbon pool"
+    ),
+    :fluxes__c_eco_out => orD(
+        :standard_name => "c_eco_out",
+        :long_name => "total_carbon_loss",
+        :units => "gC/m2/time",
+        :land_field => "fluxes",
+        :description => "outflux of carbon from each carbol pool"
     ),
     :fluxes__drainage => orD(
         :standard_name => "drainage",
@@ -551,13 +712,6 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "fluxes",
         :description => "interception evaporation loss"
     ),
-    :fluxes__PET_evaporation => orD(
-        :standard_name => "PET_evaporation",
-        :long_name => "potential_soil_evaporation",
-        :units => "mm/time",
-        :land_field => "evaporation",
-        :description => "potential soil evaporation"
-    ),
     :fluxes__nee => orD(
         :standard_name => "nee",
         :long_name => "net_ecosystem_exchange",
@@ -593,6 +747,13 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "fluxes",
         :description => "potential evapotranspiration"
     ),
+    :fluxes__PET_evaporation => orD(
+        :standard_name => "PET_evaporation",
+        :long_name => "potential_soil_evaporation",
+        :units => "mm/time",
+        :land_field => "evaporation",
+        :description => "potential soil evaporation"
+    ),
     :fluxes__precip => orD(
         :standard_name => "precip",
         :long_name => "total_precipiration",
@@ -606,6 +767,13 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :units => "mm/time",
         :land_field => "fluxes",
         :description => "amount of precipitation in liquid form"
+    ),
+    :fluxes__root_water_uptake => orD(
+        :standard_name => "root_water_uptake",
+        :long_name => "root_water_uptake",
+        :units => "mm/time",
+        :land_field => "fluxes",
+        :description => "amount of water uptaken for transpiration per soil layer"
     ),
     :fluxes__runoff => orD(
         :standard_name => "runoff",
@@ -663,33 +831,19 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "fluxes",
         :description => "transpiration"
     ),
-    :diagnostics__gpp_f_airT => orD(
-        :standard_name => "gpp_f_airT",
-        :long_name => "air_temperature_effect_gpp",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of air temperature on gpp. 1: no stress, 0: complete stress"
-    ),
-    :diagnostics__gpp_climate_stressors => orD(
-        :standard_name => "gpp_climate_stressors",
-        :long_name => "climate_effect_per_factor_gpp",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "a collection of all gpp climate stressors including light, temperature, radiation, and vpd"
-    ),
-    :diagnostics__gpp_demand => orD(
-        :standard_name => "gpp_demand",
-        :long_name => "demand_driven_gpp",
+    :fluxes__zero_c_eco_flow => orD(
+        :standard_name => "zero_c_eco_flow",
+        :long_name => "zero_vector_for_c_eco_flow",
         :units => "gC/m2/time",
-        :land_field => "diagnostics",
-        :description => "demand driven gross primary prorDuctivity"
+        :land_field => "fluxes",
+        :description => "helper for resetting c_eco_flow in every time step"
     ),
-    :diagnostics__gpp_f_climate => orD(
-        :standard_name => "gpp_f_climate",
-        :long_name => "net_climate_effect_gpp",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of climate on gpp. 1: no stress, 0: complete stress"
+    :fluxes__zero_c_eco_influx => orD(
+        :standard_name => "zero_c_eco_influx",
+        :long_name => "zero_vector_for_c_eco_influx",
+        :units => "gC/m2/time",
+        :land_field => "fluxes",
+        :description => "helper for resetting c_eco_influx in every time step"
     ),
     :gppDiffRadiation__CI_max => orD(
         :standard_name => "CI_max",
@@ -705,54 +859,26 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "gppDiffRadiation",
         :description => "minimum of cloudiness index until the time step from the beginning of simulation (including spinup)"
     ),
-    :diagnostics__gpp_f_cloud => orD(
-        :standard_name => "gpp_f_cloud",
-        :long_name => "cloudiness_index_effect_gpp",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of cloud on gpp. 1: no stress, 0: complete stress"
+    :models__c_model => orD(
+        :standard_name => "c_model",
+        :long_name => "base_carbon_model",
+        :units => "symbol",
+        :land_field => "models",
+        :description => "a base carbon cycle model to loop through the pools and fill the main or component pools needed for using static arrays. A mandatory field for every carbon model realization"
     ),
-    :diagnostics__gpp_f_light => orD(
-        :standard_name => "gpp_f_light",
-        :long_name => "light_effect_gpp",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of light on gpp. 1: no stress, 0: complete stress"
+    :models__unsat_k_model => orD(
+        :standard_name => "unsat_k_model",
+        :long_name => "unsat k model",
+        :units => "symbol",
+        :land_field => "models",
+        :description => "name of the model used to calculate unsaturated hydraulic conductivity"
     ),
-    :diagnostics__gpp_potential => orD(
-        :standard_name => "gpp_potential",
-        :long_name => "potential_productivity",
-        :units => "gC/m2/time",
-        :land_field => "diagnostics",
-        :description => "potential gross primary prorDcutivity"
-    ),
-    :diagnostics__gpp_f_soilW => orD(
-        :standard_name => "gpp_f_soilW",
-        :long_name => "soil_moisture_effect_gpp",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of soil moisture on gpp. 1: no stress, 0: complete stress"
-    ),
-    :constants__t_two => orD(
-        :standard_name => "t_two",
-        :long_name => "t two",
-        :units => "number",
-        :land_field => "constants",
-        :description => "a type stable 2"
-    ),
-    :diagnostics__gpp_f_vpd => orD(
-        :standard_name => "gpp_f_vpd",
-        :long_name => "vapor_pressure_deficit_effect_gpp",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "effect of vpd on gpp. 1: no stress, 0: complete stress"
-    ),
-    :pools__TWS => orD(
-        :standard_name => "TWS",
-        :long_name => "terrestrial_water_storage",
-        :units => "mm",
-        :land_field => "pools",
-        :description => "terrestrial water storage including all water pools"
+    :models__w_model => orD(
+        :standard_name => "w_model",
+        :long_name => "w model",
+        :units => "symbol",
+        :land_field => "models",
+        :description => "a base water cycle model to loop through the pools and fill the main or component pools needed for using static arrays. A mandatory field for every water model/pool realization"
     ),
     :pools__cEco => orD(
         :standard_name => "cEco",
@@ -838,6 +964,48 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "pools",
         :description => "carbon content of cVegWood pool(s)"
     ),
+    :pools__ΔcEco => orD(
+        :standard_name => "ΔcEco",
+        :long_name => "delta_change_cEco",
+        :units => "mm",
+        :land_field => "pools",
+        :description => "change in water storage in cEco pool(s)"
+    ),
+    :pools__ΔgroundW => orD(
+        :standard_name => "ΔgroundW",
+        :long_name => "delta_change_groundW",
+        :units => "mm",
+        :land_field => "pools",
+        :description => "change in water storage in groundW pool(s)"
+    ),
+    :pools__ΔsnowW => orD(
+        :standard_name => "ΔsnowW",
+        :long_name => "delta_change_snowW",
+        :units => "mm",
+        :land_field => "pools",
+        :description => "change in water storage in snowW pool(s)"
+    ),
+    :pools__ΔsoilW => orD(
+        :standard_name => "ΔsoilW",
+        :long_name => "delta_change_soilW",
+        :units => "mm",
+        :land_field => "pools",
+        :description => "change in water storage in soilW pool(s)"
+    ),
+    :pools__ΔsurfaceW => orD(
+        :standard_name => "ΔsurfaceW",
+        :long_name => "delta_change_surfaceW",
+        :units => "mm",
+        :land_field => "pools",
+        :description => "change in water storage in surfaceW pool(s)"
+    ),
+    :pools__ΔTWS => orD(
+        :standard_name => "ΔTWS",
+        :long_name => "delta_change_TWS",
+        :units => "mm",
+        :land_field => "pools",
+        :description => "change in water storage in TWS pool(s)"
+    ),
     :pools__groundW => orD(
         :standard_name => "groundW",
         :long_name => "groundwater_storage",
@@ -866,12 +1034,12 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "pools",
         :description => "water storage in surfaceW pool(s)"
     ),
-    :properties__sum_soil_depth => orD(
-        :standard_name => "sum_soil_depth",
-        :long_name => "total_depth_of_soil_column",
+    :pools__TWS => orD(
+        :standard_name => "TWS",
+        :long_name => "terrestrial_water_storage",
         :units => "mm",
-        :land_field => "properties",
-        :description => "total depth of soil"
+        :land_field => "pools",
+        :description => "terrestrial water storage including all water pools"
     ),
     :properties__cumulative_soil_depths => orD(
         :standard_name => "cumulative_soil_depths",
@@ -880,12 +1048,103 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => "the depth to the bottom of each soil layer"
     ),
-    :rootWaterEfficiency__root_over => orD(
-        :standard_name => "root_over",
-        :long_name => "is_root_over",
-        :units => "boolean",
-        :land_field => "rootWaterEfficiency",
-        :description => "a boolean indicating if the root is allowed to exract water from a given layer depending on maximum rooting depth"
+    :properties__LIGEFF => orD(
+        :standard_name => "LIGEFF",
+        :long_name => "LIGEFF",
+        :units => "fraction",
+        :land_field => "properties",
+        :description => ""
+    ),
+    :properties__LIGNIN => orD(
+        :standard_name => "LIGNIN",
+        :long_name => "LIGNIN",
+        :units => "fraction",
+        :land_field => "properties",
+        :description => ""
+    ),
+    :properties__LITC2N => orD(
+        :standard_name => "LITC2N",
+        :long_name => "LITC2N",
+        :units => "fraction",
+        :land_field => "properties",
+        :description => ""
+    ),
+    :properties__kFC => orD(
+        :standard_name => "soil_kFC",
+        :long_name => "k_field_capacity",
+        :units => "mm/time",
+        :land_field => "properties",
+        :description => "hydraulic conductivity of soil at field capacity per layer"
+    ),
+    :properties__kSat => orD(
+        :standard_name => "kSat",
+        :long_name => "k_saturated",
+        :units => "mm/time",
+        :land_field => "properties",
+        :description => "hydraulic conductivity of soil at saturation per layer"
+    ),
+    :properties__kWP => orD(
+        :standard_name => "kWP",
+        :long_name => "k_wilting_point",
+        :units => "mm/time",
+        :land_field => "properties",
+        :description => "hydraulic conductivity of soil at wilting point per layer"
+    ),
+    :properties__MTF => orD(
+        :standard_name => "MTF",
+        :long_name => "MTF",
+        :units => "fraction",
+        :land_field => "properties",
+        :description => ""
+    ),
+    :properties__ψFC => orD(
+        :standard_name => "ψFC",
+        :long_name => "ψ_field_capacity",
+        :units => "m",
+        :land_field => "properties",
+        :description => "matric potential of soil at field capacity per layer"
+    ),
+    :properties__ψSat => orD(
+        :standard_name => "ψSat",
+        :long_name => "ψ_saturated",
+        :units => "m",
+        :land_field => "properties",
+        :description => "matric potential of soil at saturation per layer"
+    ),
+    :properties__ψWP => orD(
+        :standard_name => "ψWP",
+        :long_name => "ψ_wilting_point",
+        :units => "m",
+        :land_field => "properties",
+        :description => "matric potential of soil at wiliting point per layer"
+    ),
+    :properties__SCLIGNIN => orD(
+        :standard_name => "SCLIGNIN",
+        :long_name => "SCLIGNIN",
+        :units => "fraction",
+        :land_field => "properties",
+        :description => ""
+    ),
+    :properties__soil_α => orD(
+        :standard_name => "soil_α",
+        :long_name => "soil_α",
+        :units => "number",
+        :land_field => "properties",
+        :description => "alpha parameter of soil per layer"
+    ),
+    :properties__soil_β => orD(
+        :standard_name => "soil_β",
+        :long_name => "soil_β",
+        :units => "number",
+        :land_field => "properties",
+        :description => "beta parameter of soil per layer"
+    ),
+    :properties__soil_layer_thickness => orD(
+        :standard_name => "soil_layer_thickness",
+        :long_name => "soil_thickness_per_layer",
+        :units => "mm",
+        :land_field => "properties",
+        :description => "thickness of each soil layer"
     ),
     :properties__sp_kFC => orD(
         :standard_name => "sp_kFC",
@@ -964,13 +1223,6 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => "calculated/input matric potential of soil at wiliting point per layer"
     ),
-    :models__unsat_k_model => orD(
-        :standard_name => "unsat_k_model",
-        :long_name => "unsat k model",
-        :units => "symbol",
-        :land_field => "models",
-        :description => "name of the model used to calculate unsaturated hydraulic conductivity"
-    ),
     :properties__st_clay => orD(
         :standard_name => "st_clay",
         :long_name => "soil_texture_clay",
@@ -999,110 +1251,12 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => "fraction of silt content in the soil per layer"
     ),
-    :properties__kFC => orD(
-        :standard_name => "soil_kFC",
-        :long_name => "k_field_capacity",
-        :units => "mm/time",
-        :land_field => "properties",
-        :description => "hydraulic conductivity of soil at field capacity per layer"
-    ),
-    :properties__kSat => orD(
-        :standard_name => "kSat",
-        :long_name => "k_saturated",
-        :units => "mm/time",
-        :land_field => "properties",
-        :description => "hydraulic conductivity of soil at saturation per layer"
-    ),
-    :properties__kWP => orD(
-        :standard_name => "kWP",
-        :long_name => "k_wilting_point",
-        :units => "mm/time",
-        :land_field => "properties",
-        :description => "hydraulic conductivity of soil at wilting point per layer"
-    ),
-    :properties__wAWC => orD(
-        :standard_name => "wAWC",
-        :long_name => "w_available_water_capacity",
+    :properties__sum_soil_depth => orD(
+        :standard_name => "sum_soil_depth",
+        :long_name => "total_depth_of_soil_column",
         :units => "mm",
         :land_field => "properties",
-        :description => "maximum amount of water available for vegetation/transpiration per soil layer (wSat-WP)"
-    ),
-    :properties__wFC => orD(
-        :standard_name => "wFC",
-        :long_name => "w_field_capacity",
-        :units => "mm",
-        :land_field => "properties",
-        :description => "amount of water in the soil at field capacity per layer"
-    ),
-    :properties__wSat => orD(
-        :standard_name => "wSat",
-        :long_name => "w_saturated",
-        :units => "mm",
-        :land_field => "properties",
-        :description => "amount of water in the soil at saturation per layer"
-    ),
-    :properties__wWP => orD(
-        :standard_name => " wWP",
-        :long_name => "wilting_point",
-        :units => "mm",
-        :land_field => "properties",
-        :description => "amount of water in the soil at wiliting point per layer"
-    ),
-    :properties__soil_α => orD(
-        :standard_name => "soil_α",
-        :long_name => "soil_α",
-        :units => "number",
-        :land_field => "properties",
-        :description => "alpha parameter of soil per layer"
-    ),
-    :properties__soil_β => orD(
-        :standard_name => "soil_β",
-        :long_name => "soil_β",
-        :units => "number",
-        :land_field => "properties",
-        :description => "beta parameter of soil per layer"
-    ),
-    :properties__θFC => orD(
-        :standard_name => "θFC",
-        :long_name => "θ_field_capacity",
-        :units => "m3/m3",
-        :land_field => "properties",
-        :description => "moisture content of soil at field capacity per layer"
-    ),
-    :properties__θSat => orD(
-        :standard_name => "θSat",
-        :long_name => "θ_saturated",
-        :units => "m3/m3",
-        :land_field => "properties",
-        :description => "moisture content of soil at saturation (porosity) per layer"
-    ),
-    :properties__θWP => orD(
-        :standard_name => "θWP",
-        :long_name => "θ_wilting_point",
-        :units => "m3/m3",
-        :land_field => "properties",
-        :description => "moisture content of soil at wilting point per layer"
-    ),
-    :properties__ψFC => orD(
-        :standard_name => "ψFC",
-        :long_name => "ψ_field_capacity",
-        :units => "m",
-        :land_field => "properties",
-        :description => "matric potential of soil at field capacity per layer"
-    ),
-    :properties__ψSat => orD(
-        :standard_name => "ψSat",
-        :long_name => "ψ_saturated",
-        :units => "m",
-        :land_field => "properties",
-        :description => "matric potential of soil at saturation per layer"
-    ),
-    :properties__ψWP => orD(
-        :standard_name => "ψWP",
-        :long_name => "ψ_wilting_point",
-        :units => "m",
-        :land_field => "properties",
-        :description => "matric potential of soil at wiliting point per layer"
+        :description => "total depth of soil"
     ),
     :properties__sum_wAWC => orD(
         :standard_name => "sum_available_water_capacity",
@@ -1132,26 +1286,61 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => "total amount of water in the soil at wiliting point"
     ),
-    :properties__soil_layer_thickness => orD(
-        :standard_name => "soil_layer_thickness",
-        :long_name => "soil_thickness_per_layer",
+    :properties__θFC => orD(
+        :standard_name => "θFC",
+        :long_name => "θ_field_capacity",
+        :units => "m3/m3",
+        :land_field => "properties",
+        :description => "moisture content of soil at field capacity per layer"
+    ),
+    :properties__θSat => orD(
+        :standard_name => "θSat",
+        :long_name => "θ_saturated",
+        :units => "m3/m3",
+        :land_field => "properties",
+        :description => "moisture content of soil at saturation (porosity) per layer"
+    ),
+    :properties__θWP => orD(
+        :standard_name => "θWP",
+        :long_name => "θ_wilting_point",
+        :units => "m3/m3",
+        :land_field => "properties",
+        :description => "moisture content of soil at wilting point per layer"
+    ),
+    :properties__wAWC => orD(
+        :standard_name => "wAWC",
+        :long_name => "w_available_water_capacity",
         :units => "mm",
         :land_field => "properties",
-        :description => "thickness of each soil layer"
+        :description => "maximum amount of water available for vegetation/transpiration per soil layer (wSat-WP)"
     ),
-    :states__LAI => orD(
-        :standard_name => "LAI",
-        :long_name => "leaf_area_index",
-        :units => "m2/m2",
-        :land_field => "states",
-        :description => "leaf area index"
-    ),
-    :states__WBP => orD(
-        :standard_name => "WBP",
-        :long_name => "water_balance_pool",
+    :properties__wFC => orD(
+        :standard_name => "wFC",
+        :long_name => "w_field_capacity",
         :units => "mm",
-        :land_field => "states",
-        :description => "water balance tracker pool that starts with rain and ends up with 0 after allocating to soil percolation"
+        :land_field => "properties",
+        :description => "amount of water in the soil at field capacity per layer"
+    ),
+    :properties__wSat => orD(
+        :standard_name => "wSat",
+        :long_name => "w_saturated",
+        :units => "mm",
+        :land_field => "properties",
+        :description => "amount of water in the soil at saturation per layer"
+    ),
+    :properties__wWP => orD(
+        :standard_name => " wWP",
+        :long_name => "wilting_point",
+        :units => "mm",
+        :land_field => "properties",
+        :description => "amount of water in the soil at wiliting point per layer"
+    ),
+    :rootWaterEfficiency__root_over => orD(
+        :standard_name => "root_over",
+        :long_name => "is_root_over",
+        :units => "boolean",
+        :land_field => "rootWaterEfficiency",
+        :description => "a boolean indicating if the root is allowed to exract water from a given layer depending on maximum rooting depth"
     ),
     :states__ambient_CO2 => orD(
         :standard_name => "ambient_CO2",
@@ -1160,19 +1349,19 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "states",
         :description => "ambient co2 concentration"
     ),
-    :states__auto_respiration_growth => orD(
-        :standard_name => "auto_respiration_growth",
-        :long_name => "growth_respiration",
-        :units => "gC/m2/time",
+    :states__aboveground_biomass => orD(
+        :standard_name => "aboveground_biomass",
+        :long_name => "aboveground_woody_biomass",
+        :units => "gC/m2",
         :land_field => "states",
-        :description => "growth respiration per vegetation pool"
+        :description => "carbon content on the cVegWood component",
     ),
-    :fluxes__auto_respiration_maintain => orD(
-        :standard_name => "auto_respiration_maintain",
-        :long_name => "maintenance_respiration",
-        :units => "gC/m2/time",
-        :land_field => "fluxes",
-        :description => "maintenance respiration per vegetation pool"
+    :states__c_remain => orD(
+        :standard_name => "c_remain",
+        :long_name => "carbon_remain",
+        :units => "gC/m2",
+        :land_field => "states",
+        :description => "amount of carbon to keep in the ecosystem vegetation pools in case of disturbances"
     ),
     :states__cEco_prev => orD(
         :standard_name => "cEco_prev",
@@ -1180,62 +1369,6 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :units => "gC/m2",
         :land_field => "states",
         :description => "ecosystem carbon content of the previous time step"
-    ),
-    :diagnostics__c_allocation => orD(
-        :standard_name => "c_allocation",
-        :long_name => "cabon_allocation",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "fraction of gpp allocated to different (live) carbon pools"
-    ),
-    :fluxes__c_eco_efflux => orD(
-        :standard_name => "c_eco_efflux",
-        :long_name => "autotrophic_carbon_loss",
-        :units => "gC/m2/time",
-        :land_field => "fluxes",
-        :description => "losss of carbon from (live) vegetation pools due to autotrophic respiration"
-    ),
-    :fluxes__c_eco_flow => orD(
-        :standard_name => "c_eco_flow",
-        :long_name => "net_carbon_flow",
-        :units => "gC/m2/time",
-        :land_field => "fluxes",
-        :description => "flow of carbon to a given carbon pool from other carbon pools"
-    ),
-    :fluxes__c_eco_influx => orD(
-        :standard_name => "c_eco_influx",
-        :long_name => "net_carbon_influx",
-        :units => "gC/m2/time",
-        :land_field => "fluxes",
-        :description => "net influx from allocation and efflux (npp) to each (live) carbon pool"
-    ),
-    :diagnostics__c_eco_k => orD(
-        :standard_name => "c_eco_k",
-        :long_name => "carbon_decomposition_rate",
-        :units => "/time",
-        :land_field => "diagnostics",
-        :description => "decomposition rate of carbon per pool"
-    ),
-    :fluxes__c_eco_npp => orD(
-        :standard_name => "c_eco_npp",
-        :long_name => "carbon_net_primary_productivity",
-        :units => "gC/m2/time",
-        :land_field => "fluxes",
-        :description => "npp of each carbon pool"
-    ),
-    :fluxes__c_eco_out => orD(
-        :standard_name => "c_eco_out",
-        :long_name => "total_carbon_loss",
-        :units => "gC/m2/time",
-        :land_field => "fluxes",
-        :description => "outflux of carbon from each carbol pool"
-    ),
-    :fluxes__c_flow_A_vec => orD(
-        :standard_name => "c_flow_A_vec",
-        :long_name => "carbon_flow_vector",
-        :units => "fraction",
-        :land_field => "fluxes",
-        :description => "fraction of the carbon loss fron a (giver) pool that flows to a (taker) pool"
     ),
     :states__fAPAR => orD(
         :standard_name => "fAPAR",
@@ -1258,12 +1391,12 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "states",
         :description => "fractional coverage of grid with trees"
     ),
-    :properties__max_root_depth => orD(
-        :standard_name => "max_root_depth",
-        :long_name => "maximum_rooting_depth",
-        :units => "mm",
-        :land_field => "properties",
-        :description => "maximum depth of root"
+    :states__LAI => orD(
+        :standard_name => "LAI",
+        :long_name => "leaf_area_index",
+        :units => "m2/m2",
+        :land_field => "states",
+        :description => "leaf area index"
     ),
     :states__PAW => orD(
         :standard_name => "PAW",
@@ -1272,19 +1405,12 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "states",
         :description => "amount of water available for transpiration per soil layer"
     ),
-    :diagnostics__root_water_efficiency => orD(
-        :standard_name => "root_water_efficiency",
-        :long_name => "root_water_efficiency",
-        :units => "fraction",
-        :land_field => "diagnostics",
-        :description => "a efficiency like number that indicates the ease/fraction of soil water that can extracted by the root per layer"
-    ),
-    :fluxes__root_water_uptake => orD(
-        :standard_name => "root_water_uptake",
-        :long_name => "root_water_uptake",
-        :units => "mm/time",
-        :land_field => "fluxes",
-        :description => "amount of water uptaken for transpiration per soil layer"
+    :states__Tair_prev => orD(
+        :standard_name => "Tair_prev",
+        :long_name => "Tair_previous_timestep",
+        :units => "degree_C",
+        :land_field => "states",
+        :description => "air temperature in the previous time step"
     ),
     :states__total_water => orD(
         :standard_name => "total_water",
@@ -1300,131 +1426,12 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "states",
         :description => "sum of water storage across all components in previous time step"
     ),
-    :diagnostics__transpiration_supply => orD(
-        :standard_name => "transpiration_supply",
-        :long_name => "supply_moisture_for_transpiration",
+    :states__WBP => orD(
+        :standard_name => "WBP",
+        :long_name => "water_balance_pool",
         :units => "mm",
-        :land_field => "diagnostics",
-        :description => "total amount of water available in soil for transpiration"
-    ),
-    :fluxes__zero_c_eco_flow => orD(
-        :standard_name => "zero_c_eco_flow",
-        :long_name => "zero_vector_for_c_eco_flow",
-        :units => "gC/m2/time",
-        :land_field => "fluxes",
-        :description => "helper for resetting c_eco_flow in every time step"
-    ),
-    :fluxes__zero_c_eco_influx => orD(
-        :standard_name => "zero_c_eco_influx",
-        :long_name => "zero_vector_for_c_eco_influx",
-        :units => "gC/m2/time",
-        :land_field => "fluxes",
-        :description => "helper for resetting c_eco_influx in every time step"
-    ),
-    :pools__ΔTWS => orD(
-        :standard_name => "ΔTWS",
-        :long_name => "delta_change_TWS",
-        :units => "mm",
-        :land_field => "pools",
-        :description => "change in water storage in TWS pool(s)"
-    ),
-    :pools__ΔcEco => orD(
-        :standard_name => "ΔcEco",
-        :long_name => "delta_change_cEco",
-        :units => "mm",
-        :land_field => "pools",
-        :description => "change in water storage in cEco pool(s)"
-    ),
-    :pools__ΔgroundW => orD(
-        :standard_name => "ΔgroundW",
-        :long_name => "delta_change_groundW",
-        :units => "mm",
-        :land_field => "pools",
-        :description => "change in water storage in groundW pool(s)"
-    ),
-    :pools__ΔsnowW => orD(
-        :standard_name => "ΔsnowW",
-        :long_name => "delta_change_snowW",
-        :units => "mm",
-        :land_field => "pools",
-        :description => "change in water storage in snowW pool(s)"
-    ),
-    :pools__ΔsoilW => orD(
-        :standard_name => "ΔsoilW",
-        :long_name => "delta_change_soilW",
-        :units => "mm",
-        :land_field => "pools",
-        :description => "change in water storage in soilW pool(s)"
-    ),
-    :pools__ΔsurfaceW => orD(
-        :standard_name => "ΔsurfaceW",
-        :long_name => "delta_change_surfaceW",
-        :units => "mm",
-        :land_field => "pools",
-        :description => "change in water storage in surfaceW pool(s)"
-    ),
-    :constants__n_TWS => orD(
-        :standard_name => "n_TWS",
-        :long_name => "num_layers_TWS",
-        :units => "number",
-        :land_field => "constants",
-        :description => "total number of water pools"
-    ),
-    :constants__n_groundW => orD(
-        :standard_name => "n_groundW",
-        :long_name => "num_layers_groundW",
-        :units => "number",
-        :land_field => "constants",
-        :description => "total number of layers in groundwater pool"
-    ),
-    :constants__n_snowW => orD(
-        :standard_name => "n_snowW",
-        :long_name => "num_layers_snowW",
-        :units => "number",
-        :land_field => "constants",
-        :description => "total number of layers in snow pool"
-    ),
-    :constants__n_soilW => orD(
-        :standard_name => "n_soilW",
-        :long_name => "num_layers_soilW",
-        :units => "number",
-        :land_field => "constants",
-        :description => "total number of layers in soil moisture pool"
-    ),
-    :constants__n_surfaceW => orD(
-        :standard_name => "n_surfaceW",
-        :long_name => "num_layers_surfaceW",
-        :units => "number",
-        :land_field => "constants",
-        :description => "total number of layers in surface water pool"
-    ),
-    :constants__o_one => orD(
-        :standard_name => "o_one",
-        :long_name => "type_stable_one",
-        :units => "numver",
-        :land_field => "constants",
-        :description => "a helper type stable 1 to be used across all models"
-    ),
-    :models__w_model => orD(
-        :standard_name => "w_model",
-        :long_name => "w model",
-        :units => "symbol",
-        :land_field => "models",
-        :description => "a base water cycle model to loop through the pools and fill the main or component pools needed for using static arrays. A mandatory field for every water model/pool realization"
-    ),
-    :constants__z_zero => orD(
-        :standard_name => "z_zero",
-        :long_name => "type_stable_zero",
-        :units => "number",
-        :land_field => "constants",
-        :description => "a helper type stable 0 to be used across all models"
-    ),
-    :diagnostics__water_balance => orD(
-        :standard_name => "water_balance",
-        :long_name => "water_balance_error",
-        :units => "mm",
-        :land_field => "diagnostics",
-        :description => "misbalance of the water for the given time step calculated as the differences between total input, output and change in storages"
+        :land_field => "states",
+        :description => "water balance tracker pool that starts with rain and ends up with 0 after allocating to soil percolation"
     )
 )
 

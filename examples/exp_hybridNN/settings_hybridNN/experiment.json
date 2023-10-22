@@ -83,7 +83,7 @@
       "fluxes.c_eco_influx": "d_cEco",
       "diagnostics.c_eco_k": "d_cEco",
       "fluxes.c_eco_out": "d_cEco",
-      "fluxes.c_flow_A_vec": 10,
+      "diagnostics.c_flow_A_vec": 10,
       "states.fAPAR": null,
       "states.frac_snow": null,
       "states.PAW": "d_soil",
