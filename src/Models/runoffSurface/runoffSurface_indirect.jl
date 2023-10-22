@@ -14,7 +14,7 @@ function compute(params::runoffSurface_indirect, forcing, land, helpers)
     @unpack_land begin
         surfaceW ∈ land.pools
         overland_runoff ∈ land.fluxes
-        n_surfaceW ∈ land.diagnostics
+        n_surfaceW ∈ land.constants
     end
 
     # fraction of overland runoff that recharges the surface water & the fraction that flows out directly
