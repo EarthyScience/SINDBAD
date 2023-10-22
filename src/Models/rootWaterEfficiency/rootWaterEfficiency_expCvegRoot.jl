@@ -34,7 +34,7 @@ function precompute(params::rootWaterEfficiency_expCvegRoot, forcing, land, help
         root_over ∈ land.rootWaterEfficiency
         cumulative_soil_depths ∈ land.properties
         z_zero ∈ land.constants
-        max_root_depth ∈ land.properties
+        max_root_depth ∈ land.diagnostics
     end
     if max_root_depth > z_zero
         @rep_elem one(eltype(root_over)) → (root_over, 1, :soilW)

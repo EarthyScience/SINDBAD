@@ -29,7 +29,7 @@ function precompute(params::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     # disp(["the maxRootD scalar: " constant_frac_max_root_depth])
 
     ## pack land variables
-    @pack_land max_root_depth → land.properties
+    @pack_land max_root_depth → land.diagnostics
     return land
 end
 

@@ -12,7 +12,7 @@ end
 function define(params::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI params
     @unpack_land begin
-        (c_giver, c_taker, c_flow_A_array) ∈ land.cCycleBase
+        (c_giver, c_taker) ∈ land.constants
     end
     ## instantiate variables
 
@@ -59,7 +59,7 @@ function define(params::cFlow_GSI, forcing, land, helpers)
     @pack_land begin
         (c_flow_A_vec_ind, aSrc, aTrg) → land.cFlow
         eco_stressor_prev → land.diagnostics
-        c_flow_A_vec → land.fluxes
+        c_flow_A_vec → land.diagnostics
     end
 
     return land
@@ -84,7 +84,7 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
         (c_flow_A_vec_ind, aSrc, aTrg) ∈ land.cFlow
         (c_allocation_f_soilW, c_allocation_f_soilT, c_allocation_f_cloud, eco_stressor_prev)  ∈ land.diagnostics
         c_eco_k ∈ land.diagnostics
-        (c_flow_A_vec, ) ∈ land.fluxes
+        c_flow_A_vec ∈ land.diagnostics
     end
 
     # Compute sigmoid functions
@@ -157,9 +157,8 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (leaf_to_reserve, leaf_to_reserve_frac, root_to_reserve, root_to_reserve_frac, reserve_to_leaf, reserve_to_leaf_frac, reserve_to_root, reserve_to_root_frac, eco_stressor, k_shedding_leaf, k_shedding_leaf_frac, k_shedding_root, k_shedding_root_frac, slope_eco_stressor, eco_stressor_prev) → land.diagnostics
-        (c_eco_k,) → land.states
-        c_flow_A_vec → land.fluxes
+        (leaf_to_reserve, leaf_to_reserve_frac, root_to_reserve, root_to_reserve_frac, reserve_to_leaf, reserve_to_leaf_frac, reserve_to_root, reserve_to_root_frac, eco_stressor, k_shedding_leaf, k_shedding_leaf_frac, k_shedding_root, k_shedding_root_frac, slope_eco_stressor, eco_stressor_prev, c_eco_k) → land.diagnostics
+        c_flow_A_vec → land.diagnostics
     end
     return land
 end
@@ -182,7 +181,7 @@ Actual transfers of c between pools (of diagonal components) using cFlow_GSI
  - land.diagnostics.f_soilT_prev: previous temperature stressors for carbon allocation
  - land.diagnostics.c_allocation_f_soilW: water stressors for carbon allocation
  - land.diagnostics.f_soilW_prev: previous water stressors for carbon allocation
- - land.cCycleBase.c_flow_A_array: transfer matrix for carbon at ecosystem level
+ - land.diagnostics.c_flow_A_array: transfer matrix for carbon at ecosystem level
 
 *Outputs*
  - land.cFlow.c_flow_A_vec: updated transfer flow rate for carbon at ecosystem level
