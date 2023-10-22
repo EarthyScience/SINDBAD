@@ -45,8 +45,6 @@ Plant available water using vegAvailableWater_rootWaterEfficiency
 
 *Inputs*
  - land.pools.soilW
- - land.rootWaterEfficiency.constant_root_water_efficiency
- - land.states.maxRootD
 
 *Outputs*
  - land.states.root_water_efficiency
