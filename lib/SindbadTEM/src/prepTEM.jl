@@ -86,6 +86,11 @@ function getSpatialInfo(forcing)
 
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
 
+    # allNans = qbmap(loc_space_maps) do loc_space_map
+    #     loc_ind = Tuple(last.(loc_space_map))
+    #     loc_forcing = getLocForcingData(forcing_nt_array, loc_ind)
+    #     all(isnan, loc_forcing[1])
+    # end
     allNans = Bool[]
     for i ∈ eachindex(loc_space_maps)
         loc_ind = Tuple(last.(loc_space_maps[i]))
