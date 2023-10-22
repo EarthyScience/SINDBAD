@@ -6,7 +6,7 @@ struct cCycleDisturbance_cFlow <: cCycleDisturbance end
 
 function define(params::cCycleDisturbance_cFlow, forcing, land, helpers)
     @unpack_land begin
-        (c_giver, c_taker) ∈ land.cCycleBase
+        (c_giver, c_taker) ∈ land.constants
         (z_zero, o_one) ∈ land.constants
         cVeg ∈ land.pools
     end
@@ -35,9 +35,9 @@ function compute(params::cCycleDisturbance_cFlow, forcing, land, helpers)
     @unpack_land begin
         (zix_veg_all, c_lose_to_zix_vec) ∈ land.cCycleDisturbance
         cEco ∈ land.pools
-        (c_giver, c_taker, c_remain) ∈ land.cCycleBase
+        (c_giver, c_taker,) ∈ land.constants
         c_model ∈ land.models
-
+        c_remain ∈ land.states
     end
     if f_dist_intensity > z_zero
         for zixVeg ∈ zix_veg_all
@@ -92,7 +92,7 @@ update pools and states in cCycleDisturbance_cFlow
 *Versions*
  - 1.0 on 23.04.2021 [skoirala]
  - 1.0 on 23.04.2021 [skoirala]  
- - 1.1 on 29.11.2021 [skoirala]: moved the scaling parameters to  ccyclebase_gsi [land.cCycleBase.ηA & land.cCycleBase.ηH]  
+ - 1.1 on 29.11.2021 [skoirala]: moved the scaling parameters to  ccyclebase_gsi [land.diagnostics.ηA & land.diagnostics.ηH]  
 
 *Created by:*
  - skoirala

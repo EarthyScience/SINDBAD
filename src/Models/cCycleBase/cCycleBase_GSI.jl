@@ -38,7 +38,7 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
     C_to_N_cVeg = zero(cEco) #sujan
     # C_to_N_cVeg[getZix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
     c_eco_k_base = zero(cEco)
-    c_τ_eco = zero(cEco)
+    c_eco_τ = zero(cEco)
 
     # if there is flux order check that is consistent
     c_flow_order = Tuple(collect(1:length(findall(>(z_zero), c_flow_A_array))))
@@ -50,9 +50,11 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (c_flow_A_array, c_flow_order, c_taker, c_giver, c_remain) → land.cCycleBase
-        (C_to_N_cVeg, c_τ_eco, c_eco_k_base) → land.diagnostics
+        c_flow_A_array → land.diagnostics
+        (c_flow_order, c_taker, c_giver) → land.constants
+        (C_to_N_cVeg, c_eco_τ, c_eco_k_base) → land.diagnostics
         c_model → land.models
+        c_remain → land.states
     end
     return land
 end
@@ -60,19 +62,19 @@ end
 function precompute(params::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI params
     @unpack_land begin
-        (C_to_N_cVeg, c_eco_k_base, c_τ_eco) ∈ land.diagnostics
+        (C_to_N_cVeg, c_eco_k_base, c_eco_τ) ∈ land.diagnostics
         (z_zero, o_one) ∈ land.constants
     end
 
     ## replace values
-    @rep_elem c_τ_Root → (c_τ_eco, 1, :cEco)
-    @rep_elem c_τ_Wood → (c_τ_eco, 2, :cEco)
-    @rep_elem c_τ_Leaf → (c_τ_eco, 3, :cEco)
-    @rep_elem c_τ_Reserve → (c_τ_eco, 4, :cEco)
-    @rep_elem c_τ_LitSlow → (c_τ_eco, 5, :cEco)
-    @rep_elem c_τ_LitFast → (c_τ_eco, 6, :cEco)
-    @rep_elem c_τ_SoilSlow → (c_τ_eco, 7, :cEco)
-    @rep_elem c_τ_SoilOld → (c_τ_eco, 8, :cEco)
+    @rep_elem c_τ_Root → (c_eco_τ, 1, :cEco)
+    @rep_elem c_τ_Wood → (c_eco_τ, 2, :cEco)
+    @rep_elem c_τ_Leaf → (c_eco_τ, 3, :cEco)
+    @rep_elem c_τ_Reserve → (c_eco_τ, 4, :cEco)
+    @rep_elem c_τ_LitSlow → (c_eco_τ, 5, :cEco)
+    @rep_elem c_τ_LitFast → (c_eco_τ, 6, :cEco)
+    @rep_elem c_τ_SoilSlow → (c_eco_τ, 7, :cEco)
+    @rep_elem c_τ_SoilOld → (c_eco_τ, 8, :cEco)
 
     vegZix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
     for ix ∈ eachindex(vegZix)
@@ -80,13 +82,13 @@ function precompute(params::cCycleBase_GSI, forcing, land, helpers)
     end
     c_one = one(eltype(c_eco_k_base))
     for i ∈ eachindex(c_eco_k_base)
-        tmp = c_one - (exp(-c_τ_eco[i])^(c_one / helpers.dates.timesteps_in_year))
+        tmp = c_one - (exp(-c_eco_τ[i])^(c_one / helpers.dates.timesteps_in_year))
         @rep_elem tmp → (c_eco_k_base, i, :cEco)
     end
 
     ## pack land variables
     @pack_land begin
-        (C_to_N_cVeg, c_τ_eco, c_eco_k_base, ηA, ηH) → land.diagnostics
+        (C_to_N_cVeg, c_eco_τ, c_eco_k_base, ηA, ηH) → land.diagnostics
     end
     return land
 end
@@ -178,7 +180,7 @@ Pool structure of the carbon cycle using cCycleBase_GSI
  - annk: turnover rate of ecosystem carbon pools
 
 *Outputs*
- - land.cCycleBase.c_τ_eco _Pool: turnover rate of each ecosystem carbon pool
+ - land.diagnostics.c_eco_τ _Pool: turnover rate of each ecosystem carbon pool
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cCycleBase_GSI

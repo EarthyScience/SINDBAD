@@ -8,7 +8,7 @@ end
 
 function define(params::cFlowVegProperties_CASA, forcing, land, helpers)
     @unpack_cFlowVegProperties_CASA params
-    c_taker ∈ land.cCycleBase
+    c_taker ∈ land.constants
 
     ## instantiate variables
     p_F_vec = eltype(land.pools.cEco).(zero([c_taker...]))

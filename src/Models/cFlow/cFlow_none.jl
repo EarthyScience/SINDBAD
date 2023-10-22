@@ -16,7 +16,7 @@ function define(params::cFlow_none, forcing, land, helpers)
     p_giver = []
 
     ## pack land variables
-    @pack_land (c_flow_A_vec, p_E_vec, p_F_vec, p_giver, p_taker) → land.cFlow
+    @pack_land (c_flow_A_vec, p_E_vec, p_F_vec) → land.diagnostics
     return land
 end
 

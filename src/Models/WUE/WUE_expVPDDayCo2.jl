@@ -26,7 +26,7 @@ function compute(params::WUE_expVPDDayCo2, forcing, land, helpers)
     WUE = WUENoCO2 * fCO2_CO2
 
     ## pack land variables
-    @pack_land WUENoCO2 → land.WUE
+    @pack_land WUENoCO2 → land.diagnostics
     @pack_land WUE → land.diagnostics
     return land
 end
@@ -47,7 +47,7 @@ Estimate wue using WUE_expVPDDayCo2
  - forcing.f_VPD_day: daytime mean VPD [kPa]
 
 *Outputs*
- - land.WUE.WUENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
+ - land.diagnostics.WUENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
 
 ---
 

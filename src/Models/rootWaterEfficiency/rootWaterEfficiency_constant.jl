@@ -37,7 +37,7 @@ function precompute(params::rootWaterEfficiency_constant, forcing, land, helpers
         root_water_efficiency ∈ land.diagnostics
         soilW ∈ land.pools
         z_zero ∈ land.constants
-        max_root_depth ∈ land.properties
+        max_root_depth ∈ land.diagnostics
     end
     if max_root_depth >= z_zero
         @rep_elem constant_root_water_efficiency → (root_water_efficiency, 1, :soilW)
