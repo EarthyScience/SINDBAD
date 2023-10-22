@@ -7,7 +7,8 @@ function define(params::cCycleConsistency_simple, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         cEco ∈ land.pools
-        (c_giver, c_flow_A_array) ∈ land.cCycleBase
+        c_flow_A_array ∈ land.diagnostics
+        c_giver ∈ land.constants
     end
     # make list of indices which give carbon to other pools during the flow, and separate them if 
     # they are above or below the diagonal in flow vector
@@ -47,7 +48,7 @@ function checkCcycleErrors(params::cCycleConsistency_simple, forcing, land, help
     ## unpack land variables
     @unpack_land begin
         c_allocation ∈ land.diagnostics
-        c_flow_A_vec ∈ land.fluxes
+        c_flow_A_vec ∈ land.diagnostics
         (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) ∈ land.cCycleConsistency
         tolerance ∈ helpers.numbers
     end

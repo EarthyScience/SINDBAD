@@ -45,7 +45,7 @@ multiply all effects that change the turnover rates [k]
 Combine effects of different factors on decomposition rates using cTau_mult
 
 *Inputs*
- - land.cCycleBase.c_eco_k:
+ - land.diagnostics.c_eco_k:
  - land.diagnostics.c_eco_k_f_LAI: LAI stressor values on the the turnover rates
  - land.diagnostics.c_eco_k_f_soil_props: Soil texture stressor values on the the turnover rates
  - land.diagnostics.c_eco_k_f_soilT: Air temperature stressor values on the the turnover rates

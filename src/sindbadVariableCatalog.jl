@@ -159,11 +159,11 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "models",
         :description => "a base carbon cycle model to loop through the pools and fill the main or component pools needed for using static arrays. A mandatory field for every carbon model realization"
     ),
-    :diagnostics__c_remain => orD(
+    :states__c_remain => orD(
         :standard_name => "c_remain",
         :long_name => "carbon_remain",
         :units => "gC/m2",
-        :land_field => "diagnostics",
+        :land_field => "states",
         :description => "amount of carbon to keep in the ecosystem vegetation pools in case of disturbances"
     ),
     :cCycleBase__c_taker => orD(
@@ -173,8 +173,8 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "cCycleBase",
         :description => "index of the source carbon pool for a given flow"
     ),
-    :diagnostics__c_τ_eco => orD(
-        :standard_name => "c_τ_eco",
+    :diagnostics__c_eco_τ => orD(
+        :standard_name => "c_eco_τ",
         :long_name => "carbon_turnover_per_pool",
         :units => "years",
         :land_field => "diagnostics",
@@ -460,11 +460,11 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "diagnostics",
         :description => "effect of veg_props on carbon decomposition rate. 1: no stress, 0: complete stress"
     ),
-    :pools__aboveground_biomass => orD(
+    :states__aboveground_biomass => orD(
         :standard_name => "aboveground_biomass",
         :long_name => "aboveground_woody_biomass",
         :units => "gC/m2",
-        :land_field => "pools",
+        :land_field => "states",
         :description => "carbon content on the cVegWood component",
     ),
     :fluxes__auto_respiration => orD(
@@ -1174,11 +1174,11 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "fluxes",
         :description => "maintenance respiration per vegetation pool"
     ),
-    :pools__cEco_prev => orD(
+    :states__cEco_prev => orD(
         :standard_name => "cEco_prev",
         :long_name => "ecosystem_carbon_pool_previous_timestep",
         :units => "gC/m2",
-        :land_field => "pools",
+        :land_field => "states",
         :description => "ecosystem carbon content of the previous time step"
     ),
     :diagnostics__c_allocation => orD(

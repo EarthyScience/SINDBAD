@@ -21,7 +21,7 @@ function define(params::autoRespiration_Thornley2000C, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (k_respiration_maintain, k_respiration_maintain_su, Fd) → land.autoRespiration
+        (k_respiration_maintain, k_respiration_maintain_su, Fd) → land.diagnostics
         (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) → land.fluxes
     end
     return land
@@ -33,7 +33,7 @@ function compute(params::autoRespiration_Thornley2000C, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (k_respiration_maintain, k_respiration_maintain_su, Fd) ∈ land.autoRespiration
+        (k_respiration_maintain, k_respiration_maintain_su, Fd) ∈ land.diagnostics
         (c_eco_efflux, auto_respiration_growth, auto_respiration_maintain) ∈ land.fluxes
         cEco ∈ land.pools
         gpp ∈ land.fluxes
@@ -82,7 +82,7 @@ function compute(params::autoRespiration_Thornley2000C, forcing, land, helpers)
     end
     ## pack land variables
     @pack_land begin
-        (k_respiration_maintain, k_respiration_maintain_su) → land.autoRespiration
+        (k_respiration_maintain, k_respiration_maintain_su) → land.diagnostics
         (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) → land.fluxes
     end
     return land
@@ -102,7 +102,7 @@ Determine growth and maintenance respiration using autoRespiration_Thornley2000C
 *Inputs*
  - info.timeScale.stepsPerDay: number of time steps per day
  - land.diagnostics.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
- - land.cCycleBase.C_to_N_cVeg: carbon to nitrogen ratio [gC.gN-1]
+ - land.diagnostics.C_to_N_cVeg: carbon to nitrogen ratio [gC.gN-1]
  - land.diagnostics.c_allocation: carbon allocation []
  - land.pools.cEco: ecosystem carbon pools [gC.m2]
  - land.fluxes.gpp: gross primary productivity [gC.m2.δT-1]

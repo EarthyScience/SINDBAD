@@ -18,7 +18,8 @@ function define(params::cCycle_GSI, forcing, land, helpers)
 
     @pack_land begin
         (c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx) → land.fluxes
-        (cEco_prev, ΔcEco) → land.pools
+        cEco_prev → land.states
+        ΔcEco → land.pools
     end
     return land
 end
@@ -27,11 +28,12 @@ function compute(params::cCycle_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (c_allocation, c_eco_k) ∈ land.diagnostics
+        (c_allocation, c_eco_k, c_flow_A_vec) ∈ land.diagnostics
         (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx) ∈ land.fluxes
-        (cEco, cVeg, ΔcEco, cEco_prev) ∈ land.pools
-        (c_flow_A_vec, gpp) ∈ land.fluxes
-        (c_flow_order, c_giver, c_taker) ∈ land.cCycleBase
+        (cEco, cVeg, ΔcEco) ∈ land.pools
+        cEco_prev ∈ land.states
+        gpp ∈ land.fluxes
+        (c_flow_order, c_giver, c_taker) ∈ land.constants
         c_model ∈ land.models
     end
     ## reset ecoflow and influx to be zero at every time step
@@ -99,7 +101,8 @@ function compute(params::cCycle_GSI, forcing, land, helpers)
     @pack_land begin
         (nee, npp, auto_respiration, eco_respiration, hetero_respiration) → land.fluxes
         (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) → land.fluxes
-        (ΔcEco, cEco_prev) → land.pools
+        cEco_prev → land.states
+        ΔcEco → land.pools
     end
     return land
 end
@@ -114,7 +117,7 @@ Allocate carbon to vegetation components using cCycle_GSI
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.cCycleBase.c_τ_eco: carbon allocation matrix
+ - land.diagnostics.c_eco_τ: carbon allocation matrix
  - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
@@ -122,7 +125,7 @@ Allocate carbon to vegetation components using cCycle_GSI
  - land.diagnostics.c_allocation: carbon allocation matrix
 
 *Outputs*
- - land.cCycleBase.c_eco_k: decay rates for the carbon pool at each time step
+ - land.diagnostics.c_eco_k: decay rates for the carbon pool at each time step
  - land.fluxes.c_eco_npp: values for net primary productivity
  - land.fluxes.auto_respiration: values for autotrophic respiration
  - land.fluxes.eco_respiration: values for ecosystem respiration

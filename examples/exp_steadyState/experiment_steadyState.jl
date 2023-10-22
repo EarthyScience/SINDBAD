@@ -42,7 +42,7 @@ function get_xtick_names(info, land_for_s, look_at)
     xtname = []
     xtl = nothing
     if look_at == :cEco
-        xtl = land_for_s.cCycleBase.c_τ_eco
+        xtl = land_for_s.diagnostics.c_eco_τ
     end
     for (i, comp) ∈ enumerate(getfield(info.helpers.pools.components, look_at))
         zix = getfield(info.helpers.pools.zix, comp)
