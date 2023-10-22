@@ -3,9 +3,10 @@ export autoRespirationAirT_none
 struct autoRespirationAirT_none <: autoRespirationAirT end
 
 function define(params::autoRespirationAirT_none, forcing, land, helpers)
+    @unpack_land cEco ∈ land.pools
 
     ## calculate variables
-    auto_respiration_f_airT = one(first(land.pools.cEco))
+    auto_respiration_f_airT = one(first(cEco))
 
     ## pack land variables
     @pack_land auto_respiration_f_airT → land.diagnostics

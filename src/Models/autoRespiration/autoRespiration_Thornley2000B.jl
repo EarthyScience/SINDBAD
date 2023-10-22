@@ -11,11 +11,11 @@ function define(params::autoRespiration_Thornley2000B, forcing, land, helpers)
     @unpack_land begin
         cEco ∈ land.pools
     end
-    c_eco_efflux = zero(land.pools.cEco)
-    k_respiration_maintain = one.(land.pools.cEco)
-    k_respiration_maintain_su = one.(land.pools.cEco)
-    auto_respiration_growth = zero(land.pools.cEco)
-    auto_respiration_maintain = zero(land.pools.cEco)
+    c_eco_efflux = zero(cEco)
+    k_respiration_maintain = one.(cEco)
+    k_respiration_maintain_su = one.(cEco)
+    auto_respiration_growth = zero(cEco)
+    auto_respiration_maintain = zero(cEco)
 
     ## pack land variables
     @pack_land begin
@@ -33,15 +33,16 @@ function compute(params::autoRespiration_Thornley2000B, forcing, land, helpers)
     @unpack_land begin
         (k_respiration_maintain, k_respiration_maintain_su) ∈ land.diagnostics
         (c_eco_efflux, auto_respiration_growth, auto_respiration_maintain) ∈ land.fluxes
-        cEco ∈ land.pools
+        (cEco, cVeg) ∈ land.pools
         gpp ∈ land.fluxes
         C_to_N_cVeg ∈ land.diagnostics
+        cVegZix = cVeg ∈ helpers.pools.zix
         (auto_respiration_f_airT, c_allocation) ∈ land.diagnostics
     end
     # adjust nitrogen efficiency rate of maintenance respiration to the current
     # model time step
     RMN = RMN / helpers.dates.timesteps_in_day
-    zix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    zix = getZix(cVeg, cVegZix)
     for ix ∈ zix
 
         # compute maintenance & growth respiration terms for each vegetation pool
@@ -94,7 +95,7 @@ Determine growth and maintenance respiration using autoRespiration_Thornley2000A
  - land.diagnostics.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
  - land.diagnostics.C_to_N_cVeg: carbon to nitrogen ratio [gC.gN-1]
  - land.diagnostics.c_allocation: carbon allocation []
- - land.pools.cEco: ecosystem carbon pools [gC.m2]
+ - cEco: ecosystem carbon pools [gC.m2]
  - land.fluxes.gpp: gross primary productivity [gC.m2.δT-1]
 
 *Outputs*

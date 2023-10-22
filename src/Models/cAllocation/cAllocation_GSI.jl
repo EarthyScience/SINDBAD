@@ -3,13 +3,14 @@ export cAllocation_GSI
 struct cAllocation_GSI <: cAllocation end
 
 function define(params::cAllocation_GSI, forcing, land, helpers)
+    @unpack_land cEco ∈ land.pools
     ## instantiate variables
-    c_allocation = zero(land.pools.cEco)
+    c_allocation = zero(cEco)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
 
-    c_allocation_to_veg = zero(land.pools.cEco)
+    c_allocation_to_veg = zero(cEco)
     cVeg_zix = Tuple{Int}[]
-    cVeg_nzix = eltype(land.pools.cEco)[]
+    cVeg_nzix = eltype(cEco)[]
     cpI = 1
     for cpName ∈ cVeg_names
         zix = getZix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))

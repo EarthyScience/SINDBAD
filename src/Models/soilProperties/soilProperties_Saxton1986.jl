@@ -39,19 +39,20 @@ end
 
 function define(params::soilProperties_Saxton1986, forcing, land, helpers)
     @unpack_soilProperties_Saxton1986 params
+    @unpack_land soilW ∈ land.pools
 
     ## instantiate variables
-    sp_α = zero(land.pools.soilW)
-    sp_β = zero(land.pools.soilW)
-    sp_kFC = zero(land.pools.soilW)
-    sp_θFC = zero(land.pools.soilW)
-    sp_ψFC = zero(land.pools.soilW)
-    sp_kWP = zero(land.pools.soilW)
-    sp_θWP = zero(land.pools.soilW)
-    sp_ψWP = zero(land.pools.soilW)
-    sp_kSat = zero(land.pools.soilW)
-    sp_θSat = zero(land.pools.soilW)
-    sp_ψSat = zero(land.pools.soilW)
+    sp_α = zero(soilW)
+    sp_β = zero(soilW)
+    sp_kFC = zero(soilW)
+    sp_θFC = zero(soilW)
+    sp_ψFC = zero(soilW)
+    sp_kWP = zero(soilW)
+    sp_θWP = zero(soilW)
+    sp_ψWP = zero(soilW)
+    sp_kSat = zero(soilW)
+    sp_θSat = zero(soilW)
+    sp_ψSat = zero(soilW)
 
     unsat_k_model = kSaxton1986()
 
@@ -70,11 +71,12 @@ function precompute(params::soilProperties_Saxton1986, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land (sp_α, sp_β, sp_kFC, sp_θFC, sp_ψFC, sp_kWP, sp_θWP, sp_ψWP, sp_kSat, sp_θSat, sp_ψSat) ∈ land.properties
+    @unpack_land soilW ∈ land.pools
 
     ## calculate variables
     # number of layers & creation of arrays
     # calculate & set the soil hydraulic properties for each layer
-    for sl in eachindex(land.pools.soilW)
+    for sl in eachindex(soilW)
         (α, β, kFC, θFC, ψFC) = calcPropsSaxton1986(params, land, helpers, sl, ψFC)
         (_, _, kWP, θWP, ψWP) = calcPropsSaxton1986(params, land, helpers, sl, ψWP)
         (_, _, kSat, θSat, ψSat) = calcPropsSaxton1986(params, land, helpers, sl, ψSat)

@@ -11,13 +11,14 @@ end
 
 function define(params::soilTexture_constant, forcing, land, helpers)
     @unpack_soilTexture_constant params
+    @unpack_land soilW ∈ land.pools
 
     ## set parameter variables
     @debug "soilTexture_constant: distributing the constant texture properties over the soil layers."
-    st_clay = zero(land.pools.soilW)
-    st_orgm = zero(land.pools.soilW)
-    st_sand = zero(land.pools.soilW)
-    st_silt = zero(land.pools.soilW)
+    st_clay = zero(soilW)
+    st_orgm = zero(soilW)
+    st_sand = zero(soilW)
+    st_silt = zero(soilW)
 
     ## pack land variables
     @pack_land (st_clay, st_sand, st_silt, st_orgm) → land.properties
