@@ -6,7 +6,7 @@ export NDWI_constant
 end
 #! format: on
 
-function compute(params::NDWI_constant, forcing, land, helpers)
+function precompute(params::NDWI_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_NDWI_constant params
 

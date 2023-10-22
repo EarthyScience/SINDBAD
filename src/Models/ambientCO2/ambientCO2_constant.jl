@@ -6,7 +6,7 @@ export ambientCO2_constant
 end
 #! format: on
 
-function compute(params::ambientCO2_constant, forcing, land, helpers)
+function precompute(params::ambientCO2_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_ambientCO2_constant params
 

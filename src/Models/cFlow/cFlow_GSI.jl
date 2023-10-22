@@ -59,7 +59,7 @@ function define(params::cFlow_GSI, forcing, land, helpers)
 
 
     @pack_land begin
-        (c_flow_A_vec_ind, aSrc, aTrg) → land.cFlow
+        c_flow_A_vec_ind → land.cFlow
         eco_stressor_prev → land.diagnostics
         c_flow_A_vec → land.diagnostics
     end
@@ -83,7 +83,7 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI params
     ## unpack land variables
     @unpack_land begin
-        (c_flow_A_vec_ind, aSrc, aTrg) ∈ land.cFlow
+        c_flow_A_vec_ind ∈ land.cFlow
         (c_allocation_f_soilW, c_allocation_f_soilT, c_allocation_f_cloud, eco_stressor_prev)  ∈ land.diagnostics
         c_eco_k ∈ land.diagnostics
         c_flow_A_vec ∈ land.diagnostics
@@ -120,8 +120,6 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     Re2R_i = reserve_to_leaf_root * (one(Re2L_i) - Re2L_i) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
 
     # adjust the outflow rate from the flow pools
-    # @show reserve_to_leaf_frac, reserve_to_root_frac
-
     c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, k_shedding_leaf, leaf_to_reserve, one(leaf_to_reserve), helpers.pools.zix.cVegLeaf, helpers)
     leaf_to_reserve_frac = getFrac(leaf_to_reserve, c_eco_k_f_sum)
     k_shedding_leaf_frac = getFrac(k_shedding_leaf, c_eco_k_f_sum)
@@ -140,12 +138,6 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     c_flow_A_vec = repElem(c_flow_A_vec, root_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.root_to_reserve)
     c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_leaf)
     c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_root)
-    # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_leaf] = c_flow_A_vec
-    # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_root] = reserve_to_root_frac
-    # c_flow_A_vec[c_flow_A_vec_ind.leaf_to_reserve] = leaf_to_reserve_frac
-    # c_flow_A_vec[c_flow_A_vec_ind.root_to_reserve] = root_to_reserve_frac
-    # c_flow_A_vec[c_flow_A_vec_ind.k_shedding_leaf] = k_shedding_leaf_frac
-    # c_flow_A_vec[c_flow_A_vec_ind.k_shedding_root] = k_shedding_root_frac
 
     # store the varibles in diagnostic structure
     leaf_to_reserve = leaf_root_to_reserve # should it be divided by 2?

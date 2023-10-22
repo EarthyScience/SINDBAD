@@ -6,7 +6,7 @@ export NDVI_constant
 end
 #! format: on
 
-function compute(params::NDVI_constant, forcing, land, helpers)
+function precompute(params::NDVI_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_NDVI_constant params
 

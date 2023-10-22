@@ -7,7 +7,7 @@ function compute(params::cFlow_CASA, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (p_E_vec, p_F_vec) ∈ land.cFlowVegProperties
-        (p_E_vec, p_F_vec) ∈ land.cFlowSoilProperties
+        (p_E_vec, p_F_vec) ∈ land.diagnostics
         c_flow_E_array ∈ land.diagnostics
         (z_zero, o_one) ∈ land.constants
     end
@@ -56,8 +56,8 @@ Actual transfers of c between pools (of diagonal components) using cFlow_CASA
 
 *Inputs*
  - land.diagnostics.c_flow_E_array: transfer matrix for carbon at ecosystem level
- - land.cFlowSoilProperties.p_E_vec: effect of soil on transfer efficiency between pools
- - land.cFlowSoilProperties.p_F_vec: effect of vegetation on transfer fraction between pools
+ - land.diagnostics.p_E_vec: effect of soil on transfer efficiency between pools
+ - land.diagnostics.p_F_vec: effect of vegetation on transfer fraction between pools
  - land.cFlowVegProperties.p_E_vec: effect of soil on transfer efficiency between pools
  - land.cFlowVegProperties.p_F_vec effect of vegetation on transfer fraction between pools
 
