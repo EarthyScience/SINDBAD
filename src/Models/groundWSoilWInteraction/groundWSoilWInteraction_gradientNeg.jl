@@ -22,7 +22,7 @@ function compute(params::groundWSoilWInteraction_gradientNeg, forcing, land, hel
     @unpack_land begin
         wSat ∈ land.properties
         (ΔsoilW, soilW, ΔgroundW, groundW) ∈ land.pools
-        (n_groundW, z_zero) ∈ land.diagnostics
+        (n_groundW, z_zero) ∈ land.constants
         gw_recharge ∈ land.fluxes
     end
     # maximum groundwater storage

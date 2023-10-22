@@ -23,9 +23,9 @@ function define(params::soilWBase_smax2Layer, forcing, land, helpers)
     end
 
     ## instantiate variables
-    wSat = zero(land.pools.soilW)
-    wFC = zero(land.pools.soilW)
-    wWP = zero(land.pools.soilW)
+    wSat = zero(soilW)
+    wFC = zero(soilW)
+    wWP = zero(soilW)
 
     ## pack land variables
     @pack_land (soil_layer_thickness, wSat, wFC, wWP) → land.properties
@@ -51,7 +51,7 @@ function compute(params::soilWBase_smax2Layer, forcing, land, helpers)
     wAWC = wSat
 
     ## pack land variables
-    @pack_land (wAWC, wFC, wSat, wWP, n_soilW, soil_layer_thickness) → land.properties
+    @pack_land (wAWC, wFC, wSat, wWP, soil_layer_thickness) → land.properties
     return land
 end
 
