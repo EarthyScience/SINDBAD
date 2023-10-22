@@ -8,9 +8,10 @@ end
 
 function define(params::cTauSoilW_CASA, forcing, land, helpers)
     @unpack_cTauSoilW_CASA params
+    @unpack_land cEco ∈ land.pools
 
     ## instantiate variables
-    c_eco_k_f_soilW = one.(land.pools.cEco)
+    c_eco_k_f_soilW = one.(cEco)
 
     ## pack land variables
     @pack_land c_eco_k_f_soilW → land.diagnostics
@@ -84,7 +85,7 @@ Effect of soil moisture on decomposition rates using cTauSoilW_CASA
  - helpers.dates.timesteps_in_year: number of time steps per year
  - land.fluxes.PET: potential evapotranspiration [mm]
  - land.diagnostics.fsoilW_prev: previous time step below ground moisture effect on decomposition processes
- - land.pools.soilW_prev: soil moisture sum of all layers of previous time step [mm]
+ - soilW_prev: soil moisture sum of all layers of previous time step [mm]
  - land.fluxes.rain: rainfall
 
 *Outputs*

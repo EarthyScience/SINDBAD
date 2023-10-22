@@ -12,9 +12,10 @@ end
 
 function define(params::cTauSoilW_GSI, forcing, land, helpers)
     @unpack_cTauSoilW_GSI params
+    @unpack_land cEco ∈ land.pools
 
     ## instantiate variables
-    c_eco_k_f_soilW = one.(land.pools.cEco)
+    c_eco_k_f_soilW = one.(cEco)
 
     ## pack land variables
     @pack_land c_eco_k_f_soilW → land.diagnostics
@@ -31,13 +32,13 @@ function compute(params::cTauSoilW_GSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         wSat ∈ land.properties
-        soilW ∈ land.pools
+        (cEco, cLit, cSoil, soilW) ∈ land.pools
     end
     w_one = one(eltype(soilW))
     ## for the litter pools; only use the top layer"s moisture
     soilW_top = min(frac_to_perc * soilW[1] / wSat[1], frac_to_perc)
     soilW_top_sc = fSoilW_cTau(w_one, opt_soilW_A, opt_soilW_B, w_exp, opt_soilW, soilW_top)
-    cLitZix = getZix(land.pools.cLit, helpers.pools.zix.cLit)
+    cLitZix = getZix(cLit, helpers.pools.zix.cLit)
     for l_zix ∈ cLitZix
         @rep_elem soilW_top_sc → (c_eco_k_f_soilW, l_zix, :cEco)
     end
@@ -46,7 +47,7 @@ function compute(params::cTauSoilW_GSI, forcing, land, helpers)
     soilW_all = min(frac_to_perc * sum(soilW) / sum(wSat), frac_to_perc)
     soilW_all_sc = fSoilW_cTau(w_one, opt_soilW_A, opt_soilW_B, w_exp, opt_soilW, soilW_all)
 
-    cSoilZix = getZix(land.pools.cSoil, helpers.pools.zix.cSoil)
+    cSoilZix = getZix(cSoil, helpers.pools.zix.cSoil)
     for s_zix ∈ cSoilZix
         @rep_elem soilW_all_sc → (c_eco_k_f_soilW, s_zix, :cEco)
     end
@@ -84,7 +85,7 @@ $(SindbadParameters)
 Effect of soil moisture on decomposition rates using cTauSoilW_GSI
 
 *Inputs*
- - land.pools.soilW: soil temperature
+ - soilW: soil temperature
 
 *Outputs*
  - land.diagnostics.c_eco_k_f_soilW: effect of moisture on cTau for different pools

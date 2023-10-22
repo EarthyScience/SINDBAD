@@ -7,11 +7,13 @@ end
 #! format: on
 
 function define(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
+    @unpack_land o_one ∈ land.constants
+
     ## unpack parameters
     @unpack_cAllocationSoilT_gppGSI params
 
     # assume initial prev as one (no stress)
-    c_allocation_f_soilT_prev = land.constants.o_one
+    c_allocation_f_soilT_prev = o_one
 
     @pack_land c_allocation_f_soilT_prev → land.diagnostics
     return land

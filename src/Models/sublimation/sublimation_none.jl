@@ -3,9 +3,9 @@ export sublimation_none
 struct sublimation_none <: sublimation end
 
 function define(params::sublimation_none, forcing, land, helpers)
-
+    @unpack_land snowW ∈ land.pools
     ## calculate variables
-    sublimation = zero(eltype(land.pools.snowW))
+    sublimation = zero(eltype(snowW))
 
     ## pack land variables
     @pack_land sublimation → land.fluxes

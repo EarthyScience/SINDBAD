@@ -14,9 +14,10 @@ end
 
 function define(params::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_cTauVegProperties_CASA params
+    @unpack_land cEco ∈ land.pools
 
     ## instantiate variables
-    c_eco_k_f_veg_props = one.(land.pools.cEco)
+    c_eco_k_f_veg_props = one.(cEco)
 
     ## pack land variables
     @pack_land c_eco_k_f_veg_props → land.diagnostics
@@ -40,7 +41,6 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
     C2LIGNIN = C2LIGNIN #sujan
     ## adjust the annk that are pft dependent directly on the p matrix
     pftVec = unique(PFT)
-    # AGE = zero(land.pools.cEco); #sujan
     for cpN ∈ (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
         # get average age from parameters
         AGE = z_zero #sujan

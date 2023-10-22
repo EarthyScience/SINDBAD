@@ -9,15 +9,16 @@ end
 
 function define(params::rootWaterEfficiency_k2fvegFraction, forcing, land, helpers)
     @unpack_rootWaterEfficiency_k2fvegFraction params
+    @unpack_land soilW ∈ land.pools
 
     ## precomputations/check
 
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
-    if length(land.pools.soilW) != 2
+    if length(soilW) != 2
         error("rootWaterEfficiency_k2fvegFraction approach works for 2 soil layers only.")
     end
     # create the arrays to fill in the soil properties 
-    root_water_efficiency = one.(land.pools.soilW)
+    root_water_efficiency = one.(soilW)
 
     ## pack land variables
     @pack_land root_water_efficiency → land.diagnostics

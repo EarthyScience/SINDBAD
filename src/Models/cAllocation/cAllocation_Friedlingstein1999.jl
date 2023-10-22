@@ -10,15 +10,20 @@ end
 
 function define(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
     @unpack_cAllocation_Friedlingstein1999 params
+    @unpack_land begin 
+        cEco ∈ land.pools
+        cEcoZix = zix ∈ helpers.pools 
+    end
 
     ## instantiate variables
-    c_allocation = zero(land.pools.cEco) #sujan
-    c_allocation_to_veg = zero(land.pools.cEco)
+    c_allocation = zero(cEco) #sujan
+    c_allocation_to_veg = zero(cEco)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
     cVeg_nzix = []
     cVeg_zix = []
+    land_pools = getfield(land, :pools)
     for cpName ∈ cVeg_names
-        zix = getZix(getfield(land.pools, cpName), helpers.pools.zix, cpName)
+        zix = getZix(getfield(land_pools, cpName), cEcoZix, cpName)
         nZix = oftype(first(c_allocation), length(zix))
         push!(cVeg_nzix, nZix)
         push!(cVeg_zix, zix)

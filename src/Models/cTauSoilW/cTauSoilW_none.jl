@@ -3,9 +3,10 @@ export cTauSoilW_none
 struct cTauSoilW_none <: cTauSoilW end
 
 function define(params::cTauSoilW_none, forcing, land, helpers)
+    @unpack_land cEco ∈ land.pools
 
     ## calculate variables
-    c_eco_k_f_soilW = one.(land.pools.cEco)
+    c_eco_k_f_soilW = one.(cEco)
 
     ## pack land variables
     @pack_land c_eco_k_f_soilW → land.diagnostics

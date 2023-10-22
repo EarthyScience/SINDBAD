@@ -3,10 +3,15 @@ export gppDemand_min
 struct gppDemand_min <: gppDemand end
 
 function define(params::gppDemand_min, forcing, land, helpers)
-    gpp_climate_stressors = ones(typeof(land.diagnostics.gpp_potential), 4)
+    @unpack_land begin
+        land_pools = pools ∈ land 
+        gpp_potential ∈ land.diagnostics
+    end
 
-    if hasproperty(land.pools, :soilW)
-        if land.pools.soilW isa SVector
+    gpp_climate_stressors = ones(typeof(gpp_potential), 4)
+    if hasproperty(land_pools, :soilW)
+        @unpack_land soilW ∈ land.pools
+        if soilW isa SVector
             gpp_climate_stressors = SVector{4}(gpp_climate_stressors)
         end
     end
