@@ -31,6 +31,7 @@ end
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 
+@time output_all = runExperimentFullOutput(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];
 plotdat = run_helpers.output_array;
