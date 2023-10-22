@@ -6,19 +6,7 @@ export fAPAR_constant
 end
 #! format: on
 
-function define(params::fAPAR_constant, forcing, land, helpers)
-    ## unpack parameters
-    @unpack_fAPAR_constant params
-
-    ## calculate variables
-    fAPAR = constant_fAPAR
-
-    ## pack land variables
-    @pack_land fAPAR → land.states
-    return land
-end
-
-function compute(params::fAPAR_constant, forcing, land, helpers)
+function precompute(params::fAPAR_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_fAPAR_constant params
 

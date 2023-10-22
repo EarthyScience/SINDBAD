@@ -6,7 +6,7 @@ export EVI_constant
 end
 #! format: on
 
-function compute(params::EVI_constant, forcing, land, helpers)
+function precompute(params::EVI_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_EVI_constant params
 

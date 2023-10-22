@@ -6,7 +6,7 @@ export LAI_constant
 end
 #! format: on
 
-function compute(params::LAI_constant, forcing, land, helpers)
+function precompute(params::LAI_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_LAI_constant params
 

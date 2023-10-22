@@ -6,7 +6,7 @@ export vegFraction_constant
 end
 #! format: on
 
-function compute(params::vegFraction_constant, forcing, land, helpers)
+function precompute(params::vegFraction_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_vegFraction_constant params
 

@@ -6,7 +6,7 @@ export WUE_constant
 end
 #! format: on
 
-function compute(params::WUE_constant, forcing, land, helpers)
+function precompute(params::WUE_constant, forcing, land, helpers)
     ## unpack parameters
     @unpack_WUE_constant params
 
