@@ -26,15 +26,15 @@ end
 function compute(params::sublimation_GLEAM, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_sublimation_GLEAM params
-    @unpack_forcing (f_psurf_day, f_rn, f_airT_day) ∈ forcing
+    @unpack_nt (f_psurf_day, f_rn, f_airT_day) ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        frac_snow ∈ land.states
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.pools
-        (z_zero, o_one, t_two) ∈ land.constants
-        n_snowW ∈ land.constants
+    @unpack_nt begin
+        frac_snow ⇐ land.states
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
+        (z_zero, o_one, t_two) ⇐ land.constants
+        n_snowW ⇐ land.constants
     end
     # convert temperature to Kelvin
     T = f_airT_day + deg_to_k
@@ -64,22 +64,22 @@ function compute(params::sublimation_GLEAM, forcing, land, helpers)
     # Then sublimation [mm/day] is calculated in GLEAM using a P.T. equation
     sublimation = min(snowW[1] + ΔsnowW[1], PTtermSub * frac_snow) # assumes that sublimation occurs from the 1st snow layer if there is multilayered snow model
 
-    @add_to_elem -sublimation → (ΔsnowW, 1, :snowW)
+    @add_to_elem -sublimation ⇒ (ΔsnowW, 1, :snowW)
 
     ## pack land variables
-    @pack_land begin
-        sublimation → land.fluxes
-        PTtermSub → land.sublimation
-        ΔsnowW → land.pools
+    @pack_nt begin
+        sublimation ⇒ land.fluxes
+        PTtermSub ⇒ land.sublimation
+        ΔsnowW ⇒ land.pools
     end
     return land
 end
 
 function update(params::sublimation_GLEAM, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.pools
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
     # update snow pack
     snowW[1] = snowW[1] + ΔsnowW[1]
@@ -88,9 +88,9 @@ function update(params::sublimation_GLEAM, forcing, land, helpers)
     ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
 
     ## pack land variables
-    @pack_land begin
-        snowW → land.pools
-        ΔsnowW → land.pools
+    @pack_nt begin
+        snowW ⇒ land.pools
+        ΔsnowW ⇒ land.pools
     end
     return land
 end

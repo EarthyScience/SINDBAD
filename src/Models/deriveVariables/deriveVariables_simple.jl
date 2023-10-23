@@ -3,10 +3,10 @@ export deriveVariables_simple
 struct deriveVariables_simple <: deriveVariables end
 
 function compute(params::deriveVariables_simple, forcing, land, helpers)
-    @unpack_land cVegWood ∈ land.pools
+    @unpack_nt cVegWood ⇐ land.pools
     ## calculate variables
     aboveground_biomass = cVegWood[1]
-    @pack_land aboveground_biomass → land.states
+    @pack_nt aboveground_biomass ⇒ land.states
     return land
 end
 

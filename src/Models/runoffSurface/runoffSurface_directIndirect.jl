@@ -12,12 +12,12 @@ function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
     @unpack_runoffSurface_directIndirect params
 
     ## unpack land variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.pools
-        overland_runoff ∈ land.fluxes
-        (z_zero, o_one) ∈ land.constants
-        n_surfaceW ∈ land.constants
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
+        overland_runoff ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
+        n_surfaceW ⇐ land.constants
     end
     # fraction of overland runoff that recharges the surface water & the
     # fraction that flows out directly
@@ -31,13 +31,13 @@ function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
     surface_runoff = surface_runoff_direct + surface_runoff_indirect
 
     # update the delta storage
-    @add_to_elem suw_recharge → (ΔsurfaceW, 1, :surfaceW) # assumes all the recharge supplies the first surface water layer
+    @add_to_elem suw_recharge ⇒ (ΔsurfaceW, 1, :surfaceW) # assumes all the recharge supplies the first surface water layer
     ΔsurfaceW = addToEachElem(ΔsurfaceW, - surface_runoff_indirect / n_surfaceW)
 
     ## pack land variables
-    @pack_land begin
-        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) → land.fluxes
-        ΔsurfaceW → land.pools
+    @pack_nt begin
+        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) ⇒ land.fluxes
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end
@@ -46,9 +46,9 @@ function update(params::runoffSurface_directIndirect, forcing, land, helpers)
     @unpack_runoffSurface_directIndirect params
 
     ## unpack variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.pools
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
     end
 
     ## update storage pools
@@ -58,9 +58,9 @@ function update(params::runoffSurface_directIndirect, forcing, land, helpers)
     ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
     ## pack land variables
-    @pack_land begin
-        surfaceW → land.pools
-        ΔsurfaceW → land.pools
+    @pack_nt begin
+        surfaceW ⇒ land.pools
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end

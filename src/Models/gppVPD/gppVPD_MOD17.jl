@@ -10,15 +10,15 @@ end
 function compute(params::gppVPD_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_MOD17 params
-    @unpack_forcing f_VPD_day ∈ forcing
-    @unpack_land (z_zero, o_one) ∈ land.constants
+    @unpack_nt f_VPD_day ⇐ forcing
+    @unpack_nt (z_zero, o_one) ⇐ land.constants
 
     ## calculate variables
     vsc = (VPD_max - f_VPD_day) / (VPD_max - VPD_min)
     gpp_f_vpd = clampZeroOne(vsc)
 
     ## pack land variables
-    @pack_land gpp_f_vpd → land.diagnostics
+    @pack_nt gpp_f_vpd ⇒ land.diagnostics
     return land
 end
 

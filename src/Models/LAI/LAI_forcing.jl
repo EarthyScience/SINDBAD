@@ -4,11 +4,11 @@ struct LAI_forcing <: LAI end
 
 function compute(params::LAI_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing f_LAI ∈ forcing
+    @unpack_nt f_LAI ⇐ forcing
 
     LAI = f_LAI
     ## pack land variables
-    @pack_land LAI → land.states
+    @pack_nt LAI ⇒ land.states
     return land
 end
 

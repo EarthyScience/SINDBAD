@@ -3,13 +3,13 @@ export autoRespiration_none
 struct autoRespiration_none <: autoRespiration end
 
 function define(params::autoRespiration_none, forcing, land, helpers)
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
     c_eco_efflux = zero(cEco)
 
     ## pack land variables
-    @pack_land c_eco_efflux → land.states
+    @pack_nt c_eco_efflux ⇒ land.states
     return fluxes
 end
 

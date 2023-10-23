@@ -3,29 +3,29 @@ export cCycle_CASA, spin_cCycle_CASA
 struct cCycle_CASA <: cCycle end
 
 function define(params::cCycle_CASA, forcing, land, helpers)
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
     ## instantiate variables
     c_eco_efflux = zero(cEco) #sujan moved from get states
     c_eco_influx = zero(cEco)
     c_eco_flow = zero(cEco)
 
     ## pack land variables
-    @pack_land (c_eco_efflux, c_eco_influx, c_eco_flow) → land.cCycle
+    @pack_nt (c_eco_efflux, c_eco_influx, c_eco_flow) ⇒ land.cCycle
     return land
 end
 
 function compute(params::cCycle_CASA, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        (c_eco_efflux, c_eco_influx, c_eco_flow) ∈ land.cCycle
-        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ∈ land.fluxes
-        (cEco, cVeg) ∈ land.pools
-        gpp ∈ land.fluxes
-        (c_eco_k, c_allocation) ∈ land.diagnostics
-        (p_E_vec, p_F_vec, p_giver, p_taker) ∈ land.cFlow
-        c_flow_order ∈ land.constants
-        c_eco_τ ∈ land.diagnostics
+    @unpack_nt begin
+        (c_eco_efflux, c_eco_influx, c_eco_flow) ⇐ land.cCycle
+        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ⇐ land.fluxes
+        (cEco, cVeg) ⇐ land.pools
+        gpp ⇐ land.fluxes
+        (c_eco_k, c_allocation) ⇐ land.diagnostics
+        (p_E_vec, p_F_vec, p_giver, p_taker) ⇐ land.cFlow
+        c_flow_order ⇐ land.constants
+        c_eco_τ ⇐ land.diagnostics
     end
     # NUMBER OF TIME STEPS PER YEAR
     ## these all need to be zeros maybe is taken care automatically
@@ -55,9 +55,9 @@ function compute(params::cCycle_CASA, forcing, land, helpers)
     nee = eco_respiration - gpp
 
     ## pack land variables
-    @pack_land begin
-        (nee, c_eco_npp, auto_respiration, eco_respiration, hetero_respiration) → land.fluxes
-        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) → land.states
+    @pack_nt begin
+        (nee, c_eco_npp, auto_respiration, eco_respiration, hetero_respiration) ⇒ land.fluxes
+        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ⇒ land.states
     end
     return land
 end
@@ -148,15 +148,15 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
   - the input datasets [f, fe, fx, s, d] have to have a full year (or cycle  of years) that will be used as the recycling dataset for the  determination of C pools at equilibrium
 """
 function spin_cCycle_CASA(forcing, land, helpers, NI2E)
-    @unpack_forcing f_airT ∈ forcing
+    @unpack_nt f_airT ⇐ forcing
 
-    @unpack_land begin
-        cEco ∈ land.pools
-        (c_allocation, cEco, p_autoRespiration_km4su, p_cFlow_A, p_cTau_k) ∈ land.history
-        gpp ∈ land.fluxes
-        (p_giver, p_taker) ∈ land.cFlow
-        YG ∈ land.diagnostics
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        cEco ⇐ land.pools
+        (c_allocation, cEco, p_autoRespiration_km4su, p_cFlow_A, p_cTau_k) ⇐ land.history
+        gpp ⇐ land.fluxes
+        (p_giver, p_taker) ⇐ land.cFlow
+        YG ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
@@ -292,6 +292,6 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     out = runForward(selected_models, forcing, out, modelnames, helpers)
 
     ## pack land variables
-    @pack_land cEco → land.pools
+    @pack_nt cEco ⇒ land.pools
     return land
 end

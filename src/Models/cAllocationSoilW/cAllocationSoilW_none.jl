@@ -4,13 +4,13 @@ struct cAllocationSoilW_none <: cAllocationSoilW end
 
 function define(params::cAllocationSoilW_none, forcing, land, helpers)
 
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
     c_allocation_f_soilW = one(first(cEco))
 
     ## pack land variables
-    @pack_land c_allocation_f_soilW → land.diagnostics
+    @pack_nt c_allocation_f_soilW ⇒ land.diagnostics
     return land
 end
 

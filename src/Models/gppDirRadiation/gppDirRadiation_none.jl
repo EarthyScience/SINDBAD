@@ -3,12 +3,12 @@ export gppDirRadiation_none
 struct gppDirRadiation_none <: gppDirRadiation end
 
 function define(params::gppDirRadiation_none, forcing, land, helpers)
-    @unpack_land o_one ∈ land.constants
+    @unpack_nt o_one ⇐ land.constants
     ## calculate variables
     gpp_f_light = o_one
 
     ## pack land variables
-    @pack_land gpp_f_light → land.diagnostics
+    @pack_nt gpp_f_light ⇒ land.diagnostics
     return land
 end
 

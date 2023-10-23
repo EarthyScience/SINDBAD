@@ -14,7 +14,7 @@ function precompute(params::vegFraction_constant, forcing, land, helpers)
     frac_vegetation = constant_frac_vegetation
 
     ## pack land variables
-    @pack_land frac_vegetation → land.states
+    @pack_nt frac_vegetation ⇒ land.states
     return land
 end
 

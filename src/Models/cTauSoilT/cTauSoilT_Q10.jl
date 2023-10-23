@@ -11,14 +11,14 @@ end
 function compute(params::cTauSoilT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_cTauSoilT_Q10 params
-    @unpack_forcing f_airT ∈ forcing
+    @unpack_nt f_airT ⇐ forcing
 
     ## calculate variables
     # CALCULATE EFFECT OF TEMPERATURE ON SOIL CARBON FLUXES
     c_eco_k_f_soilT = Q10^((f_airT - ref_airT) / Q10_base)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soilT → land.diagnostics
+    @pack_nt c_eco_k_f_soilT ⇒ land.diagnostics
     return land
 end
 

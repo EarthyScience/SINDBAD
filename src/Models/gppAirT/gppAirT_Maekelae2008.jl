@@ -10,22 +10,22 @@ end
 
 function define(params::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_forcing f_airT_day ∈ forcing
+    @unpack_nt f_airT_day ⇐ forcing
 
     X_prev = f_airT_day
 
     ## pack land variables
-    @pack_land X_prev → land.diagnostics
+    @pack_nt X_prev ⇒ land.diagnostics
     return land
 end
 
 function compute(params::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_Maekelae2008 params
-    @unpack_forcing f_airT_day ∈ forcing
-    @unpack_land begin
-        o_one ∈ land.constants
-        X_prev ∈ land.diagnostics
+    @unpack_nt f_airT_day ⇐ forcing
+    @unpack_nt begin
+        o_one ⇐ land.constants
+        X_prev ⇐ land.diagnostics
     end
 
     ## calculate variables
@@ -40,7 +40,7 @@ function compute(params::gppAirT_Maekelae2008, forcing, land, helpers)
     X_prev = X
 
     ## pack land variables
-    @pack_land (gpp_f_airT, X_prev) → land.diagnostics
+    @pack_nt (gpp_f_airT, X_prev) ⇒ land.diagnostics
     return land
 end
 

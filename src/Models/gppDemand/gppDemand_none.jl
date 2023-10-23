@@ -3,7 +3,7 @@ export gppDemand_none
 struct gppDemand_none <: gppDemand end
 
 function define(params::gppDemand_none, forcing, land, helpers)
-    @unpack_land (o_one, z_zero) ∈ land.constants
+    @unpack_nt (o_one, z_zero) ⇐ land.constants
 
     gpp_f_climate = o_one
 
@@ -11,7 +11,7 @@ function define(params::gppDemand_none, forcing, land, helpers)
     gpp_demand = z_zero
 
     ## pack land variables
-    @pack_land (gpp_f_climate, gpp_demand) → land.diagnostics
+    @pack_nt (gpp_f_climate, gpp_demand) ⇒ land.diagnostics
     return land
 end
 

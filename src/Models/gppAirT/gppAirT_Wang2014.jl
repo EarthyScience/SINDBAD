@@ -9,14 +9,14 @@ end
 function compute(params::gppAirT_Wang2014, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_Wang2014 params
-    @unpack_forcing f_airT_day ∈ forcing
-    @unpack_land (z_zero, o_one) ∈ land.diagnostics
+    @unpack_nt f_airT_day ⇐ forcing
+    @unpack_nt (z_zero, o_one) ⇐ land.diagnostics
 
     ## calculate variables
     gpp_f_airT = clampZeroOne(f_airT_day / Tmax)
 
     ## pack land variables
-    @pack_land gpp_f_airT → land.diagnostics
+    @pack_nt gpp_f_airT ⇒ land.diagnostics
     return land
 end
 

@@ -14,13 +14,13 @@ end
 
 function define(params::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_cTauVegProperties_CASA params
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
     c_eco_k_f_veg_props = one.(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_veg_props → land.diagnostics
+    @pack_nt c_eco_k_f_veg_props ⇒ land.diagnostics
     return land
 end
 
@@ -29,10 +29,10 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_cTauVegProperties_CASA params
 
     ## unpack land variables
-    @unpack_land begin
-        PFT ∈ land.properties
-        c_eco_k_f_veg_props ∈ land.diagnostics
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        PFT ⇐ land.properties
+        c_eco_k_f_veg_props ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
@@ -78,10 +78,10 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
     c_eco_k_f_veg_props[helpers.pools.zix.cLitRootFS] = LIGEFF
 
     ## pack land variables
-    @pack_land begin
-        c_eco_τ → land.diagnostics
-        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN) → land.properties
-        c_eco_k_f_veg_props → land.diagnostics
+    @pack_nt begin
+        c_eco_τ ⇒ land.diagnostics
+        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN) ⇒ land.properties
+        c_eco_k_f_veg_props ⇒ land.diagnostics
     end
     return land
 end

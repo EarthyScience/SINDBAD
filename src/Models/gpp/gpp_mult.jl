@@ -3,16 +3,16 @@ export gpp_mult
 struct gpp_mult <: gpp end
 
 function define(params::gpp_mult, forcing, land, helpers)
-    @unpack_land begin
-        z_zero ∈ land.constants
+    @unpack_nt begin
+        z_zero ⇐ land.constants
     end
 
     AllScGPP = z_zero
     gpp = z_zero
     ## pack land variables
-    @pack_land begin
-        AllScGPP → land.gpp
-        gpp → land.fluxes
+    @pack_nt begin
+        AllScGPP ⇒ land.gpp
+        gpp ⇒ land.fluxes
     end
     return land
 end
@@ -20,11 +20,11 @@ end
 function compute(params::gpp_mult, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        gpp_f_climate ∈ land.diagnostics
-        fAPAR ∈ land.states
-        gpp_potential ∈ land.diagnostics
-        gpp_f_soilW ∈ land.diagnostics
+    @unpack_nt begin
+        gpp_f_climate ⇐ land.diagnostics
+        fAPAR ⇐ land.states
+        gpp_potential ⇐ land.diagnostics
+        gpp_f_soilW ⇐ land.diagnostics
     end
 
     AllScGPP = gpp_f_climate * gpp_f_soilW #sujan
@@ -32,9 +32,9 @@ function compute(params::gpp_mult, forcing, land, helpers)
     gpp = fAPAR * gpp_potential * AllScGPP
 
     ## pack land variables
-    @pack_land begin
-        gpp → land.fluxes
-        AllScGPP → land.gpp
+    @pack_nt begin
+        gpp ⇒ land.fluxes
+        AllScGPP ⇒ land.gpp
     end
     return land
 end

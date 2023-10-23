@@ -3,7 +3,7 @@ export cAllocation_GSI
 struct cAllocation_GSI <: cAllocation end
 
 function define(params::cAllocation_GSI, forcing, land, helpers)
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
     ## instantiate variables
     c_allocation = zero(cEco)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
@@ -21,9 +21,9 @@ function define(params::cAllocation_GSI, forcing, land, helpers)
     cVeg_zix = Tuple(cVeg_zix)
     cVeg_nzix = Tuple(cVeg_nzix)
     ## pack land variables
-    @pack_land begin
-        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg) → land.cAllocation
-        c_allocation → land.diagnostics
+    @pack_nt begin
+        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg) ⇒ land.cAllocation
+        c_allocation ⇒ land.diagnostics
     end
     return land
 end
@@ -31,12 +31,12 @@ end
 function compute(params::cAllocation_GSI, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg) ∈ land.cAllocation
-        c_allocation ∈ land.diagnostics
-        c_allocation_f_soilW ∈ land.diagnostics
-        c_allocation_f_soilT ∈ land.diagnostics
-        t_two ∈ land.constants
+    @unpack_nt begin
+        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg) ⇐ land.cAllocation
+        c_allocation ⇐ land.diagnostics
+        c_allocation_f_soilW ⇐ land.diagnostics
+        c_allocation_f_soilT ⇐ land.diagnostics
+        t_two ⇐ land.constants
     end
     c_two = one(c_allocation_f_soilT) + one(c_allocation_f_soilT)
     # allocation to root; wood & leaf
@@ -50,9 +50,9 @@ function compute(params::cAllocation_GSI, forcing, land, helpers)
     #     a2W = DASW./(DASW+DAST)./2;
     #     a2R = DAST./(DASW+DAST);
 
-    @rep_elem a_cVegRoot → (c_allocation_to_veg, 1, :cEco)
-    @rep_elem a_cVegWood → (c_allocation_to_veg, 2, :cEco)
-    @rep_elem a_cVegLeaf → (c_allocation_to_veg, 3, :cEco)
+    @rep_elem a_cVegRoot ⇒ (c_allocation_to_veg, 1, :cEco)
+    @rep_elem a_cVegWood ⇒ (c_allocation_to_veg, 2, :cEco)
+    @rep_elem a_cVegLeaf ⇒ (c_allocation_to_veg, 3, :cEco)
 
     # distribute the allocation according to pools
     for cl in eachindex(cVeg_names)
@@ -60,11 +60,11 @@ function compute(params::cAllocation_GSI, forcing, land, helpers)
         nZix = cVeg_nzix[cl]
         for ix ∈ zix
             c_allocation_to_veg_ix = c_allocation_to_veg[cl] / nZix
-            @rep_elem c_allocation_to_veg_ix → (c_allocation, ix, :cEco)
+            @rep_elem c_allocation_to_veg_ix ⇒ (c_allocation, ix, :cEco)
         end
     end
 
-    @pack_land c_allocation → land.diagnostics
+    @pack_nt c_allocation ⇒ land.diagnostics
 
     return land
 end

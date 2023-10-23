@@ -11,9 +11,9 @@ function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land,
     @unpack_groundWSurfaceWInteraction_fracGradient params
 
     ## unpack land variables
-    @unpack_land begin
-        (ΔsurfaceW, ΔgroundW, groundW, surfaceW) ∈ land.pools
-        (n_surfaceW, n_groundW) ∈ land.constants
+    @unpack_nt begin
+        (ΔsurfaceW, ΔgroundW, groundW, surfaceW) ⇐ land.pools
+        (n_surfaceW, n_groundW) ⇐ land.constants
     end
 
     ## calculate variables
@@ -24,9 +24,9 @@ function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land,
     ΔsurfaceW = addToEachElem(ΔsurfaceW, gw_to_suw_flux / n_surfaceW)
 
     ## pack land variables
-    @pack_land begin
-        gw_to_suw_flux → land.fluxes
-        (ΔsurfaceW, ΔgroundW) → land.pools
+    @pack_nt begin
+        gw_to_suw_flux ⇒ land.fluxes
+        (ΔsurfaceW, ΔgroundW) ⇒ land.pools
     end
 
     return land
@@ -34,9 +34,9 @@ end
 
 function update(params::groundWSurfaceWInteraction_fracGradient, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        (groundW, surfaceW) ∈ land.pools
-        (ΔgroundW, ΔsurfaceW) ∈ land.states
+    @unpack_nt begin
+        (groundW, surfaceW) ⇐ land.pools
+        (ΔgroundW, ΔsurfaceW) ⇐ land.states
     end
 
     ## update storage pools
@@ -48,8 +48,8 @@ function update(params::groundWSurfaceWInteraction_fracGradient, forcing, land, 
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     ## pack land variables
-    @pack_land begin
-        (groundW, ΔgroundW, surfaceW, ΔsurfaceW) → land.pools
+    @pack_nt begin
+        (groundW, ΔgroundW, surfaceW, ΔsurfaceW) ⇒ land.pools
     end
     return land
 end

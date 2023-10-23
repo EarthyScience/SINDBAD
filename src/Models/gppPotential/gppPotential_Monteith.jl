@@ -9,14 +9,14 @@ end
 function compute(params::gppPotential_Monteith, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppPotential_Monteith params
-    @unpack_forcing f_PAR ∈ forcing
+    @unpack_nt f_PAR ⇐ forcing
 
     ## calculate variables
     # set rueGPP to a constant
     gpp_potential = εmax * f_PAR
 
     ## pack land variables
-    @pack_land gpp_potential → land.diagnostics
+    @pack_nt gpp_potential ⇒ land.diagnostics
     return land
 end
 

@@ -4,9 +4,9 @@ struct cTauVegProperties_none <: cTauVegProperties end
 
 function define(params::cTauVegProperties_none, forcing, land, helpers)
 
-    @unpack_land begin
-        (z_zero, o_one) ∈ land.constants
-        cEco ∈ land.pools        
+    @unpack_nt begin
+        (z_zero, o_one) ⇐ land.constants
+        cEco ⇐ land.pools        
     end 
 
     ## calculate variables
@@ -18,8 +18,8 @@ function define(params::cTauVegProperties_none, forcing, land, helpers)
     LIGEFF = z_zero
 
     ## pack land variables
-    @pack_land (LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN) → land.properties
-    @pack_land c_eco_k_f_veg_props → land.diagnostics
+    @pack_nt (LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN) ⇒ land.properties
+    @pack_nt c_eco_k_f_veg_props ⇒ land.diagnostics
     return land
 
 end

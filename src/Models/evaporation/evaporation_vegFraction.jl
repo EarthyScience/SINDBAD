@@ -12,12 +12,12 @@ function compute(params::evaporation_vegFraction, forcing, land, helpers)
     @unpack_evaporation_vegFraction params
 
     ## unpack land variables
-    @unpack_land begin
-        frac_vegetation ∈ land.states
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
-        PET ∈ land.fluxes
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        frac_vegetation ⇐ land.states
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        PET ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
     end
 
     # multiply equilibrium PET with αSoil & [1.0 - frac_vegetation] to get potential soil evap
@@ -28,13 +28,13 @@ function compute(params::evaporation_vegFraction, forcing, land, helpers)
     evaporation = min(PET_evaporation, k_evaporation * (soilW[1] + ΔsoilW[1]))
 
     # update soil moisture changes
-    @add_to_elem -evaporation → (ΔsoilW, 1, :soilW)
+    @add_to_elem -evaporation ⇒ (ΔsoilW, 1, :soilW)
 
     ## pack land variables
-    @pack_land begin
-        PET_evaporation → land.fluxes
-        evaporation → land.fluxes
-        ΔsoilW → land.pools
+    @pack_nt begin
+        PET_evaporation ⇒ land.fluxes
+        evaporation ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
@@ -43,9 +43,9 @@ function update(params::evaporation_vegFraction, forcing, land, helpers)
     @unpack_evaporation_bareFraction params
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -56,9 +56,9 @@ function update(params::evaporation_vegFraction, forcing, land, helpers)
     ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
     ## pack land variables
-    @pack_land begin
-        soilW → land.pools
-        ΔsoilW → land.pools
+    @pack_nt begin
+        soilW ⇒ land.pools
+        ΔsoilW ⇒ land.pools
     end
     return land
 end

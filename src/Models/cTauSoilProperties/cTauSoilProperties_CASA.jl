@@ -8,13 +8,13 @@ end
 
 function define(params::cTauSoilProperties_CASA, forcing, land, helpers)
     @unpack_cTauSoilProperties_CASA params
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
     c_eco_k_f_soil_props = one.(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soil_props → land.diagnostics
+    @pack_nt c_eco_k_f_soil_props ⇒ land.diagnostics
     return land
 end
 
@@ -23,10 +23,10 @@ function compute(params::cTauSoilProperties_CASA, forcing, land, helpers)
     @unpack_cTauSoilProperties_CASA params
 
     ## unpack land variables
-    @unpack_land c_eco_k_f_soil_props ∈ land.diagnostics
+    @unpack_nt c_eco_k_f_soil_props ⇐ land.diagnostics
 
     ## unpack land variables
-    @unpack_land (st_clay, st_silt) ∈ land.properties
+    @unpack_nt (st_clay, st_silt) ⇐ land.properties
 
     ## calculate variables
     #sujan: moving clay & silt from land.properties to p_soilWBase.
@@ -38,7 +38,7 @@ function compute(params::cTauSoilProperties_CASA, forcing, land, helpers)
     # (ineficient, should be pix zix_mic)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soil_props → land.diagnostics
+    @pack_nt c_eco_k_f_soil_props ⇒ land.diagnostics
     return land
 end
 

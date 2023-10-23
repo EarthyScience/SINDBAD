@@ -12,10 +12,10 @@ function compute(params::runoffBase_Zhang2008, forcing, land, helpers)
     @unpack_runoffBase_Zhang2008 params
 
     ## unpack land variables
-    @unpack_land begin
-        groundW ∈ land.pools
-        ΔgroundW ∈ land.pools
-        n_groundW ∈ land.constants
+    @unpack_nt begin
+        groundW ⇐ land.pools
+        ΔgroundW ⇐ land.pools
+        n_groundW ⇐ land.constants
     end
 
     ## calculate variables
@@ -27,9 +27,9 @@ function compute(params::runoffBase_Zhang2008, forcing, land, helpers)
     ΔgroundW = addToEachElem(ΔgroundW, -base_runoff / n_groundW)
 
     ## pack land variables
-    @pack_land begin
-        base_runoff → land.fluxes
-        ΔgroundW → land.pools
+    @pack_nt begin
+        base_runoff ⇒ land.fluxes
+        ΔgroundW ⇒ land.pools
     end
     return land
 end
@@ -38,9 +38,9 @@ function update(params::runoffBase_Zhang2008, forcing, land, helpers)
     @unpack_runoffBase_Zhang2008 params
 
     ## unpack variables
-    @unpack_land begin
-        groundW ∈ land.pools
-        ΔgroundW ∈ land.pools
+    @unpack_nt begin
+        groundW ⇐ land.pools
+        ΔgroundW ⇐ land.pools
     end
 
     ## update variables
@@ -50,9 +50,9 @@ function update(params::runoffBase_Zhang2008, forcing, land, helpers)
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     # ## pack land variables
-    # @pack_land begin
-    # 	groundW → land.pools
-    # 	# ΔgroundW → land.pools
+    # @pack_nt begin
+    # 	groundW ⇒ land.pools
+    # 	# ΔgroundW ⇒ land.pools
     # end
     return land
 end

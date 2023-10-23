@@ -5,17 +5,17 @@ struct gpp_coupled <: gpp end
 function compute(params::gpp_coupled, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        transpiration_supply ∈ land.diagnostics
-        gpp_f_soilW ∈ land.diagnostics
-        gpp_demand ∈ land.diagnostics
-        WUE ∈ land.diagnostics
+    @unpack_nt begin
+        transpiration_supply ⇐ land.diagnostics
+        gpp_f_soilW ⇐ land.diagnostics
+        gpp_demand ⇐ land.diagnostics
+        WUE ⇐ land.diagnostics
     end
 
     gpp = min(transpiration_supply * WUE, gpp_demand * gpp_f_soilW)
 
     ## pack land variables
-    @pack_land gpp → land.fluxes
+    @pack_nt gpp ⇒ land.fluxes
     return land
 end
 

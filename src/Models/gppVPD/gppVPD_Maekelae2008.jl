@@ -9,15 +9,15 @@ end
 function compute(params::gppVPD_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_Maekelae2008 params
-    @unpack_forcing f_VPD_day ∈ forcing
-    @unpack_land o_one ∈ land.constants
+    @unpack_nt f_VPD_day ⇐ forcing
+    @unpack_nt o_one ⇐ land.constants
 
     ## calculate variables
     gpp_f_vpd = exp(-k * f_VPD_day)
     gpp_f_vpd = minOne(gpp_f_vpd)
 
     ## pack land variables
-    @pack_land gpp_f_vpd → land.diagnostics
+    @pack_nt gpp_f_vpd ⇒ land.diagnostics
     return land
 end
 

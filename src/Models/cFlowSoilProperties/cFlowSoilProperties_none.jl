@@ -3,9 +3,9 @@ export cFlowSoilProperties_none
 struct cFlowSoilProperties_none <: cFlowSoilProperties end
 
 function define(params::cFlowSoilProperties_none, forcing, land, helpers)
-    @unpack_land begin
-        c_taker ∈ land.constants
-        cEco ∈ land.pools
+    @unpack_nt begin
+        c_taker ⇐ land.constants
+        cEco ⇐ land.pools
     end 
     ## calculate variables
     p_E_vec = eltype(cEco).(zero([c_taker...]))
@@ -20,7 +20,7 @@ function define(params::cFlowSoilProperties_none, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (p_E_vec, p_F_vec) → land.diagnostics
+    @pack_nt (p_E_vec, p_F_vec) ⇒ land.diagnostics
     return land
 end
 
