@@ -4,7 +4,7 @@ struct runoff_sum <: runoff end
 
 function define(params::runoff_sum, forcing, land, helpers)
 
-    @unpack_land z_zero ∈ land.constants
+    @unpack_nt z_zero ⇐ land.constants
 
     ## set variables to zero
     base_runoff = z_zero
@@ -12,8 +12,8 @@ function define(params::runoff_sum, forcing, land, helpers)
     surface_runoff = z_zero
 
     ## pack land variables
-    @pack_land begin
-        (runoff, base_runoff, surface_runoff) → land.fluxes
+    @pack_nt begin
+        (runoff, base_runoff, surface_runoff) ⇒ land.fluxes
     end
     return land
 end
@@ -21,13 +21,13 @@ end
 function compute(params::runoff_sum, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land (base_runoff, surface_runoff) ∈ land.fluxes
+    @unpack_nt (base_runoff, surface_runoff) ⇐ land.fluxes
 
     ## calculate variables
     runoff = surface_runoff + base_runoff
 
     ## pack land variables
-    @pack_land runoff → land.fluxes
+    @pack_nt runoff ⇒ land.fluxes
     return land
 end
 

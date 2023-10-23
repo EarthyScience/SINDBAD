@@ -5,14 +5,14 @@ struct rootWaterUptake_topBottom <: rootWaterUptake end
 function define(params::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        soilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
     end
     root_water_uptake = zero(soilW)
 
     ## pack land variables
-    @pack_land begin
-        root_water_uptake → land.fluxes
+    @pack_nt begin
+        root_water_uptake ⇒ land.fluxes
     end
     return land
 end
@@ -20,11 +20,11 @@ end
 function compute(params::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        PAW ∈ land.states
-        (soilW, ΔsoilW) ∈ land.pools
-        root_water_uptake ∈ land.fluxes
-        transpiration ∈ land.fluxes
+    @unpack_nt begin
+        PAW ⇐ land.states
+        (soilW, ΔsoilW) ⇐ land.pools
+        root_water_uptake ⇐ land.fluxes
+        transpiration ⇐ land.fluxes
     end
     # get the transpiration
     to_uptake = transpiration
@@ -35,9 +35,9 @@ function compute(params::rootWaterUptake_topBottom, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land begin
-        root_water_uptake → land.fluxes
-        ΔsoilW → land.pools
+    @pack_nt begin
+        root_water_uptake ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
@@ -45,9 +45,9 @@ end
 function update(params::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -58,8 +58,8 @@ function update(params::rootWaterUptake_topBottom, forcing, land, helpers)
     ΔsoilW .= ΔsoilW .- ΔsoilW
 
     ## pack land variables
-    @pack_land begin
-        (soilW, ΔsoilW) → land.pools
+    @pack_nt begin
+        (soilW, ΔsoilW) ⇒ land.pools
     end
     return land
 end

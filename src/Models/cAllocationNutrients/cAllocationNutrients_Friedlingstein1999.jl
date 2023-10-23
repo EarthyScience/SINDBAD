@@ -12,13 +12,13 @@ function compute(params::cAllocationNutrients_Friedlingstein1999, forcing, land,
     @unpack_cAllocationNutrients_Friedlingstein1999 params
 
     ## unpack land variables
-    @unpack_land begin
-        PAW ∈ land.states
-        sum_wAWC ∈ land.properties
-        c_allocation_f_soilW ∈ land.diagnostics
-        c_allocation_f_soilT ∈ land.diagnostics
-        PET ∈ land.fluxes
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        PAW ⇐ land.states
+        sum_wAWC ⇐ land.properties
+        c_allocation_f_soilW ⇐ land.diagnostics
+        c_allocation_f_soilT ⇐ land.diagnostics
+        PET ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
     end
 
     # estimate NL
@@ -32,7 +32,7 @@ function compute(params::cAllocationNutrients_Friedlingstein1999, forcing, land,
     c_allocation_f_W_N = min(WL, NL)
 
     ## pack land variables
-    @pack_land c_allocation_f_W_N → land.cAllocationNutrients
+    @pack_nt c_allocation_f_W_N ⇒ land.cAllocationNutrients
     return land
 end
 

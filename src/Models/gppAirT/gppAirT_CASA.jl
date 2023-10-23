@@ -12,8 +12,8 @@ end
 function compute(params::gppAirT_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_CASA params
-    @unpack_forcing f_airT_day ∈ forcing
-    @unpack_land o_one ∈ land.constants
+    @unpack_nt f_airT_day ⇐ forcing
+    @unpack_nt o_one ⇐ land.constants
 
     ## calculate variables
     # CALCULATE T1: account for effects of temperature stress reflects the empirical observation that plants in very cold habitats typically have low maximum rates
@@ -37,7 +37,7 @@ function compute(params::gppAirT_CASA, forcing, land, helpers)
     gpp_f_airT = f_airT_day >= opt_airT ? T2 : T1
 
     ## pack land variables
-    @pack_land gpp_f_airT → land.diagnostics
+    @pack_nt gpp_f_airT ⇒ land.diagnostics
     return land
 end
 

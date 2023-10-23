@@ -11,7 +11,7 @@ function compute(params::runoffInterflow_residual, forcing, land, helpers)
     @unpack_runoffInterflow_residual params
 
     ## unpack land variables
-    @unpack_land WBP ∈ land.states
+    @unpack_nt WBP ⇐ land.states
 
     ## calculate variables
     # simply assume that a fraction of the still available water runs off
@@ -20,9 +20,9 @@ function compute(params::runoffInterflow_residual, forcing, land, helpers)
     WBP = WBP - interflow_runoff
 
     ## pack land variables
-    @pack_land begin
-        interflow_runoff → land.fluxes
-        WBP → land.states
+    @pack_nt begin
+        interflow_runoff ⇒ land.fluxes
+        WBP ⇒ land.states
     end
     return land
 end

@@ -61,9 +61,9 @@ end
 function define(params::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 params
 
-    @unpack_land begin
-        soilW ∈ land.pools
-        (st_clay, st_orgm, st_sand) ∈ land.properties
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        (st_clay, st_orgm, st_sand) ⇐ land.properties
     end
     ## instantiate variables
     sp_α = zero(soilW)
@@ -82,8 +82,8 @@ function define(params::soilProperties_Saxton2006, forcing, land, helpers)
     unsat_k_model = kSaxton2006()
 
     ## pack land variables
-    @pack_land (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) → land.properties
-    @pack_land unsat_k_model → land.models
+    @pack_nt (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ⇒ land.properties
+    @pack_nt unsat_k_model ⇒ land.models
     return land
 end
 
@@ -91,28 +91,28 @@ end
 function precompute(params::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 params
 
-    @unpack_land begin
-        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.properties
+    @unpack_nt begin
+        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ⇐ land.properties
     end
     ## calculate variables
     # calculate & set the soil hydraulic properties for each layer
     for sl in eachindex(sp_α)
         (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = calcPropsSaxton2006(params, land, helpers, sl)
-        @rep_elem α → (sp_α, sl, :soilW)
-        @rep_elem β → (sp_β, sl, :soilW)
-        @rep_elem kFC → (sp_kFC, sl, :soilW)
-        @rep_elem θFC → (sp_θFC, sl, :soilW)
-        @rep_elem ψFC → (sp_ψFC, sl, :soilW)
-        @rep_elem kWP → (sp_kWP, sl, :soilW)
-        @rep_elem θWP → (sp_θWP, sl, :soilW)
-        @rep_elem ψWP → (sp_ψWP, sl, :soilW)
-        @rep_elem kSat → (sp_kSat, sl, :soilW)
-        @rep_elem θSat → (sp_θSat, sl, :soilW)
-        @rep_elem ψSat → (sp_ψSat, sl, :soilW)
+        @rep_elem α ⇒ (sp_α, sl, :soilW)
+        @rep_elem β ⇒ (sp_β, sl, :soilW)
+        @rep_elem kFC ⇒ (sp_kFC, sl, :soilW)
+        @rep_elem θFC ⇒ (sp_θFC, sl, :soilW)
+        @rep_elem ψFC ⇒ (sp_ψFC, sl, :soilW)
+        @rep_elem kWP ⇒ (sp_kWP, sl, :soilW)
+        @rep_elem θWP ⇒ (sp_θWP, sl, :soilW)
+        @rep_elem ψWP ⇒ (sp_ψWP, sl, :soilW)
+        @rep_elem kSat ⇒ (sp_kSat, sl, :soilW)
+        @rep_elem θSat ⇒ (sp_θSat, sl, :soilW)
+        @rep_elem ψSat ⇒ (sp_ψSat, sl, :soilW)
     end
 
     ## pack land variables
-    @pack_land (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) → land.properties
+    @pack_nt (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ⇒ land.properties
     return land
 end
 
@@ -190,12 +190,12 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
  - is also used by all approaches depending on kUnsat within time loop of coreTEM
 """
 function unsatK(land, helpers, sl, ::kSaxton2006)
-    @unpack_land begin
-        (t_two, t_three) ∈ land.constants
-        (soil_β, kSat, wSat) ∈ land.properties
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        (t_two, t_three) ⇐ land.constants
+        (soil_β, kSat, wSat) ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
@@ -245,9 +245,9 @@ calculates the soil hydraulic properties based on Saxton 2006
 function calcPropsSaxton2006(params::soilProperties_Saxton2006, land, helpers, sl)
 
     @unpack_soilProperties_Saxton2006 params
-    @unpack_land begin
-        (st_clay, st_orgm, st_sand) ∈ land.properties
-        (z_zero, o_one, t_two, t_three) ∈ land.constants
+    @unpack_nt begin
+        (st_clay, st_orgm, st_sand) ⇐ land.properties
+        (z_zero, o_one, t_two, t_three) ⇐ land.constants
     end
 
     clay = st_clay[sl]

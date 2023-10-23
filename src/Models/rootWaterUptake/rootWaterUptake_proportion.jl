@@ -5,14 +5,14 @@ struct rootWaterUptake_proportion <: rootWaterUptake end
 function define(params::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        soilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
     end
     root_water_uptake = zero(soilW)
 
     ## pack land variables
-    @pack_land begin
-        root_water_uptake → land.fluxes
+    @pack_nt begin
+        root_water_uptake ⇒ land.fluxes
     end
     return land
 end
@@ -20,13 +20,13 @@ end
 function compute(params::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        PAW ∈ land.states
-        (soilW, ΔsoilW) ∈ land.pools
-        transpiration ∈ land.fluxes
-        root_water_uptake ∈ land.fluxes
-        (z_zero, o_one) ∈ land.constants
-        tolerance ∈ helpers.numbers
+    @unpack_nt begin
+        PAW ⇐ land.states
+        (soilW, ΔsoilW) ⇐ land.pools
+        transpiration ⇐ land.fluxes
+        root_water_uptake ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
+        tolerance ⇐ helpers.numbers
     end
     # get the transpiration
     # to_uptake = o_one * transpiration
@@ -36,13 +36,13 @@ function compute(params::rootWaterUptake_proportion, forcing, land, helpers)
     # extract from top to bottom
     for sl ∈ eachindex(land.pools.soilW)
         uptake_proportion = to_uptake * getFrac(PAW[sl], PAWTotal)
-        @rep_elem uptake_proportion → (root_water_uptake, sl, :soilW)
-        @add_to_elem -root_water_uptake[sl] → (ΔsoilW, sl, :soilW)
+        @rep_elem uptake_proportion ⇒ (root_water_uptake, sl, :soilW)
+        @add_to_elem -root_water_uptake[sl] ⇒ (ΔsoilW, sl, :soilW)
     end
     # pack land variables
-    @pack_land begin
-        root_water_uptake → land.fluxes
-        ΔsoilW → land.pools
+    @pack_nt begin
+        root_water_uptake ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
@@ -50,9 +50,9 @@ end
 function update(params::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -63,9 +63,9 @@ function update(params::rootWaterUptake_proportion, forcing, land, helpers)
     ΔsoilW .= ΔsoilW .- ΔsoilW
 
     ## pack land variables
-    @pack_land begin
-        soilW → land.pools
-        # ΔsoilW → land.pools
+    @pack_nt begin
+        soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
     end
     return land
 end

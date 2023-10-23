@@ -8,13 +8,13 @@ end
 
 function define(params::cTauSoilW_CASA, forcing, land, helpers)
     @unpack_cTauSoilW_CASA params
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
     c_eco_k_f_soilW = one.(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soilW → land.diagnostics
+    @pack_nt c_eco_k_f_soilW ⇒ land.diagnostics
     return land
 end
 
@@ -23,15 +23,15 @@ function compute(params::cTauSoilW_CASA, forcing, land, helpers)
     @unpack_cTauSoilW_CASA params
 
     ## unpack land variables
-    @unpack_land c_eco_k_f_soilW ∈ land.diagnostics
+    @unpack_nt c_eco_k_f_soilW ⇐ land.diagnostics
 
     ## unpack land variables
-    @unpack_land begin
-        rain ∈ land.fluxes
-        soilW_prev ∈ land.pools
-        fsoilW_prev ∈ land.diagnostics
-        PET ∈ land.fluxes
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        rain ⇐ land.fluxes
+        soilW_prev ⇐ land.pools
+        fsoilW_prev ⇐ land.diagnostics
+        PET ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
     end
     # NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
     TSPY = helpers.dates.timesteps_in_year #sujan
@@ -66,7 +66,7 @@ function compute(params::cTauSoilW_CASA, forcing, land, helpers)
     c_eco_k_f_soilW[helpers.pools.zix.cEco] = fsoilW
 
     ## pack land variables
-    @pack_land fsoilW → land.diagnostics
+    @pack_nt fsoilW ⇒ land.diagnostics
     return land
 end
 

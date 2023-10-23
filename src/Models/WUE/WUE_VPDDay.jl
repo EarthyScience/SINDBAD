@@ -10,17 +10,17 @@ end
 function compute(params::WUE_VPDDay, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_WUE_VPDDay params
-    @unpack_forcing f_VPD_day ∈ forcing
-    @unpack_land begin
-        tolerance ∈ helpers.numbers
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt f_VPD_day ⇐ forcing
+    @unpack_nt begin
+        tolerance ⇐ helpers.numbers
+        (z_zero, o_one) ⇐ land.constants
     end
     ## calculate variables
     # "WUEat1hPa"
     WUE = WUE_one_hpa * o_one / sqrt(kpa_to_hpa * (f_VPD_day + tolerance))
 
     ## pack land variables
-    @pack_land WUE → land.diagnostics
+    @pack_nt WUE ⇒ land.diagnostics
     return land
 end
 

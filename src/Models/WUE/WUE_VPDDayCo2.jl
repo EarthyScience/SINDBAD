@@ -12,13 +12,13 @@ end
 function compute(params::WUE_VPDDayCo2, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_WUE_VPDDayCo2 params
-    @unpack_forcing f_VPD_day ∈ forcing
+    @unpack_nt f_VPD_day ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        ambient_CO2 ∈ land.states
-        tolerance ∈ helpers.numbers
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        ambient_CO2 ⇐ land.states
+        tolerance ⇐ helpers.numbers
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
@@ -28,8 +28,8 @@ function compute(params::WUE_VPDDayCo2, forcing, land, helpers)
     WUE = WUENoCO2 * fCO2_CO2
 
     ## pack land variables
-    @pack_land WUENoCO2 → land.diagnostics
-    @pack_land WUE → land.diagnostics
+    @pack_nt WUENoCO2 ⇒ land.diagnostics
+    @pack_nt WUE ⇒ land.diagnostics
     return land
 end
 

@@ -26,15 +26,15 @@ end
 function define(params::cCycleBase_simple, forcing, land, helpers)
     @unpack_cCycleBase_simple params
 
-    @unpack_land begin
-        cEco ∈ land.pools
+    @unpack_nt begin
+        cEco ⇐ land.pools
     end
     ## instantiate variables
     C_to_N_cVeg = one.(cEco)
 
     ## pack land variables
-    @pack_land begin
-        (C_to_N_cVeg, c_flow_A_array) → land.diagnostics
+    @pack_nt begin
+        (C_to_N_cVeg, c_flow_A_array) ⇒ land.diagnostics
     end
     return land
 end
@@ -44,9 +44,9 @@ function compute(params::cCycleBase_simple, forcing, land, helpers)
     @unpack_cCycleBase_simple params
 
     ## unpack land variables
-    @unpack_land begin
-        C_to_N_cVeg ∈ land.diagnostics
-        o_one ∈ land.constants
+    @unpack_nt begin
+        C_to_N_cVeg ⇐ land.diagnostics
+        o_one ⇐ land.constants
     end
 
     ## calculate variables
@@ -58,7 +58,7 @@ function compute(params::cCycleBase_simple, forcing, land, helpers)
     c_eco_k_base = o_one .- (exp.(-o_one .* annk) .^ (o_one / TSPY))
 
     ## pack land variables
-    @pack_land (C_to_N_cVeg, c_eco_k_base, c_flow_A_array) → land.diagnostics
+    @pack_nt (C_to_N_cVeg, c_eco_k_base, c_flow_A_array) ⇒ land.diagnostics
 
     return land
 end

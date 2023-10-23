@@ -4,22 +4,22 @@ struct drainage_wFC <: drainage end
 
 function define(params::drainage_wFC, forcing, land, helpers)
     ## instantiate drainage
-    @unpack_land soilW ∈ land.pools
+    @unpack_nt soilW ⇐ land.pools
     drainage = zero(soilW)
     ## pack land variables
-    @pack_land drainage → land.fluxes
+    @pack_nt drainage ⇒ land.fluxes
     return land
 end
 
 function compute(params::drainage_wFC, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        drainage ∈ land.fluxes
-        (p_nsoilLayers, wFC) ∈ land.properties
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
-        z_zero ∈ land.constants
+    @unpack_nt begin
+        drainage ⇐ land.fluxes
+        (p_nsoilLayers, wFC) ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        z_zero ⇐ land.constants
     end
 
     ## calculate drainage
@@ -33,18 +33,18 @@ function compute(params::drainage_wFC, forcing, land, helpers)
     end
 
     ## pack land variables
-    # @pack_land begin
-    # 	drainage → land.fluxes
-    # 	# ΔsoilW → land.pools
+    # @pack_nt begin
+    # 	drainage ⇒ land.fluxes
+    # 	# ΔsoilW ⇒ land.pools
     # end
     return land
 end
 
 function update(params::drainage_wFC, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -55,9 +55,9 @@ function update(params::drainage_wFC, forcing, land, helpers)
     ΔsoilW .= ΔsoilW .- ΔsoilW
 
     ## pack land variables
-    @pack_land begin
-        # soilW → land.pools
-        # ΔsoilW → land.pools
+    @pack_nt begin
+        # soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
     end
     return land
 end

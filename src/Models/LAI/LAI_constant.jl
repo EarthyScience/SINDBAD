@@ -14,7 +14,7 @@ function precompute(params::LAI_constant, forcing, land, helpers)
     LAI = constant_LAI
 
     ## pack land variables
-    @pack_land LAI → land.states
+    @pack_nt LAI ⇒ land.states
     return land
 end
 

@@ -8,9 +8,9 @@ end
 
 function define(params::cFlowVegProperties_CASA, forcing, land, helpers)
     @unpack_cFlowVegProperties_CASA params
-    @unpack_land begin 
-        c_taker ∈ land.constants
-        cEco ∈ land.pools
+    @unpack_nt begin 
+        c_taker ⇐ land.constants
+        cEco ⇐ land.pools
     end
     ## instantiate variables
     p_F_vec = eltype(cEco).(zero([c_taker...]))
@@ -19,7 +19,7 @@ function define(params::cFlowVegProperties_CASA, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land p_F_vec → land.cFlowVegProperties
+    @pack_nt p_F_vec ⇒ land.cFlowVegProperties
     return land
 end
 
@@ -28,9 +28,9 @@ function compute(params::cFlowVegProperties_CASA, forcing, land, helpers)
     @unpack_cFlowVegProperties_CASA params
 
     ## unpack land variables
-    @unpack_land begin 
-        p_F_vec ∈ land.cFlowVegProperties
-        cEco ∈ land.pools
+    @unpack_nt begin 
+        p_F_vec ⇐ land.cFlowVegProperties
+        cEco ⇐ land.pools
     end
     ## calculate variables
     # p_fVeg = zeros(nPix, length(info.model.c.nZix)); #sujan
@@ -49,7 +49,7 @@ function compute(params::cFlowVegProperties_CASA, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (p_E_vec, p_F_vec) → land.cFlowVegProperties
+    @pack_nt (p_E_vec, p_F_vec) ⇒ land.cFlowVegProperties
     return land
 end
 

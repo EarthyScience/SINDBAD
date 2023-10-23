@@ -12,13 +12,13 @@ function compute(params::runoffSurface_directIndirectFroSoil, forcing, land, hel
     @unpack_runoffSurface_directIndirectFroSoil params
 
     ## unpack land variables
-    @unpack_land begin
-        frac_frozen ∈ land.runoffSaturationExcess
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.pools
-        overland_runoff ∈ land.fluxes
-        (z_zero, o_one) ∈ land.constants
-        n_surfaceW ∈ land.constants
+    @unpack_nt begin
+        frac_frozen ⇐ land.runoffSaturationExcess
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
+        overland_runoff ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
+        n_surfaceW ⇐ land.constants
     end
     # fraction of overland runoff that flows out directly
     fracFastQ = (o_one - rf) * (o_one - frac_frozen) + frac_frozen
@@ -37,9 +37,9 @@ function compute(params::runoffSurface_directIndirectFroSoil, forcing, land, hel
     ΔsurfaceW .= ΔsurfaceW .- surface_runoff_indirect / n_surfaceW # assumes all layers contribute equally to indirect component of surface runoff
 
     ## pack land variables
-    @pack_land begin
-        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) → land.fluxes
-        ΔsurfaceW → land.pools
+    @pack_nt begin
+        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) ⇒ land.fluxes
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end
@@ -48,9 +48,9 @@ function update(params::runoffSurface_directIndirectFroSoil, forcing, land, help
     @unpack_runoffSurface_directIndirectFroSoil params
 
     ## unpack variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.pools
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
     end
 
     ## update storage pools
@@ -60,9 +60,9 @@ function update(params::runoffSurface_directIndirectFroSoil, forcing, land, help
     ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
     ## pack land variables
-    @pack_land begin
-        surfaceW → land.pools
-        ΔsurfaceW → land.pools
+    @pack_nt begin
+        surfaceW ⇒ land.pools
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end

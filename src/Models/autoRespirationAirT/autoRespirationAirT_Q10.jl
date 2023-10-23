@@ -11,14 +11,14 @@ end
 function compute(params::autoRespirationAirT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_autoRespirationAirT_Q10 params
-    @unpack_forcing f_airT ∈ forcing
+    @unpack_nt f_airT ⇐ forcing
 
     ## calculate variables
     auto_respiration_f_airT = Q10^((f_airT - ref_airT) / Q10_base)
 
     ## pack land variables
-    @pack_land begin
-        auto_respiration_f_airT → land.diagnostics
+    @pack_nt begin
+        auto_respiration_f_airT ⇒ land.diagnostics
     end
     return land
 end

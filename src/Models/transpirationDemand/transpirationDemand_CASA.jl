@@ -5,11 +5,11 @@ struct transpirationDemand_CASA <: transpirationDemand end
 function compute(params::transpirationDemand_CASA, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        PAW ∈ land.states
-        (wAWC, soil_α, soil_β) ∈ land.properties
-        percolation ∈ land.fluxes
-        PET ∈ land.fluxes
+    @unpack_nt begin
+        PAW ⇐ land.states
+        (wAWC, soil_α, soil_β) ⇐ land.properties
+        percolation ⇐ land.fluxes
+        PET ⇐ land.fluxes
     end
     VMC = clampZeroOne(sum(PAW) / sum(wAWC))
     o_one = one(VMC)
@@ -17,7 +17,7 @@ function compute(params::transpirationDemand_CASA, forcing, land, helpers)
     transpiration_demand = percolation + (PET - percolation) * RDR
 
     ## pack land variables
-    @pack_land transpiration_demand → land.diagnostics
+    @pack_nt transpiration_demand ⇒ land.diagnostics
     return land
 end
 

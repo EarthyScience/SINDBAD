@@ -3,7 +3,7 @@ export cFlow_none
 struct cFlow_none <: cFlow end
 
 function define(params::cFlow_none, forcing, land, helpers)
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
     ## calculate variables
     tmp = repeat(zero(cEco),
         1,
@@ -16,7 +16,7 @@ function define(params::cFlow_none, forcing, land, helpers)
     p_giver = []
 
     ## pack land variables
-    @pack_land (c_flow_A_vec, p_E_vec, p_F_vec) → land.diagnostics
+    @pack_nt (c_flow_A_vec, p_E_vec, p_F_vec) ⇒ land.diagnostics
     return land
 end
 

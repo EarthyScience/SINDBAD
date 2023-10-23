@@ -5,11 +5,11 @@ struct groundWRecharge_kUnsat <: groundWRecharge end
 function compute(params::groundWRecharge_kUnsat, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        wSat ∈ land.properties
-        unsat_k_model ∈ land.models
-        (ΔsoilW, soilW, ΔgroundW, groundW) ∈ land.pools
-        n_groundW ∈ land.constants
+    @unpack_nt begin
+        wSat ⇐ land.properties
+        unsat_k_model ⇐ land.models
+        (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
+        n_groundW ⇐ land.constants
     end
 
     # calculate recharge
@@ -20,9 +20,9 @@ function compute(params::groundWRecharge_kUnsat, forcing, land, helpers)
     ΔsoilW[end] = ΔsoilW[end] - gw_recharge
 
     ## pack land variables
-    @pack_land begin
-        gw_recharge → land.fluxes
-        (ΔsoilW, ΔgroundW) → land.pools
+    @pack_nt begin
+        gw_recharge ⇒ land.fluxes
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
@@ -30,9 +30,9 @@ end
 function update(params::groundWRecharge_kUnsat, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        (soilW, groundW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
+    @unpack_nt begin
+        (soilW, groundW) ⇐ land.pools
+        (ΔsoilW, ΔgroundW) ⇐ land.states
     end
 
     ## update storage pools
@@ -44,9 +44,9 @@ function update(params::groundWRecharge_kUnsat, forcing, land, helpers)
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     ## pack land variables
-    @pack_land begin
-        (groundW, soilW) → land.pools
-        (ΔsoilW, ΔgroundW) → land.pools
+    @pack_nt begin
+        (groundW, soilW) ⇒ land.pools
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end

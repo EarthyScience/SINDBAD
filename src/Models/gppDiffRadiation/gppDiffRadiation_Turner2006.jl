@@ -9,25 +9,25 @@ end
 function define(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Turner2006 params
-    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
+    @unpack_nt (f_rg, f_rg_pot) ⇐ forcing
 
     ## calculate variables
     CI = f_rg / f_rg_pot
     CI_min = CI
     CI_max = CI
     ## pack land variables
-    @pack_land (CI_min, CI_max) → land.diagnostics
+    @pack_nt (CI_min, CI_max) ⇒ land.diagnostics
     return land
 end
 
 function compute(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Turner2006 params
-    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
-    @unpack_land begin
-        (CI_min, CI_max) ∈ land.diagnostics
-        z_zero ∈ land.constants
-        tolerance ∈ helpers.numbers
+    @unpack_nt (f_rg, f_rg_pot) ⇐ forcing
+    @unpack_nt begin
+        (CI_min, CI_max) ⇐ land.diagnostics
+        z_zero ⇐ land.constants
+        tolerance ⇐ helpers.numbers
     end
 
     ## calculate variables
@@ -43,7 +43,7 @@ function compute(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     gpp_f_cloud = f_rg_pot > z_zero ? cScGPP : zero(cScGPP)
 
     ## pack land variables
-    @pack_land (gpp_f_cloud, CI_min, CI_max) → land.diagnostics
+    @pack_nt (gpp_f_cloud, CI_min, CI_max) ⇒ land.diagnostics
     return land
 end
 

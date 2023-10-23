@@ -9,11 +9,11 @@ end
 function compute(params::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDirRadiation_Maekelae2008 params
-    @unpack_forcing f_PAR ∈ forcing
+    @unpack_nt f_PAR ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        fAPAR ∈ land.states
+    @unpack_nt begin
+        fAPAR ⇐ land.states
     end
 
     o_one = one(γ)
@@ -21,7 +21,7 @@ function compute(params::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     gpp_f_light =  o_one / (o_one * f_PAR * fAPAR + o_one)
 
     ## pack land variables
-    @pack_land gpp_f_light → land.diagnostics
+    @pack_nt gpp_f_light ⇒ land.diagnostics
     return land
 end
 

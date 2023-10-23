@@ -11,12 +11,12 @@ end
 function compute(params::gppVPD_expco2, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_expco2 params
-    @unpack_forcing f_VPD_day ∈ forcing
+    @unpack_nt f_VPD_day ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        ambient_CO2 ∈ land.states
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        ambient_CO2 ⇐ land.states
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
@@ -24,7 +24,7 @@ function compute(params::gppVPD_expco2, forcing, land, helpers)
     gpp_f_vpd = clampZeroOne(fVPD_VPD)
 
     ## pack land variables
-    @pack_land gpp_f_vpd → land.diagnostics
+    @pack_nt gpp_f_vpd ⇒ land.diagnostics
     return land
 end
 

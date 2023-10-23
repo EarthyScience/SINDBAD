@@ -5,8 +5,8 @@ struct soilTexture_forcing <: soilTexture end
 function define(params::soilTexture_forcing, forcing, land, helpers)
     #@needscheck
     ## unpack forcing
-    @unpack_forcing (f_clay, f_orgm, f_sand, f_silt) ∈ forcing
-    @unpack_land soilW ∈ land.pools
+    @unpack_nt (f_clay, f_orgm, f_sand, f_silt) ⇐ forcing
+    @unpack_nt soilW ⇐ land.pools
 
     ## unpack land variables
 
@@ -24,22 +24,22 @@ function define(params::soilTexture_forcing, forcing, land, helpers)
     if length(st_clay_f) != length(st_clay)
         @debug "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers."
         for sl ∈ eachindex(st_clay)
-            @rep_elem mean(st_clay_f) → (st_clay, sl, :soilW)
-            @rep_elem mean(st_sand_f) → (st_sand, sl, :soilW)
-            @rep_elem mean(st_silt_f) → (st_silt, sl, :soilW)
-            @rep_elem mean(st_orgm_f) → (st_orgm, sl, :soilW)
+            @rep_elem mean(st_clay_f) ⇒ (st_clay, sl, :soilW)
+            @rep_elem mean(st_sand_f) ⇒ (st_sand, sl, :soilW)
+            @rep_elem mean(st_silt_f) ⇒ (st_silt, sl, :soilW)
+            @rep_elem mean(st_orgm_f) ⇒ (st_orgm, sl, :soilW)
         end
     else
         for sl ∈ eachindex(st_clay)
-            @rep_elem st_clay_f[sl] → (st_clay, sl, :soilW)
-            @rep_elem st_sand_f[sl] → (st_sand, sl, :soilW)
-            @rep_elem st_silt_f[sl] → (st_silt, sl, :soilW)
-            @rep_elem st_orgm_f[sl] → (st_orgm, sl, :soilW)
+            @rep_elem st_clay_f[sl] ⇒ (st_clay, sl, :soilW)
+            @rep_elem st_sand_f[sl] ⇒ (st_sand, sl, :soilW)
+            @rep_elem st_silt_f[sl] ⇒ (st_silt, sl, :soilW)
+            @rep_elem st_orgm_f[sl] ⇒ (st_orgm, sl, :soilW)
         end
     end
 
     ## pack land variables
-    @pack_land (st_clay, st_orgm, st_sand, st_silt) → land.properties
+    @pack_nt (st_clay, st_orgm, st_sand, st_silt) ⇒ land.properties
     return land
 end
 

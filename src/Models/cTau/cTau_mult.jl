@@ -4,35 +4,35 @@ struct cTau_mult <: cTau end
 
 function define(params::cTau_mult, forcing, land, helpers)
     ## unpack land variables
-    @unpack_land begin
-        cEco ∈ land.pools
+    @unpack_nt begin
+        cEco ⇐ land.pools
     end
     c_eco_k = zero(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k → land.diagnostics
+    @pack_nt c_eco_k ⇒ land.diagnostics
     return land
 end
 
 function compute(params::cTau_mult, forcing, land, helpers)
     ## unpack land variables
-    @unpack_land begin
-        c_eco_k_f_veg_props ∈ land.diagnostics
-        c_eco_k_f_soilW ∈ land.diagnostics
-        c_eco_k_f_soilT ∈ land.diagnostics
-        c_eco_k_f_soil_props ∈ land.diagnostics
-        c_eco_k_f_LAI ∈ land.diagnostics
-        c_eco_k_base ∈ land.diagnostics
-        c_eco_k ∈ land.diagnostics
+    @unpack_nt begin
+        c_eco_k_f_veg_props ⇐ land.diagnostics
+        c_eco_k_f_soilW ⇐ land.diagnostics
+        c_eco_k_f_soilT ⇐ land.diagnostics
+        c_eco_k_f_soil_props ⇐ land.diagnostics
+        c_eco_k_f_LAI ⇐ land.diagnostics
+        c_eco_k_base ⇐ land.diagnostics
+        c_eco_k ⇐ land.diagnostics
     end
     for i ∈ eachindex(c_eco_k)
         tmp = c_eco_k_base[i] * c_eco_k_f_LAI[i] * c_eco_k_f_soil_props[i] * c_eco_k_f_veg_props[i] * c_eco_k_f_soilT * c_eco_k_f_soilW[i]
         tmp = clampZeroOne(tmp)
-        @rep_elem tmp → (c_eco_k, i, :cEco)
+        @rep_elem tmp ⇒ (c_eco_k, i, :cEco)
     end
 
     ## pack land variables
-    @pack_land c_eco_k → land.diagnostics
+    @pack_nt c_eco_k ⇒ land.diagnostics
     return land
 end
 

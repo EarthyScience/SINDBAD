@@ -7,7 +7,7 @@ end
 #! format: on
 
 function define(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
-    @unpack_land o_one ∈ land.constants
+    @unpack_nt o_one ⇐ land.constants
 
     ## unpack parameters
     @unpack_cAllocationSoilT_gppGSI params
@@ -15,7 +15,7 @@ function define(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
     # assume initial prev as one (no stress)
     c_allocation_f_soilT_prev = o_one
 
-    @pack_land c_allocation_f_soilT_prev → land.diagnostics
+    @pack_nt c_allocation_f_soilT_prev ⇒ land.diagnostics
     return land
 end
 
@@ -24,9 +24,9 @@ function compute(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
     @unpack_cAllocationSoilT_gppGSI params
 
     ## unpack land variables
-    @unpack_land begin
-        gpp_f_airT ∈ land.diagnostics
-        c_allocation_f_soilT_prev ∈ land.diagnostics
+    @unpack_nt begin
+        gpp_f_airT ⇐ land.diagnostics
+        c_allocation_f_soilT_prev ⇐ land.diagnostics
     end
 
     # computation for the temperature effect on decomposition/mineralization
@@ -36,7 +36,7 @@ function compute(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
     c_allocation_f_soilT_prev = c_allocation_f_soilT
 
     ## pack land variables
-    @pack_land (c_allocation_f_soilT, c_allocation_f_soilT_prev) → land.diagnostics
+    @pack_nt (c_allocation_f_soilT, c_allocation_f_soilT_prev) ⇒ land.diagnostics
     return land
 end
 
