@@ -264,11 +264,7 @@ function tcPrint(d; c_olor=true, t_ype=true, v_alue=true, t_space="", space_pad 
     ttf = t_space * space_pad
     for k ∈ sort(keys(d))
         if d[k] isa NamedTuple
-            if t_ype == true
-                tp = " = (; "
-            else
-                tp = ""
-            end
+            tp = " = (; "
             print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(ttf) $(k)$(tp)\n")
             tcPrint(d[k]; c_olor=c_olor, t_ype=t_ype, v_alue=v_alue, t_space = ttf, space_pad="     ")
         else
