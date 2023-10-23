@@ -9,14 +9,14 @@ end
 function define(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        soilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
     end
     soil_capillary_flux = zero(soilW)
 
     ## pack land variables
-    @pack_land begin
-        soil_capillary_flux → land.fluxes
+    @pack_nt begin
+        soil_capillary_flux ⇒ land.fluxes
     end
     return land
 end
@@ -26,12 +26,12 @@ function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
     @unpack_capillaryFlow_VanDijk2010 params
 
     ## unpack land variables
-    @unpack_land begin
-        (soil_kFC, wSat) ∈ land.properties
-        soil_capillary_flux ∈ land.fluxes
-        (soilW, ΔsoilW) ∈ land.pools
-        tolerance ∈ helpers.numbers
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        (soil_kFC, wSat) ⇐ land.properties
+        soil_capillary_flux ⇐ land.fluxes
+        (soilW, ΔsoilW) ⇐ land.pools
+        tolerance ⇐ helpers.numbers
+        (z_zero, o_one) ⇐ land.constants
     end
 
     for sl ∈ 1:(length(soilW)-1)
@@ -41,15 +41,15 @@ function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
         lossCap = maxZero(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]))
         minFlow = min(tmpCapFlow, holdCap, lossCap)
         tmp = minFlow > tolerance ? minFlow : zero(minFlow)
-        @rep_elem tmp → (soil_capillary_flux, sl, :soilW)
-        @add_to_elem soil_capillary_flux[sl] → (ΔsoilW, sl, :soilW)
-        @add_to_elem -soil_capillary_flux[sl] → (ΔsoilW, sl + 1, :soilW)
+        @rep_elem tmp ⇒ (soil_capillary_flux, sl, :soilW)
+        @add_to_elem soil_capillary_flux[sl] ⇒ (ΔsoilW, sl, :soilW)
+        @add_to_elem -soil_capillary_flux[sl] ⇒ (ΔsoilW, sl + 1, :soilW)
     end
 
     ## pack land variables
-    @pack_land begin
-        soil_capillary_flux → land.fluxes
-        ΔsoilW → land.pools
+    @pack_nt begin
+        soil_capillary_flux ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
@@ -57,8 +57,8 @@ end
 function update(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        (soilW, ΔsoilW) ∈ land.pools
+    @unpack_nt begin
+        (soilW, ΔsoilW) ⇐ land.pools
     end
 
     ## update variables
@@ -69,8 +69,8 @@ function update(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
     ΔsoilW = ΔsoilW - ΔsoilW
 
     ## pack land variables
-    @pack_land begin
-        (soilW, ΔsoilW) → land.pools
+    @pack_nt begin
+        (soilW, ΔsoilW) ⇒ land.pools
     end
     return land
 end

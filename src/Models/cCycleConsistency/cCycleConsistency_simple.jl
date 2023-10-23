@@ -5,10 +5,10 @@ struct cCycleConsistency_simple <: cCycleConsistency end
 function define(params::cCycleConsistency_simple, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        cEco ∈ land.pools
-        c_flow_A_array ∈ land.diagnostics
-        c_giver ∈ land.constants
+    @unpack_nt begin
+        cEco ⇐ land.pools
+        c_flow_A_array ⇐ land.diagnostics
+        c_giver ⇐ land.constants
     end
     # make list of indices which give carbon to other pools during the flow, and separate them if 
     # they are above or below the diagonal in flow vector
@@ -28,7 +28,7 @@ function define(params::cCycleConsistency_simple, forcing, land, helpers)
     end
     giver_lower_indices = Tuple(giver_lower_indices)
     giver_upper_indices = Tuple(giver_upper_indices)
-    @pack_land (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) → land.cCycleConsistency
+    @pack_nt (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) ⇒ land.cCycleConsistency
     return land
 end
 
@@ -46,11 +46,11 @@ end
 
 function checkCcycleErrors(params::cCycleConsistency_simple, forcing, land, helpers, ::DoCatchModelErrors) #when check is on
     ## unpack land variables
-    @unpack_land begin
-        c_allocation ∈ land.diagnostics
-        c_flow_A_vec ∈ land.diagnostics
-        (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) ∈ land.cCycleConsistency
-        tolerance ∈ helpers.numbers
+    @unpack_nt begin
+        c_allocation ⇐ land.diagnostics
+        c_flow_A_vec ⇐ land.diagnostics
+        (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) ⇐ land.cCycleConsistency
+        tolerance ⇐ helpers.numbers
     end
 
     # check allocation

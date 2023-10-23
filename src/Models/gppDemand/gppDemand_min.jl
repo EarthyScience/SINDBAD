@@ -3,20 +3,20 @@ export gppDemand_min
 struct gppDemand_min <: gppDemand end
 
 function define(params::gppDemand_min, forcing, land, helpers)
-    @unpack_land begin
-        land_pools = pools ∈ land 
-        gpp_potential ∈ land.diagnostics
+    @unpack_nt begin
+        land_pools = pools ⇐ land 
+        gpp_potential ⇐ land.diagnostics
     end
 
     gpp_climate_stressors = ones(typeof(gpp_potential), 4)
     if hasproperty(land_pools, :soilW)
-        @unpack_land soilW ∈ land.pools
+        @unpack_nt soilW ⇐ land.pools
         if soilW isa SVector
             gpp_climate_stressors = SVector{4}(gpp_climate_stressors)
         end
     end
 
-    @pack_land (gpp_climate_stressors) → land.diagnostics
+    @pack_nt (gpp_climate_stressors) ⇒ land.diagnostics
 
     return land
 end
@@ -24,13 +24,9 @@ end
 function compute(params::gppDemand_min, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        gpp_f_cloud ∈ land.diagnostics
-        fAPAR ∈ land.states
-        gpp_potential ∈ land.diagnostics
-        gpp_f_light ∈ land.diagnostics
-        gpp_climate_stressors ∈ land.diagnostics
-        gpp_f_airT ∈ land.diagnostics
+    @unpack_nt begin
+        fAPAR ⇐ land.states
+        (gpp_f_cloud, gpp_potential, gpp_f_light, gpp_climate_stressors, gpp_f_airT) ⇐ land.diagnostics
     end
 
     # @show gpp_f_airT, gpp_f_vpd, gpp_climate_stressors
@@ -47,7 +43,7 @@ function compute(params::gppDemand_min, forcing, land, helpers)
     gpp_demand = fAPAR * gpp_potential * gpp_f_climate
 
     ## pack land variables
-    @pack_land (gpp_f_climate, gpp_demand) → land.diagnostics
+    @pack_nt (gpp_f_climate, gpp_demand) ⇒ land.diagnostics
     return land
 end
 

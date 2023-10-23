@@ -14,7 +14,7 @@ function precompute(params::WUE_constant, forcing, land, helpers)
     WUE = constant_WUE
 
     ## pack land variables
-    @pack_land WUE → land.diagnostics
+    @pack_nt WUE ⇒ land.diagnostics
     return land
 end
 

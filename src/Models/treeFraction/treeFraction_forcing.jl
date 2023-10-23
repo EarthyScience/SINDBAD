@@ -4,10 +4,10 @@ struct treeFraction_forcing <: treeFraction end
 
 function compute(params::treeFraction_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing frac_tree ∈ forcing
+    @unpack_nt frac_tree ⇐ forcing
 
     ## pack land variables
-    @pack_land frac_tree → land.states
+    @pack_nt frac_tree ⇒ land.states
     return land
 end
 

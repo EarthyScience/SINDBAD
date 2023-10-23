@@ -11,10 +11,10 @@ function compute(params::runoffSurface_indirect, forcing, land, helpers)
     @unpack_runoffSurface_indirect params
 
     ## unpack land variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        overland_runoff ∈ land.fluxes
-        n_surfaceW ∈ land.constants
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        overland_runoff ⇐ land.fluxes
+        n_surfaceW ⇐ land.constants
     end
 
     # fraction of overland runoff that recharges the surface water & the fraction that flows out directly
@@ -28,9 +28,9 @@ function compute(params::runoffSurface_indirect, forcing, land, helpers)
     ΔsurfaceW .= ΔsurfaceW .- surface_runoff / n_surfaceW # assumes all layers contribute equally to indirect component of surface runoff
 
     ## pack land variables
-    @pack_land begin
-        (surface_runoff, suw_recharge) → land.fluxes
-        ΔsurfaceW → land.pools
+    @pack_nt begin
+        (surface_runoff, suw_recharge) ⇒ land.fluxes
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end
@@ -39,9 +39,9 @@ function update(params::runoffSurface_indirect, forcing, land, helpers)
     @unpack_runoffSurface_indirect params
 
     ## unpack variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.pools
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
     end
 
     ## update storage pools
@@ -51,9 +51,9 @@ function update(params::runoffSurface_indirect, forcing, land, helpers)
     ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
     ## pack land variables
-    @pack_land begin
-        surfaceW → land.pools
-        ΔsurfaceW → land.pools
+    @pack_nt begin
+        surfaceW ⇒ land.pools
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end

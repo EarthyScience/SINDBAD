@@ -11,9 +11,9 @@ function compute(params::groundWRecharge_fraction, forcing, land, helpers)
     @unpack_groundWRecharge_fraction params
 
     ## unpack land variables
-    @unpack_land begin
-        (ΔsoilW, soilW, ΔgroundW, groundW) ∈ land.pools
-        n_groundW ∈ land.constants
+    @unpack_nt begin
+        (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
+        n_groundW ⇐ land.constants
     end
 
     ## calculate variables
@@ -24,9 +24,9 @@ function compute(params::groundWRecharge_fraction, forcing, land, helpers)
     ΔsoilW[end] = ΔsoilW[end] - gw_recharge
 
     ## pack land variables
-    @pack_land begin
-        gw_recharge → land.fluxes
-        (ΔsoilW, ΔgroundW) → land.pools
+    @pack_nt begin
+        gw_recharge ⇒ land.fluxes
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
@@ -35,9 +35,9 @@ function update(params::groundWRecharge_fraction, forcing, land, helpers)
     @unpack_groundWRecharge_fraction params
 
     ## unpack variables
-    @unpack_land begin
-        (soilW, groundW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
+    @unpack_nt begin
+        (soilW, groundW) ⇐ land.pools
+        (ΔsoilW, ΔgroundW) ⇐ land.states
     end
 
     ## update storage pools
@@ -49,9 +49,9 @@ function update(params::groundWRecharge_fraction, forcing, land, helpers)
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     ## pack land variables
-    @pack_land begin
-        (groundW, soilW) → land.pools
-        (ΔsoilW, ΔgroundW) → land.pools
+    @pack_nt begin
+        (groundW, soilW) ⇒ land.pools
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end

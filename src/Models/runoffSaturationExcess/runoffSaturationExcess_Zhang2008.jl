@@ -11,13 +11,13 @@ function compute(params::runoffSaturationExcess_Zhang2008, forcing, land, helper
     @unpack_runoffSaturationExcess_Zhang2008 params
 
     ## unpack land variables
-    @unpack_land begin
-        WBP ∈ land.states
-        wSat ∈ land.properties
-        soilW ∈ land.pools
-        PET ∈ land.fluxes
-        ΔsoilW ∈ land.pools
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        WBP ⇐ land.states
+        wSat ⇐ land.properties
+        soilW ⇐ land.pools
+        PET ⇐ land.fluxes
+        ΔsoilW ⇐ land.pools
+        (z_zero, o_one) ⇐ land.constants
     end
     # a supply - demand limit concept cf Budyko
     # calc demand limit [X0]
@@ -30,9 +30,9 @@ function compute(params::runoffSaturationExcess_Zhang2008, forcing, land, helper
     WBP = WBP - sat_excess_runoff
 
     ## pack land variables
-    @pack_land begin
-        sat_excess_runoff → land.fluxes
-        WBP → land.states
+    @pack_nt begin
+        sat_excess_runoff ⇒ land.fluxes
+        WBP ⇒ land.states
     end
     return land
 end

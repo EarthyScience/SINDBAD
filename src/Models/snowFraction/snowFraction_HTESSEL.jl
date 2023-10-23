@@ -11,10 +11,10 @@ function compute(params::snowFraction_HTESSEL, forcing, land, helpers)
     @unpack_snowFraction_HTESSEL params
 
     ## unpack land variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.pools
-        o_one ∈ land.constants
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
+        o_one ⇐ land.constants
     end
 
     ## calculate variables
@@ -23,7 +23,7 @@ function compute(params::snowFraction_HTESSEL, forcing, land, helpers)
     frac_snow = min(o_one, sum(snowW) / snow_cover_param)
 
     ## pack land variables
-    @pack_land frac_snow → land.states
+    @pack_nt frac_snow ⇒ land.states
     return land
 end
 

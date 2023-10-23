@@ -3,13 +3,13 @@ export interception_none
 struct interception_none <: interception end
 
 function define(params::interception_none, forcing, land, helpers)
-    @unpack_land z_zero ∈ land.constants
+    @unpack_nt z_zero ⇐ land.constants
 
     ## calculate variables
     interception = z_zero
 
     ## pack land variables
-    @pack_land interception → land.fluxes
+    @pack_nt interception ⇒ land.fluxes
     return land
 end
 

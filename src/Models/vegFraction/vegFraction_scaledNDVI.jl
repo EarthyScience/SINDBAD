@@ -11,15 +11,15 @@ function compute(params::vegFraction_scaledNDVI, forcing, land, helpers)
     @unpack_vegFraction_scaledNDVI params
 
     ## unpack land variables
-    @unpack_land begin
-        NDVI ∈ land.states
+    @unpack_nt begin
+        NDVI ⇐ land.states
     end
 
     ## calculate variables
     frac_vegetation = clampZeroOne(NDVI * NDVIscale)
 
     ## pack land variables
-    @pack_land frac_vegetation → land.states
+    @pack_nt frac_vegetation ⇒ land.states
     return land
 end
 

@@ -11,14 +11,14 @@ function compute(params::transpirationDemand_PETvegFraction, forcing, land, help
     @unpack_transpirationDemand_PETvegFraction params
 
     ## unpack land variables
-    @unpack_land begin
-        frac_vegetation ∈ land.states
-        PET ∈ land.fluxes
+    @unpack_nt begin
+        frac_vegetation ⇐ land.states
+        PET ⇐ land.fluxes
     end
     transpiration_demand = PET * α * frac_vegetation
 
     ## pack land variables
-    @pack_land transpiration_demand → land.diagnostics
+    @pack_nt transpiration_demand ⇒ land.diagnostics
     return land
 end
 

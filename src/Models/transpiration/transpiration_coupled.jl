@@ -5,15 +5,15 @@ struct transpiration_coupled <: transpiration end
 function compute(params::transpiration_coupled, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        gpp ∈ land.fluxes
-        WUE ∈ land.diagnostics
+    @unpack_nt begin
+        gpp ⇐ land.fluxes
+        WUE ⇐ land.diagnostics
     end
     # calculate actual transpiration coupled with GPP
     transpiration = gpp / WUE
 
     ## pack land variables
-    @pack_land transpiration → land.fluxes
+    @pack_nt transpiration ⇒ land.fluxes
     return land
 end
 

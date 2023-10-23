@@ -3,13 +3,13 @@ export runoffInterflow_none
 struct runoffInterflow_none <: runoffInterflow end
 
 function define(params::runoffInterflow_none, forcing, land, helpers)
-    @unpack_land z_zero ∈ land.constants
+    @unpack_nt z_zero ⇐ land.constants
 
     ## calculate variables
     interflow_runoff = z_zero
 
     ## pack land variables
-    @pack_land interflow_runoff → land.fluxes
+    @pack_nt interflow_runoff ⇒ land.fluxes
     return land
 end
 

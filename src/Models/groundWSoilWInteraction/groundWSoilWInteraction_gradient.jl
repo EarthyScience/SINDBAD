@@ -9,11 +9,11 @@ end
 
 
 function define(params::groundWSoilWInteraction_gradient, forcing, land, helpers)
-    @unpack_land z_zero ∈ land.constants
+    @unpack_nt z_zero ⇐ land.constants
     ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
     gw_recharge = z_zero
     ## pack land variables
-    @pack_land gw_recharge → land.fluxes
+    @pack_nt gw_recharge ⇒ land.fluxes
     return land
 end
 
@@ -21,11 +21,11 @@ function compute(params::groundWSoilWInteraction_gradient, forcing, land, helper
     ## unpack parameters
     @unpack_groundWSoilWInteraction_gradient params
     ## unpack land variables
-    @unpack_land begin
-        wSat ∈ land.properties
-        (ΔsoilW, soilW, ΔgroundW, groundW) ∈ land.pools
-        (n_groundW, z_zero) ∈ land.constants
-        gw_recharge ∈ land.fluxes
+    @unpack_nt begin
+        wSat ⇐ land.properties
+        (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
+        (n_groundW, z_zero) ⇐ land.constants
+        gw_recharge ⇐ land.fluxes
     end
     # maximum groundwater storage
     p_gwmax = wSat[end] * smax_scale
@@ -45,24 +45,24 @@ function compute(params::groundWSoilWInteraction_gradient, forcing, land, helper
 
     # adjust the delta storages
     ΔgroundW = addToEachElem(ΔgroundW, -gw_capillary_flux / n_groundW)
-    @add_to_elem gw_capillary_flux → (ΔsoilW, lastindex(ΔsoilW), :soilW)
+    @add_to_elem gw_capillary_flux ⇒ (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     # adjust the gw_recharge as net flux between soil and groundwater. positive from soil to gw
     gw_recharge = gw_recharge - gw_capillary_flux
 
     ## pack land variables
-    @pack_land begin
-        (gw_capillary_flux, gw_recharge) → land.fluxes
-        (ΔsoilW, ΔgroundW) → land.pools
+    @pack_nt begin
+        (gw_capillary_flux, gw_recharge) ⇒ land.fluxes
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
 
 function update(params::groundWSoilWInteraction_gradient, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        (soilW, groundW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
+    @unpack_nt begin
+        (soilW, groundW) ⇐ land.pools
+        (ΔsoilW, ΔgroundW) ⇐ land.states
     end
 
     ## update storage pools
@@ -74,9 +74,9 @@ function update(params::groundWSoilWInteraction_gradient, forcing, land, helpers
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     ## pack land variables
-    @pack_land begin
-        (groundW, soilW) → land.pools
-        (ΔsoilW, ΔgroundW) → land.pools
+    @pack_nt begin
+        (groundW, soilW) ⇒ land.pools
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end

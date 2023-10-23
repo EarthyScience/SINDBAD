@@ -30,8 +30,8 @@ function define(params::runoffSaturationExcess_Bergstroem1992VegFractionPFT, for
     β_veg = max(β_min, β_veg * frac_vegetation) # do this?
 
     ## pack land variables
-    @pack_land begin
-        β_veg → land.runoffSaturationExcess
+    @pack_nt begin
+        β_veg ⇒ land.runoffSaturationExcess
     end
     return land
 end
@@ -40,15 +40,15 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionPFT, fo
     ## unpack parameters and forcing
     #@needscheck
     @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT params
-    @unpack_forcing PFT ∈ forcing
+    @unpack_nt PFT ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        (WBP, frac_vegetation) ∈ land.states
-        β_veg ∈ land.runoffSaturationExcess
-        wSat ∈ land.properties
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
+    @unpack_nt begin
+        (WBP, frac_vegetation) ⇐ land.states
+        β_veg ⇐ land.runoffSaturationExcess
+        wSat ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
     # get the PFT data & assign parameters
     tmp_smax_veg = sum(wSat)
@@ -61,9 +61,9 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionPFT, fo
     WBP = WBP - sat_excess_runoff
 
     ## pack land variables
-    @pack_land begin
-        sat_excess_runoff → land.fluxes
-        WBP → land.states
+    @pack_nt begin
+        sat_excess_runoff ⇒ land.fluxes
+        WBP ⇒ land.states
     end
     return land
 end

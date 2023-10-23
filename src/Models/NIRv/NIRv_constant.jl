@@ -14,7 +14,7 @@ function precompute(params::NIRv_constant, forcing, land, helpers)
     NIRv = constant_NIRv
 
     ## pack land variables
-    @pack_land NIRv → land.states
+    @pack_nt NIRv ⇒ land.states
     return land
 end
 
