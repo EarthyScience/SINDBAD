@@ -3,25 +3,25 @@ export drainage_kUnsat
 struct drainage_kUnsat <: drainage end
 
 function define(params::drainage_kUnsat, forcing, land, helpers)
-    @unpack_land soilW ∈ land.pools
+    @unpack_nt soilW ⇐ land.pools
     ## instantiate drainage
     drainage = zero(soilW)
     ## pack land variables
-    @pack_land drainage → land.fluxes
+    @pack_nt drainage ⇒ land.fluxes
     return land
 end
 
 function compute(params::drainage_kUnsat, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        drainage ∈ land.fluxes
-        unsat_k_model ∈ land.models
-        (wSat, wFC, soil_β, soil_kFC, kSat) ∈ land.properties
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
-        (z_zero, o_one) ∈ land.constants
-        tolerance ∈ helpers.numbers
+    @unpack_nt begin
+        drainage ⇐ land.fluxes
+        unsat_k_model ⇐ land.models
+        (wSat, wFC, soil_β, soil_kFC, kSat) ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        (z_zero, o_one) ⇐ land.constants
+        tolerance ⇐ helpers.numbers
     end
 
     ## calculate drainage
@@ -37,9 +37,9 @@ function compute(params::drainage_kUnsat, forcing, land, helpers)
     end
 
     ## pack land variables
-    # @pack_land begin
-    # 	drainage → land.fluxes
-    # 	# ΔsoilW → land.pools
+    # @pack_nt begin
+    # 	drainage ⇒ land.fluxes
+    # 	# ΔsoilW ⇒ land.pools
     # end
     return land
 end
@@ -47,9 +47,9 @@ end
 function update(params::drainage_kUnsat, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -60,9 +60,9 @@ function update(params::drainage_kUnsat, forcing, land, helpers)
     ΔsoilW .= ΔsoilW .- ΔsoilW
 
     ## pack land variables
-    @pack_land begin
-        soilW → land.pools
-        # ΔsoilW → land.pools
+    @pack_nt begin
+        soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
     end
     return land
 end

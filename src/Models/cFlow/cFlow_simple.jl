@@ -5,7 +5,7 @@ struct cFlow_simple <: cFlow end
 function compute(params::cFlow_simple, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land c_flow_A_array ∈ land.diagnostics
+    @unpack_nt c_flow_A_array ⇐ land.diagnostics
 
     ## calculate variables
     #@nc : this needs to go in the full..
@@ -25,9 +25,9 @@ function compute(params::cFlow_simple, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land begin
-        c_flow_order → land.constants
-        (c_flow_A_vec, p_giver, p_taker) → land.cFlow
+    @pack_nt begin
+        c_flow_order ⇒ land.constants
+        (c_flow_A_vec, p_giver, p_taker) ⇒ land.cFlow
     end
     return land
 end

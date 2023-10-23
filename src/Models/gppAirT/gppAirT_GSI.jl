@@ -14,7 +14,7 @@ end
 function define(params::gppAirT_GSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_gppAirT_GSI params
-    @unpack_land o_one ∈ land.constants
+    @unpack_nt o_one ⇐ land.constants
 
     gpp_f_airT_c = o_one
     gpp_f_airT_h = o_one
@@ -23,19 +23,19 @@ function define(params::gppAirT_GSI, forcing, land, helpers)
                                       τ * (o_one / (o_one + exp(-slope * (f_n - base))))
 
     ## pack land variables
-    @pack_land (gpp_f_airT_c, gpp_f_airT_h, f_smooth) → land.diagnostics
+    @pack_nt (gpp_f_airT_c, gpp_f_airT_h, f_smooth) ⇒ land.diagnostics
     return land
 end
 
 function compute(params::gppAirT_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_GSI params
-    @unpack_forcing f_airT ∈ forcing
+    @unpack_nt f_airT ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        (gpp_f_airT_c, gpp_f_airT_h, f_smooth) ∈ land.diagnostics
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        (gpp_f_airT_c, gpp_f_airT_h, f_smooth) ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
@@ -53,7 +53,7 @@ function compute(params::gppAirT_GSI, forcing, land, helpers)
     gpp_f_airT_h = hScGPP
 
     ## pack land variables
-    @pack_land (gpp_f_airT, cScGPP, hScGPP, gpp_f_airT_c, gpp_f_airT_h) → land.diagnostics
+    @pack_nt (gpp_f_airT, cScGPP, hScGPP, gpp_f_airT_c, gpp_f_airT_h) ⇒ land.diagnostics
     return land
 end
 

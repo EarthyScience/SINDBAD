@@ -11,9 +11,9 @@ function compute(params::interception_vegFraction, forcing, land, helpers)
     @unpack_interception_vegFraction params
 
     ## unpack land variables
-    @unpack_land begin
-        (WBP, frac_vegetation) ∈ land.states
-        rain ∈ land.fluxes
+    @unpack_nt begin
+        (WBP, frac_vegetation) ⇐ land.states
+        rain ⇐ land.fluxes
     end
     # calculate interception loss
     interception_capacity = p_interception * frac_vegetation
@@ -22,9 +22,9 @@ function compute(params::interception_vegFraction, forcing, land, helpers)
     WBP = WBP - interception
 
     ## pack land variables
-    @pack_land begin
-        interception → land.fluxes
-        WBP → land.states
+    @pack_nt begin
+        interception ⇒ land.fluxes
+        WBP ⇒ land.states
     end
     return land
 end

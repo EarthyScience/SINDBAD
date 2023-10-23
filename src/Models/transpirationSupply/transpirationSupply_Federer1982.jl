@@ -11,14 +11,14 @@ function compute(params::transpirationSupply_Federer1982, forcing, land, helpers
     @unpack_transpirationSupply_Federer1982 params
 
     ## unpack land variables
-    @unpack_land begin
-        PAW ∈ land.states
-        sum_wSat ∈ land.properties
+    @unpack_nt begin
+        PAW ⇐ land.states
+        sum_wSat ⇐ land.properties
     end
     transpiration_supply = max_t_loss * sum(PAW) / sum_wSat
 
     ## pack land variables
-    @pack_land transpiration_supply → land.diagnostics
+    @pack_nt transpiration_supply ⇒ land.diagnostics
     return land
 end
 

@@ -9,12 +9,12 @@ end
 function compute(params::rainSnow_forcing, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_rainSnow_forcing params
-    @unpack_forcing (f_rain, f_snow) ∈ forcing
+    @unpack_nt (f_rain, f_snow) ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.pools
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
 
     ## calculate variables
@@ -26,18 +26,18 @@ function compute(params::rainSnow_forcing, forcing, land, helpers)
     ΔsnowW[1] = ΔsnowW[1] + snow
 
     ## pack land variables
-    @pack_land begin
-        (precip, rain, snow) → land.fluxes
-        ΔsnowW → land.pools
+    @pack_nt begin
+        (precip, rain, snow) ⇒ land.fluxes
+        ΔsnowW ⇒ land.pools
     end
     return land
 end
 
 function update(params::rainSnow_forcing, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.pools
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
     # update snow pack
     snowW[1] = snowW[1] + ΔsnowW[1]
@@ -46,9 +46,9 @@ function update(params::rainSnow_forcing, forcing, land, helpers)
     ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
 
     ## pack land variables
-    @pack_land begin
-        snowW → land.pools
-        ΔsnowW → land.pools
+    @pack_nt begin
+        snowW ⇒ land.pools
+        ΔsnowW ⇒ land.pools
     end
     return land
 end

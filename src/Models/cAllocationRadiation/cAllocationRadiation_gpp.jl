@@ -5,14 +5,14 @@ struct cAllocationRadiation_gpp <: cAllocationRadiation end
 function compute(params::cAllocationRadiation_gpp, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land gpp_f_cloud ∈ land.diagnostics
+    @unpack_nt gpp_f_cloud ⇐ land.diagnostics
 
     ## calculate variables
     # computation for the radiation effect on decomposition/mineralization
     c_allocation_f_cloud = gpp_f_cloud
 
     ## pack land variables
-    @pack_land c_allocation_f_cloud → land.diagnostics
+    @pack_nt c_allocation_f_cloud ⇒ land.diagnostics
     return land
 end
 

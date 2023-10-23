@@ -9,13 +9,13 @@ end
 
 function define(params::cTauLAI_CASA, forcing, land, helpers)
     @unpack_cTauLAI_CASA params
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
     c_eco_k_f_LAI = one.(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_LAI → land.diagnostics
+    @pack_nt c_eco_k_f_LAI ⇒ land.diagnostics
     return land
 end
 
@@ -24,12 +24,12 @@ function compute(params::cTauLAI_CASA, forcing, land, helpers)
     @unpack_cTauLAI_CASA params
 
     ## unpack land variables
-    @unpack_land c_eco_k_f_LAI ∈ land.diagnostics
+    @unpack_nt c_eco_k_f_LAI ⇐ land.diagnostics
 
     ## unpack land variables
-    @unpack_land begin
-        LAI ∈ land.states
-        (c_eco_τ, c_eco_k) ∈ land.diagnostics
+    @unpack_nt begin
+        LAI ⇐ land.states
+        (c_eco_τ, c_eco_k) ⇐ land.diagnostics
     end
     # set LAI stressor on τ to ones
     TSPY = helpers.dates.timesteps_in_year #sujan
@@ -94,7 +94,7 @@ function compute(params::cTauLAI_CASA, forcing, land, helpers)
     c_eco_k_f_LAI[zix_root] = c_eco_τ[zix_root] * RTLAI / c_eco_k[zix_root] # root litter scalar
 
     ## pack land variables
-    @pack_land (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_f_LAI) → land.diagnostics
+    @pack_nt (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_f_LAI) ⇒ land.diagnostics
     return land
 end
 

@@ -11,8 +11,8 @@ function compute(params::fAPAR_cVegLeaf, forcing, land, helpers)
     @unpack_fAPAR_cVegLeaf params
 
     ## unpack land variables
-    @unpack_land begin
-        cVegLeaf ∈ land.pools
+    @unpack_nt begin
+        cVegLeaf ⇐ land.pools
     end
 
     ## calculate variables
@@ -20,7 +20,7 @@ function compute(params::fAPAR_cVegLeaf, forcing, land, helpers)
     fAPAR = one(k_extinction) - exp(-(cVegLeaf_sum * k_extinction))
 
     ## pack land variables
-    @pack_land fAPAR → land.states
+    @pack_nt fAPAR ⇒ land.states
     return land
 end
 

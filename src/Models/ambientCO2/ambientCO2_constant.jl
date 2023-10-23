@@ -14,7 +14,7 @@ function precompute(params::ambientCO2_constant, forcing, land, helpers)
     ambient_CO2 = constant_ambient_CO2
 
     ## pack land variables
-    @pack_land ambient_CO2 → land.states
+    @pack_nt ambient_CO2 ⇒ land.states
     return land
 end
 

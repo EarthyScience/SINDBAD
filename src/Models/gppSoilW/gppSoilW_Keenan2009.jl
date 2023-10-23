@@ -13,9 +13,9 @@ function compute(params::gppSoilW_Keenan2009, forcing, land, helpers)
     @unpack_gppSoilW_Keenan2009 params
 
     ## unpack land variables
-    @unpack_land begin
-        (sum_wSat, sum_WP) ∈ land.properties
-        soilW ∈ land.pools
+    @unpack_nt begin
+        (sum_wSat, sum_WP) ⇐ land.properties
+        soilW ⇐ land.pools
     end
 
     max_AWC = maxZero(sum_wSat - sum_WP)
@@ -27,7 +27,7 @@ function compute(params::gppSoilW_Keenan2009, forcing, land, helpers)
     gpp_f_soilW = clampZeroOne(smsc)
 
     ## pack land variables
-    @pack_land gpp_f_soilW → land.diagnostics
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
     return land
 end
 

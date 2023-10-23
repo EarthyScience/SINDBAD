@@ -10,14 +10,14 @@ function compute(params::LAI_cVegLeaf, forcing, land, helpers)
     ## unpack parameters
     @unpack_LAI_cVegLeaf params
 
-    @unpack_land cVegLeaf ∈ land.pools
+    @unpack_nt cVegLeaf ⇐ land.pools
 
     ## calculate variables
     cVegLeafTotal = totalS(cVegLeaf)
     LAI = cVegLeafTotal * SLA
 
     ## pack land variables
-    @pack_land LAI → land.states
+    @pack_nt LAI ⇒ land.states
     return land
 end
 

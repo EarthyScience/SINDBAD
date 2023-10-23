@@ -11,9 +11,9 @@ end
 function compute(params::gppAirT_TEM, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_TEM params
-    @unpack_forcing f_airT_day ∈ forcing
-    @unpack_land begin
-        (z_zero, o_one, t_two) ∈ land.constants
+    @unpack_nt f_airT_day ⇐ forcing
+    @unpack_nt begin
+        (z_zero, o_one, t_two) ⇐ land.constants
     end
 
     ## calculate variables
@@ -24,7 +24,7 @@ function compute(params::gppAirT_TEM, forcing, land, helpers)
     gpp_f_airT = clampZeroOne(TScGPP)
 
     ## pack land variables
-    @pack_land gpp_f_airT → land.diagnostics
+    @pack_nt gpp_f_airT ⇒ land.diagnostics
     return land
 end
 

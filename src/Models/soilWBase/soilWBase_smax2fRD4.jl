@@ -14,9 +14,9 @@ end
 function define(params::soilWBase_smax2fRD4, forcing, land, helpers)
     @unpack_soilWBase_smax2fRD4 params
 
-    @unpack_land begin
-        soilW ∈ land.pools
-        n_soilW ∈ land.constants
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        n_soilW ⇐ land.constants
     end
     rootwater_capacities = ones(typeof(smax1), 4)
     if soilW isa SVector
@@ -37,9 +37,9 @@ function define(params::soilWBase_smax2fRD4, forcing, land, helpers)
     wWP = zero(soilW)
 
     ## pack land variables
-    @pack_land begin
-        (soil_layer_thickness, wSat, wFC, wWP) → land.properties
-        rootwater_capacities → land.soilWBase
+    @pack_nt begin
+        (soil_layer_thickness, wSat, wFC, wWP) ⇒ land.properties
+        rootwater_capacities ⇒ land.soilWBase
     end
     return land
 end
@@ -47,12 +47,12 @@ end
 function compute(params::soilWBase_smax2fRD4, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_soilWBase_smax2fRD4 params
-    @unpack_forcing (f_AWC, f_RDeff, f_RDmax, f_SWCmax) ∈ forcing
+    @unpack_nt (f_AWC, f_RDeff, f_RDmax, f_SWCmax) ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        (soil_layer_thickness, wSat, wFC, wWP) ∈ land.properties
-        rootwater_capacities ∈ land.soilWBase
+    @unpack_nt begin
+        (soil_layer_thickness, wSat, wFC, wWP) ⇐ land.properties
+        rootwater_capacities ⇐ land.soilWBase
     end
 
     ## calculate variables
@@ -65,20 +65,20 @@ function compute(params::soilWBase_smax2fRD4, forcing, land, helpers)
 
     # set the properties for each soil layer
     # 1st layer
-    @rep_elem smax1 * soil_layer_thickness[1] → (wSat, 1, :soilW)
-    @rep_elem smax1 * soil_layer_thickness[1] → (wFC, 1, :soilW)
+    @rep_elem smax1 * soil_layer_thickness[1] ⇒ (wSat, 1, :soilW)
+    @rep_elem smax1 * soil_layer_thickness[1] ⇒ (wFC, 1, :soilW)
 
     # 2nd layer - fill in by linaer combination of the RD data
-    @rep_elem sum(rootwater_capacities) → (wSat, 2, :soilW)
-    @rep_elem sum(rootwater_capacities) → (wFC, 2, :soilW)
+    @rep_elem sum(rootwater_capacities) ⇒ (wSat, 2, :soilW)
+    @rep_elem sum(rootwater_capacities) ⇒ (wFC, 2, :soilW)
 
     # get the plant available water available (all the water is plant available)
     wAWC = wSat
 
     ## pack land variables
-    @pack_land begin
-        (wSat, wFC, wWP) → land.properties
-        rootwater_capacities → land.soilWBase
+    @pack_nt begin
+        (wSat, wFC, wWP) ⇒ land.properties
+        rootwater_capacities ⇒ land.soilWBase
     end
 
     return land

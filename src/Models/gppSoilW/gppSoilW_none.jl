@@ -3,14 +3,14 @@ export gppSoilW_none
 struct gppSoilW_none <: gppSoilW end
 
 function define(params::gppSoilW_none, forcing, land, helpers)
-    @unpack_land o_one ∈ land.constants
+    @unpack_nt o_one ⇐ land.constants
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
     gpp_f_soilW = o_one
 
     ## pack land variables
-    @pack_land gpp_f_soilW → land.diagnostics
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
     return land
 end
 

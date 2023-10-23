@@ -5,12 +5,12 @@ struct runoffInfiltrationExcess_Jung <: runoffInfiltrationExcess end
 function compute(params::runoffInfiltrationExcess_Jung, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        (WBP, fAPAR) ∈ land.states
-        kSat ∈ land.properties
-        rain ∈ land.fluxes
-        rainInt ∈ land.states
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        (WBP, fAPAR) ⇐ land.states
+        kSat ⇐ land.properties
+        rain ⇐ land.fluxes
+        rainInt ⇐ land.states
+        (z_zero, o_one) ⇐ land.constants
     end
     # assumes infiltration capacity is unlimited in the vegetated fraction [infiltration flux = P*fpar] the infiltration flux for the unvegetated fraction is given as the minimum of the precip & the min of precip intensity [P] & infiltration capacity [I] scaled with rain duration [P/R]
 
@@ -23,9 +23,9 @@ function compute(params::runoffInfiltrationExcess_Jung, forcing, land, helpers)
     WBP = WBP - inf_excess_runoff
 
     ## pack land variables
-    @pack_land begin
-        inf_excess_runoff → land.fluxes
-        WBP → land.states
+    @pack_nt begin
+        inf_excess_runoff ⇒ land.fluxes
+        WBP ⇒ land.states
     end
     return land
 end

@@ -10,19 +10,19 @@ end
 
 function define(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
     @unpack_rootWaterEfficiency_expCvegRoot params
-    @unpack_land begin
-        soil_layer_thickness ∈ land.properties
-        soilW ∈ land.pools
+    @unpack_nt begin
+        soil_layer_thickness ⇐ land.properties
+        soilW ⇐ land.pools
     end
     ## instantiate variables
     root_water_efficiency = one.(soilW)
     cumulative_soil_depths = cumsum(soil_layer_thickness)
     root_over = one.(soilW)
     ## pack land variables
-    @pack_land begin
-        root_over → land.rootWaterEfficiency
-        cumulative_soil_depths → land.properties
-        root_water_efficiency → land.diagnostics
+    @pack_nt begin
+        root_over ⇒ land.rootWaterEfficiency
+        cumulative_soil_depths ⇒ land.properties
+        root_water_efficiency ⇒ land.diagnostics
     end
     return land
 end
@@ -31,24 +31,24 @@ function precompute(params::rootWaterEfficiency_expCvegRoot, forcing, land, help
     ## unpack parameters
     @unpack_rootWaterEfficiency_expCvegRoot params
     ## unpack land variables
-    @unpack_land begin
-        root_over ∈ land.rootWaterEfficiency
-        cumulative_soil_depths ∈ land.properties
-        z_zero ∈ land.constants
-        max_root_depth ∈ land.diagnostics
-        soilW ∈ land.pools
+    @unpack_nt begin
+        root_over ⇐ land.rootWaterEfficiency
+        cumulative_soil_depths ⇐ land.properties
+        z_zero ⇐ land.constants
+        max_root_depth ⇐ land.diagnostics
+        soilW ⇐ land.pools
     end
     if max_root_depth > z_zero
-        @rep_elem one(eltype(root_over)) → (root_over, 1, :soilW)
+        @rep_elem one(eltype(root_over)) ⇒ (root_over, 1, :soilW)
     end
     for sl ∈ eachindex(soilW)[2:end]
         soilcumuD = cumulative_soil_depths[sl-1]
         rootOver = max_root_depth - soilcumuD
         rootEff = rootOver >= z_zero ? one(eltype(root_over)) : zero(eltype(root_over))
-        @rep_elem rootEff → (root_over, sl, :soilW)
+        @rep_elem rootEff ⇒ (root_over, sl, :soilW)
     end
     ## pack land variables
-    @pack_land root_over → land.rootWaterEfficiency
+    @pack_nt root_over ⇒ land.rootWaterEfficiency
     return land
 end
 
@@ -56,10 +56,10 @@ function compute(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers
     ## unpack parameters
     @unpack_rootWaterEfficiency_expCvegRoot params
     ## unpack land variables
-    @unpack_land begin
-        root_over ∈ land.rootWaterEfficiency
-        root_water_efficiency ∈ land.diagnostics
-        (cVegRoot, soilW) ∈ land.pools
+    @unpack_nt begin
+        root_over ⇐ land.rootWaterEfficiency
+        root_water_efficiency ⇐ land.diagnostics
+        (cVegRoot, soilW) ⇐ land.pools
     end
     ## calculate variables
     tmp_rootEff = max_root_water_efficiency -
@@ -67,10 +67,10 @@ function compute(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers
 
     for sl ∈ eachindex(soilW)
         root_water_efficiency_sl = root_over[sl] * tmp_rootEff
-        @rep_elem root_water_efficiency_sl → (root_water_efficiency, sl, :soilW)
+        @rep_elem root_water_efficiency_sl ⇒ (root_water_efficiency, sl, :soilW)
     end
     ## pack land variables
-    @pack_land root_water_efficiency → land.diagnostics
+    @pack_nt root_water_efficiency ⇒ land.diagnostics
     return land
 end
 

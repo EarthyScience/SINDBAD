@@ -14,7 +14,7 @@ function precompute(params::NDWI_constant, forcing, land, helpers)
     NDWI = constant_NDWI
 
     ## pack land variables
-    @pack_land NDWI → land.states
+    @pack_nt NDWI ⇒ land.states
     return land
 end
 

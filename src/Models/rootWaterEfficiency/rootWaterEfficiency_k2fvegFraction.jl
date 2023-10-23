@@ -9,7 +9,7 @@ end
 
 function define(params::rootWaterEfficiency_k2fvegFraction, forcing, land, helpers)
     @unpack_rootWaterEfficiency_k2fvegFraction params
-    @unpack_land soilW ∈ land.pools
+    @unpack_nt soilW ⇐ land.pools
 
     ## precomputations/check
 
@@ -21,7 +21,7 @@ function define(params::rootWaterEfficiency_k2fvegFraction, forcing, land, helpe
     root_water_efficiency = one.(soilW)
 
     ## pack land variables
-    @pack_land root_water_efficiency → land.diagnostics
+    @pack_nt root_water_efficiency ⇒ land.diagnostics
     return land
 end
 
@@ -30,9 +30,9 @@ function compute(params::rootWaterEfficiency_k2fvegFraction, forcing, land, help
     @unpack_rootWaterEfficiency_k2fvegFraction params
 
     ## unpack land variables
-    @unpack_land begin
-        root_water_efficiency ∈ land.diagnostics
-        frac_vegetation ∈ land.states
+    @unpack_nt begin
+        root_water_efficiency ⇐ land.diagnostics
+        frac_vegetation ⇐ land.states
     end
 
     ## calculate variables
@@ -42,12 +42,12 @@ function compute(params::rootWaterEfficiency_k2fvegFraction, forcing, land, help
     k2_root_water_efficiency = minOne(frac_vegetation * k2_scale) # the fraction of water that a root can uptake from the 1st soil layer
     # set the properties
     # 1st Layer
-    @rep_elem k1_root_water_efficiency → (root_water_efficiency, 1, :soilW)
+    @rep_elem k1_root_water_efficiency ⇒ (root_water_efficiency, 1, :soilW)
     # 2nd Layer
-    @rep_elem k2_root_water_efficiency → (root_water_efficiency, 2, :soilW)
+    @rep_elem k2_root_water_efficiency ⇒ (root_water_efficiency, 2, :soilW)
 
     ## pack land variables
-    @pack_land root_water_efficiency → land.diagnostics
+    @pack_nt root_water_efficiency ⇒ land.diagnostics
     return land
 end
 
