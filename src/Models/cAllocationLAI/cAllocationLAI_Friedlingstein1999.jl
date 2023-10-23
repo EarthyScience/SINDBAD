@@ -13,14 +13,14 @@ function compute(params::cAllocationLAI_Friedlingstein1999, forcing, land, helpe
     @unpack_cAllocationLAI_Friedlingstein1999 params
 
     ## unpack land variables
-    @unpack_land LAI ∈ land.states
+    @unpack_nt LAI ⇐ land.states
 
     ## calculate variables
     # light limitation [c_allocation_f_LAI] calculation
     c_allocation_f_LAI = clamp(exp(-kext * LAI), min_f_LAI, max_f_LAI)
 
     ## pack land variables
-    @pack_land c_allocation_f_LAI → land.diagnostics
+    @pack_nt c_allocation_f_LAI ⇒ land.diagnostics
     return land
 end
 

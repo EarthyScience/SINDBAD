@@ -11,8 +11,8 @@ function define(params::vegAvailableWater_sigmoid, forcing, land, helpers)
     @unpack_vegAvailableWater_sigmoid params
 
     ## unpack land variables
-    @unpack_land begin
-        soilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
     end
 
     θ_dos = zero(soilW)
@@ -22,7 +22,7 @@ function define(params::vegAvailableWater_sigmoid, forcing, land, helpers)
     maxWater = zero(soilW)
 
     ## pack land variables
-    @pack_land (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) → land.states
+    @pack_nt (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ⇒ land.states
     return land
 end
 
@@ -31,26 +31,26 @@ function compute(params::vegAvailableWater_sigmoid, forcing, land, helpers)
     @unpack_vegAvailableWater_sigmoid params
 
     ## unpack land variables
-    @unpack_land begin
-        (wWP, wFC, wSat, soil_β) ∈ land.properties
-        root_water_efficiency ∈ land.diagnostics
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.pools
-        (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ∈ land.states
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        (wWP, wFC, wSat, soil_β) ⇐ land.properties
+        root_water_efficiency ⇐ land.diagnostics
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ⇐ land.states
+        (z_zero, o_one) ⇐ land.constants
     end
     for sl ∈ eachindex(soilW)
         θ_dos = (soilW[sl] + ΔsoilW[sl]) / wSat[sl]
         θ_fc_dos = wFC[sl] / wSat[sl]
         tmpSoilWStress = clampZeroOne(o_one / (o_one + exp(-exp_factor * soil_β[sl] * (θ_dos - θ_fc_dos))))
-        @rep_elem tmpSoilWStress → (soilWStress, sl, :soilW)
+        @rep_elem tmpSoilWStress ⇒ (soilWStress, sl, :soilW)
         maxWater = clampZeroOne(soilW[sl] + ΔsoilW[sl] - wWP[sl])
         PAW_sl = root_water_efficiency[sl] * maxWater * tmpSoilWStress
-        @rep_elem PAW_sl → (PAW, sl, :soilW)
+        @rep_elem PAW_sl ⇒ (PAW, sl, :soilW)
     end
 
     ## pack land variables
-    @pack_land (PAW, soilWStress) → land.states
+    @pack_nt (PAW, soilWStress) ⇒ land.states
     return land
 end
 

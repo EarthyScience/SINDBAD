@@ -12,7 +12,7 @@ function define(params::gppSoilW_Stocker2020, forcing, land, helpers)
     gpp_f_soilW = one(q)
 
     ## pack land variables
-    @pack_land gpp_f_soilW → land.diagnostics
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
     return land
 end
 
@@ -21,10 +21,10 @@ function compute(params::gppSoilW_Stocker2020, forcing, land, helpers)
     @unpack_gppSoilW_Stocker2020 params
 
     ## unpack land variables
-    @unpack_land begin
-        (sum_wFC, sum_WP) ∈ land.properties
-        soilW ∈ land.pools
-        (z_zero, o_one, t_two) ∈ land.constants
+    @unpack_nt begin
+        (sum_wFC, sum_WP) ⇐ land.properties
+        soilW ⇐ land.pools
+        (z_zero, o_one, t_two) ⇐ land.constants
     end
     ## calculate variables
     SM = sum(soilW)
@@ -36,7 +36,7 @@ function compute(params::gppSoilW_Stocker2020, forcing, land, helpers)
     gpp_f_soilW = clampZeroOne(c_allocation_f_soilW)
 
     ## pack land variables
-    @pack_land gpp_f_soilW → land.diagnostics
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
     return land
 end
 

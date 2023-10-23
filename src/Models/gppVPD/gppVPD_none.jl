@@ -3,14 +3,14 @@ export gppVPD_none
 struct gppVPD_none <: gppVPD end
 
 function define(params::gppVPD_none, forcing, land, helpers)
-    @unpack_land o_one ∈ land.constants
+    @unpack_nt o_one ⇐ land.constants
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
     gpp_f_vpd = o_one
 
     ## pack land variables
-    @pack_land gpp_f_vpd → land.diagnostics
+    @pack_nt gpp_f_vpd ⇒ land.diagnostics
     return land
 end
 

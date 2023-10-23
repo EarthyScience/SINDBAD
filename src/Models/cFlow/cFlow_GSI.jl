@@ -11,11 +11,11 @@ end
 
 function define(params::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI params
-    @unpack_land begin
-        (cEco, soilW) ∈ land.pools
-        (c_giver, c_taker) ∈ land.constants
-        cEco_comps = cEco ∈ helpers.pools.components
-        sum_wSat ∈ land.properties
+    @unpack_nt begin
+        (cEco, soilW) ⇐ land.pools
+        (c_giver, c_taker) ⇐ land.constants
+        cEco_comps = cEco ⇐ helpers.pools.components
+        sum_wSat ⇐ land.properties
     end
     ## instantiate variables
 
@@ -58,10 +58,10 @@ function define(params::cFlow_GSI, forcing, land, helpers)
     eco_stressor_prev = totalS(soilW) / sum_wSat
 
 
-    @pack_land begin
-        c_flow_A_vec_ind → land.cFlow
-        eco_stressor_prev → land.diagnostics
-        c_flow_A_vec → land.diagnostics
+    @pack_nt begin
+        c_flow_A_vec_ind ⇒ land.cFlow
+        eco_stressor_prev ⇒ land.diagnostics
+        c_flow_A_vec ⇒ land.diagnostics
     end
 
     return land
@@ -72,7 +72,7 @@ function adjust_pk(c_eco_k, kValue, flowValue, maxValue, zix, helpers)
     for ix ∈ zix
         # @show ix, c_eco_k[ix]
         tmp = min(c_eco_k[ix] + kValue + flowValue, maxValue)
-        @rep_elem tmp → (c_eco_k, ix, :cEco)
+        @rep_elem tmp ⇒ (c_eco_k, ix, :cEco)
         c_eco_k_f_sum = c_eco_k_f_sum + tmp
     end
     return c_eco_k, c_eco_k_f_sum
@@ -82,11 +82,11 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_cFlow_GSI params
     ## unpack land variables
-    @unpack_land begin
-        c_flow_A_vec_ind ∈ land.cFlow
-        (c_allocation_f_soilW, c_allocation_f_soilT, c_allocation_f_cloud, eco_stressor_prev)  ∈ land.diagnostics
-        c_eco_k ∈ land.diagnostics
-        c_flow_A_vec ∈ land.diagnostics
+    @unpack_nt begin
+        c_flow_A_vec_ind ⇐ land.cFlow
+        (c_allocation_f_soilW, c_allocation_f_soilT, c_allocation_f_cloud, eco_stressor_prev)  ⇐ land.diagnostics
+        c_eco_k ⇐ land.diagnostics
+        c_flow_A_vec ⇐ land.diagnostics
     end
 
     # Compute sigmoid functions
@@ -150,9 +150,9 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     eco_stressor_prev = eco_stressor
 
     ## pack land variables
-    @pack_land begin
-        (leaf_to_reserve, leaf_to_reserve_frac, root_to_reserve, root_to_reserve_frac, reserve_to_leaf, reserve_to_leaf_frac, reserve_to_root, reserve_to_root_frac, eco_stressor, k_shedding_leaf, k_shedding_leaf_frac, k_shedding_root, k_shedding_root_frac, slope_eco_stressor, eco_stressor_prev, c_eco_k) → land.diagnostics
-        c_flow_A_vec → land.diagnostics
+    @pack_nt begin
+        (leaf_to_reserve, leaf_to_reserve_frac, root_to_reserve, root_to_reserve_frac, reserve_to_leaf, reserve_to_leaf_frac, reserve_to_root, reserve_to_root_frac, eco_stressor, k_shedding_leaf, k_shedding_leaf_frac, k_shedding_root, k_shedding_root_frac, slope_eco_stressor, eco_stressor_prev, c_eco_k) ⇒ land.diagnostics
+        c_flow_A_vec ⇒ land.diagnostics
     end
     return land
 end

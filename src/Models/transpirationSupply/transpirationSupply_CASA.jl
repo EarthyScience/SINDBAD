@@ -5,13 +5,13 @@ struct transpirationSupply_CASA <: transpirationSupply end
 function compute(params::transpirationSupply_CASA, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land PAW ∈ land.states
+    @unpack_nt PAW ⇐ land.states
 
     ## calculate variables
     transpiration_supply = sum(PAW)
 
     ## pack land variables
-    @pack_land transpiration_supply → land.diagnostics
+    @pack_nt transpiration_supply ⇒ land.diagnostics
     return land
 end
 

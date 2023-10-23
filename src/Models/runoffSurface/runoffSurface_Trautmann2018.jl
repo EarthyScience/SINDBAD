@@ -14,7 +14,7 @@ function define(params::runoffSurface_Trautmann2018, forcing, land, helpers)
     Rdelay = z / (sum(z) * ones(1, 61))
 
     ## pack land variables
-    @pack_land (z, Rdelay) → land.surface_runoff
+    @pack_nt (z, Rdelay) ⇒ land.surface_runoff
     return land
 end
 
@@ -24,13 +24,13 @@ function compute(params::runoffSurface_Trautmann2018, forcing, land, helpers)
     @unpack_runoffSurface_Trautmann2018 params
 
     ## unpack land variables
-    @unpack_land (z, Rdelay) ∈ land.surface_runoff
+    @unpack_nt (z, Rdelay) ⇐ land.surface_runoff
 
     ## unpack land variables
-    @unpack_land begin
-        (rain, snow) ∈ land.fluxes
-        (snowW, snowW_prev, soilW, soilW_prev, surfaceW) ∈ land.pools
-        (evaporation, overland_runoff, sublimation) ∈ land.fluxes
+    @unpack_nt begin
+        (rain, snow) ⇐ land.fluxes
+        (snowW, snowW_prev, soilW, soilW_prev, surfaceW) ⇐ land.pools
+        (evaporation, overland_runoff, sublimation) ⇐ land.fluxes
     end
     # calculate delay function of previous days
     # calculate Q from delay of previous days
@@ -49,9 +49,9 @@ function compute(params::runoffSurface_Trautmann2018, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land begin
-        surface_runoff → land.fluxes
-        (Rdelay, dSurf) → land.surface_runoff
+    @pack_nt begin
+        surface_runoff ⇒ land.fluxes
+        (Rdelay, dSurf) ⇒ land.surface_runoff
     end
     return land
 end
@@ -60,9 +60,9 @@ function update(params::runoffSurface_Trautmann2018, forcing, land, helpers)
     @unpack_runoffSurface_Trautmann2018 params
 
     ## unpack variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.pools
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
     end
 
     ## update storage pools
@@ -72,9 +72,9 @@ function update(params::runoffSurface_Trautmann2018, forcing, land, helpers)
     ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
     ## pack land variables
-    @pack_land begin
-        surfaceW → land.pools
-        ΔsurfaceW → land.pools
+    @pack_nt begin
+        surfaceW ⇒ land.pools
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end

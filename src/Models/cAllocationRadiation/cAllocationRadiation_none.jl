@@ -3,13 +3,13 @@ export cAllocationRadiation_none
 struct cAllocationRadiation_none <: cAllocationRadiation end
 
 function define(params::cAllocationRadiation_none, forcing, land, helpers)
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
     c_allocation_f_cloud = one(first(cEco))
 
     ## pack land variables
-    @pack_land c_allocation_f_cloud → land.diagnostics
+    @pack_nt c_allocation_f_cloud ⇒ land.diagnostics
     return land
 end
 

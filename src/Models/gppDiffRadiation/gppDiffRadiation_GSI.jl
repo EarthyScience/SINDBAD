@@ -11,27 +11,27 @@ end
 function define(params::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI params
-    @unpack_forcing f_rg ∈ forcing
-    @unpack_land o_one ∈ land.constants
+    @unpack_nt f_rg ⇐ forcing
+    @unpack_nt o_one ⇐ land.constants
 
     gpp_f_cloud_prev = o_one
     gpp_f_cloud = o_one
     MJ_to_W = oftype(fR_base, 11.57407)
 
     ## pack land variables
-    @pack_land (gpp_f_cloud, gpp_f_cloud_prev, MJ_to_W) → land.diagnostics
+    @pack_nt (gpp_f_cloud, gpp_f_cloud_prev, MJ_to_W) ⇒ land.diagnostics
     return land
 end
 
 function compute(params::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI params
-    @unpack_forcing f_rg ∈ forcing
+    @unpack_nt f_rg ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        (gpp_f_cloud_prev, MJ_to_W) ∈ land.diagnostics
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        (gpp_f_cloud_prev, MJ_to_W) ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
     ## calculate variables
     f_prev = gpp_f_cloud_prev
@@ -41,7 +41,7 @@ function compute(params::gppDiffRadiation_GSI, forcing, land, helpers)
     gpp_f_cloud_prev = gpp_f_cloud
 
     ## pack land variables
-    @pack_land (gpp_f_cloud, gpp_f_cloud_prev) → land.diagnostics
+    @pack_nt (gpp_f_cloud, gpp_f_cloud_prev) ⇒ land.diagnostics
     return land
 end
 

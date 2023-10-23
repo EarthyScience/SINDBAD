@@ -9,9 +9,9 @@ end
 function define(params::soilWBase_smax1Layer, forcing, land, helpers)
     @unpack_soilWBase_smax1Layer params
 
-    @unpack_land begin
-        soilW ∈ land.pools
-        n_soilW ∈ land.constants
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        n_soilW ⇐ land.constants
     end
     ## precomputations/check
     # get the soil thickness & root distribution information from input
@@ -27,7 +27,7 @@ function define(params::soilWBase_smax1Layer, forcing, land, helpers)
     wWP = zero(soilW)
 
     ## pack land variables
-    @pack_land (soil_layer_thickness, wSat, wFC, wWP) → land.properties
+    @pack_nt (soil_layer_thickness, wSat, wFC, wWP) ⇒ land.properties
     return land
 end
 
@@ -36,7 +36,7 @@ function compute(params::soilWBase_smax1Layer, forcing, land, helpers)
     @unpack_soilWBase_smax1Layer params
 
     ## unpack land variables
-    @unpack_land (soil_layer_thickness, wSat, wFC, wWP) ∈ land.properties
+    @unpack_nt (soil_layer_thickness, wSat, wFC, wWP) ⇐ land.properties
 
     ## calculate variables
 
@@ -49,7 +49,7 @@ function compute(params::soilWBase_smax1Layer, forcing, land, helpers)
     wAWC = wSat
 
     ## pack land variables
-    @pack_land (wAWC, wFC, wSat, wWP) → land.properties
+    @pack_nt (wAWC, wFC, wSat, wWP) ⇒ land.properties
     return land
 end
 

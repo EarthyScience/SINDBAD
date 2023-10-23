@@ -16,19 +16,19 @@ function define(params::cAllocationRadiation_GSI, forcing, land, helpers)
     c_allocation_f_cloud_prev = one(slope_rad)
 
     ## pack land variables
-    @pack_land c_allocation_f_cloud_prev → land.diagnostics
+    @pack_nt c_allocation_f_cloud_prev ⇒ land.diagnostics
     return land
 end
 
 function compute(params::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_cAllocationRadiation_GSI params
-    @unpack_forcing f_PAR ∈ forcing
+    @unpack_nt f_PAR ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        c_allocation_f_cloud_prev ∈ land.diagnostics
-        (z_zero, o_one) ∈ land.constants
+    @unpack_nt begin
+        c_allocation_f_cloud_prev ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
     ## calculate variables
     # computation for the radiation effect on decomposition/mineralization
@@ -38,7 +38,7 @@ function compute(params::cAllocationRadiation_GSI, forcing, land, helpers)
     c_allocation_f_cloud_prev = c_allocation_c_allocation_f_cloud
 
     ## pack land variables
-    @pack_land (c_allocation_c_allocation_f_cloud, c_allocation_f_cloud_prev) → land.diagnostics
+    @pack_nt (c_allocation_c_allocation_f_cloud, c_allocation_f_cloud_prev) ⇒ land.diagnostics
     return land
 end
 

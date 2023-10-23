@@ -23,15 +23,15 @@ end
 function define(params::PET_Lu2005, forcing, land, helpers)
     ## unpack forcing
     @unpack_PET_Lu2005 params
-    @unpack_forcing f_airT ∈ forcing
+    @unpack_nt f_airT ⇐ forcing
     PET = zero(f_airT)
     ## calculate variables
     Tair_prev = f_airT
 
     ## pack land variables
-    @pack_land begin 
-        PET → land.fluxes
-        Tair_prev → land.states
+    @pack_nt begin 
+        PET ⇒ land.fluxes
+        Tair_prev ⇒ land.states
     end
     return land
 end
@@ -40,10 +40,10 @@ function compute(params::PET_Lu2005, forcing, land, helpers)
     ## unpack parameters
     @unpack_PET_Lu2005 params
     ## unpack forcing
-    @unpack_forcing (f_rn, f_airT) ∈ forcing
+    @unpack_nt (f_rn, f_airT) ⇐ forcing
 
-    @unpack_land begin
-        Tair_prev ∈ land.states
+    @unpack_nt begin
+        Tair_prev ⇐ land.states
     end
 
     ## calculate variables
@@ -61,7 +61,7 @@ function compute(params::PET_Lu2005, forcing, land, helpers)
     γ = sh_cp * atmp / (γ_resistance * λ)
 
     # G is the heat flux density to the ground [MJ/m^2/day]
-    # G = 4.2[T[i+1]-T[i-1]]/dt → adopted to T[i]-T[i-1] by skoirala
+    # G = 4.2[T[i+1]-T[i-1]]/dt ⇒ adopted to T[i]-T[i-1] by skoirala
     # G = 4.2 * (Tair_ip1 - Tair_im1) / dt
     # where Ti is the mean air temperature [°C] for the period i; &
     # dt the difference of time [days]..
@@ -74,9 +74,9 @@ function compute(params::PET_Lu2005, forcing, land, helpers)
     Tair_prev = f_airT
 
     ## pack land variables
-    @pack_land begin 
-        PET → land.fluxes
-        Tair_prev → land.states
+    @pack_nt begin 
+        PET ⇒ land.fluxes
+        Tair_prev ⇒ land.states
     end
     return land
 end

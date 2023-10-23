@@ -12,12 +12,12 @@ end
 function compute(params::gppVPD_PRELES, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_PRELES params
-    @unpack_forcing f_VPD_day ∈ forcing
+    @unpack_nt f_VPD_day ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        ambient_CO2 ∈ land.states
-        o_one ∈ land.constants
+    @unpack_nt begin
+        ambient_CO2 ⇐ land.states
+        o_one ⇐ land.constants
     end
     # fVPD_VPD                    = exp(p.gppfVPD.kappa .* -f.f_VPD_day(:,tix) .* (p.gppfVPD.base_ambient_CO2 ./ s.cd.ambCO2) .^ -p.gppfVPD.Ckappa);
     # fCO2_CO2                    = 1 + (s.cd.ambCO2 - p.gppfVPD.base_ambient_CO2) ./ (s.cd.ambCO2 - p.gppfVPD.base_ambient_CO2 + p.gppfVPD.sat_ambient_CO2);
@@ -30,7 +30,7 @@ function compute(params::gppVPD_PRELES, forcing, land, helpers)
     gpp_f_vpd = clampZeroOne(fVPD_VPD * fCO2_CO2)
 
     ## pack land variables
-    @pack_land gpp_f_vpd → land.diagnostics
+    @pack_nt gpp_f_vpd ⇒ land.diagnostics
     return land
 end
 

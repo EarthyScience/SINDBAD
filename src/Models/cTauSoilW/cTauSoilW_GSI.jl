@@ -12,13 +12,13 @@ end
 
 function define(params::cTauSoilW_GSI, forcing, land, helpers)
     @unpack_cTauSoilW_GSI params
-    @unpack_land cEco ∈ land.pools
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
     c_eco_k_f_soilW = one.(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soilW → land.diagnostics
+    @pack_nt c_eco_k_f_soilW ⇒ land.diagnostics
     return land
 end
 
@@ -27,12 +27,12 @@ function compute(params::cTauSoilW_GSI, forcing, land, helpers)
     @unpack_cTauSoilW_GSI params
 
     ## unpack land variables
-    @unpack_land c_eco_k_f_soilW ∈ land.diagnostics
+    @unpack_nt c_eco_k_f_soilW ⇐ land.diagnostics
 
     ## unpack land variables
-    @unpack_land begin
-        wSat ∈ land.properties
-        (cEco, cLit, cSoil, soilW) ∈ land.pools
+    @unpack_nt begin
+        wSat ⇐ land.properties
+        (cEco, cLit, cSoil, soilW) ⇐ land.pools
     end
     w_one = one(eltype(soilW))
     ## for the litter pools; only use the top layer"s moisture
@@ -40,7 +40,7 @@ function compute(params::cTauSoilW_GSI, forcing, land, helpers)
     soilW_top_sc = fSoilW_cTau(w_one, opt_soilW_A, opt_soilW_B, w_exp, opt_soilW, soilW_top)
     cLitZix = getZix(cLit, helpers.pools.zix.cLit)
     for l_zix ∈ cLitZix
-        @rep_elem soilW_top_sc → (c_eco_k_f_soilW, l_zix, :cEco)
+        @rep_elem soilW_top_sc ⇒ (c_eco_k_f_soilW, l_zix, :cEco)
     end
 
     ## repeat for the soil pools; using all soil moisture layers
@@ -49,11 +49,11 @@ function compute(params::cTauSoilW_GSI, forcing, land, helpers)
 
     cSoilZix = getZix(cSoil, helpers.pools.zix.cSoil)
     for s_zix ∈ cSoilZix
-        @rep_elem soilW_all_sc → (c_eco_k_f_soilW, s_zix, :cEco)
+        @rep_elem soilW_all_sc ⇒ (c_eco_k_f_soilW, s_zix, :cEco)
     end
 
     ## pack land variables
-    @pack_land c_eco_k_f_soilW → land.diagnostics
+    @pack_nt c_eco_k_f_soilW ⇒ land.diagnostics
     return land
 end
 

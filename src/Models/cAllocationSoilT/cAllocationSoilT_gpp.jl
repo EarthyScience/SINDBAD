@@ -5,14 +5,14 @@ struct cAllocationSoilT_gpp <: cAllocationSoilT end
 function compute(params::cAllocationSoilT_gpp, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land gpp_f_airT ∈ land.diagnostics
+    @unpack_nt gpp_f_airT ⇐ land.diagnostics
 
     ## calculate variables
     # computation for the temperature effect on decomposition/mineralization
     c_allocation_f_soilT = gpp_f_airT
 
     ## pack land variables
-    @pack_land c_allocation_f_soilT → land.diagnostics
+    @pack_nt c_allocation_f_soilT ⇒ land.diagnostics
     return land
 end
 

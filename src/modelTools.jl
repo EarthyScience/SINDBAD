@@ -85,21 +85,21 @@ function getInOutModel(model, model_func::Symbol)
     mod_code_lines = strip.(split(mod_code, "\n"))
 
     # get the input vars
-    in_lines_index = findall(x -> ((occursin("∈", x) || occursin("land.", x) || occursin("forcing.", x))&& !occursin("for ", x) && !occursin("helpers.", x) && !startswith(x, "#")), mod_code_lines)
+    in_lines_index = findall(x -> ((occursin("⇐", x) || occursin("land.", x) || occursin("forcing.", x))&& !occursin("for ", x) && !occursin("helpers.", x) && !startswith(x, "#")), mod_code_lines)
     in_all = map(in_lines_index) do in_in 
         mod_line = mod_code_lines[in_in]
         in_line = ""
         try 
             mod_line = strip(mod_line)
             in_line_src=""
-            if occursin("∈", mod_line)
-                in_line = strip(split(mod_line, "∈")[1])
-                in_line_src = strip(split(mod_line, "∈")[2])
-                if occursin("@unpack_land", in_line)
-                    in_line=strip(split(in_line, "@unpack_land")[2])
+            if occursin("⇐", mod_line)
+                in_line = strip(split(mod_line, "⇐")[1])
+                in_line_src = strip(split(mod_line, "⇐")[2])
+                if occursin("@unpack_nt", in_line)
+                    in_line=strip(split(in_line, "@unpack_nt")[2])
                 end
-                if occursin("@unpack_forcing", in_line)
-                    in_line=strip(split(in_line, "@unpack_forcing")[2])
+                if occursin("@unpack_nt", in_line)
+                    in_line=strip(split(in_line, "@unpack_nt")[2])
                 end
                 if occursin("land.", in_line_src)
                     in_line_src=strip(split(in_line_src, "land.")[2])
@@ -107,15 +107,15 @@ function getInOutModel(model, model_func::Symbol)
                 if occursin("forcing.", in_line_src)
                     in_line_src="forcing"
                 end
-            elseif occursin("land.", mod_line) && occursin("=", mod_line) && !occursin("→", mod_line) 
+            elseif occursin("land.", mod_line) && occursin("=", mod_line) && !occursin("⇒", mod_line) 
                 in_line = strip(mod_line)
-                @warn "Using an unextracted variable from land in $model_func function of $(model_name).jl in line $(in_line).\nWhile this is not necessarily a source of error, these variables are NOT used in consistency checks and may be prone to bugs and lead to cluttered code. Follow the convention of unpacking all variables to use locally using @unpack_land."
+                @warn "Using an unextracted variable from land in $model_func function of $(model_name).jl in line $(in_line).\nWhile this is not necessarily a source of error, these variables are NOT used in consistency checks and may be prone to bugs and lead to cluttered code. Follow the convention of unpacking all variables to use locally using @unpack_nt."
 
                 # rhs=strip(split(strip(mod_line), "=")[2])
-            elseif occursin("forcing.", mod_line) && occursin("=", mod_line) && !occursin("→", mod_line) 
+            elseif occursin("forcing.", mod_line) && occursin("=", mod_line) && !occursin("⇒", mod_line) 
                 in_line = strip(mod_line)
-                # in_line=strip(split(strip(mod_line), "∈")[1])
-                @warn "Using an unextracted variable from forcing in  $model_func function of $(model_name).jl in line $(in_line).\nWhile this is not necessarily a source of error, these variables are NOT used in consistency checks and may be prone to bugs and lead to cluttered code. Follow the convention of unpacking all variables to use locally using @unpack_forcing."
+                # in_line=strip(split(strip(mod_line), "⇐")[1])
+                @warn "Using an unextracted variable from forcing in  $model_func function of $(model_name).jl in line $(in_line).\nWhile this is not necessarily a source of error, these variables are NOT used in consistency checks and may be prone to bugs and lead to cluttered code. Follow the convention of unpacking all variables to use locally using @unpack_nt."
                 in_line_src="forcing"
             end
             in_v_str = replace(strip(in_line), "(" => "",  ")" => "")
@@ -125,20 +125,20 @@ function getInOutModel(model, model_func::Symbol)
             in_line_src = Symbol(in_line_src)
             Pair.(Ref(in_line_src), in_v_list)
         catch e
-            @error "Error extracting input information from $model_func function of $(model_name).jl in line $(in_line). Possibly due to a line break in call of @unpack_land macro."
+            @error "Error extracting input information from $model_func function of $(model_name).jl in line $(in_line). Possibly due to a line break in call of @unpack_nt macro."
             error(e)
         end
     end
     mod_vars[:input] = Tuple(vcat(in_all...))
 
     # get the output vars
-    out_lines_index = findall(x -> (occursin("→", x) && !occursin("_elem", x) && !occursin("@rep_", x) && !startswith(x, "#")), mod_code_lines)
+    out_lines_index = findall(x -> (occursin("⇒", x) && !occursin("_elem", x) && !occursin("@rep_", x) && !startswith(x, "#")), mod_code_lines)
     out_all = map(out_lines_index) do out_in
-        out_line = strip(split(mod_code_lines[out_in], "→")[1])
+        out_line = strip(split(mod_code_lines[out_in], "⇒")[1])
         try
-        out_line_tar = Symbol(strip(split(split(mod_code_lines[out_in], "→")[2], "land.")[2]))
-            if occursin("@pack_land", out_line)
-                out_line=strip(split(out_line, "@pack_land")[2])
+        out_line_tar = Symbol(strip(split(split(mod_code_lines[out_in], "⇒")[2], "land.")[2]))
+            if occursin("@pack_nt", out_line)
+                out_line=strip(split(out_line, "@pack_nt")[2])
             end
             out_v_str = replace(strip(out_line), "(" => "",  ")" => "")
             out_v_list = [(strip(_v)) for _v in split(out_v_str, ",")[1:end]]
@@ -147,7 +147,7 @@ function getInOutModel(model, model_func::Symbol)
             out_v_list = Symbol.(out_v_list[(!isempty).(out_v_list)])
             Pair.(Ref(out_line_tar), out_v_list)
         catch e
-            @error "Error extracting output information from $model_func function of $(model_name).jl in line $(out_line). Possibly due to a line break in call of @pack_land macro."
+            @error "Error extracting output information from $model_func function of $(model_name).jl in line $(out_line). Possibly due to a line break in call of @pack_nt macro."
             error(e)
         end
     end

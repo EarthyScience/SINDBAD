@@ -5,12 +5,11 @@ struct soilWBase_uniform <: soilWBase end
 function define(params::soilWBase_uniform, forcing, land, helpers)
     #@needscheck
     ## unpack land variables
-    @unpack_land begin
-        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈
-        land.properties
-        (st_clay, st_orgm, st_sand, st_silt) ∈ land.properties
-        soilW ∈ land.pools
-        n_soilW ∈ land.constants
+    @unpack_nt begin
+        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ⇐ land.properties
+        (st_clay, st_orgm, st_sand, st_silt) ⇐ land.properties
+        soilW ⇐ land.pools
+        n_soilW ⇐ land.constants
     end
 
     # instatiate variables 
@@ -36,15 +35,15 @@ function define(params::soilWBase_uniform, forcing, land, helpers)
 
     for sl ∈ eachindex(soilW)
         sd_sl = soilDepths[sl]
-        @rep_elem sd_sl → (soil_layer_thickness, sl, :soilW)
+        @rep_elem sd_sl ⇒ (soil_layer_thickness, sl, :soilW)
         p_wFC_sl = θFC[sl] * sd_sl
-        @rep_elem p_wFC_sl → (wFC, sl, :soilW)
+        @rep_elem p_wFC_sl ⇒ (wFC, sl, :soilW)
         wWP_sl = θWP[sl] * sd_sl
-        @rep_elem wWP_sl → (wWP, sl, :soilW)
+        @rep_elem wWP_sl ⇒ (wWP, sl, :soilW)
         p_wSat_sl = θSat[sl] * sd_sl
-        @rep_elem p_wSat_sl → (wSat, sl, :soilW)
+        @rep_elem p_wSat_sl ⇒ (wSat, sl, :soilW)
         soilW_sl = min(soilW[sl], wSat[sl])
-        @rep_elem soilW_sl → (soilW, sl, :soilW)
+        @rep_elem soilW_sl ⇒ (soilW, sl, :soilW)
     end
 
     # get the plant available water capacity
@@ -56,7 +55,7 @@ function define(params::soilWBase_uniform, forcing, land, helpers)
     sum_wSat = sum(wSat)
     sum_wAWC = sum(wAWC)
 
-    @pack_land begin
+    @pack_nt begin
         (soil_kFC,
             kSat,
             kWP,
@@ -76,8 +75,8 @@ function define(params::soilWBase_uniform, forcing, land, helpers)
             θWP,
             ψFC,
             ψSat,
-            ψWP) → land.properties
-        soilW → land.pools
+            ψWP) ⇒ land.properties
+        soilW ⇒ land.pools
     end
     return land
 end

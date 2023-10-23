@@ -87,13 +87,13 @@ function doNothing(_data)
 end
 
 """
-    entertainMe(n=100)
+    entertainMe(n=10, disp_text="Sindbad.jl")
 
-display the SINDBAD banner n times
+display the disp_text n times
 """
-function entertainMe(n=10)
+function entertainMe(n=10, disp_text="Sindbad.jl")
     for _x in 1:n
-        sindbadBanner()
+        sindbadBanner(disp_text)
         sleep(0.1)
     end
 end
@@ -180,14 +180,14 @@ function setLogLevel(log_level::Symbol)
 end
 
 """
-    sindbadBanner()
+    sindbadBanner(disp_text="Sindbad.jl")
 
-displays the Sindbad.jl banner using Figlets
+displays display text as a banner using Figlets
 """
-function sindbadBanner()
+function sindbadBanner(disp_text="Sindbad.jl")
     print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
     println("######################################################################################################\n")
-    FIGlet.render("Sindbad.jl", rand(figlet_fonts))
+    FIGlet.render(disp_text, rand(figlet_fonts))
     println("######################################################################################################")
     return nothing
 end

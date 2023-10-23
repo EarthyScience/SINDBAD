@@ -5,12 +5,12 @@ struct ambientCO2_forcing <: ambientCO2 end
 
 function compute(params::ambientCO2_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing f_ambient_CO2 ∈ forcing
+    @unpack_nt f_ambient_CO2 ⇐ forcing
 
     ambient_CO2 = f_ambient_CO2
 
     ## pack land variables
-    @pack_land ambient_CO2 → land.states
+    @pack_nt ambient_CO2 ⇒ land.states
     return land
 end
 

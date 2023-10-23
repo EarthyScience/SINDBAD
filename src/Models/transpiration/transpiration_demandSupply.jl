@@ -5,15 +5,15 @@ struct transpiration_demandSupply <: transpiration end
 function compute(params::transpiration_demandSupply, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        transpiration_supply ∈ land.diagnostics
-        transpiration_demand ∈ land.diagnostics
+    @unpack_nt begin
+        transpiration_supply ⇐ land.diagnostics
+        transpiration_demand ⇐ land.diagnostics
     end
 
     transpiration = min(transpiration_demand, transpiration_supply)
 
     ## pack land variables
-    @pack_land transpiration → land.fluxes
+    @pack_nt transpiration ⇒ land.fluxes
     return land
 end
 
