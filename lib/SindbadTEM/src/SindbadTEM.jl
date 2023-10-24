@@ -19,6 +19,5 @@ module SindbadTEM
     include("runTEMSpace.jl")
     include("runTEMCube.jl")
     include("spinupTEM.jl")
-    include("updateParameters.jl")
 
 end # module SindbadTEM
