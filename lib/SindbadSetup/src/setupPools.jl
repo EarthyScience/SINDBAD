@@ -239,11 +239,7 @@ function setPoolsInfo(info::NamedTuple)
     else
         hlp_new = hlp_states
     end
-    # hlt_new = setTupleField(hlp_new, (:vals, hlp_states.vals))
-    # info = (; info..., pools=tmp_states)
-    # info = (; info..., temp=(; info.temp..., pools=tmp_states))
     info = (; info..., pools=tmp_states, temp=(; info.temp..., helpers=(; info.temp.helpers..., pools=hlp_new)))
-    # info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., pools=hlp_states)))
     return info
 end
 

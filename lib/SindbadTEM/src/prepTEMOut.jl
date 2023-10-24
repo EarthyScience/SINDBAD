@@ -40,6 +40,34 @@ end
 
 
 """
+    getOutArrayType(num_type, ::DoUseForwardDiff)
+
+return the type of elements to be used in the output array
+
+# Arguments:
+- `num_type`: the given type from the given model settings
+- `::DoUseForwardDiff`: a type dispatch to use a special type for forwarddiff cases
+"""
+function getOutArrayType(_, ::DoUseForwardDiff)
+    return Real
+end
+
+
+"""
+    getOutArrayType(num_type, ::DoNotUseForwardDiff)
+
+return the type of elements to be used in the output array
+
+# Arguments:
+- `num_type`: the given type from the given model settings
+- `::DoNotUseForwardDiff`: a type dispatch to not use a special type for forwarddiff cases
+"""
+function getOutArrayType(num_type, ::DoNotUseForwardDiff)
+    return num_type
+end
+
+
+"""
     getOutDims(info, forcing_helpers)
 
 intermediary helper function to only get the the dimensions for SINDBAD output
@@ -235,7 +263,6 @@ function getOutDimsPairs(tem_output, forcing_helpers; dthres=1)
         depth_info = tem_output.depth_info[opInd]
         depth_size = first(depth_info)
         depth_name = last(depth_info)
-        # depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land)
         od = []
         push!(od, axes_dims_pairs[1])
         if depth_size > dthres
@@ -252,35 +279,6 @@ function getOutDimsPairs(tem_output, forcing_helpers; dthres=1)
     end
     return outdims_pairs
 end
-
-"""
-    getOutArrayType(num_type, ::DoUseForwardDiff)
-
-return the type of elements to be used in the output array
-
-# Arguments:
-- `num_type`: the given type from the given model settings
-- `::DoUseForwardDiff`: a type dispatch to use a special type for forwarddiff cases
-"""
-function getOutArrayType(_, ::DoUseForwardDiff)
-    return Real
-end
-
-
-"""
-    getOutArrayType(num_type, ::DoNotUseForwardDiff)
-
-return the type of elements to be used in the output array
-
-# Arguments:
-- `num_type`: the given type from the given model settings
-- `::DoNotUseForwardDiff`: a type dispatch to not use a special type for forwarddiff cases
-"""
-function getOutArrayType(num_type, ::DoNotUseForwardDiff)
-    return num_type
-end
-
-
 
 
 """

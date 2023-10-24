@@ -17,6 +17,7 @@ module SindbadSetup
     include("setupExperimentInfo.jl")
     include("setupTypes.jl")
     include("setupPools.jl")
+    include("updateParameters.jl")
     include("setupParameters.jl")
     include("setupModels.jl")
     include("setupOutput.jl")

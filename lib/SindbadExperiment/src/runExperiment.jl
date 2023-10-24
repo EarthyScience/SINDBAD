@@ -150,28 +150,6 @@ function runExperimentForward(sindbad_experiment::String; replace_info=Dict())
 end
 
 
-"""
-    runExperimentFullOutput(sindbad_experiment::String; replace_info = nothing)
-
-uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
-"""
-function runExperimentFullOutput(sindbad_experiment::String; replace_info=Dict())
-    setLogLevel()
-    replace_info = deepcopy(replace_info)
-    replace_info["experiment.flags.run_forward"] = true
-    replace_info["experiment.flags.run_optimization"] = false
-    replace_info["experiment.flags.calc_cost"] = false
-    info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    info = @set info.helpers.run.land_output_type = LandOutArrayAll()
-    run_helpers = prepTEM(info.models.forward, forcing, info)
-    info = @set info.output.variables = run_helpers.output_vars
-    runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
-    output_dims = run_helpers.output_dims
-    run_output = run_helpers.output_array
-    saveOutCubes(info, run_output, output_dims, run_helpers.output_vars)
-    return (; forcing, info, output=(; Pair.(getUniqueVarNames(run_helpers.output_vars), run_output)...))
-end
-
 
 """
     runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=Dict())
@@ -202,6 +180,30 @@ function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::S
     setLogLevel()
     return (; forcing, info, output=forward_output)
 end
+
+
+"""
+    runExperimentFullOutput(sindbad_experiment::String; replace_info = nothing)
+
+uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
+"""
+function runExperimentFullOutput(sindbad_experiment::String; replace_info=Dict())
+    setLogLevel()
+    replace_info = deepcopy(replace_info)
+    replace_info["experiment.flags.run_forward"] = true
+    replace_info["experiment.flags.run_optimization"] = false
+    replace_info["experiment.flags.calc_cost"] = false
+    info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+    info = @set info.helpers.run.land_output_type = LandOutArrayAll()
+    run_helpers = prepTEM(info.models.forward, forcing, info)
+    info = @set info.output.variables = run_helpers.output_vars
+    runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
+    output_dims = run_helpers.output_dims
+    run_output = run_helpers.output_array
+    saveOutCubes(info, run_output, output_dims, run_helpers.output_vars)
+    return (; forcing, info, output=(; Pair.(getUniqueVarNames(run_helpers.output_vars), run_output)...))
+end
+
 
 """
     runExperimentOpti(sindbad_experiment::String; replace_info = nothing)

@@ -193,7 +193,7 @@ function setInputParameters(original_table::Table, updated_table::Table)
                     row.model == Symbol(updated_table[i].model),
             original_table)
         if isempty(subtbl)
-            error("model: parameter $(updated_table[i].name) not found in model $(updated_table[i].models). Make sure that the parameter exists in the selected approach for $(updated_table[i].models) or correct the parameter name in params input.")
+            error("model: parameter $(updated_table[i].name) not found in model $(updated_table[i].model). Make sure that the parameter exists in the selected approach for $(updated_table[i].model) or correct the parameter name in params input.")
         else
             posmodel = findall(x -> x == Symbol(updated_table[i].model), upoTable.model)
             posvar = findall(x -> x == Symbol(updated_table[i].name), upoTable.name)
