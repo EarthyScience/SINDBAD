@@ -142,7 +142,6 @@ function setSpinupAndForwardModels(info::NamedTuple)
         selected_approach = model_info.approach
         selected_approach = String(sm) * "_" * selected_approach
         selected_approach_func = getTypedModel(Symbol(selected_approach), info.temp.helpers.numbers.num_type)
-        # selected_approach_func = getfield(Sindbad.Models, Symbol(selected_approach))()
         selected_approach_forward = (selected_approach_forward..., selected_approach_func)
         if :use_in_spinup in propertynames(model_info)
             use_in_spinup = model_info.use_in_spinup
@@ -159,11 +158,11 @@ function setSpinupAndForwardModels(info::NamedTuple)
     is_spinup = findall(is_spinup .== 1)
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
-    if hasproperty(info, :parameters) && !isempty(info.parameters)
-        original_params_forward = getParameters(selected_approach_forward)
-        input_params = info.parameters
-        updated_params = setInputParameters(original_params_forward, input_params)
-        selected_approach_forward = updateModelParameters(updated_params, selected_approach_forward)
+    if hasproperty(info[:settings], :parameters) && !isempty(info.settings.parameters)
+        original_params_table = getParameters(selected_approach_forward, info.temp.helpers.numbers.num_type)
+        input_params_table = info.settings.parameters
+        updated_params_table = setInputParameters(original_params_table, input_params_table)
+        selected_approach_forward = updateModelParameters(updated_params_table, selected_approach_forward, updated_params_table.optim)
     end
     info = (; info..., temp=(; info.temp..., models=(; info.temp.models..., forward=selected_approach_forward, is_spinup=is_spinup))) 
     return info
