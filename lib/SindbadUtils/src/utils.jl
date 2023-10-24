@@ -91,9 +91,9 @@ end
 
 display the disp_text n times
 """
-function entertainMe(n=10, disp_text="Sindbad.jl")
+function entertainMe(n=10, disp_text="Sindbad.jl", c_olor=false)
     for _x in 1:n
-        sindbadBanner(disp_text)
+        sindbadBanner(disp_text, c_olor)
         sleep(0.1)
     end
 end
@@ -112,9 +112,9 @@ end
 
 
 """
-    isInvalid(num)
+    isInvalid(_data::Number)
 
-
+returns if the input number is invalid
 """
 function isInvalid(_data)
     return isnothing(_data) || ismissing(_data) || isnan(_data) || isinf(_data)
@@ -184,8 +184,10 @@ end
 
 displays display text as a banner using Figlets
 """
-function sindbadBanner(disp_text="Sindbad.jl")
-    print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
+function sindbadBanner(disp_text="Sindbad.jl", c_olor=false)
+    if c_olor
+        print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
+    end
     println("######################################################################################################\n")
     FIGlet.render(disp_text, rand(figlet_fonts))
     println("######################################################################################################")

@@ -112,7 +112,7 @@ end
 """
     dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}})
 
-removes the list of fields from a given named tuple
+removes/drops the list of fields from a given named tuple
 
 # Arguments:
 - `namedtuple`: a namedtuple to remove the fields from
@@ -120,7 +120,7 @@ removes the list of fields from a given named tuple
 """
 function dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}}) 
     keepnames = Base.diff_names(Base._nt_names(namedtuple), names)
-   return NamedTuple{keepnames}(namedtuple)
+    return NamedTuple{keepnames}(namedtuple)
 end
 
 """
@@ -218,7 +218,10 @@ end
 """
     removeEmptyTupleFields(tpl::NamedTuple)
 
+removes all empty files of a NamedTuple
 
+# Arguments:
+- `tpl`: input tuple    
 """
 function removeEmptyTupleFields(tpl::NamedTuple)
     indx = findall(x -> x != NamedTuple(), values(tpl))
@@ -228,20 +231,33 @@ end
 
 
 """
-    setTupleSubfield(out, fieldname, vals)
+    setTupleSubfield(tpl, fieldname, vals)
 
-
+sets the subfield of a NamedTuple
 
 # Arguments:
-- `out`: DESCRIPTION
-- `fieldname`: DESCRIPTION
-- `vals`: DESCRIPTION
+- `tpl`: input tuple
+- `fieldname`: fieldname to write
+- `vals`: tuple with subfieldname and value to write
 """
-function setTupleSubfield(out, fieldname, vals)
-    return (; out..., fieldname => (; getfield(out, fieldname)..., first(vals) => last(vals)))
+function setTupleSubfield(tpl::NamedTuple, fieldname::Symbol, vals::Tuple{Symbol, Any})
+    if !hasproperty(tpl, fieldname)
+        tpl = setTupleField(tpl, (fieldname, (;)))
+    end
+    return (; tpl..., fieldname => (; getfield(tpl, fieldname)..., first(vals) => last(vals)))
 end
 
-setTupleField(out, vals) = (; out..., first(vals) => last(vals))
+
+"""
+    setTupleField(tpl, fieldname, vals)
+
+sets the field of a NamedTuple
+
+# Arguments:
+- `tpl`: input tuple
+- `vals`: tuple with fieldname and value to write
+"""
+setTupleField(tpl::NamedTuple, vals::Tuple{Symbol, Any}) = (; tpl..., first(vals) => last(vals))
 
 
 """
@@ -317,9 +333,9 @@ function tcPrint(d; c_olor=true, t_ype=true, v_alue=true, t_space="", space_pad 
     end
     if t_ype == true
         t_space = t_space * " "
-        print(Crayon(; foreground=lc), "$(ttf))::NamedTuple,\n")
+        print(Crayon(; foreground=lc), " $(ttf))::NamedTuple,\n")
     else
-        print(Crayon(; foreground=lc), "$(ttf)),\n")
+        print(Crayon(; foreground=lc), " $(ttf)),\n")
     end
 
 end
