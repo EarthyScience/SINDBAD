@@ -36,7 +36,7 @@ function update(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, h
     ## unpack variables
     @unpack_nt begin
         (groundW, surfaceW) ⇐ land.pools
-        (ΔgroundW, ΔsurfaceW) ⇐ land.states
+        (ΔgroundW, ΔsurfaceW) ⇐ land.pools
     end
 
     ## update storage pools
