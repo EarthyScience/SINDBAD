@@ -30,7 +30,7 @@ else
     ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
 end
 ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(begin_year).$(end_year).daily.nc")
-path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
+path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/v202311_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
 path_observation = path_input;
 
 nrepeat = 200
@@ -91,7 +91,7 @@ opti_sets = Dict(
 
 forcing_config = "forcing_$(forcing_set).json";
 parallelization_lib = "threads"
-exp_main = "wroasted_v202310"
+exp_main = "wroasted_v202311"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)
@@ -111,7 +111,7 @@ for o_set in opti_set
         "experiment.flags.catch_model_errors" => true,
         "experiment.flags.spinup_TEM" => true,
         "experiment.flags.debug_model" => false,
-        "experiment.model_spinup_sequence" => sequence,
+        "experiment.model_spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
