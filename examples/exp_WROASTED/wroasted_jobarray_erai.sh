@@ -10,4 +10,4 @@
 #SBATCH --time=06-00:00:00
 # mkdir -p run_logs_erai
 export JULIA_NUM_THREADS=${SLURM_CPUS_PER_TASK}
-/Net/Groups/Services/HPC_22/apps/julia/julia-1.9.2/bin/julia --project=../exp_distri --heap-size-hint=5G WROASTED_jobarray_erai.jl
+/Net/Groups/Services/HPC_22/apps/julia/julia-1.9.2/bin/julia --project=../exp_graf --heap-size-hint=5G WROASTED_jobarray_erai.jl

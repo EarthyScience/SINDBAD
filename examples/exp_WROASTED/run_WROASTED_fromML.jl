@@ -121,7 +121,7 @@ for site_index in sites
         "experiment.flags.catch_model_errors" => false,
         "experiment.flags.spinup_TEM" => true,
         "experiment.flags.debug_model" => false,
-        "experiment.model_spinup_sequence" => sequence[2:end],
+        "experiment.model_spinup.sequence" => sequence[2:end],
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
