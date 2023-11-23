@@ -97,7 +97,7 @@
           "standard_name": "Above-ground biomass",
           "sindbad_unit": "gC m-2",
           "source_unit": "gC m-2",
-          "source_variable": "agb_merged"
+          "source_variable": "agb_merged_PFT"
         },
         "model_full_var": "states.aboveground_biomass"
       },
