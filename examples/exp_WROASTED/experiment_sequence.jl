@@ -43,7 +43,7 @@ for domain ∈ sites
     nc = SindbadData.NetCDF.open(data_path)
     y_dist = nc.gatts["last_disturbance_on"]
 
-    nrepeat_d = nothing
+    nrepeat_d = -1
     if y_dist !== "undisturbed"
         y_disturb = year(Date(y_dist))
         y_start = Meta.parse(begin_year)
@@ -51,17 +51,11 @@ for domain ∈ sites
         nrepeat_d = y_start - y_disturb
     end
     sequence = nothing
-    if isnothing(nrepeat_d)
-        sequence = [
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "n_repeat" => 1),
-        ]
-    elseif nrepeat_d < 0
-        sequence = [
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "n_repeat" => 1),
-        ]
-    elseif nrepeat_d == 0
+    sequence = [
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "n_repeat" => 1),
+    ]
+    if nrepeat_d == 0
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
             Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "n_repeat" => 1),
@@ -72,11 +66,9 @@ for domain ∈ sites
             Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "n_repeat" => 1),
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat_d),
         ]
-    else
-        error("cannot determine the repeat for disturbance")
     end
 
-    replace_info["experiment.model_spinup_sequence"] = sequence
+    replace_info["experiment.model_spinup.sequence"] = sequence
     @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info)
 
     info = out_opti.info;
