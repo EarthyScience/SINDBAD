@@ -18,22 +18,41 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::MSE)
 end
 
 """
-    loss(y, yσ, ŷ, ::NMAE1R)
+    loss(y, yσ, ŷ, ::NAME1R)
 
-Relative normalized model absolute error
+Relative normalized absolute mean error
 
-``NMAE1R = \\frac{(|y - ŷ|)}{one(eltype(ŷ)) + y}``
+``NAME1R = \\frac{(|μ_ŷ - μ_y|)}{1 + μ_y}``
 
 # Arguments:
 - `y`: observation data
 - `yσ`: observational uncertainty data
 - `ŷ`: model simulation data/estimate
-- `nothing`: DESCRIPTION
+- `::NAME1R`: a type dispatch
 """
-function loss(y, yσ, ŷ, ::NMAE1R)
+function loss(y, yσ, ŷ, ::NAME1R)
     μ_y = mean(y)
     μ_ŷ = mean(ŷ)
     NMAE1R = abs(μ_ŷ - μ_y) / (one(eltype(ŷ)) + μ_y)
+    return NMAE1R
+end
+
+"""
+    loss(y, yσ, ŷ, ::NMAE1R)
+
+Relative normalized mean absolute error
+
+``NMAE1R = \\frac{(mean(|y - ŷ|))}{1 + μ_y}``
+
+# Arguments:
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
+- `::NMAE1R`: a type dispatch
+"""
+function loss(y, yσ, ŷ, ::NMAE1R)
+    μ_y = mean(y)
+    NMAE1R = mean(abs.(ŷ - y)) / (one(eltype(ŷ)) + μ_y)
     return NMAE1R
 end
 
