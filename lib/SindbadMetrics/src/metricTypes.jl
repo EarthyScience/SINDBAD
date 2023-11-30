@@ -12,6 +12,7 @@ export NSEInv
 export NSEσ
 export NSEσInv
 export Pcor
+export PcorInv
 export Pcor2
 export Pcor2Inv
 export Scor
@@ -31,6 +32,7 @@ struct NSEInv <: SindbadMetric end
 struct NSEσ <: SindbadMetric end
 struct NSEσInv <: SindbadMetric end
 struct Pcor <: SindbadMetric end
+struct PcorInv <: SindbadMetric end
 struct Pcor2 <: SindbadMetric end
 struct Pcor2Inv <: SindbadMetric end
 struct Scor <: SindbadMetric end
