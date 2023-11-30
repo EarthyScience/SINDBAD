@@ -59,15 +59,15 @@ end
 experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 out_sp_exp = nothing
 model_array_type = "static_array"
-tjs = (1, 100, 1_000)
+tjs = (1, 100, 1_000, 10_000)
 # tjs = (1000,)
-# tjs = (10_000,)
+tjs = (10_000,)
 nLoop_pre_spin = 10
 # for model_array_type ∈ ("static_array",)
 # for model_array_type ∈ ("array",) #, "static_array")
 setLogLevel(:warn)
 model_array_type = "static_array"
-for model_array_type ∈ ("static_array", "array") #, "static_array")
+for model_array_type ∈ ("static_array",) #, "array") #, "static_array")
     replace_info = Dict("experiment.exe_rules.model_array_type" => model_array_type,
         "experiment.flags.debug_model" => false);
     println("model_array_type: ", model_array_type)
@@ -95,11 +95,11 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
     spinup_models = info.models.forward[info.models.is_spinup]
     out_path = info.output.dirs.figure
     sel_pool = :cEco_TWS
-    # for sel_pool in (:cEco_TWS,)
+    for sel_pool in (:cEco_TWS,)
     # for sel_pool in (:cEco,)
     # for sel_pool in (:TWS,)
     # for sel_pool in (:cEco,)
-    for sel_pool in (:TWS, :cEco, :cEco_TWS)
+    # for sel_pool in (:TWS, :cEco, :cEco_TWS)
 
         look_at = sel_pool
 

@@ -83,8 +83,8 @@ end
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2)
-    Scor = loss(y, yσ, ŷ, Scor())
-    return Scor * Scor
+    ρ = loss(y, yσ, ŷ, Scor())
+    return ρ * ρ
 end
 
 """
@@ -99,8 +99,8 @@ end
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2Inv)
-    Scor2Inv = one(eltype(ŷ)) - loss(y, yσ, ŷ, Scor2())
-    return Scor2Inv
+    ρ2Inv = one(eltype(ŷ)) - loss(y, yσ, ŷ, Scor2())
+    return ρ2Inv
 end
 
 """
@@ -119,6 +119,22 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor)
 end
 
 """
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::PcorInv)
+
+
+
+# Arguments:
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
+- `::PcorInv`: DESCRIPTION
+"""
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::PcorInv)
+    rInv = one(eltype(ŷ)) - loss(y, yσ, ŷ, Pcor())
+    return rInv
+end
+
+"""
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2)
 
 
@@ -130,8 +146,8 @@ end
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2)
-    pcor = loss(y, yσ, ŷ, Pcor())
-    return pcor * pcor
+    r = loss(y, yσ, ŷ, Pcor())
+    return r * r
 end
 
 """
@@ -146,8 +162,8 @@ end
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2Inv)
-    Pcor2Inv = one(eltype(ŷ)) - loss(y, yσ, ŷ, Pcor2())
-    return Pcor2Inv
+    r2Inv = one(eltype(ŷ)) - loss(y, yσ, ŷ, Pcor2())
+    return r2Inv
 end
 
 """
@@ -227,7 +243,7 @@ end
 - `y`: observation data
 - `yσ`: observational uncertainty data
 - `ŷ`: model simulation data/estimate
-- `nothing`: DESCRIPTION
+- `::NSE`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSE)
     NSE = one(eltype(ŷ)) .- sum(abs2.((y .- ŷ))) / sum(abs2.((y .- mean(y))))
