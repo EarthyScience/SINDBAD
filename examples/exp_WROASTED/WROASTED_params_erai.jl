@@ -91,8 +91,8 @@ opti_sets = Dict(
 
 forcing_config = "forcing_$(forcing_set).json";
 parallelization_lib = "threads"
-exp_main_params = "wroasted_v202311"
-exp_main = "fw_wroasted_v202311"
+exp_main_params = "wroasted_v202312"
+exp_main = "fw_wroasted_v202312"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)

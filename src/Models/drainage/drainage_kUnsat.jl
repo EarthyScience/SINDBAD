@@ -17,7 +17,7 @@ function compute(params::drainage_kUnsat, forcing, land, helpers)
     @unpack_nt begin
         drainage ⇐ land.fluxes
         unsat_k_model ⇐ land.models
-        (wSat, wFC, soil_β, soil_kFC, kSat) ⇐ land.properties
+        (wSat, wFC, soil_β, kFC, kSat) ⇐ land.properties
         soilW ⇐ land.pools
         ΔsoilW ⇐ land.pools
         (z_zero, o_one) ⇐ land.constants
