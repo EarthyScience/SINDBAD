@@ -6,10 +6,7 @@ function define(params::soilWBase_uniform, forcing, land, helpers)
     #@needscheck
     ## unpack land variables
     @unpack_nt begin
-        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ⇐ land.properties
-        (st_clay, st_orgm, st_sand, st_silt) ⇐ land.properties
         soilW ⇐ land.pools
-        n_soilW ⇐ land.constants
     end
 
     # instatiate variables 
@@ -17,23 +14,56 @@ function define(params::soilWBase_uniform, forcing, land, helpers)
     wFC = zero(soilW)
     wWP = zero(soilW)
     wSat = zero(soilW)
+    wAWC = wFC - wWP
+    # save the sums of selected variables
+    sum_wFC = sum(wFC)
+    sum_WP = sum(wWP)
+    sum_wSat = sum(wSat)
+    sum_wAWC = sum(wAWC)
 
-    soilDepths = helpers.pools.layer_thickness.soilW
-    # soilDepths = helpers.pools.layer_thickness.soilW
+    kSat = zero(soilW)
+    kFC = zero(soilW)
+    kWP = zero(soilW)
+    ψSat = zero(soilW)
+    ψFC = zero(soilW)
+    ψWP = zero(soilW)
+    θSat = zero(soilW)
+    θFC = zero(soilW)
+    θWP = zero(soilW)
+    soil_α = zero(soilW)
+    soil_β = zero(soilW)
 
-    kSat = sp_kSat
-    soil_kFC = sp_kFC
-    kWP = sp_kWP
-    ψSat = sp_ψSat
-    ψFC = sp_ψFC
-    ψWP = sp_ψWP
-    θSat = sp_θSat
-    θFC = sp_θFC
-    θWP = sp_θWP
-    soil_α = sp_α
-    soil_β = sp_β
+    # get the plant available water capacity
+
+    @pack_nt begin
+        (kFC, kSat, kWP, soil_layer_thickness, wAWC, wFC, wSat, wWP, sum_wAWC, sum_wFC, sum_wSat, sum_WP, soil_α, soil_β, θFC, θSat, θWP, ψFC, ψSat, ψWP) ⇒ land.properties
+    end
+    return land
+end
+
+
+function precompute(params::soilWBase_uniform, forcing, land, helpers)
+    ## unpack land variables
+    @unpack_nt begin
+        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ⇐ land.properties
+        (kFC, kSat, kWP, soil_layer_thickness, wAWC, wFC, wSat, wWP, sum_wAWC, sum_wFC, sum_wSat, sum_WP, soil_α, soil_β, θFC, θSat, θWP, ψFC, ψSat, ψWP) ⇐ land.properties
+        soilW ⇐ land.pools
+        soilDepths = soilW ⇐ helpers.pools.layer_thickness 
+    end
 
     for sl ∈ eachindex(soilW)
+        @rep_elem sp_kSat[sl] ⇒ (kSat, sl, :soilW)
+        @rep_elem sp_kFC[sl] ⇒ (kFC, sl, :soilW)
+        @rep_elem sp_kWP[sl] ⇒ (kWP, sl, :soilW)
+        @rep_elem sp_ψSat[sl] ⇒ (ψSat, sl, :soilW)
+        @rep_elem sp_ψFC[sl] ⇒ (ψFC, sl, :soilW)
+        @rep_elem sp_ψWP[sl] ⇒ (ψWP, sl, :soilW)
+        @rep_elem sp_θSat[sl] ⇒ (θSat, sl, :soilW)
+        @rep_elem sp_θFC[sl] ⇒ (θFC, sl, :soilW)
+        @rep_elem sp_θWP[sl] ⇒ (θWP, sl, :soilW)
+        @rep_elem sp_α[sl] ⇒ (soil_α, sl, :soilW)
+        @rep_elem sp_β[sl] ⇒ (soil_β, sl, :soilW)
+
         sd_sl = soilDepths[sl]
         @rep_elem sd_sl ⇒ (soil_layer_thickness, sl, :soilW)
         p_wFC_sl = θFC[sl] * sd_sl
@@ -56,26 +86,7 @@ function define(params::soilWBase_uniform, forcing, land, helpers)
     sum_wAWC = sum(wAWC)
 
     @pack_nt begin
-        (soil_kFC,
-            kSat,
-            kWP,
-            soil_layer_thickness,
-            wAWC,
-            wFC,
-            wSat,
-            wWP,
-            sum_wAWC,
-            sum_wFC,
-            sum_wSat,
-            sum_WP,
-            soil_α,
-            soil_β,
-            θFC,
-            θSat,
-            θWP,
-            ψFC,
-            ψSat,
-            ψWP) ⇒ land.properties
+        (kFC, kSat, kWP, soil_layer_thickness, wAWC, wFC, wSat, wWP, sum_wAWC, sum_wFC, sum_wSat, sum_WP, soil_α, soil_β, θFC, θSat, θWP, ψFC, ψSat, ψWP) ⇒ land.properties
         soilW ⇒ land.pools
     end
     return land
