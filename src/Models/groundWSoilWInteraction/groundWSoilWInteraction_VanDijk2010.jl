@@ -21,7 +21,7 @@ function compute(params::groundWSoilWInteraction_VanDijk2010, forcing, land, hel
 
     ## unpack land variables
     @unpack_nt begin
-        (soil_kFC, kSat, wSat) ⇐ land.properties
+        (kFC, kSat, wSat) ⇐ land.properties
         (ΔsoilW, ΔgroundW, groundW, soilW) ⇐ land.pools
         unsat_k_model ⇐ land.models
         (z_zero, o_one) ⇐ land.constants
@@ -33,7 +33,7 @@ function compute(params::groundWSoilWInteraction_VanDijk2010, forcing, land, hel
     # degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
     dosSoilend = clampZeroOne((soilW[end] + ΔsoilW[end]) / wSat[end])
     k_sat = kSat[end] # assume GW is saturated
-    k_fc = soil_kFC[end] # assume GW is saturated
+    k_fc = kFC[end] # assume GW is saturated
     k_unsat = unsatK(land, helpers, lastindex(soilW), unsat_k_model)
 
     # get the capillary flux

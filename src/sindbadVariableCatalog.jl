@@ -1070,7 +1070,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :description => ""
     ),
     :properties__kFC => orD(
-        :standard_name => "soil_kFC",
+        :standard_name => "kFC",
         :long_name => "k_field_capacity",
         :units => "mm/time",
         :land_field => "properties",
