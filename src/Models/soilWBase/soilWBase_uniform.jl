@@ -99,7 +99,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_uniform
  - land.soilTexture.p_[sand/silt/clay/orgm]: texture properties [nPix, nZix]
 
 *Outputs*
- - all soil hydraulic properties in land.soilWBase.p_[parameterName] (nPix, nTix)
+ - all soil hydraulic properties in land.soilWBase.p_parameterName (nPix, nTix)
  - makeLookup: to switch on/off the creation of lookup table of  unsaturated hydraulic conductivity
 
 # instantiate:

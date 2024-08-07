@@ -61,7 +61,7 @@ Combine effects as multiplicative or minimum using gppDemand_mult
  - land.gppDirRadiation.gpp_f_light: light saturation scalar [-], between 0-1
  - land.gppPotential.gpp_potential: maximum potential GPP based on radiation use efficiency
  - land.gppVPD.gpp_f_vpd: VPD effect on GPP [-], between 0-1
- - land.states.fAPAR: fraction of absorbed photosynthetically active radiation  [-] (equivalent to "canopy cover" in Gash & Miralles)
+ - land.states.fAPAR: fraction of absorbed photosynthetically active radiation (equivalent to "canopy cover" in Gash & Miralles)
 
 *Outputs*
  - land.gppDemand.gpp_f_climate [effective scalar, 0-1]
