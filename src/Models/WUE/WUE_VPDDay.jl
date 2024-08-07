@@ -1,9 +1,9 @@
 export WUE_VPDDay
 
 #! format: off
-@bounds @describe @units @with_kw struct WUE_VPDDay{T1,T2,T3} <: WUE
+@bounds @describe @units @with_kw struct WUE_VPDDay{T1,T2} <: WUE
     WUE_one_hpa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
-    kpa_to_hpa::T3 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | ""
+    kpa_to_hpa::T2 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | ""
 end
 #! format: on
 
