@@ -1,3 +1,11 @@
 [deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DocumenterVitepress = "4710194d-e776-4893-9690-8d956a29c365"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
+SindbadData = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
+SindbadMetrics = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
+SindbadSetup = "2b7f2987-8a1e-48b4-8a02-cc9e7c4eeb1c"
+SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
+SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
