@@ -11,17 +11,13 @@ using StatsBase: mean
 export describe, bounds, units
 export DoCatchModelErrors
 export DoNotCatchModelErrors
-
+export @describe, @bounds, @units
+export @with_kw
 export sindbad_models
 # export LandEcosystem
 # define dispatch structs for catching model errors
 struct DoCatchModelErrors end
 struct DoNotCatchModelErrors end
-
-## Define SINDBAD supertype
-abstract type LandEcosystem end
-
-
 
 ## fallback functions for instantiate, precompute, compute and update. 
 ## These functions here make the corresponding functions in the model (approaches) optional

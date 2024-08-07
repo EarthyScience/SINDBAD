@@ -49,3 +49,5 @@ docs/build/
 .vscode
 .gitlab-ci.yml
 .DS_Store
+node_modules
+package-lock.json
