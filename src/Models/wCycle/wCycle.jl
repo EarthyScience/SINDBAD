@@ -13,3 +13,4 @@ Apply the delta storage changes to storage variables
  - combined: computes the algebraic sum of storage and delta storage of combined pool
 
 """
+wCycle
