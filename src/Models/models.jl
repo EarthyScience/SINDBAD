@@ -11,7 +11,8 @@ using StatsBase: mean
 export describe, bounds, units
 export DoCatchModelErrors
 export DoNotCatchModelErrors
-
+export @describe, @bounds, @units
+export @with_kw
 export sindbad_models
 # define dispatch structs for catching model errors
 struct DoCatchModelErrors end
