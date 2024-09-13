@@ -1,22 +1,20 @@
 using Sindbad
+using SindbadTEM
+using InteractiveUtils
+using DocumenterVitepress
 using Documenter
+using DocStringExtensions
 
-#DocMeta.setdocmeta!(Sindbad, :DocTestSetup, :(using Sindbad); recursive=true)
+# dev ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM
 
-makedocs(;
-    #modules=[Sindbad],
-    #authors="SINDBAD <sindbad.pirates@bgc-jena.mpg.de> and contributors",
-    #repo="https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl/blob/{commit}{path}#{line}",
-    sitename="Sindbad.jl",
-    format=Documenter.HTML(; prettyurls=true),
-    #format=Documenter.HTML(;
-    #    prettyurls=get(ENV, "CI", "false") == "true",
-    #    canonical="https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl",
-    #    assets=String[]
-    #),
-    pages=["Home" => "index.md", "Basic usage" => "basics.md"])
-#=
-deploydocs(;
-    repo="git.bgc-jena.mpg.de/sindbad/Sindbad.jl"
-)
-=#
+makedocs(; sitename="Sindbad",
+    authors="Sindbad Pirates",
+    clean=true,
+    format=DocumenterVitepress.MarkdownVitepress(
+        repo = "",
+    ),
+    remotes=nothing,
+    draft=false,
+    source="src",
+    build="build",
+    )
