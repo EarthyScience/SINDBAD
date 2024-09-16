@@ -7,16 +7,16 @@ export evaporation_demandSupply
 end
 #! format: on
 
-function compute(p_struct::evaporation_demandSupply, forcing, land, helpers)
+function compute(params::evaporation_demandSupply, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_demandSupply p_struct
+    @unpack_evaporation_demandSupply params
 
     ## unpack land variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        PET ∈ land.fluxes
-        z_zero ∈ land.wCycleBase
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        PET ⇐ land.fluxes
+        z_zero ⇐ land.constants
     end
     # calculate potential soil evaporation
     PET_evaporation = maxZero(PET * α)
@@ -26,23 +26,23 @@ function compute(p_struct::evaporation_demandSupply, forcing, land, helpers)
     evaporation = min(PET_evaporation, evaporationSupply)
 
     # update soil moisture changes
-    @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
+    @add_to_elem -evaporation ⇒ (ΔsoilW, 1, :soilW)
     ## pack land variables
-    @pack_land begin
-        (PET_evaporation, evaporationSupply) => land.fluxes
-        evaporation => land.fluxes
-        ΔsoilW => land.states
+    @pack_nt begin
+        (PET_evaporation, evaporationSupply) ⇒ land.fluxes
+        evaporation ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::evaporation_demandSupply, forcing, land, helpers)
-    @unpack_evaporation_demandSupply p_struct
+function update(params::evaporation_demandSupply, forcing, land, helpers)
+    @unpack_evaporation_demandSupply params
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -53,9 +53,9 @@ function update(p_struct::evaporation_demandSupply, forcing, land, helpers)
     ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
     ## pack land variables
-    @pack_land begin
-        soilW => land.pools
-        # ΔsoilW => land.states
+    @pack_nt begin
+        soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
     end
     return land
 end

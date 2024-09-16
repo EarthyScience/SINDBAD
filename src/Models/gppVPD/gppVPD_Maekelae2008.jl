@@ -6,18 +6,18 @@ export gppVPD_Maekelae2008
 end
 #! format: on
 
-function compute(p_struct::gppVPD_Maekelae2008, forcing, land, helpers)
+function compute(params::gppVPD_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppVPD_Maekelae2008 p_struct
-    @unpack_forcing f_VPD_day ∈ forcing
-    @unpack_land o_one ∈ land.wCycleBase
+    @unpack_gppVPD_Maekelae2008 params
+    @unpack_nt f_VPD_day ⇐ forcing
+    @unpack_nt o_one ⇐ land.constants
 
     ## calculate variables
     gpp_f_vpd = exp(-k * f_VPD_day)
     gpp_f_vpd = minOne(gpp_f_vpd)
 
     ## pack land variables
-    @pack_land gpp_f_vpd => land.gppVPD
+    @pack_nt gpp_f_vpd ⇒ land.diagnostics
     return land
 end
 
@@ -35,7 +35,7 @@ Vpd effect using gppVPD_Maekelae2008
 *Inputs*
 
 *Outputs*
- - land.gppVPD.gpp_f_vpd: VPD effect on GPP between 0-1
+ - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
 
 ---
 

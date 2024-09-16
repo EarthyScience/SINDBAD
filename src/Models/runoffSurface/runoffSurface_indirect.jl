@@ -6,15 +6,15 @@ export runoffSurface_indirect
 end
 #! format: on
 
-function compute(p_struct::runoffSurface_indirect, forcing, land, helpers)
+function compute(params::runoffSurface_indirect, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffSurface_indirect p_struct
+    @unpack_runoffSurface_indirect params
 
     ## unpack land variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        overland_runoff ∈ land.fluxes
-        n_surfaceW ∈ land.wCycleBase
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        overland_runoff ⇐ land.fluxes
+        n_surfaceW ⇐ land.constants
     end
 
     # fraction of overland runoff that recharges the surface water & the fraction that flows out directly
@@ -28,20 +28,20 @@ function compute(p_struct::runoffSurface_indirect, forcing, land, helpers)
     ΔsurfaceW .= ΔsurfaceW .- surface_runoff / n_surfaceW # assumes all layers contribute equally to indirect component of surface runoff
 
     ## pack land variables
-    @pack_land begin
-        (surface_runoff, suw_recharge) => land.fluxes
-        ΔsurfaceW => land.states
+    @pack_nt begin
+        (surface_runoff, suw_recharge) ⇒ land.fluxes
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::runoffSurface_indirect, forcing, land, helpers)
-    @unpack_runoffSurface_indirect p_struct
+function update(params::runoffSurface_indirect, forcing, land, helpers)
+    @unpack_runoffSurface_indirect params
 
     ## unpack variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.states
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
     end
 
     ## update storage pools
@@ -51,9 +51,9 @@ function update(p_struct::runoffSurface_indirect, forcing, land, helpers)
     ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
     ## pack land variables
-    @pack_land begin
-        surfaceW => land.pools
-        ΔsurfaceW => land.states
+    @pack_nt begin
+        surfaceW ⇒ land.pools
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end

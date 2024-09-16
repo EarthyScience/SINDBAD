@@ -2,9 +2,6 @@ export getForcingForTimeStep
 export getLocData
 export getLocForcingData
 export getLocOutputData
-export getLocForcing!
-export getLocOutput!
-export getNumberOfTimeSteps
 export setOutputForTimeStep!
 
 """
@@ -117,40 +114,6 @@ function getLocOutputData(output_array, loc_ind)
     return loc_output
 end
 
-"""
-    getLocOutput!(output_array, loc_output, ar_inds)
-
-
-
-# Arguments:
-- `output_array`: an output array/view for ALL locations
-- `loc_output`: an output array/view for a single location
-- `ar_inds`: DESCRIPTION
-"""
-function getLocOutput!(output_array, loc_output, ar_inds)
-    for i ∈ eachindex(output_array)
-        loc_output[i] = getArrayView(output_array[i], ar_inds)
-    end
-    return nothing
-end
-
-"""
-    getLocOutput!(output_array, loc_output, ar_inds)
-
-
-
-# Arguments:
-- `output_array`: an output array/view for ALL locations
-- `ar_inds`: DESCRIPTION
-"""
-function getLocOutput!(output_array, ar_inds)
-    loc_output = map(output_array) do a
-        getArrayView(a, ar_inds)
-    end
-    return loc_output
-end
-
-
 
 """
     getLocOutputView(ar, val::AbstractVector, ts::Int64)
@@ -178,17 +141,6 @@ end
 """
 function getLocOutputView(ar::T, val::T1, ts::T2) where {T, T1<:Real, T2<:Int}
     return view(ar, ts)
-end
-
-
-"""
-    getNumberOfTimeSteps(incubes, time_name)
-
-
-"""
-function getNumberOfTimeSteps(incubes, time_name)
-    i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
-    return length(getAxis(time_name, incubes[i1]).values)
 end
 
 
@@ -222,6 +174,7 @@ function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {out
             field = first(ov)
             subfield = last(ov)
             data_l = getfield(getfield(land, field), subfield)
+            # @show i, ov, size(data_l)
             data_o = outputs[i]
             fillLocOutput!(data_o, data_l, ts)
         end

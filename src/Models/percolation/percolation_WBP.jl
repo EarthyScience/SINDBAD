@@ -2,15 +2,15 @@ export percolation_WBP
 
 struct percolation_WBP <: percolation end
 
-function compute(p_struct::percolation_WBP, forcing, land, helpers)
+function compute(params::percolation_WBP, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        (soilW, groundW) ∈ land.pools
-        (ΔgroundW, ΔsoilW, WBP) ∈ land.states
-        (o_one, n_groundW) ∈ land.wCycleBase
-        tolerance ∈ helpers.numbers
-        wSat ∈ land.soilWBase
+    @unpack_nt begin
+        (ΔgroundW, ΔsoilW, soilW, groundW) ⇐ land.pools
+        WBP ⇐ land.states
+        (o_one, n_groundW) ⇐ land.constants
+        tolerance ⇐ helpers.numbers
+        wSat ⇐ land.properties
     end
 
     # set WBP as the soil percolation
@@ -18,7 +18,7 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
     to_allocate = o_one * percolation
     for sl ∈ eachindex(land.pools.soilW)
         allocated = min(wSat[sl] - (soilW[sl] + ΔsoilW[sl]), to_allocate)
-        @add_to_elem allocated => (ΔsoilW, sl, :soilW)
+        @add_to_elem allocated ⇒ (ΔsoilW, sl, :soilW)
         to_allocate = to_allocate - allocated
     end
     to_groundW = to_allocate / n_groundW
@@ -29,19 +29,19 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
     WBP = to_allocate
 
     ## pack land variables
-    @pack_land begin
-        percolation => land.fluxes
-        WBP => land.states
-        (ΔgroundW, ΔsoilW) => land.states
+    @pack_nt begin
+        percolation ⇒ land.fluxes
+        WBP ⇒ land.states
+        (ΔgroundW, ΔsoilW) ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::percolation_WBP, forcing, land, helpers)
+function update(params::percolation_WBP, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -52,9 +52,9 @@ function update(p_struct::percolation_WBP, forcing, land, helpers)
     ΔsoilW .= ΔsoilW .- ΔsoilW
 
     ## pack land variables
-    @pack_land begin
-        soilW => land.pools
-        # ΔsoilW => land.states
+    @pack_nt begin
+        soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
     end
     return land
 end

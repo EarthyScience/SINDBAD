@@ -10,15 +10,15 @@ export interception_Miralles2010
 end
 #! format: on
 
-function compute(p_struct::interception_Miralles2010, forcing, land, helpers)
+function compute(params::interception_Miralles2010, forcing, land, helpers)
     ## unpack parameters
-    @unpack_interception_Miralles2010 p_struct
+    @unpack_interception_Miralles2010 params
 
     ## unpack land variables
-    @unpack_land begin
-        (WBP, fAPAR) ∈ land.states
-        rain ∈ land.fluxes
-        rainInt ∈ land.states
+    @unpack_nt begin
+        (WBP, fAPAR) ⇐ land.states
+        rain ⇐ land.fluxes
+        rainInt ⇐ land.states
     end
     tmp = 1.0
     canopy_storage = canopy_storage * tmp
@@ -67,9 +67,9 @@ function compute(p_struct::interception_Miralles2010, forcing, land, helpers)
     WBP = WBP - interception
 
     ## pack land variables
-    @pack_land begin
-        interception => land.fluxes
-        WBP => land.states
+    @pack_nt begin
+        interception ⇒ land.fluxes
+        WBP ⇒ land.states
     end
     return land
 end

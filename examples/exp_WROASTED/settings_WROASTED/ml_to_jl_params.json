@@ -32,7 +32,7 @@
   "groundWRecharge.dos_exp": "gwRec.dos_exp",
   "rootMaximumDepth.constant_frßß∑ac_max_root_depth": "rootMaxD.fracRootD2SoilD",
   "rootWaterEfficiency.k_efficiency_cVegRoot": "rootFrac.k_cVegRoot",
-  "runoffBase.bc": "roBase.bc",
+  "runoffBase.k_baseflow": "roBase.bc",
   "runoffSaturationExcess.β": "roSat.berg",
   "snowMelt.melt_Rn": "snowMelt.melt_Rn",
   "snowMelt.melt_T": "snowMelt.melt_T",

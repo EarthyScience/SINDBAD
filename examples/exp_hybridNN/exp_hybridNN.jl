@@ -18,12 +18,12 @@ experiment_json = "../exp_hybridNN/settings_hybridNN/experiment.json"
 
 info = getExperimentInfo(experiment_json);
 
-tbl_params = getParameters(info.tem.models.forward, info.optim.model_parameter_default, info.optim.model_parameters_to_optimize, info.tem.helpers.numbers.sNT);
+tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type);
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 
-selected_models = info.tem.models.forward;
+selected_models = info.models.forward;
 param_to_index = getParameterIndices(selected_models, tbl_params);
 
 run_helpers = prepTEM(selected_models, forcing, observations, info);
@@ -31,9 +31,8 @@ run_helpers = prepTEM(selected_models, forcing, observations, info);
 loc_forcing_t = run_helpers.loc_forcing_t;
 land_init = run_helpers.loc_land;
 tem = (;
-    tem_helpers = run_helpers.tem_with_types.helpers,
-    tem_spinup = run_helpers.tem_with_types.spinup,
-    tem_run_spinup = run_helpers.tem_with_types.helpers.run.spinup_TEM,
+    tem_info = run_helpers.tem_info,
+    tem_run_spinup = run_helpers.tem_info.run.spinup_TEM,
 );
 
 # site specific variables
@@ -56,9 +55,9 @@ loc_spinup_forcing = space_spinup_forcing[site_location];
 
 # cost related
 
-cost_options = [prepCostOptions(loc_obs, info.optim.cost_options) for loc_obs in loc_observations];
+cost_options = [prepCostOptions(loc_obs, info.optimization.cost_options) for loc_obs in loc_observations];
 
-constraint_method = info.optim.multi_constraint_method;
+constraint_method = info.optimization.multi_constraint_method;
 
 
 # ForwardDiff.gradient(f, x)
@@ -131,7 +130,7 @@ gradient_lib = FiniteDiffGrad();
 @time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_sites_batch, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
 
 # machine learning parameters baseline
-@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.data,name="seq_training_output")
+@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.dirs.data,name="seq_training_output")
 
 f_suffix = "_epoch-$(n_epochs)_batch-size-$(batch_size)-seed-$(batch_seed)_$(nameof(typeof(gradient_lib)))"
 using CairoMakie
@@ -141,7 +140,7 @@ obj = plot!(ax, sites_loss';
     colorrange=(0,5))
 Colorbar(fig[1,2], obj)
 fig
-save(joinpath(info.output.figure, "epoch_loss$(f_suffix).png"), fig)
+save(joinpath(info.output.dirs.figure, "epoch_loss$(f_suffix).png"), fig)
 
 fig = Figure(; resolution = (2400,1200))
 ax = Axis(fig[1,1]; xlabel = "epoch", ylabel = "site loss")
@@ -150,7 +149,7 @@ foreach(axes(sites_loss,1)) do _cl
     fig
     obj = lines!(ax, mean(sites_loss, dims=1)[1,:], linewidth = 5, color = "black")
 end
-save(joinpath(info.output.figure, "epoch_lines$(f_suffix).png"), fig)
+save(joinpath(info.output.dirs.figure, "epoch_lines$(f_suffix).png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 

@@ -6,17 +6,17 @@ export gppPotential_Monteith
 end
 #! format: on
 
-function compute(p_struct::gppPotential_Monteith, forcing, land, helpers)
+function compute(params::gppPotential_Monteith, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppPotential_Monteith p_struct
-    @unpack_forcing f_PAR ∈ forcing
+    @unpack_gppPotential_Monteith params
+    @unpack_nt f_PAR ⇐ forcing
 
     ## calculate variables
     # set rueGPP to a constant
     gpp_potential = εmax * f_PAR
 
     ## pack land variables
-    @pack_land gpp_potential => land.gppPotential
+    @pack_nt gpp_potential ⇒ land.diagnostics
     return land
 end
 
@@ -34,7 +34,7 @@ Maximum instantaneous radiation use efficiency using gppPotential_Monteith
 *Inputs*
 
 *Outputs*
- - land.gppPotential.rueGPP: potential GPP based on RUE [nPix, nTix]
+ - land.diagnostics.rueGPP: potential GPP based on RUE
 
 ---
 

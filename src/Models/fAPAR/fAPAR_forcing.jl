@@ -2,14 +2,14 @@ export fAPAR_forcing
 
 struct fAPAR_forcing <: fAPAR end
 
-function compute(p_struct::fAPAR_forcing, forcing, land, helpers)
+function compute(params::fAPAR_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing f_fAPAR ∈ forcing
+    @unpack_nt f_fAPAR ⇐ forcing
 
     fAPAR = f_fAPAR
 
     ## pack land variables
-    @pack_land fAPAR => land.states
+    @pack_nt fAPAR ⇒ land.states
     return land
 end
 

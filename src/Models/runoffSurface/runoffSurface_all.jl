@@ -2,17 +2,17 @@ export runoffSurface_all
 
 struct runoffSurface_all <: runoffSurface end
 
-function compute(p_struct::runoffSurface_all, forcing, land, helpers)
+function compute(params::runoffSurface_all, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land overland_runoff ∈ land.fluxes
+    @unpack_nt overland_runoff ⇐ land.fluxes
 
     ## calculate variables
     # all overland flow becomes surface runoff
     surface_runoff = overland_runoff
 
     ## pack land variables
-    @pack_land surface_runoff => land.fluxes
+    @pack_nt surface_runoff ⇒ land.fluxes
     return land
 end
 

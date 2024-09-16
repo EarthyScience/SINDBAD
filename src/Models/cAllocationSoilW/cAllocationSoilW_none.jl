@@ -2,13 +2,15 @@ export cAllocationSoilW_none
 
 struct cAllocationSoilW_none <: cAllocationSoilW end
 
-function define(p_struct::cAllocationSoilW_none, forcing, land, helpers)
+function define(params::cAllocationSoilW_none, forcing, land, helpers)
+
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    c_allocation_f_soilW = one(first(land.pools.cEco))
+    c_allocation_f_soilW = one(first(cEco))
 
     ## pack land variables
-    @pack_land c_allocation_f_soilW => land.cAllocationSoilW
+    @pack_nt c_allocation_f_soilW ⇒ land.diagnostics
     return land
 end
 
@@ -20,7 +22,7 @@ sets the moisture effect on allocation to one (no effect)
 *Inputs*
 
 *Outputs*
-- land.cAllocationSoilW.c_allocation_f_soilW: moisture effect on cAllocation (0-1)
+- land.diagnostics.c_allocation_f_soilW: moisture effect on cAllocation (0-1)
 
 ---
 

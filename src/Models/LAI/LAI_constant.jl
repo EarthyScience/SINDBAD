@@ -6,15 +6,15 @@ export LAI_constant
 end
 #! format: on
 
-function compute(p_struct::LAI_constant, forcing, land, helpers)
+function precompute(params::LAI_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_LAI_constant p_struct
+    @unpack_LAI_constant params
 
     ## calculate variables
     LAI = constant_LAI
 
     ## pack land variables
-    @pack_land LAI => land.states
+    @pack_nt LAI ⇒ land.states
     return land
 end
 

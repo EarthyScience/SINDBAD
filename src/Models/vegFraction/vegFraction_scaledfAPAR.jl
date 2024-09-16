@@ -6,20 +6,20 @@ export vegFraction_scaledfAPAR
 end
 #! format: on
 
-function compute(p_struct::vegFraction_scaledfAPAR, forcing, land, helpers)
+function compute(params::vegFraction_scaledfAPAR, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledfAPAR p_struct
+    @unpack_vegFraction_scaledfAPAR params
 
     ## unpack land variables
-    @unpack_land begin
-        fAPAR ∈ land.states
+    @unpack_nt begin
+        fAPAR ⇐ land.states
     end
 
     ## calculate variables
     frac_vegetation = minOne(fAPAR * fAPAR_scalar)
 
     ## pack land variables
-    @pack_land frac_vegetation => land.states
+    @pack_nt frac_vegetation ⇒ land.states
     return land
 end
 

@@ -2,13 +2,14 @@ export runoffSaturationExcess_none
 
 struct runoffSaturationExcess_none <: runoffSaturationExcess end
 
-function define(p_struct::runoffSaturationExcess_none, forcing, land, helpers)
+function define(params::runoffSaturationExcess_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
     ## calculate variables
-    sat_excess_runoff = land.wCycleBase.z_zero
+    sat_excess_runoff = z_zero
 
     ## pack land variables
-    @pack_land sat_excess_runoff => land.fluxes
+    @pack_nt sat_excess_runoff ⇒ land.fluxes
     return land
 end
 

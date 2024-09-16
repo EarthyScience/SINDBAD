@@ -2,13 +2,14 @@ export interception_none
 
 struct interception_none <: interception end
 
-function define(p_struct::interception_none, forcing, land, helpers)
+function define(params::interception_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
     ## calculate variables
-    interception = land.wCycleBase.z_zero
+    interception = z_zero
 
     ## pack land variables
-    @pack_land interception => land.fluxes
+    @pack_nt interception ⇒ land.fluxes
     return land
 end
 

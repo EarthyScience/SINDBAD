@@ -7,12 +7,12 @@ export soilWBase_smax2Layer
 end
 #! format: on
 
-function define(p_struct::soilWBase_smax2Layer, forcing, land, helpers)
-    @unpack_soilWBase_smax2Layer p_struct
+function define(params::soilWBase_smax2Layer, forcing, land, helpers)
+    @unpack_soilWBase_smax2Layer params
 
-    @unpack_land begin
-        soilW ∈ land.pools
-        n_soilW ∈ land.wCycleBase
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        n_soilW ⇐ land.constants
     end
     ## precomputations/check
     # get the soil thickness & root distribution information from input
@@ -23,35 +23,35 @@ function define(p_struct::soilWBase_smax2Layer, forcing, land, helpers)
     end
 
     ## instantiate variables
-    wSat = zero(land.pools.soilW)
-    wFC = zero(land.pools.soilW)
-    wWP = zero(land.pools.soilW)
+    wSat = zero(soilW)
+    wFC = zero(soilW)
+    wWP = zero(soilW)
 
     ## pack land variables
-    @pack_land (soil_layer_thickness, wSat, wFC, wWP) => land.soilWBase
+    @pack_nt (soil_layer_thickness, wSat, wFC, wWP) ⇒ land.properties
     return land
 end
 
-function compute(p_struct::soilWBase_smax2Layer, forcing, land, helpers)
+function compute(params::soilWBase_smax2Layer, forcing, land, helpers)
     ## unpack parameters
-    @unpack_soilWBase_smax2Layer p_struct
+    @unpack_soilWBase_smax2Layer params
 
     ## unpack land variables
-    @unpack_land (soil_layer_thickness, wSat, wFC, wWP) ∈ land.soilWBase
+    @unpack_nt (soil_layer_thickness, wSat, wFC, wWP) ⇐ land.properties
 
     ## calculate variables
     # set the properties for each soil layer
     # 1st layer
-    @rep_elem smax1 * soil_layer_thickness[1] => (wSat, 1, :soilW)
-    @rep_elem smax2 * soil_layer_thickness[2] => (wSat, 2, :soilW)
-    @rep_elem smax1 * soil_layer_thickness[1] => (wFC, 1, :soilW)
-    @rep_elem smax2 * soil_layer_thickness[2] => (wFC, 2, :soilW)
+    @rep_elem smax1 * soil_layer_thickness[1] ⇒ (wSat, 1, :soilW)
+    @rep_elem smax2 * soil_layer_thickness[2] ⇒ (wSat, 2, :soilW)
+    @rep_elem smax1 * soil_layer_thickness[1] ⇒ (wFC, 1, :soilW)
+    @rep_elem smax2 * soil_layer_thickness[2] ⇒ (wFC, 2, :soilW)
 
     # get the plant available water available (all the water is plant available)
     wAWC = wSat
 
     ## pack land variables
-    @pack_land (wAWC, wFC, wSat, wWP, n_soilW, soil_layer_thickness) => land.soilWBase
+    @pack_nt (wAWC, wFC, wSat, wWP, soil_layer_thickness) ⇒ land.properties
     return land
 end
 
@@ -70,12 +70,12 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2Layer
  - helpers.pools.: soil layers & depths
 
 *Outputs*
- - land.soilWBase.p_nsoilLayers
- - land.soilWBase.soil_layer_thickness
- - land.soilWBase.wAWC: = land.soilWBase.wSat
- - land.soilWBase.wFC : = land.soilWBase.wSat
- - land.soilWBase.wSat: wSat = smax for 2 soil layers
- - land.soilWBase.WP: wilting point set to zero for all layers
+ - land.properties.p_nsoilLayers
+ - land.properties.soil_layer_thickness
+ - land.properties.wAWC: = land.properties.wSat
+ - land.properties.wFC : = land.properties.wSat
+ - land.properties.wSat: wSat = smax for 2 soil layers
+ - land.properties.WP: wilting point set to zero for all layers
 
 # instantiate:
 instantiate/instantiate time-invariant variables for soilWBase_smax2Layer

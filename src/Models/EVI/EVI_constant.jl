@@ -6,15 +6,15 @@ export EVI_constant
 end
 #! format: on
 
-function compute(p_struct::EVI_constant, forcing, land, helpers)
+function precompute(params::EVI_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_EVI_constant p_struct
+    @unpack_EVI_constant params
 
     ## calculate variables
     EVI = constant_EVI
 
     ## pack land variables
-    @pack_land EVI => land.states
+    @pack_nt EVI ⇒ land.states
     return land
 end
 

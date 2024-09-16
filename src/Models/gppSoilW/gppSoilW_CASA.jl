@@ -6,30 +6,30 @@ export gppSoilW_CASA
 end
 #! format: on
 
-function define(p_struct::gppSoilW_CASA, forcing, land, helpers)
+function define(params::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     ## unpack land variables
-    @unpack_land begin
-        z_zero ∈ land.wCycleBase
+    @unpack_nt begin
+        z_zero ⇐ land.constants
     end
     gpp_f_soilW_prev = z_zero
 
     ## pack land variables
-    @pack_land gpp_f_soilW_prev => land.gppSoilW
+    @pack_nt gpp_f_soilW_prev ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::gppSoilW_CASA, forcing, land, helpers)
+function compute(params::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppSoilW_CASA p_struct
-    @unpack_forcing f_airT ∈ forcing
+    @unpack_gppSoilW_CASA params
+    @unpack_nt f_airT ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        gpp_f_soilW_prev ∈ land.gppSoilW
-        PAW ∈ land.states
-        PET ∈ land.fluxes
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        gpp_f_soilW_prev ⇐ land.diagnostics
+        PAW ⇐ land.states
+        PET ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
     end
 
     OmBweOPET = (o_one - base_f_soilW) / PET
@@ -41,7 +41,7 @@ function compute(p_struct::gppSoilW_CASA, forcing, land, helpers)
     gpp_f_soilW_prev = gpp_f_soilW
 
     ## pack land variables
-    @pack_land (OmBweOPET, gpp_f_soilW, gpp_f_soilW_prev) => land.gppSoilW
+    @pack_nt (OmBweOPET, gpp_f_soilW, gpp_f_soilW_prev) ⇒ land.diagnostics
     return land
 end
 
@@ -60,7 +60,7 @@ $(SindbadParameters)
  - land.fluxes.PET: potential ET
 
 *Outputs*
- - land.gppSoilW.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
+ - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
 
 ---
 
