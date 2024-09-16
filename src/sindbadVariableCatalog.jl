@@ -1069,22 +1069,22 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => ""
     ),
-    :properties__kFC => orD(
-        :standard_name => "kFC",
+    :properties__k_fc => orD(
+        :standard_name => "k_fc",
         :long_name => "k_field_capacity",
         :units => "mm/time",
         :land_field => "properties",
         :description => "hydraulic conductivity of soil at field capacity per layer"
     ),
-    :properties__kSat => orD(
-        :standard_name => "kSat",
+    :properties__k_sat => orD(
+        :standard_name => "k_sat",
         :long_name => "k_saturated",
         :units => "mm/time",
         :land_field => "properties",
         :description => "hydraulic conductivity of soil at saturation per layer"
     ),
-    :properties__kWP => orD(
-        :standard_name => "kWP",
+    :properties__k_wp => orD(
+        :standard_name => "k_wp",
         :long_name => "k_wilting_point",
         :units => "mm/time",
         :land_field => "properties",
@@ -1097,22 +1097,22 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => ""
     ),
-    :properties__ψFC => orD(
-        :standard_name => "ψFC",
+    :properties__ψ_fc => orD(
+        :standard_name => "ψ_fc",
         :long_name => "ψ_field_capacity",
         :units => "m",
         :land_field => "properties",
         :description => "matric potential of soil at field capacity per layer"
     ),
-    :properties__ψSat => orD(
-        :standard_name => "ψSat",
+    :properties__ψ_sat => orD(
+        :standard_name => "ψ_sat",
         :long_name => "ψ_saturated",
         :units => "m",
         :land_field => "properties",
         :description => "matric potential of soil at saturation per layer"
     ),
-    :properties__ψWP => orD(
-        :standard_name => "ψWP",
+    :properties__ψ_wp => orD(
+        :standard_name => "ψ_wp",
         :long_name => "ψ_wilting_point",
         :units => "m",
         :land_field => "properties",
@@ -1146,22 +1146,22 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => "thickness of each soil layer"
     ),
-    :properties__sp_kFC => orD(
-        :standard_name => "sp_kFC",
-        :long_name => "soil_property_kFC",
+    :properties__sp_k_fc => orD(
+        :standard_name => "sp_k_fc",
+        :long_name => "soil_property_k_fc",
         :units => "mm/time",
         :land_field => "properties",
         :description => "calculated/input hydraulic conductivity of soil at field capacity per layer"
     ),
-    :properties__sp_kSat => orD(
-        :standard_name => "sp_kSat",
+    :properties__sp_k_sat => orD(
+        :standard_name => "sp_k_sat",
         :long_name => "soil_property_k_saturated",
         :units => "mm/time",
         :land_field => "properties",
         :description => "calculated/input hydraulic conductivity of soil at saturation per layer"
     ),
-    :properties__sp_kWP => orD(
-        :standard_name => "sp_kWP",
+    :properties__sp_k_wp => orD(
+        :standard_name => "sp_k_wp",
         :long_name => "soil_property_k_wilting_point",
         :units => "mm/time",
         :land_field => "properties",
@@ -1181,43 +1181,43 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => "calculated/input beta parameter of soil per layer"
     ),
-    :properties__sp_θFC => orD(
-        :standard_name => "sp_θFC",
+    :properties__sp_θ_fc => orD(
+        :standard_name => "sp_θ_fc",
         :long_name => "soil_property_θ_field_capacity",
         :units => "m3/m3",
         :land_field => "properties",
         :description => "calculated/input moisture content of soil at field capacity per layer"
     ),
-    :properties__sp_θSat => orD(
-        :standard_name => "sp_θSat",
+    :properties__sp_θ_sat => orD(
+        :standard_name => "sp_θ_sat",
         :long_name => "soil_property_θ_saturated",
         :units => "m3/m3",
         :land_field => "properties",
         :description => "calculated/input moisture content of soil at saturation (porosity) per layer"
     ),
-    :properties__sp_θWP => orD(
-        :standard_name => "sp_θWP",
+    :properties__sp_θ_wp => orD(
+        :standard_name => "sp_θ_wp",
         :long_name => "soil_property_θ_wilting_point",
         :units => "m3/m3",
         :land_field => "properties",
         :description => "calculated/input moisture content of soil at wilting point per layer"
     ),
-    :properties__sp_ψFC => orD(
-        :standard_name => "sp_ψFC",
+    :properties__sp_ψ_fc => orD(
+        :standard_name => "sp_ψ_fc",
         :long_name => "soil_property_ψ_field_capacity",
         :units => "m",
         :land_field => "properties",
         :description => "calculated/input matric potential of soil at field capacity per layer"
     ),
-    :properties__sp_ψSat => orD(
-        :standard_name => "sp_ψSat",
+    :properties__sp_ψ_sat => orD(
+        :standard_name => "sp_ψ_sat",
         :long_name => "soil_property_ψ_saturated",
         :units => "m",
         :land_field => "properties",
         :description => "calculated/input matric potential of soil at saturation per layer"
     ),
-    :properties__sp_ψWP => orD(
-        :standard_name => "sp_ψWP",
+    :properties__sp_ψ_wp => orD(
+        :standard_name => "sp_ψ_wp",
         :long_name => "soil_property_ψ_wilting_point",
         :units => "m",
         :land_field => "properties",
@@ -1251,85 +1251,85 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => "fraction of silt content in the soil per layer"
     ),
-    :properties__sum_soil_depth => orD(
-        :standard_name => "sum_soil_depth",
+    :properties__∑soil_depth => orD(
+        :standard_name => "∑soil_depth",
         :long_name => "total_depth_of_soil_column",
         :units => "mm",
         :land_field => "properties",
         :description => "total depth of soil"
     ),
-    :properties__sum_wAWC => orD(
-        :standard_name => "sum_available_water_capacity",
-        :long_name => "sum_available_water_capacity",
+    :properties__∑w_awc => orD(
+        :standard_name => "∑available_water_capacity",
+        :long_name => "∑available_water_capacity",
         :units => "mm",
         :land_field => "properties",
         :description => "total amount of water available for vegetation/transpiration"
     ),
-    :properties__sum_wFC => orD(
-        :standard_name => "sum_wFC",
-        :long_name => "sum_w_field_capacity",
+    :properties__∑w_fc => orD(
+        :standard_name => "∑w_fc",
+        :long_name => "∑w_field_capacity",
         :units => "mm",
         :land_field => "properties",
         :description => "total amount of water in the soil at field capacity"
     ),
-    :properties__sum_wSat => orD(
-        :standard_name => "sum_wSat",
-        :long_name => "sum_w_saturated",
+    :properties__∑w_sat => orD(
+        :standard_name => "∑w_sat",
+        :long_name => "∑w_saturated",
         :units => "mm",
         :land_field => "properties",
         :description => "total amount of water in the soil at saturation"
     ),
-    :properties__sum_WP => orD(
-        :standard_name => "sum_WP",
-        :long_name => "sum_wilting_point",
+    :properties__∑w_wp => orD(
+        :standard_name => "∑w_wp",
+        :long_name => "∑wilting_point",
         :units => "mm",
         :land_field => "properties",
         :description => "total amount of water in the soil at wiliting point"
     ),
-    :properties__θFC => orD(
-        :standard_name => "θFC",
+    :properties__θ_fc => orD(
+        :standard_name => "θ_fc",
         :long_name => "θ_field_capacity",
         :units => "m3/m3",
         :land_field => "properties",
         :description => "moisture content of soil at field capacity per layer"
     ),
-    :properties__θSat => orD(
-        :standard_name => "θSat",
+    :properties__θ_sat => orD(
+        :standard_name => "θ_sat",
         :long_name => "θ_saturated",
         :units => "m3/m3",
         :land_field => "properties",
         :description => "moisture content of soil at saturation (porosity) per layer"
     ),
-    :properties__θWP => orD(
-        :standard_name => "θWP",
+    :properties__θ_wp => orD(
+        :standard_name => "θ_wp",
         :long_name => "θ_wilting_point",
         :units => "m3/m3",
         :land_field => "properties",
         :description => "moisture content of soil at wilting point per layer"
     ),
-    :properties__wAWC => orD(
-        :standard_name => "wAWC",
+    :properties__w_awc => orD(
+        :standard_name => "w_awc",
         :long_name => "w_available_water_capacity",
         :units => "mm",
         :land_field => "properties",
-        :description => "maximum amount of water available for vegetation/transpiration per soil layer (wSat-WP)"
+        :description => "maximum amount of water available for vegetation/transpiration per soil layer (w_sat-_wp)"
     ),
-    :properties__wFC => orD(
-        :standard_name => "wFC",
+    :properties__w_fc => orD(
+        :standard_name => "w_fc",
         :long_name => "w_field_capacity",
         :units => "mm",
         :land_field => "properties",
         :description => "amount of water in the soil at field capacity per layer"
     ),
-    :properties__wSat => orD(
-        :standard_name => "wSat",
+    :properties__w_sat => orD(
+        :standard_name => "w_sat",
         :long_name => "w_saturated",
         :units => "mm",
         :land_field => "properties",
         :description => "amount of water in the soil at saturation per layer"
     ),
-    :properties__wWP => orD(
-        :standard_name => " wWP",
+    :properties__w_wp => orD(
+        :standard_name => " w_wp",
         :long_name => "wilting_point",
         :units => "mm",
         :land_field => "properties",

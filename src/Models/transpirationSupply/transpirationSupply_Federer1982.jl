@@ -13,9 +13,9 @@ function compute(params::transpirationSupply_Federer1982, forcing, land, helpers
     ## unpack land variables
     @unpack_nt begin
         PAW ⇐ land.states
-        sum_wSat ⇐ land.properties
+        ∑w_sat ⇐ land.properties
     end
-    transpiration_supply = max_t_loss * sum(PAW) / sum_wSat
+    transpiration_supply = max_t_loss * sum(PAW) / ∑w_sat
 
     ## pack land variables
     @pack_nt transpiration_supply ⇒ land.diagnostics
@@ -35,7 +35,7 @@ Supply-limited transpiration using transpirationSupply_Federer1982
 
 *Inputs*
  - land.pools.soilW : total soil moisture
- - land.properties.wAWC: total maximum plant available water [FC-WP]
+ - land.properties.w_awc: total maximum plant available water [_fc-_wp]
  - land.states.PAW: actual extractable water
 
 *Outputs*

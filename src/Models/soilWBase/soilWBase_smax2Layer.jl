@@ -23,12 +23,12 @@ function define(params::soilWBase_smax2Layer, forcing, land, helpers)
     end
 
     ## instantiate variables
-    wSat = zero(soilW)
-    wFC = zero(soilW)
-    wWP = zero(soilW)
+    w_sat = zero(soilW)
+    w_fc = zero(soilW)
+    w_wp = zero(soilW)
 
     ## pack land variables
-    @pack_nt (soil_layer_thickness, wSat, wFC, wWP) ⇒ land.properties
+    @pack_nt (soil_layer_thickness, w_sat, w_fc, w_wp) ⇒ land.properties
     return land
 end
 
@@ -37,21 +37,21 @@ function compute(params::soilWBase_smax2Layer, forcing, land, helpers)
     @unpack_soilWBase_smax2Layer params
 
     ## unpack land variables
-    @unpack_nt (soil_layer_thickness, wSat, wFC, wWP) ⇐ land.properties
+    @unpack_nt (soil_layer_thickness, w_sat, w_fc, w_wp) ⇐ land.properties
 
     ## calculate variables
     # set the properties for each soil layer
     # 1st layer
-    @rep_elem smax1 * soil_layer_thickness[1] ⇒ (wSat, 1, :soilW)
-    @rep_elem smax2 * soil_layer_thickness[2] ⇒ (wSat, 2, :soilW)
-    @rep_elem smax1 * soil_layer_thickness[1] ⇒ (wFC, 1, :soilW)
-    @rep_elem smax2 * soil_layer_thickness[2] ⇒ (wFC, 2, :soilW)
+    @rep_elem smax1 * soil_layer_thickness[1] ⇒ (w_sat, 1, :soilW)
+    @rep_elem smax2 * soil_layer_thickness[2] ⇒ (w_sat, 2, :soilW)
+    @rep_elem smax1 * soil_layer_thickness[1] ⇒ (w_fc, 1, :soilW)
+    @rep_elem smax2 * soil_layer_thickness[2] ⇒ (w_fc, 2, :soilW)
 
     # get the plant available water available (all the water is plant available)
-    wAWC = wSat
+    w_awc = w_sat
 
     ## pack land variables
-    @pack_nt (wAWC, wFC, wSat, wWP, soil_layer_thickness) ⇒ land.properties
+    @pack_nt (w_awc, w_fc, w_sat, w_wp, soil_layer_thickness) ⇒ land.properties
     return land
 end
 
@@ -72,10 +72,10 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2Layer
 *Outputs*
  - land.properties.p_nsoilLayers
  - land.properties.soil_layer_thickness
- - land.properties.wAWC: = land.properties.wSat
- - land.properties.wFC : = land.properties.wSat
- - land.properties.wSat: wSat = smax for 2 soil layers
- - land.properties.WP: wilting point set to zero for all layers
+ - land.properties.w_awc: = land.properties.w_sat
+ - land.properties.w_fc : = land.properties.w_sat
+ - land.properties.w_sat: w_sat = smax for 2 soil layers
+ - land.properties._wp: wilting point set to zero for all layers
 
 # instantiate:
 instantiate/instantiate time-invariant variables for soilWBase_smax2Layer

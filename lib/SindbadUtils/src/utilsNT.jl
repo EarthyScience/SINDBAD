@@ -278,7 +278,7 @@ function tcPrint(d; c_olor=true, t_ype=true, v_alue=true, t_space="", space_pad 
     colors_types = collectColorForTypes(d; c_olor=c_olor)
     lc = nothing
     ttf = t_space * space_pad
-    for k ∈ sort(keys(d))
+    for k ∈ sort(collect(keys(d)))
         if d[k] isa NamedTuple
             tp = " = (; "
             print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(ttf) $(k)$(tp)\n")
