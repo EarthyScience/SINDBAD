@@ -2,29 +2,30 @@ export drainage_kUnsat
 
 struct drainage_kUnsat <: drainage end
 
-function define(p_struct::drainage_kUnsat, forcing, land, helpers)
+function define(params::drainage_kUnsat, forcing, land, helpers)
+    @unpack_nt soilW ⇐ land.pools
     ## instantiate drainage
-    drainage = zero(land.pools.soilW)
+    drainage = zero(soilW)
     ## pack land variables
-    @pack_land drainage => land.fluxes
+    @pack_nt drainage ⇒ land.fluxes
     return land
 end
 
-function compute(p_struct::drainage_kUnsat, forcing, land, helpers)
+function compute(params::drainage_kUnsat, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        drainage ∈ land.fluxes
-        unsat_k_model ∈ land.soilProperties
-        (wSat, wFC, soil_β, soil_kFC, kSat) ∈ land.soilWBase
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
-        tolerance ∈ helpers.numbers
+    @unpack_nt begin
+        drainage ⇐ land.fluxes
+        unsat_k_model ⇐ land.models
+        (wSat, wFC, soil_β, kFC, kSat) ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        (z_zero, o_one) ⇐ land.constants
+        tolerance ⇐ helpers.numbers
     end
 
     ## calculate drainage
-    for sl ∈ 1:(length(land.pools.soilW)-1)
+    for sl ∈ 1:(length(soilW)-1)
         holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         max_drain = wSat[sl] - wFC[sl]
         lossCap = min(soilW[sl] + ΔsoilW[sl], max_drain)
@@ -36,19 +37,19 @@ function compute(p_struct::drainage_kUnsat, forcing, land, helpers)
     end
 
     ## pack land variables
-    # @pack_land begin
-    # 	drainage => land.fluxes
-    # 	# ΔsoilW => land.states
+    # @pack_nt begin
+    # 	drainage ⇒ land.fluxes
+    # 	# ΔsoilW ⇒ land.pools
     # end
     return land
 end
 
-function update(p_struct::drainage_kUnsat, forcing, land, helpers)
+function update(params::drainage_kUnsat, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -59,9 +60,9 @@ function update(p_struct::drainage_kUnsat, forcing, land, helpers)
     ΔsoilW .= ΔsoilW .- ΔsoilW
 
     ## pack land variables
-    @pack_land begin
-        soilW => land.pools
-        # ΔsoilW => land.states
+    @pack_nt begin
+        soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
     end
     return land
 end

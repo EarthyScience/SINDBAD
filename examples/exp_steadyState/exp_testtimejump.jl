@@ -23,7 +23,6 @@ for (i, tj) ∈ enumerate(tjs)
     info = setupInfo(info)
 
     forcing = getForcing(info)
-    # linit= createLandInit(info.tem);
 
     run_helpers = prepTEM(forcing, info);
     space_forcing = run_helpers.space_forcing;
@@ -32,29 +31,29 @@ for (i, tj) ∈ enumerate(tjs)
     output_array = run_helpers.output_array;
     space_output = run_helpers.space_output;
     space_land = run_helpers.space_land;
-    tem_with_types = run_helpers.tem_with_types;
+    tem_info = run_helpers.tem_info;
 
 
     spinupforc = :day_MSC
     sel_forcing = getfield(spinup_forcing, spinupforc)
-    n_timesteps = getfield(run_helpers.tem_with_types.spinup.sequence[findfirst(x -> x.forcing === spinupforc, run_helpers.tem_with_types.spinup.sequence)], :n_timesteps)
+    n_timesteps = getfield(run_helpers.tem_info.spinup_sequence[findfirst(x -> x.forcing === spinupforc, run_helpers.tem_info.spinup_sequence)], :n_timesteps)
 
 
     land_init = run_helpers.loc_land
     sel_pool = :cEco
 
-    spinup_models = tem_with_types.models.forward
+    spinup_models = tem_info.models.forward
     sp = ODETsit5()
     @show "ODE_Init", tj
 
-    @time out_sp_ode = SindbadTEM.spinup(spinup_models, sel_forcing, loc_forcing_t, deepcopy(land_init), tem_with_types.helpers, n_timesteps, sp)
+    @time out_sp_ode = SindbadTEM.spinup(spinup_models, sel_forcing, loc_forcing_t, deepcopy(land_init), tem_info.model_helpers, n_timesteps, sp)
 
     out_sp_ode_init = deepcopy(out_sp_ode)
     @show "Exp_Init", tj
     sp = selSpinupModels()
     out_sp_exp = land_init
-    @time for nl ∈ 1:Int(tem_with_types.differential_eqn.time_jump)
-        @time out_sp_exp = SindbadTEM.spinup(spinup_models, sel_forcing, loc_forcing_t, deepcopy(out_sp_exp), tem_with_types.helpers, n_timesteps, sp)
+    @time for nl ∈ 1:Int(tem_info.differential_eqn.time_jump)
+        @time out_sp_exp = SindbadTEM.spinup(spinup_models, sel_forcing, loc_forcing_t, deepcopy(out_sp_exp), tem_info.model_helpers, n_timesteps, sp)
     end
     out_sp_exp_init = deepcopy(out_sp_exp)
     expSol[:, i] = getfield(out_sp_ode_init.pools, sel_pool)
@@ -78,7 +77,7 @@ x_lims = min.(minimum(expSol), minimum(odeSol)), max.(maximum(expSol), maximum(o
 xlims!(x_lims);
 plot!([x_lims...], [x_lims...]; color=:grey, label="1:1");
 plt
-savefig(joinpath(info.output.figure, "scatter_allpool.png"))
+savefig(joinpath(info.output.dirs.figure, "scatter_allpool.png"))
 
 # one subplot per pool
 pltall = [];
@@ -93,4 +92,4 @@ for (i, cp) ∈ enumerate(cVeg_names)
     push!(pltall, p)
 end
 plot(pltall...; layout=(4, 2))
-savefig(joinpath(info.output.figure, "scatter_eachpool.png"))
+savefig(joinpath(info.output.dirs.figure, "scatter_eachpool.png"))

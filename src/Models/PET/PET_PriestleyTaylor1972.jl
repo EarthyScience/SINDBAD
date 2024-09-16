@@ -14,12 +14,12 @@ export PET_PriestleyTaylor1972
 end
 #! format: on
 
-function compute(p_struct::PET_PriestleyTaylor1972, forcing, land, helpers)
+function compute(params::PET_PriestleyTaylor1972, forcing, land, helpers)
     ## unpack parameters
-    @unpack_PET_PriestleyTaylor1972 p_struct
+    @unpack_PET_PriestleyTaylor1972 params
     ## unpack forcing
-    @unpack_forcing (f_rn, f_airT) ∈ forcing
-    @unpack_land z_zero ∈ land.wCycleBase
+    @unpack_nt (f_rn, f_airT) ⇐ forcing
+    @unpack_nt z_zero ⇐ land.constants
 
     ## calculate variables
     Δ = Δ_1 * exp(Δ_2 * f_airT / (Δ_3 + f_airT))
@@ -29,7 +29,7 @@ function compute(p_struct::PET_PriestleyTaylor1972, forcing, land, helpers)
     PET = maxZero(PET)
 
     ## pack land variables
-    @pack_land PET => land.fluxes
+    @pack_nt PET ⇒ land.fluxes
     return land
 end
 

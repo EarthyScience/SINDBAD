@@ -12,36 +12,35 @@ export cTauVegProperties_CASA
 end
 #! format: on
 
-function define(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
-    @unpack_cTauVegProperties_CASA p_struct
+function define(params::cTauVegProperties_CASA, forcing, land, helpers)
+    @unpack_cTauVegProperties_CASA params
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
-    c_eco_k_f_veg_props = one.(land.pools.cEco)
-    annk = z_zero #sujan ones(size(AGE))
+    c_eco_k_f_veg_props = one.(cEco)
 
     ## pack land variables
-    @pack_land (c_eco_k_f_veg_props, annk) => land.cTauVegProperties
+    @pack_nt c_eco_k_f_veg_props ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
+function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauVegProperties_CASA p_struct
+    @unpack_cTauVegProperties_CASA params
 
     ## unpack land variables
-    @unpack_land begin
-        PFT ∈ land.vegProperties
-        (c_eco_k_f_veg_props, annk) ∈ land.cTauVegProperties
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        PFT ⇐ land.properties
+        c_eco_k_f_veg_props ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
-    # c_τ_eco = annk; #sujan
+    # c_eco_τ = annk; #sujan
     # initialize the outputs to ones
     C2LIGNIN = C2LIGNIN #sujan
     ## adjust the annk that are pft dependent directly on the p matrix
     pftVec = unique(PFT)
-    # AGE = zero(land.pools.cEco); #sujan
     for cpN ∈ (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
         # get average age from parameters
         AGE = z_zero #sujan
@@ -52,8 +51,8 @@ function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
         annk[AGE>z_zero] = o_one / AGE[AGE>z_zero]
         # feed it to the new annual turnover rates
         zix = helpers.pools.zix.(cpN)
-        c_τ_eco[zix] = annk #sujan
-        # c_τ_eco[zix] = annk[zix]
+        c_eco_τ[zix] = annk #sujan
+        # c_eco_τ[zix] = annk[zix]
     end
     # feed the parameters that are pft dependent.
     pftVec = unique(PFT)
@@ -79,10 +78,10 @@ function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     c_eco_k_f_veg_props[helpers.pools.zix.cLitRootFS] = LIGEFF
 
     ## pack land variables
-    @pack_land begin
-        c_τ_eco => land.cCycleBase
-        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN, c_eco_k_f_veg_props) =>
-            land.cTauVegProperties
+    @pack_nt begin
+        c_eco_τ ⇒ land.diagnostics
+        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN) ⇒ land.properties
+        c_eco_k_f_veg_props ⇒ land.diagnostics
     end
     return land
 end
@@ -99,15 +98,15 @@ $(SindbadParameters)
 Effect of vegetation properties on soil decomposition rates using cTauVegProperties_CASA
 
 *Inputs*
- - land.vegProperties.PFT:
+ - land.properties.PFT:
 
 *Outputs*
- - land.cTauVegProperties.LIGEFF:
- - land.cTauVegProperties.LIGNIN:
- - land.cTauVegProperties.LITC2N:
- - land.cTauVegProperties.MTF:
- - land.cTauVegProperties.SCLIGNIN:
- - land.cTauVegProperties.c_eco_k_f_veg_props:
+ - land.properties.LIGEFF:
+ - land.properties.LIGNIN:
+ - land.properties.LITC2N:
+ - land.properties.MTF:
+ - land.properties.SCLIGNIN:
+ - land.diagnostics.c_eco_k_f_veg_props:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauVegProperties_CASA

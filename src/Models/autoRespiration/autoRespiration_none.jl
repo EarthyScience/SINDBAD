@@ -2,14 +2,15 @@ export autoRespiration_none
 
 struct autoRespiration_none <: autoRespiration end
 
-function define(p_struct::autoRespiration_none, forcing, land, helpers)
+function define(params::autoRespiration_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    c_eco_efflux = zero(land.pools.cEco)
+    c_eco_efflux = zero(cEco)
 
     ## pack land variables
-    @pack_land c_eco_efflux => land.states
-    return land
+    @pack_nt c_eco_efflux ⇒ land.states
+    return fluxes
 end
 
 @doc """

@@ -2,13 +2,14 @@ export cTauSoilProperties_none
 
 struct cTauSoilProperties_none <: cTauSoilProperties end
 
-function define(p_struct::cTauSoilProperties_none, forcing, land, helpers)
+function define(params::cTauSoilProperties_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    c_eco_k_f_soil_props = one.(land.pools.cEco)
+    c_eco_k_f_soil_props = one.(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soil_props => land.cTauSoilProperties
+    @pack_nt c_eco_k_f_soil_props ⇒ land.diagnostics
     return land
 end
 

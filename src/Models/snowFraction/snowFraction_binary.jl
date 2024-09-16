@@ -2,13 +2,13 @@ export snowFraction_binary
 
 struct snowFraction_binary <: snowFraction end
 
-function compute(p_struct::snowFraction_binary, forcing, land, helpers)
+function compute(params::snowFraction_binary, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
+        (z_zero, o_one) ⇐ land.constants
     end
 
     # if there is snow; then snow fraction is 1; otherwise 0
@@ -16,7 +16,7 @@ function compute(p_struct::snowFraction_binary, forcing, land, helpers)
     frac_snow = tot_snow > z_zero ? one(tot_snow) : zero(tot_snow)
 
     ## pack land variables
-    @pack_land frac_snow => land.states
+    @pack_nt frac_snow ⇒ land.states
     return land
 end
 

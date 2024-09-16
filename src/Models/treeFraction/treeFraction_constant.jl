@@ -7,15 +7,15 @@ end
 #! format: on
 
 
-function compute(p_struct::treeFraction_constant, forcing, land, helpers)
+function precompute(params::treeFraction_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_treeFraction_constant p_struct
+    @unpack_treeFraction_constant params
 
     ## calculate variables
     frac_tree = constant_frac_tree
 
     ## pack land variables
-    @pack_land frac_tree => land.states
+    @pack_nt frac_tree ⇒ land.states
     return land
 end
 

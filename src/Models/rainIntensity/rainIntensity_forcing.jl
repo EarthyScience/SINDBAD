@@ -2,14 +2,14 @@ export rainIntensity_forcing
 
 struct rainIntensity_forcing <: rainIntensity end
 
-function compute(p_struct::rainIntensity_forcing, forcing, land, helpers)
+function compute(params::rainIntensity_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing f_rain_int ∈ forcing
+    @unpack_nt f_rain_int ⇐ forcing
 
     rain_int = f_rain_int
 
     ## pack land variables
-    @pack_land rain_int => land.states
+    @pack_nt rain_int ⇒ land.states
     return land
 end
 

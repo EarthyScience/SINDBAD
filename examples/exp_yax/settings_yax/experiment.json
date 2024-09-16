@@ -54,14 +54,14 @@
       "fluxes.runoff": null,
       "fluxes.surface_runoff": null,
       "fluxes.transpiration": null,
-      "gppAirT.gpp_f_airT": null,
-      "gppDemand.gpp_demand": null,
-      "gppDemand.gpp_f_climate": null,
-      "gppPotential.gpp_potential": null,
-      "gppVPD.gpp_f_vpd": null,
+      "diagnostics.gpp_f_airT": null,
+      "diagnostics.gpp_demand": null,
+      "diagnostics.gpp_f_climate": null,
+      "diagnostics.gpp_potential": null,
+      "diagnostics.gpp_f_vpd": null,
       "pools.soilW": "d_soil",
       "states.fAPAR": null,
-      "states.water_balance": null
+      "diagnostics.water_balance": null
     }
   },
   "model_spinup": {

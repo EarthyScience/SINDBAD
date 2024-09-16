@@ -6,61 +6,59 @@ export capillaryFlow_VanDijk2010
 end
 #! format: on
 
-function define(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
+function define(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        soilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
     end
-    soil_capillary_flux = zero(land.pools.soilW)
+    soil_capillary_flux = zero(soilW)
 
     ## pack land variables
-    @pack_land begin
-        soil_capillary_flux => land.fluxes
+    @pack_nt begin
+        soil_capillary_flux ⇒ land.fluxes
     end
     return land
 end
 
-function compute(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
+function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
     ## unpack parameters
-    @unpack_capillaryFlow_VanDijk2010 p_struct
+    @unpack_capillaryFlow_VanDijk2010 params
 
     ## unpack land variables
-    @unpack_land begin
-        (soil_kFC, wSat) ∈ land.soilWBase
-        soil_capillary_flux ∈ land.fluxes
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        tolerance ∈ helpers.numbers
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        (kFC, wSat) ⇐ land.properties
+        soil_capillary_flux ⇐ land.fluxes
+        (soilW, ΔsoilW) ⇐ land.pools
+        tolerance ⇐ helpers.numbers
+        (z_zero, o_one) ⇐ land.constants
     end
 
-    for sl ∈ 1:(length(land.pools.soilW)-1)
+    for sl ∈ 1:(length(soilW)-1)
         dos_soilW = clampZeroOne((soilW[sl] + ΔsoilW[sl]) ./ wSat[sl])
-        tmpCapFlow = sqrt(soil_kFC[sl+1] * soil_kFC[sl]) * (o_one - dos_soilW)
+        tmpCapFlow = sqrt(kFC[sl+1] * kFC[sl]) * (o_one - dos_soilW)
         holdCap = maxZero(wSat[sl] - (soilW[sl] + ΔsoilW[sl]))
         lossCap = maxZero(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]))
         minFlow = min(tmpCapFlow, holdCap, lossCap)
         tmp = minFlow > tolerance ? minFlow : zero(minFlow)
-        @rep_elem tmp => (soil_capillary_flux, sl, :soilW)
-        @add_to_elem soil_capillary_flux[sl] => (ΔsoilW, sl, :soilW)
-        @add_to_elem -soil_capillary_flux[sl] => (ΔsoilW, sl + 1, :soilW)
+        @rep_elem tmp ⇒ (soil_capillary_flux, sl, :soilW)
+        @add_to_elem soil_capillary_flux[sl] ⇒ (ΔsoilW, sl, :soilW)
+        @add_to_elem -soil_capillary_flux[sl] ⇒ (ΔsoilW, sl + 1, :soilW)
     end
 
     ## pack land variables
-    @pack_land begin
-        soil_capillary_flux => land.fluxes
-        ΔsoilW => land.states
+    @pack_nt begin
+        soil_capillary_flux ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
+function update(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+    @unpack_nt begin
+        (soilW, ΔsoilW) ⇐ land.pools
     end
 
     ## update variables
@@ -71,9 +69,8 @@ function update(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
     ΔsoilW = ΔsoilW - ΔsoilW
 
     ## pack land variables
-    @pack_land begin
-        soilW => land.pools
-        # ΔsoilW => land.states
+    @pack_nt begin
+        (soilW, ΔsoilW) ⇒ land.pools
     end
     return land
 end

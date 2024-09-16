@@ -7,20 +7,20 @@ export WUE_VPDDay
 end
 #! format: on
 
-function compute(p_struct::WUE_VPDDay, forcing, land, helpers)
+function compute(params::WUE_VPDDay, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_WUE_VPDDay p_struct
-    @unpack_forcing f_VPD_day ∈ forcing
-    @unpack_land begin
-        tolerance ∈ helpers.numbers
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_WUE_VPDDay params
+    @unpack_nt f_VPD_day ⇐ forcing
+    @unpack_nt begin
+        tolerance ⇐ helpers.numbers
+        (z_zero, o_one) ⇐ land.constants
     end
     ## calculate variables
     # "WUEat1hPa"
     WUE = WUE_one_hpa * o_one / sqrt(kpa_to_hpa * (f_VPD_day + tolerance))
 
     ## pack land variables
-    @pack_land WUE => land.WUE
+    @pack_nt WUE ⇒ land.diagnostics
     return land
 end
 
@@ -40,7 +40,7 @@ Estimate wue using WUE_VPDDay
  - forcing.f_VPD_day: daytime mean VPD [kPa]
 
 *Outputs*
- - land.WUE.WUE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
+ - land.diagnostics.WUE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
 
 ---
 

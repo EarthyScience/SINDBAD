@@ -2,13 +2,13 @@ export cAllocationSoilT_none
 
 struct cAllocationSoilT_none <: cAllocationSoilT end
 
-function define(p_struct::cAllocationSoilT_none, forcing, land, helpers)
-
+function define(params::cAllocationSoilT_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
     ## calculate variables
-    c_allocation_f_soilT = one(first(land.pools.cEco)) #sujan fsoilW was changed to fTSoil
+    c_allocation_f_soilT = one(first(cEco)) #sujan fsoilW was changed to fTSoil
 
     ## pack land variables
-    @pack_land c_allocation_f_soilT => land.cAllocationSoilT
+    @pack_nt c_allocation_f_soilT ⇒ land.diagnostics
     return land
 end
 

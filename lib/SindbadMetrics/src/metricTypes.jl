@@ -1,6 +1,7 @@
 # ------------------------- metric -------------------------
-abstract type SindbadMetric end
+export SindbadMetric
 export MSE
+export NAME1R
 export NMAE1R
 export NNSE
 export NNSEInv
@@ -11,13 +12,16 @@ export NSEInv
 export NSEσ
 export NSEσInv
 export Pcor
+export PcorInv
 export Pcor2
 export Pcor2Inv
 export Scor
 export Scor2
 export Scor2Inv
 
+abstract type SindbadMetric end
 struct MSE <: SindbadMetric end
+struct NAME1R <: SindbadMetric end
 struct NMAE1R <: SindbadMetric end
 struct NNSE <: SindbadMetric end
 struct NNSEInv <: SindbadMetric end
@@ -28,6 +32,7 @@ struct NSEInv <: SindbadMetric end
 struct NSEσ <: SindbadMetric end
 struct NSEσInv <: SindbadMetric end
 struct Pcor <: SindbadMetric end
+struct PcorInv <: SindbadMetric end
 struct Pcor2 <: SindbadMetric end
 struct Pcor2Inv <: SindbadMetric end
 struct Scor <: SindbadMetric end

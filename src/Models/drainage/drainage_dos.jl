@@ -6,34 +6,33 @@ export drainage_dos
 end
 #! format: on
 
-function define(p_struct::drainage_dos, forcing, land, helpers)
+function define(params::drainage_dos, forcing, land, helpers)
     ## unpack parameters
 
     ## unpack land variables
-    @unpack_land begin
-        ΔsoilW ∈ land.states
+    @unpack_nt begin
+        ΔsoilW ⇐ land.pools
     end
     drainage = zero(ΔsoilW)
 
     ## pack land variables
-    @pack_land begin
-        drainage => land.fluxes
+    @pack_nt begin
+        drainage ⇒ land.fluxes
     end
     return land
 end
 
-function compute(p_struct::drainage_dos, forcing, land, helpers)
+function compute(params::drainage_dos, forcing, land, helpers)
     ## unpack parameters
-    @unpack_drainage_dos p_struct
+    @unpack_drainage_dos params
 
     ## unpack land variables
-    @unpack_land begin
-        drainage ∈ land.fluxes
-        (wSat, soil_β, wFC) ∈ land.soilWBase
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
-        tolerance ∈ helpers.numbers
+    @unpack_nt begin
+        drainage ⇐ land.fluxes
+        (wSat, soil_β, wFC) ⇐ land.properties
+        (soilW, ΔsoilW) ⇐ land.pools
+        (z_zero, o_one) ⇐ land.constants
+        tolerance ⇐ helpers.numbers
     end
 
     ## calculate drainage
@@ -46,25 +45,25 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
         holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         drain = min(drainage_tmp, holdCap, lossCap)
         tmp = drain > tolerance ? drain : zero(drain)
-        @rep_elem tmp => (drainage, sl, :soilW)
-        @add_to_elem -tmp => (ΔsoilW, sl, :soilW)
-        @add_to_elem tmp => (ΔsoilW, sl + 1, :soilW)
+        @rep_elem tmp ⇒ (drainage, sl, :soilW)
+        @add_to_elem -tmp ⇒ (ΔsoilW, sl, :soilW)
+        @add_to_elem tmp ⇒ (ΔsoilW, sl + 1, :soilW)
     end
-    @rep_elem z_zero => (drainage, lastindex(drainage), :soilW)
+    @rep_elem z_zero ⇒ (drainage, lastindex(drainage), :soilW)
     ## pack land variables
-    @pack_land begin
-        drainage => land.fluxes
-        ΔsoilW => land.states
+    @pack_nt begin
+        drainage ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::drainage_dos, forcing, land, helpers)
+function update(params::drainage_dos, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -75,9 +74,9 @@ function update(p_struct::drainage_dos, forcing, land, helpers)
     ΔsoilW .= ΔsoilW .- ΔsoilW
 
     ## pack land variables
-    # @pack_land begin
-    # 	soilW => land.pools
-    # 	ΔsoilW => land.states
+    # @pack_nt begin
+    # 	soilW ⇒ land.pools
+    # 	ΔsoilW ⇒ land.pools
     # end
     return land
 end

@@ -7,7 +7,7 @@ toggleStackTraceNT()
 site_index = 37
 # site_index = 68
 sites = 1:205
-# sites = [37, ]
+sites = [37, ]
 # sites = 1:20
 # sites = [11, 33, 55, 105, 148]
 forcing_set = "erai"
@@ -133,10 +133,10 @@ for site_index in sites
     forcing = getForcing(info)
 
     ### update the model parameters with values from matlab optimization
-    tbl_params = getParameters(info.tem.models.forward,
-        info.optim.model_parameter_default,
-        info.optim.model_parameters_to_optimize,
-        info.tem.helpers.numbers.sNT)
+    tbl_params = getParameters(info.models.forward,
+        info.optimization.model_parameter_default,
+        info.optimization.model_parameters_to_optimize,
+        info.helpers.numbers.num_type)
     opt_params = tbl_params.optim
     param_names = tbl_params.name_full
     param_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
@@ -156,13 +156,13 @@ for site_index in sites
             @show opt_params[opi], "new"
             @info "\n------------------------------------------------\n"
         end
-        models_with_matlab_params = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
+        models_with_matlab_params = updateModelParameters(tbl_params, info.models.forward, opt_params)
 
 
         tbl_params_2 = getParameters(models_with_matlab_params,
-            info.optim.model_parameter_default,
-            info.optim.model_parameters_to_optimize,
-            info.tem.helpers.numbers.sNT)
+            info.optimization.model_parameter_default,
+            info.optimization.model_parameters_to_optimize,
+            info.helpers.numbers.num_type)
 
         ## run the model
 
@@ -173,7 +173,7 @@ for site_index in sites
             run_helpers.loc_forcing_t,
             run_helpers.output_array,
             run_helpers.space_land,
-            run_helpers.tem_with_types)
+            run_helpers.tem_info)
 
         outcubes = run_helpers.output_array
 
@@ -184,8 +184,8 @@ for site_index in sites
 
         # some plots for model simulations from JL and matlab versions
         opt_dat = outcubes
-        output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
-        costOpt = prepCostOptions(obs_array, info.optim.cost_options)
+        output_vars = valToSymbol(run_helpers.tem_info.vals.output_vars)
+        costOpt = prepCostOptions(obs_array, info.optimization.cost_options)
         default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
         foreach(costOpt) do var_row
             v = var_row.variable
@@ -214,7 +214,7 @@ for site_index in sites
             else
                 tspan = first(non_nan_index):last(non_nan_index)
             end
-            xdata = [info.tem.helpers.dates.range[tspan]...]
+            xdata = [info.helpers.dates.range[tspan]...]
             obs_σ = obs_σ[tspan]
             obs_var = obs_var[tspan]
             jl_dat = jl_dat[tspan, 1, 1, 1]
@@ -224,7 +224,7 @@ for site_index in sites
             metr_def = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
             metr_opt = loss(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
             v = (var_row.mod_field, var_row.mod_subfield)
-            vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+            vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
             v = vinfo["standard_name"]
             plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
             plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
@@ -250,15 +250,15 @@ for site_index in sites
                 run_helpers.loc_forcing_t,
                 run_helpers.space_output,
                 run_helpers.space_land,
-                run_helpers.tem_with_types)
+                run_helpers.tem_info)
 
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-            output_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+            output_vars = valToSymbol(run_helpers.tem_info.vals.output_vars)
             for (o, v) in enumerate(output_vars)
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = run_helpers.output_array[o][:, :, 1, 1]
-                xdata = [info.tem.helpers.dates.range...][debug_span]
-                vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+                xdata = [info.helpers.dates.range...][debug_span]
+                vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
                 ml_dat = nothing
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
@@ -293,7 +293,7 @@ for site_index in sites
             for (o, v) in enumerate(forc_vars)
                 println("plot forc-model => site: $domain, variable: $v")
                 def_var = forcing.data[o][:, :, 1, 1]
-                xdata = [info.tem.helpers.dates.range...]
+                xdata = [info.helpers.dates.range...]
                 if size(def_var, 1) !== length(xdata)
                     xdata = 1:size(def_var, 1)
                 end

@@ -2,9 +2,8 @@ export gppDemand_none
 
 struct gppDemand_none <: gppDemand end
 
-function define(p_struct::gppDemand_none, forcing, land, helpers)
-    o_one = land.wCycleBase.o_one
-    z_zero = land.wCycleBase.z_zero
+function define(params::gppDemand_none, forcing, land, helpers)
+    @unpack_nt (o_one, z_zero) ⇐ land.constants
 
     gpp_f_climate = o_one
 
@@ -12,7 +11,7 @@ function define(p_struct::gppDemand_none, forcing, land, helpers)
     gpp_demand = z_zero
 
     ## pack land variables
-    @pack_land (gpp_f_climate, gpp_demand) => land.gppDemand
+    @pack_nt (gpp_f_climate, gpp_demand) ⇒ land.diagnostics
     return land
 end
 
@@ -28,8 +27,8 @@ Combine effects as multiplicative or minimum using gppDemand_none
  - helpers
 
 *Outputs*
- - land.gppDemand.gpp_f_climate: effective scalar of demands
- - land.gppDemand.gpp_demand: demand-driven GPP with no stress
+ - land.diagnostics.gpp_f_climate: effective scalar of demands
+ - land.diagnostics.gpp_demand: demand-driven GPP with no stress
 
 # instantiate:
 instantiate/instantiate time-invariant variables for gppDemand_none

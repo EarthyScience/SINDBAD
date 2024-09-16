@@ -1,15 +1,19 @@
 export booleanizeArray
 export doNothing
+export entertainMe
 export getAbsDataPath
 export isInvalid
 export LandWrapper
 export nonUnique
 export replaceInvalid
 export setLogLevel
+export sindbadBanner
 export tabularizeList
 export toggleStackTraceNT
 export toUpperCaseFirst
 export valToSymbol
+
+figlet_fonts = ("3D Diagonal", "3D-ASCII", "3d", "4max", "5 Line Oblique", "5x7", "6x9", "AMC AAA01", "AMC Razor", "AMC Razor2", "AMC Slash", "AMC Slider", "AMC Thin", "AMC Tubes", "AMC Untitled", "ANSI Regular", "ANSI Shadow", "Big Money-ne", "Big Money-nw", "Big Money-se", "Big Money-sw", "Bloody", "Caligraphy2", "DOS Rebel", "Dancing Font", "Def Leppard", "Delta Corps Priest 1", "Electronic", "Elite", "Fire Font-k", "Fun Face", "Georgia11", "Larry 3D", "Lil Devil", "Line Blocks", "NT Greek", "NV Script", "Red Phoenix", "Rowan Cap", "S Blood", "THIS", "Two Point", "USA Flag", "Wet Letter", "acrobatic", "alligator", "alligator2", "alligator3", "alphabet", "arrows", "asc_____", "avatar", "banner", "banner3", "banner3-D", "banner4", "barbwire", "bell", "big", "bolger", "braced", "bright", "bulbhead", "caligraphy", "charact2", "charset_", "clb6x10", "colossal", "computer", "cosmic", "crawford", "crazy", "diamond", "doom", "fender", "fraktur", "georgi16", "ghoulish", "graffiti", "hollywood", "jacky", "jazmine", "maxiwi", "merlin1", "nancyj", "nancyj-improved", "nscript", "o8", "ogre", "pebbles", "reverse", "roman", "rounded", "rozzo", "script", "slant", "small", "soft", "speed", "standard", "stop", "tanja", "thick", "train", "univers", "whimsy");
 
 """
     LandWrapper{S}
@@ -82,6 +86,17 @@ function doNothing(_data)
     return _data
 end
 
+"""
+    entertainMe(n=10, disp_text="Sindbad.jl")
+
+display the disp_text n times
+"""
+function entertainMe(n=10, disp_text="Sindbad.jl", c_olor=false)
+    for _x in 1:n
+        sindbadBanner(disp_text, c_olor)
+        sleep(0.1)
+    end
+end
 
 """
     getAbsDataPath(info, data_path)
@@ -90,16 +105,16 @@ end
 """
 function getAbsDataPath(info, data_path)
     if !isabspath(data_path)
-        data_path = joinpath(info.experiment_root, data_path)
+        data_path = joinpath(info.experiment.dirs.experiment, data_path)
     end
     return data_path
 end
 
 
 """
-    isInvalid(num)
+    isInvalid(_data::Number)
 
-
+returns if the input number is invalid
 """
 function isInvalid(_data)
     return isnothing(_data) || ismissing(_data) || isnan(_data) || isinf(_data)
@@ -165,6 +180,22 @@ function setLogLevel(log_level::Symbol)
 end
 
 """
+    sindbadBanner(disp_text="Sindbad.jl")
+
+displays display text as a banner using Figlets
+"""
+function sindbadBanner(disp_text="Sindbad.jl", c_olor=false)
+    if c_olor
+        print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
+    end
+    println("######################################################################################################\n")
+    FIGlet.render(disp_text, rand(figlet_fonts))
+    println("######################################################################################################")
+    return nothing
+end
+
+
+"""
     tabularizeList(_list)
 
 convert a list/tuple to a Table from TypedTables
@@ -210,4 +241,3 @@ returns the symbol from which val was created for a type dispatch based on name
 function valToSymbol(val)
     return typeof(val).parameters[1]
 end
-

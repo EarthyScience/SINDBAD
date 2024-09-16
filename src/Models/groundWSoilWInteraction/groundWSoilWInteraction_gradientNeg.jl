@@ -7,24 +7,24 @@ export groundWSoilWInteraction_gradientNeg
 end
 #! format: on
 
-function define(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
+function define(params::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
     ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
-    gw_recharge = land.wCycleBase.z_zero
+    gw_recharge = z_zero
     ## pack land variables
-    @pack_land gw_recharge => land.fluxes
+    @pack_nt gw_recharge ⇒ land.fluxes
     return land
 end
 
-function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
+function compute(params::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWSoilWInteraction_gradientNeg p_struct
+    @unpack_groundWSoilWInteraction_gradientNeg params
     ## unpack land variables
-    @unpack_land begin
-        wSat ∈ land.soilWBase
-        (groundW, soilW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
-        (n_groundW, z_zero) ∈ land.wCycleBase
-        gw_recharge ∈ land.fluxes
+    @unpack_nt begin
+        wSat ⇐ land.properties
+        (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
+        (n_groundW, z_zero) ⇐ land.constants
+        gw_recharge ⇐ land.fluxes
     end
     # maximum groundwater storage
     p_gwmax = wSat[end] * smax_scale
@@ -47,25 +47,25 @@ function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, h
 
     # adjust the delta storages
     ΔgroundW = addToEachElem(ΔgroundW, -gw_capillary_flux / n_groundW)
-    @add_to_elem gw_capillary_flux => (ΔsoilW, lastindex(ΔsoilW), :soilW)
+    @add_to_elem gw_capillary_flux ⇒ (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     # adjust the gw_recharge as net flux between soil and groundwater. positive from soil to gw
     gw_recharge = gw_recharge - gw_capillary_flux
 
     ## pack land variables
-    @pack_land begin
-        (gw_capillary_flux, gw_recharge) => land.fluxes
-        (ΔsoilW, ΔgroundW) => land.states
+    @pack_nt begin
+        (gw_capillary_flux, gw_recharge) ⇒ land.fluxes
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
+function update(params::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        (soilW, groundW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
+    @unpack_nt begin
+        (soilW, groundW) ⇐ land.pools
+        (ΔsoilW, ΔgroundW) ⇐ land.states
     end
 
     ## update storage pools
@@ -77,9 +77,9 @@ function update(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, he
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     ## pack land variables
-    @pack_land begin
-        (groundW, soilW) => land.pools
-        (ΔsoilW, ΔgroundW) => land.states
+    @pack_nt begin
+        (groundW, soilW) ⇒ land.pools
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
@@ -98,7 +98,7 @@ Groundwater soil moisture interactions (capilary flux) using groundWSoilWInterac
 *Inputs*
  - info : length(land.pools.soilW) = number of soil layers
  - land.groundWSoilWInteraction.p_gwmax : maximum storage capacity of the groundwater
- - land.soilWBase.wSat : maximum storage capacity of soil [mm]
+ - land.properties.wSat : maximum storage capacity of soil [mm]
 
 *Outputs*
  - land.fluxes.gw_capillary_flux : flux between groundW & soilW

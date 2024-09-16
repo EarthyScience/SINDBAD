@@ -2,18 +2,18 @@ export gpp_transpirationWUE
 
 struct gpp_transpirationWUE <: gpp end
 
-function compute(p_struct::gpp_transpirationWUE, forcing, land, helpers)
+function compute(params::gpp_transpirationWUE, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        transpiration ∈ land.fluxes
-        WUE ∈ land.WUE
+    @unpack_nt begin
+        transpiration ⇐ land.fluxes
+        WUE ⇐ land.diagnostics
     end
 
     gpp = transpiration * WUE
 
     ## pack land variables
-    @pack_land gpp => land.fluxes
+    @pack_nt gpp ⇒ land.fluxes
     return land
 end
 
@@ -25,7 +25,7 @@ calculate GPP based on transpiration & water use efficiency
 # compute:
 
 *Inputs*
- - land.WUE.WUE: water use efficiency in gC/mmH2O
+ - land.diagnostics.WUE: water use efficiency in gC/mmH2O
  - land.fluxes.transpiration: actual transpiration
 
 *Outputs*

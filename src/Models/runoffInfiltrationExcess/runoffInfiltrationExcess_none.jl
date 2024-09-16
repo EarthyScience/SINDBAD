@@ -2,13 +2,14 @@ export runoffInfiltrationExcess_none
 
 struct runoffInfiltrationExcess_none <: runoffInfiltrationExcess end
 
-function define(p_struct::runoffInfiltrationExcess_none, forcing, land, helpers)
+function define(params::runoffInfiltrationExcess_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
     ## calculate variables
-    inf_excess_runoff = land.wCycleBase.z_zero
+    inf_excess_runoff = z_zero
 
     ## pack land variables
-    @pack_land inf_excess_runoff => land.fluxes
+    @pack_nt inf_excess_runoff ⇒ land.fluxes
     return land
 end
 
