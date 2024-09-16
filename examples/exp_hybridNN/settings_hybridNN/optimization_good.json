@@ -1,6 +1,5 @@
 {
   "algorithm": "CMAEvolutionStrategy_CMAES",
-  "land_output_type": "array",
   "model_parameter_default": {
     "distribution": ["normal", [0.0, 1.0]],
     "is_ml": true
@@ -75,7 +74,7 @@
     "default_observation": {
       "additive_unit_conversion": false,
       "bounds": null,
-      "data_path": "../data/fluxnet_cube/FLUXNET_v1.zarr",
+      "data_path": "/Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v2023_12.zarr",
       "is_categorical": false,
       "standard_name": null,
       "sindbad_unit": null,
@@ -98,7 +97,7 @@
           "standard_name": "Above-ground biomass",
           "sindbad_unit": "gC m-2",
           "source_unit": "gC m-2",
-          "source_variable": "agb_merged"
+          "source_variable": "agb_merged_PFT"
         },
         "model_full_var": "states.aboveground_biomass"
       },
@@ -159,12 +158,17 @@
         },
         "data": {
           "bounds": [0.0, 1.0],
-          "standard_name": "mergedNDVI_MCD43A",
+          "standard_name": "NDVI_MCD43A",
           "sindbad_unit": "adimensional",
           "source_unit": "adimensional",
-          "source_variable": "mergedNDVI_MCD43A"
+          "source_variable": "NDVI_MCD43A"
         },
-        "model_full_var": "states.fAPAR"
+        "model_full_var": "states.fAPAR",
+        "qflag": {
+          "bounds": [0.85, 1.0],
+          "data_path": null,
+          "source_variable": "NDVI_QC_MCD43A"
+        }
       },
       "nee": {
         "cost_options": {
@@ -191,7 +195,7 @@
       },
       "nirv": {
         "cost_options": {
-          "cost_metric": "scor2_inv",
+          "cost_metric": "n_pcor_inv",
           "temporal_data_aggr": "day_anomaly",
           "aggr_obs": true
         },
@@ -202,7 +206,12 @@
           "source_unit": "-",
           "source_variable": "NIRv_MCD43A"
         },
-        "model_full_var": "fluxes.gpp"
+        "model_full_var": "fluxes.gpp",
+        "qflag": {
+          "bounds": [0.85, 1.0],
+          "data_path": null,
+          "source_variable": "NIRv_QC_MCD43A"
+        }
       },
       "reco": {
         "cost_options": {
