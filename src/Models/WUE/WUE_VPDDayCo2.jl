@@ -9,16 +9,16 @@ export WUE_VPDDayCo2
 end
 #! format: on
 
-function compute(p_struct::WUE_VPDDayCo2, forcing, land, helpers)
+function compute(params::WUE_VPDDayCo2, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_WUE_VPDDayCo2 p_struct
-    @unpack_forcing f_VPD_day ∈ forcing
+    @unpack_WUE_VPDDayCo2 params
+    @unpack_nt f_VPD_day ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        ambient_CO2 ∈ land.states
-        tolerance ∈ helpers.numbers
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        ambient_CO2 ⇐ land.states
+        tolerance ⇐ helpers.numbers
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
@@ -28,7 +28,8 @@ function compute(p_struct::WUE_VPDDayCo2, forcing, land, helpers)
     WUE = WUENoCO2 * fCO2_CO2
 
     ## pack land variables
-    @pack_land (WUE, WUENoCO2) => land.WUE
+    @pack_nt WUENoCO2 ⇒ land.diagnostics
+    @pack_nt WUE ⇒ land.diagnostics
     return land
 end
 
@@ -48,7 +49,7 @@ Estimate wue using WUE_VPDDayCo2
  - forcing.f_VPD_day: daytime mean VPD [kPa]
 
 *Outputs*
- - land.WUE.WUENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
+ - land.diagnostics.WUENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
 
 ---
 

@@ -7,17 +7,17 @@ export cAllocationSoilT_Friedlingstein1999
 end
 #! format: on
 
-function compute(p_struct::cAllocationSoilT_Friedlingstein1999, forcing, land, helpers)
+function compute(params::cAllocationSoilT_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilT_Friedlingstein1999 p_struct
+    @unpack_cAllocationSoilT_Friedlingstein1999 params
 
     ## unpack land variables
-    @unpack_land c_allocation_f_soilT ∈ land.cTauSoilT
+    @unpack_nt c_allocation_f_soilT ⇐ land.diagnostics
 
     c_allocation_f_soilT = clamp(c_allocation_f_soilT, min_f_soilT, max_f_soilT)
 
     ## pack land variables
-    @pack_land c_allocation_f_soilT => land.cAllocationSoilT
+    @pack_nt c_allocation_f_soilT ⇒ land.diagnostics
     return land
 end
 
@@ -32,10 +32,10 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - land.cTauSoilT.c_allocation_f_soilT: temperature effect on soil decomposition
+ - land.diagnostics.c_allocation_f_soilT: temperature effect on soil decomposition
 
 *Outputs*
- - land.cAllocationSoilT.c_allocation_f_soilT: temperature stressor on carbon allocation
+ - land.diagnostics.c_allocation_f_soilT: temperature stressor on carbon allocation
 
 ---
 

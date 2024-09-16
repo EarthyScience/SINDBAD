@@ -4,6 +4,7 @@ authors = ["SINDBAD <sindbad@bgc-jena.mpg.de> and contributors"]
 version = "0.1.0"
 
 [deps]
+CodeTracking = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 FieldMetadata = "bf96fef3-21d2-5d20-8afa-0e7d4c32a885"

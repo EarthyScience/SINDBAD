@@ -2,13 +2,14 @@ export gpp_none
 
 struct gpp_none <: gpp end
 
-function define(p_struct::gpp_none, forcing, land, helpers)
+function define(params::gpp_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
     ## calculate variables
-    gpp = land.wCycleBase.z_zero
+    gpp = z_zero
 
     ## pack land variables
-    @pack_land gpp => land.fluxes
+    @pack_nt gpp ⇒ land.fluxes
     return land
 end
 

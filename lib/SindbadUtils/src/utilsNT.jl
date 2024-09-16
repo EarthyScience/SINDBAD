@@ -112,7 +112,7 @@ end
 """
     dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}})
 
-removes the list of fields from a given named tuple
+removes/drops the list of fields from a given named tuple
 
 # Arguments:
 - `namedtuple`: a namedtuple to remove the fields from
@@ -120,7 +120,7 @@ removes the list of fields from a given named tuple
 """
 function dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}}) 
     keepnames = Base.diff_names(Base._nt_names(namedtuple), names)
-   return NamedTuple{keepnames}(namedtuple)
+    return NamedTuple{keepnames}(namedtuple)
 end
 
 """
@@ -218,7 +218,10 @@ end
 """
     removeEmptyTupleFields(tpl::NamedTuple)
 
+removes all empty files of a NamedTuple
 
+# Arguments:
+- `tpl`: input tuple    
 """
 function removeEmptyTupleFields(tpl::NamedTuple)
     indx = findall(x -> x != NamedTuple(), values(tpl))
@@ -228,75 +231,84 @@ end
 
 
 """
-    setTupleSubfield(out, fieldname, vals)
+    setTupleSubfield(tpl, fieldname, vals)
 
-
+sets the subfield of a NamedTuple
 
 # Arguments:
-- `out`: DESCRIPTION
-- `fieldname`: DESCRIPTION
-- `vals`: DESCRIPTION
+- `tpl`: input tuple
+- `fieldname`: fieldname to write
+- `vals`: tuple with subfieldname and value to write
 """
-function setTupleSubfield(out, fieldname, vals)
-    return (; out..., fieldname => (; getfield(out, fieldname)..., first(vals) => last(vals)))
+function setTupleSubfield(tpl::NamedTuple, fieldname::Symbol, vals::Tuple{Symbol, Any})
+    if !hasproperty(tpl, fieldname)
+        tpl = setTupleField(tpl, (fieldname, (;)))
+    end
+    return (; tpl..., fieldname => (; getfield(tpl, fieldname)..., first(vals) => last(vals)))
 end
 
-setTupleField(out, vals) = (; out..., first(vals) => last(vals))
+
+"""
+    setTupleField(tpl, fieldname, vals)
+
+sets the field of a NamedTuple
+
+# Arguments:
+- `tpl`: input tuple
+- `vals`: tuple with fieldname and value to write
+"""
+setTupleField(tpl::NamedTuple, vals::Tuple{Symbol, Any}) = (; tpl..., first(vals) => last(vals))
 
 
 """
-    tcPrint(d, df = 1; c_olor = true, t_ype = true, istop = true)
+    tcPrint(d; c_olor=true, t_ype=true, v_alue=true, t_op=true)
 
 - a helper function to navigate the input named tuple and annotate types.
 - a random set of colors is chosen per type of the data/field
 - a mixed colored output within a feild usually warrants caution on type mismatches
 
 # Arguments:
-- `d`: DESCRIPTION
-- `df`: DESCRIPTION
-- `c_olor`: DESCRIPTION
-- `t_ype`: DESCRIPTION
-- `istop`: DESCRIPTION
+- `d`: an oject to print on screen
+- `c_olor`: a flag to turn on/off the colors
+- `t_ype`: a flag to turn on/off the appending of types
+- `v_alue`: a flag to turn on/off the values
+- `t_space`: a starting tab space
 """
-function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
+function tcPrint(d; c_olor=true, t_ype=true, v_alue=true, t_space="", space_pad = "")
     colors_types = collectColorForTypes(d; c_olor=c_olor)
     lc = nothing
-    tt = "\t"
+    ttf = t_space * space_pad
     for k ∈ sort(keys(d))
-        # lc = colors_types[typeof(d[k])]
         if d[k] isa NamedTuple
-            tt = ""
-            if t_ype == true
-                tp = " = (; "
-                # lc = colors_types[typeof(d[k])]
-            else
-                tp = ""
-            end
-            if df != 1
-                tt = repeat("\t", df)
-            end
-            print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt) $(k)$(tp)\n")
-            tcPrint(d[k], df; c_olor=c_olor, t_ype=t_ype, istop=false)
+            tp = " = (; "
+            print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(ttf) $(k)$(tp)\n")
+            tcPrint(d[k]; c_olor=c_olor, t_ype=t_ype, v_alue=v_alue, t_space = ttf, space_pad="     ")
         else
-            tt = repeat("\t", df)
             if t_ype == true
                 tp = "::$(typeof(d[k]))"
                 if tp == "::NT"
                     tp = "::Tuple"
                 end
             else
-                tt = repeat("\t", df)
                 tp = ""
             end
             if typeof(d[k]) <: Float32
+                to_print = "$(ttf) $(k) = $(d[k])f0$(tp),\n"
+                if !v_alue
+                    to_print = "$(ttf) $(k)$(tp),\n"
+                end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = $(d[k])f0$(tp),\n")
+                    to_print)
             elseif typeof(d[k]) <: SVector
+                to_print = "$(ttf) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n"
+                if !v_alue
+                    to_print = "$(ttf) $(k)$(tp),\n"
+                end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n")
+                to_print)
             elseif typeof(d[k]) <: Matrix
-                print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt) $(k) = [\n")
-                tt_row = repeat(tt[1], length(tt) + 1)
+                print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(ttf) $(k) = [\n")
+                tt_row = repeat(ttf[1], length(ttf) + 1)
                 for _d ∈ eachrow(d[k])
                     d_str = nothing
                     if eltype(_d) == Float32
@@ -309,20 +321,21 @@ function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
                 end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt_row) ]$(tp),\n")
             else
+                to_print = "$(ttf) $(k) = $(d[k])$(tp),\n"
+                if !v_alue
+                    to_print = "$(ttf) $(k)$(tp),\n"
+                end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = $(d[k])$(tp),\n")
+                    to_print)
             end
             lc = colors_types[typeof(d[k])]
         end
-        # if k == last(keys(d))
-        #     print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt))::NamedTuple,\n")
-        # end
-        df = 1
     end
     if t_ype == true
-        tt = tt * " "
-        print(Crayon(; foreground=lc), "$(tt))::NamedTuple,\n")
+        t_space = t_space * " "
+        print(Crayon(; foreground=lc), " $(ttf))::NamedTuple,\n")
     else
-        print(Crayon(; foreground=lc), "$(tt)),\n")
+        print(Crayon(; foreground=lc), " $(ttf)),\n")
     end
+
 end

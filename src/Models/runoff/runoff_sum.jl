@@ -2,30 +2,32 @@ export runoff_sum
 
 struct runoff_sum <: runoff end
 
-function define(p_struct::runoff_sum, forcing, land, helpers)
+function define(params::runoff_sum, forcing, land, helpers)
+
+    @unpack_nt z_zero ⇐ land.constants
 
     ## set variables to zero
-    base_runoff = land.wCycleBase.z_zero
-    runoff = land.wCycleBase.z_zero
-    surface_runoff = land.wCycleBase.z_zero
+    base_runoff = z_zero
+    runoff = z_zero
+    surface_runoff = z_zero
 
     ## pack land variables
-    @pack_land begin
-        (runoff, base_runoff, surface_runoff) => land.fluxes
+    @pack_nt begin
+        (runoff, base_runoff, surface_runoff) ⇒ land.fluxes
     end
     return land
 end
 
-function compute(p_struct::runoff_sum, forcing, land, helpers)
+function compute(params::runoff_sum, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land (base_runoff, surface_runoff) ∈ land.fluxes
+    @unpack_nt (base_runoff, surface_runoff) ⇐ land.fluxes
 
     ## calculate variables
     runoff = surface_runoff + base_runoff
 
     ## pack land variables
-    @pack_land runoff => land.fluxes
+    @pack_nt runoff ⇒ land.fluxes
     return land
 end
 

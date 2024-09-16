@@ -6,17 +6,17 @@ export evaporation_bareFraction
 end
 #! format: on
 
-function compute(p_struct::evaporation_bareFraction, forcing, land, helpers)
+function compute(params::evaporation_bareFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_bareFraction p_struct
+    @unpack_evaporation_bareFraction params
 
     ## unpack land variables
-    @unpack_land begin
-        frac_vegetation ∈ land.states
-        ΔsoilW ∈ land.states
-        soilW ∈ land.pools
-        PET ∈ land.fluxes
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        frac_vegetation ⇐ land.states
+        ΔsoilW ⇐ land.pools
+        soilW ⇐ land.pools
+        PET ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
     end
     # scale the potential ET with bare soil fraction
     PET_evaporation = PET * (o_one - frac_vegetation)
@@ -24,24 +24,24 @@ function compute(p_struct::evaporation_bareFraction, forcing, land, helpers)
     evaporation = min(PET_evaporation, (soilW[1] + ΔsoilW[1]) * ks)
 
     # update soil moisture changes
-    @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
+    @add_to_elem -evaporation ⇒ (ΔsoilW, 1, :soilW)
 
     ## pack land variables
-    @pack_land begin
-        PET_evaporation => land.fluxes
-        evaporation => land.fluxes
-        ΔsoilW => land.states
+    @pack_nt begin
+        PET_evaporation ⇒ land.fluxes
+        evaporation ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::evaporation_bareFraction, forcing, land, helpers)
-    @unpack_evaporation_bareFraction p_struct
+function update(params::evaporation_bareFraction, forcing, land, helpers)
+    @unpack_evaporation_bareFraction params
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -52,9 +52,9 @@ function update(p_struct::evaporation_bareFraction, forcing, land, helpers)
     ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
     # ## pack land variables
-    # @pack_land begin
-    # 	soilW => land.pools
-    # 	ΔsoilW => land.states
+    # @pack_nt begin
+    # 	soilW ⇒ land.pools
+    # 	ΔsoilW ⇒ land.pools
     # end
     return land
 end

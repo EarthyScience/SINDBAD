@@ -6,29 +6,30 @@ export cTauSoilProperties_CASA
 end
 #! format: on
 
-function define(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
-    @unpack_cTauSoilProperties_CASA p_struct
+function define(params::cTauSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cTauSoilProperties_CASA params
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
-    c_eco_k_f_soil_props = one.(land.pools.cEco)
+    c_eco_k_f_soil_props = one.(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soil_props => land.cTauSoilProperties
+    @pack_nt c_eco_k_f_soil_props ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
+function compute(params::cTauSoilProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauSoilProperties_CASA p_struct
+    @unpack_cTauSoilProperties_CASA params
 
     ## unpack land variables
-    @unpack_land c_eco_k_f_soil_props ∈ land.cTauSoilProperties
+    @unpack_nt c_eco_k_f_soil_props ⇐ land.diagnostics
 
     ## unpack land variables
-    @unpack_land (st_clay, st_silt) ∈ land.soilTexture
+    @unpack_nt (st_clay, st_silt) ⇐ land.properties
 
     ## calculate variables
-    #sujan: moving clay & silt from land.soilTexture to p_soilWBase.
+    #sujan: moving clay & silt from land.properties to p_soilWBase.
     clay = mean(st_clay)
     silt = mean(st_silt)
     # TEXTURE EFFECT ON k OF cMicSoil
@@ -37,7 +38,7 @@ function compute(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
     # (ineficient, should be pix zix_mic)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soil_props => land.cTauSoilProperties
+    @pack_nt c_eco_k_f_soil_props ⇒ land.diagnostics
     return land
 end
 
@@ -53,11 +54,11 @@ $(SindbadParameters)
 Effect of soil texture on soil decomposition rates using cTauSoilProperties_CASA
 
 *Inputs*
- - land.soilTexture.st_clay: values for clay soil texture
- - land.soilTexture.st_silt: values for silt soil texture
+ - land.properties.st_clay: values for clay soil texture
+ - land.properties.st_silt: values for silt soil texture
 
 *Outputs*
- - land.cTauSoilProperties.c_eco_k_f_soil_props: Soil texture stressor values on the the turnover rates
+ - land.diagnostics.c_eco_k_f_soil_props: Soil texture stressor values on the the turnover rates
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauSoilProperties_CASA

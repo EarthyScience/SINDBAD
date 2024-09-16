@@ -1,5 +1,6 @@
 module Sindbad
 using Reexport: @reexport
+@reexport using CodeTracking
 @reexport using DataStructures: DataStructures
 using DocStringExtensions
 @reexport using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
@@ -15,5 +16,6 @@ abstract type LandEcosystem end
 include("utilsCore.jl")
 include("sindbadVariableCatalog.jl")
 include("Models/models.jl")
+include("modelTools.jl")
 @reexport using .Models
 end

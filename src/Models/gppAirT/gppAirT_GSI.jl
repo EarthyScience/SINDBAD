@@ -11,10 +11,10 @@ export gppAirT_GSI
 end
 #! format: on
 
-function define(p_struct::gppAirT_GSI, forcing, land, helpers)
+function define(params::gppAirT_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppAirT_GSI p_struct
-    @unpack_land o_one ∈ land.wCycleBase
+    @unpack_gppAirT_GSI params
+    @unpack_nt o_one ⇐ land.constants
 
     gpp_f_airT_c = o_one
     gpp_f_airT_h = o_one
@@ -23,19 +23,19 @@ function define(p_struct::gppAirT_GSI, forcing, land, helpers)
                                       τ * (o_one / (o_one + exp(-slope * (f_n - base))))
 
     ## pack land variables
-    @pack_land (gpp_f_airT_c, gpp_f_airT_h, f_smooth) => land.gppAirT
+    @pack_nt (gpp_f_airT_c, gpp_f_airT_h, f_smooth) ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::gppAirT_GSI, forcing, land, helpers)
+function compute(params::gppAirT_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_GSI p_struct
-    @unpack_forcing f_airT ∈ forcing
+    @unpack_gppAirT_GSI params
+    @unpack_nt f_airT ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        (gpp_f_airT_c, gpp_f_airT_h, f_smooth) ∈ land.gppAirT
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        (gpp_f_airT_c, gpp_f_airT_h, f_smooth) ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
@@ -53,7 +53,7 @@ function compute(p_struct::gppAirT_GSI, forcing, land, helpers)
     gpp_f_airT_h = hScGPP
 
     ## pack land variables
-    @pack_land (gpp_f_airT, cScGPP, hScGPP, gpp_f_airT_c, gpp_f_airT_h) => land.gppAirT
+    @pack_nt (gpp_f_airT, cScGPP, hScGPP, gpp_f_airT_c, gpp_f_airT_h) ⇒ land.diagnostics
     return land
 end
 
@@ -73,7 +73,7 @@ Effect of temperature using gppAirT_GSI
  - f_airT_c_τ: contribution of current time step
 
 *Outputs*
- - land.gppAirT.gpp_f_airT: light effect on GPP between 0-1
+ - land.diagnostics.gpp_f_airT: light effect on GPP between 0-1
 
 ---
 

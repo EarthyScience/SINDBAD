@@ -6,15 +6,15 @@ export rainSnow_Tair
 end
 #! format: on
 
-function compute(p_struct::rainSnow_Tair, forcing, land, helpers)
+function compute(params::rainSnow_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_rainSnow_Tair p_struct
-    @unpack_forcing (f_rain, f_airT) ∈ forcing
+    @unpack_rainSnow_Tair params
+    @unpack_nt (f_rain, f_airT) ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
     rain = f_rain
     snow = zero(f_rain)
@@ -26,22 +26,22 @@ function compute(p_struct::rainSnow_Tair, forcing, land, helpers)
     precip = rain + snow
 
     # add snowfall to snowpack of the first layer
-    @add_to_elem snow => (ΔsnowW, 1, :snowW)
+    @add_to_elem snow ⇒ (ΔsnowW, 1, :snowW)
     ## pack land variables
-    @pack_land begin
-        (precip, rain, snow) => land.fluxes
-        ΔsnowW => land.states
+    @pack_nt begin
+        (precip, rain, snow) ⇒ land.fluxes
+        ΔsnowW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::rainSnow_Tair, forcing, land, helpers)
-    @unpack_rainSnow_Tair p_struct
+function update(params::rainSnow_Tair, forcing, land, helpers)
+    @unpack_rainSnow_Tair params
 
     ## unpack variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
 
     ## update variables
@@ -52,9 +52,9 @@ function update(p_struct::rainSnow_Tair, forcing, land, helpers)
     ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
 
     ## pack land variables
-    @pack_land begin
-        snowW => land.pools
-        # ΔsnowW => land.states
+    @pack_nt begin
+        snowW ⇒ land.pools
+        # ΔsnowW ⇒ land.pools
     end
     return land
 end

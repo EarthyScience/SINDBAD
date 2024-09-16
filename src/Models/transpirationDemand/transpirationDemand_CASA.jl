@@ -2,14 +2,14 @@ export transpirationDemand_CASA
 
 struct transpirationDemand_CASA <: transpirationDemand end
 
-function compute(p_struct::transpirationDemand_CASA, forcing, land, helpers)
+function compute(params::transpirationDemand_CASA, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        PAW ∈ land.states
-        (wAWC, soil_α, soil_β) ∈ land.soilWBase
-        percolation ∈ land.fluxes
-        PET ∈ land.fluxes
+    @unpack_nt begin
+        PAW ⇐ land.states
+        (wAWC, soil_α, soil_β) ⇐ land.properties
+        percolation ⇐ land.fluxes
+        PET ⇐ land.fluxes
     end
     VMC = clampZeroOne(sum(PAW) / sum(wAWC))
     o_one = one(VMC)
@@ -17,7 +17,7 @@ function compute(p_struct::transpirationDemand_CASA, forcing, land, helpers)
     transpiration_demand = percolation + (PET - percolation) * RDR
 
     ## pack land variables
-    @pack_land transpiration_demand => land.transpirationDemand
+    @pack_nt transpiration_demand ⇒ land.diagnostics
     return land
 end
 
@@ -31,8 +31,8 @@ Demand-driven transpiration using transpirationDemand_CASA
 
 *Inputs*
  - land.pools.PAW : plant avaiable water
- - land.soilWBase.p_[α/β]: moisture retention characteristics
- - land.soilWBase.wAWC: total maximum plant available water [FC-WP]
+ - land.properties.p_[α/β]: moisture retention characteristics
+ - land.properties.wAWC: total maximum plant available water [FC-WP]
  - land.states.PAW: actual extractable water
 
 *Outputs*

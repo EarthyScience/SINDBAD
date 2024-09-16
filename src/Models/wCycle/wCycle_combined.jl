@@ -2,24 +2,24 @@ export wCycle_combined
 
 struct wCycle_combined <: wCycle end
 
-function define(p_struct::wCycle_combined, forcing, land, helpers)
+function define(params::wCycle_combined, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        ΔTWS ∈ land.states
+    @unpack_nt begin
+        ΔTWS ⇐ land.pools
     end
     zeroΔTWS = zero(ΔTWS)
 
-    @pack_land zeroΔTWS => land.states
+    @pack_nt zeroΔTWS ⇒ land.pools
     return land
 end
 
-function compute(p_struct::wCycle_combined, forcing, land, helpers)
+function compute(params::wCycle_combined, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        TWS ∈ land.pools
-        (ΔTWS, zeroΔTWS) ∈ land.states
-        tolerance ∈ helpers.numbers
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        TWS ⇐ land.pools
+        (ΔTWS, zeroΔTWS) ⇐ land.pools
+        tolerance ⇐ helpers.numbers
+        (z_zero, o_one) ⇐ land.constants
     end
     total_water_prev = sum(TWS)
     #TWS_old = deepcopy(TWS)
@@ -41,9 +41,9 @@ function compute(p_struct::wCycle_combined, forcing, land, helpers)
     total_water = sum(TWS)
 
     # pack land variables
-    @pack_land begin
-        (TWS) => land.pools
-        (ΔTWS, total_water, total_water_prev) => land.states
+    @pack_nt begin
+        (ΔTWS, TWS) ⇒ land.pools
+        (total_water, total_water_prev) ⇒ land.states
     end
     return land
 end

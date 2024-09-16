@@ -6,18 +6,18 @@ export snowMelt_Tair
 end
 #! format: on
 
-function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
+function compute(params::snowMelt_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_snowMelt_Tair p_struct
-    @unpack_forcing f_airT ∈ forcing
+    @unpack_snowMelt_Tair params
+    @unpack_nt f_airT ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        (WBP, frac_snow) ∈ land.states
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
-        z_zero ∈ land.wCycleBase
-        n_snowW ∈ land.wCycleBase
+    @unpack_nt begin
+        (WBP, frac_snow) ⇐ land.states
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
+        z_zero ⇐ land.constants
+        n_snowW ⇐ land.constants
     end
     # effect of temperature on snow melt = snowMeltRate * f_airT
     pRate = (rate * helpers.dates.timesteps_in_day)
@@ -33,22 +33,22 @@ function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
     WBP = WBP + snow_melt
 
     ## pack land variables
-    @pack_land begin
-        snow_melt => land.fluxes
-        Tterm => land.fluxes
-        WBP => land.states
-        ΔsnowW => land.states
+    @pack_nt begin
+        snow_melt ⇒ land.fluxes
+        Tterm ⇒ land.fluxes
+        WBP ⇒ land.states
+        ΔsnowW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::snowMelt_Tair, forcing, land, helpers)
-    @unpack_snowMelt_Tair p_struct
+function update(params::snowMelt_Tair, forcing, land, helpers)
+    @unpack_snowMelt_Tair params
 
     ## unpack variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
 
     # update snow pack
@@ -58,9 +58,9 @@ function update(p_struct::snowMelt_Tair, forcing, land, helpers)
     ΔsnowW .= ΔsnowW .- ΔsnowW
 
     ## pack land variables
-    @pack_land begin
-        snowW => land.pools
-        ΔsnowW => land.states
+    @pack_nt begin
+        snowW ⇒ land.pools
+        ΔsnowW ⇒ land.pools
     end
     return land
 end

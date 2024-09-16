@@ -2,41 +2,41 @@ export groundWSurfaceWInteraction_fracGroundW
 
 #! format: off
 @bounds @describe @units @with_kw struct groundWSurfaceWInteraction_fracGroundW{T1} <: groundWSurfaceWInteraction
-    k_groundW_to_surfaceW::T1 = 0.5 | (0.0001, 0.999) | "scale parameter for drainage from wGW to wSurf" | "fraction"
+    k_gw_to_suw::T1 = 0.5 | (0.0001, 0.999) | "scale parameter for drainage from wGW to wSurf" | "fraction"
 end
 #! format: on
 
-function compute(p_struct::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
+function compute(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWSurfaceWInteraction_fracGroundW p_struct
+    @unpack_groundWSurfaceWInteraction_fracGroundW params
 
     ## unpack land variables
-    @unpack_land begin
-        (groundW, surfaceW) ∈ land.pools
-        (ΔsurfaceW, ΔgroundW) ∈ land.states
-        (n_surfaceW, n_groundW) ∈ land.wCycleBase
+    @unpack_nt begin
+        (groundW, surfaceW) ⇐ land.pools
+        (ΔsurfaceW, ΔgroundW) ⇐ land.pools
+        (n_surfaceW, n_groundW) ⇐ land.constants
     end
 
     ## calculate variables
-    groundW_to_surfaceW = k_groundW_to_surfaceW * totalS(groundW, ΔgroundW)
+    gw_to_suw_flux = k_gw_to_suw * totalS(groundW, ΔgroundW)
 
     # update the delta storages
-    ΔgroundW = addToEachElem(ΔgroundW, -groundW_to_surfaceW / n_groundW)
-    ΔsurfaceW = addToEachElem(ΔsurfaceW, groundW_to_surfaceW / n_surfaceW)
+    ΔgroundW = addToEachElem(ΔgroundW, -gw_to_suw_flux / n_groundW)
+    ΔsurfaceW = addToEachElem(ΔsurfaceW, gw_to_suw_flux / n_surfaceW)
 
     ## pack land variables
-    @pack_land begin
-        groundW_to_surfaceW => land.fluxes
-        (ΔsurfaceW, ΔgroundW) => land.states
+    @pack_nt begin
+        gw_to_suw_flux ⇒ land.fluxes
+        (ΔsurfaceW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
+function update(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        (groundW, surfaceW) ∈ land.pools
-        (ΔgroundW, ΔsurfaceW) ∈ land.states
+    @unpack_nt begin
+        (groundW, surfaceW) ⇐ land.pools
+        (ΔgroundW, ΔsurfaceW) ⇐ land.pools
     end
 
     ## update storage pools
@@ -48,9 +48,8 @@ function update(p_struct::groundWSurfaceWInteraction_fracGroundW, forcing, land,
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     ## pack land variables
-    @pack_land begin
-        (groundW, surfaceW) => land.pools
-        (ΔgroundW, ΔsurfaceW) => land.states
+    @pack_nt begin
+        (groundW, ΔgroundW, surfaceW, ΔsurfaceW) ⇒ land.pools
     end
     return land
 end

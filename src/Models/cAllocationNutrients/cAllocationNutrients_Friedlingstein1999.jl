@@ -7,18 +7,18 @@ export cAllocationNutrients_Friedlingstein1999
 end
 #! format: on
 
-function compute(p_struct::cAllocationNutrients_Friedlingstein1999, forcing, land, helpers)
+function compute(params::cAllocationNutrients_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationNutrients_Friedlingstein1999 p_struct
+    @unpack_cAllocationNutrients_Friedlingstein1999 params
 
     ## unpack land variables
-    @unpack_land begin
-        PAW ∈ land.states
-        sum_wAWC ∈ land.soilWBase
-        c_allocation_f_soilW ∈ land.cAllocationSoilW
-        c_allocation_f_soilT ∈ land.cAllocationSoilT
-        PET ∈ land.fluxes
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        PAW ⇐ land.states
+        sum_wAWC ⇐ land.properties
+        c_allocation_f_soilW ⇐ land.diagnostics
+        c_allocation_f_soilT ⇐ land.diagnostics
+        PET ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
     end
 
     # estimate NL
@@ -32,7 +32,7 @@ function compute(p_struct::cAllocationNutrients_Friedlingstein1999, forcing, lan
     c_allocation_f_W_N = min(WL, NL)
 
     ## pack land variables
-    @pack_land c_allocation_f_W_N => land.cAllocationNutrients
+    @pack_nt c_allocation_f_W_N ⇒ land.cAllocationNutrients
     return land
 end
 
@@ -48,13 +48,13 @@ $(SindbadParameters)
 
 *Inputs*
  - land.fluxes.PET: values for potential evapotranspiration
- - land.cAllocationSoilT.c_allocation_f_soilT: values for partial computation for the temperature effect on  decomposition/mineralization
- - land.cAllocationSoilW.c_allocation_f_soilW: values for partial computation for the moisture effect on  decomposition/mineralization
- - land.soilWBase.sum_wAWC: sum of water available capacity
+ - land.diagnostics.c_allocation_f_soilT: values for partial computation for the temperature effect on  decomposition/mineralization
+ - land.diagnostics.c_allocation_f_soilW: values for partial computation for the moisture effect on  decomposition/mineralization
+ - land.properties.sum_wAWC: sum of water available capacity
  - land.states.PAW: values for maximum fraction of water that root can uptake from soil layers as constant
 
 *Outputs*
- - land.cAllocationNutrients.c_allocation_f_W_N: nutrient limitation on cAllocation
+ - land.diagnostics.c_allocation_f_W_N: nutrient limitation on cAllocation
 
 ---
 

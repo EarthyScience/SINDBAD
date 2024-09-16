@@ -6,15 +6,15 @@ export NDVI_constant
 end
 #! format: on
 
-function compute(p_struct::NDVI_constant, forcing, land, helpers)
+function precompute(params::NDVI_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_NDVI_constant p_struct
+    @unpack_NDVI_constant params
 
     ## calculate variables
     NDVI = constant_NDVI
 
     ## pack land variables
-    @pack_land NDVI => land.states
+    @pack_nt NDVI ⇒ land.states
     return land
 end
 

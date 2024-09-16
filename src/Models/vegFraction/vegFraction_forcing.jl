@@ -2,13 +2,13 @@ export vegFraction_forcing
 
 struct vegFraction_forcing <: vegFraction end
 
-function compute(p_struct::vegFraction_forcing, forcing, land, helpers)
-    @unpack_forcing f_frac_vegetation ∈ forcing
+function compute(params::vegFraction_forcing, forcing, land, helpers)
+    @unpack_nt f_frac_vegetation ⇐ forcing
 
     frac_vegetation = f_frac_vegetation
 
     ## pack land variables
-    @pack_land frac_vegetation => land.states
+    @pack_nt frac_vegetation ⇒ land.states
     return land
 end
 

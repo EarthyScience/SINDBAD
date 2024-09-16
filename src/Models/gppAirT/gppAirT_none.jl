@@ -2,14 +2,15 @@ export gppAirT_none
 
 struct gppAirT_none <: gppAirT end
 
-function define(p_struct::gppAirT_none, forcing, land, helpers)
+function define(params::gppAirT_none, forcing, land, helpers)
+    @unpack_nt o_one ⇐ land.constants
 
     ## calculate variables
     # set scalar to a constant o_one [no effect on potential GPP]
-    gpp_f_airT = land.wCycleBase.o_one
+    gpp_f_airT = o_one
 
     ## pack land variables
-    @pack_land gpp_f_airT => land.gppAirT
+    @pack_nt gpp_f_airT ⇒ land.diagnostics
     return land
 end
 
@@ -25,7 +26,7 @@ Effect of temperature using gppAirT_none
  - helpers
 
 *Outputs*
- - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
+ - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
 
 # instantiate:
 instantiate/instantiate time-invariant variables for gppAirT_none

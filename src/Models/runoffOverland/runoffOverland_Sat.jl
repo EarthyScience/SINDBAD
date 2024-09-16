@@ -2,16 +2,16 @@ export runoffOverland_Sat
 
 struct runoffOverland_Sat <: runoffOverland end
 
-function compute(p_struct::runoffOverland_Sat, forcing, land, helpers)
+function compute(params::runoffOverland_Sat, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land sat_excess_runoff ∈ land.fluxes
+    @unpack_nt sat_excess_runoff ⇐ land.fluxes
 
     ## calculate variables
     overland_runoff = sat_excess_runoff
 
     ## pack land variables
-    @pack_land overland_runoff => land.fluxes
+    @pack_nt overland_runoff ⇒ land.fluxes
     return land
 end
 

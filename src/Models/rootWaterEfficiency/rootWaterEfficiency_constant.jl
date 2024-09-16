@@ -6,45 +6,50 @@ export rootWaterEfficiency_constant
 end
 #! format: on
 
-function define(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
-    @unpack_rootWaterEfficiency_constant p_struct
-    @unpack_land soil_layer_thickness ∈ land.soilWBase
-    @unpack_land soilW ∈ land.pools
+function define(params::rootWaterEfficiency_constant, forcing, land, helpers)
+    @unpack_rootWaterEfficiency_constant params
+    
+    @unpack_nt begin
+        soil_layer_thickness ⇐ land.properties
+        soilW ⇐ land.pools            
+    end
+
     cumulative_soil_depths = cumsum(soil_layer_thickness)
     ## instantiate
-    root_water_efficiency = one.(land.pools.soilW)
+    root_water_efficiency = one.(soilW)
 
     ## pack land variables
-    @pack_land begin
-        root_water_efficiency => land.states
-        cumulative_soil_depths => land.rootWaterEfficiency
+    @pack_nt begin
+        root_water_efficiency ⇒ land.diagnostics
+        cumulative_soil_depths ⇒ land.properties
     end
 
     return land
 end
 
 
-function precompute(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
+function precompute(params::rootWaterEfficiency_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootWaterEfficiency_constant p_struct
+    @unpack_rootWaterEfficiency_constant params
     ## unpack land variables
-    @unpack_land begin
-        cumulative_soil_depths ∈ land.rootWaterEfficiency
-        root_water_efficiency ∈ land.states
-        z_zero ∈ land.wCycleBase
-        max_root_depth ∈ land.states
+    @unpack_nt begin
+        cumulative_soil_depths ⇐ land.properties
+        root_water_efficiency ⇐ land.diagnostics
+        soilW ⇐ land.pools
+        z_zero ⇐ land.constants
+        max_root_depth ⇐ land.diagnostics
     end
     if max_root_depth >= z_zero
-        @rep_elem constant_root_water_efficiency => (root_water_efficiency, 1, :soilW)
+        @rep_elem constant_root_water_efficiency ⇒ (root_water_efficiency, 1, :soilW)
     end
-    for sl ∈ eachindex(land.pools.soilW)[2:end]
+    for sl ∈ eachindex(soilW)[2:end]
         soilcumuD = cumulative_soil_depths[sl-1]
         rootOver = max_root_depth - soilcumuD
         rootEff = rootOver >= z_zero ? constant_root_water_efficiency : zero(eltype(root_water_efficiency))
-        @rep_elem rootEff => (root_water_efficiency, sl, :soilW)
+        @rep_elem rootEff ⇒ (root_water_efficiency, sl, :soilW)
     end
     ## pack land variables
-    @pack_land root_water_efficiency => land.states
+    @pack_nt root_water_efficiency ⇒ land.diagnostics
     return land
 end
 

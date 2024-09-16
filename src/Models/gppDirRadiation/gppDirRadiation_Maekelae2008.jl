@@ -6,22 +6,22 @@ export gppDirRadiation_Maekelae2008
 end
 #! format: on
 
-function compute(p_struct::gppDirRadiation_Maekelae2008, forcing, land, helpers)
+function compute(params::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDirRadiation_Maekelae2008 p_struct
-    @unpack_forcing f_PAR ∈ forcing
+    @unpack_gppDirRadiation_Maekelae2008 params
+    @unpack_nt f_PAR ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        fAPAR ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        fAPAR ⇐ land.states
     end
 
+    o_one = one(γ)
     ## calculate variables
-    gpp_f_light = o_one / (γ * f_PAR * fAPAR + o_one)
+    gpp_f_light =  o_one / (o_one * f_PAR * fAPAR + o_one)
 
     ## pack land variables
-    @pack_land gpp_f_light => land.gppDirRadiation
+    @pack_nt gpp_f_light ⇒ land.diagnostics
     return land
 end
 
@@ -42,7 +42,7 @@ Effect of direct radiation using gppDirRadiation_Maekelae2008
  - γ: light response curve parameter to account for light  saturation [m2/MJ-1 of APAR]. The smaller γ the smaller  the effect; no effect if it becomes 0 [i.e. linear light response]
 
 *Outputs*
- - land.gppDirRadiation.gpp_f_light: effect of light saturation on potential GPP
+ - land.diagnostics.gpp_f_light: effect of light saturation on potential GPP
 
 ---
 

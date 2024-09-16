@@ -6,15 +6,15 @@ export vegFraction_constant
 end
 #! format: on
 
-function compute(p_struct::vegFraction_constant, forcing, land, helpers)
+function precompute(params::vegFraction_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_constant p_struct
+    @unpack_vegFraction_constant params
 
     ## calculate variables
     frac_vegetation = constant_frac_vegetation
 
     ## pack land variables
-    @pack_land frac_vegetation => land.states
+    @pack_nt frac_vegetation ⇒ land.states
     return land
 end
 

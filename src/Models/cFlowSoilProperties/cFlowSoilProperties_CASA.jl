@@ -11,33 +11,34 @@ export cFlowSoilProperties_CASA
 end
 #! format: on
 
-function define(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
-    @unpack_cFlowSoilProperties_CASA p_struct
+function define(params::cFlowSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cFlowSoilProperties_CASA params
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
-    p_E_vec = repeat(zero(land.pools.cEco),
+    p_E_vec = repeat(zero(cEco),
         1,
         1,
-        length(land.pools.cEco))
+        length(cEco))
 
     ## pack land variables
-    @pack_land p_E_vec => land.cFlowSoilProperties
+    @pack_nt p_E_vec ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
+function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cFlowSoilProperties_CASA p_struct
+    @unpack_cFlowSoilProperties_CASA params
 
     ## unpack land variables
-    @unpack_land p_E_vec ∈ land.cFlowSoilProperties
+    @unpack_nt p_E_vec ⇐ land.diagnostics
 
     ## unpack land variables
-    @unpack_land (st_clay, st_silt) ∈ land.soilTexture
+    @unpack_nt (st_clay, st_silt) ⇐ land.properties
 
     ## calculate variables
-    # p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
-    # p_fSoil = zero(land.pools.cEco)
+    # p_fSoil = zeros(length(info.model.nPix), length(info.model.nZix))
+    # p_fSoil = zero(cEco)
     # #sujan
     p_F_vec = p_E_vec
     clay = mean(st_clay)
@@ -64,7 +65,7 @@ function compute(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (p_E_vec, p_F_vec) => land.cFlowSoilProperties
+    @pack_nt (p_E_vec, p_F_vec) ⇒ land.diagnostics
     return land
 end
 
@@ -80,14 +81,14 @@ $(SindbadParameters)
 Effect of soil properties on the c transfers between pools using cFlowSoilProperties_CASA
 
 *Inputs*
- - land.soilTexture.st_clay: soil hydraulic properties for clay layer
- - land.soilTexture.st_silt: soil hydraulic properties for silt layer
+ - land.properties.st_clay: soil hydraulic properties for clay layer
+ - land.properties.st_silt: soil hydraulic properties for silt layer
 
 *Outputs*
- - land.cFlowSoilProperties.p_E_vec: effect of soil on transfer efficiency between pools
- - land.cFlowSoilProperties.p_F_vec: effect of soil on transfer fraction between pools
- - land.cFlowSoilProperties.p_E_vec
- - land.cFlowSoilProperties.p_F_vec
+ - land.diagnostics.p_E_vec: effect of soil on transfer efficiency between pools
+ - land.diagnostics.p_F_vec: effect of soil on transfer fraction between pools
+ - land.diagnostics.p_E_vec
+ - land.diagnostics.p_F_vec
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cFlowSoilProperties_CASA

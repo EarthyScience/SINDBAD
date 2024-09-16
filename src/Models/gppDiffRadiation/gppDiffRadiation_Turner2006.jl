@@ -6,28 +6,28 @@ export gppDiffRadiation_Turner2006
 end
 #! format: on
 
-function define(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
+function define(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Turner2006 p_struct
-    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
+    @unpack_gppDiffRadiation_Turner2006 params
+    @unpack_nt (f_rg, f_rg_pot) ⇐ forcing
 
     ## calculate variables
     CI = f_rg / f_rg_pot
     CI_min = CI
     CI_max = CI
     ## pack land variables
-    @pack_land (CI_min, CI_max) => land.gppDiffRadiation
+    @pack_nt (CI_min, CI_max) ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
+function compute(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Turner2006 p_struct
-    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
-    @unpack_land begin
-        (CI_min, CI_max) ∈ land.gppDiffRadiation
-        (z_zero, o_one) ∈ land.wCycleBase
-        tolerance ∈ helpers.numbers
+    @unpack_gppDiffRadiation_Turner2006 params
+    @unpack_nt (f_rg, f_rg_pot) ⇐ forcing
+    @unpack_nt begin
+        (CI_min, CI_max) ⇐ land.diagnostics
+        z_zero ⇐ land.constants
+        tolerance ⇐ helpers.numbers
     end
 
     ## calculate variables
@@ -39,11 +39,11 @@ function compute(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
 
     SCI = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were calculated in the instantiate using the full time series of f_rg and f_rg_pot. Now, this is not possible, and thus min and max need to be updated on the go, and once the simulation is complete in the first cycle of forcing, it will work...
 
-    cScGPP = (o_one - rue_ratio) * SCI + rue_ratio
+    cScGPP = (one(rue_ratio) - rue_ratio) * SCI + rue_ratio
     gpp_f_cloud = f_rg_pot > z_zero ? cScGPP : zero(cScGPP)
 
     ## pack land variables
-    @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
+    @pack_nt (gpp_f_cloud, CI_min, CI_max) ⇒ land.diagnostics
     return land
 end
 
@@ -62,7 +62,7 @@ $(SindbadParameters)
  - forcing.f_rg_pot: Potential radiation [MJ/m2/time]
 
 *Outputs*
- - land.gppDiffRadiation.gpp_f_cloud: effect of cloudiness on potential GPP
+ - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
 
 ---
 

@@ -1,44 +1,16 @@
 export prepTEM
 
+
 """
-    addSpinupLog(land, seq, ::DoStoreSpinup)
+    addErrorCatcher(loc_land, DoDebugModel)
 
-
+add error catcher and show land when debug model is turned on
 
 # Arguments:
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `seq`: DESCRIPTION
-- `::DoStoreSpinup`: DESCRIPTION
+- `loc_land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `::DoDebugModel`: a type dispatch to debug the model
 """
-function addSpinupLog(land, seq, ::DoStoreSpinup) # when history is true
-    n_repeat = 1
-    for _seq in seq
-        n_repeat = n_repeat + _seq.n_repeat
-    end
-    spinuplog = Vector{typeof(land.pools)}(undef, n_repeat)
-    @pack_land spinuplog => land.states
-    return land
-end
-
-"""
-    addSpinupLog(land, _, ::DoNotStoreSpinup)
-
-
-
-# Arguments:
-- `land`: sindbad land
-- `::DoNotStoreSpinup`: indicates not to store the spinup history
-"""
-function addSpinupLog(land, _, ::DoNotStoreSpinup) # when history is false
-    return land
-end
-
-"""
-    debugModel(loc_land, DoDebugModel)
-
-
-"""
-function debugModel(loc_land, ::DoDebugModel) # print land when debug model is true/on
+function addErrorCatcher(loc_land, ::DoDebugModel) # print land when debug model is true/on
     Sindbad.eval(:(error_catcher = []))
     push!(Sindbad.error_catcher, loc_land)
     tcPrint(loc_land)
@@ -47,15 +19,95 @@ end
 
 
 """
-    debugModel(_, ::DoNotDebugModel)
+    addErrorCatcher(loc_land, DoDebugModel)
 
+a fallback function to call when not to add error_catcher to land
 
+# Arguments:
+- `::DoDebugModel`: a type dispatch to debug the model
 """
-function debugModel(_, ::DoNotDebugModel) # do nothing debug model is false/off
+function addErrorCatcher(_, ::DoNotDebugModel) # do nothing debug model is false/off
     return nothing
 end
 
+
 """
+    addSpinupLog(loc_land, sequence, ::DoStoreSpinup)
+
+add preallocated holder for storing spinup log for each repeat of spinup
+
+# Arguments:
+- `loc_land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `sequence`: spinup sequence
+- `::DoStoreSpinup`: a type dispatch to store the spinup history
+"""
+function addSpinupLog(loc_land, sequence, ::DoStoreSpinup) # when history is true
+    n_repeat = 1
+    for _seq in sequence
+        n_repeat = n_repeat + _seq.n_repeat
+    end
+    spinuplog = Vector{typeof(loc_land.pools)}(undef, n_repeat)
+    @pack_nt spinuplog ⇒ loc_land.states
+    return loc_land
+end
+
+"""
+    addSpinupLog(land, _, ::DoNotStoreSpinup)
+
+a fallback function to call when not to add spinuplog to land
+
+# Arguments:
+- `loc_land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `::DoNotStoreSpinup`: a type dispatch not to store the spinup history
+"""
+function addSpinupLog(loc_land, _, ::DoNotStoreSpinup) # when history is false
+    return loc_land
+end
+
+
+"""
+    getRunTemInfo(info, forcing)
+
+a helper to condense the useful info only for the inner model runs
+
+# Arguments:
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+"""
+function getRunTemInfo(info, forcing)
+    tem_helpers=info.helpers
+    output_vars = info.output.variables
+    @debug "     preparing vals for generated functions"
+    vals = (; forcing_types=Val(forcing.f_types), output_vars=Val(output_vars))
+    upd_tem_helpers = (;)
+    tem_dates = tem_helpers.dates
+    tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
+    # upd_tem_helpers = setTupleField(upd_tem_helpers, (:dates, tem_dates))
+    time_size = getproperty(forcing.helpers.sizes, Symbol(forcing.helpers.dimensions.time))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:n_timesteps, time_size))
+    tem_numbers = tem_helpers.numbers
+    tem_numbers = (; tolerance=tem_numbers.tolerance)
+    model_helpers = (;)
+    model_helpers = setTupleField(model_helpers, (:dates, tem_dates))
+    model_helpers = setTupleField(model_helpers, (:run, (; catch_model_errors=tem_helpers.run.catch_model_errors)))
+    model_helpers = setTupleField(model_helpers, (:numbers, tem_numbers))
+    model_helpers = setTupleField(model_helpers, (:pools, tem_helpers.pools))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:vals, vals))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:model_helpers, model_helpers))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:run, tem_helpers.run))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:spinup_sequence, getSpinupTemLite(info.spinup)))
+
+    return upd_tem_helpers
+end
+
+
+"""
+    getSpatialInfo(forcing)
+
+get the information of the indices of the data to run the model for
+
+# Arguments:
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 """
 function getSpatialInfo(forcing)
     @debug "     getting the space locations to run the model loop"
@@ -86,69 +138,161 @@ function getSpatialInfo(forcing)
 end
 
 
-function getSpinupTemLite(tem_with_types)
-    tem_spinup = tem_with_types.spinup
+
+"""
+    getSpinupTemLite(tem_spinup)
+
+a helper to just get the spinup sequence to pass to inner functions
+
+# Arguments:
+- `tem_spinup`: a NT with all spinup information
+"""
+function getSpinupTemLite(tem_spinup)
     newseqs = []
     for seq in tem_spinup.sequence
         ns = (; forcing=seq.forcing, n_repeat= seq.n_repeat, n_timesteps=seq.n_timesteps, spinup_mode=seq.spinup_mode, options=seq.options)
         # ns = SpinSequence(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.options)
         push!(newseqs, ns)
     end
-    # restart_file = tem_spinup.restart_file
-    # paths = (; restart_file = isnothing(restart_file) ? "./" : restart_file)
-    tem_spin_lite = (; sequence = [_s for _s in newseqs])
-    tem_with_types = (; tem_with_types..., spinup = tem_spin_lite)
-    return tem_with_types
+    sequence = [_s for _s in newseqs]
+    return sequence
 
 end
 
-"""
-getTEMVals(forcing, output_vars, tem_helpers)
-"""
-function getTEMVals(forcing, output_vars, tem, tem_helpers)
-    @debug "     preparing vals for generated functions"
-    vals = (; forcing_types=Val(forcing.f_types), output_vars=Val(output_vars))
-    upd_tem_helpers = (;)
-    tem_dates = tem_helpers.dates
-    tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
-    # upd_tem_helpers = setTupleField(upd_tem_helpers, (:dates, tem_dates))
-    time_size = getproperty(forcing.helpers.sizes, Symbol(forcing.helpers.dimensions.time))
-    upd_tem_helpers = setTupleField(upd_tem_helpers, (:n_timesteps, time_size))
-    tem_numbers = tem_helpers.numbers
-    tem_numbers = (; tolerance=tem_numbers.tolerance)
-    model_helpers = (;)
-    model_helpers = setTupleField(model_helpers, (:dates, tem_dates))
-    model_helpers = setTupleField(model_helpers, (:run, (; catch_model_errors=tem_helpers.run.catch_model_errors)))
-    model_helpers = setTupleField(model_helpers, (:numbers, tem_numbers))
-    model_helpers = setTupleField(model_helpers, (:pools, tem_helpers.pools))
-    upd_tem_helpers = setTupleField(upd_tem_helpers, (:vals, vals))
-    upd_tem_helpers = setTupleField(upd_tem_helpers, (:model_helpers, model_helpers))
-    upd_tem_helpers = setTupleField(upd_tem_helpers, (:run, tem_helpers.run))
-    tem_with_types = setTupleField(tem, (:helpers, upd_tem_helpers))
-    return tem_with_types
-end
-
 
 """
-    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArray)
 
 
+prepare the information and objects needed to run TEM
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::LandOutArray`: a dispatch for preparing TEM for using preallocated array
+- `::LandOutArray`: a type dispatch for preparing TEM for using preallocated array
 """
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayFD)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArray)
 
     @info "     preparing spatial and tem helpers"
     space_ind = getSpatialInfo(forcing)
 
     # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output.variables, tem, tem_helpers);
+    tem_info = getRunTemInfo(info, forcing);
+
+
+    ## run the model for one time step
+    @info "     model run for one location and time step"
+    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
+    land_init = output.land_init
+    loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
+    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
+
+    addErrorCatcher(loc_land, info.helpers.run.debug_model)
+
+    output_array = output.data
+    output_vars = output.variables
+    output_dims = output.dims
+
+    # collect local data and create copies
+    @info "     preallocating local, threaded, and spatial data"
+    space_forcing = map([space_ind...]) do lsi
+        getLocForcingData(forcing_nt_array, lsi)
+    end
+    space_spinup_forcing = map(space_forcing) do loc_forcing
+        getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
+    end
+
+    space_output = map([space_ind...]) do lsi
+        getLocOutputData(output_array, lsi)
+    end
+
+    space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
+
+    forcing_nt_array = nothing
+
+    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_info)
+    return run_helpers
+end
+
+
+"""
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArrayAll)
+
+prepare the information and objects needed to run TEM
+
+# Arguments:
+- `selected_models`: a tuple of all models selected in the given model structure
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
+- `::LandOutArrayAll`: a type dispatch for preparing TEM for using preallocated array to output ALL LAND VARIABLES
+"""
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArrayAll)
+
+    @info "     preparing spatial and tem helpers"
+    space_ind = getSpatialInfo(forcing)
+
+    # generate vals for dispatch of forcing and output
+    tem_info = getRunTemInfo(info, forcing);
+
+    ## run the model for one time step
+    @info "     model run for one location and time step"
+    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
+    land_init = output.land_init
+    loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
+    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
+
+    addErrorCatcher(loc_land, info.helpers.run.debug_model)
+
+    info = setModelOutputLandAll(info, loc_land)
+
+    tem_info = @set tem_info.vals.output_vars = Val(info.output.variables)
+    output_dims, output_array = getOutDimsArrays(info, forcing.helpers)
+
+    # collect local data and create copies
+    @info "     preallocating local, threaded, and spatial data"
+    space_forcing = map([space_ind...]) do lsi
+        getLocForcingData(forcing_nt_array, lsi)
+    end
+    space_spinup_forcing = map(space_forcing) do loc_forcing
+        getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
+    end
+
+    space_output = map([space_ind...]) do lsi
+        getLocOutputData(output_array, lsi)
+    end
+
+    space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
+
+    forcing_nt_array = nothing
+
+    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars=info.output.variables, tem_info)
+    return run_helpers
+end
+
+
+"""
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, ::LandOutArrayFD)
+
+prepare the information and objects needed to run TEM
+
+# Arguments:
+- `selected_models`: a tuple of all models selected in the given model structure
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `observations`: an observation NT including the observation data and variables
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
+- `::LandOutArrayFD`: a type dispatch for preparing TEM for using preallocated array while doing FD hybrid experiment
+"""
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, ::LandOutArrayFD)
+
+    @info "     preparing spatial and tem helpers"
+    space_ind = getSpatialInfo(forcing)
+
+    # generate vals for dispatch of forcing and output
+    tem_info = getRunTemInfo(info, forcing);
 
 
     ## run the model for one time step
@@ -157,23 +301,9 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
     land_init = output.land_init
     output_array = output.data
     loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
-    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_with_types)
+    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
 
-    debugModel(loc_land, tem.helpers.run.debug_model)
-
-    ovars = output.variables;
-    i = 1
-    output_array = map(output_array) do od
-        ov = ovars[i]
-        mod_field = first(ov)
-        mod_subfield = last(ov)
-        lvar = getproperty(getproperty(loc_land, mod_field), mod_subfield)
-        if lvar isa AbstractArray
-            eltype(lvar).(od)
-        else
-            typeof(lvar).(od)
-        end
-    end
+    addErrorCatcher(loc_land, info.helpers.run.debug_model)
 
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
@@ -187,222 +317,76 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
     end
 
     space_spinup_forcing = map(space_forcing) do loc_forcing
-        getAllSpinupForcing(loc_forcing, tem_with_types.spinup.sequence, tem_with_types.helpers);
+        getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
     end
 
-    tem_with_types = getSpinupTemLite(tem_with_types);
     space_output = map([space_ind...]) do lsi
         getLocOutputData(output_array, lsi)
     end
 
     forcing_nt_array = nothing
 
-    run_helpers = (; space_forcing, loc_observations, space_ind, space_spinup_forcing, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_with_types)
+    run_helpers = (; space_forcing, loc_observations, space_ind, space_spinup_forcing, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_info)
 
     return run_helpers
 end
 
-function getAllLandVars(land)
-    av=[]
-    for f in propertynames(land)
-        lf = getproperty(land,f)
-        for sf in propertynames(lf)
-            pv = getproperty(lf, sf)
-            if (isa(pv, AbstractArray) && ndims(pv) < 2)  || isa(pv, Number)
-                push!(av, (f, sf))
-            end
-        end
-    end
-    return Tuple(av)
-end
 
 
 """
-    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayAll)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutStacked)
 
 
+prepare the information and objects needed to run TEM
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::LandOutArrayAll`: a dispatch for preparing TEM for using preallocated array to output ALL LAND VARIABLES
+- `::LandOutStacked`: a type dispatch for preparing TEM for running model and saving output as stacked land vector
 """
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArrayAll)
-
-    @info "     preparing spatial and tem helpers"
-    space_ind = getSpatialInfo(forcing)
-
-    # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output.variables, tem, tem_helpers);
-
-    ## run the model for one time step
-    @info "     model run for one location and time step"
-    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
-    land_init = output.land_init
-    loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
-    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_with_types)
-
-    debugModel(loc_land, tem.helpers.run.debug_model)
-
-    output_vars = getAllLandVars(loc_land)
-    tem_with_types = @set tem_with_types.helpers.vals.output_vars = Val(output_vars)
-
-    output_dims, output_array = getOutDimsArrays(output_vars, info, loc_land, forcing.helpers)
-
-
-    # collect local data and create copies
-    @info "     preallocating local, threaded, and spatial data"
-    space_forcing = map([space_ind...]) do lsi
-        getLocForcingData(forcing_nt_array, lsi)
-    end
-    space_spinup_forcing = map(space_forcing) do loc_forcing
-        getAllSpinupForcing(loc_forcing, tem_with_types.spinup.sequence, tem_with_types.helpers);
-    end
-
-    tem_with_types = getSpinupTemLite(tem_with_types);
-    space_output = map([space_ind...]) do lsi
-        getLocOutputData(output_array, lsi)
-    end
-
-    space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
-
-    forcing_nt_array = nothing
-
-    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_with_types)
-    return run_helpers
-end
-
-
-"""
-    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
-
-
-
-# Arguments:
-- `selected_models`: a tuple of all models selected in the given model structure
-- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::LandOutArray`: a dispatch for preparing TEM for using preallocated array
-"""
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
-
-    @info "     preparing spatial and tem helpers"
-    space_ind = getSpatialInfo(forcing)
-
-    # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output.variables, tem, tem_helpers);
-
-
-    ## run the model for one time step
-    @info "     model run for one location and time step"
-    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
-    land_init = output.land_init
-    loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
-    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_with_types)
-
-    debugModel(loc_land, tem.helpers.run.debug_model)
-
-    output_array = output.data
-    output_vars = output.variables
-    output_dims = output.dims
-
-    # ovars = output.variables;
-    # i = 1
-    # output_array = map(output_array) do od
-    #     ov = ovars[i]
-    #     mod_field = first(ov)
-    #     mod_subfield = last(ov)
-    #     lvar = getproperty(getproperty(loc_land, mod_field), mod_subfield)
-    #     if lvar isa AbstractArray
-    #         eltype(lvar).(od)
-    #     else
-    #         typeof(lvar).(od)
-    #     end
-    # end
-
-
-    # collect local data and create copies
-    @info "     preallocating local, threaded, and spatial data"
-    space_forcing = map([space_ind...]) do lsi
-        getLocForcingData(forcing_nt_array, lsi)
-    end
-    space_spinup_forcing = map(space_forcing) do loc_forcing
-        getAllSpinupForcing(loc_forcing, tem_with_types.spinup.sequence, tem_with_types.helpers);
-    end
-
-    tem_with_types = getSpinupTemLite(tem_with_types);
-    space_output = map([space_ind...]) do lsi
-        getLocOutputData(output_array, lsi)
-    end
-
-    space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
-
-    forcing_nt_array = nothing
-
-    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_with_types)
-    return run_helpers
-end
-
-
-"""
-    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
-
-
-
-# Arguments:
-- `selected_models`: a tuple of all models selected in the given model structure
-- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::LandOutStacked`: a dispatch for preparing TEM for using preallocated array
-"""
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutStacked)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutStacked)
     
     # get the output things
     @info "     preparing spatial and tem helpers"
     space_ind = getSpatialInfo(forcing)
 
     # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output.variables, tem, tem_helpers);
+    tem_info = getRunTemInfo(info, forcing);
 
     ## run the model for one time step
     @info "     model run for one location and time step"
     land_init = output.land_init
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
-    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_with_types)
-    debugModel(loc_land, tem.helpers.run.debug_model)
+    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
+    addErrorCatcher(loc_land, info.helpers.run.debug_model)
 
     output_vars = output.variables
     output_dims = output.dims
 
-    run_helpers = (; loc_forcing, loc_forcing_t, loc_land, space_ind, output_dims, output_vars, tem_with_types)
+    run_helpers = (; loc_forcing, loc_forcing_t, loc_land, space_ind, output_dims, output_vars, tem_info)
     return run_helpers
 end
 
 
 """
-    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutTimeseries)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutTimeseries)
 
 
+prepare the information and objects needed to run TEM
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::LandOutTimeseries`: a dispatch for preparing TEM for using preallocated array
+- `::LandOutTimeseries`: a type dispatch for preparing TEM for running model and saving output of land as a preallocated time series
 """
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutTimeseries)
-    run_helpers = helpPrepTEM(selected_models, info, forcing, output, tem, tem_helpers, LandOutStacked())
-    land_timeseries = Vector{typeof(run_helpers.loc_land)}(undef, tem.helpers.dates.size)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutTimeseries)
+    run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutStacked())
+    land_timeseries = Vector{typeof(run_helpers.loc_land)}(undef, tem_helpers.dates.size)
     run_helpers = setTupleField(run_helpers, (:land_timeseries, land_timeseries))
     return run_helpers
 end
@@ -410,28 +394,29 @@ end
 
 
 """
-    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutYAXArray)
 
 
+prepare the information and objects needed to run TEM
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::LandOutYAXArray`: a dispatch for preparing TEM for using yax array for model output
+- `::LandOutYAXArray`: a type dispatch for preparing TEM for using yax array for model output
 """
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutYAXArray)
 
     # generate vals for dispatch of forcing and output
-    tem_with_types = getTEMVals(forcing, output.variables, tem, tem_helpers);
+    tem_info = getRunTemInfo(info, forcing);
+    # tem_info = @set tem_info.spinup = info.spinup.sequence
 
     loc_land = output.land_init
     output_vars = output.variables
     output_dims = output.dims
 
-    run_helpers = (; loc_land, output_vars, output_dims, tem_with_types)
+    run_helpers = (; loc_land, output_vars, output_dims, tem_info)
     return run_helpers
 end
 
@@ -441,10 +426,10 @@ end
 
 
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 """
 function prepTEM(forcing::NamedTuple, info::NamedTuple)
-    selected_models = info.tem.models.forward
+    selected_models = info.models.forward
     return prepTEM(selected_models, forcing, info)
 end
 
@@ -456,14 +441,13 @@ end
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 """
 function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
     @info "prepTEM: preparing to run terrestrial ecosystem model (TEM)"
-    tem_helpers = info.tem.helpers
     output = prepTEMOut(info, forcing.helpers)
     @info "  helpPrepTEM: preparing helpers for running model experiment"
-    run_helpers = helpPrepTEM(selected_models, info, forcing, output, info.tem, tem_helpers, tem_helpers.run.land_output_type)
+    run_helpers = helpPrepTEM(selected_models, info, forcing, output, info.helpers.run.land_output_type)
     @info "\n----------------------------------------------\n"
     return run_helpers
 end
@@ -476,13 +460,12 @@ end
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 """
 function prepTEM(selected_models, forcing::NamedTuple, observations::NamedTuple, info::NamedTuple)
     @info "prepTEM: preparing to run terrestrial ecosystem model (TEM)"
-    tem_helpers = info.tem.helpers
     output = prepTEMOut(info, forcing.helpers)
-    run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, info.tem, tem_helpers, tem_helpers.run.land_output_type)
+    run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, info.helpers.run.land_output_type)
     @info "\n----------------------------------------------\n"
     return run_helpers
 end
@@ -503,16 +486,16 @@ end
 - `::LandOutArray`: a dispatch for running model with preallocated array
 """
 function runTEMOne(selected_models, loc_forcing, land_init, tem)
-    loc_forcing_t = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.helpers.vals.forcing_types)
+    loc_forcing_t = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.vals.forcing_types)
     loc_land = definePrecomputeTEM(selected_models, loc_forcing_t, land_init,
-        tem.helpers.model_helpers)
-    loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.helpers.model_helpers)
+        tem.model_helpers)
+    loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
     loc_land = removeEmptyTupleFields(loc_land)
-    loc_land = addSpinupLog(loc_land, tem.spinup.sequence, tem.helpers.run.store_spinup)
+    loc_land = addSpinupLog(loc_land, tem.spinup_sequence, tem.run.store_spinup)
     # loc_land = definePrecomputeTEM(selected_models, loc_forcing_t, loc_land,
-        # tem.helpers.model_helpers)
+        # tem.model_helpers)
     loc_land = precomputeTEM(selected_models, loc_forcing_t, loc_land,
-        tem.helpers.model_helpers)
-    loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.helpers.model_helpers)
+        tem.model_helpers)
+    loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
     return loc_forcing_t, loc_land
 end

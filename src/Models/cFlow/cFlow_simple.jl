@@ -2,10 +2,10 @@ export cFlow_simple
 
 struct cFlow_simple <: cFlow end
 
-function compute(p_struct::cFlow_simple, forcing, land, helpers)
+function compute(params::cFlow_simple, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land c_flow_A_array ∈ land.cCycleBase
+    @unpack_nt c_flow_A_array ⇐ land.diagnostics
 
     ## calculate variables
     #@nc : this needs to go in the full..
@@ -16,7 +16,7 @@ function compute(p_struct::cFlow_simple, forcing, land, helpers)
     p_taker = c_taker
     p_giver = c_giver
     # if there is flux order check that is consistent
-    if !isfield(land.cCycleBase, :c_flow_order)
+    if !isfield(land.constants, :c_flow_order)
         c_flow_order = 1:length(c_taker)
     else
         if length(c_flow_order) != length(c_taker)
@@ -25,9 +25,9 @@ function compute(p_struct::cFlow_simple, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land begin
-        c_flow_order => land.cCycleBase
-        (c_flow_A_vec, p_giver, p_taker) => land.cFlow
+    @pack_nt begin
+        c_flow_order ⇒ land.constants
+        (c_flow_A_vec, p_giver, p_taker) ⇒ land.cFlow
     end
     return land
 end
@@ -41,11 +41,10 @@ combine all the effects that change the transfers between carbon pools
 Actual transfers of c between pools (of diagonal components) using cFlow_simple
 
 *Inputs*
- - land.cCycleBase.c_flow_A_array: transfer matrix for carbon at ecosystem level
+ - land.diagnostics.c_flow_A_array: transfer matrix for carbon at ecosystem level
 
 *Outputs*
- - land.cFlow.c_flow_A_vec: effect of vegetation & vegetation on actual transfer rates between pools
- - land.cFlow.c_flow_A_vec
+ - land.diagnostics.c_flow_A_vec: effect of vegetation & vegetation on actual transfer rates between pools
 
 ---
 
