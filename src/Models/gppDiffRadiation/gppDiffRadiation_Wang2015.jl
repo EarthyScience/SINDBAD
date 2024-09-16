@@ -15,10 +15,20 @@ function define(params::gppDiffRadiation_Wang2015, forcing, land, helpers)
     CI = one(μ) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
     CI_min = CI
     CI_max = CI
-    ## pack land variables
     @pack_nt (CI_min, CI_max) ⇒ land.gppDiffRadiation
     return land
 end
+
+function precompute(params::gppDiffRadiation_Wang2015, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_gppDiffRadiation_Wang2015 params
+    ## calculate variables
+    gpp_f_cloud = one(μ)
+    ## pack land variables
+    @pack_nt gpp_f_cloud ⇒ land.diagnostics
+    return land
+end
+
 
 function compute(params::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing

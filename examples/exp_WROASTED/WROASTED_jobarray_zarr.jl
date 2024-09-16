@@ -4,14 +4,15 @@ using Dates
 using Plots
 toggleStackTraceNT()
 
-# site_index = 1
 site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+# site_index = 89
 # site_index = Base.parse(Int, ARGS[1])
-forcing_set = "cruj"
+forcing_set = "erai"
 site_info = CSV.File(
-    "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
-    header=false);
-domain = string(site_info[site_index][2])
+"/Net/Groups/BGI/scratch/skoirala/prod_sindbad.jl/examples/exp_WROASTED/settings_WROASTED/site_names_disturbance.csv";
+    header=true);
+domain = string(site_info[site_index][1])
+y_dist = string(site_info[site_index][2])
 
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 path_input = nothing
@@ -22,7 +23,7 @@ if forcing_set == "erai"
     dataset = "ERAinterim.v2"
     begin_year = "1979"
     end_year = "2017"
-    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/sopt_sets_wroasted/"
+    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/v202312_ml_wroasted/"
 else
     dataset = "CRUJRA.v2_2"
     begin_year = "1901"
@@ -30,18 +31,14 @@ else
     ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
 end
 ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(begin_year).$(end_year).daily.nc")
-path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/v202312_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
+path_input = 
+ "/Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v2023_12.zarr";#joinpath("/Net/Groups/BGI/scratch/skoirala/v202312_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
 path_observation = path_input;
 
 nrepeat = 200
 
-
-## get the spinup sequence
-nc = SindbadData.NetCDF.open(path_input);
-y_dist = nc.gatts["last_disturbance_on"]
-
 nrepeat_d = nothing
-if y_dist !== "undisturbed"
+if y_dist != "undisturbed"
     y_disturb = year(Date(y_dist))
     y_start = Meta.parse(begin_year)
     nrepeat_d = y_start - y_disturb
@@ -88,24 +85,29 @@ opti_sets = Dict(
     :set9 => ["agb", "ndvi"],
     :set10 => ["agb", "ndvi", "nirv"],
 )
-
+forcing_set = "zarr";
 forcing_config = "forcing_$(forcing_set).json";
 parallelization_lib = "threads"
-exp_main = "wroasted_v202311"
+exp_main = "wroasted_v202403"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)
+# opti_set = (:set3,)
 optimize_it = true;
+o_set = :set1
+
 for o_set in opti_set
-    path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
+    path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
 
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
     replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
         "experiment.basics.config_files.forcing" => forcing_config,
+        "experiment.basics.config_files.optimization" => "optimization_zarr.json",
         "experiment.basics.domain" => domain,
         "experiment.basics.name" => exp_name,
         "experiment.basics.time.date_end" => end_year * "-12-31",
+        "experiment.exe_rules.input_data_backend" => "zarr",
         "experiment.flags.run_optimization" => optimize_it,
         "experiment.flags.calc_cost" => true,
         "experiment.flags.catch_model_errors" => true,
@@ -113,6 +115,7 @@ for o_set in opti_set
         "experiment.flags.debug_model" => false,
         "experiment.model_spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
+        "forcing.subset.site" => [site_index,site_index],
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
@@ -154,6 +157,8 @@ for o_set in opti_set
         loss_name = nameof(typeof(lossMetric))
         if loss_name in (:NNSEInv, :NSEInv)
             lossMetric = NSE()
+        # else
+        #     lossMetric = Pcor()
         end
         (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
         (_, _, opt_var) = getData(opt_dat, obs_array, var_row)
