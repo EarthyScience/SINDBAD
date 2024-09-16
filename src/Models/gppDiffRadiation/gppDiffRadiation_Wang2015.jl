@@ -6,30 +6,30 @@ export gppDiffRadiation_Wang2015
 end
 #! format: on
 
-function define(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
+function define(params::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Wang2015 p_struct
-    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
+    @unpack_gppDiffRadiation_Wang2015 params
+    @unpack_nt (f_rg, f_rg_pot) ⇐ forcing
 
     ## calculate variables
     CI = one(μ) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
     CI_min = CI
     CI_max = CI
     ## pack land variables
-    @pack_land (CI_min, CI_max) => land.gppDiffRadiation
+    @pack_nt (CI_min, CI_max) ⇒ land.gppDiffRadiation
     return land
 end
 
-function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
+function compute(params::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Wang2015 p_struct
+    @unpack_gppDiffRadiation_Wang2015 params
 
-    @unpack_forcing (f_rg, f_rg_pot) ∈ forcing
+    @unpack_nt (f_rg, f_rg_pot) ⇐ forcing
 
-    @unpack_land begin
-        (CI_min, CI_max) ∈ land.gppDiffRadiation
-        (z_zero) ∈ land.wCycleBase
-        tolerance ∈ helpers.numbers
+    @unpack_nt begin
+        (CI_min, CI_max) ⇐ land.gppDiffRadiation
+        z_zero ⇐ land.constants
+        tolerance ⇐ helpers.numbers
     end
 
     ## calculate variables
@@ -49,7 +49,8 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
     gpp_f_cloud = f_rg_pot > zero(f_rg_pot) ? cScGPP : zero(cScGPP)
 
     ## pack land variables
-    @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
+    @pack_nt gpp_f_cloud ⇒ land.diagnostics
+    @pack_nt (CI_min, CI_max) ⇒ land.gppDiffRadiation
     return land
 end
 
@@ -69,7 +70,7 @@ $(SindbadParameters)
  - rue_ratio : ratio of clear sky LUE to max LUE  in turner et al., appendix A, e_[g_cs] / e_[g_max], should be between 0 & 1
 
 *Outputs*
- - land.gppDiffRadiation.gpp_f_cloud: effect of cloudiness on potential GPP
+ - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
 
 ---
 
@@ -79,7 +80,7 @@ $(SindbadParameters)
  - Turner, D. P., Ritts, W. D., Styles, J. M., Yang, Z., Cohen, W. B., Law, B. E., & Thornton, P. E. (2006).  A diagnostic carbon flux model to monitor the effects of disturbance & interannual variation in  climate on regional NEP. Tellus B: Chemical & Physical Meteorology, 58[5], 476-490.  DOI: 10.1111/j.1600-0889.2006.00221.x
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up [changed the output to nPix, nTix]
+ - 1.0 on 22.11.2019 [skoirala]: documentation & clean up
  - 1.1 on 22.01.2021 [skoirala]: minimum & maximum function had []  missing & were not working  
 
 *Created by:*

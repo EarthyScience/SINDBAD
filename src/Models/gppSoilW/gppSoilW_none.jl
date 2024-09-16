@@ -2,14 +2,15 @@ export gppSoilW_none
 
 struct gppSoilW_none <: gppSoilW end
 
-function define(p_struct::gppSoilW_none, forcing, land, helpers)
+function define(params::gppSoilW_none, forcing, land, helpers)
+    @unpack_nt o_one ⇐ land.constants
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
-    gpp_f_soilW = land.wCycleBase.o_one
+    gpp_f_soilW = o_one
 
     ## pack land variables
-    @pack_land gpp_f_soilW => land.gppSoilW
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
     return land
 end
 
@@ -24,7 +25,7 @@ sets the soil moisture stress on gpp_potential to one (no stress)
  - helpers
 
 *Outputs*
- - land.gppSoilW.gpp_f_soilW: soil moisture effect on GPP [] dimensionless, between 0-1
+ - land.diagnostics.gpp_f_soilW: soil moisture effect on GPP [] dimensionless, between 0-1
 
 # instantiate:
 instantiate/instantiate time-invariant variables for gppSoilW_none

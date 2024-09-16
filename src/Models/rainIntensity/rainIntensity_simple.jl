@@ -6,16 +6,16 @@ export rainIntensity_simple
 end
 #! format: on
 
-function compute(p_struct::rainIntensity_simple, forcing, land, helpers)
+function compute(params::rainIntensity_simple, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_rainIntensity_simple p_struct
-    @unpack_forcing f_rain ∈ forcing
+    @unpack_rainIntensity_simple params
+    @unpack_nt f_rain ⇐ forcing
 
     ## calculate variables
     rain_int = f_rain * rain_init_factor
 
     ## pack land variables
-    @pack_land rain_int => land.states
+    @pack_nt rain_int ⇒ land.states
     return land
 end
 

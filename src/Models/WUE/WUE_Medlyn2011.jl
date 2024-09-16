@@ -8,26 +8,26 @@ export WUE_Medlyn2011
 end
 #! format: on
 
-function define(p_struct::WUE_Medlyn2011, forcing, land, helpers)
-    @unpack_WUE_Medlyn2011 p_struct
+function define(params::WUE_Medlyn2011, forcing, land, helpers)
+    @unpack_WUE_Medlyn2011 params
 
     # umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
     umol_to_gC = oftype(diffusivity_ratio, 6.6667e-004)
     ## pack land variables
-    @pack_land umol_to_gC => land.WUE
+    @pack_nt umol_to_gC ⇒ land.WUE
     return land
 end
 
-function compute(p_struct::WUE_Medlyn2011, forcing, land, helpers)
+function compute(params::WUE_Medlyn2011, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_WUE_Medlyn2011 p_struct
-    @unpack_forcing (f_psurf_day, f_VPD_day) ∈ forcing
+    @unpack_WUE_Medlyn2011 params
+    @unpack_nt (f_psurf_day, f_VPD_day) ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        ambient_CO2 ∈ land.states
-        tolerance ∈ helpers.numbers
-        umol_to_gC ∈ land.WUE
+    @unpack_nt begin
+        ambient_CO2 ⇐ land.states
+        tolerance ⇐ helpers.numbers
+        umol_to_gC ⇐ land.WUE
     end
 
     ## calculate variables
@@ -40,7 +40,8 @@ function compute(p_struct::WUE_Medlyn2011, forcing, land, helpers)
     ci = ciNoCO2 * ambient_CO2
 
     ## pack land variables
-    @pack_land (WUE, WUENoCO2, ci, ciNoCO2) => land.WUE
+    @pack_nt (ci, ciNoCO2) ⇒ land.states
+    @pack_nt (WUENoCO2, WUE) ⇒ land.diagnostics
     return land
 end
 
@@ -60,10 +61,10 @@ Estimate wue using WUE_Medlyn2011
  - forcing.f_VPD_day: daytime mean VPD [kPa]
 
 *Outputs*
- - land.WUE.WUE: water use efficiency A/E [gC/mmH2O] with ambient co2
- - land.WUE.ci: internal co2 with ambient co2
- - land.WUE.WUENoCO2: instantiated A/E [gC/mmH2O] without ambient co2
- - land.WUE.ciNoCO2: instantiated internal co2 scalar without ambient co2
+ - land.diagnostics.WUE: water use efficiency A/E [gC/mmH2O] with ambient co2
+ - land.states.ci: internal co2 with ambient co2
+ - land.diagnostics.WUENoCO2: instantiated A/E [gC/mmH2O] without ambient co2
+ - land.states.ciNoCO2: instantiated internal co2 scalar without ambient co2
 
 ---
 

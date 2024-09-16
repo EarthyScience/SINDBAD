@@ -6,18 +6,18 @@ export transpirationDemand_PET
 end
 #! format: on
 
-function compute(p_struct::transpirationDemand_PET, forcing, land, helpers)
+function compute(params::transpirationDemand_PET, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationDemand_PET p_struct
+    @unpack_transpirationDemand_PET params
 
     ## unpack land variables
-    @unpack_land PET ∈ land.fluxes
+    @unpack_nt PET ⇐ land.fluxes
 
     ## calculate variables
     transpiration_demand = PET * α
 
     ## pack land variables
-    @pack_land transpiration_demand => land.transpirationDemand
+    @pack_nt transpiration_demand ⇒ land.diagnostics
     return land
 end
 
@@ -37,7 +37,7 @@ Demand-driven transpiration using transpirationDemand_PET
  - α: α parameter for potential transpiration
 
 *Outputs*
- - land.transpirationDemand.transpiration_demand: demand driven transpiration
+ - land.diagnostics.transpiration_demand: demand driven transpiration
 
 ---
 

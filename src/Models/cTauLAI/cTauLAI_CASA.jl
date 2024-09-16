@@ -7,28 +7,29 @@ export cTauLAI_CASA
 end
 #! format: on
 
-function define(p_struct::cTauLAI_CASA, forcing, land, helpers)
-    @unpack_cTauLAI_CASA p_struct
+function define(params::cTauLAI_CASA, forcing, land, helpers)
+    @unpack_cTauLAI_CASA params
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
-    c_eco_k_f_LAI = one.(land.pools.cEco)
+    c_eco_k_f_LAI = one.(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_LAI => land.cTauLAI
+    @pack_nt c_eco_k_f_LAI ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
+function compute(params::cTauLAI_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauLAI_CASA p_struct
+    @unpack_cTauLAI_CASA params
 
     ## unpack land variables
-    @unpack_land c_eco_k_f_LAI ∈ land.cTauLAI
+    @unpack_nt c_eco_k_f_LAI ⇐ land.diagnostics
 
     ## unpack land variables
-    @unpack_land begin
-        LAI ∈ land.states
-        (c_τ_eco, c_eco_k) ∈ land.cCycleBase
+    @unpack_nt begin
+        LAI ⇐ land.states
+        (c_eco_τ, c_eco_k) ⇐ land.diagnostics
     end
     # set LAI stressor on τ to ones
     TSPY = helpers.dates.timesteps_in_year #sujan
@@ -88,12 +89,12 @@ function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
     RTLAI[ndx] = (1.0 - k_root_LAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + k_root_LAI / TSPY
     # Feed the output fluxes to cCycle components
     zix_veg = p_cVegLeafZix
-    c_eco_k_f_LAI[zix_veg] = c_τ_eco[zix_veg] * LTLAI / c_eco_k[zix_veg] # leaf litter scalar
+    c_eco_k_f_LAI[zix_veg] = c_eco_τ[zix_veg] * LTLAI / c_eco_k[zix_veg] # leaf litter scalar
     zix_root = p_cVegRootZix
-    c_eco_k_f_LAI[zix_root] = c_τ_eco[zix_root] * RTLAI / c_eco_k[zix_root] # root litter scalar
+    c_eco_k_f_LAI[zix_root] = c_eco_τ[zix_root] * RTLAI / c_eco_k[zix_root] # root litter scalar
 
     ## pack land variables
-    @pack_land (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_f_LAI) => land.cTauLAI
+    @pack_nt (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_f_LAI) ⇒ land.diagnostics
     return land
 end
 
@@ -114,8 +115,8 @@ Calculate litterfall scalars (that affect the changes in the vegetation k) using
  - helpers.dates.timesteps_in_year: number of years of simulations
 
 *Outputs*
- - land.cTauLAI.c_eco_k_f_LAI:
- - land.cTauLAI.c_eco_k_f_LAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
+ - land.diagnostics.c_eco_k_f_LAI:
+ - land.diagnostics.c_eco_k_f_LAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauLAI_CASA

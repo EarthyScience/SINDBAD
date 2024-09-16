@@ -8,15 +8,15 @@ export gppVPD_expco2
 end
 #! format: on
 
-function compute(p_struct::gppVPD_expco2, forcing, land, helpers)
+function compute(params::gppVPD_expco2, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppVPD_expco2 p_struct
-    @unpack_forcing f_VPD_day ∈ forcing
+    @unpack_gppVPD_expco2 params
+    @unpack_nt f_VPD_day ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        ambient_CO2 ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        ambient_CO2 ⇐ land.states
+        (z_zero, o_one) ⇐ land.constants
     end
 
     ## calculate variables
@@ -24,7 +24,7 @@ function compute(p_struct::gppVPD_expco2, forcing, land, helpers)
     gpp_f_vpd = clampZeroOne(fVPD_VPD)
 
     ## pack land variables
-    @pack_land gpp_f_vpd => land.gppVPD
+    @pack_nt gpp_f_vpd ⇒ land.diagnostics
     return land
 end
 
@@ -46,7 +46,7 @@ Vpd effect using gppVPD_expco2
  - κ: parameter of the exponential decay function of GPP with  VPD [kPa-1] dimensionless [0.06 0.7]; median !0.4, same as k from  Maekaelae 2008
 
 *Outputs*
- - land.gppVPD.gpp_f_vpd: VPD effect on GPP between 0-1
+ - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
 
 ---
 

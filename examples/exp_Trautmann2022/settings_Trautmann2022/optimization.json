@@ -19,7 +19,7 @@
     "gppSoilW,q",
     "gppSoilW,θstar",
     "groundWRecharge,dos_exp",
-    "runoffBase,bc",
+    "runoffBase,k_baseflow",
     "rootMaximumDepth,constant_frac_max_root_depth",
     "runoffSaturationExcess,β",
     "transpirationSupply,k_transpiration",

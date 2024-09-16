@@ -2,38 +2,37 @@ export groundWRecharge_kUnsat
 
 struct groundWRecharge_kUnsat <: groundWRecharge end
 
-function compute(p_struct::groundWRecharge_kUnsat, forcing, land, helpers)
+function compute(params::groundWRecharge_kUnsat, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        wSat ∈ land.soilWBase
-        unsat_k_model ∈ land.soilProperties
-        (groundW, soilW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
-        n_groundW ∈ land.wCycleBase
+    @unpack_nt begin
+        wSat ⇐ land.properties
+        unsat_k_model ⇐ land.models
+        (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
+        n_groundW ⇐ land.constants
     end
 
     # calculate recharge
-    k_unsat = unsatK(land, helpers, lastindex(land.pools.soilW), unsat_k_model)
+    k_unsat = unsatK(land, helpers, lastindex(soilW), unsat_k_model)
     gw_recharge = min(k_unsat, soilW[end] + ΔsoilW[end])
 
     ΔgroundW .= ΔgroundW .+ gw_recharge / n_groundW
     ΔsoilW[end] = ΔsoilW[end] - gw_recharge
 
     ## pack land variables
-    @pack_land begin
-        gw_recharge => land.fluxes
-        (ΔsoilW, ΔgroundW) => land.states
+    @pack_nt begin
+        gw_recharge ⇒ land.fluxes
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::groundWRecharge_kUnsat, forcing, land, helpers)
+function update(params::groundWRecharge_kUnsat, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        (soilW, groundW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
+    @unpack_nt begin
+        (soilW, groundW) ⇐ land.pools
+        (ΔsoilW, ΔgroundW) ⇐ land.states
     end
 
     ## update storage pools
@@ -45,9 +44,9 @@ function update(p_struct::groundWRecharge_kUnsat, forcing, land, helpers)
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     ## pack land variables
-    @pack_land begin
-        (groundW, soilW) => land.pools
-        (ΔsoilW, ΔgroundW) => land.states
+    @pack_nt begin
+        (groundW, soilW) ⇒ land.pools
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
@@ -63,7 +62,7 @@ Recharge the groundwater using groundWRecharge_kUnsat
 *Inputs*
  - land.pools.soilW: soil moisture
  - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
- - land.soilWBase.wSat: moisture at saturation
+ - land.properties.wSat: moisture at saturation
 
 *Outputs*
  - land.fluxes.gw_recharge

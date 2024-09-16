@@ -12,12 +12,10 @@ export getVarName
 export getZix
 export maxZero, maxOne, minZero, minOne
 export offDiag, offDiagUpper, offDiagLower
-export @pack_land, @unpack_land, @unpack_forcing
+export @pack_nt, @unpack_nt
 export repElem, @rep_elem, repVec, @rep_vec
 export setComponents
 export setComponentFromMainPool, setMainFromComponentPool
-export showParamsOfAModel
-export showParamsOfAllModels
 export SindbadParameters
 export totalS
 
@@ -27,7 +25,7 @@ end
 
 macro add_to_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
-    @assert outparams.args[1] == :(=>)
+    @assert outparams.args[1] == :(⇒)
     @assert length(outparams.args) == 3
     lhs = esc(outparams.args[2])
     rhs = outparams.args[3]
@@ -43,7 +41,7 @@ macro add_to_elem(outparams::Expr)
                 tar,
                 lhs,
                 esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
-                # esc(:(land.wCycleBase.z_zero)),
+                # esc(:(land.constants.z_zero)),
                 esc(indx)))
     ]
     return Expr(:block, outCode...)
@@ -395,30 +393,30 @@ function offDiagUpper(A::AbstractMatrix)
 end
 
 
-macro pack_land(outparams)
+macro pack_nt(outparams)
     @assert outparams.head == :block || outparams.head == :call || outparams.head == :(=)
     if outparams.head == :block
-        outputs = processPackLand.(filter(i -> isa(i, Expr), outparams.args))
+        outputs = processPackNT.(filter(i -> isa(i, Expr), outparams.args))
         outCode = Expr(:block, outputs...)
     else
-        outCode = processPackLand(outparams)
+        outCode = processPackNT(outparams)
     end
     return outCode
 end
 
 """
-    processPackLand(ex)
+    processPackNT(ex)
 
 
 """
-function processPackLand(ex)
-    rename, ex = if ex.args[1] == :(=)
-        ex.args[2], ex.args[3]
+function processPackNT(ex)
+    rename, ex = if ex.head == :(=)
+        ex.args[1], ex.args[2]
     else
         nothing, ex
     end
     @assert ex.head == :call
-    @assert ex.args[1] == :(=>)
+    @assert ex.args[1] == :(⇒)
     @assert length(ex.args) == 3
     lhs = ex.args[2]
     rhs = ex.args[3]
@@ -429,7 +427,7 @@ function processPackLand(ex)
         #println("tuple")
         lhs = lhs.args
     else
-        error("processPackLand: could not pack:" * lhs * "=" * rhs)
+        error("processPackNT: could not pack:" * lhs * "=" * rhs)
     end
     if rename === nothing
         rename = lhs
@@ -466,18 +464,18 @@ function processPackLand(ex)
 end
 
 """
-    processUnpackForcing(ex)
+    processUnpackNT(ex)
 
 
 """
-function processUnpackForcing(ex)
+function processUnpackNT(ex)
     rename, ex = if ex.head == :(=)
         ex.args[1], ex.args[2]
     else
         nothing, ex
     end
     @assert ex.head == :call
-    @assert ex.args[1] == :(∈)
+    @assert ex.args[1] == :(⇐)
     @assert length(ex.args) == 3
     lhs = ex.args[2]
     rhs = ex.args[3]
@@ -486,41 +484,7 @@ function processUnpackForcing(ex)
     elseif lhs.head == :tuple
         lhs = lhs.args
     else
-        error("processUnpackForcing: could not unpack forcing:" * lhs * "=" * rhs)
-    end
-    if rename === nothing
-        rename = lhs
-    elseif rename isa Expr && rename.head == :tuple
-        rename = rename.args
-    end
-    lines = broadcast(lhs, rename) do s, rn
-        return Expr(:(=), esc(rn), Expr(:(.), esc(rhs), QuoteNode(s)))
-    end
-    return Expr(:block, lines...)
-end
-
-"""
-    processUnpackLand(ex)
-
-
-"""
-function processUnpackLand(ex)
-    rename, ex = if ex.head == :(=)
-        ex.args[1], ex.args[2]
-    else
-        nothing, ex
-    end
-    @assert ex.head == :call
-    @assert ex.args[1] == :(∈)
-    @assert length(ex.args) == 3
-    lhs = ex.args[2]
-    rhs = ex.args[3]
-    if lhs isa Symbol
-        lhs = [lhs]
-    elseif lhs.head == :tuple
-        lhs = lhs.args
-    else
-        error("processUnpackLand: could not unpack:" * lhs * "=" * rhs)
+        error("processUnpackNT: could not unpack:" * lhs * "=" * rhs)
     end
     if rename === nothing
         rename = lhs
@@ -536,7 +500,7 @@ end
 
 macro rep_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
-    @assert outparams.args[1] == :(=>)
+    @assert outparams.args[1] == :(⇒)
     @assert length(outparams.args) == 3
     lhs = esc(outparams.args[2])
     rhs = outparams.args[3]
@@ -601,7 +565,7 @@ end
 
 macro rep_vec(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
-    @assert outparams.args[1] == :(=>)
+    @assert outparams.args[1] == :(⇒)
     @assert length(outparams.args) == 3
     lhs = esc(outparams.args[2])
     rhs = esc(outparams.args[3])
@@ -663,8 +627,8 @@ function setComponents(
                     Expr(:ref, s_main, ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
-                    :(land.wCycleBase.z_zero),
-                    :(land.wCycleBase.o_one),
+                    :(land.constants.z_zero),
+                    :(land.constants.o_one),
                     c_ix)))
 
             c_ix += 1
@@ -719,8 +683,8 @@ end
                     Expr(:ref, s_main, ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
-                    :(land.wCycleBase.z_zero),
-                    :(land.wCycleBase.o_one),
+                    :(land.constants.z_zero),
+                    :(land.constants.o_one),
                     c_ix)))
 
             c_ix += 1
@@ -773,8 +737,8 @@ end
                     Expr(:ref, s_comp, c_ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_main)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_main)),
-                    :(land.wCycleBase.z_zero),
-                    :(land.wCycleBase.o_one),
+                    :(land.constants.z_zero),
+                    :(land.constants.o_one),
                     ix)))
             c_ix += 1
         end
@@ -789,44 +753,6 @@ end
                     Expr(:parameters, Expr(:(...), :(land.pools)),
                         Expr(:kw, s_main, s_main))))))))
     return gen_output
-end
-
-"""
-    showParamsOfAllModels(models)
-
-shows the current parameters of all given models
-"""
-function showParamsOfAllModels(models)
-    for mn in sort([nameof.(supertype.(typeof.(models)))...])
-        showParamsOfAModel(models, mn)
-        println("------------------------------------------------------------------")
-    end
-    return nothing
-end
-
-
-"""
-    showParamsOfAModel(models, model::Symbol)
-
-shows the current parameters of a given model (Symboll) [NOT APPRAOCH] based on the list of models provided
-"""
-function showParamsOfAModel(models, model::Symbol)
-    model_names = Symbol.(supertype.(typeof.(models)))
-    approach_names = nameof.(typeof.(models))
-    m_index = findall(m -> m == model, model_names)[1]
-    mod = models[m_index]
-    println("model: $(model_names[m_index])")
-    println("approach: $(approach_names[m_index])")
-    pnames = fieldnames(typeof(mod))
-    if length(pnames) == 0
-        println("parameters: none")
-    else
-        println("parameters:")
-        foreach(pnames) do fn
-            println("   $fn => $(getproperty(mod, fn))")
-        end
-    end
-    return nothing
 end
 
 const SindbadParameters = BoundFields(false)
@@ -858,19 +784,14 @@ function totalS(s)
 end
 
 
-macro unpack_forcing(inparams)
-    @assert inparams.head == :call || inparams.head == :(=)
-    return outputs = processUnpackForcing(inparams)
-end
 
-
-macro unpack_land(inparams)
+macro unpack_nt(inparams)
     @assert inparams.head == :block || inparams.head == :call || inparams.head == :(=)
     if inparams.head == :block
-        outputs = processUnpackLand.(filter(i -> isa(i, Expr), inparams.args))
+        outputs = processUnpackNT.(filter(i -> isa(i, Expr), inparams.args))
         outCode = Expr(:block, outputs...)
     else
-        outCode = processUnpackLand(inparams)
+        outCode = processUnpackNT(inparams)
     end
     return outCode
 end

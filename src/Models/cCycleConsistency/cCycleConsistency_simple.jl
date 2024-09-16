@@ -2,12 +2,13 @@ export cCycleConsistency_simple
 
 struct cCycleConsistency_simple <: cCycleConsistency end
 
-function define(p_struct::cCycleConsistency_simple, forcing, land, helpers)
+function define(params::cCycleConsistency_simple, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        cEco ∈ land.pools
-        (c_giver, c_flow_A_array) ∈ land.cCycleBase
+    @unpack_nt begin
+        cEco ⇐ land.pools
+        c_flow_A_array ⇐ land.diagnostics
+        c_giver ⇐ land.constants
     end
     # make list of indices which give carbon to other pools during the flow, and separate them if 
     # they are above or below the diagonal in flow vector
@@ -27,7 +28,7 @@ function define(p_struct::cCycleConsistency_simple, forcing, land, helpers)
     end
     giver_lower_indices = Tuple(giver_lower_indices)
     giver_upper_indices = Tuple(giver_upper_indices)
-    @pack_land (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) => land.cCycleConsistency
+    @pack_nt (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) ⇒ land.cCycleConsistency
     return land
 end
 
@@ -43,13 +44,13 @@ function throwError(land, msg)
     error(msg)
 end
 
-function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::DoCatchModelErrors) #when check is on
+function checkCcycleErrors(params::cCycleConsistency_simple, forcing, land, helpers, ::DoCatchModelErrors) #when check is on
     ## unpack land variables
-    @unpack_land begin
-        c_allocation ∈ land.states
-        c_flow_A_vec ∈ land.states
-        (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) ∈ land.cCycleConsistency
-        tolerance ∈ helpers.numbers
+    @unpack_nt begin
+        c_allocation ⇐ land.diagnostics
+        c_flow_A_vec ⇐ land.diagnostics
+        (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) ⇐ land.cCycleConsistency
+        tolerance ⇐ helpers.numbers
     end
 
     # check allocation
@@ -94,7 +95,7 @@ function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, he
             s = s + c_flow_A_vec[ind]
         end
         if (s - one(s)) > helpers.numbers.tolerance
-            throwError(land, "sum of giver flow greater than one in upper cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
+            throwError(land, "sum of giver flow greater than one in upper cFlow vector for $(info.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
         end
     end
 
@@ -104,19 +105,19 @@ function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, he
             s = s + c_flow_A_vec[ind]
         end
         if (s - one(s)) > helpers.numbers.tolerance
-            throwError(land, "sum of giver flow greater than one in lower cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
+            throwError(land, "sum of giver flow greater than one in lower cFlow vector for $(info.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
         end
     end
 
     return nothing
 end
 
-function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::DoNotCatchModelErrors) #when check is off/false
+function checkCcycleErrors(params::cCycleConsistency_simple, forcing, land, helpers, ::DoNotCatchModelErrors) #when check is off/false
     return nothing
 end
 
-function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
-    checkCcycleErrors(p_struct, forcing, land, helpers, helpers.run.catch_model_errors)
+function compute(params::cCycleConsistency_simple, forcing, land, helpers)
+    checkCcycleErrors(params, forcing, land, helpers, helpers.run.catch_model_errors)
     return land
 end
 
@@ -130,7 +131,7 @@ Consistency checks on the c allocation and transfers between pools using cCycleC
 
 *Inputs*
  - flow_vector: carbon flow vector
- - land.states.c_allocation: carbon allocation vector
+ - land.diagnostics.c_allocation: carbon allocation vector
 
 *Outputs*
 

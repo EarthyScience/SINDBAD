@@ -2,29 +2,29 @@ export getPools_simple
 
 struct getPools_simple <: getPools end
 
-function define(p_struct::getPools_simple, forcing, land, helpers)
+function define(params::getPools_simple, forcing, land, helpers)
     ## unpack land variables
-    @unpack_land begin
-        z_zero ∈ land.wCycleBase
+    @unpack_nt begin
+        z_zero ⇐ land.constants
     end
     ## calculate variables
     WBP = z_zero
-
-    @pack_land WBP => land.states
+    @pack_nt WBP ⇒ land.states
     return land
 end
 
-function compute(p_struct::getPools_simple, forcing, land, helpers)
+
+function compute(params::getPools_simple, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        rain ∈ land.fluxes
-        WBP ∈ land.states
+    @unpack_nt begin
+        rain ⇐ land.fluxes
+        WBP ⇐ land.states
     end
     ## calculate variables
     WBP = oftype(WBP, rain)
 
-    @pack_land WBP => land.states
+    @pack_nt WBP ⇒ land.states
     return land
 end
 

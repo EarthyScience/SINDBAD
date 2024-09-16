@@ -2,13 +2,14 @@ export runoffBase_none
 
 struct runoffBase_none <: runoffBase end
 
-function define(p_struct::runoffBase_none, forcing, land, helpers)
+function define(params::runoffBase_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
     ## calculate variables
-    base_runoff = land.wCycleBase.z_zero
+    base_runoff = z_zero
 
     ## pack land variables
-    @pack_land base_runoff => land.fluxes
+    @pack_nt base_runoff ⇒ land.fluxes
     return land
 end
 

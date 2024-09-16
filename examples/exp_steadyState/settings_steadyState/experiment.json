@@ -59,7 +59,7 @@
       "pools.cEco": "d_cEco",
       "pools.snowW": "d_snow",
       "pools.soilW": "d_soil",
-      "states.water_balance": null
+      "diagnostics.water_balance": null
     }
   },
   "model_spinup": {

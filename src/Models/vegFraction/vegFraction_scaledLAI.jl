@@ -6,20 +6,20 @@ export vegFraction_scaledLAI
 end
 #! format: on
 
-function compute(p_struct::vegFraction_scaledLAI, forcing, land, helpers)
+function compute(params::vegFraction_scaledLAI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledLAI p_struct
+    @unpack_vegFraction_scaledLAI params
 
     ## unpack land variables
-    @unpack_land begin
-        LAI ∈ land.states
+    @unpack_nt begin
+        LAI ⇐ land.states
     end
 
     ## calculate variables
     frac_vegetation = minOne(LAI * LAIscale)
 
     ## pack land variables
-    @pack_land frac_vegetation => land.states
+    @pack_nt frac_vegetation ⇒ land.states
     return land
 end
 

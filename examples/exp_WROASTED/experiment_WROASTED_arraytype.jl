@@ -39,15 +39,14 @@ for (i, model_array_type) in enumerate(("array", "view", "static_array"))
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
     forcing = getForcing(info)
-    linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
     run_helpers = prepTEM(forcing, info)
-    @time runTEM!(info.tem.models.forward,
+    @time runTEM!(info.models.forward,
         run_helpers.space_forcing,
         run_helpers.space_spinup_forcing,
         run_helpers.loc_forcing_t,
         run_helpers.space_output,
         run_helpers.space_land,
-        run_helpers.tem_with_types)
+        run_helpers.tem_info)
     ds = forcing.data[1]
     opt_dat = run_helpers.output_array
     output_vars = run_helpers.output_vars
@@ -58,4 +57,4 @@ for (i, model_array_type) in enumerate(("array", "view", "static_array"))
         label=model_array_type)
     
 end
-savefig(joinpath(info.output.figure, "compare_model_array_types_$(var_name).png"))
+savefig(joinpath(info.output.dirs.figure, "compare_model_array_types_$(var_name).png"))

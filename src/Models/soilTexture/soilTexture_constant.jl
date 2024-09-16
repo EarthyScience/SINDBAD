@@ -9,34 +9,35 @@ export soilTexture_constant
 end
 #! format: on
 
-function define(p_struct::soilTexture_constant, forcing, land, helpers)
-    @unpack_soilTexture_constant p_struct
+function define(params::soilTexture_constant, forcing, land, helpers)
+    @unpack_soilTexture_constant params
+    @unpack_nt soilW ⇐ land.pools
 
     ## set parameter variables
     @debug "soilTexture_constant: distributing the constant texture properties over the soil layers."
-    st_clay = zero(land.pools.soilW)
-    st_orgm = zero(land.pools.soilW)
-    st_sand = zero(land.pools.soilW)
-    st_silt = zero(land.pools.soilW)
+    st_clay = zero(soilW)
+    st_orgm = zero(soilW)
+    st_sand = zero(soilW)
+    st_silt = zero(soilW)
 
     ## pack land variables
-    @pack_land (st_clay, st_sand, st_silt, st_orgm) => land.soilTexture
+    @pack_nt (st_clay, st_sand, st_silt, st_orgm) ⇒ land.properties
     return land
 end
 
-function precompute(p_struct::soilTexture_constant, forcing, land, helpers)
-    @unpack_soilTexture_constant p_struct
-    @unpack_land (st_clay, st_sand, st_silt, st_orgm) ∈ land.soilTexture
+function precompute(params::soilTexture_constant, forcing, land, helpers)
+    @unpack_soilTexture_constant params
+    @unpack_nt (st_clay, st_sand, st_silt, st_orgm) ⇐ land.properties
 
     for sl ∈ eachindex(st_clay)
-        @rep_elem clay => (st_clay, sl, :soilW)
-        @rep_elem sand => (st_sand, sl, :soilW)
-        @rep_elem silt => (st_silt, sl, :soilW)
-        @rep_elem orgm => (st_orgm, sl, :soilW)
+        @rep_elem clay ⇒ (st_clay, sl, :soilW)
+        @rep_elem sand ⇒ (st_sand, sl, :soilW)
+        @rep_elem silt ⇒ (st_silt, sl, :soilW)
+        @rep_elem orgm ⇒ (st_orgm, sl, :soilW)
     end
 
     ## pack land variables
-    @pack_land (st_clay, st_sand, st_silt, st_orgm) => land.soilTexture
+    @pack_nt (st_clay, st_sand, st_silt, st_orgm) ⇒ land.properties
     return land
 end
 

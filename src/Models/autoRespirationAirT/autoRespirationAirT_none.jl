@@ -2,13 +2,14 @@ export autoRespirationAirT_none
 
 struct autoRespirationAirT_none <: autoRespirationAirT end
 
-function define(p_struct::autoRespirationAirT_none, forcing, land, helpers)
+function define(params::autoRespirationAirT_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    auto_respiration_f_airT = one(first(land.pools.cEco))
+    auto_respiration_f_airT = one(first(cEco))
 
     ## pack land variables
-    @pack_land auto_respiration_f_airT => land.autoRespirationAirT
+    @pack_nt auto_respiration_f_airT ⇒ land.diagnostics
     return land
 end
 

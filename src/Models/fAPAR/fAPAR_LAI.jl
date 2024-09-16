@@ -6,19 +6,19 @@ export fAPAR_LAI
 end
 #! format: on
 
-function compute(p_struct::fAPAR_LAI, forcing, land, helpers)
-    @unpack_fAPAR_LAI p_struct
+function compute(params::fAPAR_LAI, forcing, land, helpers)
+    @unpack_fAPAR_LAI params
 
     ## unpack land variables
-    @unpack_land begin
-        LAI ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        LAI ⇐ land.states
+        (z_zero, o_one) ⇐ land.constants
     end
     ## calculate variables
     fAPAR = o_one - exp(-(LAI * k_extinction))
 
     ## pack land variables
-    @pack_land fAPAR => land.states
+    @pack_nt fAPAR ⇒ land.states
     return land
 end
 

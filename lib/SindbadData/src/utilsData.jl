@@ -1,4 +1,5 @@
 export AllNaN
+export getNumberOfTimeSteps
 export mapCleanData
 export subsetAndProcessYax
 export yaxCubeToKeyedArray
@@ -172,6 +173,19 @@ function getSindbadDims(c)
     return [act_dimnames[k] => getproperty(c, dimnames[k]) |> Array for k ∈ eachindex(dimnames)]
 end
 
+
+
+"""
+    getNumberOfTimeSteps(incubes, time_name)
+
+
+"""
+function getNumberOfTimeSteps(incubes, time_name)
+    i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
+    return length(getAxis(time_name, incubes[i1]).values)
+end
+
+
 """
     getTargetDimensionOrder(info)
 
@@ -179,9 +193,9 @@ end
 """
 function getTargetDimensionOrder(info)
     tar_dims = nothing
-    if !isnothing(info.forcing.data_dimension.permute)
+    if !isnothing(info.settings.forcing.data_dimension.permute)
         tar_dims = Symbol[]
-        for pd ∈ info.forcing.data_dimension.permute
+        for pd ∈ info.settings.forcing.data_dimension.permute
             tdn = Symbol(pd)
             push!(tar_dims, tdn)
         end
@@ -210,13 +224,13 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::B
     v = nc[source_variable]
     ax = map(NCDatasets.dimnames(v)) do dn
         rax = nothing
-        if dn == info.forcing.data_dimension.time
-            t = nc[info.forcing.data_dimension.time]
+        if dn == info.settings.forcing.data_dimension.time
+            t = nc[info.settings.forcing.data_dimension.time]
             t = [_t for _t in t]
             rax = Dim{Symbol(dn)}(t)
         else
             if dn in keys(nc)
-                dv = info.tem.helpers.numbers.sNT.(nc[dn][:])
+                dv = info.helpers.numbers.num_type.(nc[dn][:])
             else
                 error("To avoid possible issues with dimensions, Sindbad does not run when the dimension variable $(dn) is not available in input data file $(data_path). Add the variable to the data, and try again.")
             end
@@ -339,14 +353,14 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Va
         @debug "         -> permuting dimensions to $(tar_dims)..."
         yax = permutedims(yax, permutes)
     end
-    if hasproperty(yax, Symbol(info.forcing.data_dimension.time))
-        init_date = DateTime(info.tem.helpers.dates.date_begin)
-        last_date = DateTime(info.tem.helpers.dates.date_end) + info.tem.helpers.dates.timestep
+    if hasproperty(yax, Symbol(info.settings.forcing.data_dimension.time))
+        init_date = DateTime(info.helpers.dates.date_begin)
+        last_date = DateTime(info.helpers.dates.date_end) + info.helpers.dates.timestep
         yax = yax[time=(init_date .. last_date)]
     end
 
-    if hasproperty(info.forcing, :subset)
-        yax = getSpatialSubset(info.forcing.subset, yax)
+    if hasproperty(info.settings.forcing, :subset)
+        yax = getSpatialSubset(info.settings.forcing.subset, yax)
     end
 
     #todo mean of the data instead of zero or nan

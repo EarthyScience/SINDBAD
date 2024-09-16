@@ -3,6 +3,7 @@ module SindbadUtils
     using Crayons
     using DataStructures
     using Dates
+    using FIGlet
     using Logging
     using Reexport: @reexport
     @reexport using NaNStatistics
@@ -16,5 +17,5 @@ module SindbadUtils
     include("utilsNT.jl")
     include("utilsSpatial.jl")
     include("utilsTemporal.jl")
-
+    
 end # module SindbadUtils

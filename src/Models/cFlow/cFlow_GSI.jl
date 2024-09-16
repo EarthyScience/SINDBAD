@@ -9,15 +9,17 @@ export cFlow_GSI
 end
 #! format: on
 
-function define(p_struct::cFlow_GSI, forcing, land, helpers)
-    @unpack_cFlow_GSI p_struct
-    @unpack_land begin
-        (c_giver, c_taker, c_flow_A_array) ∈ land.cCycleBase
+function define(params::cFlow_GSI, forcing, land, helpers)
+    @unpack_cFlow_GSI params
+    @unpack_nt begin
+        (cEco, soilW) ⇐ land.pools
+        (c_giver, c_taker) ⇐ land.constants
+        cEco_comps = cEco ⇐ helpers.pools.components
+        sum_wSat ⇐ land.properties
     end
     ## instantiate variables
 
     # transfers
-    cEco_comps = helpers.pools.components.cEco
     aTrg = []
     for t_rg in c_taker
         push!(aTrg, cEco_comps[t_rg])
@@ -47,18 +49,19 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
         k_shedding_root=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
     # tcPrint(c_flow_A_vec_ind)
-    c_flow_A_vec = one.(eltype(land.pools.cEco).(zero([c_taker...])))
+    c_flow_A_vec = one.(eltype(cEco).(zero([c_taker...])))
 
-    if land.pools.cEco isa SVector
+    if cEco isa SVector
         c_flow_A_vec = SVector{length(c_flow_A_vec)}(c_flow_A_vec)
     end
 
-    eco_stressor_prev = totalS(land.pools.soilW) / land.soilWBase.sum_wSat
+    eco_stressor_prev = totalS(soilW) / sum_wSat
 
 
-    @pack_land begin
-        (c_flow_A_vec_ind, eco_stressor_prev, aSrc, aTrg) => land.cFlow
-        c_flow_A_vec => land.states
+    @pack_nt begin
+        c_flow_A_vec_ind ⇒ land.cFlow
+        eco_stressor_prev ⇒ land.diagnostics
+        c_flow_A_vec ⇒ land.diagnostics
     end
 
     return land
@@ -69,23 +72,21 @@ function adjust_pk(c_eco_k, kValue, flowValue, maxValue, zix, helpers)
     for ix ∈ zix
         # @show ix, c_eco_k[ix]
         tmp = min(c_eco_k[ix] + kValue + flowValue, maxValue)
-        @rep_elem tmp => (c_eco_k, ix, :cEco)
+        @rep_elem tmp ⇒ (c_eco_k, ix, :cEco)
         c_eco_k_f_sum = c_eco_k_f_sum + tmp
     end
     return c_eco_k, c_eco_k_f_sum
 end
 
-function compute(p_struct::cFlow_GSI, forcing, land, helpers)
+function compute(params::cFlow_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cFlow_GSI p_struct
+    @unpack_cFlow_GSI params
     ## unpack land variables
-    @unpack_land begin
-        (eco_stressor_prev, c_flow_A_vec_ind, aSrc, aTrg) ∈ land.cFlow
-        c_allocation_f_soilW ∈ land.cAllocationSoilW
-        c_allocation_f_soilT ∈ land.cAllocationSoilT
-        c_allocation_f_cloud ∈ land.cAllocationRadiation
-        (c_flow_A_vec, c_eco_k) ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        c_flow_A_vec_ind ⇐ land.cFlow
+        (c_allocation_f_soilW, c_allocation_f_soilT, c_allocation_f_cloud, eco_stressor_prev)  ⇐ land.diagnostics
+        c_eco_k ⇐ land.diagnostics
+        c_flow_A_vec ⇐ land.diagnostics
     end
 
     # Compute sigmoid functions
@@ -113,14 +114,12 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
     Re2L_i = zero(slope_leaf_root_to_reserve)
-    if c_allocation_f_soilW + c_allocation_f_cloud !== z_zero
+    if c_allocation_f_soilW + c_allocation_f_cloud !== Re2L_i
         Re2L_i = reserve_to_leaf_root * (c_allocation_f_soilW / (c_allocation_f_cloud + c_allocation_f_soilW)) # if water stressor is high, , larger fraction of reserve goes to the leaves for light acquisition
     end
     Re2R_i = reserve_to_leaf_root * (one(Re2L_i) - Re2L_i) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
 
     # adjust the outflow rate from the flow pools
-    # @show reserve_to_leaf_frac, reserve_to_root_frac
-
     c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, k_shedding_leaf, leaf_to_reserve, one(leaf_to_reserve), helpers.pools.zix.cVegLeaf, helpers)
     leaf_to_reserve_frac = getFrac(leaf_to_reserve, c_eco_k_f_sum)
     k_shedding_leaf_frac = getFrac(k_shedding_leaf, c_eco_k_f_sum)
@@ -139,12 +138,6 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     c_flow_A_vec = repElem(c_flow_A_vec, root_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.root_to_reserve)
     c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_leaf)
     c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_root)
-    # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_leaf] = c_flow_A_vec
-    # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_root] = reserve_to_root_frac
-    # c_flow_A_vec[c_flow_A_vec_ind.leaf_to_reserve] = leaf_to_reserve_frac
-    # c_flow_A_vec[c_flow_A_vec_ind.root_to_reserve] = root_to_reserve_frac
-    # c_flow_A_vec[c_flow_A_vec_ind.k_shedding_leaf] = k_shedding_leaf_frac
-    # c_flow_A_vec[c_flow_A_vec_ind.k_shedding_root] = k_shedding_root_frac
 
     # store the varibles in diagnostic structure
     leaf_to_reserve = leaf_root_to_reserve # should it be divided by 2?
@@ -157,23 +150,9 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     eco_stressor_prev = eco_stressor
 
     ## pack land variables
-    @pack_land begin
-        (leaf_to_reserve,
-            leaf_to_reserve_frac,
-            root_to_reserve,
-            root_to_reserve_frac,
-            reserve_to_leaf,
-            reserve_to_leaf_frac,
-            reserve_to_root,
-            reserve_to_root_frac,
-            eco_stressor,
-            k_shedding_leaf,
-            k_shedding_leaf_frac,
-            k_shedding_root,
-            k_shedding_root_frac,
-            slope_eco_stressor,
-            eco_stressor_prev) => land.cFlow
-        (c_flow_A_vec, c_eco_k) => land.states
+    @pack_nt begin
+        (leaf_to_reserve, leaf_to_reserve_frac, root_to_reserve, root_to_reserve_frac, reserve_to_leaf, reserve_to_leaf_frac, reserve_to_root, reserve_to_root_frac, eco_stressor, k_shedding_leaf, k_shedding_leaf_frac, k_shedding_root, k_shedding_root_frac, slope_eco_stressor, eco_stressor_prev, c_eco_k) ⇒ land.diagnostics
+        c_flow_A_vec ⇒ land.diagnostics
     end
     return land
 end
@@ -190,13 +169,13 @@ $(SindbadParameters)
 Actual transfers of c between pools (of diagonal components) using cFlow_GSI
 
 *Inputs*
- - land.cAllocationRadiation.c_allocation_f_cloud: radiation stressors for carbo allocation
- - land.cAllocationRadiation.f_cloud_prev: previous radiation stressors for carbo allocation
- - land.cAllocationSoilT.c_allocation_f_soilT: temperature stressors for carbon allocation
- - land.cAllocationSoilT.f_soilT_prev: previous temperature stressors for carbon allocation
- - land.cAllocationSoilW.c_allocation_f_soilW: water stressors for carbon allocation
- - land.cAllocationSoilW.f_soilW_prev: previous water stressors for carbon allocation
- - land.cCycleBase.c_flow_A_array: transfer matrix for carbon at ecosystem level
+ - land.diagnostics.c_allocation_f_cloud: radiation stressors for carbo allocation
+ - land.diagnostics.f_cloud_prev: previous radiation stressors for carbo allocation
+ - land.diagnostics.c_allocation_f_soilT: temperature stressors for carbon allocation
+ - land.diagnostics.f_soilT_prev: previous temperature stressors for carbon allocation
+ - land.diagnostics.c_allocation_f_soilW: water stressors for carbon allocation
+ - land.diagnostics.f_soilW_prev: previous water stressors for carbon allocation
+ - land.diagnostics.c_flow_A_array: transfer matrix for carbon at ecosystem level
 
 *Outputs*
  - land.cFlow.c_flow_A_vec: updated transfer flow rate for carbon at ecosystem level

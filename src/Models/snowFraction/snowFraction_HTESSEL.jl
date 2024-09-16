@@ -2,28 +2,28 @@ export snowFraction_HTESSEL
 
 #! format: off
 @bounds @describe @units @with_kw struct snowFraction_HTESSEL{T1} <: snowFraction
-    CoverParam::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
+    snow_cover_param::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
 end
 #! format: on
 
-function compute(p_struct::snowFraction_HTESSEL, forcing, land, helpers)
+function compute(params::snowFraction_HTESSEL, forcing, land, helpers)
     ## unpack parameters
-    @unpack_snowFraction_HTESSEL p_struct
+    @unpack_snowFraction_HTESSEL params
 
     ## unpack land variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
-        o_one ∈ land.wCycleBase
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
+        o_one ⇐ land.constants
     end
 
     ## calculate variables
     # suggested by Sujan [after HTESSEL GHM]
 
-    frac_snow = min(o_one, sum(snowW) / CoverParam)
+    frac_snow = min(o_one, sum(snowW) / snow_cover_param)
 
     ## pack land variables
-    @pack_land frac_snow => land.states
+    @pack_nt frac_snow ⇒ land.states
     return land
 end
 

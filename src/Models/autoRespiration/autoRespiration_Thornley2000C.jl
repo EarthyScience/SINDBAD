@@ -8,46 +8,47 @@ export autoRespiration_Thornley2000C
 end
 #! format: on
 
-function define(p_struct::autoRespiration_Thornley2000C, forcing, land, helpers)
-    @unpack_land begin
-        cEco ∈ land.pools
+function define(params::autoRespiration_Thornley2000C, forcing, land, helpers)
+    @unpack_nt begin
+        cEco ⇐ land.pools
     end
-    c_eco_efflux = zero(land.pools.cEco)
-    k_respiration_maintain = one.(land.pools.cEco)
-    k_respiration_maintain_su = one.(land.pools.cEco)
-    auto_respiration_growth = zero(land.pools.cEco)
-    auto_respiration_maintain = zero(land.pools.cEco)
-    Fd = one.(land.pools.cEco)
+    c_eco_efflux = zero(cEco)
+    k_respiration_maintain = one.(cEco)
+    k_respiration_maintain_su = one.(cEco)
+    auto_respiration_growth = zero(cEco)
+    auto_respiration_maintain = zero(cEco)
+    Fd = one.(cEco)
 
     ## pack land variables
-    @pack_land begin
-        (k_respiration_maintain, k_respiration_maintain_su, Fd) => land.autoRespiration
-        (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) => land.states
+    @pack_nt begin
+        (k_respiration_maintain, k_respiration_maintain_su, Fd) ⇒ land.diagnostics
+        (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) ⇒ land.fluxes
     end
     return land
 end
 
-function compute(p_struct::autoRespiration_Thornley2000C, forcing, land, helpers)
+function compute(params::autoRespiration_Thornley2000C, forcing, land, helpers)
     ## unpack parameters
-    @unpack_autoRespiration_Thornley2000C p_struct
+    @unpack_autoRespiration_Thornley2000C params
 
     ## unpack land variables
-    @unpack_land begin
-        (k_respiration_maintain, k_respiration_maintain_su, Fd) ∈ land.autoRespiration
-        (c_allocation, c_eco_efflux, auto_respiration_growth, auto_respiration_maintain) ∈ land.states
-        cEco ∈ land.pools
-        gpp ∈ land.fluxes
-        C_to_N_cVeg ∈ land.cCycleBase
-        auto_respiration_f_airT ∈ land.autoRespirationAirT
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        (k_respiration_maintain, k_respiration_maintain_su, Fd) ⇐ land.diagnostics
+        (c_eco_efflux, auto_respiration_growth, auto_respiration_maintain) ⇐ land.fluxes
+        (cEco, cVeg) ⇐ land.pools
+        gpp ⇐ land.fluxes
+        C_to_N_cVeg ⇐ land.diagnostics
+        cVegZix = cVeg ⇐ helpers.pools.zix
+        (auto_respiration_f_airT, c_allocation) ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
     # adjust nitrogen efficiency rate of maintenance respiration to the current
     # model time step
     RMN = RMN / helpers.dates.timesteps_in_day
-    zix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    zix = getZix(cVeg, cVegZix)
     for ix ∈ zix
 
-        @rep_elem MTF => (Fd, ix, :cEco)
+        @rep_elem MTF ⇒ (Fd, ix, :cEco)
 
         # compute maintenance & growth respiration terms for each vegetation pool
         # according to MODEL C - growth; degradation & resynthesis view of
@@ -74,16 +75,16 @@ function compute(p_struct::autoRespiration_Thornley2000C, forcing, land, helpers
 
         # total respiration per pool: R_a = R_m + R_g
         cEcoEfflux_ix = RA_M_ix + RA_G_ix
-        @rep_elem cEcoEfflux_ix => (c_eco_efflux, ix, :cEco)
-        @rep_elem k_respiration_maintain_ix => (k_respiration_maintain, ix, :cEco)
-        @rep_elem k_respiration_maintain_su_ix => (k_respiration_maintain_su, ix, :cEco)
-        @rep_elem RA_M_ix => (auto_respiration_maintain, ix, :cEco)
-        @rep_elem RA_G_ix => (auto_respiration_growth, ix, :cEco)
+        @rep_elem cEcoEfflux_ix ⇒ (c_eco_efflux, ix, :cEco)
+        @rep_elem k_respiration_maintain_ix ⇒ (k_respiration_maintain, ix, :cEco)
+        @rep_elem k_respiration_maintain_su_ix ⇒ (k_respiration_maintain_su, ix, :cEco)
+        @rep_elem RA_M_ix ⇒ (auto_respiration_maintain, ix, :cEco)
+        @rep_elem RA_G_ix ⇒ (auto_respiration_growth, ix, :cEco)
     end
     ## pack land variables
-    @pack_land begin
-        (k_respiration_maintain, k_respiration_maintain_su) => land.autoRespiration
-        (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) => land.states
+    @pack_nt begin
+        (k_respiration_maintain, k_respiration_maintain_su) ⇒ land.diagnostics
+        (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) ⇒ land.fluxes
     end
     return land
 end
@@ -101,10 +102,10 @@ Determine growth and maintenance respiration using autoRespiration_Thornley2000C
 
 *Inputs*
  - info.timeScale.stepsPerDay: number of time steps per day
- - land.autoRespirationAirT.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
- - land.cCycleBase.C_to_N_cVeg: carbon to nitrogen ratio [gC.gN-1]
- - land.states.c_allocation: carbon allocation []
- - land.pools.cEco: ecosystem carbon pools [gC.m2]
+ - land.diagnostics.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
+ - land.diagnostics.C_to_N_cVeg: carbon to nitrogen ratio [gC.gN-1]
+ - land.diagnostics.c_allocation: carbon allocation []
+ - cEco: ecosystem carbon pools [gC.m2]
  - land.fluxes.gpp: gross primary productivity [gC.m2.δT-1]
 
 *Outputs*

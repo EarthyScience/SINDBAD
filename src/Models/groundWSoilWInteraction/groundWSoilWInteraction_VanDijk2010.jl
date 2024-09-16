@@ -6,35 +6,35 @@ export groundWSoilWInteraction_VanDijk2010
 end
 #! format: on
 
-function define(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+function define(params::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
     ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
-    gw_recharge = land.wCycleBase.z_zero
+    @unpack_groundWSoilWInteraction_VanDijk2010 params
+    gw_recharge = zero(max_fraction)
     ## pack land variables
-    @pack_land gw_recharge => land.fluxes
+    @pack_nt gw_recharge ⇒ land.fluxes
     return land
 end
 
-function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+function compute(params::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWSoilWInteraction_VanDijk2010 p_struct
+    @unpack_groundWSoilWInteraction_VanDijk2010 params
 
     ## unpack land variables
-    @unpack_land begin
-        (soil_kFC, kSat, wSat) ∈ land.soilWBase
-        (groundW, soilW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
-        unsat_k_model ∈ land.soilProperties
-        (z_zero, o_one) ∈ land.wCycleBase
-        n_groundW ∈ land.wCycleBase
-        gw_recharge ∈ land.fluxes
+    @unpack_nt begin
+        (kFC, kSat, wSat) ⇐ land.properties
+        (ΔsoilW, ΔgroundW, groundW, soilW) ⇐ land.pools
+        unsat_k_model ⇐ land.models
+        (z_zero, o_one) ⇐ land.constants
+        n_groundW ⇐ land.constants
+        gw_recharge ⇐ land.fluxes
     end
 
     # calculate recharge
     # degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
     dosSoilend = clampZeroOne((soilW[end] + ΔsoilW[end]) / wSat[end])
     k_sat = kSat[end] # assume GW is saturated
-    k_fc = soil_kFC[end] # assume GW is saturated
-    k_unsat = unsatK(land, helpers, lastindex(land.pools.soilW), unsat_k_model)
+    k_fc = kFC[end] # assume GW is saturated
+    k_unsat = unsatK(land, helpers, lastindex(soilW), unsat_k_model)
 
     # get the capillary flux
     c_flux = sqrt(k_unsat * k_sat) * (o_one - dosSoilend)
@@ -43,25 +43,25 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
 
     # adjust the delta storages
     ΔgroundW = addToEachElem(ΔgroundW, -gw_capillary_flux / n_groundW)
-    @add_to_elem gw_capillary_flux => (ΔsoilW, lastindex(ΔsoilW), :soilW)
+    @add_to_elem gw_capillary_flux ⇒ (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     # adjust the gw_recharge as net flux between soil and groundwater. positive from soil to gw
     gw_recharge = gw_recharge - gw_capillary_flux
 
     ## pack land variables
-    @pack_land begin
-        (gw_capillary_flux, gw_recharge) => land.fluxes
-        (ΔsoilW, ΔgroundW) => land.states
+    @pack_nt begin
+        (gw_capillary_flux, gw_recharge) ⇒ land.fluxes
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+function update(params::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
     ## unpack variables
-    @unpack_land begin
-        (soilW, groundW) ∈ land.pools
-        (ΔsoilW, ΔgroundW) ∈ land.states
+    @unpack_nt begin
+        (soilW, groundW) ⇐ land.pools
+        (ΔsoilW, ΔgroundW) ⇐ land.states
     end
 
     ## update storage pools
@@ -73,9 +73,8 @@ function update(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, he
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     ## pack land variables
-    @pack_land begin
-        (groundW, soilW) => land.pools
-        (ΔsoilW, ΔgroundW) => land.states
+    @pack_nt begin
+        (soilW, ΔsoilW, groundW, ΔgroundW) ⇒ land.pools
     end
     return land
 end
@@ -89,7 +88,7 @@ calculates the upward flow of water from groundwater to lowermost soil layer usi
 Groundwater soil moisture interactions (capilary flux) using groundWSoilWInteraction_VanDijk2010
 
 *Inputs*
- - land.pools.soilW: soil moisture in different layers
+ - soilW: soil moisture in different layers
  - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
 
 *Outputs*
@@ -101,8 +100,8 @@ Groundwater soil moisture interactions (capilary flux) using groundWSoilWInterac
 update pools and states in groundWSoilWInteraction_VanDijk2010
 
  - land.fluxes.gw_recharge
- - land.pools.groundW[1]
- - land.pools.soilW
+ - groundW[1]
+ - soilW
 
 ---
 

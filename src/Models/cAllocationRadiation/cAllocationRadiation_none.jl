@@ -2,13 +2,14 @@ export cAllocationRadiation_none
 
 struct cAllocationRadiation_none <: cAllocationRadiation end
 
-function define(p_struct::cAllocationRadiation_none, forcing, land, helpers)
+function define(params::cAllocationRadiation_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    c_allocation_f_cloud = one(first(land.pools.cEco))
+    c_allocation_f_cloud = one(first(cEco))
 
     ## pack land variables
-    @pack_land c_allocation_f_cloud => land.cAllocationRadiation
+    @pack_nt c_allocation_f_cloud ⇒ land.diagnostics
     return land
 end
 
@@ -20,7 +21,7 @@ sets the radiation effect on allocation to one (no effect)
 *Inputs*
 
 *Outputs*
-- land.Radiation.c_allocation_f_cloud: radiation effect on cAllocation (0-1)
+- land.diagnostics.c_allocation_f_cloud: radiation effect on cAllocation (0-1)
 
 
 ---

@@ -2,45 +2,45 @@ export runoffBase_Zhang2008
 
 #! format: off
 @bounds @describe @units @with_kw struct runoffBase_Zhang2008{T1} <: runoffBase
-    bc::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
+    k_baseflow::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
 end
 #! format: on
 
 
-function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
+function compute(params::runoffBase_Zhang2008, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffBase_Zhang2008 p_struct
+    @unpack_runoffBase_Zhang2008 params
 
     ## unpack land variables
-    @unpack_land begin
-        groundW ∈ land.pools
-        ΔgroundW ∈ land.states
-        n_groundW ∈ land.wCycleBase
+    @unpack_nt begin
+        groundW ⇐ land.pools
+        ΔgroundW ⇐ land.pools
+        n_groundW ⇐ land.constants
     end
 
     ## calculate variables
     # simply assume that a fraction of the GWstorage is baseflow
-    base_runoff = bc * totalS(groundW, ΔgroundW)
+    base_runoff = k_baseflow * totalS(groundW, ΔgroundW)
 
     # update groundwater changes
 
     ΔgroundW = addToEachElem(ΔgroundW, -base_runoff / n_groundW)
 
     ## pack land variables
-    @pack_land begin
-        base_runoff => land.fluxes
-        ΔgroundW => land.states
+    @pack_nt begin
+        base_runoff ⇒ land.fluxes
+        ΔgroundW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
-    @unpack_runoffBase_Zhang2008 p_struct
+function update(params::runoffBase_Zhang2008, forcing, land, helpers)
+    @unpack_runoffBase_Zhang2008 params
 
     ## unpack variables
-    @unpack_land begin
-        groundW ∈ land.pools
-        ΔgroundW ∈ land.states
+    @unpack_nt begin
+        groundW ⇐ land.pools
+        ΔgroundW ⇐ land.pools
     end
 
     ## update variables
@@ -50,9 +50,9 @@ function update(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
     ΔgroundW .= ΔgroundW .- ΔgroundW
 
     # ## pack land variables
-    # @pack_land begin
-    # 	groundW => land.pools
-    # 	# ΔgroundW => land.states
+    # @pack_nt begin
+    # 	groundW ⇒ land.pools
+    # 	# ΔgroundW ⇒ land.pools
     # end
     return land
 end
