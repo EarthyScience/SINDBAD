@@ -2,13 +2,14 @@ export saturatedFraction_none
 
 struct saturatedFraction_none <: saturatedFraction end
 
-function define(p_struct::saturatedFraction_none, forcing, land, helpers)
+function define(params::saturatedFraction_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
     ## calculate variables
-    satFrac = land.wCycleBase.z_zero
+    satFrac = z_zero
 
     ## pack land variables
-    @pack_land satFrac => land.states
+    @pack_nt satFrac ⇒ land.states
     return land
 end
 

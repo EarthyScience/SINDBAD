@@ -8,14 +8,14 @@ export gppSoilW_Keenan2009
 end
 #! format: on
 
-function compute(p_struct::gppSoilW_Keenan2009, forcing, land, helpers)
+function compute(params::gppSoilW_Keenan2009, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_Keenan2009 p_struct
+    @unpack_gppSoilW_Keenan2009 params
 
     ## unpack land variables
-    @unpack_land begin
-        (sum_wSat, sum_WP) ∈ land.soilWBase
-        soilW ∈ land.pools
+    @unpack_nt begin
+        (sum_wSat, sum_WP) ⇐ land.properties
+        soilW ⇐ land.pools
     end
 
     max_AWC = maxZero(sum_wSat - sum_WP)
@@ -27,7 +27,7 @@ function compute(p_struct::gppSoilW_Keenan2009, forcing, land, helpers)
     gpp_f_soilW = clampZeroOne(smsc)
 
     ## pack land variables
-    @pack_land gpp_f_soilW => land.gppSoilW
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
     return land
 end
 
@@ -44,11 +44,11 @@ Gpp as a function of soilW
 
 *Inputs*
  - land.pools.soilW: values of soil moisture current time step
- - land.soilWBase.wSat: saturation point
- - land.soilWBase.WP: wilting point
+ - land.properties.wSat: saturation point
+ - land.properties.WP: wilting point
 
 *Outputs*
- - land.gppSoilW.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
+ - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
 
 ---
 

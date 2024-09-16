@@ -1,6 +1,5 @@
 export getExperimentInfo
 export getGlobalAttributesForOutCubes
-export getOutputFileInfo
 
 """
     getExperimentInfo(sindbad_experiment::String; replace_info = nothing)
@@ -13,8 +12,8 @@ function getExperimentInfo(sindbad_experiment::String; replace_info=Dict())
 
     @info "getExperimentInfo: setup experiment..."
     info = setupInfo(info)
-    saveInfo(info, info.tem.helpers.run.save_info)
-    setDebugErrorCatcher(info.tem.helpers.run.catch_model_errors)
+    saveInfo(info, info.helpers.run.save_info)
+    setDebugErrorCatcher(info.helpers.run.catch_model_errors)
     @info "\n------------------------------------------------\n"
     return info
 end
@@ -38,8 +37,8 @@ function getGlobalAttributesForOutCubes(info)
     # sindbad_version = String(take!(io))
     global_attr = Dict(
         "simulation_by" => ENV["USER"],
-        "experiment" => info.experiment.basics.name,
-        "domain" => info.experiment.basics.domain,
+        "experiment" => info.temp.experiment.basics.name,
+        "domain" => info.temp.experiment.basics.domain,
         "date" => string(Date(now())),
         # "SINDBAD" => sindbad_version,
         "machine" => Sys.MACHINE,
@@ -51,22 +50,9 @@ function getGlobalAttributesForOutCubes(info)
 end
 
 
-"""
-    getOutputFileInfo(info)
-
-
-"""
-function getOutputFileInfo(info)
-    global_metadata = getGlobalAttributesForOutCubes(info)
-    file_prefix = joinpath(info.output.data, info.experiment.basics.name * "_" * info.experiment.basics.domain)
-    out_file_info = (; global_metadata=global_metadata, file_prefix=file_prefix)
-    return out_file_info
-end
-
-
 function saveInfo(info, ::DoSaveInfo)
     @info "  saveInfo: saving info..."
-    @save joinpath(info.tem.helpers.output.settings, "info.jld2") info
+    @save joinpath(info.output.dirs.settings, "info.jld2") info
     return nothing
 end
 

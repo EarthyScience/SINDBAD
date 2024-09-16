@@ -6,35 +6,35 @@ export evaporation_Snyder2000
     β::T2 = 3.0 | (1.0, 5.0) | "soil moisture resistance factor for soil evapotranspiration" | "mm^0.5"
 end
 #! format: on
-function define(p_struct::evaporation_Snyder2000, forcing, land, helpers)
+function define(params::evaporation_Snyder2000, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_Snyder2000 p_struct
+    @unpack_evaporation_Snyder2000 params
 
     ## unpack land variables
-    @unpack_land z_zero ∈ land.wCycleBase
+    @unpack_nt z_zero ⇐ land.constants
 
     sPET_prev = z_zero
 
     ## pack land variables
-    @pack_land begin
-        sPET_prev => land.fluxes
+    @pack_nt begin
+        sPET_prev ⇒ land.fluxes
     end
     return land
 end
 
-function compute(p_struct::evaporation_Snyder2000, forcing, land, helpers)
+function compute(params::evaporation_Snyder2000, forcing, land, helpers)
     #@needscheck
     ## unpack parameters
-    @unpack_evaporation_Snyder2000 p_struct
+    @unpack_evaporation_Snyder2000 params
 
     ## unpack land variables
-    @unpack_land begin
-        fAPAR ∈ land.states
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        PET ∈ land.fluxes
-        sPET_prev ∈ land.fluxes
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        fAPAR ⇐ land.states
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        PET ⇐ land.fluxes
+        sPET_prev ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
     end
     # set the PET and ET values as precomputation; because they are needed in the first time step & updated every time
     PET = PET * α * (o_one - fAPAR)
@@ -56,28 +56,28 @@ function compute(p_struct::evaporation_Snyder2000, forcing, land, helpers)
     evaporation = min(ETsoil, soilWAvail)
 
     # update soil moisture changes
-    @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
+    @add_to_elem -evaporation ⇒ (ΔsoilW, 1, :soilW)
 
     # storing the ET & PET of the current time step
     sPET_prev = sPET
     sET = isdry * (sET + ET)
 
     ## pack land variables
-    @pack_land begin
-        (sET, sPET_prev) => land.fluxes
-        evaporation => land.fluxes
-        ΔsoilW => land.states
+    @pack_nt begin
+        (sET, sPET_prev) ⇒ land.fluxes
+        evaporation ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::evaporation_Snyder2000, forcing, land, helpers)
-    @unpack_evaporation_bareFraction p_struct
+function update(params::evaporation_Snyder2000, forcing, land, helpers)
+    @unpack_evaporation_bareFraction params
 
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -88,9 +88,9 @@ function update(p_struct::evaporation_Snyder2000, forcing, land, helpers)
     ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
     ## pack land variables
-    @pack_land begin
-        soilW => land.pools
-        # ΔsoilW => land.states
+    @pack_nt begin
+        soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
     end
     return land
 end

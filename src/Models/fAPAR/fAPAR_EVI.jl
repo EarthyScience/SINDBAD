@@ -7,18 +7,18 @@ export fAPAR_EVI
 end
 #! format: on
 
-function compute(p_struct::fAPAR_EVI, forcing, land, helpers)
-    @unpack_fAPAR_EVI p_struct
+function compute(params::fAPAR_EVI, forcing, land, helpers)
+    @unpack_fAPAR_EVI params
 
     ## unpack land variables
-    @unpack_land EVI ∈ land.states
+    @unpack_nt EVI ⇐ land.states
 
     ## calculate variables
     fAPAR = EVI_to_fAPAR_m * EVI + EVI_to_fAPAR_c
     fAPAR = clampZeroOne(fAPAR)
 
     ## pack land variables
-    @pack_land fAPAR => land.states
+    @pack_nt fAPAR ⇒ land.states
     return land
 end
 

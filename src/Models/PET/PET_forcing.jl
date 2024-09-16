@@ -2,13 +2,13 @@ export PET_forcing
 
 struct PET_forcing <: PET end
 
-function compute(p_struct::PET_forcing, forcing, land, helpers)
+function compute(params::PET_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing f_PET ∈ forcing
+    @unpack_nt f_PET ⇐ forcing
 
     PET = f_PET
     ## pack land variables
-    @pack_land PET => land.fluxes
+    @pack_nt PET ⇒ land.fluxes
     return land
 end
 

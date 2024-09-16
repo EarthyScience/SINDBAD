@@ -6,31 +6,35 @@ export cAllocationSoilW_gppGSI
 end
 #! format: on
 
-function define(p_struct::cAllocationSoilW_gppGSI, forcing, land, helpers)
-    f_soilW_prev = sum(land.pools.soilW) / land.soilWBase.sum_wSat
+function define(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        sum_wSat ⇐ land.properties
+    end
+    c_allocation_f_soilW_prev = sum(soilW) / sum_wSat
 
     ## pack land variables
-    @pack_land f_soilW_prev => land.cAllocationSoilW
+    @pack_nt c_allocation_f_soilW_prev ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::cAllocationSoilW_gppGSI, forcing, land, helpers)
+function compute(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilW_gppGSI p_struct
+    @unpack_cAllocationSoilW_gppGSI params
 
     ## unpack land variables
-    @unpack_land begin
-        gpp_f_soilW ∈ land.gppSoilW
-        f_soilW_prev ∈ land.cAllocationSoilW
+    @unpack_nt begin
+        gpp_f_soilW ⇐ land.diagnostics
+        c_allocation_f_soilW_prev ⇐ land.diagnostics
     end
     # computation for the moisture effect on decomposition/mineralization
-    c_allocation_f_soilW = f_soilW_prev + (gpp_f_soilW - f_soilW_prev) * τ_soilW
+    c_allocation_f_soilW = c_allocation_f_soilW_prev + (gpp_f_soilW - c_allocation_f_soilW_prev) * τ_soilW
 
     # set the prev
-    f_soilW_prev = c_allocation_f_soilW
+    c_allocation_f_soilW_prev = c_allocation_f_soilW
 
     ## pack land variables
-    @pack_land (c_allocation_f_soilW, f_soilW_prev) => land.cAllocationSoilW
+    @pack_nt (c_allocation_f_soilW, c_allocation_f_soilW_prev) ⇒ land.diagnostics
     return land
 end
 
@@ -45,11 +49,11 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - land.cAllocationSoilW.f_soilW_prev: moisture stressor from previous time step
- - land.gppSoilW.gpp_f_soilW: moisture stressors on GPP
+ - land.diagnostics.f_soilW_prev: moisture stressor from previous time step
+ - land.diagnostics.gpp_f_soilW: moisture stressors on GPP
 
 *Outputs*
- - land.cAllocationSoilW.c_allocation_f_soilW: moisture effect on allocation
+ - land.diagnostics.c_allocation_f_soilW: moisture effect on allocation
 
 ---
 

@@ -10,49 +10,50 @@ export cTauSoilW_GSI
 end
 #! format: on
 
-function define(p_struct::cTauSoilW_GSI, forcing, land, helpers)
-    @unpack_cTauSoilW_GSI p_struct
+function define(params::cTauSoilW_GSI, forcing, land, helpers)
+    @unpack_cTauSoilW_GSI params
+    @unpack_nt cEco ⇐ land.pools
 
     ## instantiate variables
-    c_eco_k_f_soilW = one.(land.pools.cEco)
+    c_eco_k_f_soilW = one.(cEco)
 
     ## pack land variables
-    @pack_land c_eco_k_f_soilW => land.cTauSoilW
+    @pack_nt c_eco_k_f_soilW ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
+function compute(params::cTauSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauSoilW_GSI p_struct
+    @unpack_cTauSoilW_GSI params
 
     ## unpack land variables
-    @unpack_land c_eco_k_f_soilW ∈ land.cTauSoilW
+    @unpack_nt c_eco_k_f_soilW ⇐ land.diagnostics
 
     ## unpack land variables
-    @unpack_land begin
-        wSat ∈ land.soilWBase
-        soilW ∈ land.pools
+    @unpack_nt begin
+        wSat ⇐ land.properties
+        (cEco, cLit, cSoil, soilW) ⇐ land.pools
     end
     w_one = one(eltype(soilW))
     ## for the litter pools; only use the top layer"s moisture
     soilW_top = min(frac_to_perc * soilW[1] / wSat[1], frac_to_perc)
     soilW_top_sc = fSoilW_cTau(w_one, opt_soilW_A, opt_soilW_B, w_exp, opt_soilW, soilW_top)
-    cLitZix = getZix(land.pools.cLit, helpers.pools.zix.cLit)
+    cLitZix = getZix(cLit, helpers.pools.zix.cLit)
     for l_zix ∈ cLitZix
-        @rep_elem soilW_top_sc => (c_eco_k_f_soilW, l_zix, :cEco)
+        @rep_elem soilW_top_sc ⇒ (c_eco_k_f_soilW, l_zix, :cEco)
     end
 
     ## repeat for the soil pools; using all soil moisture layers
     soilW_all = min(frac_to_perc * sum(soilW) / sum(wSat), frac_to_perc)
     soilW_all_sc = fSoilW_cTau(w_one, opt_soilW_A, opt_soilW_B, w_exp, opt_soilW, soilW_all)
 
-    cSoilZix = getZix(land.pools.cSoil, helpers.pools.zix.cSoil)
+    cSoilZix = getZix(cSoil, helpers.pools.zix.cSoil)
     for s_zix ∈ cSoilZix
-        @rep_elem soilW_all_sc => (c_eco_k_f_soilW, s_zix, :cEco)
+        @rep_elem soilW_all_sc ⇒ (c_eco_k_f_soilW, s_zix, :cEco)
     end
 
     ## pack land variables
-    @pack_land c_eco_k_f_soilW => land.cTauSoilW
+    @pack_nt c_eco_k_f_soilW ⇒ land.diagnostics
     return land
 end
 
@@ -84,10 +85,10 @@ $(SindbadParameters)
 Effect of soil moisture on decomposition rates using cTauSoilW_GSI
 
 *Inputs*
- - land.pools.soilW: soil temperature
+ - soilW: soil temperature
 
 *Outputs*
- - land.cTauSoilW.c_eco_k_f_soilW: effect of moisture on cTau for different pools
+ - land.diagnostics.c_eco_k_f_soilW: effect of moisture on cTau for different pools
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauSoilW_GSI

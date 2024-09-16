@@ -6,30 +6,30 @@ export runoffSurface_Orth2013
 end
 #! format: on
 
-function define(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
-    @unpack_runoffSurface_Orth2013 p_struct
+function define(params::runoffSurface_Orth2013, forcing, land, helpers)
+    @unpack_runoffSurface_Orth2013 params
 
     ## instantiate variables
     z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60) + 1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
     Rdelay = z / (sum(z) * ones(1, 61))
 
     ## pack land variables
-    @pack_land (z, Rdelay) => land.surface_runoff
+    @pack_nt (z, Rdelay) ⇒ land.surface_runoff
     return land
 end
 
-function compute(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
+function compute(params::runoffSurface_Orth2013, forcing, land, helpers)
     #@needscheck and redo
     ## unpack parameters
-    @unpack_runoffSurface_Orth2013 p_struct
+    @unpack_runoffSurface_Orth2013 params
 
     ## unpack land variables
-    @unpack_land (z, Rdelay) ∈ land.surface_runoff
+    @unpack_nt (z, Rdelay) ⇐ land.surface_runoff
 
     ## unpack land variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        overland_runoff ∈ land.fluxes
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        overland_runoff ⇐ land.fluxes
     end
     # calculate delay function of previous days
     # calculate Q from delay of previous days
@@ -42,20 +42,20 @@ function compute(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
     # update the water pool
 
     ## pack land variables
-    @pack_land begin
-        surface_runoff => land.fluxes
-        Rdelay => land.surface_runoff
+    @pack_nt begin
+        surface_runoff ⇒ land.fluxes
+        Rdelay ⇒ land.surface_runoff
     end
     return land
 end
 
-function update(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
-    @unpack_runoffSurface_Orth2013 p_struct
+function update(params::runoffSurface_Orth2013, forcing, land, helpers)
+    @unpack_runoffSurface_Orth2013 params
 
     ## unpack variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.states
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
     end
 
     ## update storage pools
@@ -65,9 +65,9 @@ function update(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
     ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
     ## pack land variables
-    @pack_land begin
-        surfaceW => land.pools
-        ΔsurfaceW => land.states
+    @pack_nt begin
+        surfaceW ⇒ land.pools
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end

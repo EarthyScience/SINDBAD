@@ -6,15 +6,15 @@ export rainSnow_forcing
 end
 #! format: on
 
-function compute(p_struct::rainSnow_forcing, forcing, land, helpers)
+function compute(params::rainSnow_forcing, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_rainSnow_forcing p_struct
-    @unpack_forcing (f_rain, f_snow) ∈ forcing
+    @unpack_rainSnow_forcing params
+    @unpack_nt (f_rain, f_snow) ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
 
     ## calculate variables
@@ -26,18 +26,18 @@ function compute(p_struct::rainSnow_forcing, forcing, land, helpers)
     ΔsnowW[1] = ΔsnowW[1] + snow
 
     ## pack land variables
-    @pack_land begin
-        (precip, rain, snow) => land.fluxes
-        ΔsnowW => land.states
+    @pack_nt begin
+        (precip, rain, snow) ⇒ land.fluxes
+        ΔsnowW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::rainSnow_forcing, forcing, land, helpers)
+function update(params::rainSnow_forcing, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
     # update snow pack
     snowW[1] = snowW[1] + ΔsnowW[1]
@@ -46,9 +46,9 @@ function update(p_struct::rainSnow_forcing, forcing, land, helpers)
     ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
 
     ## pack land variables
-    @pack_land begin
-        snowW => land.pools
-        ΔsnowW => land.states
+    @pack_nt begin
+        snowW ⇒ land.pools
+        ΔsnowW ⇒ land.pools
     end
     return land
 end

@@ -8,19 +8,19 @@ export runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
 end
 #! format: on
 
-function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land, helpers)
+function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
-    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionFroSoil p_struct
-    @unpack_forcing frac_frozen_soil ∈ forcing
+    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionFroSoil params
+    @unpack_nt frac_frozen_soil ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        (WBP, frac_vegetation) ∈ land.states
-        wSat ∈ land.soilWBase
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_nt begin
+        (WBP, frac_vegetation) ⇐ land.states
+        wSat ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        (z_zero, o_one) ⇐ land.constants
     end
 
     # scale the input frozen soil fraction; maximum is 1
@@ -39,10 +39,10 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionFroSo
     WBP = WBP - sat_excess_runoff
 
     ## pack land variables
-    @pack_land begin
-        sat_excess_runoff => land.fluxes
-        (frac_frozen, β_veg) => land.runoffSaturationExcess
-        WBP => land.states
+    @pack_nt begin
+        sat_excess_runoff ⇒ land.fluxes
+        (frac_frozen, β_veg) ⇒ land.runoffSaturationExcess
+        WBP ⇒ land.states
     end
     return land
 end

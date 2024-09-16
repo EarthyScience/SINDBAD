@@ -6,20 +6,20 @@ export vegFraction_scaledNIRv
 end
 #! format: on
 
-function compute(p_struct::vegFraction_scaledNIRv, forcing, land, helpers)
+function compute(params::vegFraction_scaledNIRv, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledNIRv p_struct
+    @unpack_vegFraction_scaledNIRv params
 
     ## unpack land variables
-    @unpack_land begin
-        NIRv ∈ land.states
+    @unpack_nt begin
+        NIRv ⇐ land.states
     end
 
     ## calculate variables
     frac_vegetation = clampZeroOne(NIRv * NIRvscale)
 
     ## pack land variables
-    @pack_land frac_vegetation => land.states
+    @pack_nt frac_vegetation ⇒ land.states
     return land
 end
 

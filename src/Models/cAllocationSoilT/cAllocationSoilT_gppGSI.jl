@@ -6,35 +6,37 @@ export cAllocationSoilT_gppGSI
 end
 #! format: on
 
-function define(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
+function define(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
+    @unpack_nt o_one ⇐ land.constants
+
     ## unpack parameters
-    @unpack_cAllocationSoilT_gppGSI p_struct
+    @unpack_cAllocationSoilT_gppGSI params
 
     # assume initial prev as one (no stress)
-    f_soilT_prev = land.wCycleBase.o_one
+    c_allocation_f_soilT_prev = o_one
 
-    @pack_land f_soilT_prev => land.cAllocationSoilT
+    @pack_nt c_allocation_f_soilT_prev ⇒ land.diagnostics
     return land
 end
 
-function compute(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
+function compute(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilT_gppGSI p_struct
+    @unpack_cAllocationSoilT_gppGSI params
 
     ## unpack land variables
-    @unpack_land begin
-        gpp_f_airT ∈ land.gppAirT
-        f_soilT_prev ∈ land.cAllocationSoilT
+    @unpack_nt begin
+        gpp_f_airT ⇐ land.diagnostics
+        c_allocation_f_soilT_prev ⇐ land.diagnostics
     end
 
     # computation for the temperature effect on decomposition/mineralization
     c_allocation_f_soilT = f_soilT_prev + (gpp_f_airT - f_soilT_prev) * τ_Tsoil
 
     # set the prev
-    f_soilT_prev = c_allocation_f_soilT
+    c_allocation_f_soilT_prev = c_allocation_f_soilT
 
     ## pack land variables
-    @pack_land (c_allocation_f_soilT, f_soilT_prev) => land.cAllocationSoilT
+    @pack_nt (c_allocation_f_soilT, c_allocation_f_soilT_prev) ⇒ land.diagnostics
     return land
 end
 
@@ -49,11 +51,11 @@ $(SindbadParameters)
 # compute:
 
 *Inputs*
- - land.cAllocationSoilT.f_soilT_prev: temperature stressor from previous time step
- - land.gppAirT.gpp_f_airT: temperature stressors on GPP
+ - land.diagnostics.c_allocation_f_soilT_prev: temperature stressor from previous time step
+ - land.diagnostics.gpp_f_airT: temperature stressors on GPP
 
 *Outputs*
- - land.cAllocationSoilT.c_allocation_f_soilT: temperature effect on decomposition/mineralization (0-1)
+ - land.diagnostics.c_allocation_f_soilT: temperature effect on decomposition/mineralization (0-1)
 
 ---
 

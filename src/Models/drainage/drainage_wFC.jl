@@ -2,27 +2,28 @@ export drainage_wFC
 
 struct drainage_wFC <: drainage end
 
-function define(p_struct::drainage_wFC, forcing, land, helpers)
+function define(params::drainage_wFC, forcing, land, helpers)
     ## instantiate drainage
-    drainage = zero(land.pools.soilW)
+    @unpack_nt soilW ⇐ land.pools
+    drainage = zero(soilW)
     ## pack land variables
-    @pack_land drainage => land.fluxes
+    @pack_nt drainage ⇒ land.fluxes
     return land
 end
 
-function compute(p_struct::drainage_wFC, forcing, land, helpers)
+function compute(params::drainage_wFC, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        drainage ∈ land.fluxes
-        (p_nsoilLayers, wFC) ∈ land.soilWBase
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        z_zero ∈ land.wCycleBase
+    @unpack_nt begin
+        drainage ⇐ land.fluxes
+        (p_nsoilLayers, wFC) ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        z_zero ⇐ land.constants
     end
 
     ## calculate drainage
-    for sl ∈ 1:(length(land.pools.soilW)-1)
+    for sl ∈ 1:(length(soilW)-1)
         holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         lossCap = soilW[sl] + ΔsoilW[sl]
         drainage[sl] = maxZero(soilW[sl] + ΔsoilW[sl] - wFC[sl])
@@ -32,18 +33,18 @@ function compute(p_struct::drainage_wFC, forcing, land, helpers)
     end
 
     ## pack land variables
-    # @pack_land begin
-    # 	drainage => land.fluxes
-    # 	# ΔsoilW => land.states
+    # @pack_nt begin
+    # 	drainage ⇒ land.fluxes
+    # 	# ΔsoilW ⇒ land.pools
     # end
     return land
 end
 
-function update(p_struct::drainage_wFC, forcing, land, helpers)
+function update(params::drainage_wFC, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
     end
 
     ## update variables
@@ -54,9 +55,9 @@ function update(p_struct::drainage_wFC, forcing, land, helpers)
     ΔsoilW .= ΔsoilW .- ΔsoilW
 
     ## pack land variables
-    @pack_land begin
-        # soilW => land.pools
-        # ΔsoilW => land.states
+    @pack_nt begin
+        # soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
     end
     return land
 end
@@ -71,7 +72,7 @@ Recharge the soil using drainage_wFC
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilWBase.wFC: field capacity of soil in mm
+ - land.properties.wFC: field capacity of soil in mm
  - land.states.WBP amount of water that can potentially drain
 
 *Outputs*

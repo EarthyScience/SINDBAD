@@ -2,36 +2,36 @@ export vegAvailableWater_rootWaterEfficiency
 
 struct vegAvailableWater_rootWaterEfficiency <: vegAvailableWater end
 
-function define(p_struct::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
+function define(params::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        soilW ∈ land.pools
+    @unpack_nt begin
+        soilW ⇐ land.pools
     end
 
     PAW = zero(soilW)
 
     ## pack land variables
-    @pack_land PAW => land.states
+    @pack_nt PAW ⇒ land.states
     return land
 end
 
-function compute(p_struct::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
+function compute(params::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        wWP ∈ land.soilWBase
-        root_water_efficiency ∈ land.states
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
-        PAW ∈ land.states
+    @unpack_nt begin
+        wWP ⇐ land.properties
+        root_water_efficiency ⇐ land.diagnostics
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        PAW ⇐ land.states
     end
     for sl ∈ eachindex(soilW)
         PAW_sl = root_water_efficiency[sl] * (maxZero(soilW[sl] + ΔsoilW[sl] - wWP[sl]))
-        @rep_elem PAW_sl => (PAW, sl, :soilW)
+        @rep_elem PAW_sl ⇒ (PAW, sl, :soilW)
     end
 
-    @pack_land PAW => land.states
+    @pack_nt PAW ⇒ land.states
     return land
 end
 
@@ -45,8 +45,6 @@ Plant available water using vegAvailableWater_rootWaterEfficiency
 
 *Inputs*
  - land.pools.soilW
- - land.rootWaterEfficiency.constant_root_water_efficiency
- - land.states.maxRootD
 
 *Outputs*
  - land.states.root_water_efficiency

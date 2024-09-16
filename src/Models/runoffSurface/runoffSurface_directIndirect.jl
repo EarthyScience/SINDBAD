@@ -7,17 +7,17 @@ export runoffSurface_directIndirect
 end
 #! format: on
 
-function compute(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
+function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffSurface_directIndirect p_struct
+    @unpack_runoffSurface_directIndirect params
 
     ## unpack land variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.states
-        overland_runoff ∈ land.fluxes
-        (z_zero, o_one) ∈ land.wCycleBase
-        n_surfaceW ∈ land.wCycleBase
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
+        overland_runoff ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
+        n_surfaceW ⇐ land.constants
     end
     # fraction of overland runoff that recharges the surface water & the
     # fraction that flows out directly
@@ -31,24 +31,24 @@ function compute(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
     surface_runoff = surface_runoff_direct + surface_runoff_indirect
 
     # update the delta storage
-    @add_to_elem suw_recharge => (ΔsurfaceW, 1, :surfaceW) # assumes all the recharge supplies the first surface water layer
+    @add_to_elem suw_recharge ⇒ (ΔsurfaceW, 1, :surfaceW) # assumes all the recharge supplies the first surface water layer
     ΔsurfaceW = addToEachElem(ΔsurfaceW, - surface_runoff_indirect / n_surfaceW)
 
     ## pack land variables
-    @pack_land begin
-        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) => land.fluxes
-        ΔsurfaceW => land.states
+    @pack_nt begin
+        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) ⇒ land.fluxes
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end
 
-function update(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
-    @unpack_runoffSurface_directIndirect p_struct
+function update(params::runoffSurface_directIndirect, forcing, land, helpers)
+    @unpack_runoffSurface_directIndirect params
 
     ## unpack variables
-    @unpack_land begin
-        surfaceW ∈ land.pools
-        ΔsurfaceW ∈ land.states
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
     end
 
     ## update storage pools
@@ -58,9 +58,9 @@ function update(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
     ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
     ## pack land variables
-    @pack_land begin
-        surfaceW => land.pools
-        ΔsurfaceW => land.states
+    @pack_nt begin
+        surfaceW ⇒ land.pools
+        ΔsurfaceW ⇒ land.pools
     end
     return land
 end
