@@ -17,7 +17,7 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
     ## unpack land variables
     @unpack_nt begin
         (WBP, frac_vegetation) ⇐ land.states
-        wSat ⇐ land.properties
+        w_sat ⇐ land.properties
         soilW ⇐ land.pools
         ΔsoilW ⇐ land.pools
         (z_zero, o_one) ⇐ land.constants
@@ -25,7 +25,7 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
 
     # scale the input frozen soil fraction; maximum is 1
     frac_frozen = minOne(frac_frozen_soil * frozen_frac_scalar)
-    tmp_smax_veg = sum(wSat) * (o_one - frac_frozen + tolerance)
+    tmp_smax_veg = sum(w_sat) * (o_one - frac_frozen + tolerance)
     tmp_soilW_total = sum(soilW + ΔsoilW)
 
     # get the berg parameters according the vegetation fraction

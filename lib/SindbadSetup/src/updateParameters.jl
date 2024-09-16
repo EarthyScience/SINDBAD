@@ -83,7 +83,16 @@ function updateModelParameters(tbl_params::Table, selected_models::Tuple, param_
     return (updatedModels...,)
 end
 
+"""
+    updateModelParameters(param_to_index::NamedTuple, selected_models, param_vector::AbstractArray)
 
+update models/parameters without mutating the table of parameters
+
+# Arguments:
+- `param_to_index`: a NamedTuple matching indices to models
+- `selected_models`: a tuple of all models selected in the given model structure
+- `param_vector`: a vector of parameter values to update the models
+"""
 function updateModelParameters(param_to_index::NamedTuple, selected_models, param_vector::AbstractArray)
     map(selected_models) do model
           modelmap = param_to_index[nameof(typeof(model))]

@@ -10,5 +10,5 @@
 #SBATCH --time=15-00:00:00
 mkdir -p run_logs_cruj
 export JULIA_NUM_THREADS=${SLURM_CPUS_PER_TASK}
-/Net/Groups/Services/HPC_22/apps/julia/julia-1.9.2/bin/julia --project=../exp_distri --heap-size-hint=5G WROASTED_jobarray_cruj.jl
+/Net/Groups/Services/HPC_22/apps/julia/julia-1.10.0/bin/julia --project=../exp_distri --heap-size-hint=5G WROASTED_jobarray_cruj.jl
 # /Net/Groups/BGI/scratch/skoirala/.juliaup/bin/julia --project=../exp_distri --heap-size-hint=2G experiment_WROASTED_jobarray.jl

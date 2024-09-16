@@ -17,7 +17,7 @@ function compute(params::drainage_kUnsat, forcing, land, helpers)
     @unpack_nt begin
         drainage ⇐ land.fluxes
         unsat_k_model ⇐ land.models
-        (wSat, wFC, soil_β, kFC, kSat) ⇐ land.properties
+        (w_sat, w_fc, soil_β, k_fc, k_sat) ⇐ land.properties
         soilW ⇐ land.pools
         ΔsoilW ⇐ land.pools
         (z_zero, o_one) ⇐ land.constants
@@ -26,8 +26,8 @@ function compute(params::drainage_kUnsat, forcing, land, helpers)
 
     ## calculate drainage
     for sl ∈ 1:(length(soilW)-1)
-        holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
-        max_drain = wSat[sl] - wFC[sl]
+        holdCap = w_sat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        max_drain = w_sat[sl] - w_fc[sl]
         lossCap = min(soilW[sl] + ΔsoilW[sl], max_drain)
         k = unsatK(land, helpers, sl, unsat_k_model)
         drain = min(k, holdCap, lossCap)

@@ -111,7 +111,7 @@
         },
         "data": {
           "bounds": [-100.0, 100.0],
-          "data_path": "../data/graf/opt.2d.m.Africa.month.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.month.GRUN_v1_GWP3_WGS84_05_2005_2013.nc",
           "standard_name": "Runoff",
           "sindbad_unit": "mm day-1",
           "source_unit": "mm day-1",

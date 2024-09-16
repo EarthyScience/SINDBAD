@@ -22,18 +22,18 @@ function compute(params::gppSoilW_Stocker2020, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_nt begin
-        (sum_wFC, sum_WP) ⇐ land.properties
+        (∑w_fc, ∑w_wp) ⇐ land.properties
         soilW ⇐ land.pools
         (z_zero, o_one, t_two) ⇐ land.constants
     end
     ## calculate variables
     SM = sum(soilW)
-    max_AWC = maxZero(sum_wFC - sum_WP)
-    actAWC = maxZero(SM - sum_WP)
+    max_AWC = maxZero(∑w_fc - ∑w_wp)
+    actAWC = maxZero(SM - ∑w_wp)
     SM_nor = minOne(actAWC / max_AWC)
     tf_soilW = -q * (SM_nor - θstar)^t_two + o_one
-    c_allocation_f_soilW = SM_nor <= θstar ? tf_soilW : one(tf_soilW)
-    gpp_f_soilW = clampZeroOne(c_allocation_f_soilW)
+    tmp_f_soilW = SM_nor <= θstar ? tf_soilW : one(tf_soilW)
+    gpp_f_soilW = clampZeroOne(tmp_f_soilW)
 
     ## pack land variables
     @pack_nt gpp_f_soilW ⇒ land.diagnostics
@@ -53,8 +53,8 @@ Gpp as a function of soilW; should be set to none if coupled with transpiration 
 
 *Inputs*
  - land.pools.soilW: values of soil moisture current time step
- - land.properties.sum_WP: sum of wilting point
- - land.properties.sum_wFC: sum of field capacity
+ - land.properties.∑w_wp: sum of wilting point
+ - land.properties.∑w_fc: sum of field capacity
 
 *Outputs*
  - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)

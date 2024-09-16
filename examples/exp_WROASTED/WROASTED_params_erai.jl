@@ -22,7 +22,7 @@ if forcing_set == "erai"
     dataset = "ERAinterim.v2"
     begin_year = "1979"
     end_year = "2017"
-    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/ml_wroasted/"
+    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/v202312_ml_wroasted/"
 else
     dataset = "CRUJRA.v2_2"
     begin_year = "1901"
@@ -30,7 +30,7 @@ else
     ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
 end
 ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(begin_year).$(end_year).daily.nc")
-path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/v202311_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
+path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/v202312_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
 path_observation = path_input;
 
 nrepeat = 200
@@ -99,8 +99,8 @@ opti_set = (:set1,)
 optimize_it = false;
 o_set = :set1
 # for o_set in opti_set
-    path_params = "/Net/Groups/BGI/scratch/skoirala/$(exp_main_params)_sjindbad/$(forcing_set)/$(o_set)"
-    path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
+    path_params = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main_params)_sjindbad/$(forcing_set)/$(o_set)"
+    path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
     exp_name_params = "$(exp_main_params)_$(forcing_set)_$(o_set)"
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
     params_file = joinpath(path_params, "$(domain)_$(exp_name_params)", "optimization", "$(exp_name_params)_$(domain)_model_parameters_to_optimize.csv")
@@ -143,7 +143,7 @@ o_set = :set1
 
     varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :nirv => "gpp")
 
-    fig_prefix = joinpath(info.output.dirs.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
+    fig_prefix = joinpath(info.output.dirs.figure, "comparison_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
 
     foreach(costOpt) do var_row
         v = var_row.variable

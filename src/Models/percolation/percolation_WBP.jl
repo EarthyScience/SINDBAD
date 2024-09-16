@@ -10,14 +10,14 @@ function compute(params::percolation_WBP, forcing, land, helpers)
         WBP ⇐ land.states
         (o_one, n_groundW) ⇐ land.constants
         tolerance ⇐ helpers.numbers
-        wSat ⇐ land.properties
+        w_sat ⇐ land.properties
     end
 
     # set WBP as the soil percolation
     percolation = WBP
     to_allocate = o_one * percolation
     for sl ∈ eachindex(land.pools.soilW)
-        allocated = min(wSat[sl] - (soilW[sl] + ΔsoilW[sl]), to_allocate)
+        allocated = min(w_sat[sl] - (soilW[sl] + ΔsoilW[sl]), to_allocate)
         @add_to_elem allocated ⇒ (ΔsoilW, sl, :soilW)
         to_allocate = to_allocate - allocated
     end

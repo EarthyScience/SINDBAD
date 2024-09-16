@@ -18,11 +18,11 @@ function define(params::vegAvailableWater_sigmoid, forcing, land, helpers)
     θ_dos = zero(soilW)
     θ_fc_dos = zero(soilW)
     PAW = zero(soilW)
-    soilWStress = zero(soilW)
-    maxWater = zero(soilW)
+    soilW_stress = zero(soilW)
+    max_water = zero(soilW)
 
     ## pack land variables
-    @pack_nt (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ⇒ land.states
+    @pack_nt (θ_dos, θ_fc_dos, PAW, soilW_stress, max_water) ⇒ land.states
     return land
 end
 
@@ -32,25 +32,25 @@ function compute(params::vegAvailableWater_sigmoid, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_nt begin
-        (wWP, wFC, wSat, soil_β) ⇐ land.properties
+        (w_wp, w_fc, w_sat, soil_β) ⇐ land.properties
         root_water_efficiency ⇐ land.diagnostics
         soilW ⇐ land.pools
         ΔsoilW ⇐ land.pools
-        (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ⇐ land.states
+        (θ_dos, θ_fc_dos, PAW, soilW_stress, max_water) ⇐ land.states
         (z_zero, o_one) ⇐ land.constants
     end
     for sl ∈ eachindex(soilW)
-        θ_dos = (soilW[sl] + ΔsoilW[sl]) / wSat[sl]
-        θ_fc_dos = wFC[sl] / wSat[sl]
-        tmpSoilWStress = clampZeroOne(o_one / (o_one + exp(-exp_factor * soil_β[sl] * (θ_dos - θ_fc_dos))))
-        @rep_elem tmpSoilWStress ⇒ (soilWStress, sl, :soilW)
-        maxWater = clampZeroOne(soilW[sl] + ΔsoilW[sl] - wWP[sl])
-        PAW_sl = root_water_efficiency[sl] * maxWater * tmpSoilWStress
+        θ_dos = (soilW[sl] + ΔsoilW[sl]) / w_sat[sl]
+        θ_fc_dos = w_fc[sl] / w_sat[sl]
+        tmp_soilW_stress = clampZeroOne(o_one / (o_one + exp(-exp_factor * soil_β[sl] * (θ_dos - θ_fc_dos))))
+        @rep_elem tmp_soilW_stress ⇒ (soilW_stress, sl, :soilW)
+        max_water = clampZeroOne(soilW[sl] + ΔsoilW[sl] - w_wp[sl])
+        PAW_sl = root_water_efficiency[sl] * max_water * tmp_soilW_stress
         @rep_elem PAW_sl ⇒ (PAW, sl, :soilW)
     end
 
     ## pack land variables
-    @pack_nt (PAW, soilWStress) ⇒ land.states
+    @pack_nt (PAW, soilW_stress) ⇒ land.states
     return land
 end
 

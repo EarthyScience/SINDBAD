@@ -66,6 +66,44 @@ end
 
 
 """
+    filterNanPixels(forcing, loc_space_maps, ::DoNotFilterNanPixels)
+
+filter all the pixels where every timestep is a nan, i.e., masked out regions
+
+# Arguments:
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `loc_space_maps`: local coordinates of all input points
+- `::DoNotFilterNanPixels`: a type dispatch to not filter all nan only pixels
+"""
+function filterNanPixels(_, loc_space_maps, ::DoNotFilterNanPixels)
+    return loc_space_maps
+end
+
+
+"""
+    filterNanPixels(forcing, loc_space_maps, ::DoFilterNanPixels)
+
+filter all the pixels where every timestep is a nan, i.e., masked out regions
+
+# Arguments:
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `loc_space_maps`: local coordinates of all input points
+- `::DoFilterNanPixels`: a type dispatch to filter all nan only pixels
+"""
+function filterNanPixels(forcing, loc_space_maps, ::DoFilterNanPixels)
+    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
+    allNans = Bool[]
+    for i ∈ eachindex(loc_space_maps)
+        loc_ind = Tuple(last.(loc_space_maps[i]))
+        loc_forcing = getLocDataNT(forcing_nt_array, loc_ind)
+        push!(allNans, all(isnan, loc_forcing[1]))
+    end
+    loc_space_maps = loc_space_maps[allNans.==false]
+    return loc_space_maps
+end
+
+
+"""
     getRunTemInfo(info, forcing)
 
 a helper to condense the useful info only for the inner model runs
@@ -95,21 +133,21 @@ function getRunTemInfo(info, forcing)
     upd_tem_helpers = setTupleField(upd_tem_helpers, (:vals, vals))
     upd_tem_helpers = setTupleField(upd_tem_helpers, (:model_helpers, model_helpers))
     upd_tem_helpers = setTupleField(upd_tem_helpers, (:run, tem_helpers.run))
-    upd_tem_helpers = setTupleField(upd_tem_helpers, (:spinup_sequence, getSpinupTemLite(info.spinup)))
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:spinup_sequence, getSpinupTemLite(info.spinup.sequence)))
 
     return upd_tem_helpers
 end
 
 
 """
-    getSpatialInfo(forcing)
+    getSpatialInfo(forcing, filterNanPixels)
 
 get the information of the indices of the data to run the model for
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 """
-function getSpatialInfo(forcing)
+function getSpatialInfo(forcing, filter_nan_pixels)
     @debug "     getting the space locations to run the model loop"
     forcing_sizes = forcing.helpers.sizes
     loopvars = collect(keys(forcing_sizes))
@@ -122,18 +160,8 @@ function getSpatialInfo(forcing)
         end
     end
     loc_space_maps = Tuple(loc_space_maps)
-
-    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
-
-    allNans = Bool[]
-    for i ∈ eachindex(loc_space_maps)
-        loc_ind = Tuple(last.(loc_space_maps[i]))
-        loc_forcing = getLocForcingData(forcing_nt_array, loc_ind)
-        push!(allNans, all(isnan, loc_forcing[1]))
-    end
-    loc_space_maps = loc_space_maps[allNans.==false]
+    loc_space_maps = filterNanPixels(forcing, loc_space_maps, filter_nan_pixels)
     space_ind = Tuple([Tuple(last.(loc_space_map)) for loc_space_map ∈ loc_space_maps])
-
     return space_ind
 end
 
@@ -145,13 +173,12 @@ end
 a helper to just get the spinup sequence to pass to inner functions
 
 # Arguments:
-- `tem_spinup`: a NT with all spinup information
+- `tem_spinup_sequence`: a NT with all spinup information
 """
-function getSpinupTemLite(tem_spinup)
+function getSpinupTemLite(tem_spinup_sequence)
     newseqs = []
-    for seq in tem_spinup.sequence
+    for seq in tem_spinup_sequence
         ns = (; forcing=seq.forcing, n_repeat= seq.n_repeat, n_timesteps=seq.n_timesteps, spinup_mode=seq.spinup_mode, options=seq.options)
-        # ns = SpinSequence(seq.forcing, seq.n_repeat, seq.n_timesteps, seq.spinup_mode, seq.options)
         push!(newseqs, ns)
     end
     sequence = [_s for _s in newseqs]
@@ -176,7 +203,7 @@ prepare the information and objects needed to run TEM
 function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArray)
 
     @info "     preparing spatial and tem helpers"
-    space_ind = getSpatialInfo(forcing)
+    space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTemInfo(info, forcing);
@@ -186,7 +213,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     @info "     model run for one location and time step"
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
-    loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
+    loc_forcing = getLocDataNT(forcing_nt_array, space_ind[1])
     loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
 
     addErrorCatcher(loc_land, info.helpers.run.debug_model)
@@ -198,14 +225,14 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
     space_forcing = map([space_ind...]) do lsi
-        getLocForcingData(forcing_nt_array, lsi)
+        getLocDataNT(forcing_nt_array, lsi)
     end
     space_spinup_forcing = map(space_forcing) do loc_forcing
         getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
     end
 
     space_output = map([space_ind...]) do lsi
-        getLocOutputData(output_array, lsi)
+        getLocDataArray(output_array, lsi)
     end
 
     space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
@@ -232,7 +259,7 @@ prepare the information and objects needed to run TEM
 function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArrayAll)
 
     @info "     preparing spatial and tem helpers"
-    space_ind = getSpatialInfo(forcing)
+    space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTemInfo(info, forcing);
@@ -241,7 +268,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     @info "     model run for one location and time step"
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
-    loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
+    loc_forcing = getLocDataNT(forcing_nt_array, space_ind[1])
     loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
 
     addErrorCatcher(loc_land, info.helpers.run.debug_model)
@@ -254,14 +281,14 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
     space_forcing = map([space_ind...]) do lsi
-        getLocForcingData(forcing_nt_array, lsi)
+        getLocDataNT(forcing_nt_array, lsi)
     end
     space_spinup_forcing = map(space_forcing) do loc_forcing
         getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
     end
 
     space_output = map([space_ind...]) do lsi
-        getLocOutputData(output_array, lsi)
+        getLocDataArray(output_array, lsi)
     end
 
     space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
@@ -289,7 +316,7 @@ prepare the information and objects needed to run TEM
 function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, ::LandOutArrayFD)
 
     @info "     preparing spatial and tem helpers"
-    space_ind = getSpatialInfo(forcing)
+    space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTemInfo(info, forcing);
@@ -300,7 +327,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     output_array = output.data
-    loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
+    loc_forcing = getLocDataNT(forcing_nt_array, space_ind[1])
     loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
 
     addErrorCatcher(loc_land, info.helpers.run.debug_model)
@@ -308,25 +335,26 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
     space_forcing = map([space_ind...]) do lsi
-        getLocForcingData(forcing_nt_array, lsi)
+        getLocDataNT(forcing_nt_array, lsi)
     end
     
     observations_nt_array = makeNamedTuple(observations.data, observations.variables)
-    loc_observations = map([space_ind...]) do lsi
-        getLocForcingData(observations_nt_array, lsi)
+    space_observation = map([space_ind...]) do lsi
+        getLocDataNT(observations_nt_array, lsi)
     end
+    observations_nt_array = nothing
 
     space_spinup_forcing = map(space_forcing) do loc_forcing
         getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
     end
 
     space_output = map([space_ind...]) do lsi
-        getLocOutputData(output_array, lsi)
+        getLocDataArray(output_array, lsi)
     end
 
     forcing_nt_array = nothing
 
-    run_helpers = (; space_forcing, loc_observations, space_ind, space_spinup_forcing, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_info)
+    run_helpers = (; space_forcing, space_observation, space_ind, space_spinup_forcing, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_info)
 
     return run_helpers
 end
@@ -350,7 +378,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     
     # get the output things
     @info "     preparing spatial and tem helpers"
-    space_ind = getSpatialInfo(forcing)
+    space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTemInfo(info, forcing);
@@ -359,7 +387,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     @info "     model run for one location and time step"
     land_init = output.land_init
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
-    loc_forcing = getLocForcingData(forcing_nt_array, space_ind[1])
+    loc_forcing = getLocDataNT(forcing_nt_array, space_ind[1])
     loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
     addErrorCatcher(loc_land, info.helpers.run.debug_model)
 
@@ -489,13 +517,13 @@ function runTEMOne(selected_models, loc_forcing, land_init, tem)
     loc_forcing_t = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.vals.forcing_types)
     loc_land = definePrecomputeTEM(selected_models, loc_forcing_t, land_init,
         tem.model_helpers)
-    loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
-    loc_land = removeEmptyTupleFields(loc_land)
+    # loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
+    # loc_land = removeEmptyTupleFields(loc_land)
     loc_land = addSpinupLog(loc_land, tem.spinup_sequence, tem.run.store_spinup)
     # loc_land = definePrecomputeTEM(selected_models, loc_forcing_t, loc_land,
         # tem.model_helpers)
-    loc_land = precomputeTEM(selected_models, loc_forcing_t, loc_land,
-        tem.model_helpers)
-    loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
+    # loc_land = precomputeTEM(selected_models, loc_forcing_t, loc_land,
+        # tem.model_helpers)
+    # loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
     return loc_forcing_t, loc_land
 end
