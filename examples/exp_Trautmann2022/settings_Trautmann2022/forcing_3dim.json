@@ -1,7 +1,7 @@
 {
   "data_dimension": {
     "time": "time",
-    "permute": null,
+    "permute": ["time", "lat", "lon"],
     "space": ["lat", "lon"]
   },
   "default_forcing": {

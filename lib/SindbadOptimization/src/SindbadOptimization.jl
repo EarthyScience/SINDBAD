@@ -1,6 +1,7 @@
 module SindbadOptimization
 
     using CMAEvolutionStrategy: minimize, xbest
+    # using BayesOpt: ConfigParameters, set_kernel!, bayes_optimization, SC_MAP
     using Evolutionary: Evolutionary
     using ForwardDiff
     using InteractiveUtils
@@ -11,6 +12,7 @@ module SindbadOptimization
     using OptimizationOptimJL
     using OptimizationBBO
     using OptimizationGCMAES
+    # using OptimizationQuadDIRECT
     using SindbadTEM
     using SindbadMetrics
 

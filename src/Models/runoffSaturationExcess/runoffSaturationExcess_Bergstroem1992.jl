@@ -13,12 +13,12 @@ function compute(params::runoffSaturationExcess_Bergstroem1992, forcing, land, h
     ## unpack land variables
     @unpack_nt begin
         WBP ⇐ land.states
-        wSat ⇐ land.properties
+        w_sat ⇐ land.properties
         soilW ⇐ land.pools
         ΔsoilW ⇐ land.pools
     end
     # @show WBP
-    tmp_smax_veg = sum(wSat)
+    tmp_smax_veg = sum(w_sat)
     tmp_soilW_total = sum(soilW)
     # calculate land runoff from incoming water & current soil moisture
     tmp_sat_exc_frac = clampZeroOne((tmp_soilW_total / tmp_smax_veg)^β)

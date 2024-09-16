@@ -26,13 +26,13 @@ function compute(params::gppSoilW_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_nt begin
-        (sum_wAWC, sum_WP) ⇐ land.properties
+        (∑w_awc, ∑w_wp) ⇐ land.properties
         soilW ⇐ land.pools
         (gpp_f_soilW_prev) ⇐ land.diagnostics
     end
 
-    actAWC = maxZero(totalS(soilW) - sum_WP)
-    SM_nor = minOne(actAWC / sum_wAWC)
+    actAWC = maxZero(totalS(soilW) - ∑w_wp)
+    SM_nor = minOne(actAWC / ∑w_awc)
     o_one = one(f_soilW_τ)
     gpp_f_soilW = (o_one - f_soilW_τ) * gpp_f_soilW_prev + f_soilW_τ * (o_one / (o_one + exp(-f_soilW_slope * (SM_nor - f_soilW_base))))
     gpp_f_soilW = clampZeroOne(gpp_f_soilW)
@@ -56,7 +56,7 @@ $(SindbadParameters)
 *Inputs*
  - f_soilW_τ: contribution of current time step
  - land.pools.soilW: values of soil moisture current time step
- - land.properties.WP: wilting point
+ - land.properties._wp: wilting point
 
 *Outputs*
  - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)

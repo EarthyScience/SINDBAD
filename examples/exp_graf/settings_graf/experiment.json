@@ -21,7 +21,7 @@
     "land_output_type": "array",
     "longtuple_size": null,
     "model_array_type": "static_array",
-    "model_number_type": "Float32",
+    "model_number_type": "Float64",
     "parallelization": "threads",
     "tolerance": 1.0e-2,
     "yax_max_cache": 2e9
@@ -30,6 +30,7 @@
     "calc_cost": true,
     "catch_model_errors": false,
     "debug_model": false,
+    "filter_nan_pixels": false,
     "inline_update": false,
     "run_forward": true,
     "run_optimization": false,
@@ -62,7 +63,9 @@
       "diagnostics.gpp_f_vpd": null,
       "pools.soilW": "d_soil",
       "states.fAPAR": null,
-      "diagnostics.water_balance": null
+      "states.PAW": "d_soil",
+      "diagnostics.water_balance": null,
+      "diagnostics.WUE": null
     }
   },
   "model_spinup": {

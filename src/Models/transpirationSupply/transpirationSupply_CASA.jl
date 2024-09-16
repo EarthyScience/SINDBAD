@@ -26,7 +26,7 @@ Supply-limited transpiration using transpirationSupply_CASA
 *Inputs*
  - land.pools.soilW : total soil moisture
  - land.properties.soil_[α/β]: moisture retention characteristics
- - land.properties.wAWC: total maximum plant available water [FC-WP]
+ - land.properties.w_awc: total maximum plant available water [_fc-_wp]
  - land.states.PAW: actual extractable water
 
 *Outputs*

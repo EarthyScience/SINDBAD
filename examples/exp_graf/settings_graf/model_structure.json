@@ -14,7 +14,7 @@
       "approach": "dos"
     },
     "evaporation": {
-      "approach": "fAPAR"
+      "approach": "vegFraction"
     },
     "evapotranspiration": {
       "approach": "sum"
@@ -35,7 +35,7 @@
       "approach": "mult"
     },
     "gppDiffRadiation": {
-      "approach": "none"
+      "approach": "Wang2015"
     },
     "gppDirRadiation": {
       "approach": "none"
@@ -55,11 +55,14 @@
     "groundWSoilWInteraction": {
       "approach": "VanDijk2010"
     },
+    "interception": {
+      "approach": "vegFraction"
+    },
     "percolation": {
       "approach": "WBP"
     },
     "PET": {
-      "approach": "Lu2005"
+      "approach": "forcing"
     },
     "rainSnow": {
       "approach": "rain"

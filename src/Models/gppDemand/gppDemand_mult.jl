@@ -13,7 +13,7 @@ function define(params::gppDemand_mult, forcing, land, helpers)
         end
     end
 
-    @pack_nt (gpp_climate_stressors) ⇒ land.diagnostics
+    @pack_nt gpp_climate_stressors ⇒ land.diagnostics
 
     return land
 end

@@ -11,4 +11,7 @@
 # mkdir -p run_logs_erai
 export JULIA_NUM_THREADS=${SLURM_CPUS_PER_TASK}
 sleep $SLURM_ARRAY_TASK_ID
-/Net/Groups/Services/HPC_22/apps/julia/julia-1.10.0/bin/julia --project=../exp_graf --heap-size-hint=6G WROASTED_jobarray_erai.jl
+
+# /Net/Groups/Services/HPC_22/apps/julia/julia-1.10.0/bin/julia --project=../exp_graf --heap-size-hint=6G WROASTED_jobarray_zarr_tmp.jl
+
+/Net/Groups/Services/HPC_22/apps/julia/julia-1.10.0/bin/julia --project=../exp_graf --heap-size-hint=6G WROASTED_jobarray_zarr.jl

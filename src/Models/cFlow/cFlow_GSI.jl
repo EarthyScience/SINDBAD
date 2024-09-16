@@ -15,7 +15,7 @@ function define(params::cFlow_GSI, forcing, land, helpers)
         (cEco, soilW) ⇐ land.pools
         (c_giver, c_taker) ⇐ land.constants
         cEco_comps = cEco ⇐ helpers.pools.components
-        sum_wSat ⇐ land.properties
+        ∑w_sat ⇐ land.properties
     end
     ## instantiate variables
 
@@ -55,7 +55,7 @@ function define(params::cFlow_GSI, forcing, land, helpers)
         c_flow_A_vec = SVector{length(c_flow_A_vec)}(c_flow_A_vec)
     end
 
-    eco_stressor_prev = totalS(soilW) / sum_wSat
+    eco_stressor_prev = totalS(soilW) / ∑w_sat
 
 
     @pack_nt begin
