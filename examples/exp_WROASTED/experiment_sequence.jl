@@ -79,7 +79,7 @@ for domain ∈ sites
     default_data = out_opti.output.default
     costOpt = prepCostOptions(out_opti.observation, info.optimization.cost_options)
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    fig_prefix = joinpath(info.output.dirs.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
+    fig_prefix = joinpath(info.output.dirs.figure, "comparison_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
 
     foreach(costOpt) do var_row
         v = var_row.variable
