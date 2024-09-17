@@ -97,7 +97,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimization)
     println("-------------------Optimization Mode---------------------------\n")
-    setLogLevel(:warn)
+    # setLogLevel(:warn)
     observations = getObservation(info, forcing.helpers)
     additionaldims = setdiff(keys(forcing.helpers.sizes), info.settings.forcing.data_dimension.time)
     run_output = nothing
@@ -217,6 +217,11 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=Dict())
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization)
     fp_output = runExperimentForwardParams(opti_output.params, sindbad_experiment; replace_info=replace_info)
-    return (; forcing, info=fp_output.info, observation=opti_output.observation, output=fp_output.output, params=opti_output.params)
+    cost_options = prepCostOptions(opti_output.observation, info.optimization.cost_options)
+    loss_vector = getLossVector(fp_output.output.optimized, opti_output.observation, cost_options)
+    loss_vector_def = getLossVector(fp_output.output.default, opti_output.observation, cost_options)
+    loss_table = Table((; variable=cost_options.variable, metric=cost_options.cost_metric, loss_opt=loss_vector, loss_def=loss_vector_def))
+    display(loss_table)
+    return (; forcing, info=fp_output.info, loss=loss_table, observation=opti_output.observation, output=fp_output.output, params=opti_output.params)
 end
 

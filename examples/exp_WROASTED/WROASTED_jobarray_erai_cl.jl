@@ -4,10 +4,10 @@ using Dates
 using Plots
 toggleStackTraceNT()
 
-# site_index = 1
 site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+# site_index = 1
 # site_index = Base.parse(Int, ARGS[1])
-forcing_set = "cruj"
+forcing_set = "erai"
 site_info = CSV.File(
     "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
     header=false);
@@ -22,7 +22,7 @@ if forcing_set == "erai"
     dataset = "ERAinterim.v2"
     begin_year = "1979"
     end_year = "2017"
-    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/sopt_sets_wroasted/"
+    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/v202312_ml_wroasted/"
 else
     dataset = "CRUJRA.v2_2"
     begin_year = "1901"
@@ -91,13 +91,13 @@ opti_sets = Dict(
 
 forcing_config = "forcing_$(forcing_set).json";
 parallelization_lib = "threads"
-exp_main = "wroasted_v202311"
+exp_main = "wroasted_v202312_cl"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)
 optimize_it = true;
 for o_set in opti_set
-    path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
+    path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
 
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
@@ -154,6 +154,8 @@ for o_set in opti_set
         loss_name = nameof(typeof(lossMetric))
         if loss_name in (:NNSEInv, :NSEInv)
             lossMetric = NSE()
+        # else
+        #     lossMetric = Pcor()
         end
         (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
         (_, _, opt_var) = getData(opt_dat, obs_array, var_row)

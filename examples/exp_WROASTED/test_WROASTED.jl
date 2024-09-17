@@ -1,12 +1,14 @@
 using Revise
 using SindbadExperiment
+# using CairoMakie
+
 using Plots
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "2000"
 end_year = "2017"
 
-domain = "DE-Hai"
+domain = "US-SRM"
 # domain = "MY-PSO"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
@@ -62,6 +64,8 @@ foreach(costOpt) do var_row
     loss_name = nameof(typeof(lossMetric))
     if loss_name in (:NNSEInv, :NSEInv)
         lossMetric = NSE()
+    # else
+        # lossMetric = Pcor()    
     end
     (obs_var, obs_σ, def_var) = getData(def_dat, observation, var_row)
     (_, _, opt_var) = getData(opt_dat, observation, var_row)

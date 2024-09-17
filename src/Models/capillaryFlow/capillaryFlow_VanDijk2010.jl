@@ -27,7 +27,7 @@ function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_nt begin
-        (kFC, wSat) ⇐ land.properties
+        (k_fc, w_sat) ⇐ land.properties
         soil_capillary_flux ⇐ land.fluxes
         (soilW, ΔsoilW) ⇐ land.pools
         tolerance ⇐ helpers.numbers
@@ -35,9 +35,9 @@ function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
     end
 
     for sl ∈ 1:(length(soilW)-1)
-        dos_soilW = clampZeroOne((soilW[sl] + ΔsoilW[sl]) ./ wSat[sl])
-        tmpCapFlow = sqrt(kFC[sl+1] * kFC[sl]) * (o_one - dos_soilW)
-        holdCap = maxZero(wSat[sl] - (soilW[sl] + ΔsoilW[sl]))
+        dos_soilW = clampZeroOne((soilW[sl] + ΔsoilW[sl]) ./ w_sat[sl])
+        tmpCapFlow = sqrt(k_fc[sl+1] * k_fc[sl]) * (o_one - dos_soilW)
+        holdCap = maxZero(w_sat[sl] - (soilW[sl] + ΔsoilW[sl]))
         lossCap = maxZero(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]))
         minFlow = min(tmpCapFlow, holdCap, lossCap)
         tmp = minFlow > tolerance ? minFlow : zero(minFlow)

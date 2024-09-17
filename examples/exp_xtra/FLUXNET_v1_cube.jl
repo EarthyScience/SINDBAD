@@ -7,11 +7,12 @@ using Dates
 using UnicodePlots
 using ProgressMeter
 
-path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-mainpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily"
+mainpath = "/Net/Groups/BGI/scratch/skoirala/v202312_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily"
+path_input = joinpath(mainpath,"DE-Hai.1979.2017.daily.nc")
+
 files = readdir(mainpath);
 path_input = joinpath(mainpath, files[10]);
-ds = NCDataset(path_input);
+ds = NCDataset(path_input)
 
 function select_variables(ds)
     sizes = []

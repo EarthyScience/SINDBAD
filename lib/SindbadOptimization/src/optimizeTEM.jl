@@ -23,8 +23,9 @@ function getLoss(param_vector::AbstractArray, base_models, forcing, spinup_forci
     updated_models = updateModelParameters(param_updater, base_models, param_vector)
     land_wrapper_timeseries = runTEM(updated_models, forcing, spinup_forcing, loc_forcing_t, land_timeseries, land_init, tem_info)
     loss_vector = getLossVector(land_wrapper_timeseries, observations, cost_options)
-    @debug loss_vector
-    return combineLoss(loss_vector, multi_constraint_method)
+    loss = combineLoss(loss_vector, multi_constraint_method)
+    @debug loss_vector, loss
+    return loss
 end
 
 
@@ -49,7 +50,9 @@ function getLoss(param_vector::AbstractArray, base_models, forcing, spinup_forci
     updated_models = updateModelParameters(param_updater, base_models, param_vector)
     land_wrapper_timeseries = runTEM(updated_models, forcing, spinup_forcing, loc_forcing_t, land_init, tem_info)
     loss_vector = getLossVector(land_wrapper_timeseries, observations, cost_options)
-    return combineLoss(loss_vector, multi_constraint_method)
+    loss = combineLoss(loss_vector, multi_constraint_method)
+    @debug loss_vector, loss
+    return loss
 end
 
 
@@ -76,7 +79,9 @@ function getLoss(param_vector, selected_models, space_forcing, space_spinup_forc
     updated_models = updateModelParameters(param_updater, selected_models, param_vector)
     runTEM!(updated_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info)
     loss_vector = getLossVector(output_array, observations, cost_options)
-    return combineLoss(loss_vector, multi_constraint_method)
+    loss = combineLoss(loss_vector, multi_constraint_method)
+    @debug loss_vector, loss
+    return loss
 end
 
 

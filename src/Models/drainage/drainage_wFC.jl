@@ -16,7 +16,7 @@ function compute(params::drainage_wFC, forcing, land, helpers)
     ## unpack land variables
     @unpack_nt begin
         drainage ⇐ land.fluxes
-        (p_nsoilLayers, wFC) ⇐ land.properties
+        (p_nsoilLayers, w_fc) ⇐ land.properties
         soilW ⇐ land.pools
         ΔsoilW ⇐ land.pools
         z_zero ⇐ land.constants
@@ -24,9 +24,9 @@ function compute(params::drainage_wFC, forcing, land, helpers)
 
     ## calculate drainage
     for sl ∈ 1:(length(soilW)-1)
-        holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        holdCap = w_sat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         lossCap = soilW[sl] + ΔsoilW[sl]
-        drainage[sl] = maxZero(soilW[sl] + ΔsoilW[sl] - wFC[sl])
+        drainage[sl] = maxZero(soilW[sl] + ΔsoilW[sl] - w_fc[sl])
         drainage[sl] = min(drainage[sl], holdCap, lossCap)
         ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
         ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
@@ -72,7 +72,7 @@ Recharge the soil using drainage_wFC
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.properties.wFC: field capacity of soil in mm
+ - land.properties.w_fc: field capacity of soil in mm
  - land.states.WBP amount of water that can potentially drain
 
 *Outputs*
