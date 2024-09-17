@@ -46,12 +46,12 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionPFT, fo
     @unpack_nt begin
         (WBP, frac_vegetation) ⇐ land.states
         β_veg ⇐ land.runoffSaturationExcess
-        wSat ⇐ land.properties
+        w_sat ⇐ land.properties
         soilW ⇐ land.pools
         ΔsoilW ⇐ land.pools
     end
     # get the PFT data & assign parameters
-    tmp_smax_veg = sum(wSat)
+    tmp_smax_veg = sum(w_sat)
     tmp_soilW_total = sum(soilW + ΔsoilW)
 
     # calculate land runoff from incoming water & current soil moisture

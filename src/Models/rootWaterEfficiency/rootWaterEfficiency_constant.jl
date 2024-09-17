@@ -2,7 +2,7 @@ export rootWaterEfficiency_constant
 
 #! format: off
 @bounds @describe @units @with_kw struct rootWaterEfficiency_constant{T1} <: rootWaterEfficiency
-    constant_root_water_efficiency::T1 = 0.05 | (0.01, 0.15) | "root fraction" | ""
+    constant_root_water_efficiency::T1 = 0.99 | (0.001, 0.999) | "root fraction" | ""
 end
 #! format: on
 

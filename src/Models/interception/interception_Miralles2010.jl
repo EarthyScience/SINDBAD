@@ -87,9 +87,9 @@ Interception evaporation using interception_Miralles2010
 
 *Inputs*
  - info; tix
- - land.states.fAPAR: fraction of absorbed photosynthetically active  radiation (equivalent to "canopy cover" in Gash & Miralles)
+ - land.states.fAPAR: fraction of absorbed photosynthetically active  radiation [equivalent to "canopy cover" in Gash & Miralles]
  - rain: rainfall [mm/time]
- - rainInt: rainfall intensity, [mm/hr], (1.5, or, 5.6, for, synoptic, |, convective)
+ - rainInt: rainfall intensity [mm/hr]  (1.5, or, 5.6, for, synoptic, |, convective)
 
 *Outputs*
  - land.fluxes.interception: canopy interception evaporation [mm/time]

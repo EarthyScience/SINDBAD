@@ -1,0 +1,8 @@
+{
+  "method": "CMAES",
+  "options": {
+    "iterations": 5000,
+    "show_trace": true
+  },
+  "package": "Evolutionary"
+}

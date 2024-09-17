@@ -2,7 +2,7 @@ export groundWRecharge_dos
 
 #! format: off
 @bounds @describe @units @with_kw struct groundWRecharge_dos{T1} <: groundWRecharge
-    dos_exp::T1 = 1.5 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage to groundwater" | ""
+    dos_exp::T1 = 1.5 | (1.0, 3.0) | "exponent of non-linearity for dos influence on drainage to groundwater" | ""
 end
 #! format: on
 
@@ -27,14 +27,14 @@ function compute(params::groundWRecharge_dos, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_nt begin
-        (wSat, soil_β) ⇐ land.properties
+        (w_sat, soil_β) ⇐ land.properties
         (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
         (z_zero, o_one) ⇐ land.constants
         n_groundW ⇐ land.constants
     end
     # calculate recharge
-    dosSoilEnd = clampZeroOne((soilW[end] + ΔsoilW[end]) / wSat[end])
-    recharge_fraction = clampZeroOne((dosSoilEnd)^(dos_exp * soil_β[end]))
+    dos_soil_end = clampZeroOne((soilW[end] + ΔsoilW[end]) / w_sat[end])
+    recharge_fraction = clampZeroOne((dos_soil_end)^(dos_exp * soil_β[end]))
     gw_recharge = recharge_fraction * (soilW[end] + ΔsoilW[end])
 
     ΔgroundW = addToEachElem(ΔgroundW, gw_recharge / n_groundW)
