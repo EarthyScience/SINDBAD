@@ -26,7 +26,7 @@ for (i, tj) ∈ enumerate(tjs)
 
     run_helpers = prepTEM(forcing, info);
     space_forcing = run_helpers.space_forcing;
-    spinup_forcing = run_helpers.space_spinup_forcing;
+    spinup_forcing = run_helpers.space_spinup_forcing[1];
     loc_forcing_t = run_helpers.loc_forcing_t;
     output_array = run_helpers.output_array;
     space_output = run_helpers.space_output;
@@ -42,7 +42,7 @@ for (i, tj) ∈ enumerate(tjs)
     land_init = run_helpers.loc_land
     sel_pool = :cEco
 
-    spinup_models = tem_info.models.forward
+    spinup_models = info.models.forward
     sp = ODETsit5()
     @show "ODE_Init", tj
 
