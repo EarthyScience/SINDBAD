@@ -57,7 +57,6 @@ function loss(y, yσ, ŷ, ::NMAE1R)
 end
 
 """
-"""
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSE)
 
 
