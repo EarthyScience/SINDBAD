@@ -10,7 +10,7 @@ using Colors
 Makie.inline!(false)
 lines(1:10)
 
-output_vars = valToSymbol(output_default.output_vars)
+output_vars = valToSymbol(output_default.info.output.variables)
 names_pair = Dict(output_vars .=> 1:4)
 
 var_name = Observable(1)
