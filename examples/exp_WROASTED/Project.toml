@@ -1,6 +1,4 @@
 [deps]
-CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-FIGlet = "3064a664-84fe-4d92-92c7-ed492f3d8fae"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"

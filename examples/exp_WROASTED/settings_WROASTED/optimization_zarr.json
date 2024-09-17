@@ -1,8 +1,8 @@
 {
-  "algorithm": "CMAEvolutionStrategy_CMAES",
+  "algorithm": "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
   "model_parameter_default": {
     "distribution": ["normal", [0.0, 1.0]],
-    "is_ml": true
+    "is_ml": false
   },
   "model_parameters_to_optimize": {
     "autoRespiration,RMN": null,
@@ -74,7 +74,7 @@
     "default_observation": {
       "additive_unit_conversion": false,
       "bounds": null,
-      "data_path": "/Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v2023_12.zarr",
+      "data_path": "../data/BE-Vie.1979.2017.daily.nc",
       "is_categorical": false,
       "standard_name": null,
       "sindbad_unit": null,
@@ -97,7 +97,7 @@
           "standard_name": "Above-ground biomass",
           "sindbad_unit": "gC m-2",
           "source_unit": "gC m-2",
-          "source_variable": "agb_merged_PFT"
+          "source_variable": "agb_merged_PFT_remoteS"
         },
         "model_full_var": "states.aboveground_biomass"
       },

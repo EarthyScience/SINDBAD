@@ -1,7 +1,7 @@
 export getForcingForTimeStep
 export getLocData
-export getLocForcingData
-export getLocOutputData
+export getLocDataNT
+export getLocDataArray
 export setOutputForTimeStep!
 
 """
@@ -15,7 +15,7 @@ export setOutputForTimeStep!
 - `ts`: DESCRIPTION
 """
 function fillLocOutput!(ar::T, val::T1, ts::T2) where {T, T1, T2<:Int}
-    data_ts = getLocOutputView(ar, val, ts)
+    data_ts = getLocArrayView(ar, val, ts)
     return data_ts .= val
 end
 
@@ -77,29 +77,14 @@ end
 - `loc_ind`: a tuple with the spatial indices of the data for a given location
 """
 function getLocData(forcing, output_array, loc_ind)
-    loc_forcing = getLocForcingData(forcing, loc_ind)
-    loc_output = getLocOutputData(output_array, loc_ind)
+    loc_forcing = getLocDataNT(forcing, loc_ind)
+    loc_output = getLocDataArray(output_array, loc_ind)
     return loc_forcing, loc_output
 end
 
-"""
-    getLocForcingData(forcing, output_array, loc_ind)
-
-
-
-# Arguments:
-- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `loc_ind`: a tuple with the spatial indices of the data for a given location
-"""
-function getLocForcingData(forcing, loc_ind)
-    loc_forcing = map(forcing) do a
-        getArrayView(Array(a), loc_ind)
-    end
-    return loc_forcing
-end
 
 """
-    getLocOutputData(forcing, output_array, loc_ind)
+    getLocDataArray(forcing, output_array, loc_ind)
 
 
 
@@ -107,7 +92,7 @@ end
 - `output_array`: an output array/view for ALL locations
 - `loc_ind`: a tuple with the spatial indices of the data for a given location
 """
-function getLocOutputData(output_array, loc_ind)
+function getLocDataArray(output_array, loc_ind)
     loc_output = map(output_array) do a
         getArrayView(a, loc_ind)
     end
@@ -116,7 +101,25 @@ end
 
 
 """
-    getLocOutputView(ar, val::AbstractVector, ts::Int64)
+    getLocDataNT(forcing, output_array, loc_ind)
+
+
+
+# Arguments:
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `loc_ind`: a tuple with the spatial indices of the data for a given location
+"""
+function getLocDataNT(forcing, loc_ind)
+    loc_forcing = map(forcing) do a
+        getArrayView(a, loc_ind) |> Array
+    end
+    return loc_forcing
+end
+
+
+
+"""
+    getLocArrayView(ar, val::AbstractVector, ts::Int64)
 
 
 
@@ -125,12 +128,12 @@ end
 - `val`: DESCRIPTION
 - `ts`: DESCRIPTION
 """
-function getLocOutputView(ar::T, val::T1, ts::T2) where {T, T1<:AbstractVector, T2<:Int}
+function getLocArrayView(ar::T, val::T1, ts::T2) where {T, T1<:AbstractVector, T2<:Int}
     return view(ar, ts, 1:size(val,1))
 end
 
 """
-    getLocOutputView(ar, val::Real, ts::Int64)
+    getLocArrayView(ar, val::Real, ts::Int64)
 
 
 
@@ -139,7 +142,7 @@ end
 - `val`: DESCRIPTION
 - `ts`: DESCRIPTION
 """
-function getLocOutputView(ar::T, val::T1, ts::T2) where {T, T1<:Real, T2<:Int}
+function getLocArrayView(ar::T, val::T1, ts::T2) where {T, T1<:Real, T2<:Int}
     return view(ar, ts)
 end
 

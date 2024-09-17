@@ -1,6 +1,6 @@
 export setupInfo
 export createInitLand
-
+export getSpinupSequenceWithTypes
 
 """
     createInitLand(tem)
@@ -271,25 +271,16 @@ function setRestartFilePath(info::NamedTuple)
 end
 
 
-"""
-    setupInfo(info::NamedTuple)
-
-uses the configuration info and processes information for spinup
-"""
-function setSpinupInfo(info)
-    info = setRestartFilePath(info)
-    infospin = info.settings.experiment.model_spinup
-    # change spinup sequence dispatch variables to Val, get the temporal aggregators
-    seqq = infospin.sequence
+function getSpinupSequenceWithTypes(seqq, helpers_dates)
     seqq_typed = []
     for seq in seqq
         for kk in keys(seq)
             if kk == "forcing"
                 skip_aggregation = false
-                if startswith(kk, info.temp.helpers.dates.temporal_resolution)
+                if startswith(kk, helpers_dates.temporal_resolution)
                     skip_aggregation = true
                 end
-                aggregator = createTimeAggregator(info.temp.helpers.dates.range, seq[kk], mean, skip_aggregation)
+                aggregator = createTimeAggregator(helpers_dates.range, seq[kk], mean, skip_aggregation)
                 seq["aggregator"] = aggregator
                 seq["aggregator_type"] = TimeNoDiff()
                 seq["aggregator_indices"] = [_ind for _ind in vcat(aggregator[1].indices...)]
@@ -310,7 +301,20 @@ function setSpinupInfo(info)
         sst = SpinSequenceWithAggregator(seq["forcing"], seq["n_repeat"], seq["n_timesteps"], seq["spinup_mode"], optns, seq["aggregator_indices"], seq["aggregator"], seq["aggregator_type"]);
         push!(seqq_typed, sst)
     end
-    
+    return seqq_typed
+end
+
+"""
+    setupInfo(info::NamedTuple)
+
+uses the configuration info and processes information for spinup
+"""
+function setSpinupInfo(info)
+    info = setRestartFilePath(info)
+    infospin = info.settings.experiment.model_spinup
+    # change spinup sequence dispatch variables to Val, get the temporal aggregators
+    seqq = infospin.sequence
+    seqq_typed = getSpinupSequenceWithTypes(seqq, info.temp.helpers.dates)
     infospin = setTupleField(infospin, (:sequence, [_s for _s in seqq_typed]))
     info = setTupleSubfield(info, :temp, (:spinup, infospin))
     return info

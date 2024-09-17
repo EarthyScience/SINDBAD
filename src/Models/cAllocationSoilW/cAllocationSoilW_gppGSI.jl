@@ -9,9 +9,9 @@ end
 function define(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
     @unpack_nt begin
         soilW ⇐ land.pools
-        sum_wSat ⇐ land.properties
+        ∑w_sat ⇐ land.properties
     end
-    c_allocation_f_soilW_prev = sum(soilW) / sum_wSat
+    c_allocation_f_soilW_prev = sum(soilW) / ∑w_sat
 
     ## pack land variables
     @pack_nt c_allocation_f_soilW_prev ⇒ land.diagnostics

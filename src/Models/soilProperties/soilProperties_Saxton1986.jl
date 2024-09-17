@@ -4,9 +4,9 @@ struct kSaxton1986 end
 
 #! format: off
 @bounds @describe @units @with_kw struct soilProperties_Saxton1986{T1,T2,T3,TN} <: soilProperties
-    ψFC::T1 = 33.0 | (30.0, 35.0) | "matric potential at field capacity" | "kPa"
-    ψWP::T2 = 1500.0 | (1000.0, 1800.0) | "matric potential at wilting point" | "kPa"
-    ψSat::T3 = 0.0 | (0.0, 5.0) | "matric potential at saturation" | "kPa"
+    ψ_fc::T1 = 33.0 | (30.0, 35.0) | "matric potential at field capacity" | "kPa"
+    ψ_wp::T2 = 1500.0 | (1000.0, 1800.0) | "matric potential at wilting point" | "kPa"
+    ψ_sat::T3 = 0.0 | (0.0, 5.0) | "matric potential at saturation" | "kPa"
     a1::TN = -4.396 | (-Inf, Inf) | "Saxton Parameters" | ""
     a2::TN = -0.0715 | (-Inf, Inf) | "Saxton Parameters" | ""
     a3::TN = -0.000488 | (-Inf, Inf) | "Saxton Parameters" | ""
@@ -44,21 +44,21 @@ function define(params::soilProperties_Saxton1986, forcing, land, helpers)
     ## instantiate variables
     sp_α = zero(soilW)
     sp_β = zero(soilW)
-    sp_kFC = zero(soilW)
-    sp_θFC = zero(soilW)
-    sp_ψFC = zero(soilW)
-    sp_kWP = zero(soilW)
-    sp_θWP = zero(soilW)
-    sp_ψWP = zero(soilW)
-    sp_kSat = zero(soilW)
-    sp_θSat = zero(soilW)
-    sp_ψSat = zero(soilW)
+    sp_k_fc = zero(soilW)
+    sp_θ_fc = zero(soilW)
+    sp_ψ_fc = zero(soilW)
+    sp_k_wp = zero(soilW)
+    sp_θ_wp = zero(soilW)
+    sp_ψ_wp = zero(soilW)
+    sp_k_sat = zero(soilW)
+    sp_θ_sat = zero(soilW)
+    sp_ψ_sat = zero(soilW)
 
     unsat_k_model = kSaxton1986()
 
     ## pack land variables
     @pack_nt begin
-        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ⇒ land.properties
+        (sp_k_fc, sp_k_sat, sp_k_wp, sp_α, sp_β, sp_θ_fc, sp_θ_sat, sp_θ_wp, sp_ψ_fc, sp_ψ_sat, sp_ψ_wp) ⇒ land.properties
         (n100, n1000, n2, n24, n3600, e1, e2, e3, e4, e5, e6, e7) ⇒ land.soilProperties
         unsat_k_model ⇒ land.models
     end
@@ -70,32 +70,32 @@ function precompute(params::soilProperties_Saxton1986, forcing, land, helpers)
     @unpack_soilProperties_Saxton1986 params
 
     ## unpack land variables
-    @unpack_nt (sp_α, sp_β, sp_kFC, sp_θFC, sp_ψFC, sp_kWP, sp_θWP, sp_ψWP, sp_kSat, sp_θSat, sp_ψSat) ⇐ land.properties
+    @unpack_nt (sp_α, sp_β, sp_k_fc, sp_θ_fc, sp_ψ_fc, sp_k_wp, sp_θ_wp, sp_ψ_wp, sp_k_sat, sp_θ_sat, sp_ψ_sat) ⇐ land.properties
     @unpack_nt soilW ⇐ land.pools
 
     ## calculate variables
     # number of layers & creation of arrays
     # calculate & set the soil hydraulic properties for each layer
     for sl in eachindex(soilW)
-        (α, β, kFC, θFC, ψFC) = calcPropsSaxton1986(params, land, helpers, sl, ψFC)
-        (_, _, kWP, θWP, ψWP) = calcPropsSaxton1986(params, land, helpers, sl, ψWP)
-        (_, _, kSat, θSat, ψSat) = calcPropsSaxton1986(params, land, helpers, sl, ψSat)
+        (α, β, k_fc, θ_fc, ψ_fc) = calcPropsSaxton1986(params, land, helpers, sl, ψ_fc)
+        (_, _, k_wp, θ_wp, ψ_wp) = calcPropsSaxton1986(params, land, helpers, sl, ψ_wp)
+        (_, _, k_sat, θ_sat, ψ_sat) = calcPropsSaxton1986(params, land, helpers, sl, ψ_sat)
         @rep_elem α ⇒ (sp_α, sl, :soilW)
         @rep_elem β ⇒ (sp_β, sl, :soilW)
-        @rep_elem kFC ⇒ (sp_kFC, sl, :soilW)
-        @rep_elem θFC ⇒ (sp_θFC, sl, :soilW)
-        @rep_elem ψFC ⇒ (sp_ψFC, sl, :soilW)
-        @rep_elem kWP ⇒ (sp_kWP, sl, :soilW)
-        @rep_elem θWP ⇒ (sp_θWP, sl, :soilW)
-        @rep_elem ψWP ⇒ (sp_ψWP, sl, :soilW)
-        @rep_elem kSat ⇒ (sp_kSat, sl, :soilW)
-        @rep_elem θSat ⇒ (sp_θSat, sl, :soilW)
-        @rep_elem ψSat ⇒ (sp_ψSat, sl, :soilW)
+        @rep_elem k_fc ⇒ (sp_k_fc, sl, :soilW)
+        @rep_elem θ_fc ⇒ (sp_θ_fc, sl, :soilW)
+        @rep_elem ψ_fc ⇒ (sp_ψ_fc, sl, :soilW)
+        @rep_elem k_wp ⇒ (sp_k_wp, sl, :soilW)
+        @rep_elem θ_wp ⇒ (sp_θ_wp, sl, :soilW)
+        @rep_elem ψ_wp ⇒ (sp_ψ_wp, sl, :soilW)
+        @rep_elem k_sat ⇒ (sp_k_sat, sl, :soilW)
+        @rep_elem θ_sat ⇒ (sp_θ_sat, sl, :soilW)
+        @rep_elem ψ_sat ⇒ (sp_ψ_sat, sl, :soilW)
     end
 
     ## pack land variables
     @pack_nt begin
-        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ⇒ land.properties
+        (sp_k_fc, sp_k_sat, sp_k_wp, sp_α, sp_β, sp_θ_fc, sp_θ_sat, sp_θ_wp, sp_ψ_fc, sp_ψ_sat, sp_ψ_wp) ⇒ land.properties
     end
     return land
 end
