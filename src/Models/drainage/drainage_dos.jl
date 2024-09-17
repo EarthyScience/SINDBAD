@@ -2,7 +2,7 @@ export drainage_dos
 
 #! format: off
 @bounds @describe @units @with_kw struct drainage_dos{T1} <: drainage
-    dos_exp::T1 = 1.1 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
+    dos_exp::T1 = 1.5 | (0.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
 end
 #! format: on
 
@@ -29,7 +29,7 @@ function compute(params::drainage_dos, forcing, land, helpers)
     ## unpack land variables
     @unpack_nt begin
         drainage ⇐ land.fluxes
-        (wSat, soil_β, wFC) ⇐ land.properties
+        (w_sat, soil_β, w_fc) ⇐ land.properties
         (soilW, ΔsoilW) ⇐ land.pools
         (z_zero, o_one) ⇐ land.constants
         tolerance ⇐ helpers.numbers
@@ -37,12 +37,12 @@ function compute(params::drainage_dos, forcing, land, helpers)
 
     ## calculate drainage
     for sl ∈ 1:(length(land.pools.soilW)-1)
-        soilW_sl = min(maxZero(soilW[sl] + ΔsoilW[sl]), wSat[sl])
-        drain_fraction = clampZeroOne(((soilW_sl) / wSat[sl])^(dos_exp * soil_β[sl]))
+        soilW_sl = min(maxZero(soilW[sl] + ΔsoilW[sl]), w_sat[sl])
+        drain_fraction = clampZeroOne(((soilW_sl) / w_sat[sl])^(dos_exp * soil_β[sl]))
         drainage_tmp = drain_fraction * (soilW_sl)
-        max_drain = wSat[sl] - wFC[sl]
+        max_drain = w_sat[sl] - w_fc[sl]
         lossCap = min(soilW_sl, max_drain)
-        holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        holdCap = w_sat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         drain = min(drainage_tmp, holdCap, lossCap)
         tmp = drain > tolerance ? drain : zero(drain)
         @rep_elem tmp ⇒ (drainage, sl, :soilW)

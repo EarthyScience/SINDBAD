@@ -4,8 +4,8 @@ using Dates
 using Plots
 toggleStackTraceNT()
 
-# site_index = 1
 site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+# site_index = 1
 # site_index = Base.parse(Int, ARGS[1])
 forcing_set = "erai"
 site_info = CSV.File(
@@ -22,7 +22,7 @@ if forcing_set == "erai"
     dataset = "ERAinterim.v2"
     begin_year = "1979"
     end_year = "2017"
-    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/ml_wroasted/"
+    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/v202312_ml_wroasted/"
 else
     dataset = "CRUJRA.v2_2"
     begin_year = "1901"
@@ -30,7 +30,7 @@ else
     ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
 end
 ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(begin_year).$(end_year).daily.nc")
-path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/v202311_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
+path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/v202312_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
 path_observation = path_input;
 
 nrepeat = 200
@@ -91,13 +91,14 @@ opti_sets = Dict(
 
 forcing_config = "forcing_$(forcing_set).json";
 parallelization_lib = "threads"
-exp_main = "wroasted_v202312"
+exp_main = "wroasted_v202403"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)
+# opti_set = (:set3,)
 optimize_it = true;
 for o_set in opti_set
-    path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
+    path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
 
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
@@ -136,7 +137,7 @@ for o_set in opti_set
 
     varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :nirv => "gpp")
 
-    fig_prefix = joinpath(info.output.dirs.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
+    fig_prefix = joinpath(info.output.dirs.figure, "comparison_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
 
     foreach(costOpt) do var_row
         v = var_row.variable
@@ -145,7 +146,7 @@ for o_set in opti_set
         if v == :agb
             ml_dat = nc_ml[varib_dict[v]][1, 1, 2, :]
         elseif v == :ndvi
-            ml_dat = ml_dat #.- mean(ml_dat)
+            ml_dat = ml_dat .- mean(ml_dat)
         end
         v = (var_row.mod_field, var_row.mod_subfield)
         vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
@@ -154,6 +155,8 @@ for o_set in opti_set
         loss_name = nameof(typeof(lossMetric))
         if loss_name in (:NNSEInv, :NSEInv)
             lossMetric = NSE()
+        # else
+        #     lossMetric = Pcor()
         end
         (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
         (_, _, opt_var) = getData(opt_dat, obs_array, var_row)
