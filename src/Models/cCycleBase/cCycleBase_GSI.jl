@@ -54,7 +54,6 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
         (c_flow_order, c_taker, c_giver) ⇒ land.constants
         (C_to_N_cVeg, c_eco_τ, c_eco_k_base) ⇒ land.diagnostics
         c_model ⇒ land.models
-        c_remain ⇒ land.states
     end
     return land
 end
@@ -89,6 +88,7 @@ function precompute(params::cCycleBase_GSI, forcing, land, helpers)
     ## pack land variables
     @pack_nt begin
         (C_to_N_cVeg, c_eco_τ, c_eco_k_base, ηA, ηH) ⇒ land.diagnostics
+        c_remain ⇒ land.states
     end
     return land
 end

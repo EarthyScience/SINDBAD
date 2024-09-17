@@ -152,7 +152,8 @@
       },
       "ndvi": {
         "cost_options": {
-          "cost_metric": "pcor_inv",
+          "cost_metric": "NNSE_inv",
+          "temporal_data_aggr": "day_anomaly",
           "aggr_obs": true
         },
         "data": {
@@ -194,7 +195,7 @@
       },
       "nirv": {
         "cost_options": {
-          "cost_metric": "pcor_inv",
+          "cost_metric": "n_pcor_inv",
           "temporal_data_aggr": "day_anomaly",
           "aggr_obs": true
         },

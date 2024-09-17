@@ -14,7 +14,7 @@ function compute(params::cAllocationNutrients_Friedlingstein1999, forcing, land,
     ## unpack land variables
     @unpack_nt begin
         PAW ⇐ land.states
-        sum_wAWC ⇐ land.properties
+        ∑w_awc ⇐ land.properties
         c_allocation_f_soilW ⇐ land.diagnostics
         c_allocation_f_soilT ⇐ land.diagnostics
         PET ⇐ land.fluxes
@@ -26,7 +26,7 @@ function compute(params::cAllocationNutrients_Friedlingstein1999, forcing, land,
     NL = PET > z_zero ? nl : one(nl) #@needscheck is the else value one or zero? In matlab version was set to ones.
 
     # water limitation calculation
-    WL = clamp(sum(PAW) / sum_wAWC, min_L, max_L)
+    WL = clamp(sum(PAW) / ∑w_awc, min_L, max_L)
 
     # minimum of WL & NL
     c_allocation_f_W_N = min(WL, NL)
@@ -50,7 +50,7 @@ $(SindbadParameters)
  - land.fluxes.PET: values for potential evapotranspiration
  - land.diagnostics.c_allocation_f_soilT: values for partial computation for the temperature effect on  decomposition/mineralization
  - land.diagnostics.c_allocation_f_soilW: values for partial computation for the moisture effect on  decomposition/mineralization
- - land.properties.sum_wAWC: sum of water available capacity
+ - land.properties.∑w_awc: sum of water available capacity
  - land.states.PAW: values for maximum fraction of water that root can uptake from soil layers as constant
 
 *Outputs*
