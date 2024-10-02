@@ -1,6 +1,5 @@
 import { defineConfig } from 'vitepress'
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
-// import { OramaPlugin } from '@orama/plugin-vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -19,13 +18,9 @@ export default defineConfig({
       light: "github-light",
       dark: "github-dark"}
   },
-  // vite: {
-  //   plugins: [OramaPlugin()]
-  // },
+
   themeConfig: {
     outline: 'deep',
-    // https://vitepress.dev/reference/default-theme-config
-        // https://vitepress.dev/reference/default-theme-config
     logo: { src: '/logo.png', width: 24, height: 24 },
     search: {
           provider: 'local',
@@ -33,28 +28,50 @@ export default defineConfig({
             detailedView: true
           }
         },
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Modelling Design', link: '/modelling_design' },
-      { text: 'Models', link: '/models' },
-      { text: 'TEM', link: '/TEM' },
-      { text: 'Optimize', link: '/Optimize' },
-      { text: 'Hybrid', link: '/Hybrid' }
-    ],
-
-    sidebar: [
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Installation', link: '/install' },
-          { text: 'Modelling Design', link: '/modelling_design' },
-          { text: 'Models', link: '/models' },
-          { text: 'Cost Metrics', link: '/costMetrics' },
-          { text: 'How to document', link: '/how_to_doc' },
-          { text: 'API models', link: '/api_models' }
-        ]
-      }
-    ],
+        nav: [
+          { text: 'Home', link: '/' },
+          { text: 'Get Started', items: [
+            { text: 'Installation', link: '/install' },
+            { text: 'Modelling Design', link: '/modelling_design' },
+            { text: 'TEM', link: '/TEM' },
+            { text: 'Optimization', link: '.' },
+            { text: 'ML', link: '.' }]
+          },
+          { text: 'Set settings',  items: [
+            { text: 'model_structure', link: '.' },
+            { text: 'experiment', link: '.' },
+            { text: 'forcing', link: '.' },
+            { text: 'optimization', link: '.' },
+          ] 
+          },
+          { text: 'API', 
+            items: [
+              { text: 'Models', link: '/models' },
+              { text: 'TEM', link: '.' },
+              { text: 'Optimization', link: '.' },
+              { text: 'ML', link: '.' }
+            ]
+          },
+    
+        ],
+    
+        sidebar: [
+          { text: 'Get Started', items: [
+            { text: 'Installation', link: '/install' },
+            { text: 'Modelling Design', link: '/modelling_design' },
+            { text: 'TEM', link: '/TEM' },
+            { text: 'Optimization', link: '.' },
+            { text: 'ML', link: '.' }]
+          },
+          { text: 'API', 
+            items: [
+              { text: 'Models', link: '/models' },
+              { text: 'TEM', link: '.' },
+              { text: 'Optimization', link: '.' },
+              { text: 'ML', link: '.' }
+            ]
+          },
+        ],
 
     socialLinks: [
       {
