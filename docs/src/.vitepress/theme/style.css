@@ -1,6 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Space+Mono:regular,italic,700,700italic);
-@import url(https://fonts.googleapis.com/css?family=Space+Grotesk:regular,italic,700,700italic);
-
 /**
  * Customize default theme styling by overriding CSS variables:
  * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
@@ -10,6 +7,11 @@
  * Fonts
  * -------------------------------------------------------------------------- 
  */
+ @font-face {
+  font-family: JuliaMono-Regular;
+  src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono/webfonts/JuliaMono-Regular.woff2");
+}
+
  .VPHero .clip {
   white-space: pre;
   /* font-size: 24px; */
@@ -28,8 +30,31 @@
     Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 
   /* Code Snippet font */
-  --vp-font-family-mono: "Fira Code", Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  --vp-font-family-mono: JuliaMono-Regular, monospace;
+
+}
+
+/* 
+Disable contextual alternates (kind of like ligatures but different) in monospace, 
+which turns `/>` to an up arrow and `|>` (the Julia pipe symbol) to an up arrow as well.  
+This is pretty bad for Julia folks reading even though copy+paste retains the same text.
+*/
+/* Target elements with class 'mono' */
+.mono-no-substitutions {
+  font-family: "JuliaMono-Light", monospace;
+  font-feature-settings: "calt" off;
+}
+
+/* Alternatively, you can use the following if you prefer: */
+.mono-no-substitutions-alt {
+  font-family: "JuliaMono-Light", monospace;
+  font-variant-ligatures: none;
+}
+
+/* If you want to apply this globally to all monospace text: */
+pre, code {
+  font-family: "JuliaMono-Light", monospace;
+  font-feature-settings: "calt" off;
 }
 
 /**
@@ -178,4 +203,67 @@ mjx-container > svg {
   --vp-c-brand-3: #3782b9;
   --vp-c-sponsor: #ee4e95;
   --vitest-c-sponsor-hover: #e51370;
+}
+
+/* .vitepress/theme/custom.css */
+
+.VPFooter {
+  padding: 1rem 0;
+}
+
+.VPFooter .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -1rem;
+  margin-bottom: -1rem;
+}
+
+.VPFooter .message,
+.VPFooter .copyright {
+  display: flex;
+  align-items: center;
+}
+
+.VPFooter .message {
+  margin-right: 1em;
+}
+
+.footer-logo {
+  height: 4em;
+}
+
+.VPFooter .copyright {
+  flex-direction: column;
+  text-align: center;
+}
+
+.VPFooter .copyright span {
+  margin-bottom: 0.0em;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .VPFooter .container {
+    flex-direction: column;
+  }
+
+  .VPFooter .message {
+    margin-right: 0;
+    margin-bottom: 1em;
+  }
+}
+
+/* Component: Docstring Custom Block */
+
+.jldocstring.custom-block {
+  border: 1px solid var(--vp-c-gray-2);
+  color: var(--vp-c-text-1)
+}
+
+.jldocstring.custom-block summary {
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  margin: 0 0 8px;
 }
