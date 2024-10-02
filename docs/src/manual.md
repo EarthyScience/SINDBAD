@@ -1,0 +1,1 @@
+Landing page manual sections
