@@ -13,4 +13,5 @@ using Test
 
     @test long_tpl[1] == models_set[1]
     @test tpl_range == models_set[5:end]
+    @test_throws ErrorException long_tpl[8] # tests Index out of bounds 
 end
