@@ -67,8 +67,8 @@ pre, code {
   --julia-red: rgb(179.10, 52.875, 45.0);
   --julia-green: rgb(49.5, 134.1, 33.525);
 
-  --vp-c-brand: #646cff;
-  --vp-c-brand-light: #747bff;
+  --vp-c-brand: #0e0e0e;
+  --vp-c-brand-light: #DEA958ff;
   --vp-c-brand-lighter: #9499ff;
   --vp-c-brand-lightest: #bcc0ff;
   --vp-c-brand-dark: #535bf2;
@@ -111,15 +111,15 @@ pre, code {
 :root {
   --vp-home-hero-name-color: transparent;
   --vp-home-hero-name-background: -webkit-linear-gradient(
-    120deg,
+    -145deg,
     #e4c92a,
     #5edd33,
     #3782b9 80%
   );
 
   --vp-home-hero-image-background-image: linear-gradient(
-    -45deg,
-    /* #e4c92a 30%, */
+    -165deg,
+    #c4c2bb 30%,
     #dadd33 30%,
     #e23131
   );
@@ -190,17 +190,17 @@ mjx-container > svg {
  * -------------------------------------------------------------------------- */
 
  :root {
-  --vp-c-brand-1: #5edd33;
-  --vp-c-brand-2: #5edd33;
-  --vp-c-brand-3: #5edd33;
+  --vp-c-brand-1: #2496e2;
+  --vp-c-brand-2: #3d8abe;
+  --vp-c-brand-3: #487da0;
   --vp-c-sponsor: #ca2971;
   --vitest-c-sponsor-hover: #c13071;
 }
 
 .dark {
-  --vp-c-brand-1: #3782b9;
-  --vp-c-brand-2: #3782b9;
-  --vp-c-brand-3: #3782b9;
+  --vp-c-brand-1: #DEA958ff;
+  --vp-c-brand-2: #F8E895ff;
+  --vp-c-brand-3: #d8c980;
   --vp-c-sponsor: #ee4e95;
   --vitest-c-sponsor-hover: #e51370;
 }
