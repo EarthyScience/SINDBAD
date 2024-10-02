@@ -11,7 +11,7 @@ prepare a NT/Table of the SINDBAD models from a longtuple which is converted to 
 
 """
 function getParameters(selected_models::LongTuple, num_type; return_table=true)
-    selected_models = getTupleFromLongTable(selected_models)
+    selected_models = getTupleFromLongTuple(selected_models)
     return getParameters(selected_models, num_type; return_table=return_table)
 end
 

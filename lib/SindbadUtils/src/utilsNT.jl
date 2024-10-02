@@ -4,7 +4,7 @@ export foldlLongTuple
 export foldlUnrolled
 export LongTuple
 export getCombinedNamedTuple
-export getTupleFromLongTable
+export getTupleFromLongTuple
 export makeLongTuple
 export makeNamedTuple
 export removeEmptyTupleFields
@@ -52,7 +52,7 @@ Base.getindex(arg::LongTuple{N}, i::Int) where N = begin
 end
 
 
-# TODO: StepRange
+# TODO: inverse step range
 
 Base.getindex(arg::LongTuple{N}, r::UnitRange{Int}) where N = begin
     selected_elements = []
@@ -75,24 +75,24 @@ end
 Base.firstindex(arg::LongTuple{N}) where N = 1
 
 function Base.show(io::IO, arg::LongTuple{N}) where N
-    printstyled(io, "LongTuple with ", length(arg.data), " inner tuples:\n"; color=:yellow)
+    printstyled(io, "LongTuple with ", length(arg.data), " inner tuples:\n"; color=:bold)
+    print(io, "\n")
     for (i, tup) in enumerate(arg.data)
-        printstyled(io, "Tuple $i:\n"; color = :green)
         for (j, elem) in enumerate(tup)
-            show_element(io, elem, "  ")
+            show_element(io, elem, "|- ")
         end
     end
 end
 
 function show_element(io::IO, elem, indent)
     struct_name = nameof(typeof(elem))
-    printstyled(io, indent, struct_name, ":\n"; color = :cyan)
+    printstyled(io, indent, struct_name, ":\n"; color =:light_blue)
     parameter_names = fieldnames(typeof(elem))
     if isempty(parameter_names)
-        printstyled(io, indent, "  ", "--", "\n"; color=:red)
+        printstyled(io, "      ", "--", "\n"; color=:light_black)
     else
         for fieldname in parameter_names
-            print(io, indent, "  ", fieldname, " :: ", getproperty(elem, fieldname), "\n")
+            print(io, "      ", fieldname, " :: ", getproperty(elem, fieldname), "\n")
         end
     end
 end
@@ -212,7 +212,7 @@ function getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
     return combined_nt
 end
 
-function getTupleFromLongTable(long_tuple)
+function getTupleFromLongTuple(long_tuple)
     emp_vec = []
     foreach(long_tuple) do lt
         push!(emp_vec, lt)
