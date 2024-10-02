@@ -38,6 +38,65 @@ Base.map(f, arg::LongTuple{N}) where N = LongTuple{N}(map(tup-> map(f, tup), arg
 
 @inline Base.foreach(f, arg::LongTuple) = foreach(tup-> foreach(f, tup), arg.data)
 
+# Base.getindex(arg::LongTuple{N}, i::Int) where N = getindex(arg.data, (i-1) ÷ N + 1)[(i-1) % N + 1]
+Base.getindex(arg::LongTuple{N}, i::Int) where N = begin
+    total_elements = 0
+    for (_, tup) in enumerate(arg.data)
+        len = length(tup)
+        if total_elements < i <= total_elements + len
+            return tup[i - total_elements]
+        end
+        total_elements += len
+    end
+    throw(error("Index $i out of bounds for LongTuple. Total length is $total_elements."))
+end
+
+
+# TODO: StepRange
+
+Base.getindex(arg::LongTuple{N}, r::UnitRange{Int}) where N = begin
+    selected_elements = []
+    # Loop over the range
+    for i in r
+        tuple_idx = (i-1) ÷ N + 1        # Determine which tuple contains the element
+        elem_idx = (i-1) % N + 1         # Determine the element's index within the tuple
+        push!(selected_elements, arg.data[tuple_idx][elem_idx])
+    end
+    new_long_tuple = LongTuple{N}(selected_elements...)
+    return new_long_tuple
+end
+
+Base.lastindex(arg::LongTuple{N}) where N = begin
+    # Calculate the total number of elements across all inner tuples
+    total_elements = sum(length(tup) for tup in arg.data)
+    return total_elements
+end
+
+Base.firstindex(arg::LongTuple{N}) where N = 1
+
+function Base.show(io::IO, arg::LongTuple{N}) where N
+    printstyled(io, "LongTuple with ", length(arg.data), " inner tuples:\n"; color=:yellow)
+    for (i, tup) in enumerate(arg.data)
+        printstyled(io, "Tuple $i:\n"; color = :green)
+        for (j, elem) in enumerate(tup)
+            show_element(io, elem, "  ")
+        end
+    end
+end
+
+function show_element(io::IO, elem, indent)
+    struct_name = nameof(typeof(elem))
+    printstyled(io, indent, struct_name, ":\n"; color = :cyan)
+    parameter_names = fieldnames(typeof(elem))
+    if isempty(parameter_names)
+        printstyled(io, indent, "  ", "--", "\n"; color=:red)
+    else
+        for fieldname in parameter_names
+            print(io, indent, "  ", fieldname, " :: ", getproperty(elem, fieldname), "\n")
+        end
+    end
+end
+
 
 """
     collectColorForTypes(d; c_olor = true)
