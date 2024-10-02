@@ -126,6 +126,22 @@ PET_forcing
 
 :::
 
+## PFT
+
+```@docs
+PFT
+```
+:::details PFT methods
+
+:::tabs
+
+== PFT_constant
+```@docs
+PFT_constant
+```
+
+:::
+
 ## WUE
 
 ```@docs
@@ -431,6 +447,10 @@ cCycleBase_CASA
 ```@docs
 cCycleBase_GSI
 ```
+== cCycleBase_GSITOO
+```@docs
+cCycleBase_GSITOO
+```
 == cCycleBase_simple
 ```@docs
 cCycleBase_simple
@@ -467,9 +487,77 @@ cCycleDisturbance
 ```@docs
 cCycleDisturbance_WROASTED
 ```
+== cCycleDisturbance_WROASTEDTOO
+```@docs
+cCycleDisturbance_WROASTEDTOO
+```
 == cCycleDisturbance_cFlow
 ```@docs
 cCycleDisturbance_cFlow
+```
+== cCycleDisturbance_none
+```@docs
+cCycleDisturbance_none
+```
+
+:::
+
+## cFireBurnedArea
+
+```@docs
+cFireBurnedArea
+```
+:::details cFireBurnedArea methods
+
+:::tabs
+
+== cFireBurnedArea_forcing
+```@docs
+cFireBurnedArea_forcing
+```
+== cFireBurnedArea_none
+```@docs
+cFireBurnedArea_none
+```
+
+:::
+
+## cFireCombustionCompleteness
+
+```@docs
+cFireCombustionCompleteness
+```
+:::details cFireCombustionCompleteness methods
+
+:::tabs
+
+== cFireCombustionCompleteness_none
+```@docs
+cFireCombustionCompleteness_none
+```
+== cFireCombustionCompleteness_vanDerWerf2006
+```@docs
+cFireCombustionCompleteness_vanDerWerf2006
+```
+
+:::
+
+## cFireMortality
+
+```@docs
+cFireMortality
+```
+:::details cFireMortality methods
+
+:::tabs
+
+== cFireMortality_none
+```@docs
+cFireMortality_none
+```
+== cFireMortality_vanDerWerf2004
+```@docs
+cFireMortality_vanDerWerf2004
 ```
 
 :::
@@ -662,6 +750,22 @@ cTauVegProperties_CASA
 == cTauVegProperties_none
 ```@docs
 cTauVegProperties_none
+```
+
+:::
+
+## cVegetationDieOff
+
+```@docs
+cVegetationDieOff
+```
+:::details cVegetationDieOff methods
+
+:::tabs
+
+== cVegetationDieOff_forcing
+```@docs
+cVegetationDieOff_forcing
 ```
 
 :::
@@ -1154,18 +1258,6 @@ interception_vegFraction
 
 :::
 
-## landProperties
-
-```@docs
-landProperties
-```
-:::details landProperties methods
-
-:::tabs
-
-
-:::
-
 ## percolation
 
 ```@docs
@@ -1603,10 +1695,6 @@ soilWBase_smax1Layer
 ```@docs
 soilWBase_smax2Layer
 ```
-== soilWBase_smax2fPFT
-```@docs
-soilWBase_smax2fPFT
-```
 == soilWBase_smax2fRD4
 ```@docs
 soilWBase_smax2fRD4
@@ -1794,22 +1882,6 @@ vegFraction_scaledNIRv
 == vegFraction_scaledfAPAR
 ```@docs
 vegFraction_scaledfAPAR
-```
-
-:::
-
-## vegProperties
-
-```@docs
-vegProperties
-```
-:::details vegProperties methods
-
-:::tabs
-
-== vegProperties_PFT
-```@docs
-vegProperties_PFT
 ```
 
 :::
