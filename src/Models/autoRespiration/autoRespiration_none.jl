@@ -10,7 +10,7 @@ function define(params::autoRespiration_none, forcing, land, helpers)
 
     ## pack land variables
     @pack_nt c_eco_efflux ⇒ land.states
-    return fluxes
+    return land
 end
 
 @doc """
