@@ -5,7 +5,7 @@ using Test
 @testset "SindbadUtils: LongTuple" begin
     # define a toy tuple of models
     models_set = (rainSnow_Tair(), ambientCO2_constant(), cAllocation_fixed(),
-    cCycle_simple(), fAPAR_constant(), gpp_coupled(), PFT_constant())
+    cCycle_simple(), fAPAR_constant(), gpp_coupled(), PFT_constant(), cCycleBase_CASA())
     # create a LongTuple
     long_tpl = makeLongTuple(models_set)
     # range
