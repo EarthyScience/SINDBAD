@@ -6,3 +6,4 @@ include("../mock_input/helpers.jl")
 # called them as tmp_forcing, tmp_land, tmp_helpers
 
 include("ambientCO2.jl")
+include("autoRespiration.jl")
