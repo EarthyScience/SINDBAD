@@ -11,9 +11,9 @@ import Sindbad.Models as SM
         # test allocations, they should be zero!
         @test (@ballocated SM.compute($tmp_model, $tmp_forcing, $land_d, $tmp_helpers)) == 0
         # # check output
-        # land = SM.compute(tmp_model, tmp_forcing, land_d, tmp_helpers)
-        # # what goes in, goes out.
-        # @test tmp_forcing.f_dist_intensity == land.diagnostics.c_fire_fba
+        land = SM.compute(tmp_model, tmp_forcing, land_d, tmp_helpers)
+        # here, it should be the default value
+        @test land.states.ambient_CO2 == 400.0
     end
     @testset "ambientCO2_forcing" begin
         tmp_model = ambientCO2_forcing()
@@ -25,8 +25,8 @@ import Sindbad.Models as SM
         # test allocations, they should be zero!
         @test (@ballocated SM.compute($tmp_model, $tmp_forcing, $land_d, $tmp_helpers)) == 0
         # # check output
-        # land = SM.compute(tmp_model, tmp_forcing, land_d, tmp_helpers)
-        # # what goes in, goes out.
-        # @test tmp_forcing.f_dist_intensity == land.diagnostics.c_fire_fba
+        land = SM.compute(tmp_model, tmp_forcing, land_d, tmp_helpers)
+        # here, it should be the input forcing
+        @test land.states.ambient_CO2 == 336.01f0
     end
 end
