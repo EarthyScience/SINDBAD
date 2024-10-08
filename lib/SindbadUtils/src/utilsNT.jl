@@ -75,24 +75,29 @@ end
 Base.firstindex(arg::LongTuple{N}) where N = 1
 
 function Base.show(io::IO, arg::LongTuple{N}) where N
-    printstyled(io, "LongTuple with ", length(arg.data), " inner tuples:\n"; color=:bold)
-    print(io, "\n")
+    printstyled(io, "LongTuple with ", length(arg.data), " inner tuples"; color=:bold)
+    printstyled(io, ":"; color=:yellow)
+    println(io)
     for (i, tup) in enumerate(arg.data)
         for (j, elem) in enumerate(tup)
-            show_element(io, elem, "|- ")
+            show_element(io, elem, "  ")
         end
     end
 end
 
 function show_element(io::IO, elem, indent)
     struct_name = nameof(typeof(elem))
-    printstyled(io, indent, struct_name, ":\n"; color =:light_blue)
+    print(io, indent, struct_name,)
+    printstyled(io, ":"; color=:blue)
+    println(io)
     parameter_names = fieldnames(typeof(elem))
     if isempty(parameter_names)
-        printstyled(io, "      ", "--", "\n"; color=:light_black)
+        printstyled(io, "    ", "--", "\n"; color=:light_black)
     else
         for fieldname in parameter_names
-            print(io, "      ", fieldname, " :: ", getproperty(elem, fieldname), "\n")
+            print(io, "    ", fieldname)
+            printstyled(io, "::"; color=:red )
+            print(io, getproperty(elem, fieldname), "\n")
         end
     end
 end
