@@ -63,5 +63,6 @@ tmp_helpers = (; pools = (;
         cEco = (:cVegRoot, :cVegWood, :cVegLeaf, :cVegReserve, :cLitFast, :cLitSlow, :cSoilSlow, :cSoilOld),
         
         )
-    )
+    ),
+    dates = (; timesteps_in_day=1),
 )
