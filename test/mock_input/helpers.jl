@@ -1,0 +1,67 @@
+# Mock data:
+# add more for other models
+tmp_helpers = (; pools = (;
+    zix = (;
+        cVeg = (1, 2, 3, 4),
+        cLit = (5, 6),
+        cSoil = (7, 8),
+        cVegRoot = (1,),
+        cVegWood = (2,),
+        cVegLeaf = (3,),
+        cVegReserve = (4,),
+        cLitFast = (5,),
+        cLitSlow = (6,),
+        cSoilSlow = (7,),
+        cSoilOld = (8,),
+        cEco = (1, 2, 3, 4, 5, 6, 7, 8),
+        soilW = (1, 2, 3, 4),
+        groundW = (5,),
+        snowW = (6,),
+        surfaceW = (7,),
+        TWS = (1, 2, 3, 4, 5, 6, 7)
+        ),
+    # needed by @rep_elem
+    zeros = (;
+        cVeg = Float32[0.0, 0.0, 0.0, 0.0],
+        cLit = Float32[0.0, 0.0],
+        cSoil = Float32[0.0, 0.0],
+        cVegRoot = Float32[0.0],
+        cVegWood = Float32[0.0],
+        cVegLeaf = Float32[0.0],
+        cVegReserve = Float32[0.0],
+        cLitFast = Float32[0.0],
+        cLitSlow = Float32[0.0],
+        cSoilSlow = Float32[0.0],
+        cSoilOld = Float32[0.0],
+        cEco = Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        soilW = Float32[0.0, 0.0, 0.0, 0.0],
+        groundW = Float32[0.0],
+        snowW = Float32[0.0],
+        surfaceW = Float32[0.0],
+        TWS = Float32[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        ),
+    ones = (;
+        cVeg = Float32[1.0, 1.0, 1.0, 1.0],
+        cLit = Float32[1.0, 1.0],
+        cSoil = Float32[1.0, 1.0],
+        cVegRoot = Float32[1.0],
+        cVegWood = Float32[1.0],
+        cVegLeaf = Float32[1.0],
+        cVegReserve = Float32[1.0],
+        cLitFast = Float32[1.0],
+        cLitSlow = Float32[1.0],
+        cSoilSlow = Float32[1.0],
+        cSoilOld = Float32[1.0],
+        cEco = Float32[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        soilW = Float32[1.0, 1.0, 1.0, 1.0],
+        groundW = Float32[1.0],
+        snowW = Float32[1.0],
+        surfaceW = Float32[1.0],
+        TWS = Float32[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        ),
+    components = (;
+        cEco = (:cVegRoot, :cVegWood, :cVegLeaf, :cVegReserve, :cLitFast, :cLitSlow, :cSoilSlow, :cSoilOld),
+        
+        )
+    )
+)
