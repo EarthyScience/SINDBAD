@@ -75,7 +75,7 @@ end
 Base.firstindex(arg::LongTuple{N}) where N = 1
 
 function Base.show(io::IO, arg::LongTuple{N}) where N
-    printstyled(io, "LongTuple with ", length(arg.data), " inner tuples"; color=:bold)
+    printstyled(io, "LongTuple"; color=:bold)
     printstyled(io, ":"; color=:yellow)
     println(io)
     for (i, tup) in enumerate(arg.data)
