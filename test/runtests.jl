@@ -2,5 +2,7 @@ using Sindbad
 using BenchmarkTools
 using Test
 
-include("utilsCore.jl")
-include("Models/models.jl")
+@testset verbose=true begin
+    include("utilsCore.jl")
+    include("Models/models.jl") 
+end
