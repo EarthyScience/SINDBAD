@@ -44,6 +44,9 @@ tmp_land = (;
         ),
     diagnostics = (;
         gpp_f_soilW = 0.5f0, # 1.0f0
+        C_to_N_cVeg = [0.25f0, 0.25f0, 0.25f0, 0.25f0],
+        c_allocation =[0.25f0, 0.25f0, 0.25f0, 0.25f0],
+        auto_respiration_f_airT = 0.5f0,
         c_fVegDieOff = 0.5f0, # 0.5f0,
         c_fire_fba = 0.5f0, #0.5f0,
         c_Fire_cci = [0.0f0, 0.25f0, 0.9f0, 0.25f0, 0.9f0, 0.5f0, 0.9f0, 0.0f0],
@@ -53,6 +56,7 @@ tmp_land = (;
         ∑w_sat = 0.2f0 # 783.7831f0
         ),
     fluxes = (;
+        gpp = 0.5f0
         )
     )
 
