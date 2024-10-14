@@ -6,7 +6,7 @@
       "vitepress-plugin-tabs": "^0.5.0"
     },
     "scripts": {
-      "docs:dev": "vitepress dev build/.documenter",
+      "docs:dev": "vitepress dev build/.documenter --host",
       "docs:build": "vitepress build build/.documenter",
       "docs:preview": "vitepress preview build/.documenter"
     },
