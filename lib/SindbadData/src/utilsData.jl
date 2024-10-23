@@ -7,10 +7,10 @@ export yaxCubeToKeyedArray
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
 
-Add skipping filter for pixels with all nans in YAXArrays
+Add skipping filter for pixels with all nans or missings in YAXArrays
 """
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
-YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
+YAXArrays.DAT.checkskip(::AllNaN, x) = all(ismissing, x) || all(isnan, x)
 
 
 """
