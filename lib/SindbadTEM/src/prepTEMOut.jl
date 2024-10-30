@@ -117,7 +117,6 @@ get the dimensions for SINDBAD output using YAXArray as array backend
 """
 function getOutDims(info, forcing_helpers, ::OutputYAXArray)
     outdims_pairs = getOutDimsPairs(info.output, forcing_helpers);
-    info.settings.forcing.data_dimension.time
     space_dims = Symbol.(info.settings.forcing.data_dimension.space)
     var_dims = map(outdims_pairs) do dim_pairs
         od = []
@@ -131,10 +130,12 @@ function getOutDims(info, forcing_helpers, ::OutputYAXArray)
     v_index = 1
     outdims = map(info.output.variables) do vname_full
         vname = string(last(vname_full))
+        _properties = collectMetadata(info, vname_full)
         vdims = var_dims[v_index]
         outformat = info.settings.experiment.model_output.format
         backend = outformat == "nc" ? :netcdf : :zarr
         out_dim = OutDims(vdims...;
+        properties = _properties,
         path=info.output.file_info.file_prefix * "_$(vname).$(outformat)",
         backend=backend,
         overwrite=true)
@@ -358,4 +359,31 @@ create the output fields needed for the optimization experiment
 """
 function setupOptiOutput(info::NamedTuple, output::NamedTuple, ::DoNotRunOptimization)
     return output
+end
+
+"""
+collectMetadata(info, vname)
+
+This function collects metadata regarding the experiment's OS as well as details about output variables.
+
+# Arguments:
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `vname`: a tuple of symbols, i.e., `(:diagnostics, :water_balance)`.
+- `output`: a Dictionary, `Dict{String, Any}` with all relevant metadata.
+
+"""
+function collectMetadata(info, vname)
+    metadata_platform = info.output.file_info.global_metadata
+    _properties = Dict{String, Any}()
+    try
+        vinfo = getVariableInfo(vname, info.experiment.basics.temporal_resolution)
+        for (k,v) in vinfo
+            _properties[k] = v
+        end
+    catch
+        @warn "variable `$(vname)` is not in the catalog. Please create a new entry in `sindbadVariableCatalog.jl`. "
+    end
+    # as of now this is for every single output cube, for datasets it should be only once, and not for every variable.
+    _properties["platform_info"] = metadata_platform
+    return _properties
 end
