@@ -45,6 +45,18 @@ function getParameters(selected_models::Tuple, num_type; return_table=true)
         end
         m_id
     end
+
+    unts=[]
+    for m in eachindex(name)
+        prm_name = Symbol(name[m])
+        appr = approach_func[m]()
+        if hasproperty(appr, prm_name)
+            push!(unts, Sindbad.Models.units(appr, prm_name))
+        else
+            error("$appr does not have a parameter $prmn")
+        end
+    end
+
     # default = num_type.(default)
     lower = num_type.(lower)
     upper = num_type.(upper)
@@ -53,6 +65,7 @@ function getParameters(selected_models::Tuple, num_type; return_table=true)
     name,
     default,
     optim=default,
+    units=unts,
     lower,
     upper,
     model,
