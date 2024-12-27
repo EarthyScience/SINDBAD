@@ -1,12 +1,12 @@
 export interception_Miralles2010
 
 #! format: off
-@bounds @describe @units @with_kw struct interception_Miralles2010{T1,T2,T3,T4,T5} <: interception
-    canopy_storage::T1 = 1.2 | (0.4, 2.0) | "Canopy storage" | "mm"
-    fte::T2 = 0.02 | (0.02, 0.02) | "fraction of trunk evaporation" | ""
-    evap_rate::T3 = 0.3 | (0.1, 0.5) | "mean evaporation rate" | "mm/hr"
-    trunk_capacity::T4 = 0.02 | (0.02, 0.02) | "trunk capacity" | "mm"
-    pd::T5 = 0.02 | (0.02, 0.02) | "fraction rain to trunks" | ""
+@bounds @describe @units @timescale @with_kw struct interception_Miralles2010{T1,T2,T3,T4,T5} <: interception
+    canopy_storage::T1 = 1.2 | (0.4, 2.0) | "Canopy storage" | "mm" | ""
+    fte::T2 = 0.02 | (0.02, 0.02) | "fraction of trunk evaporation" | "" | ""
+    evap_rate::T3 = 0.3 | (0.1, 0.5) | "mean evaporation rate" | "mm/hr" | ""
+    trunk_capacity::T4 = 0.02 | (0.02, 0.02) | "trunk capacity" | "mm" | ""
+    pd::T5 = 0.02 | (0.02, 0.02) | "fraction rain to trunks" | "" | ""
 end
 #! format: on
 

@@ -1,8 +1,8 @@
 export vegFraction_scaledLAI
 
 #! format: off
-@bounds @describe @units @with_kw struct vegFraction_scaledLAI{T1} <: vegFraction
-    LAIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for LAI" | ""
+@bounds @describe @units @timescale @with_kw struct vegFraction_scaledLAI{T1} <: vegFraction
+    LAIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for LAI" | "" | ""
 end
 #! format: on
 

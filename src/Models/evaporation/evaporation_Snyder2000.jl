@@ -1,9 +1,9 @@
 export evaporation_Snyder2000
 
 #! format: off
-@bounds @describe @units @with_kw struct evaporation_Snyder2000{T1,T2} <: evaporation
-    α::T1 = 1.0 | (0.5, 1.5) | "scaling factor for PET to account for maximum bare soil evaporation" | ""
-    β::T2 = 3.0 | (1.0, 5.0) | "soil moisture resistance factor for soil evapotranspiration" | "mm^0.5"
+@bounds @describe @units @timescale @with_kw struct evaporation_Snyder2000{T1,T2} <: evaporation
+    α::T1 = 1.0 | (0.5, 1.5) | "scaling factor for PET to account for maximum bare soil evaporation" | "" | ""
+    β::T2 = 3.0 | (1.0, 5.0) | "soil moisture resistance factor for soil evapotranspiration" | "mm^0.5" | ""
 end
 #! format: on
 function define(params::evaporation_Snyder2000, forcing, land, helpers)

@@ -1,8 +1,8 @@
 export treeFraction_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct treeFraction_constant{T1} <: treeFraction
-    constant_frac_tree::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | ""
+@bounds @describe @units @timescale @with_kw struct treeFraction_constant{T1} <: treeFraction
+    constant_frac_tree::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | "" | ""
 end
 #! format: on
 

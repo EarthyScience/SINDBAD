@@ -5,13 +5,14 @@ using ..Sindbad
 using FieldMetadata: @metadata
 using Parameters: @with_kw
 using StatsBase: mean
+@metadata timescale "" String
 @metadata describe "" String
 @metadata bounds (-Inf, Inf) Tuple
 @metadata units "" String
 export describe, bounds, units
 export DoCatchModelErrors
 export DoNotCatchModelErrors
-export @describe, @bounds, @units
+export @describe, @bounds, @units, @timescale
 export @with_kw
 export sindbad_models
 # define dispatch structs for catching model errors

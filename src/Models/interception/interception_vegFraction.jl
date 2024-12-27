@@ -1,8 +1,8 @@
 export interception_vegFraction
 
 #! format: off
-@bounds @describe @units @with_kw struct interception_vegFraction{T1} <: interception
-    p_interception::T1 = 1.0 | (0.0001, 5.0) | "maximum interception storage" | "mm"
+@bounds @describe @units @timescale @with_kw struct interception_vegFraction{T1} <: interception
+    p_interception::T1 = 1.0 | (0.0001, 5.0) | "maximum interception storage" | "mm" | ""
 end
 #! format: on
 

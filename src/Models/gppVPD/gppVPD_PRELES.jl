@@ -1,11 +1,11 @@
 export gppVPD_PRELES
 
 #! format: off
-@bounds @describe @units @with_kw struct gppVPD_PRELES{T1,T2,T3,T4} <: gppVPD
-    κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
-    c_κ::T2 = 0.4 | (-50.0, 10.0) | "" | ""
-    base_ambient_CO2::T3 = 295.0 | (250.0, 500.0) | "" | "ppm"
-    sat_ambient_CO2::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
+@bounds @describe @units @timescale @with_kw struct gppVPD_PRELES{T1,T2,T3,T4} <: gppVPD
+    κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1" | ""
+    c_κ::T2 = 0.4 | (-50.0, 10.0) | "" | "" | ""
+    base_ambient_CO2::T3 = 295.0 | (250.0, 500.0) | "" | "ppm" | ""
+    sat_ambient_CO2::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm" | ""
 end
 #! format: on
 

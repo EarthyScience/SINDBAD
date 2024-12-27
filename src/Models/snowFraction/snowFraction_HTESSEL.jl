@@ -1,8 +1,8 @@
 export snowFraction_HTESSEL
 
 #! format: off
-@bounds @describe @units @with_kw struct snowFraction_HTESSEL{T1} <: snowFraction
-    snow_cover_param::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
+@bounds @describe @units @timescale @with_kw struct snowFraction_HTESSEL{T1} <: snowFraction
+    snow_cover_param::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm" | ""
 end
 #! format: on
 

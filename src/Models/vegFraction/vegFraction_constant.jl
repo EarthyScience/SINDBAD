@@ -1,8 +1,8 @@
 export vegFraction_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct vegFraction_constant{T1} <: vegFraction
-    constant_frac_vegetation::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | ""
+@bounds @describe @units @timescale @with_kw struct vegFraction_constant{T1} <: vegFraction
+    constant_frac_vegetation::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | "" | ""
 end
 #! format: on
 

@@ -1,8 +1,8 @@
 export gppAirT_Wang2014
 
 #! format: off
-@bounds @describe @units @with_kw struct gppAirT_Wang2014{T1} <: gppAirT
-    Tmax::T1 = 10.0 | (5.0, 45.0) | "maximum temperature at which GPP ceases" | "°C"
+@bounds @describe @units @timescale @with_kw struct gppAirT_Wang2014{T1} <: gppAirT
+    Tmax::T1 = 10.0 | (5.0, 45.0) | "maximum temperature at which GPP ceases" | "°C" | ""
 end
 #! format: on
 

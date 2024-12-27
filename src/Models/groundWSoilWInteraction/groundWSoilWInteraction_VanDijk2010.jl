@@ -1,8 +1,8 @@
 export groundWSoilWInteraction_VanDijk2010
 
 #! format: off
-@bounds @describe @units @with_kw struct groundWSoilWInteraction_VanDijk2010{T1} <: groundWSoilWInteraction
-    max_fraction::T1 = 0.5 | (0.001, 0.98) | "fraction of groundwater that can be lost to capillary flux" | ""
+@bounds @describe @units @timescale @with_kw struct groundWSoilWInteraction_VanDijk2010{T1} <: groundWSoilWInteraction
+    max_fraction::T1 = 0.5 | (0.001, 0.98) | "fraction of groundwater that can be lost to capillary flux" | "" | ""
 end
 #! format: on
 

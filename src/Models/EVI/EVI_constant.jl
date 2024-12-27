@@ -1,8 +1,8 @@
 export EVI_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct EVI_constant{T1} <: EVI
-    constant_EVI::T1 = 1.0 | (0.0, 1.0) | "EVI" | ""
+@bounds @describe @units @timescale @with_kw struct EVI_constant{T1} <: EVI
+    constant_EVI::T1 = 1.0 | (0.0, 1.0) | "EVI" | "" | ""
 end
 #! format: on
 

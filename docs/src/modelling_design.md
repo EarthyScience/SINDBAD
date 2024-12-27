@@ -25,7 +25,7 @@ All models are defined as follows:
 ````julia
 abstract type newModel <: LandEcosystem end
 
-@bounds @describe @units @with_kw struct newModel_v1{T1,T2} <: newModel
+@bounds @describe @units @timescale @with_kw struct newModel_v1{T1,T2} <: newModel
     param1::T1 = 1.0 | (2.0, 5.0) | "description 1" | "units 1"
     param2::T2 = 0.0 | (1.0, 2.0) | "description 2" | "units 2"
 end
@@ -169,7 +169,7 @@ using Sindbad: @describe, @bounds, @units, @with_kw
 # Define a model abstract type
 abstract type modelExample <: LandEcosystem end
 # define a concrete struct type
-@bounds @describe @units @with_kw struct mExample{T1,T2} <: modelExample
+@bounds @describe @units @timescale @with_kw struct mExample{T1,T2} <: modelExample
     α::T1 = 1.0 | (2.0, 5.0) | "description 1" | "units 1"
     β::T2 = 0.0 | (1.0, 2.0) | "description 2" | "units 2"
 end
