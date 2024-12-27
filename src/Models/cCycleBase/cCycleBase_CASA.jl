@@ -59,8 +59,7 @@ function compute(params::cCycleBase_CASA, forcing, land, helpers)
     C_to_N_cVeg[getZix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
 
     # turnover rates
-    TSPY = helpers.dates.timesteps_in_year
-    c_eco_k_base = o_one .- (exp.(-o_one .* annk) .^ (o_one / TSPY))
+    c_eco_k_base .= annk
 
     ## pack land variables
     @pack_nt (c_eco_k_base) ⇒ land.diagnostics

@@ -15,7 +15,7 @@ function compute(params::runoffInfiltrationExcess_Jung, forcing, land, helpers)
     # assumes infiltration capacity is unlimited in the vegetated fraction [infiltration flux = P*fpar] the infiltration flux for the unvegetated fraction is given as the minimum of the precip & the min of precip intensity [P] & infiltration capacity [I] scaled with rain duration [P/R]
 
     # get infiltration capacity of the first layer
-    pInfCapacity = k_sat[1] / helpers.dates.timesteps_in_day in mm / hr
+    pInfCapacity = k_sat[1] #/ in mm / hr
     InfExcess =
         rain - (rain * fAPAR +
                 (o_one - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt))

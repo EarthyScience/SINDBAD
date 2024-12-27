@@ -124,7 +124,6 @@ o_set = :set1
         "optimization.observations.default_observation.data_path" => path_observation,
         "optimization.observational_constraints" => opti_sets[o_set],)
     info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
-    # tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type);
 
     @time out_opti = runExperimentCost(experiment_json; replace_info=replace_info);
 
