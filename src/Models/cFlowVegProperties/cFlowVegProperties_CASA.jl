@@ -1,8 +1,8 @@
 export cFlowVegProperties_CASA
 
 #! format: off
-@bounds @describe @units @with_kw struct cFlowVegProperties_CASA{T1} <: cFlowVegProperties
-    frac_lignin_wood::T1 = 0.4 | (-Inf, Inf) | "fraction of wood that is lignin" | ""
+@bounds @describe @units @timescale @with_kw struct cFlowVegProperties_CASA{T1} <: cFlowVegProperties
+    frac_lignin_wood::T1 = 0.4 | (-Inf, Inf) | "fraction of wood that is lignin" | "" | ""
 end
 #! format: on
 

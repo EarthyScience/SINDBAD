@@ -1,9 +1,9 @@
 export groundWSoilWInteraction_gradientNeg
 
 #! format: off
-@bounds @describe @units @with_kw struct groundWSoilWInteraction_gradientNeg{T1,T2} <: groundWSoilWInteraction
-    smax_scale::T1 = 0.5 | (0.0, 50.0) | "scale param to yield storage capacity of wGW" | ""
-    max_flux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
+@bounds @describe @units @timescale @with_kw struct groundWSoilWInteraction_gradientNeg{T1,T2} <: groundWSoilWInteraction
+    smax_scale::T1 = 0.5 | (0.0, 50.0) | "scale param to yield storage capacity of wGW" | "" | ""
+    max_flux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]" | ""
 end
 #! format: on
 

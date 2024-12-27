@@ -1,8 +1,8 @@
 export LAI_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct LAI_constant{T1} <: LAI
-    constant_LAI::T1 = 3.0 | (1.0, 12.0) | "LAI" | "m2/m2"
+@bounds @describe @units @timescale @with_kw struct LAI_constant{T1} <: LAI
+    constant_LAI::T1 = 3.0 | (1.0, 12.0) | "LAI" | "m2/m2" | ""
 end
 #! format: on
 

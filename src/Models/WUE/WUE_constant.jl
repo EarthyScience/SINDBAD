@@ -1,8 +1,8 @@
 export WUE_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct WUE_constant{T1} <: WUE
-    constant_WUE::T1 = 4.1 | (1.0, 10.0) | "mean FluxNet WUE" | "gC/mmH2O"
+@bounds @describe @units @timescale @with_kw struct WUE_constant{T1} <: WUE
+    constant_WUE::T1 = 4.1 | (1.0, 10.0) | "mean FluxNet WUE" | "gC/mmH2O" | ""
 end
 #! format: on
 

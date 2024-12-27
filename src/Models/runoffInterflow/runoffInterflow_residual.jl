@@ -1,8 +1,8 @@
 export runoffInterflow_residual
 
 #! format: off
-@bounds @describe @units @with_kw struct runoffInterflow_residual{T1} <: runoffInterflow
-    rc::T1 = 0.3 | (0.0, 0.9) | "fraction of the available water that flows out as interflow" | ""
+@bounds @describe @units @timescale @with_kw struct runoffInterflow_residual{T1} <: runoffInterflow
+    rc::T1 = 0.3 | (0.0, 0.9) | "fraction of the available water that flows out as interflow" | "" | ""
 end
 #! format: on
 

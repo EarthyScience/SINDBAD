@@ -1,25 +1,25 @@
 export sublimation_GLEAM
 
 #! format: off
-@bounds @describe @units @with_kw struct sublimation_GLEAM{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18} <: sublimation
-    α::T1 = 0.95 | (0.0, 3.0) | "Priestley Taylor Coefficient for Sublimation" | "none"
-    deg_to_k::T2 = 273.15 | (-Inf, Inf) | "degree to Kelvin conversion" | "none"
-    Δ_1::T3 = 5723.265 | (-Inf, Inf) | "first parameter of Δ from Murphy & Koop [2005]" | "none"
-    Δ_2::T4 = 3.53068 | (-Inf, Inf) | "second parameter of Δ from Murphy & Koop [2005]" | "none"
-    Δ_3::T5 = 0.00728332 | (-Inf, Inf) | "third parameter of Δ from Murphy & Koop [2005]" | "none"
-    Δ_4::T6 = 9.550426 | (-Inf, Inf) | "fourth parameter of Δ from Murphy & Koop [2005]" | "none"
-    pa_to_kpa::T7 = 0.001 | (-Inf, Inf) | "pascal to kilopascal conversion" | "none"
-    λ_1::T8 = 46782.5 | (-Inf, Inf) | "first parameter of λ from Murphy & Koop [2005]" | "none"
-    λ_2::T9 = 35.8925 | (-Inf, Inf) | "second parameter of λ from Murphy & Koop [2005]" | "none"
-    λ_3::T10 = 0.07414 | (-Inf, Inf) | "third parameter of λ from Murphy & Koop [2005]" | "none"
-    λ_4::T11 = 541.5 | (-Inf, Inf) | "fourth parameter of λ from Murphy & Koop [2005]" | "none"
-    λ_5::T12 = 123.75 | (-Inf, Inf) | "fifth parameter of λ from Murphy & Koop [2005]" | "none"
-    j_to_mj::T13 = 0.000001 | (-Inf, Inf) | "joule to megajoule conversion" | "none"
-    g_to_kg::T14 = 0.001 | (-Inf, Inf) | "joule to megajoule conversion" | "none"
-    mol_mass_water::T15 = 18.01528 | (-Inf, Inf) | "molecular mass of water" | "gram"
-    sp_heat_air::T16 = 0.001 | (-Inf, Inf) | "specific heat of air" | "MJ/kg/K"
-    γ_1::T17 = 0.001 | (-Inf, Inf) | "first parameter of γ from Brunt [1952]" | "none"
-    γ_2::T18 = 0.622 | (-Inf, Inf) | "second parameter of γ from Brunt [1952]" | "none"
+@bounds @describe @units @timescale @with_kw struct sublimation_GLEAM{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18} <: sublimation
+    α::T1 = 0.95 | (0.0, 3.0) | "Priestley Taylor Coefficient for Sublimation" | "none" | ""
+    deg_to_k::T2 = 273.15 | (-Inf, Inf) | "degree to Kelvin conversion" | "none" | ""
+    Δ_1::T3 = 5723.265 | (-Inf, Inf) | "first parameter of Δ from Murphy & Koop [2005]" | "none" | ""
+    Δ_2::T4 = 3.53068 | (-Inf, Inf) | "second parameter of Δ from Murphy & Koop [2005]" | "none" | ""
+    Δ_3::T5 = 0.00728332 | (-Inf, Inf) | "third parameter of Δ from Murphy & Koop [2005]" | "none" | ""
+    Δ_4::T6 = 9.550426 | (-Inf, Inf) | "fourth parameter of Δ from Murphy & Koop [2005]" | "none" | ""
+    pa_to_kpa::T7 = 0.001 | (-Inf, Inf) | "pascal to kilopascal conversion" | "none" | ""
+    λ_1::T8 = 46782.5 | (-Inf, Inf) | "first parameter of λ from Murphy & Koop [2005]" | "none" | ""
+    λ_2::T9 = 35.8925 | (-Inf, Inf) | "second parameter of λ from Murphy & Koop [2005]" | "none" | ""
+    λ_3::T10 = 0.07414 | (-Inf, Inf) | "third parameter of λ from Murphy & Koop [2005]" | "none" | ""
+    λ_4::T11 = 541.5 | (-Inf, Inf) | "fourth parameter of λ from Murphy & Koop [2005]" | "none" | ""
+    λ_5::T12 = 123.75 | (-Inf, Inf) | "fifth parameter of λ from Murphy & Koop [2005]" | "none" | ""
+    j_to_mj::T13 = 0.000001 | (-Inf, Inf) | "joule to megajoule conversion" | "none" | ""
+    g_to_kg::T14 = 0.001 | (-Inf, Inf) | "joule to megajoule conversion" | "none" | ""
+    mol_mass_water::T15 = 18.01528 | (-Inf, Inf) | "molecular mass of water" | "gram" | ""
+    sp_heat_air::T16 = 0.001 | (-Inf, Inf) | "specific heat of air" | "MJ/kg/K" | ""
+    γ_1::T17 = 0.001 | (-Inf, Inf) | "first parameter of γ from Brunt [1952]" | "none" | ""
+    γ_2::T18 = 0.622 | (-Inf, Inf) | "second parameter of γ from Brunt [1952]" | "none" | ""
 end
 #! format: on
 

@@ -1,9 +1,9 @@
 export cAllocationSoilW_Friedlingstein1999
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocationSoilW_Friedlingstein1999{T1,T2} <: cAllocationSoilW
-    min_f_soilW::T1 = 0.5 | (0.0, 1.0) | "minimum value for moisture stressor" | ""
-    max_f_soilW::T2 = 0.8 | (0.0, 1.0) | "maximum value for moisture stressor" | ""
+@bounds @describe @units @timescale @with_kw struct cAllocationSoilW_Friedlingstein1999{T1,T2} <: cAllocationSoilW
+    min_f_soilW::T1 = 0.5 | (0.0, 1.0) | "minimum value for moisture stressor" | "" | ""
+    max_f_soilW::T2 = 0.8 | (0.0, 1.0) | "maximum value for moisture stressor" | "" | ""
 end
 #! format: on
 

@@ -1,10 +1,10 @@
 export cAllocationRadiation_GSI
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocationRadiation_GSI{T1,T2,T3} <: cAllocationRadiation
-    τ_rad::T1 = 0.02 | (0.001, 1.0) | "temporal change rate for the light-limiting function" | ""
-    slope_rad::T2 = 1.0 | (0.01, 200.0) | "slope parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
-    base_rad::T3 = 10.0 | (0.0, 100.0) | "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
+@bounds @describe @units @timescale @with_kw struct cAllocationRadiation_GSI{T1,T2,T3} <: cAllocationRadiation
+    τ_rad::T1 = 0.02 | (0.001, 1.0) | "temporal change rate for the light-limiting function" | "" | ""
+    slope_rad::T2 = 1.0 | (0.01, 200.0) | "slope parameters of a logistic function based on mean daily y shortwave downward radiation" | "" | ""
+    base_rad::T3 = 10.0 | (0.0, 100.0) | "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation" | "" | ""
 end
 #! format: on
 

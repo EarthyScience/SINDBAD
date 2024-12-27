@@ -1,11 +1,11 @@
 export WUE_VPDDayCo2
 
 #! format: off
-@bounds @describe @units @with_kw struct WUE_VPDDayCo2{T1,T2,T3,T4} <: WUE
-    WUE_one_hpa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
-    base_ambient_CO2::T2 = 380.0 | (300.0, 500.0) | "" | "ppm"
-    sat_ambient_CO2::T3 = 500.0 | (100.0, 2000.0) | "" | "ppm"
-    kpa_to_hpa::T4 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | ""
+@bounds @describe @units @timescale @with_kw struct WUE_VPDDayCo2{T1,T2,T3,T4} <: WUE
+    WUE_one_hpa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O" | ""
+    base_ambient_CO2::T2 = 380.0 | (300.0, 500.0) | "" | "ppm" | ""
+    sat_ambient_CO2::T3 = 500.0 | (100.0, 2000.0) | "" | "ppm" | ""
+    kpa_to_hpa::T4 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | "" | ""
 end
 #! format: on
 
@@ -22,7 +22,7 @@ function compute(params::WUE_VPDDayCo2, forcing, land, helpers)
     end
 
     ## calculate variables
-    # "WUEat1hPa"
+    # "WUEat1hPa" | ""
     WUENoCO2 = WUE_one_hpa * o_one / sqrt(kpa_to_hpa * (f_VPD_day + tolerance))
     fCO2_CO2 = o_one + (ambient_CO2 - base_ambient_CO2) / (ambient_CO2 - base_ambient_CO2 + sat_ambient_CO2)
     WUE = WUENoCO2 * fCO2_CO2

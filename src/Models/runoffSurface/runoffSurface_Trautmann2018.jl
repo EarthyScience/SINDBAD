@@ -1,8 +1,8 @@
 export runoffSurface_Trautmann2018
 
 #! format: off
-@bounds @describe @units @with_kw struct runoffSurface_Trautmann2018{T1} <: runoffSurface
-    qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
+@bounds @describe @units @timescale @with_kw struct runoffSurface_Trautmann2018{T1} <: runoffSurface
+    qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time" | ""
 end
 #! format: on
 

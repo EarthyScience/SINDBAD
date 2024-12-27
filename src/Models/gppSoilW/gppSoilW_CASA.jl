@@ -1,8 +1,8 @@
 export gppSoilW_CASA
 
 #! format: off
-@bounds @describe @units @with_kw struct gppSoilW_CASA{T1} <: gppSoilW
-    base_f_soilW::T1 = 0.2 | (0, 1) | "base water stress" | ""
+@bounds @describe @units @timescale @with_kw struct gppSoilW_CASA{T1} <: gppSoilW
+    base_f_soilW::T1 = 0.2 | (0, 1) | "base water stress" | "" | ""
 end
 #! format: on
 

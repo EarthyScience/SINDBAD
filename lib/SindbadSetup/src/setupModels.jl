@@ -141,7 +141,7 @@ function setSpinupAndForwardModels(info::NamedTuple)
         model_info = getfield(info.settings.model_structure.models, sm)
         selected_approach = model_info.approach
         selected_approach = String(sm) * "_" * selected_approach
-        selected_approach_func = getTypedModel(Symbol(selected_approach), info.temp.helpers.numbers.num_type)
+        selected_approach_func = getTypedModel(Symbol(selected_approach), info.temp.helpers.dates.temporal_resolution, info.temp.helpers.numbers.num_type)
         selected_approach_forward = (selected_approach_forward..., selected_approach_func)
         if :use_in_spinup in propertynames(model_info)
             use_in_spinup = model_info.use_in_spinup

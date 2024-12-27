@@ -1,8 +1,8 @@
 export groundWRecharge_dos
 
 #! format: off
-@bounds @describe @units @with_kw struct groundWRecharge_dos{T1} <: groundWRecharge
-    dos_exp::T1 = 1.5 | (1.0, 3.0) | "exponent of non-linearity for dos influence on drainage to groundwater" | ""
+@bounds @describe @units @timescale @with_kw struct groundWRecharge_dos{T1} <: groundWRecharge
+    dos_exp::T1 = 1.5 | (1.0, 3.0) | "exponent of non-linearity for dos influence on drainage to groundwater" | "" | ""
 end
 #! format: on
 

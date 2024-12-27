@@ -1,8 +1,8 @@
 export cAllocationTreeFraction_Friedlingstein1999
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1} <: cAllocationTreeFraction
-    frac_fine_to_coarse::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction"
+@bounds @describe @units @timescale @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1} <: cAllocationTreeFraction
+    frac_fine_to_coarse::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction" | ""
 end
 #! format: on
 

@@ -1,8 +1,8 @@
 export PFT_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct PFT_constant{T1} <: PFT
-    PFT::T1 = 1.0 | (1.0, 13.0) | "Plant functional type" | "class"
+@bounds @describe @units @timescale @with_kw struct PFT_constant{T1} <: PFT
+    PFT::T1 = 1.0 | (1.0, 13.0) | "Plant functional type" | "class" | ""
 end
 #! format: on
 
