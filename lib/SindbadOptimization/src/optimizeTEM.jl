@@ -100,7 +100,7 @@ end
 function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, ::LandOutArray)
 
     # get the subset of parameters table that consists of only optimized parameters
-    tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type)
+    tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
 
     param_to_index = getParameterIndices(info.models.forward, tbl_params);
     
@@ -143,7 +143,7 @@ function optimizeTEM(forcing::NamedTuple,
     ::LandOutStacked)
 
     # get the subset of parameters table that consists of only optimized parameters
-    tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type)
+    tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
 
     cost_options = prepCostOptions(observations, info.optimization.cost_options)
 
@@ -184,7 +184,7 @@ function optimizeTEM(forcing::NamedTuple,
 
     # get the subset of parameters table that consists of only optimized parameters
     tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize,
-        info.helpers.numbers.num_type)
+        info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
 
     cost_options = prepCostOptions(observations, info.optimization.cost_options)
 

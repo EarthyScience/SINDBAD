@@ -43,12 +43,15 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 tbl_params = getParameters(info.models.forward,
     info.optimization.model_parameter_default,
     info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type);
+    info.helpers.numbers.num_type, 
+    info.helpers.dates.temporal_resolution);
 
 forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
 
+# sel_models_day = deepcopy(info.models.forward);
+@time runTEM!(sel_models_day, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
 
@@ -56,7 +59,8 @@ optimized_models = info.models.forward;
 tbl_params = getParameters(info.models.forward,
     info.optimization.model_parameter_default,
     info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type);
+    info.helpers.numbers.num_type, 
+    info.helpers.dates.temporal_resolution);
 selected_models = info.models.forward;
 
 rand_m = rand()
