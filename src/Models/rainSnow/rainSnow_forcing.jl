@@ -1,8 +1,8 @@
 export rainSnow_forcing
 
 #! format: off
-@bounds @describe @units @with_kw struct rainSnow_forcing{T1} <: rainSnow
-    snowfall_scalar::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | ""
+@bounds @describe @units @timescale @with_kw struct rainSnow_forcing{T1} <: rainSnow
+    snowfall_scalar::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | "" | ""
 end
 #! format: on
 

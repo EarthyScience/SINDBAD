@@ -1,8 +1,8 @@
 export groundWSurfaceWInteraction_fracGroundW
 
 #! format: off
-@bounds @describe @units @with_kw struct groundWSurfaceWInteraction_fracGroundW{T1} <: groundWSurfaceWInteraction
-    k_gw_to_suw::T1 = 0.5 | (0.0001, 0.999) | "scale parameter for drainage from wGW to wSurf" | "fraction"
+@bounds @describe @units @timescale @with_kw struct groundWSurfaceWInteraction_fracGroundW{T1} <: groundWSurfaceWInteraction
+    k_gw_to_suw::T1 = 0.5 | (0.0001, 0.999) | "scale parameter for drainage from wGW to wSurf" | "fraction" | ""
 end
 #! format: on
 

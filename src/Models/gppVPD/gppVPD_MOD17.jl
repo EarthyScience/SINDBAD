@@ -1,9 +1,9 @@
 export gppVPD_MOD17
 
 #! format: off
-@bounds @describe @units @with_kw struct gppVPD_MOD17{T1,T2} <: gppVPD
-    VPD_max::T1 = 4.0 | (2.0, 8.0) | "Max VPD with GPP > 0" | "kPa"
-    VPD_min::T2 = 0.65 | (0.0, 1.0) | "Min VPD with GPP > 0" | "kPa"
+@bounds @describe @units @timescale @with_kw struct gppVPD_MOD17{T1,T2} <: gppVPD
+    VPD_max::T1 = 4.0 | (2.0, 8.0) | "Max VPD with GPP > 0" | "kPa" | ""
+    VPD_min::T2 = 0.65 | (0.0, 1.0) | "Min VPD with GPP > 0" | "kPa" | ""
 end
 #! format: on
 

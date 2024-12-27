@@ -1,9 +1,9 @@
 export cAllocationNutrients_Friedlingstein1999
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocationNutrients_Friedlingstein1999{T1,T2} <: cAllocationNutrients
-    min_L::T1 = 0.1 | (0.0, 1.0) | "" | ""
-    max_L::T2 = 1.0 | (0.0, 1.0) | "" | ""
+@bounds @describe @units @timescale @with_kw struct cAllocationNutrients_Friedlingstein1999{T1,T2} <: cAllocationNutrients
+    min_L::T1 = 0.1 | (0.0, 1.0) | "" | "" | ""
+    max_L::T2 = 1.0 | (0.0, 1.0) | "" | "" | ""
 end
 #! format: on
 

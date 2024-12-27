@@ -1,8 +1,8 @@
 export rootMaximumDepth_fracSoilD
 
 #! format: off
-@bounds @describe @units @with_kw struct rootMaximumDepth_fracSoilD{T1} <: rootMaximumDepth
-    constant_frac_max_root_depth::T1 = 0.5 | (0.1, 0.8) | "root depth as a fraction of soil depth" | ""
+@bounds @describe @units @timescale @with_kw struct rootMaximumDepth_fracSoilD{T1} <: rootMaximumDepth
+    constant_frac_max_root_depth::T1 = 0.5 | (0.1, 0.8) | "root depth as a fraction of soil depth" | "" | ""
 end
 #! format: on
 

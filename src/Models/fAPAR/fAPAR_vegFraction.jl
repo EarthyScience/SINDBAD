@@ -1,8 +1,8 @@
 export fAPAR_vegFraction
 
 #! format: off
-@bounds @describe @units @with_kw struct fAPAR_vegFraction{T1} <: fAPAR
-    frac_vegetation_to_fAPAR::T1 = 0.989 | (0.00001, 0.99) | "linear fraction of fAPAR and frac_vegetation" | ""
+@bounds @describe @units @timescale @with_kw struct fAPAR_vegFraction{T1} <: fAPAR
+    frac_vegetation_to_fAPAR::T1 = 0.989 | (0.00001, 0.99) | "linear fraction of fAPAR and frac_vegetation" | "" | ""
 end
 #! format: on
 

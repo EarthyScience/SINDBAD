@@ -1,10 +1,10 @@
 export gppDiffRadiation_GSI
 
 #! format: off
-@bounds @describe @units @with_kw struct gppDiffRadiation_GSI{T1,T2,T3} <: gppDiffRadiation
-    fR_τ::T1 = 0.2 | (0.01, 1.0) | "contribution factor for current stressor" | "fraction"
-    fR_slope::T2 = 58.0 | (1.0, 100.0) | "slope of sigmoid" | "fraction"
-    fR_base::T3 = 59.78 | (1.0, 120.0) | "base of sigmoid" | "fraction"
+@bounds @describe @units @timescale @with_kw struct gppDiffRadiation_GSI{T1,T2,T3} <: gppDiffRadiation
+    fR_τ::T1 = 0.2 | (0.01, 1.0) | "contribution factor for current stressor" | "fraction" | ""
+    fR_slope::T2 = 58.0 | (1.0, 100.0) | "slope of sigmoid" | "fraction" | ""
+    fR_base::T3 = 59.78 | (1.0, 120.0) | "base of sigmoid" | "fraction" | ""
 end
 #! format: on
 

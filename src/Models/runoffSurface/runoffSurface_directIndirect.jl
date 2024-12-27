@@ -1,9 +1,9 @@
 export runoffSurface_directIndirect
 
 #! format: off
-@bounds @describe @units @with_kw struct runoffSurface_directIndirect{T1,T2} <: runoffSurface
-    dc::T1 = 0.01 | (0.0001, 1.0) | "delayed surface runoff coefficient" | ""
-    rf::T2 = 0.5 | (0.0001, 1.0) | "fraction of overland runoff that recharges the surface water storage" | ""
+@bounds @describe @units @timescale @with_kw struct runoffSurface_directIndirect{T1,T2} <: runoffSurface
+    dc::T1 = 0.01 | (0.0001, 1.0) | "delayed surface runoff coefficient" | "" | ""
+    rf::T2 = 0.5 | (0.0001, 1.0) | "fraction of overland runoff that recharges the surface water storage" | "" | ""
 end
 #! format: on
 

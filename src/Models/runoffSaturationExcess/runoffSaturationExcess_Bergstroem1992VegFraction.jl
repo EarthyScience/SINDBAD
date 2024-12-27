@@ -1,9 +1,9 @@
 export runoffSaturationExcess_Bergstroem1992VegFraction
 
 #! format: off
-@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992VegFraction{T1,T2} <: runoffSaturationExcess
-    β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
-    β_min::T2 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
+@bounds @describe @units @timescale @with_kw struct runoffSaturationExcess_Bergstroem1992VegFraction{T1,T2} <: runoffSaturationExcess
+    β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | "" | ""
+    β_min::T2 = 0.1 | (0.08, 0.120) | "minimum effective β" | "" | ""
 end
 #! format: on
 

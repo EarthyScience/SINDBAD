@@ -1,8 +1,8 @@
 export fAPAR_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct fAPAR_constant{T1} <: fAPAR
-    constant_fAPAR::T1 = 0.2 | (0.0, 1.0) | "a constant fAPAR" | ""
+@bounds @describe @units @timescale @with_kw struct fAPAR_constant{T1} <: fAPAR
+    constant_fAPAR::T1 = 0.2 | (0.0, 1.0) | "a constant fAPAR" | "" | ""
 end
 #! format: on
 

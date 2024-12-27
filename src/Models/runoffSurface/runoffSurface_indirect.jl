@@ -1,8 +1,8 @@
 export runoffSurface_indirect
 
 #! format: off
-@bounds @describe @units @with_kw struct runoffSurface_indirect{T1} <: runoffSurface
-    dc::T1 = 0.01 | (0.0, 1.0) | "delayed surface runoff coefficient" | ""
+@bounds @describe @units @timescale @with_kw struct runoffSurface_indirect{T1} <: runoffSurface
+    dc::T1 = 0.01 | (0.0, 1.0) | "delayed surface runoff coefficient" | "" | ""
 end
 #! format: on
 

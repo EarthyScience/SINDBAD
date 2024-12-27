@@ -1,9 +1,9 @@
 export gppAirT_MOD17
 
 #! format: off
-@bounds @describe @units @with_kw struct gppAirT_MOD17{T1,T2} <: gppAirT
-    Tmax::T1 = 20.0 | (10.0, 35.0) | "temperature for max GPP" | "°C"
-    Tmin::T2 = 5.0 | (0.0, 15.0) | "temperature for min GPP" | "°C"
+@bounds @describe @units @timescale @with_kw struct gppAirT_MOD17{T1,T2} <: gppAirT
+    Tmax::T1 = 20.0 | (10.0, 35.0) | "temperature for max GPP" | "°C" | ""
+    Tmin::T2 = 5.0 | (0.0, 15.0) | "temperature for min GPP" | "°C" | ""
 end
 #! format: on
 
