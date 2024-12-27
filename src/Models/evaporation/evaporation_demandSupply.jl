@@ -1,9 +1,9 @@
 export evaporation_demandSupply
 
 #! format: off
-@bounds @describe @units @with_kw struct evaporation_demandSupply{T1,T2} <: evaporation
-    α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
-    k_evaporation::T2 = 0.2 | (0.05, 0.98) | "fraction of soil water that can be used for soil evaporation" | "1/time"
+@bounds @describe @units @timescale @with_kw struct evaporation_demandSupply{T1,T2} <: evaporation
+    α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | "" | ""
+    k_evaporation::T2 = 0.2 | (0.05, 0.98) | "fraction of soil water that can be used for soil evaporation" | "day-1" | "day"
 end
 #! format: on
 

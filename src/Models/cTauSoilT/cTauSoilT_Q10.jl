@@ -1,10 +1,10 @@
 export cTauSoilT_Q10
 
 #! format: off
-@bounds @describe @units @with_kw struct cTauSoilT_Q10{T1,T2,T3} <: cTauSoilT
-    Q10::T1 = 1.4 | (1.05, 3.0) | "" | ""
-    ref_airT::T2 = 30.0 | (0.01, 40.0) | "" | "°C"
-    Q10_base::T3 = 10.0 | (-Inf, Inf) | "base temperature difference" | "°C"
+@bounds @describe @units @timescale @with_kw struct cTauSoilT_Q10{T1,T2,T3} <: cTauSoilT
+    Q10::T1 = 1.4 | (1.05, 3.0) | "" | "" | ""
+    ref_airT::T2 = 30.0 | (0.01, 40.0) | "" | "°C" | ""
+    Q10_base::T3 = 10.0 | (-Inf, Inf) | "base temperature difference" | "°C" | ""
 end
 #! format: on
 

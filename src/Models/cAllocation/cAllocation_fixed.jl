@@ -1,10 +1,10 @@
 export cAllocation_fixed
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocation_fixed{T1,T2,T3} <: cAllocation
-    a_cVegRoot::T1 = 0.3 | (0.0, 1.0) | "fraction of npp to cRoot" | "fraction"
-    a_cVegWood::T2 = 0.3 | (0.0, 1.0) | "fraction of npp to cWood" | "fraction"
-    a_cVegLeaf::T3 = 0.4 | (0.0, 1.0) | "fraction of npp to cLeaf" | "fraction"
+@bounds @describe @units @timescale @with_kw struct cAllocation_fixed{T1,T2,T3} <: cAllocation
+    a_cVegRoot::T1 = 0.3 | (0.0, 1.0) | "fraction of npp to cRoot" | "fraction" | ""
+    a_cVegWood::T2 = 0.3 | (0.0, 1.0) | "fraction of npp to cWood" | "fraction" | ""
+    a_cVegLeaf::T3 = 0.4 | (0.0, 1.0) | "fraction of npp to cLeaf" | "fraction" | ""
 end
 #! format: on
 

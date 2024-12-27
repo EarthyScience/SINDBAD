@@ -1,10 +1,10 @@
 export cAllocationLAI_Friedlingstein1999
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocationLAI_Friedlingstein1999{T1,T2,T3} <: cAllocationLAI
-    kext::T1 = 0.5 | (0.0, 1.0) | "extinction coefficient of LAI effect on allocation" | ""
-    min_f_LAI::T2 = 0.1 | (0.0, 1.0) | "minimum LAI effect on allocation" | ""
-    max_f_LAI::T3 = 1.0 | (0.0, 1.0) | "maximum LAI effect on allocation" | ""
+@bounds @describe @units @timescale @with_kw struct cAllocationLAI_Friedlingstein1999{T1,T2,T3} <: cAllocationLAI
+    kext::T1 = 0.5 | (0.0, 1.0) | "extinction coefficient of LAI effect on allocation" | "" | ""
+    min_f_LAI::T2 = 0.1 | (0.0, 1.0) | "minimum LAI effect on allocation" | "" | ""
+    max_f_LAI::T3 = 1.0 | (0.0, 1.0) | "maximum LAI effect on allocation" | "" | ""
 end
 #! format: on
 

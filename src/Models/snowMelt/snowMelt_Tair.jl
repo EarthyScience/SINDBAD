@@ -1,8 +1,8 @@
 export snowMelt_Tair
 
 #! format: off
-@bounds @describe @units @with_kw struct snowMelt_Tair{T1} <: snowMelt
-    rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C"
+@bounds @describe @units @timescale @with_kw struct snowMelt_Tair{T1} <: snowMelt
+    rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C" | ""
 end
 #! format: on
 
@@ -29,7 +29,7 @@ function compute(params::snowMelt_Tair, forcing, land, helpers)
     # divide snowmelt loss equally from all layers
     ΔsnowW .= ΔsnowW .- snow_melt / n_snowW
 
-    # a Water Balance Pool variable that tracks how much water is still "available"
+    # a Water Balance Pool variable that tracks how much water is still "available" | ""
     WBP = WBP + snow_melt
 
     ## pack land variables

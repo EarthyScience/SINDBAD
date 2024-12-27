@@ -1,8 +1,8 @@
 export NDWI_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct NDWI_constant{T1} <: NDWI
-    constant_NDWI::T1 = 1.0 | (0.0, 1.0) | "NDWI" | ""
+@bounds @describe @units @timescale @with_kw struct NDWI_constant{T1} <: NDWI
+    constant_NDWI::T1 = 1.0 | (0.0, 1.0) | "NDWI" | "" | ""
 end
 #! format: on
 
