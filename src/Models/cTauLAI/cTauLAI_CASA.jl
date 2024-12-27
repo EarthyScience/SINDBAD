@@ -32,7 +32,7 @@ function compute(params::cTauLAI_CASA, forcing, land, helpers)
         (c_eco_τ, c_eco_k) ⇐ land.diagnostics
     end
     # set LAI stressor on τ to ones
-    TSPY = helpers.dates.timesteps_in_year #sujan
+    TSPY = 365 #sujan
     p_cVegLeafZix = helpers.pools.zix.cVegLeaf
     if isfield(helpers.pools.zix.cVegRootF)
         p_cVegRootZix = helpers.pools.zix.cVegRootF
@@ -112,7 +112,6 @@ Calculate litterfall scalars (that affect the changes in the vegetation k) using
 *Inputs*
  - forcing.LAI: leaf area index [m2/m2]
  - info.timeScale.stepsPerYear: number of years of simulations
- - helpers.dates.timesteps_in_year: number of years of simulations
 
 *Outputs*
  - land.diagnostics.c_eco_k_f_LAI:
