@@ -119,7 +119,7 @@ function getRunTemInfo(info, forcing)
     vals = (; forcing_types=Val(forcing.f_types), output_vars=Val(output_vars))
     upd_tem_helpers = (;)
     tem_dates = tem_helpers.dates
-    tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
+    tem_dates = (;)
     # upd_tem_helpers = setTupleField(upd_tem_helpers, (:dates, tem_dates))
     time_size = getproperty(forcing.helpers.sizes, Symbol(forcing.helpers.dimensions.time))
     upd_tem_helpers = setTupleField(upd_tem_helpers, (:n_timesteps, time_size))

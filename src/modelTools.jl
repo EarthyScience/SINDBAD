@@ -2,6 +2,7 @@
 export getInOutModel
 export getInOutModels
 export getTypedModel
+export getUnitConversionForParameter
 export modelParameter
 export modelParameters
 
@@ -292,16 +293,25 @@ function getTypedModel(model::Symbol, model_timestep="day", num_type=Float64)
     return model_instance
 end
 
+"""
+    getParameterValue(model, param_name, model_timestep)
 
+get a value of a given model parameter with units corrected
+
+# Arguments:
+- `model`: selected model
+- `param_name`: name of the parameter
+- `model_timestep`: time step of the model run
+"""
 function getParameterValue(model, param_name, model_timestep)
     param = getfield(model, param_name)
     p_timescale = Sindbad.Models.timescale(model, param_name)
+    # return param
     return param * getUnitConversionForParameter(p_timescale, model_timestep)
 end
 
 """
-    function getUnitConversionForParameter(p_timescale, model_timestep)
-(source="", target="day")
+    getUnitConversionForParameter(p_timescale, model_timestep)
 
 helper/wrapper function to get unit conversion factors for model parameters that are timescale dependent
 
@@ -335,7 +345,7 @@ function getUnitConversionForParameter(p_timescale, model_timestep)
         error("running model at $(model_timestep) is not supported")
     end
 
-    # modelling at daily scale
+    # modelling at other time steps
     if p_timescale == "second"
         conversion = 60 * 60 * 24 * time_multiplier
     elseif p_timescale == "minute"

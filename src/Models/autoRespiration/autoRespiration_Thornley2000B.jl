@@ -2,7 +2,7 @@ export autoRespiration_Thornley2000B
 
 #! format: off
 @bounds @describe @units @timescale @with_kw struct autoRespiration_Thornley2000B{T1,T2} <: autoRespiration
-    RMN::T1 = 0.009085714285714286 | (0.0009085714285714285, 0.09085714285714286) | "Nitrogen efficiency rate of maintenance respiration" | "gC/gN/day" | "day"
+    RMN::T1 = 0.009085714285714286 | (0.0009085714285714285, 0.09085714285714286) | "Nitrogen efficiency rate of maintenance respiration" | "gC/gN/year" | "year"
     YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC" | ""
 end
 #! format: on
@@ -41,7 +41,6 @@ function compute(params::autoRespiration_Thornley2000B, forcing, land, helpers)
     end
     # adjust nitrogen efficiency rate of maintenance respiration to the current
     # model time step
-    RMN = RMN / helpers.dates.timesteps_in_day
     zix = getZix(cVeg, cVegZix)
     for ix ∈ zix
 
