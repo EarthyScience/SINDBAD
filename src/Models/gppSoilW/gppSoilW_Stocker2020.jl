@@ -1,9 +1,9 @@
 export gppSoilW_Stocker2020
 
 #! format: off
-@bounds @describe @units @with_kw struct gppSoilW_Stocker2020{T1,T2} <: gppSoilW
-    q::T1 = 1.0 | (0.01, 4.0) | "sensitivity of GPP to soil moisture " | ""
-    θstar::T2 = 0.6 | (0.1, 1.0) | "" | ""
+@bounds @describe @units @timescale @with_kw struct gppSoilW_Stocker2020{T1,T2} <: gppSoilW
+    q::T1 = 1.0 | (0.01, 4.0) | "sensitivity of GPP to soil moisture " | "" | ""
+    θstar::T2 = 0.6 | (0.1, 1.0) | "" | "" | ""
 end
 #! format: on
 

@@ -1,8 +1,8 @@
 export NIRv_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct NIRv_constant{T1} <: NIRv
-    constant_NIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | ""
+@bounds @describe @units @timescale @with_kw struct NIRv_constant{T1} <: NIRv
+    constant_NIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | "" | ""
 end
 #! format: on
 

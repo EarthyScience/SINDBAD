@@ -1,9 +1,9 @@
 export cTauLAI_CASA
 
 #! format: off
-@bounds @describe @units @with_kw struct cTauLAI_CASA{T1,T2} <: cTauLAI
-    max_min_LAI::T1 = 12.0 | (11.0, 13.0) | "maximum value for the minimum LAI for litter scalars" | "m2/m2"
-    k_root_LAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter inputs" | ""
+@bounds @describe @units @timescale @with_kw struct cTauLAI_CASA{T1,T2} <: cTauLAI
+    max_min_LAI::T1 = 12.0 | (11.0, 13.0) | "maximum value for the minimum LAI for litter scalars" | "m2/m2" | ""
+    k_root_LAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter inputs" | "" | ""
 end
 #! format: on
 

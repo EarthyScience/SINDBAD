@@ -1,9 +1,9 @@
 export rootWaterEfficiency_k2fvegFraction
 
 #! format: off
-@bounds @describe @units @with_kw struct rootWaterEfficiency_k2fvegFraction{T1,T2} <: rootWaterEfficiency
-    k2_scale::T1 = 0.02 | (0.001, 10.0) | "scales vegFrac to define fraction of 2nd soil layer available for transpiration" | ""
-    k1_scale::T2 = 0.5 | (0.001, 10.0) | "scales vegFrac to fraction of 1st soil layer available for transpiration" | ""
+@bounds @describe @units @timescale @with_kw struct rootWaterEfficiency_k2fvegFraction{T1,T2} <: rootWaterEfficiency
+    k2_scale::T1 = 0.02 | (0.001, 10.0) | "scales vegFrac to define fraction of 2nd soil layer available for transpiration" | "" | ""
+    k1_scale::T2 = 0.5 | (0.001, 10.0) | "scales vegFrac to fraction of 1st soil layer available for transpiration" | "" | ""
 end
 #! format: on
 

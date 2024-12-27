@@ -1,8 +1,8 @@
 export runoffSaturationExcess_Bergstroem1992
 
 #! format: off
-@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992{T1} <: runoffSaturationExcess
-    β::T1 = 1.1 | (0.1, 5.0) | "berg exponential parameter" | ""
+@bounds @describe @units @timescale @with_kw struct runoffSaturationExcess_Bergstroem1992{T1} <: runoffSaturationExcess
+    β::T1 = 1.1 | (0.1, 5.0) | "berg exponential parameter" | "" | ""
 end
 #! format: on
 

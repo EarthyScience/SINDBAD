@@ -1,10 +1,10 @@
 export runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
 
 #! format: off
-@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992VegFractionFroSoil{T1,T2,T3} <: runoffSaturationExcess
-    β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
-    frozen_frac_scalar::T2 = 1.0 | (0.1, 3.0) | "linear scaling parameter for frozen Soil fraction" | ""
-    β_min::T3 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
+@bounds @describe @units @timescale @with_kw struct runoffSaturationExcess_Bergstroem1992VegFractionFroSoil{T1,T2,T3} <: runoffSaturationExcess
+    β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | "" | ""
+    frozen_frac_scalar::T2 = 1.0 | (0.1, 3.0) | "linear scaling parameter for frozen Soil fraction" | "" | ""
+    β_min::T3 = 0.1 | (0.08, 0.120) | "minimum effective β" | "" | ""
 end
 #! format: on
 

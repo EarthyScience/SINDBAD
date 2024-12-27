@@ -194,7 +194,8 @@ function setDatesInfo(info::NamedTuple)
         tmp_dates = setTupleField(tmp_dates, (time_prop, prop_val))
     end
     timestep = getfield(Dates, Symbol(titlecase(info.settings.experiment.basics.time.temporal_resolution)))(1)
-    time_range = Date(info.settings.experiment.basics.time.date_begin):timestep:Date(info.settings.experiment.basics.time.date_end)
+    @show timestep
+    time_range = DateTime(info.settings.experiment.basics.time.date_begin):timestep:DateTime(info.settings.experiment.basics.time.date_end)
     tmp_dates = setTupleField(tmp_dates, (:temporal_resolution, info.settings.experiment.basics.time.temporal_resolution))
     tmp_dates = setTupleField(tmp_dates, (:timestep, timestep))
     tmp_dates = setTupleField(tmp_dates, (:range, time_range))

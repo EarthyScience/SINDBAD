@@ -1,8 +1,8 @@
 export capillaryFlow_VanDijk2010
 
 #! format: off
-@bounds @describe @units @with_kw struct capillaryFlow_VanDijk2010{T1} <: capillaryFlow
-    max_frac::T1 = 0.95 | (0.02, 0.98) | "max fraction of soil moisture that can be lost as capillary flux" | ""
+@bounds @describe @units @timescale @with_kw struct capillaryFlow_VanDijk2010{T1} <: capillaryFlow
+    max_frac::T1 = 0.95 | (0.02, 0.98) | "max fraction of soil moisture that can be lost as capillary flux" | "" | ""
 end
 #! format: on
 

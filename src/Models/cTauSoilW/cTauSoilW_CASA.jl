@@ -1,8 +1,8 @@
 export cTauSoilW_CASA
 
 #! format: off
-@bounds @describe @units @with_kw struct cTauSoilW_CASA{T1} <: cTauSoilW
-    Aws::T1 = 1.0 | (0.001, 1000.0) | "curve (expansion/contraction) controlling parameter" | ""
+@bounds @describe @units @timescale @with_kw struct cTauSoilW_CASA{T1} <: cTauSoilW
+    Aws::T1 = 1.0 | (0.001, 1000.0) | "curve (expansion/contraction) controlling parameter" | "" | ""
 end
 #! format: on
 

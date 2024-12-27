@@ -1,8 +1,8 @@
 export transpirationDemand_PETvegFraction
 
 #! format: off
-@bounds @describe @units @with_kw struct transpirationDemand_PETvegFraction{T1} <: transpirationDemand
-    α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
+@bounds @describe @units @timescale @with_kw struct transpirationDemand_PETvegFraction{T1} <: transpirationDemand
+    α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | "" | ""
 end
 #! format: on
 
