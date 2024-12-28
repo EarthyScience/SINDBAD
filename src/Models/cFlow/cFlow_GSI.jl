@@ -2,10 +2,10 @@ export cFlow_GSI
 
 #! format: off
 @bounds @describe @units @timescale @with_kw struct cFlow_GSI{T1,T2,T3,T4} <: cFlow
-    slope_leaf_root_to_reserve::T1 = 0.1 | (0.01, 0.99) | "Leaf-Root to Reserve" | "fraction" | ""
-    slope_reserve_to_leaf_root::T2 = 0.1 | (0.01, 0.99) | "Reserve to Leaf-Root" | "fraction" | ""
-    k_shedding::T3 = 0.1 | (0.01, 0.99) | "rate of shedding" | "fraction" | ""
-    f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction" | ""
+    slope_leaf_root_to_reserve::T1 = 0.1 | (0.01, 0.99) | "Leaf-Root to Reserve" | "fraction" | "day"
+    slope_reserve_to_leaf_root::T2 = 0.1 | (0.01, 0.99) | "Reserve to Leaf-Root" | "fraction" | "day"
+    k_shedding::T3 = 0.1 | (0.01, 0.99) | "rate of shedding" | "fraction" | "day"
+    f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction" | "day"
 end
 #! format: on
 
