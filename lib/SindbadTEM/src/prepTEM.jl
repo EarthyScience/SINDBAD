@@ -274,7 +274,6 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     addErrorCatcher(loc_land, info.helpers.run.debug_model)
 
     info = setModelOutputLandAll(info, loc_land)
-
     tem_info = @set tem_info.vals.output_vars = Val(info.output.variables)
     output_dims, output_array = getOutDimsArrays(info, forcing.helpers)
 
@@ -517,7 +516,7 @@ function runTEMOne(selected_models, loc_forcing, land_init, tem)
     loc_forcing_t = getForcingForTimeStep(loc_forcing, loc_forcing, 1, tem.vals.forcing_types)
     loc_land = definePrecomputeTEM(selected_models, loc_forcing_t, land_init,
         tem.model_helpers)
-    # loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
+    loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
     # loc_land = removeEmptyTupleFields(loc_land)
     loc_land = addSpinupLog(loc_land, tem.spinup_sequence, tem.run.store_spinup)
     # loc_land = definePrecomputeTEM(selected_models, loc_forcing_t, loc_land,
