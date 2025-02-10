@@ -36,7 +36,7 @@ Combine effects as multiplicative or minimum; if coupled, uses transup using gpp
  - land.diagnostics.gpp_f_climate: effective demand scalars; between 0-1
  - land.diagnostics.gpp_potential: maximum potential GPP based on radiation use efficiency
  - land.diagnostics.gpp_f_soilW: soil moisture stress scalar; between 0-1
- - land.states.fAPAR: fraction of absorbed photosynthetically active radiation  [-] (equivalent to "canopy cover" in Gash & Miralles)
+ - land.states.fAPAR: fraction of absorbed photosynthetically active radiation (equivalent to "canopy cover" in Gash & Miralles)
 
 *Outputs*
  - land.fluxes.gpp: actual GPP [gC/m2/time]
