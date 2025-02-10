@@ -61,8 +61,54 @@ function Base.propertynames(o::GroupView)
 end
 Base.keys(o::GroupView) = propertynames(o)
 Base.getindex(o::GroupView, i::Symbol) = getproperty(o, i)
+Base.size(g::GroupView) = size(getfield(g, :s))
+Base.length(g::GroupView) = prod(size(g))
 
+function Base.show(io::IO, gv::GroupView)
+    print(io, "GroupView with")
+    printstyled(io, ":"; color=:red)
+    println(io)
+    print(io, "  Vector Arrays of size $(size(getfield(gv, :s)))")
+    printstyled(io, ":"; color=:blue)
+    println(io)
+    g_name = getfield(gv, :groupname)
+    for name in propertynames(gv)
+        g_data = getproperty(getproperty(first(getfield(gv, :s)), g_name), name)
+        printstyled(io, "     $name"; color=6)
+        printstyled(io, ": "; color=:yellow)
+        if isa(g_data, Tuple)
+            printstyled(io, "Tuple of length $(length(g_data))\n"; color=:light_black)
+        elseif isa(g_data, AbstractArray)
+            printstyled(io, "Vector Arrays of size $(size(g_data))\n"; color=:light_black)
+        else
+            printstyled(io, "$(typeof(g_data))\n"; color=:light_black)
+        end
+    end
+end
 
+function Base.show(io::IO, ::MIME"text/plain", lw::LandWrapper)
+    print(io, "LandWrapper")
+    printstyled(io, ":"; color=:red)
+    println(io)
+    for (i, groupname) in enumerate(propertynames(lw))
+        if groupname in (:fluxes, :states, :diagnostics, :properties, :models, :pools, :constants)
+            printstyled(io, "  $(groupname)"; color=12)
+            printstyled(io, " ➘")
+        else
+            printstyled(io, "  $(groupname)"; color=:light_black)
+            printstyled(io, ":"; color=:blue)
+            group_data = first(getfield(lw, :s))[groupname]
+            if length(propertynames(group_data))>1
+                printstyled(io, " ➘")
+            end
+        end
+        if i>20
+            printstyled(io, "\n    ⋮ ")
+            return
+        end
+        println(io)
+    end
+end
 
 """
     booleanizeArray(_array)
