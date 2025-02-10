@@ -16,7 +16,7 @@ function getModelParameterIndices(model, tbl_params, r)
 end
 
 function getParameterIndices(selected_models::LongTuple, tbl_params)
-    selected_models_tuple = getTupleFromLongTable(selected_models)
+    selected_models_tuple = getTupleFromLongTuple(selected_models)
     return getParameterIndices(selected_models_tuple, tbl_params)
 end
 
@@ -41,7 +41,7 @@ update models/parameters without mutating the table of parameters
 - `param_vector`: a vector of parameter values to update the models
 """
 function updateModelParameters(tbl_params::Table, selected_models_in::LongTuple, param_vector::AbstractArray)
-    selected_models = getTupleFromLongTable(selected_models_in)
+    selected_models = getTupleFromLongTuple(selected_models_in)
     return updateModelParameters(tbl_params, selected_models, param_vector)
 end
 
