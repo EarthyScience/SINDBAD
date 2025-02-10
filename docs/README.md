@@ -10,6 +10,14 @@ Next, load the appropiate modules
 docs $ module load nodejs/20.12.2
 ```
 
+Install npm packages
+
+```sh
+docs $ npm i
+```
+
+Load Julia
+
 ```sh
 docs $ module load julia/1.10
 ```
@@ -32,6 +40,10 @@ pkg > activate . # now, instantiate
 ````
 
 ````sh
+] dev ../ ../lib/SindbadUtils/ ../lib/SindbadData/ ../lib/SindbadMetrics/ ../lib/SindbadSetup/ ../lib/SindbadTEM
+````
+
+````sh
 pkg > instantiate # type delete[backspace] after finishing to get back to the julia repl
 ````
 
@@ -43,7 +55,7 @@ julia> include("gen_models_md.jl")
 which generates a markdown file with all available models. Then do,
 
 ```julia
-julia>include("make.jl")
+julia> include("make.jl")
 ```
 
 to create the site.

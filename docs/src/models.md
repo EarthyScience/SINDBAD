@@ -126,6 +126,22 @@ PET_forcing
 
 :::
 
+## PFT
+
+```@docs
+PFT
+```
+:::details PFT methods
+
+:::tabs
+
+== PFT_constant
+```@docs
+PFT_constant
+```
+
+:::
+
 ## WUE
 
 ```@docs
@@ -1154,18 +1170,6 @@ interception_vegFraction
 
 :::
 
-## landProperties
-
-```@docs
-landProperties
-```
-:::details landProperties methods
-
-:::tabs
-
-
-:::
-
 ## percolation
 
 ```@docs
@@ -1603,10 +1607,6 @@ soilWBase_smax1Layer
 ```@docs
 soilWBase_smax2Layer
 ```
-== soilWBase_smax2fPFT
-```@docs
-soilWBase_smax2fPFT
-```
 == soilWBase_smax2fRD4
 ```@docs
 soilWBase_smax2fRD4
@@ -1794,22 +1794,6 @@ vegFraction_scaledNIRv
 == vegFraction_scaledfAPAR
 ```@docs
 vegFraction_scaledfAPAR
-```
-
-:::
-
-## vegProperties
-
-```@docs
-vegProperties
-```
-:::details vegProperties methods
-
-:::tabs
-
-== vegProperties_PFT
-```@docs
-vegProperties_PFT
 ```
 
 :::
