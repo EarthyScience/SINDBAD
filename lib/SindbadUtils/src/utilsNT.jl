@@ -4,7 +4,7 @@ export foldlLongTuple
 export foldlUnrolled
 export LongTuple
 export getCombinedNamedTuple
-export getTupleFromLongTable
+export getTupleFromLongTuple
 export makeLongTuple
 export makeNamedTuple
 export removeEmptyTupleFields
@@ -38,19 +38,88 @@ Base.map(f, arg::LongTuple{N}) where N = LongTuple{N}(map(tup-> map(f, tup), arg
 
 @inline Base.foreach(f, arg::LongTuple) = foreach(tup-> foreach(f, tup), arg.data)
 
+# Base.getindex(arg::LongTuple{N}, i::Int) where N = getindex(arg.data, (i-1) ÷ N + 1)[(i-1) % N + 1]
+Base.getindex(arg::LongTuple{N}, i::Int) where N = begin
+    total_elements = 0
+    for (_, tup) in enumerate(arg.data)
+        len = length(tup)
+        if total_elements < i <= total_elements + len
+            return tup[i - total_elements]
+        end
+        total_elements += len
+    end
+    throw(error("Index $i out of bounds for LongTuple. Total length is $total_elements."))
+end
+
+
+# TODO: inverse step range
+
+Base.getindex(arg::LongTuple{N}, r::UnitRange{Int}) where N = begin
+    selected_elements = []
+    # Loop over the range
+    for i in r
+        tuple_idx = (i-1) ÷ N + 1        # Determine which tuple contains the element
+        elem_idx = (i-1) % N + 1         # Determine the element's index within the tuple
+        push!(selected_elements, arg.data[tuple_idx][elem_idx])
+    end
+    new_long_tuple = LongTuple{N}(selected_elements...)
+    return new_long_tuple
+end
+
+Base.lastindex(arg::LongTuple{N}) where N = begin
+    # Calculate the total number of elements across all inner tuples
+    total_elements = sum(length(tup) for tup in arg.data)
+    return total_elements
+end
+
+Base.firstindex(arg::LongTuple{N}) where N = 1
+
+function Base.show(io::IO, arg::LongTuple{N}) where N
+    printstyled(io, "LongTuple"; color=:bold)
+    printstyled(io, ":"; color=:yellow)
+    println(io)
+    k_tuple = 1
+    for (i, tup) in enumerate(arg.data)
+        for (j, elem) in enumerate(tup)
+            if k_tuple<10
+                show_element(io, elem, "  $(k_tuple)  ↓ ")
+            else
+                show_element(io, elem, "  $(k_tuple) ↓ ")
+            end
+            k_tuple +=1
+        end
+    end
+end
+
+function show_element(io::IO, elem, indent)
+    struct_name = nameof(typeof(elem))
+    printstyled(io, indent; color=:light_black)
+    printstyled(io, struct_name)
+    printstyled(io, ":"; color=:blue)
+    parameter_names = fieldnames(typeof(elem))
+    l_params = length(parameter_names)
+    printstyled(io, " with $(length(parameter_names))"; color=:light_cyan)
+    if l_params==1
+        printstyled(io, " parameter\n"; color=:light_black)
+    else
+        printstyled(io, " parameters\n"; color=:light_black)
+    end
+end
+
 
 """
-    collectColorForTypes(d; c_olor = true)
+    collectColorForTypes(d; _color = true)
 
 utility function to collect colors for all types from nested namedtuples
 """
-function collectColorForTypes(d; c_olor=true)
+function collectColorForTypes(d; _color=true)
     all_types = []
     all_types = getTypes!(d, all_types)
     c_types = Dict{DataType,Int}()
-    for t ∈ all_types
-        if c_olor == true
-            c = rand(0:255)
+    _default_colors = [v for (k,v) in StyledStrings.ANSI_4BIT_COLORS]
+    for (i,t) ∈ enumerate(all_types)
+        if _color == true
+            c = i<17 ? _default_colors[i] : rand(16:255)
         else
             c = 0
         end
@@ -153,7 +222,7 @@ function getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
     return combined_nt
 end
 
-function getTupleFromLongTable(long_tuple)
+function getTupleFromLongTuple(long_tuple)
     emp_vec = []
     foreach(long_tuple) do lt
         push!(emp_vec, lt)
@@ -261,30 +330,35 @@ setTupleField(tpl::NamedTuple, vals::Tuple{Symbol, Any}) = (; tpl..., first(vals
 
 
 """
-    tcPrint(d; c_olor=true, t_ype=true, v_alue=true, t_op=true)
+    tcPrint(d; _color=true, _type=true, _value=true, t_op=true)
 
 - a helper function to navigate the input named tuple and annotate types.
 - a random set of colors is chosen per type of the data/field
-- a mixed colored output within a feild usually warrants caution on type mismatches
+- a mixed colored output within a field usually warrants caution on type mismatches
 
 # Arguments:
-- `d`: an oject to print on screen
-- `c_olor`: a flag to turn on/off the colors
-- `t_ype`: a flag to turn on/off the appending of types
-- `v_alue`: a flag to turn on/off the values
-- `t_space`: a starting tab space
+- `d`: an object to print on screen
+- `_color`: a flag to turn on/off the colors
+- `_type`: a flag to turn on/off the appending of types
+- `_value`: a flag to turn on/off the values
+- `_tspace`: a starting tab space
 """
-function tcPrint(d; c_olor=true, t_ype=true, v_alue=true, t_space="", space_pad = "")
-    colors_types = collectColorForTypes(d; c_olor=c_olor)
+function tcPrint(d; _color=true, _type=false, _value=true, _tspace="", space_pad="")
+    colors_types = collectColorForTypes(d; _color=_color)
+    # aio = StyledStrings.AnnotatedIOBuffer()
     lc = nothing
-    ttf = t_space * space_pad
+    ttf = _tspace * space_pad
     for k ∈ sort(collect(keys(d)))
         if d[k] isa NamedTuple
-            tp = " = (; "
-            print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(ttf) $(k)$(tp)\n")
-            tcPrint(d[k]; c_olor=c_olor, t_ype=t_ype, v_alue=v_alue, t_space = ttf, space_pad="     ")
+            tp = " = (;"
+            if length(d[k])>0
+                printstyled(Crayon(; foreground=colors_types[typeof(d[k])]), "$(k)$(tp)\n")
+            else
+                printstyled(Crayon(; foreground=colors_types[typeof(d[k])]), "$(k)$(tp)")
+            end
+            tcPrint(d[k]; _color=_color, _type=_type, _value=_value, _tspace = ttf, space_pad="  ")
         else
-            if t_ype == true
+            if _type == true
                 tp = "::$(typeof(d[k]))"
                 if tp == "::NT"
                     tp = "::Tuple"
@@ -294,14 +368,14 @@ function tcPrint(d; c_olor=true, t_ype=true, v_alue=true, t_space="", space_pad 
             end
             if typeof(d[k]) <: Float32
                 to_print = "$(ttf) $(k) = $(d[k])f0$(tp),\n"
-                if !v_alue
+                if !_value
                     to_print = "$(ttf) $(k)$(tp),\n"
                 end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]),
                     to_print)
             elseif typeof(d[k]) <: SVector
                 to_print = "$(ttf) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n"
-                if !v_alue
+                if !_value
                     to_print = "$(ttf) $(k)$(tp),\n"
                 end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]),
@@ -321,21 +395,23 @@ function tcPrint(d; c_olor=true, t_ype=true, v_alue=true, t_space="", space_pad 
                 end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt_row) ]$(tp),\n")
             else
-                to_print = "$(ttf) $(k) = $(d[k])$(tp),\n"
-                if !v_alue
-                    to_print = "$(ttf) $(k)$(tp),\n"
+                to_print = "$(ttf) $(k) = $(d[k])$(tp),"
+                if !_value
+                    to_print = "$(ttf) $(k)$(tp),"
                 end
                 print(Crayon(; foreground=colors_types[typeof(d[k])]),
                     to_print)
             end
             lc = colors_types[typeof(d[k])]
         end
+        # end
+        if _type == true
+            _tspace = _tspace * " "
+            print(Crayon(; foreground=lc), " $(ttf))::NamedTuple,\n")
+        else
+            if d[k] isa NamedTuple
+                print(Crayon(; foreground=lc), "$(ttf)),\n")
+            end
+        end
     end
-    if t_ype == true
-        t_space = t_space * " "
-        print(Crayon(; foreground=lc), " $(ttf))::NamedTuple,\n")
-    else
-        print(Crayon(; foreground=lc), " $(ttf)),\n")
-    end
-
 end
