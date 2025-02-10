@@ -46,9 +46,9 @@ forcing = (;
 
 === land
 
-```land``` is a NamedTuple (NT) that carries and passes information across SINDBAD models. The ```land``` variables are organized in the subfields, and the depth of the NT should be exactly 2: a field diving the variable groups, and a subfield storing the data.
+`land` is a NamedTuple (NT) that carries and passes information across SINDBAD's models. The `land` variables are organized in subfields, and the depth of the NT should be exactly 2: a field diving the variable groups, and a subfield storing the data.
 
-If a variable is only used in only one model, but it is necessary to be precomputed, the model name itself, (e.g., cCycleBase) is used as the field. So, ```land``` can technically have many fields. But, anything that is shared across models are grouped to contain the variables that have common characteristics as,
+If a variable is only used in only one model, but it is necessary to be precomputed, the model name itself, (e.g., cCycleBase) is used as the field. So, `land` can technically have many fields. But anything shared across models is grouped to contain variables with common characteristics, such as,
 
 :::tabs
 
@@ -82,7 +82,7 @@ Ecosystem states and variables derived from these states and pools.
 
 :::
 
-````julia
+````@example land_fields
 land = (;
     constants = (; ),
     diagnostics = (; ),
@@ -104,15 +104,17 @@ A NamedTuple with all the shared variables across models.
 For every model structure/implementation, the ```land``` should be examined for potential violations of the variable grouping using:
 
 
-````julia
-julia> using SindbadUtils: tcPrint
-# julia> tcPrint(land)  # this should work, we need some merging
-nothing 
+````@ansi land_fields
+using SindbadUtils: tcPrint
+tcPrint(land)
 ````
 
+::: danger
 
 - there are no-cross checks for overwriting of variables
 - repeated fields across groups should be avoided
+
+:::
 
 ## Compute
 
@@ -243,8 +245,7 @@ display `land` using tcPrint
 
 ````@ansi mdesign
 using SindbadUtils: tcPrint
-# tcPrint(land) #  # this should work, we need some merging
-nothing
+tcPrint(land)
 ````
 
 ### Apply compute to new model
@@ -268,16 +269,13 @@ function compute(params::mExample, forcing, land, helpers)
     end
     return land
 end
-
-## and apply `compute` to new model to update var1 value
-
+# and apply `compute` to new model to update `var1` value
 land = compute(model_example, forcing, land, helpers)
 nothing # hide
 ````
 
 ````@ansi mdesign
-# tcPrint(land) # this should work, we need some merging
-nothing
+tcPrint(land)
 ````
 
 ### Zero allocations
@@ -299,6 +297,111 @@ or `@btime` for a shorter description
 
 :::
 
-What's next? Well, `composing`! This is calling `compute` on different methods updating `land` on each one of them. 
+What's next? Well, `composing`! Namely, apply `compute` on different methods and updating `land` on each one of them.
 
 The main functions for this are defined on `SindbadTEM`. See the `TEM` section to know more.
+
+Also, note that in practice, you would want to do this for multiple time steps. For the output of this operation, we use a `LandWrapper` that collects all fields in a user-friendly manner.
+
+## LandWrapper
+
+```@example land_wrapper
+using SindbadTEM.SindbadUtils: LandWrapper
+using Random
+Random.seed!(123)
+```
+
+The following mimics the expected output when performing a full forward simulation with multiple time steps. Here, you can see how to query the output.
+
+```@example land_wrapper
+land_time_series = map(1:10) do i
+    (; fluxes = (; g_flux = rand(Float32)),
+    diagnostics = (; c_vegs = rand(Float32, 5)), 
+    models = (; ),
+    pools = (; d_pool = rand(Float32, 4),),
+    properties = (; ),
+    states = (; )
+    )
+end
+nothing # hide
+```
+
+```@ansi land_wrapper
+land_wrapped = LandWrapper(land_time_series)
+```
+
+note that at the top level, only the main tuple names are printed. If you want to see what else is inside each one, then do the following:
+
+```@ansi land_wrapper
+land_wrapped.fluxes
+```
+and for the actual values
+
+```@ansi land_wrapper
+land_wrapped.fluxes.g_flux
+```
+
+or
+
+```@ansi land_wrapper
+land_wrapped.pools
+```
+with values
+
+```@ansi land_wrapper
+land_wrapped.pools.d_pool
+```
+
+## Plot LandWrapper output
+
+```@example land_wrapper
+using CairoMakie
+```
+
+```@example land_wrapper
+g_flux = land_wrapped.fluxes.g_flux
+lines(g_flux; figure = (; size = (600, 300)))
+```
+
+or the pools by first using `stackArrays`:
+
+```@example land_wrapper
+using SindbadTEM.SindbadUtils: stackArrays
+
+d_pool = land_wrapped.pools.d_pool
+series(stackArrays(d_pool); color = [:black, :red, :dodgerblue, :orange],
+    figure = (; size = (600, 300)))
+```
+
+### Attach named dimensions to land outputs
+
+Now, let's say that we know the `x` and `y` dimensions of your arrays, then you could for example do
+
+```@example land_wrapper
+using SindbadData.DimensionalData
+using Dates
+
+g_flux = land_wrapped.fluxes.g_flux
+# create a time range
+start_time = DateTime("2025-01-01")
+end_time = DateTime("2025-01-10")
+time_interval = start_time:Day(1):end_time
+# attach a time dimension
+dd_flux = DimArray(g_flux,  (Ti=time_interval, ); name=:g_flux,)
+# plot
+lines(dd_flux; figure = (; size = (600, 300)))
+```
+
+and similarly for the `d_pool`:
+
+```@example land_wrapper
+using SindbadData: toDimStackArray
+using Dates
+
+pool_names = ["root", "veg", "leaf", "wood"]
+# attach a pools dimension
+dd_pool = toDimStackArray(stackArrays(d_pool), time_interval, pool_names)
+# plot
+series(dd_pool; color = [:black, :red, :dodgerblue, :orange],
+    figure = (; size = (600, 300)))
+```
