@@ -1,12 +1,11 @@
-```@raw html
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
-  name: "Sindbad"
-  text: "A model data integration framework"
-  tagline: Strategies to integrate data and biogeochemical models
+  name: "SINDBAD"
+  text: "STRATEGIES TO INTEGRATE DATA AND BIOGEOCHEMICAL MODELS"
+  tagline: A model data integration framework
   image:
     src: /logo.png
     alt: Sindbad
@@ -37,4 +36,4 @@ features:
     title: Hybrid Modelling
     details: Optimize model parameters or simulate process via neural networks.
 ---
-```
+
