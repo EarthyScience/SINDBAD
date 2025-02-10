@@ -12,13 +12,16 @@ hero:
     alt: Sindbad
   actions:
     - theme: brand
+      text: Get Started
+      link: /install
+    - theme: alt
       text: land
       link: /land
     - theme: alt
-      text: Getting started
-      link: /install
+      text: View on repo
+      link: 
     - theme: alt
-      text: API Reference
+      text: API
       link: /models
 features:
   - icon: <img width="64" height="64" src="https://img.icons8.com/external-xnimrodx-lineal-gradient-xnimrodx/64/external-3d-design-design-tools-xnimrodx-lineal-gradient-xnimrodx.png" alt="modular-icon"/>
