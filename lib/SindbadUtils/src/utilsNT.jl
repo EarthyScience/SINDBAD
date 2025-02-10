@@ -341,13 +341,13 @@ setTupleField(tpl::NamedTuple, vals::Tuple{Symbol, Any}) = (; tpl..., first(vals
 - `_color`: a flag to turn on/off the colors
 - `_type`: a flag to turn on/off the appending of types
 - `_value`: a flag to turn on/off the values
-- `t_space`: a starting tab space
+- `_tspace`: a starting tab space
 """
-function tcPrint(d; _color=true, _type=false, _value=true, t_space="", space_pad="")
+function tcPrint(d; _color=true, _type=false, _value=true, _tspace="", space_pad="")
     colors_types = collectColorForTypes(d; _color=_color)
     # aio = StyledStrings.AnnotatedIOBuffer()
     lc = nothing
-    ttf = t_space * space_pad
+    ttf = _tspace * space_pad
     for k ∈ sort(collect(keys(d)))
         if d[k] isa NamedTuple
             tp = " = (;"
@@ -356,7 +356,7 @@ function tcPrint(d; _color=true, _type=false, _value=true, t_space="", space_pad
             else
                 printstyled(Crayon(; foreground=colors_types[typeof(d[k])]), "$(k)$(tp)")
             end
-            tcPrint(d[k]; _color=_color, _type=_type, _value=_value, t_space = ttf, space_pad="  ")
+            tcPrint(d[k]; _color=_color, _type=_type, _value=_value, _tspace = ttf, space_pad="  ")
         else
             if _type == true
                 tp = "::$(typeof(d[k]))"
@@ -406,7 +406,7 @@ function tcPrint(d; _color=true, _type=false, _value=true, t_space="", space_pad
         end
         # end
         if _type == true
-            t_space = t_space * " "
+            _tspace = _tspace * " "
             print(Crayon(; foreground=lc), " $(ttf))::NamedTuple,\n")
         else
             if d[k] isa NamedTuple
