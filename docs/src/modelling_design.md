@@ -7,6 +7,7 @@ The core components that define any model are explained on the following section
 :::info
 
 We should think about adding a template model structure. And use it as baseline to explain the components to new users that just want to know what is available.
+- Document selected_models better! specially the order in which they are executed!
 
 :::
 
@@ -121,15 +122,15 @@ Then the application for the `newModel` is done calling `compute` as follows:
 function compute(params::newModel_v1, forcing, land, helpers)
     ## unpack parameters, forcing and variables store in land
     @unpack_newModel_v1 params
-    @unpack_land (f1, f2) ∈ forcing
-    @unpack_land var1 ∈ land.diagnostics # similarly from land.fluxes, land.pools, etc...
+    @unpack_nt (f1, f2) ⇐ forcing
+    @unpack_nt var1 ⇐ land.diagnostics # similarly from land.fluxes, land.pools, etc...
 
     ## calculate variables
     var_1 = f1*param1 + param2 + f2
 
     ## pack land variables
-    @pack_land begin
-        var_1 => land.diagnostics # similarly to land.fluxes, land.pools, etc...
+    @pack_nt begin
+        var_1 ⇒ land.diagnostics # similarly to land.fluxes, land.pools, etc...
     end
     return land
 end
@@ -144,15 +145,15 @@ If additional one-time calculations are necessary, then those should be defined 
 function define(params::newModel_v1, forcing, land, helpers)
     ## unpack parameters, forcing and variables store in land
     @unpack_newModel_v1 params
-    @unpack_land (f1, f2) ∈ forcing
-    @unpack_land var1 ∈ land.diagnostics # similarly from land.fluxes, land.pools, etc...
+    @unpack_nt (f1, f2) ⇐ forcing
+    @unpack_nt var1 ⇐ land.diagnostics # similarly from land.fluxes, land.pools, etc...
 
     ## calculate variables
     new_var_1 = f1*param1 + param2 + var1*f2
 
     ## pack land variables
-    @pack_land begin
-        new_var_1 => land.diagnostics # similarly to land.fluxes, land.pools, etc...
+    @pack_nt begin
+        new_var_1 ⇒ land.diagnostics # similarly to land.fluxes, land.pools, etc...
     end
     return land
 end
@@ -210,15 +211,15 @@ Now, `define` a function for this model
 function define(params::mExample, forcing, land, helpers)
     ## unpack parameters, forcing and variables store in land
     @unpack_mExample params
-    @unpack_land (f1, f2) ∈ forcing
-    @unpack_land var1 ∈ land.diagnostics
+    @unpack_nt (f1, f2) ⇐ forcing
+    @unpack_nt var1 ⇐ land.diagnostics
 
     ## calculate variables
     new_var2 = f1*α + β + var1 * f2[2] # [!code focus]
 
     ## pack land variables
-    @pack_land begin
-        new_var2 => land.diagnostics # [!code focus]
+    @pack_nt begin
+        new_var2 ⇒ land.diagnostics # [!code focus]
     end
     return land
 end
@@ -254,16 +255,16 @@ Now, create a  `compute` function for this model
 function compute(params::mExample, forcing, land, helpers)
     ## unpack parameters, forcing and variables store in land
     @unpack_mExample params
-    @unpack_land (f1, f2) ∈ forcing
-    @unpack_land (var1, new_var2) ∈ land.diagnostics
+    @unpack_nt (f1, f2) ⇐ forcing
+    @unpack_nt (var1, new_var2) ⇐ land.diagnostics
 
     ## calculate variables
     new_var1_value = f1*α + β + var1 * f2[2] + new_var2 * f2[1] # [!code highlight]
     # update var1 value
     var1 = new_var1_value # [!code highlight]
     ## pack land variables
-    @pack_land begin
-        var1 => land.diagnostics # [!code highlight]
+    @pack_nt begin
+        var1 ⇒ land.diagnostics # [!code highlight]
     end
     return land
 end
