@@ -2,6 +2,60 @@ import { defineConfig } from 'vitepress'
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 
 // https://vitepress.dev/reference/site-config
+
+const navTemp = {
+  nav: [
+    { text: 'Home', link: '/' },
+    { text: 'Get Started', items: [
+      { text: 'Installation', link: '/install' },
+      { text: 'Modelling Design', link: '/modelling_design' },
+      { text: 'TEM', link: '/TEM' },
+      { text: 'Optimization', link: '.' },
+      { text: 'ML', link: '.' }]
+    },
+    { text: 'Set settings',  items: [
+      { text: 'model_structure', link: '.' },
+      { text: 'experiment', link: '.' },
+      { text: 'forcing', link: '.' },
+      { text: 'optimization', link: '.' },
+    ] 
+    },
+    { text: 'API', 
+      items: [
+        { text: 'Models', link: '/models' },
+        { text: 'TEM', link: '.' },
+        { text: 'Optimization', link: '.' },
+        { text: 'ML', link: '.' }
+      ]
+    },
+  ],
+}
+
+const nav = [
+  ...navTemp.nav,
+  {
+    component: 'VersionPicker',
+  }
+]
+
+const sidebar = [
+  { text: 'Get Started', items: [
+    { text: 'Installation', link: '/install' },
+    { text: 'Modelling Design', link: '/modelling_design' },
+    { text: 'TEM', link: '/TEM' },
+    { text: 'Optimization', link: '.' },
+    { text: 'ML', link: '.' }]
+  },
+  { text: 'API', 
+    items: [
+      { text: 'Models', link: '/models' },
+      { text: 'TEM', link: '.' },
+      { text: 'Optimization', link: '.' },
+      { text: 'ML', link: '.' }
+    ]
+  },
+]
+
 export default defineConfig({
   base: '/Sindbad/',
   title: "Sindbad.jl",
@@ -10,6 +64,30 @@ export default defineConfig({
   cleanUrls: true,
   ignoreDeadLinks: true,
   
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
+  ],
+  
+  vite: {
+    build: {
+      assetsInlineLimit: 0, // so we can tell whether we have created inlined images or not, we don't let vite inline them
+    },
+    optimizeDeps: {
+      exclude: [ 
+        '@nolebase/vitepress-plugin-enhanced-readabilities/client',
+        'vitepress',
+        '@nolebase/ui',
+      ], 
+    }, 
+    ssr: { 
+      noExternal: [ 
+        // If there are other packages that need to be processed by Vite, you can add them here.
+        '@nolebase/vitepress-plugin-enhanced-readabilities',
+        '@nolebase/ui',
+      ], 
+    },
+  },
+
   markdown: {
     config(md) {
       md.use(tabsMarkdownPlugin)
@@ -28,51 +106,9 @@ export default defineConfig({
             detailedView: true
           }
         },
-        nav: [
-          { text: 'Home', link: '/' },
-          { text: 'Get Started', items: [
-            { text: 'Installation', link: '/install' },
-            { text: 'Modelling Design', link: '/modelling_design' },
-            { text: 'TEM', link: '/TEM' },
-            { text: 'Optimization', link: '.' },
-            { text: 'ML', link: '.' }]
-          },
-          { text: 'Set settings',  items: [
-            { text: 'model_structure', link: '.' },
-            { text: 'experiment', link: '.' },
-            { text: 'forcing', link: '.' },
-            { text: 'optimization', link: '.' },
-          ] 
-          },
-          { text: 'API', 
-            items: [
-              { text: 'Models', link: '/models' },
-              { text: 'TEM', link: '.' },
-              { text: 'Optimization', link: '.' },
-              { text: 'ML', link: '.' }
-            ]
-          },
-    
-        ],
-    
-        sidebar: [
-          { text: 'Get Started', items: [
-            { text: 'Installation', link: '/install' },
-            { text: 'Modelling Design', link: '/modelling_design' },
-            { text: 'TEM', link: '/TEM' },
-            { text: 'Optimization', link: '.' },
-            { text: 'ML', link: '.' }]
-          },
-          { text: 'API', 
-            items: [
-              { text: 'Models', link: '/models' },
-              { text: 'TEM', link: '.' },
-              { text: 'Optimization', link: '.' },
-              { text: 'ML', link: '.' }
-            ]
-          },
-        ],
 
+    nav: nav,
+    sidebar: sidebar,
     socialLinks: [
       {
         icon: {
