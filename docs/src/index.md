@@ -1,3 +1,4 @@
+```@raw html
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
@@ -15,7 +16,7 @@ hero:
       link: /install
     - theme: alt
       text: land
-      link: /land
+      link: /modelling_design
     - theme: alt
       text: View on repo
       link: 
@@ -36,4 +37,4 @@ features:
     title: Hybrid Modelling
     details: Optimize model parameters or simulate process via neural networks.
 ---
-
+```
