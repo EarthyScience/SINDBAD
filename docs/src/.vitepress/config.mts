@@ -58,7 +58,7 @@ const sidebar = [
 
 export default defineConfig({
   base: '/Sindbad/',
-  title: "Sindbad.jl",
+  title: "SINDBAD",
   description: "A model data integration framework",
   lastUpdated: true,
   cleanUrls: true,
