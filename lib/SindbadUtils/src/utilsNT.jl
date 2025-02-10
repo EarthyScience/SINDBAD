@@ -334,7 +334,7 @@ setTupleField(tpl::NamedTuple, vals::Tuple{Symbol, Any}) = (; tpl..., first(vals
 
 - a helper function to navigate the input named tuple and annotate types.
 - a random set of colors is chosen per type of the data/field
-- a mixed colored output within a feild usually warrants caution on type mismatches
+- a mixed colored output within a field usually warrants caution on type mismatches
 
 # Arguments:
 - `d`: an object to print on screen
