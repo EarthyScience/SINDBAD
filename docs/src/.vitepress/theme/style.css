@@ -17,7 +17,8 @@
   /* font-size: 24px; */
 }
 .VPHero .text {
-  font-size: 34px;
+  font-size: 28px;
+  line-height: 1.25;
   max-width: 650px;
 }
 .VPHero .tagline {
@@ -66,14 +67,11 @@ pre, code {
   --julia-purple: rgb(131.4, 77.625, 157.05);
   --julia-red: rgb(179.10, 52.875, 45.0);
   --julia-green: rgb(49.5, 134.1, 33.525);
-
-  --vp-c-brand: #0e0e0e;
   --vp-c-brand-light: #DEA958ff;
   --vp-c-brand-lighter: #9499ff;
   --vp-c-brand-lightest: #bcc0ff;
   --vp-c-brand-dark: #535bf2;
   --vp-c-brand-darker: #454ce1;
-  --vp-c-brand-dimm: rgba(100, 108, 255, 0.08);
 }
 
 /**
@@ -138,21 +136,6 @@ pre, code {
   }
 }
 
-/**
- * Component: Custom Block
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-custom-block-tip-border: var(--vp-c-brand);
-  --vp-custom-block-tip-text: var(--vp-c-brand-darker);
-  --vp-custom-block-tip-bg: var(--vp-c-brand-dimm);
-}
-
-.dark {
-  --vp-custom-block-tip-border: var(--vp-c-brand);
-  --vp-custom-block-tip-text: var(--vp-c-brand-lightest);
-  --vp-custom-block-tip-bg: var(--vp-c-brand-dimm);
-}
 
 /**
  * Component: Algolia
@@ -190,7 +173,7 @@ mjx-container > svg {
  * -------------------------------------------------------------------------- */
 
  :root {
-  --vp-c-brand-1: #2496e2;
+  --vp-c-brand-1: #292d2f;
   --vp-c-brand-2: #3d8abe;
   --vp-c-brand-3: #487da0;
   --vp-c-sponsor: #ca2971;
