@@ -27,8 +27,8 @@ All models are defined as follows:
 abstract type newModel <: LandEcosystem end
 
 @bounds @describe @units @timescale @with_kw struct newModel_v1{T1,T2} <: newModel
-    param1::T1 = 1.0 | (2.0, 5.0) | "description 1" | "units 1"
-    param2::T2 = 0.0 | (1.0, 2.0) | "description 2" | "units 2"
+    param1::T1 = 1.0 | (2.0, 5.0) | "description 1" | "units 1" | ""
+    param2::T2 = 0.0 | (1.0, 2.0) | "description 2" | "units 2" | ""
 end
 
 ````
@@ -168,13 +168,13 @@ end
 
 ````@example mdesign
 using Sindbad
-using Sindbad: @describe, @bounds, @units, @with_kw
+using Sindbad: @describe, @bounds, @units, @with_kw, @timescale
 # Define a model abstract type
 abstract type modelExample <: LandEcosystem end
 # define a concrete struct type
 @bounds @describe @units @timescale @with_kw struct mExample{T1,T2} <: modelExample
-    α::T1 = 1.0 | (2.0, 5.0) | "description 1" | "units 1"
-    β::T2 = 0.0 | (1.0, 2.0) | "description 2" | "units 2"
+    α::T1 = 1.0 | (2.0, 5.0) | "description 1" | "units 1" | ""
+    β::T2 = 0.0 | (1.0, 2.0) | "description 2" | "units 2" | ""
 end
 nothing # hide
 ````
