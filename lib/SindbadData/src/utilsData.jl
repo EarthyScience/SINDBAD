@@ -3,14 +3,15 @@ export getNumberOfTimeSteps
 export mapCleanData
 export subsetAndProcessYax
 export yaxCubeToKeyedArray
+export toDimStackArray
 
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
 
-Add skipping filter for pixels with all nans in YAXArrays
+Add skipping filter for pixels with all nans or missings in YAXArrays
 """
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
-YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
+YAXArrays.DAT.checkskip(::AllNaN, x) = all(ismissing, x) || all(isnan, x)
 
 
 """
@@ -384,4 +385,17 @@ yaxCubeToKeyedArray(c)
 function yaxCubeToKeyedArray(c)
     t_dims = getSindbadDims(c);
     return KeyedArray(Array(c.data); t_dims...)
+end
+
+"""
+    toDimStackArray(stackArr, time_interval, p_names; name=:pools)
+
+Input Arguments
+- `stackArr`: an stacked array, usually the output of `stackArray(d_pool)`
+- `time_interval`:
+- `p_names`: names for each pool
+- `name`: name of the output DimArray, default is `:pools`
+"""
+function toDimStackArray(stackArr, time_interval, p_names; name=:pools)
+    return DimArray(stackArr,  (p_names=p_names, Ti=time_interval,); name=name,)
 end

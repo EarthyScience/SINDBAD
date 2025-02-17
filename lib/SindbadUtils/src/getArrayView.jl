@@ -1,6 +1,6 @@
 
 export getArrayView
-
+export stackArrays
 function getArrayView(_dat::AbstractArray{<:Any,N}, inds::Tuple{Int}) where N
     if N == 1
         view(_dat, first(inds))
@@ -49,4 +49,14 @@ function getArrayView(_dat::AbstractArray{<:Any,N}, inds::Tuple{Int,Int,Int}) wh
         end
         view(_dat, view_inds...)
     end
+end
+
+"""
+    stackArrays(arr)
+    
+Stacks arrays in `arr` along the first dimension. If the arrays are 1D, the result is a vector.
+"""
+function stackArrays(arr)
+    result = view(reduce(hcat, arr), :, :)
+    return length(arr[1]) == 1 ? vec(result) : result
 end
