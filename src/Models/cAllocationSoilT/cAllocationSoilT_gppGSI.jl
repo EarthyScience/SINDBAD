@@ -1,8 +1,8 @@
 export cAllocationSoilT_gppGSI
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocationSoilT_gppGSI{T1} <: cAllocationSoilT
-    τ_Tsoil::T1 = 0.2 | (0.001, 1.0) | "temporal change rate for the temperature-limiting function" | ""
+@bounds @describe @units @timescale @with_kw struct cAllocationSoilT_gppGSI{T1} <: cAllocationSoilT
+    τ_Tsoil::T1 = 0.2 | (0.001, 1.0) | "temporal change rate for the temperature-limiting function" | "" | ""
 end
 #! format: on
 

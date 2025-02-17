@@ -136,7 +136,8 @@ for site_index in sites
     tbl_params = getParameters(info.models.forward,
         info.optimization.model_parameter_default,
         info.optimization.model_parameters_to_optimize,
-        info.helpers.numbers.num_type)
+        info.helpers.numbers.num_type,
+        info.helpers.dates.temporal_resolution)
     opt_params = tbl_params.optim
     param_names = tbl_params.name_full
     param_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
@@ -162,7 +163,8 @@ for site_index in sites
         tbl_params_2 = getParameters(models_with_matlab_params,
             info.optimization.model_parameter_default,
             info.optimization.model_parameters_to_optimize,
-            info.helpers.numbers.num_type)
+            info.helpers.numbers.num_type,
+            info.helpers.dates.temporal_resolution)
 
         ## run the model
 

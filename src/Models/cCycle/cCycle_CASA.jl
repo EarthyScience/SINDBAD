@@ -71,7 +71,6 @@ Calculate decay rates for the ecosystem C pools at appropriate time steps. Perfo
 Allocate carbon to vegetation components using cCycle_CASA
 
 *Inputs*
- - helpers.dates.timesteps_in_year: number of time steps per year
  - land.diagnostics.c_eco_τ: carbon allocation matrix
  - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array

@@ -1,8 +1,8 @@
 export groundWSurfaceWInteraction_fracGradient
 
 #! format: off
-@bounds @describe @units @with_kw struct groundWSurfaceWInteraction_fracGradient{T1} <: groundWSurfaceWInteraction
-    k_gw_to_suw::T1 = 0.001 | (0.0001, 0.01) | "maximum transfer rate between GW and surface water" | "/d"
+@bounds @describe @units @timescale @with_kw struct groundWSurfaceWInteraction_fracGradient{T1} <: groundWSurfaceWInteraction
+    k_gw_to_suw::T1 = 0.001 | (0.0001, 0.01) | "maximum transfer rate between GW and surface water" | "/d" | ""
 end
 #! format: on
 

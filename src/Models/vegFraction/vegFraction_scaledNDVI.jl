@@ -1,8 +1,8 @@
 export vegFraction_scaledNDVI
 
 #! format: off
-@bounds @describe @units @with_kw struct vegFraction_scaledNDVI{T1} <: vegFraction
-    NDVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NDVI" | ""
+@bounds @describe @units @timescale @with_kw struct vegFraction_scaledNDVI{T1} <: vegFraction
+    NDVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NDVI" | "" | ""
 end
 #! format: on
 

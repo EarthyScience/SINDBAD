@@ -1,10 +1,10 @@
 export gppVPD_expco2
 
 #! format: off
-@bounds @describe @units @with_kw struct gppVPD_expco2{T1,T2,T3} <: gppVPD
-    κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
-    c_κ::T2 = 0.4 | (-50.0, 10.0) | "exponent of co2 modulation of vpd effect" | ""
-    base_ambient_CO2::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
+@bounds @describe @units @timescale @with_kw struct gppVPD_expco2{T1,T2,T3} <: gppVPD
+    κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1" | ""
+    c_κ::T2 = 0.4 | (-50.0, 10.0) | "exponent of co2 modulation of vpd effect" | "" | ""
+    base_ambient_CO2::T3 = 380.0 | (300.0, 500.0) | "" | "ppm" | ""
 end
 #! format: on
 

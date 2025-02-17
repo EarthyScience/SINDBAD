@@ -1,8 +1,8 @@
 export vegFraction_scaledfAPAR
 
 #! format: off
-@bounds @describe @units @with_kw struct vegFraction_scaledfAPAR{T1} <: vegFraction
-    fAPAR_scalar::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | ""
+@bounds @describe @units @timescale @with_kw struct vegFraction_scaledfAPAR{T1} <: vegFraction
+    fAPAR_scalar::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | "" | ""
 end
 #! format: on
 

@@ -1,20 +1,20 @@
 export runoffSaturationExcess_Bergstroem1992VegFractionPFT
 
 #! format: off
-@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992VegFractionPFT{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13} <: runoffSaturationExcess
-    β_PFT0::T1 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 0 to get the berg parameter from vegFrac" | ""
-    β_PFT1::T2 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 1 to get the berg parameter from vegFrac" | ""
-    β_PFT2::T3 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 2 to get the berg parameter from vegFrac" | ""
-    β_PFT3::T4 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 3 to get the berg parameter from vegFrac" | ""
-    β_PFT4::T5 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 4 to get the berg parameter from vegFrac" | ""
-    β_PFT5::T6 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 5 to get the berg parameter from vegFrac" | ""
-    β_PFT6::T7 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 6 to get the berg parameter from vegFrac" | ""
-    β_PFT7::T8 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 7 to get the berg parameter from vegFrac" | ""
-    β_PFT8::T9 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 8 to get the berg parameter from vegFrac" | ""
-    β_PFT9::T10 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 9 to get the berg parameter from vegFrac" | ""
-    β_PFT10::T11 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 10 to get the berg parameter from vegFrac" | ""
-    β_PFT11::T12 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 11 to get the berg parameter from vegFrac" | ""
-    β_min::T13 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
+@bounds @describe @units @timescale @with_kw struct runoffSaturationExcess_Bergstroem1992VegFractionPFT{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13} <: runoffSaturationExcess
+    β_PFT0::T1 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 0 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT1::T2 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 1 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT2::T3 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 2 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT3::T4 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 3 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT4::T5 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 4 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT5::T6 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 5 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT6::T7 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 6 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT7::T8 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 7 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT8::T9 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 8 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT9::T10 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 9 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT10::T11 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 10 to get the berg parameter from vegFrac" | "" | ""
+    β_PFT11::T12 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 11 to get the berg parameter from vegFrac" | "" | ""
+    β_min::T13 = 0.1 | (0.08, 0.120) | "minimum effective β" | "" | ""
 end
 #! format: on
 

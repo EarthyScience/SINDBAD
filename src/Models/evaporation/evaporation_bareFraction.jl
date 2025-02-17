@@ -1,8 +1,8 @@
 export evaporation_bareFraction
 
 #! format: off
-@bounds @describe @units @with_kw struct evaporation_bareFraction{T1} <: evaporation
-    ks::T1 = 0.5 | (0.1, 0.95) | "resistance against soil evaporation" | ""
+@bounds @describe @units @timescale @with_kw struct evaporation_bareFraction{T1} <: evaporation
+    ks::T1 = 0.5 | (0.1, 0.95) | "resistance against soil evaporation" | "" | ""
 end
 #! format: on
 

@@ -1,10 +1,10 @@
 export cAllocation_Friedlingstein1999
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocation_Friedlingstein1999{T1,T2,T3} <: cAllocation
-    so::T1 = 0.3 | (0.0, 1.0) | "" | ""
-    ro::T2 = 0.3 | (0.0, 1.0) | "" | ""
-    rel_Y::T3 = 2.0 | (1.0, Inf) | "" | ""
+@bounds @describe @units @timescale @with_kw struct cAllocation_Friedlingstein1999{T1,T2,T3} <: cAllocation
+    so::T1 = 0.3 | (0.0, 1.0) | "" | "" | ""
+    ro::T2 = 0.3 | (0.0, 1.0) | "" | "" | ""
+    rel_Y::T3 = 2.0 | (1.0, Inf) | "" | "" | ""
 end
 #! format: on
 
