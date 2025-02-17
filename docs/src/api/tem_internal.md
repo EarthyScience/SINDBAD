@@ -1,18 +1,13 @@
-## Public API
-
+## Internal API
 ```@meta
+CollapsedDocStrings = true
+
 DocTestSetup= quote
 using SindbadTEM
 end
 ```
 
-## Index
-
-```@index
-Pages = ["api_SindbadTEM.md"]
-```
-
 ```@autodocs
 Modules = [SindbadTEM]
-Private = false
+Public = false
 ```

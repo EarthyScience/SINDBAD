@@ -1,4 +1,0 @@
-## SindbadTEM
-## SindbadData
-## SindbadUtils
-## SindbadSetup
