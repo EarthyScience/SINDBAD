@@ -60,7 +60,7 @@ cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
 @time getLossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type)
+tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
 
 p_vec_tmp = Float32[0.57369316, 0.13665639, 0.021589328, 0.50214106, 5.8623033, 2.1876655, 2.9647522, 0.011739467, 1.5292873, 0.51821816, 1.9409876, 1.7648233, 0.4014304, 2.3504229, 0.5153693, 23.362156, 0.1913932, 0.3269863, 0.33425146, -15.749779, 2519.0886, 2.4048617, 0.5802649, 8.400246, 0.27925783, 1.2340356, 4.2097607, 25.068245, 78.582146, 0.813389, 0.024356516, 48.658554, 40.451153, 1.9116166, 78.221016, 2.258912, 0.055475786, 0.57011855, 0.4737399, 0.57703143, 0.46451482, 0.48786408]
 

@@ -1,8 +1,8 @@
 export soilWBase_smax1Layer
 
 #! format: off
-@bounds @describe @units @with_kw struct soilWBase_smax1Layer{T1} <: soilWBase
-    smax::T1 = 1.0 | (0.001, 10.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
+@bounds @describe @units @timescale @with_kw struct soilWBase_smax1Layer{T1} <: soilWBase
+    smax::T1 = 1.0 | (0.001, 10.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | "" | ""
 end
 #! format: on
 

@@ -13,7 +13,8 @@ function checkOptimizedParametersInModels(info::NamedTuple)
     tbl_params = getParameters(info.temp.models.forward,
         info.settings.optimization.model_parameter_default,
         info.settings.optimization.model_parameters_to_optimize,
-        info.temp.helpers.numbers.num_type)
+        info.temp.helpers.numbers.num_type,
+        info.temp.helpers.dates.temporal_resolution)
     model_parameters = tbl_params.name_full
     # @show model_parameters
     optim_parameters = info.settings.optimization.model_parameters_to_optimize
@@ -217,7 +218,8 @@ function setOptimization(info::NamedTuple)
     tbl_params = getParameters(info.temp.models.forward,
     info.settings.optimization.model_parameter_default,
     info.settings.optimization.model_parameters_to_optimize,
-    info.temp.helpers.numbers.num_type);
+    info.temp.helpers.numbers.num_type,
+    info.temp.helpers.dates.temporal_resolution);
 
     param_model_id_val = getParamModelIDVal(tbl_params)
     info = setTupleSubfield(info, :optimization, (:param_model_id_val, param_model_id_val))

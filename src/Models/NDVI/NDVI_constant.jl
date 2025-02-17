@@ -1,8 +1,8 @@
 export NDVI_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct NDVI_constant{T1} <: NDVI
-    constant_NDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | ""
+@bounds @describe @units @timescale @with_kw struct NDVI_constant{T1} <: NDVI
+    constant_NDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | "" | ""
 end
 #! format: on
 

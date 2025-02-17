@@ -1,8 +1,8 @@
 export transpirationSupply_Federer1982
 
 #! format: off
-@bounds @describe @units @with_kw struct transpirationSupply_Federer1982{T1} <: transpirationSupply
-    max_t_loss::T1 = 5.0 | (0.1, 20.0) | "Maximum rate of transpiration in mm/day" | "mm/day"
+@bounds @describe @units @timescale @with_kw struct transpirationSupply_Federer1982{T1} <: transpirationSupply
+    max_t_loss::T1 = 5.0 | (0.1, 20.0) | "Maximum rate of transpiration in mm/day" | "mm/day" | ""
 end
 #! format: on
 

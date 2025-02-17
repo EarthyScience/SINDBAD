@@ -1,8 +1,8 @@
 export vegFraction_scaledEVI
 
 #! format: off
-@bounds @describe @units @with_kw struct vegFraction_scaledEVI{T1} <: vegFraction
-    EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | ""
+@bounds @describe @units @timescale @with_kw struct vegFraction_scaledEVI{T1} <: vegFraction
+    EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | "" | ""
 end
 #! format: on
 

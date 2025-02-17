@@ -1,13 +1,13 @@
 export soilWBase_smax2fRD4
 
 #! format: off
-@bounds @describe @units @with_kw struct soilWBase_smax2fRD4{T1,T2,T3,T4,T5,T6} <: soilWBase
-    smax1::T1 = 1.0 | (0.001, 1.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
-    scalar_Fan::T2 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
-    scalar_Yang::T3 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
-    scalar_Wang::T4 = 0.05 | (0.0, 5.0) | "scaling for root zone storage capacity data to obtain smax2" | "fraction"
-    scalar_Tian::T5 = 0.05 | (0.0, 5.0) | "scaling for plant avaiable water capacity data to obtain smax2" | "fraction"
-    smax_Tian::T6 = 50.0 | (0.0, 1000.0) | "value for plant avaiable water capacity data where this is NaN" | "mm"
+@bounds @describe @units @timescale @with_kw struct soilWBase_smax2fRD4{T1,T2,T3,T4,T5,T6} <: soilWBase
+    smax1::T1 = 1.0 | (0.001, 1.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | "" | ""
+    scalar_Fan::T2 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction" | ""
+    scalar_Yang::T3 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction" | ""
+    scalar_Wang::T4 = 0.05 | (0.0, 5.0) | "scaling for root zone storage capacity data to obtain smax2" | "fraction" | ""
+    scalar_Tian::T5 = 0.05 | (0.0, 5.0) | "scaling for plant avaiable water capacity data to obtain smax2" | "fraction" | ""
+    smax_Tian::T6 = 50.0 | (0.0, 1000.0) | "value for plant avaiable water capacity data where this is NaN" | "mm" | ""
 end
 #! format: on
 

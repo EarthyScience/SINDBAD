@@ -1,8 +1,8 @@
 export fAPAR_cVegLeaf
 
 #! format: off
-@bounds @describe @units @with_kw struct fAPAR_cVegLeaf{T1} <: fAPAR
-    k_extinction::T1 = 0.005 | (0.0005, 0.05) | "effective light extinction coefficient" | ""
+@bounds @describe @units @timescale @with_kw struct fAPAR_cVegLeaf{T1} <: fAPAR
+    k_extinction::T1 = 0.005 | (0.0005, 0.05) | "effective light extinction coefficient" | "" | ""
 end
 #! format: on
 
