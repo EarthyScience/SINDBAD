@@ -1,8 +1,8 @@
 export LAI_cVegLeaf
 
 #! format: off
-@bounds @describe @units @with_kw struct LAI_cVegLeaf{T1} <: LAI
-    SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1"
+@bounds @describe @units @timescale @with_kw struct LAI_cVegLeaf{T1} <: LAI
+    SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1" | ""
 end
 #! format: on
 

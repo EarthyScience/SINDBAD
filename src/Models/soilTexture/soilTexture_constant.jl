@@ -1,11 +1,11 @@
 export soilTexture_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct soilTexture_constant{T1,T2,T3,T4} <: soilTexture
-    clay::T1 = 0.2 | (0.0, 1.0) | "Clay content" | ""
-    silt::T2 = 0.3 | (0.0, 1.0) | "Silt content" | ""
-    sand::T3 = 0.5 | (0.0, 1.0) | "Sand content" | ""
-    orgm::T4 = 0.0 | (0.0, 1.0) | "Organic matter content" | ""
+@bounds @describe @units @timescale @with_kw struct soilTexture_constant{T1,T2,T3,T4} <: soilTexture
+    clay::T1 = 0.2 | (0.0, 1.0) | "Clay content" | "" | ""
+    silt::T2 = 0.3 | (0.0, 1.0) | "Silt content" | "" | ""
+    sand::T3 = 0.5 | (0.0, 1.0) | "Sand content" | "" | ""
+    orgm::T4 = 0.0 | (0.0, 1.0) | "Organic matter content" | "" | ""
 end
 #! format: on
 
@@ -14,7 +14,7 @@ function define(params::soilTexture_constant, forcing, land, helpers)
     @unpack_nt soilW ⇐ land.pools
 
     ## set parameter variables
-    @debug "soilTexture_constant: distributing the constant texture properties over the soil layers."
+    @debug "soilTexture_constant: distributing the constant texture properties over the soil layers." | ""
     st_clay = zero(soilW)
     st_orgm = zero(soilW)
     st_sand = zero(soilW)

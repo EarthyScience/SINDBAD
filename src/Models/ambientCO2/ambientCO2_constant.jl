@@ -1,8 +1,8 @@
 export ambientCO2_constant
 
 #! format: off
-@bounds @describe @units @with_kw struct ambientCO2_constant{T1} <: ambientCO2
-    constant_ambient_CO2::T1 = 400.0 | (200.0, 5000.0) | "atmospheric CO2 concentration" | "ppm"
+@bounds @describe @units @timescale @with_kw struct ambientCO2_constant{T1} <: ambientCO2
+    constant_ambient_CO2::T1 = 400.0 | (200.0, 5000.0) | "atmospheric CO2 concentration" | "ppm" | ""
 end
 #! format: on
 

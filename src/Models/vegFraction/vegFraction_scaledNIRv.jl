@@ -1,8 +1,8 @@
 export vegFraction_scaledNIRv
 
 #! format: off
-@bounds @describe @units @with_kw struct vegFraction_scaledNIRv{T1} <: vegFraction
-    NIRvscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NIRv" | ""
+@bounds @describe @units @timescale @with_kw struct vegFraction_scaledNIRv{T1} <: vegFraction
+    NIRvscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NIRv" | "" | ""
 end
 #! format: on
 

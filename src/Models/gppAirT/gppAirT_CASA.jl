@@ -1,11 +1,11 @@
 export gppAirT_CASA
 
 #! format: off
-@bounds @describe @units @with_kw struct gppAirT_CASA{T1,T,T3,T4} <: gppAirT
-    opt_airT::T1 = 25.0 | (5.0, 35.0) | "check in CASA code" | "°C"
-    opt_airT_A::T = 0.2 | (0.01, 0.3) | "increasing slope of sensitivity" | ""
-    opt_airT_B::T3 = 0.3 | (0.01, 0.5) | "decreasing slope of sensitivity" | ""
-    exp_airT::T4 = 10.0 | (9.0, 11.0) | "reference for exponent of sensitivity" | ""
+@bounds @describe @units @timescale @with_kw struct gppAirT_CASA{T1,T,T3,T4} <: gppAirT
+    opt_airT::T1 = 25.0 | (5.0, 35.0) | "check in CASA code" | "°C" | ""
+    opt_airT_A::T = 0.2 | (0.01, 0.3) | "increasing slope of sensitivity" | "" | ""
+    opt_airT_B::T3 = 0.3 | (0.01, 0.5) | "decreasing slope of sensitivity" | "" | ""
+    exp_airT::T4 = 10.0 | (9.0, 11.0) | "reference for exponent of sensitivity" | "" | ""
 end
 #! format: on
 

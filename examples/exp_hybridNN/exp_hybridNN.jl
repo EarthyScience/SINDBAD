@@ -18,7 +18,7 @@ experiment_json = "../exp_hybridNN/settings_hybridNN/experiment.json"
 
 info = getExperimentInfo(experiment_json);
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type);
+tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);

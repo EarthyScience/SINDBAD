@@ -1,8 +1,8 @@
 export rainSnow_Tair
 
 #! format: off
-@bounds @describe @units @with_kw struct rainSnow_Tair{T1} <: rainSnow
-    airT_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C"
+@bounds @describe @units @timescale @with_kw struct rainSnow_Tair{T1} <: rainSnow
+    airT_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C" | ""
 end
 #! format: on
 

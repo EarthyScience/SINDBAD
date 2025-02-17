@@ -1,8 +1,8 @@
 export cTauSoilProperties_CASA
 
 #! format: off
-@bounds @describe @units @with_kw struct cTauSoilProperties_CASA{T1} <: cTauSoilProperties
-    TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | ""
+@bounds @describe @units @timescale @with_kw struct cTauSoilProperties_CASA{T1} <: cTauSoilProperties
+    TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | "" | ""
 end
 #! format: on
 

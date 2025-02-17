@@ -24,7 +24,7 @@ function precompute(params::soilTexture_forcing, forcing, land, helpers)
     @unpack_nt (st_clay, st_orgm, st_sand, st_silt) ⇐ land.properties
 
     if length(f_clay) != length(st_clay)
-        @debug "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers."
+        @debug "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers." | ""
         for sl ∈ eachindex(st_clay)
             @rep_elem mean(f_clay) ⇒ (st_clay, sl, :soilW)
             @rep_elem mean(f_sand) ⇒ (st_sand, sl, :soilW)

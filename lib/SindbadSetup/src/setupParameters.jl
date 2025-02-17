@@ -1,30 +1,31 @@
 export getParameters
 
 """
-    getParameters(selected_models::LongTuple, num_type; return_table=true)
+    getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true)
 
 prepare a NT/Table of the SINDBAD models from a longtuple which is converted to tuple before parameters are retrieved
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
 - `num_type`: a type to set the values to
-
+- `model_timestep`: time step of model run
 """
-function getParameters(selected_models::LongTuple, num_type; return_table=true)
-    selected_models = getTupleFromLongTuple(selected_models)
-    return getParameters(selected_models, num_type; return_table=return_table)
+function getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true)
+    selected_models = getTupleFromLongTable(selected_models)
+    return getParameters(selected_models, num_type, model_timestep; return_table=return_table)
 end
 
 """
-    getParameters(selected_models::Tuple, num_type; return_table=true)
+    getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
 
 prepare a NT/Table of the SINDBAD models from a tuple
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
 - `num_type`: a type to set the values to
+- `model_timestep`: time step of model run
 """
-function getParameters(selected_models::Tuple, num_type; return_table=true)
+function getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
     model_names_list = nameof.(typeof.(selected_models));
     default = [flatten(selected_models)...]
     constrains = metaflatten(selected_models, Models.bounds)
@@ -47,11 +48,21 @@ function getParameters(selected_models::Tuple, num_type; return_table=true)
     end
 
     unts=[]
+    unts_ori=[]
     for m in eachindex(name)
         prm_name = Symbol(name[m])
         appr = approach_func[m]()
+        p_timescale = Sindbad.Models.timescale(appr, prm_name)
+        unit_factor = getUnitConversionForParameter(p_timescale, model_timestep)
+        lower[m] = lower[m] * unit_factor
+        upper[m] = upper[m] * unit_factor
         if hasproperty(appr, prm_name)
-            push!(unts, Sindbad.Models.units(appr, prm_name))
+            p_unit = Sindbad.Models.units(appr, prm_name)
+            push!(unts_ori, p_unit)
+            if ~isone(unit_factor)
+                p_unit = replace(p_unit, p_timescale => model_timestep)
+            end
+            push!(unts, p_unit)
         else
             error("$appr does not have a parameter $prmn")
         end
@@ -65,9 +76,10 @@ function getParameters(selected_models::Tuple, num_type; return_table=true)
     name,
     default,
     optim=default,
-    units=unts,
     lower,
     upper,
+    units=unts,
+    units_ori=unts_ori,
     model,
     model_approach,
     approach_func,
@@ -78,16 +90,17 @@ end
 
 
 """
-    getParameters(selected_models, model_parameter_default, num_type)
+    getParameters(selected_models, model_parameter_default, num_type, model_timestep)
 
 prepare a Table of the SINDBAD models from a tuple
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
 - `num_type`: a type to set the values to
+- `model_timestep`: time step of model run
 """
-function getParameters(selected_models, model_parameter_default, num_type)
-    models_tuple = getParameters(selected_models, num_type; return_table=false)
+function getParameters(selected_models, model_parameter_default, num_type, model_timestep)
+    models_tuple = getParameters(selected_models, num_type, model_timestep; return_table=false)
     default = models_tuple.default
     model_approach = models_tuple.model_approach
     dp_dist = typeof(default[1]).(model_parameter_default[:distribution][2])
@@ -103,13 +116,14 @@ end
 
 
 # Arguments:
-- `selected_models`: DESCRIPTION
+- `selected_models`: a tuple of all models selected in the given model structure
 - `model_parameter_default`: DESCRIPTION
 - `opt_parameter`: DESCRIPTION
+- `model_timestep`: time step of model run
 """
-function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type)
+function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type, model_timestep)
     opt_parameter = replaceCommaSeparatorParams(opt_parameter)
-    tbl_parameters = getParameters(selected_models, model_parameter_default, num_type)
+    tbl_parameters = getParameters(selected_models, model_parameter_default, num_type, model_timestep)
     return filter(row -> row.name_full in opt_parameter, tbl_parameters)
 end
 
@@ -119,13 +133,14 @@ end
 
 
 # Arguments:
-- `selected_models`: a
+- `selected_models`: a tuple of all models selected in the given model structure
 - `model_parameter_default`: DESCRIPTION
 - `opt_parameter`: DESCRIPTION
+- `model_timestep`: time step of model run
 """
-function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type)
+function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type, model_timestep)
     param_list = replaceCommaSeparatorParams(keys(opt_parameter))
-    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list, num_type)
+    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list, num_type, model_timestep)
     tbl_parameters_filtered = filter(row -> row.name_full in param_list, tbl_parameters)
     new_dist = tbl_parameters_filtered.dist
     new_p_dist = tbl_parameters_filtered.p_dist

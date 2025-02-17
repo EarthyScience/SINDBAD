@@ -1,4 +1,5 @@
 using Revise
+using Sindbad
 using SindbadExperiment
 using Plots
 toggleStackTraceNT()
@@ -21,6 +22,7 @@ model_array_type = "static_array"
 replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
     "experiment.basics.config_files.forcing" => forcing_config,
     "experiment.basics.domain" => domain,
+    "experiment.basics.time.temporal_resolution" => "day",
     "forcing.default_forcing.data_path" => path_input,
     "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
@@ -38,6 +40,12 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
+tbl_params = getParameters(info.models.forward,
+    info.optimization.model_parameter_default,
+    info.optimization.model_parameters_to_optimize,
+    info.helpers.numbers.num_type, 
+    info.helpers.dates.temporal_resolution);
+
 forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
@@ -49,7 +57,8 @@ optimized_models = info.models.forward;
 tbl_params = getParameters(info.models.forward,
     info.optimization.model_parameter_default,
     info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type);
+    info.helpers.numbers.num_type, 
+    info.helpers.dates.temporal_resolution);
 selected_models = info.models.forward;
 
 rand_m = rand()
