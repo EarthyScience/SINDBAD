@@ -6,7 +6,7 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 const navTemp = {
   nav: [
     { text: 'Home', link: '/' },
-    { text: 'Get Started', items: [
+    { text: 'Manual', items: [
       { text: 'Installation', link: '/install' },
       { text: 'Modelling Design', link: '/modelling_design' },
       { text: 'TEM', link: '/TEM' },
@@ -20,12 +20,18 @@ const navTemp = {
       { text: 'optimization', link: '.' },
     ] 
     },
-    { text: 'API', 
+    { text: 'Code', 
       items: [
-        { text: 'Models', link: '/models' },
+        { text: 'Sindbad', link: '/models' },
+        { text: 'Data', link: '.' },
+        { text: 'Experiment', link: '.' },
+        { text: 'Metrics', link: '.' },
+        { text: 'ML', link: '.' },
+        { text: 'Optmization', link: '.' },
+        { text: 'Setup', link: '.' },
         { text: 'TEM', link: '.' },
-        { text: 'Optimization', link: '.' },
-        { text: 'ML', link: '.' }
+        { text: 'Utils', link: '.' },
+        // { text: 'Visuals', link: '.' }
       ]
     },
   ],
@@ -46,12 +52,19 @@ const sidebar = [
     { text: 'Optimization', link: '.' },
     { text: 'ML', link: '.' }]
   },
-  { text: 'API', 
+  { text: 'API',
+    collapsed: true, 
     items: [
-      { text: 'Models', link: '/models' },
+      { text: 'Sindbad', link: '/models' },
+      { text: 'Data', link: '.' },
+      { text: 'Experiment', link: '.' },
+      { text: 'Metrics', link: '.' },
+      { text: 'ML', link: '.' },
+      { text: 'Optmization', link: '.' },
+      { text: 'Setup', link: '.' },
       { text: 'TEM', link: '.' },
-      { text: 'Optimization', link: '.' },
-      { text: 'ML', link: '.' }
+      { text: 'Utils', link: '.' },
+      // { text: 'Visuals', link: '.' }
     ]
   },
 ]
