@@ -1,6 +1,7 @@
 module SindbadUtils
 
     using Crayons
+    using StyledStrings
     using DataStructures
     using Dates
     using FIGlet
