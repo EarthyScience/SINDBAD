@@ -1,8 +1,8 @@
 export gppDiffRadiation_Turner2006
 
 #! format: off
-@bounds @describe @units @with_kw struct gppDiffRadiation_Turner2006{T1} <: gppDiffRadiation
-    rue_ratio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
+@bounds @describe @units @timescale @with_kw struct gppDiffRadiation_Turner2006{T1} <: gppDiffRadiation
+    rue_ratio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | "" | ""
 end
 #! format: on
 

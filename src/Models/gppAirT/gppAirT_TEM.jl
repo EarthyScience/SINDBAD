@@ -1,10 +1,10 @@
 export gppAirT_TEM
 
 #! format: off
-@bounds @describe @units @with_kw struct gppAirT_TEM{T1,T2,T3} <: gppAirT
-    Tmin::T1 = 5.0 | (-10.0, 15.0) | "minimum temperature at which GPP ceases" | "°C"
-    Tmax::T2 = 20.0 | (10.0, 45.0) | "maximum temperature at which GPP ceases" | "°C"
-    opt_airT::T3 = 15.0 | (5.0, 30.0) | "optimal temperature for GPP" | "°C"
+@bounds @describe @units @timescale @with_kw struct gppAirT_TEM{T1,T2,T3} <: gppAirT
+    Tmin::T1 = 5.0 | (-10.0, 15.0) | "minimum temperature at which GPP ceases" | "°C" | ""
+    Tmax::T2 = 20.0 | (10.0, 45.0) | "maximum temperature at which GPP ceases" | "°C" | ""
+    opt_airT::T3 = 15.0 | (5.0, 30.0) | "optimal temperature for GPP" | "°C" | ""
 end
 #! format: on
 

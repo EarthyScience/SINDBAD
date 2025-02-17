@@ -1,8 +1,8 @@
 export interception_fAPAR
 
 #! format: off
-@bounds @describe @units @with_kw struct interception_fAPAR{T1} <: interception
-    isp::T1 = 1.0 | (0.1, 5.0) | "fapar dependent storage" | ""
+@bounds @describe @units @timescale @with_kw struct interception_fAPAR{T1} <: interception
+    isp::T1 = 1.0 | (0.1, 5.0) | "fapar dependent storage" | "" | ""
 end
 #! format: on
 
