@@ -1,8 +1,8 @@
 export gppVPD_Maekelae2008
 
 #! format: off
-@bounds @describe @units @with_kw struct gppVPD_Maekelae2008{T1} <: gppVPD
-    k::T1 = 0.4 | (0.06, 0.7) | "empirical parameter assuming typically negative values" | "kPa-1"
+@bounds @describe @units @timescale @with_kw struct gppVPD_Maekelae2008{T1} <: gppVPD
+    k::T1 = 0.4 | (0.06, 0.7) | "empirical parameter assuming typically negative values" | "kPa-1" | ""
 end
 #! format: on
 

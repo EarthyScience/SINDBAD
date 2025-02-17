@@ -1,9 +1,9 @@
 export snowMelt_TairRn
 
 #! format: off
-@bounds @describe @units @with_kw struct snowMelt_TairRn{T1,T2} <: snowMelt
-    melt_T::T1 = 3.0 | (0.01, 10.0) | "melt factor for temperature" | "mm/°C"
-    melt_Rn::T2 = 2.0 | (0.01, 3.0) | "melt factor for radiation" | "mm/MJ/m2"
+@bounds @describe @units @timescale @with_kw struct snowMelt_TairRn{T1,T2} <: snowMelt
+    melt_T::T1 = 3.0 | (0.01, 10.0) | "melt factor for temperature" | "mm/°C" | ""
+    melt_Rn::T2 = 2.0 | (0.01, 3.0) | "melt factor for radiation" | "mm/MJ/m2" | ""
 end
 #! format: on
 
@@ -34,7 +34,7 @@ function compute(params::snowMelt_TairRn, forcing, land, helpers)
     # divide snowmelt loss equally from all layers
     ΔsnowW = addToEachElem(ΔsnowW, -snow_melt / n_snowW)
 
-    # a Water Balance Pool variable that tracks how much water is still "available"
+    # a Water Balance Pool variable that tracks how much water is still "available" | ""
     WBP = WBP + snow_melt
 
     ## pack land variables

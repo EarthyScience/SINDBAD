@@ -1,8 +1,8 @@
 export vegAvailableWater_sigmoid
 
 #! format: off
-@bounds @describe @units @with_kw struct vegAvailableWater_sigmoid{T1} <: vegAvailableWater
-    exp_factor::T1 = 1.0 | (0.02, 3.0) | "multiplier of B factor of exponential rate" | ""
+@bounds @describe @units @timescale @with_kw struct vegAvailableWater_sigmoid{T1} <: vegAvailableWater
+    exp_factor::T1 = 1.0 | (0.02, 3.0) | "multiplier of B factor of exponential rate" | "" | ""
 end
 #! format: on
 

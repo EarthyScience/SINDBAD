@@ -1,8 +1,8 @@
 export gppDirRadiation_Maekelae2008
 
 #! format: off
-@bounds @describe @units @with_kw struct gppDirRadiation_Maekelae2008{T1} <: gppDirRadiation
-    γ::T1 = 0.04 | (0.001, 0.1) | "empirical light response parameter" | ""
+@bounds @describe @units @timescale @with_kw struct gppDirRadiation_Maekelae2008{T1} <: gppDirRadiation
+    γ::T1 = 0.04 | (0.001, 0.1) | "empirical light response parameter" | "" | ""
 end
 #! format: on
 

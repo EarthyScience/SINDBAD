@@ -104,7 +104,6 @@ pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optimization)
 
 develop_f =
     () -> begin
-        #tbl = getParameters(info.models.forward, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type);
         #code run from @infiltrate in optimizeTEM
         # d = shifloNormal(2,5)
         # using StatsPlots
@@ -112,7 +111,7 @@ develop_f =
 
         tbl_params = getParameters(tem.models.forward, optim.model_parameter_default,
             optim.model_parameters_to_optimize,
-            info.helpers.numbers.num_type)
+            info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
         # get the default and bounds
         default_values = tem.helpers.numbers.num_type.(tbl_params.default)
         lower_bounds = tem.helpers.numbers.num_type.(tbl_params.lower)

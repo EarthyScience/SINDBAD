@@ -1,8 +1,8 @@
 export groundWRecharge_fraction
 
 #! format: off
-@bounds @describe @units @with_kw struct groundWRecharge_fraction{T1} <: groundWRecharge
-    rf::T1 = 0.1 | (0.02, 0.98) | "fraction of land runoff that percolates to groundwater" | ""
+@bounds @describe @units @timescale @with_kw struct groundWRecharge_fraction{T1} <: groundWRecharge
+    rf::T1 = 0.1 | (0.02, 0.98) | "fraction of land runoff that percolates to groundwater" | "" | ""
 end
 #! format: on
 

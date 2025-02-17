@@ -169,7 +169,7 @@ function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::S
 
     default_output = runTEM!(default_models, forcing, info)
 
-    tbl_params = getParameters(default_models, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type);
+    tbl_params = getParameters(default_models, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
     optimized_models = updateModelParameters(tbl_params, default_models, params_vector)
     optimized_output = runTEM!(optimized_models, forcing, info)
 

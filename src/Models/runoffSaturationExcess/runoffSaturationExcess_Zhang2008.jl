@@ -1,8 +1,8 @@
 export runoffSaturationExcess_Zhang2008
 
 #! format: off
-@bounds @describe @units @with_kw struct runoffSaturationExcess_Zhang2008{T1} <: runoffSaturationExcess
-    α::T1 = 0.5 | (0.01, 10.0) | "an empirical Budyko parameter" | ""
+@bounds @describe @units @timescale @with_kw struct runoffSaturationExcess_Zhang2008{T1} <: runoffSaturationExcess
+    α::T1 = 0.5 | (0.01, 10.0) | "an empirical Budyko parameter" | "" | ""
 end
 #! format: on
 

@@ -1,8 +1,8 @@
 export gppDiffRadiation_Wang2015
 
 #! format: off
-@bounds @describe @units @with_kw struct gppDiffRadiation_Wang2015{T1} <: gppDiffRadiation
-    μ::T1 = 0.46 | (0.0001, 1.0) | "" | ""
+@bounds @describe @units @timescale @with_kw struct gppDiffRadiation_Wang2015{T1} <: gppDiffRadiation
+    μ::T1 = 0.46 | (0.0001, 1.0) | "" | "" | ""
 end
 #! format: on
 

@@ -1,12 +1,12 @@
 export WUE_expVPDDayCo2
 
 #! format: off
-@bounds @describe @units @with_kw struct WUE_expVPDDayCo2{T1,T2,T3,T4,T5} <: WUE
-    WUE_one_hpa::T1 = 9.2 | (2.0, 20.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
-    κ::T2 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
-    base_ambient_CO2::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
-    sat_ambient_CO2::T4 = 500.0 | (10.0, 2000.0) | "" | "ppm"
-    kpa_to_hpa::T5 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | ""
+@bounds @describe @units @timescale @with_kw struct WUE_expVPDDayCo2{T1,T2,T3,T4,T5} <: WUE
+    WUE_one_hpa::T1 = 9.2 | (2.0, 20.0) | "WUE at 1 hpa VPD" | "gC/mmH2O" | ""
+    κ::T2 = 0.4 | (0.06, 0.7) | "" | "kPa-1" | ""
+    base_ambient_CO2::T3 = 380.0 | (300.0, 500.0) | "" | "ppm" | ""
+    sat_ambient_CO2::T4 = 500.0 | (10.0, 2000.0) | "" | "ppm" | ""
+    kpa_to_hpa::T5 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | "" | ""
 end
 #! format: on
 

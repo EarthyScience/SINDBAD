@@ -1,8 +1,8 @@
 export drainage_dos
 
 #! format: off
-@bounds @describe @units @with_kw struct drainage_dos{T1} <: drainage
-    dos_exp::T1 = 1.5 | (0.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
+@bounds @describe @units @timescale @with_kw struct drainage_dos{T1} <: drainage
+    dos_exp::T1 = 1.5 | (0.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | "" | ""
 end
 #! format: on
 

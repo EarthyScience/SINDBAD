@@ -2,6 +2,7 @@
 export getInOutModel
 export getInOutModels
 export getTypedModel
+export getUnitConversionForParameter
 export modelParameter
 export modelParameters
 
@@ -257,28 +258,29 @@ get SINDBAD model, and instatiate it with the given datatype
 - `model`: a string SINDBAD model name
 - `num_type`: a number type to use for model parameters
 """
-function getTypedModel(model::String, num_type=Float64)
-    getTypedModel(Symbol(model), num_type)
+function getTypedModel(model::String, model_timestep="day", num_type=Float64)
+    getTypedModel(Symbol(model), model_timestep, num_type)
 end
 
 
 """
     getTypedModel(model::Symbol, num_type=Float64)
 
-get SINDBAD model, and instatiate it with the given datatype
+get SINDBAD model, and instantiate it with the given datatype
 
 # Arguments:
 - `model::Symbol`: a SINDBAD model name
 - `num_type`: a number type to use for model parameters
 """
-function getTypedModel(model::Symbol, num_type=Float64)
+function getTypedModel(model::Symbol, model_timestep="day", num_type=Float64)
     model_obj = getfield(Sindbad.Models, model)
     model_instance = model_obj()
     param_names = fieldnames(model_obj)
     if length(param_names) > 0
         param_vals = []
         for pn ∈ param_names
-            param = getfield(model_obj(), pn)
+            param = getParameterValue(model_obj(), pn, model_timestep)
+            # param = getfield(model_obj(), pn)
             param_typed = if typeof(param) <: Array
                 num_type.(param)
             else
@@ -290,6 +292,82 @@ function getTypedModel(model::Symbol, num_type=Float64)
     end
     return model_instance
 end
+
+"""
+    getParameterValue(model, param_name, model_timestep)
+
+get a value of a given model parameter with units corrected
+
+# Arguments:
+- `model`: selected model
+- `param_name`: name of the parameter
+- `model_timestep`: time step of the model run
+"""
+function getParameterValue(model, param_name, model_timestep)
+    param = getfield(model, param_name)
+    p_timescale = Sindbad.Models.timescale(model, param_name)
+    # return param
+    return param * getUnitConversionForParameter(p_timescale, model_timestep)
+end
+
+"""
+    getUnitConversionForParameter(p_timescale, model_timestep)
+
+helper/wrapper function to get unit conversion factors for model parameters that are timescale dependent
+
+# Arguments:
+- `p_timescale`: time scale of a SINDBAD model parameter
+- `model_timestep`: time step of the model run
+"""
+function getUnitConversionForParameter(p_timescale, model_timestep)
+    conversion = 1
+    time_multiplier = 1
+    # time multiplier compared to daily time steps
+    if model_timestep == "second"
+        time_multiplier = 1/(60* 60 * 24)
+    elseif model_timestep == "minute"
+        time_multiplier = 1/(60 * 24)
+    elseif model_timestep == "halfhour"
+        time_multiplier = 1/48
+    elseif model_timestep == "hour"
+        time_multiplier = 1/24
+    elseif model_timestep == "day"
+        time_multiplier = 1
+    elseif model_timestep == "week"
+        time_multiplier = 7
+    elseif model_timestep == "month"
+        time_multiplier = 30
+    elseif model_timestep == "year"
+        time_multiplier = 365
+    elseif model_timestep == "decade"
+        time_multiplier = 365 * 10
+    else
+        error("running model at $(model_timestep) is not supported")
+    end
+
+    # modelling at other time steps
+    if p_timescale == "second"
+        conversion = 60 * 60 * 24 * time_multiplier
+    elseif p_timescale == "minute"
+            conversion = 60 * 24 * time_multiplier
+    elseif p_timescale == "halfhour"
+        conversion = 48 * time_multiplier
+    elseif p_timescale == "hour"
+        conversion = 24 * time_multiplier
+    elseif p_timescale == "day"
+        conversion = 1 * time_multiplier
+    elseif p_timescale == "week"
+        conversion = 1/7 * time_multiplier
+    elseif p_timescale == "month"
+        conversion = 1/30 * time_multiplier
+    elseif p_timescale == "year"
+        conversion = 1/365 * time_multiplier
+    elseif p_timescale == "decade"
+        conversion = 1/(365 * 10) * time_multiplier
+    end
+    return conversion
+end
+
 
 """
     modelParameters(models)
@@ -333,7 +411,9 @@ function modelParameter(models, model::Symbol)
         println("parameters:")
         foreach(pnames) do fn
             p_dict[fn] = getproperty(mod, fn)
-            println("   $fn => $(getproperty(mod, fn))")
+            p_unit = Sindbad.Models.units(mod, fn)
+            p_unit_info = p_unit == "" ? "" : "($p_unit)"
+            println("   $fn => $(getproperty(mod, fn)) $p_unit_info")
         end
     end
     return p_dict
