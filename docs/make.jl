@@ -1,5 +1,8 @@
 using Sindbad
 using SindbadTEM
+using SindbadData
+using SindbadSetup
+using SindbadMetrics
 using InteractiveUtils
 using DocumenterVitepress
 using Documenter
