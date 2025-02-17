@@ -15,6 +15,7 @@ makedocs(; sitename="Sindbad",
     ),
     remotes=nothing,
     draft=false,
+    warnonly=true,
     source="src",
     build="build",
     )
