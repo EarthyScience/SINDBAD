@@ -6,32 +6,42 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 const navTemp = {
   nav: [
     { text: 'Home', link: '/' },
-    { text: 'Manual', items: [
-      { text: 'Installation', link: '/install' },
-      { text: 'Modelling Design', link: '/modelling_design' },
-      { text: 'TEM', link: '/TEM' },
-      { text: 'Optimization', link: '.' },
-      { text: 'ML', link: '.' }]
+    { text: 'Manual', 
+      items: [
+        { text: 'Overview', link: '.' },
+        { text: 'Install', link: '/install' },
+        { text: 'Workflows', link: '.' },
+        { text: 'Examples', link: '.' }
+    ]
     },
-    { text: 'Set settings',  items: [
-      { text: 'model_structure', link: '.' },
-      { text: 'experiment', link: '.' },
-      { text: 'forcing', link: '.' },
-      { text: 'optimization', link: '.' },
+    { text: 'Settings',  
+      items: [
+        { text: 'Experiments', link: '.' },
+        { text: 'Forcing', link: '.' },
+        { text: 'Models', link: '.' },
+        { text: 'Optimization', link: '.' }
     ] 
     },
     { text: 'Code', 
       items: [
         { text: 'Sindbad', link: '/models' },
-        { text: 'Data', link: '.' },
-        { text: 'Experiment', link: '.' },
-        { text: 'Metrics', link: '.' },
-        { text: 'ML', link: '.' },
-        { text: 'Optimization', link: '.' },
-        { text: 'Setup', link: '.' },
-        { text: 'TEM', link: '.' },
-        { text: 'Utils', link: '.' },
+        { text: '-Data', link: '.' },
+        { text: '-Experiment', link: '.' },
+        { text: '-Metrics', link: '.' },
+        { text: '-ML', link: '.' },
+        { text: '-Optimization', link: '.' },
+        { text: '-Setup', link: '.' },
+        { text: '-TEM', link: '.' },
+        { text: '-Utils', link: '.' }
         // { text: 'Visuals', link: '.' }
+      ]
+    },
+    { text: 'About', 
+      items: [
+        { text: 'Team', link: '.' },
+        { text: 'License', link: '.' },
+        { text: 'Acknowledgements', link: '.' },
+        { text: 'Contact', link: '.' }
       ]
     },
   ],
