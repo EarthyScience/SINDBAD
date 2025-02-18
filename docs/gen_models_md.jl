@@ -1,6 +1,6 @@
 using Sindbad
 
-open(joinpath(@__DIR__, "./src/api/models.md"), "w") do o_file
+open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
     foreach(sort(collect(sindbad_models))) do sm
         sms = string(sm)
         write(o_file, "## $(sm)\n\n")
