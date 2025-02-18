@@ -15,7 +15,7 @@ function define(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
         cEcoZix = zix ⇐ helpers.pools 
     end
 
-    ## instantiate variables
+    ## Instantiate variables
     c_allocation = zero(cEco) #sujan
     c_allocation_to_veg = zero(cEco)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
@@ -95,8 +95,8 @@ Combine the different effects of carbon allocation using cAllocation_Friedlingst
  - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
  - land.diagnostics.c_allocation
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cAllocation_Friedlingstein1999
+# Instantiate:
+Instantiate time-invariant variables for cAllocation_Friedlingstein1999
 
 
 ---

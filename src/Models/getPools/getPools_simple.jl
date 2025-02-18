@@ -53,7 +53,7 @@ Get the amount of water at the beginning of timestep using getPools_simple
 
 *Created by:*
  - mjung
- - ncarval
+ - ncarvalhais
  - skoirala
 """
 getPools_simple

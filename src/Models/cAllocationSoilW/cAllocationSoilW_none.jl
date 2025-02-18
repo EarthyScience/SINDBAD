@@ -17,7 +17,7 @@ end
 @doc """
 sets the moisture effect on allocation to one (no effect)
 
-# instantiate:
+# Instantiate:
 
 *Inputs*
 

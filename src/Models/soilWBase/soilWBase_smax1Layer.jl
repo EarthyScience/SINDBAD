@@ -21,7 +21,7 @@ function define(params::soilWBase_smax1Layer, forcing, land, helpers)
         error(["soilWBase_smax1Layer needs eactly 1 soil layer in model_structure.json."])
     end
 
-    ## instantiate variables
+    ## Instantiate variables
     w_sat = zero(soilW)
     w_fc = zero(soilW)
     w_wp = zero(soilW)
@@ -74,8 +74,8 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax1Layer
  - land.properties.w_fc : = land.properties.w_sat
  - land.properties._wp: wilting point set to zero for all layers
 
-# instantiate:
-instantiate/instantiate time-invariant variables for soilWBase_smax1Layer
+# Instantiate:
+Instantiate time-invariant variables for soilWBase_smax1Layer
 
 
 ---

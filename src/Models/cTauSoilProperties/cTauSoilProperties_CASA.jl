@@ -10,7 +10,7 @@ function define(params::cTauSoilProperties_CASA, forcing, land, helpers)
     @unpack_cTauSoilProperties_CASA params
     @unpack_nt cEco ⇐ land.pools
 
-    ## instantiate variables
+    ## Instantiate variables
     c_eco_k_f_soil_props = one.(cEco)
 
     ## pack land variables
@@ -60,8 +60,8 @@ Effect of soil texture on soil decomposition rates using cTauSoilProperties_CASA
 *Outputs*
  - land.diagnostics.c_eco_k_f_soil_props: Soil texture stressor values on the the turnover rates
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cTauSoilProperties_CASA
+# Instantiate:
+Instantiate time-invariant variables for cTauSoilProperties_CASA
 
 
 ---

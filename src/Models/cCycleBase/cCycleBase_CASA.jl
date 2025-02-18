@@ -34,7 +34,7 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
         cEco ⇐ land.pools
     end
 
-    ## instantiate variables
+    ## Instantiate variables
     C_to_N_cVeg = one.(cEco)
 
     ## pack land variables
@@ -81,8 +81,8 @@ Pool structure of the carbon cycle using cCycleBase_CASA
 
 *Outputs*
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cCycleBase_CASA
+# Instantiate:
+Instantiate time-invariant variables for cCycleBase_CASA
 
 
 ---

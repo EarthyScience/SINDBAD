@@ -11,7 +11,7 @@ function define(params::cTauLAI_CASA, forcing, land, helpers)
     @unpack_cTauLAI_CASA params
     @unpack_nt cEco ⇐ land.pools
 
-    ## instantiate variables
+    ## Instantiate variables
     c_eco_k_f_LAI = one.(cEco)
 
     ## pack land variables
@@ -117,8 +117,8 @@ Calculate litterfall scalars (that affect the changes in the vegetation k) using
  - land.diagnostics.c_eco_k_f_LAI:
  - land.diagnostics.c_eco_k_f_LAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cTauLAI_CASA
+# Instantiate:
+Instantiate time-invariant variables for cTauLAI_CASA
 
 
 ---

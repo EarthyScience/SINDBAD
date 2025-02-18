@@ -27,8 +27,8 @@ Combine effects as multiplicative or minimum; if coupled, uses transup using gpp
 *Outputs*
  - land.fluxes.gpp: actual GPP [gC/m2/time]
 
-# instantiate:
-instantiate/instantiate time-invariant variables for gpp_none
+# Instantiate:
+Instantiate time-invariant variables for gpp_none
 
 
 ---
@@ -41,6 +41,6 @@ instantiate/instantiate time-invariant variables for gpp_none
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 """
 gpp_none
