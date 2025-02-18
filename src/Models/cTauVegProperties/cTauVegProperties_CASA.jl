@@ -16,7 +16,7 @@ function define(params::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_cTauVegProperties_CASA params
     @unpack_nt cEco ⇐ land.pools
 
-    ## instantiate variables
+    ## Instantiate variables
     c_eco_k_f_veg_props = one.(cEco)
 
     ## pack land variables
@@ -108,8 +108,8 @@ Effect of vegetation properties on soil decomposition rates using cTauVegPropert
  - land.properties.SCLIGNIN:
  - land.diagnostics.c_eco_k_f_veg_props:
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cTauVegProperties_CASA
+# Instantiate:
+Instantiate time-invariant variables for cTauVegProperties_CASA
 
 
 ---

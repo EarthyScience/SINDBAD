@@ -64,8 +64,8 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
 *Outputs*
  - land.states.root_water_efficiency as nZix for soilW
 
-# instantiate:
-instantiate/instantiate time-invariant variables for rootWaterEfficiency_k2Layer
+# Instantiate:
+Instantiate time-invariant variables for rootWaterEfficiency_k2Layer
 
 
 ---

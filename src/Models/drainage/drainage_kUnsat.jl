@@ -4,7 +4,7 @@ struct drainage_kUnsat <: drainage end
 
 function define(params::drainage_kUnsat, forcing, land, helpers)
     @unpack_nt soilW ⇐ land.pools
-    ## instantiate drainage
+    ## Instantiate drainage
     drainage = zero(soilW)
     ## pack land variables
     @pack_nt drainage ⇒ land.fluxes

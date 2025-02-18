@@ -16,8 +16,8 @@ end
 @doc """
 set the actual τ to ones
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cTau_none
+# Instantiate:
+Instantiate time-invariant variables for cTau_none
 
 
 ---

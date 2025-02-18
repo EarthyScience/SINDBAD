@@ -9,7 +9,7 @@ function define(params::cCycle_simple, forcing, land, helpers)
     end
     n_cEco = length(cEco)
     n_cVeg = length(cVeg)
-    ## instantiate variables
+    ## Instantiate variables
     c_eco_flow = zero(cEco)
     c_eco_out = zero(cEco)
     c_eco_influx = zero(cEco)
@@ -131,8 +131,8 @@ Allocate carbon to vegetation components using cCycle_simple
  - land.pools.cEco: values for the different carbon pools
  - land.states.c_eco_efflux:
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cCycle_simple
+# Instantiate:
+Instantiate time-invariant variables for cCycle_simple
 
 
 ---
