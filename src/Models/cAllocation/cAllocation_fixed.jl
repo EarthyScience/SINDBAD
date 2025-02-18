@@ -15,7 +15,7 @@ function define(params::cAllocation_fixed, forcing, land, helpers)
         cEco ⇐ land.pools
         zix_pools = zix ⇐ helpers.pools
     end
-    ## instantiate variables
+    ## Instantiate variables
     c_allocation = zero(cEco) #sujan
     c_allocation_to_veg = zero(cEco)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
@@ -86,8 +86,8 @@ Combine the different effects of carbon allocation using cAllocation_fixed
  - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
  - land.diagnostics.c_allocation
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cAllocation_fixed
+# Instantiate:
+Instantiate time-invariant variables for cAllocation_fixed
 
 
 ---

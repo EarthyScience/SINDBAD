@@ -69,7 +69,7 @@ Gpp as a function of soilW; should be set to none if coupled with transpiration 
 *Versions*
 
 *Created by:*
- - ncarval & Shanning Bao [sbao]
+ - ncarvalhais & Shanning Bao [sbao]
 
 *Notes*
 """
