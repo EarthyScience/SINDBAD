@@ -28,8 +28,8 @@ Effect of temperature using gppAirT_none
 *Outputs*
  - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
 
-# instantiate:
-instantiate/instantiate time-invariant variables for gppAirT_none
+# Instantiate:
+Instantiate time-invariant variables for gppAirT_none
 
 
 ---
@@ -42,6 +42,6 @@ instantiate/instantiate time-invariant variables for gppAirT_none
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 """
 gppAirT_none

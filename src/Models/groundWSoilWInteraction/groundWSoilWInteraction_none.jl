@@ -16,8 +16,8 @@ end
 @doc """
 sets the groundwater capillary flux to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for groundWSoilWInteraction_none
+# Instantiate:
+Instantiate time-invariant variables for groundWSoilWInteraction_none
 
 
 ---

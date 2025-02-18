@@ -40,7 +40,7 @@ function define(params::soilProperties_Saxton1986, forcing, land, helpers)
     @unpack_soilProperties_Saxton1986 params
     @unpack_nt soilW ⇐ land.pools
 
-    ## instantiate variables
+    ## Instantiate variables
     sp_α = zero(soilW)
     sp_β = zero(soilW)
     sp_k_fc = zero(soilW)
@@ -105,8 +105,8 @@ assigns the soil hydraulic properties based on Saxton; 1986 to land.soilProperti
 # Parameters
 $(SindbadParameters)
 
-# instantiate:
-instantiate/instantiate time-invariant variables for soilProperties_Saxton1986
+# Instantiate:
+Instantiate time-invariant variables for soilProperties_Saxton1986
 
 
 ---

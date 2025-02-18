@@ -56,8 +56,8 @@ Combine effects of different factors on decomposition rates using cTau_mult
  - land.cTau.c_eco_k: values for actual turnover rates
  - land.cTau.c_eco_k
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cTau_mult
+# Instantiate:
+Instantiate time-invariant variables for cTau_mult
 
 
 ---

@@ -4,7 +4,7 @@ struct cCycle_GSI <: cCycle end
 
 function define(params::cCycle_GSI, forcing, land, helpers)
     @unpack_nt cEco ⇐ land.pools
-    ## instantiate variables
+    ## Instantiate variables
     c_eco_flow = zero(cEco)
     c_eco_out = zero(cEco)
     c_eco_influx = zero(cEco)
@@ -132,8 +132,8 @@ Allocate carbon to vegetation components using cCycle_GSI
  - land.pools.cEco: values for the different carbon pools
  - land.states.c_eco_efflux:
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cCycle_GSI
+# Instantiate:
+Instantiate time-invariant variables for cCycle_GSI
 
 
 ---

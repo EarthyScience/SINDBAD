@@ -4,7 +4,7 @@ struct cAllocation_GSI <: cAllocation end
 
 function define(params::cAllocation_GSI, forcing, land, helpers)
     @unpack_nt cEco ⇐ land.pools
-    ## instantiate variables
+    ## Instantiate variables
     c_allocation = zero(cEco)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
 
@@ -86,8 +86,8 @@ Combine the different effects of carbon allocation using cAllocation_GSI
  - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
  - land.diagnostics.c_allocation
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cAllocation_GSI
+# Instantiate:
+Instantiate time-invariant variables for cAllocation_GSI
 
 
 ---

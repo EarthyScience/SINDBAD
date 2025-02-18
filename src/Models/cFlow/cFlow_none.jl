@@ -23,8 +23,8 @@ end
 @doc """
 set transfer between pools to 0 [i.e. nothing is transfered] set c_giver & c_taker matrices to [] get the transfer matrix transfers
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cFlow_none
+# Instantiate:
+Instantiate time-invariant variables for cFlow_none
 
 
 ---
