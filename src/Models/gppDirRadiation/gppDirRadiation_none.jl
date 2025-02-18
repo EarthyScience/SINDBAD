@@ -26,8 +26,8 @@ Effect of direct radiation using gppDirRadiation_none
 *Outputs*
  - land.diagnostics.gpp_f_light: effect of light saturation on potential GPP
 
-# instantiate:
-instantiate/instantiate time-invariant variables for gppDirRadiation_none
+# Instantiate:
+Instantiate time-invariant variables for gppDirRadiation_none
 
 
 ---
@@ -41,6 +41,6 @@ instantiate/instantiate time-invariant variables for gppDirRadiation_none
 
 *Created by:*
  - mjung
- - ncarval
+ - ncarvalhais
 """
 gppDirRadiation_none

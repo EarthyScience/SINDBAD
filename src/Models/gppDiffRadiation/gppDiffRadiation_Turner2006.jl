@@ -76,6 +76,6 @@ $(SindbadParameters)
 
 *Created by:*
  - mjung
- - ncarval
+ - ncarvalhais
 """
 gppDiffRadiation_Turner2006

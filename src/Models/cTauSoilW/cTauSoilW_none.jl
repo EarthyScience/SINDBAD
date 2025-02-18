@@ -16,8 +16,8 @@ end
 @doc """
 set the moisture stress for all carbon pools to ones
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cTauSoilW_none
+# Instantiate:
+Instantiate time-invariant variables for cTauSoilW_none
 
 
 ---

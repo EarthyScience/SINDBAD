@@ -6,7 +6,7 @@ include("autoRespirationAirT_none.jl")
 include("autoRespirationAirT_Q10.jl")
 
 @doc """
-Temperature effect on autotrophic maintenance respiration
+Temperature effect on autotrophic maintenance respiration.
 
 # Approaches:
  - none: sets the effect of temperature on RA to one [no effect]

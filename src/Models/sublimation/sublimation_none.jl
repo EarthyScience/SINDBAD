@@ -15,8 +15,8 @@ end
 @doc """
 sets the snow sublimation to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for sublimation_none
+# Instantiate:
+Instantiate time-invariant variables for sublimation_none
 
 
 ---

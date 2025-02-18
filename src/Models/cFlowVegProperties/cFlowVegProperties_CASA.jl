@@ -12,7 +12,7 @@ function define(params::cFlowVegProperties_CASA, forcing, land, helpers)
         c_taker ⇐ land.constants
         cEco ⇐ land.pools
     end
-    ## instantiate variables
+    ## Instantiate variables
     p_F_vec = eltype(cEco).(zero([c_taker...]))
     if cEco isa SVector
         p_F_vec = SVector{length(p_F_vec)}(p_F_vec)
@@ -74,8 +74,8 @@ Effect of vegetation properties on the c transfers between pools using cFlowVegP
  - land.cFlowVegProperties.p_E_vec
  - land.cFlowVegProperties.p_F_vec
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cFlowVegProperties_CASA
+# Instantiate:
+Instantiate time-invariant variables for cFlowVegProperties_CASA
 
 
 ---

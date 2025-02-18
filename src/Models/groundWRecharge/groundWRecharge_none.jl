@@ -16,8 +16,8 @@ end
 @doc """
 sets the GW recharge to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for groundWRecharge_none
+# Instantiate:
+Instantiate time-invariant variables for groundWRecharge_none
 
 
 ---

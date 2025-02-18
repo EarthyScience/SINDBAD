@@ -94,8 +94,8 @@ Determine growth and maintenance respiration using autoRespiration_Thornley2000A
  - land.diagnostics.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
  - land.diagnostics.C_to_N_cVeg: carbon to nitrogen ratio [gC.gN-1]
  - land.diagnostics.c_allocation: carbon allocation []
- - cEco: ecosystem carbon pools [gC.m2]
- - land.fluxes.gpp: gross primary productivity [gC.m2.δT-1]
+ - cEco: ecosystem carbon pools [gC.m-2]
+ - land.fluxes.gpp: gross primary productivity [gC.m-2.δT-1]
 
 *Outputs*
  - land.states.c_eco_efflux: autotrophic respiration from each plant pools [gC.m-2.δT-1]
@@ -111,10 +111,10 @@ Determine growth and maintenance respiration using autoRespiration_Thornley2000A
  - Thornley, J. H. M., & M. G. R. Cannell [2000], Modelling the components  of plant respiration: Representation & realism, Ann Bot-London, 85[1]  55-67.
 
 *Versions*
- - 1.0 on 06.05.2022 [ncarval/skoirala]: cleaned up the code
+ - 1.0 on 06.05.2022 [ncarvalhais/skoirala]: cleaned up the code
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 
 *Notes*
  - Questions - practical - leave raAct per pool; | make a field land.fluxes.ra  that has all the autotrophic respiration components together?  
