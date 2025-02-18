@@ -14,7 +14,7 @@ function define(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
         soil_layer_thickness ⇐ land.properties
         soilW ⇐ land.pools
     end
-    ## instantiate variables
+    ## Instantiate variables
     root_water_efficiency = one.(soilW)
     cumulative_soil_depths = cumsum(soil_layer_thickness)
     root_over = one.(soilW)
@@ -96,8 +96,8 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
  - land.states.root_water_efficiency as nZix for soilW
  - land.states.root_water_efficiency
 
-# instantiate:
-instantiate/instantiate time-invariant variables for rootWaterEfficiency_expCvegRoot
+# Instantiate:
+Instantiate time-invariant variables for rootWaterEfficiency_expCvegRoot
 
 
 ---

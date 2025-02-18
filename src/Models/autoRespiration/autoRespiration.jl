@@ -8,12 +8,12 @@ include("autoRespiration_Thornley2000B.jl")
 include("autoRespiration_Thornley2000C.jl")
 
 @doc """
-Determine growth and maintenance respiration -> npp
+Determine autotrophic respiration (RA) based on the growth and maintenance respiration components.
 
 # Approaches:
- - none: sets the co2 efflux from all vegetation pools to zero
+ - none: No RA. Sets the C respiration flux from all vegetation pools to zero.
  - Thornley2000A: Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper].
- - Thornley2000B: Precomputations to estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell (2000): MODEL B - growth respiration is given priority (check Fig.1 of the paper). Computes the km [maintenance [respiration] coefficient]
- - Thornley2000C: Precomputations to estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell (2000): MODEL C - growth, degradation & resynthesis view of respiration (check Fig.1 of the paper). Computes the km [maintenance [respiration] coefficient]
+ - Thornley2000B: Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell (2000): MODEL B - growth respiration is given priority (check Fig.1 of the paper). Computes the km [maintenance [respiration] coefficient]
+ - Thornley2000C: Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell (2000): MODEL C - growth, degradation & resynthesis view of respiration (check Fig.1 of the paper). Computes the km [maintenance [respiration] coefficient]
 """
 autoRespiration

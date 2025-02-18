@@ -111,8 +111,8 @@ Distribution of soil hydraulic properties over depth using soilWBase_uniform
  - all soil hydraulic properties in land.properties.p_[parameterName]
  - makeLookup: to switch on/off the creation of lookup table of  unsaturated hydraulic conductivity
 
-# instantiate:
-instantiate/instantiate time-invariant variables for soilWBase_uniform
+# Instantiate:
+Instantiate time-invariant variables for soilWBase_uniform
 
 
 ---
@@ -126,7 +126,7 @@ instantiate/instantiate time-invariant variables for soilWBase_uniform
  - 1.1 on 03.12.2019 [skoirala]: handling potentail vertical distribution of soil texture  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
  - skoirala
 """
 soilWBase_uniform

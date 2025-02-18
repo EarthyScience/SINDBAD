@@ -100,8 +100,8 @@ update pools and states in snowMelt_TairRn
  - land.pools.snowW[1] : snowpack [mm]
  - land.states.WBP : water balance pool [mm]
 
-# instantiate:
-instantiate/instantiate time-invariant variables for snowMelt_TairRn
+# Instantiate:
+Instantiate time-invariant variables for snowMelt_TairRn
 
 
 ---

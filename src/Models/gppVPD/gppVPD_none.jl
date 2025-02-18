@@ -27,8 +27,8 @@ sets the VPD stress on gpp_potential to one (no stress)
 *Outputs*
  - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
 
-# instantiate:
-instantiate/instantiate time-invariant variables for gppVPD_none
+# Instantiate:
+Instantiate time-invariant variables for gppVPD_none
 
 
 ---
@@ -41,6 +41,6 @@ instantiate/instantiate time-invariant variables for gppVPD_none
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 """
 gppVPD_none
