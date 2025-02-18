@@ -135,8 +135,8 @@ Consistency checks on the c allocation and transfers between pools using cCycleC
 
 *Outputs*
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cCycleConsistency_simple
+# Instantiate:
+Instantiate time-invariant variables for cCycleConsistency_simple
 
 
 ---

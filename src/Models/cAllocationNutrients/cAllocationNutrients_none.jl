@@ -16,7 +16,7 @@ end
 @doc """
 sets the pseudo-nutrient limitation to one (no effect)
 
-# instantiate:
+# Instantiate:
 
 *Inputs*
 

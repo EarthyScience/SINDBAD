@@ -16,8 +16,8 @@ end
 @doc """
 sets interflow runoff to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for runoffInterflow_none
+# Instantiate:
+Instantiate time-invariant variables for runoffInterflow_none
 
 
 ---
