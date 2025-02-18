@@ -1,25 +1,31 @@
-## Dev/build documentation in remote server
+## dev/build documentation
 
 ```sh
 sindbad.jl $ cd docs
 ```
-
-Next, load the appropiate modules
+### remote server
+Load the appropriate modules
 
 ```sh
 docs $ module load nodejs/20.12.2
-```
-
-Install npm packages
-
-```sh
-docs $ npm i
 ```
 
 Load Julia
 
 ```sh
 docs $ module load julia/1.10
+```
+
+### locally
+
+Go to https://nodejs.org/en and follow instructions to install `Node.js`. 
+
+### Install
+
+Install `npm` packages
+
+```sh
+docs $ npm i
 ```
 
 ## Building the Documentation

@@ -6,42 +6,40 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 const navTemp = {
   nav: [
     { text: 'Home', link: '/' },
-    { text: 'Manual', 
-      items: [
-        { text: 'Overview', link: '.' },
-        { text: 'Install', link: '/install' },
-        { text: 'Workflows', link: '.' },
-        { text: 'Examples', link: '.' }
-    ]
+    { text: 'Manual', items: [
+      { text: 'Examples', link: '.' },
+      { text: 'Install', link: '/pages/manual/install' },
+      { text: 'Overview', link: '.' },
+      { text: 'Workflows', link: '/pages/manual/modelling_design' }],
     },
-    { text: 'Settings',  
-      items: [
-        { text: 'Experiments', link: '.' },
-        { text: 'Forcing', link: '.' },
-        { text: 'Models', link: '.' },
-        { text: 'Optimization', link: '.' }
+    { text: 'Settings',  items: [
+      { text: 'Experiments', link: '/pages/settings/experiment' },
+      { text: 'Forcing', link: '/pages/settings/forcing' },
+      { text: 'Models', link: '/pages/settings/model_structure' },
+      { text: 'Optimization', link: '/pages/settings/optimization' },
     ] 
     },
-    { text: 'Code', 
+   { text: 'Code', 
       items: [
-        { text: 'Sindbad', link: '/models' },
-        { text: '-Data', link: '.' },
-        { text: '-Experiment', link: '.' },
-        { text: '-Metrics', link: '.' },
-        { text: '-ML', link: '.' },
-        { text: '-Optimization', link: '.' },
-        { text: '-Setup', link: '.' },
-        { text: '-TEM', link: '.' },
-        { text: '-Utils', link: '.' }
-        // { text: 'Visuals', link: '.' }
+        { text: 'Sindbad', link: '/pages/code/sindbad' },
+        { text: ' + Data', link: '/pages/code/data' },
+        { text: ' + Experiment', link: '/pages/code/experiment' },
+        { text: ' + Metrics', link: '/pages/code/metrics' },
+        { text: ' + ML', link: '/pages/code/ml' },
+        { text: ' + Models', link: '/pages/code/models' },
+        { text: ' + Optimization', link: '/pages/code/optimization' },
+        { text: ' + Setup', link: '/pages/code/setup' },
+        { text: ' + TEM', link: '/pages/code/tem' },
+        { text: ' + Utils', link: '/pages/code/utils' },
+        { text: ' + Visuals', link: '/pages/code/visuals' }
       ]
     },
     { text: 'About', 
       items: [
-        { text: 'Team', link: '.' },
-        { text: 'License', link: '.' },
         { text: 'Acknowledgements', link: '.' },
-        { text: 'Contact', link: '.' }
+        { text: 'Contact', link: '.' },
+        { text: 'License', link: '.' },
+        { text: 'Team', link: '.' },
       ]
     },
   ],
@@ -55,27 +53,56 @@ const nav = [
 ]
 
 const sidebar = [
-  { text: 'Get Started', items: [
-    { text: 'Installation', link: '/install' },
-    { text: 'Modelling Design', link: '/modelling_design' },
-    { text: 'TEM', link: '/TEM' },
-    { text: 'Optimization', link: '.' },
-    { text: 'ML', link: '.' }]
+  { text: 'Manual', items: [
+    { text: 'Examples', link: '.' },
+    { text: 'Install', link: '/pages/manual/install' },
+    { text: 'Overview', link: '.' },
+    { text: 'Workflows', link: '/pages/manual/modelling_design' }],
   },
-  { text: 'API',
-    collapsed: true, 
+  { text: 'Settings',  items: [
+    { text: 'Experiments', link: '/pages/settings/experiment' },
+    { text: 'Forcing', link: '/pages/settings/forcing' },
+    { text: 'Models', link: '/pages/settings/model_structure' },
+    { text: 'Optimization', link: '/pages/settings/optimization' },
+  ], 
+  },
+  { text: 'Code',
+    collapsed: false,
     items: [
-      { text: 'Sindbad', link: '/models' },
-      { text: 'Data', link: '.' },
-      { text: 'Experiment', link: '.' },
-      { text: 'Metrics', link: '.' },
-      { text: 'ML', link: '.' },
-      { text: 'Optimization', link: '.' },
-      { text: 'Setup', link: '.' },
-      { text: 'TEM', link: '.' },
-      { text: 'Utils', link: '.' },
-      // { text: 'Visuals', link: '.' }
-    ]
+      { text: 'Exported',
+        collapsed: true,
+        items: [
+          { text: 'Sindbad', link: '/pages/code/sindbad' },
+          { text: ' + Data', link: '/pages/code/data' },
+          { text: ' + Experiment', link: '/pages/code/experiment' },
+          { text: ' + Metrics', link: '/pages/code/metrics' },
+          { text: ' + ML', link: '/pages/code/ml' },
+          { text: ' + Models', link: '/pages/code/models' },
+          { text: ' + Optimization', link: '/pages/code/optimization' },
+          { text: ' + Setup', link: '/pages/code/setup' },
+          { text: ' + TEM', link: '/pages/code/tem' },
+          { text: ' + Utils', link: '/pages/code/utils' },
+          { text: ' + Visuals', link: '/pages/code/visuals' }
+        ]
+      },
+      { text: 'Internal',
+        collapsed: true,
+        items: [
+          { text: 'Sindbad', link: '/pages/code/sindbad_internal' },
+          { text: ' + Data', link: '/pages/code/data_internal' },
+          { text: ' + Experiment', link: '/pages/code/experiment_internal' },
+          { text: ' + Metrics', link: '/pages/code/metrics_internal' },
+          { text: ' + ML', link: '/pages/code/ml_internal' },
+          { text: ' + Models', link: '/pages/code/models_internal' },
+          { text: ' + Optimization', link: '/pages/code/optimization_internal' },
+          { text: ' + Setup', link: '/pages/code/setup_internal' },
+          { text: ' + TEM', link: '/pages/code/tem_internal' },
+          { text: ' + Utils', link: '/pages/code/utils_internal' },
+          { text: ' + Visuals', link: '/pages/code/visuals_internal' }
+        ]
+      },
+
+    ],
   },
 ]
 
