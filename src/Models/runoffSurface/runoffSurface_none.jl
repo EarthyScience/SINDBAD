@@ -16,8 +16,8 @@ end
 @doc """
 sets surface runoff [surface_runoff] from the storage to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for runoffSurface_none
+# Instantiate:
+Instantiate time-invariant variables for runoffSurface_none
 
 
 ---

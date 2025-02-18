@@ -15,7 +15,7 @@ function define(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     @unpack_cFlowSoilProperties_CASA params
     @unpack_nt cEco ⇐ land.pools
 
-    ## instantiate variables
+    ## Instantiate variables
     p_E_vec = repeat(zero(cEco),
         1,
         1,
@@ -90,8 +90,8 @@ Effect of soil properties on the c transfers between pools using cFlowSoilProper
  - land.diagnostics.p_E_vec
  - land.diagnostics.p_F_vec
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cFlowSoilProperties_CASA
+# Instantiate:
+Instantiate time-invariant variables for cFlowSoilProperties_CASA
 
 
 ---

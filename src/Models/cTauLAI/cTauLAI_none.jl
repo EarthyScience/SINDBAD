@@ -16,8 +16,8 @@ end
 @doc """
 set values to ones
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cTauLAI_none
+# Instantiate:
+Instantiate time-invariant variables for cTauLAI_none
 
 
 ---
