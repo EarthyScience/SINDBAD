@@ -41,7 +41,7 @@ SINDBAD is developed at the Department of Biogeochemical Integration of the Max 
 
 - Lazaro Alonso (<lalonso@bgc-jena.mpg.de>)
 
-- Nuno Carvalhais (<ncarval@bgc-jena.mpg.de>)
+- Nuno Carvalhais (<ncarvalhais@bgc-jena.mpg.de>)
 
 ### Technical Support
 
