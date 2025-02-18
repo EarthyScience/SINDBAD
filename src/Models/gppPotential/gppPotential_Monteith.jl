@@ -47,7 +47,7 @@ Maximum instantaneous radiation use efficiency using gppPotential_Monteith
 
 *Created by:*
  - mjung
- - ncarval
+ - ncarvalhais
 
 *Notes*
  - no crontrols for fPAR | meteo factors

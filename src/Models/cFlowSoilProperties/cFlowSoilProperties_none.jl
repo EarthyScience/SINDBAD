@@ -27,8 +27,8 @@ end
 @doc """
 set transfer between pools to 0 [i.e. nothing is transfered]
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cFlowSoilProperties_none
+# Instantiate:
+Instantiate time-invariant variables for cFlowSoilProperties_none
 
 
 ---

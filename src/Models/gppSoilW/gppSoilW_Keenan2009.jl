@@ -61,7 +61,7 @@ Gpp as a function of soilW
  - 1.0 on 10.03.2020 [sbesnard]  
 
 *Created by:*
- - ncarval & sbesnard
+ - ncarvalhais & sbesnard
 
 *Notes*
 """

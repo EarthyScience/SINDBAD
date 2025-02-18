@@ -17,7 +17,7 @@ function define(params::cFlow_GSI, forcing, land, helpers)
         cEco_comps = cEco ⇐ helpers.pools.components
         ∑w_sat ⇐ land.properties
     end
-    ## instantiate variables
+    ## Instantiate variables
 
     # transfers
     aTrg = []
@@ -185,8 +185,8 @@ Actual transfers of c between pools (of diagonal components) using cFlow_GSI
  - land.cFlow.p_ndxTrg: taget pools
  - land.cFlow.c_flow_A_vec
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cFlow_GSI
+# Instantiate:
+Instantiate time-invariant variables for cFlow_GSI
 
 
 ---

@@ -28,8 +28,8 @@ Effect of diffuse radiation using gppDiffRadiation_none
 *Outputs*
  - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
 
-# instantiate:
-instantiate/instantiate time-invariant variables for gppDiffRadiation_none
+# Instantiate:
+Instantiate time-invariant variables for gppDiffRadiation_none
 
 
 ---
@@ -43,6 +43,6 @@ instantiate/instantiate time-invariant variables for gppDiffRadiation_none
 
 *Created by:*
  - mjung
- - ncarval
+ - ncarvalhais
 """
 gppDiffRadiation_none

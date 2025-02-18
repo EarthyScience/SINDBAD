@@ -24,7 +24,7 @@ function compute(params::autoRespirationAirT_Q10, forcing, land, helpers)
 end
 
 @doc """
-temperature effect on autotrophic maintenance respiration - Q10 model
+Sets the temperature effect on autotrophic maintenance respiration following a Q10 response model.
 
 # Parameters
 $(SindbadParameters)
@@ -53,7 +53,7 @@ Temperature effect on autotrophic maintenance respiration using autoRespirationA
  - 1.0 on 22.11.2019 [skoirala]: clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 
 *Notes*
 """

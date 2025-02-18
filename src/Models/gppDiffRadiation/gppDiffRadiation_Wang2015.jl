@@ -95,6 +95,6 @@ $(SindbadParameters)
 
 *Created by:*
  - mjung
- - ncarval
+ - ncarvalhais
 """
 gppDiffRadiation_Wang2015

@@ -72,7 +72,7 @@ Effect of temperature using gppAirT_Maekelae2008
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 
 *Notes*
  - Tmin < Tmax ALWAYS!!!

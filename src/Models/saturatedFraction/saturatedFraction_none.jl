@@ -16,8 +16,8 @@ end
 @doc """
 sets the land.states.soilWSatFrac [saturated soil fraction] toz_zero (pix, 1)
 
-# instantiate:
-instantiate/instantiate time-invariant variables for saturatedFraction_none
+# Instantiate:
+Instantiate time-invariant variables for saturatedFraction_none
 
 
 ---
