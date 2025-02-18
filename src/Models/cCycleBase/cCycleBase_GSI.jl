@@ -34,7 +34,7 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
         cEco ⇐ land.pools
         (z_zero, o_one) ⇐ land.constants
     end
-    ## instantiate variables
+    ## Instantiate variables
     C_to_N_cVeg = zero(cEco) #sujan
     # C_to_N_cVeg[getZix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
     c_eco_k_base = zero(cEco)
@@ -181,8 +181,8 @@ Pool structure of the carbon cycle using cCycleBase_GSI
 *Outputs*
  - land.diagnostics.c_eco_τ _Pool: turnover rate of each ecosystem carbon pool
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cCycleBase_GSI
+# Instantiate:
+Instantiate time-invariant variables for cCycleBase_GSI
 
 
 ---

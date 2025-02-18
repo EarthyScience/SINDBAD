@@ -9,7 +9,7 @@ end
 function define(params::runoffSurface_Orth2013, forcing, land, helpers)
     @unpack_runoffSurface_Orth2013 params
 
-    ## instantiate variables
+    ## Instantiate variables
     z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60) + 1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
     Rdelay = z / (sum(z) * ones(1, 61))
 
@@ -94,8 +94,8 @@ Runoff from surface water storages using runoffSurface_Orth2013
 update pools and states in runoffSurface_Orth2013
 
 
-# instantiate:
-instantiate/instantiate time-invariant variables for runoffSurface_Orth2013
+# Instantiate:
+Instantiate time-invariant variables for runoffSurface_Orth2013
 
 
 ---

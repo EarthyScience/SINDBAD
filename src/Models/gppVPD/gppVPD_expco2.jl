@@ -60,7 +60,7 @@ Vpd effect using gppVPD_expco2
  - 1.1 on 22.11.2020 [skoirala]: changing units to kpa for vpd & sign of  κ to match with Maekaelae2008  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 
 *Notes*
  - sign of exponent is changed to have κ parameter as positive values

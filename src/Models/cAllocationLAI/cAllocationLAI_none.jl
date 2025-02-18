@@ -16,7 +16,7 @@ end
 @doc """
 sets the LAI effect on allocation to one (no effect)
 
-# instantiate:
+# Instantiate:
 
 *Inputs*
 

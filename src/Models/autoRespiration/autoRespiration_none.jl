@@ -14,14 +14,20 @@ function define(params::autoRespiration_none, forcing, land, helpers)
 end
 
 @doc """
-sets the co2 efflux from all vegetation pools to zero
+No RA. Sets the C respiration flux from all vegetation pools to zero.
 
-# instantiate:
-instantiate/instantiate time-invariant variables for autoRespiration_none
-
+# Instantiate:
+Instantiate time-invariant variables for autoRespiration_none
 
 ---
 
 # Extended help
+
+*Notes*
+Applicability: no C cycle; or computing/inputing NPP directly, e.g. like in Potter et al., (1993) and follow up approaches.
+
+*References*
+https://doi.org/10.1029/93GB02725
+
 """
 autoRespiration_none

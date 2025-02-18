@@ -30,8 +30,8 @@ Combine effects as multiplicative or minimum using gppDemand_none
  - land.diagnostics.gpp_f_climate: effective scalar of demands
  - land.diagnostics.gpp_demand: demand-driven GPP with no stress
 
-# instantiate:
-instantiate/instantiate time-invariant variables for gppDemand_none
+# Instantiate:
+Instantiate time-invariant variables for gppDemand_none
 
 
 ---
@@ -44,6 +44,6 @@ instantiate/instantiate time-invariant variables for gppDemand_none
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 """
 gppDemand_none

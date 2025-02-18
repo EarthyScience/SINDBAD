@@ -51,7 +51,7 @@ Demand-driven transpiration using transpirationDemand_PETfAPAR
  - 1.0 on 30.04.2020 [skoirala]
 
 *Created by:*
- - sbesnard; skoirala; ncarval
+ - sbesnard; skoirala; ncarvalhais
 
 *Notes*
  - Assumes that the transpiration demand scales with vegetated fraction

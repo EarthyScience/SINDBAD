@@ -48,6 +48,6 @@ Effect of temperature using gppAirT_Wang2014
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 """
 gppAirT_Wang2014
