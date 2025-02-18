@@ -1,3 +1,8 @@
+"""
+    SindbadData
+
+Contains a set of functions to load/clean and output data.
+"""
 module SindbadData
 
     using SindbadUtils
