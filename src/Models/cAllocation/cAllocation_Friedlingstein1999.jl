@@ -2,9 +2,9 @@ export cAllocation_Friedlingstein1999
 
 #! format: off
 @bounds @describe @units @timescale @with_kw struct cAllocation_Friedlingstein1999{T1,T2,T3} <: cAllocation
-    so::T1 = 0.3 | (0.0, 1.0) | "" | "" | ""
-    ro::T2 = 0.3 | (0.0, 1.0) | "" | "" | ""
-    rel_Y::T3 = 2.0 | (1.0, Inf) | "" | "" | ""
+    so::T1 = 0.3 | (0.0, 1.0) | "fractional carbon allocation to stem for non-limiting conditions" | "fractional" | ""
+    ro::T2 = 0.3 | (0.0, 1.0) | "fractional carbon allocation to root for non-limiting conditions" | "fractional" | ""
+    rel_Y::T3 = 2.0 | (1.0, Inf) | "normalization parameter" | "dimensionless" | ""
 end
 #! format: on
 
@@ -77,7 +77,7 @@ function compute(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
 end
 
 @doc """
-compute the fraction of npp that is allocated to the different plant organs following the scheme of Friedlingstein et al 1999. Check cAlloc_Friedlingstein1999 for details.
+Compute the fraction of fixed C that is allocated to the different plant organs following the scheme of Friedlingstein et al., 1999 (section "Allocation response to multiple stresses").
 
 # Parameters
 $(SindbadParameters)
@@ -85,7 +85,7 @@ $(SindbadParameters)
 ---
 
 # compute:
-Combine the different effects of carbon allocation using cAllocation_Friedlingstein1999
+Puts together the different effects, "multiple stresses", that control the allocation of fixated carbon to the different vegetation C pools according to Friedlingstein et al., 1999.
 
 *Inputs*
  - land.diagnostics.c_allocation_f_LAI: values for light limitation

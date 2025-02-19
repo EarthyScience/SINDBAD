@@ -8,7 +8,7 @@ include("cAllocation_GSI.jl")
 include("cAllocation_none.jl")
 
 @doc """
-Compute the allocation of C fixed by photosynthesis to the different vegetation pools (fraction of the net carbon fixation received by each vegetation carbon pool on every times step). Net carbon fixation reduces growth respiratory costs (RA_G) to the gross primary productivity (GPP).
+Compute the allocation of C fixed by photosynthesis to the different vegetation pools (fraction of the net carbon fixation received by each vegetation carbon pool on every times step). Net carbon fixation reduces growth respiratory costs (RA_G) from the gross primary productivity (GPP). For some dynamic approaches, allocation is a function of several factors changing in space and time.
 
 # Approaches:
  - fixed: computes a fixed fraction of carbon that is allocated to the different plant organs. The allocation is fixed in time according to the input parameters.
