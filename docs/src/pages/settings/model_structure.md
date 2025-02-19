@@ -10,6 +10,9 @@ In the ```models``` section, the selected models are listed with the ```approach
 
 The complete list of models and its order of call can be accessed with the variable ```sindbad_models``` which is exported by ```Sindbad``` package.
 
+:::tabs
+
+== Explanation
 ````json
 {
 "default_model": {
@@ -18,7 +21,7 @@ The complete list of models and its order of call can be accessed with the varia
   },
 "models": {
     "drainage": {
-      "approach": This sets the approach to use for the process of drainage, e.g., "dos"
+      "approach": This sets the approach to use for the process of drainage,
     },
     "waterBalance": {
       "approach": an approach "simple" is used,
@@ -26,6 +29,41 @@ The complete list of models and its order of call can be accessed with the varia
     }
   },
 ````
+== Example
+````json
+"default_model": {
+    "order": 0,
+    "use_in_spinup": true
+  }
+"models": {
+    "ambientCO2": {
+      "approach": "forcing"
+    },
+    "autoRespiration": {
+      "approach": "Thornley2000A"
+    },
+    "autoRespirationAirT": {
+      "approach": "Q10"
+    },
+    "cAllocation": {
+      "approach": "GSI"
+    },
+    "cAllocationLAI": {
+      "approach": "none"
+    },
+    "cAllocationNutrients": {
+      "approach": "none"
+    },
+    "cAllocationRadiation": {
+      "approach": "gpp"
+    },
+    "cAllocationSoilT": {
+      "approach": "gpp"
+    }
+  }
+````
+:::
+
 Note that the list of models should always represent a sufficient set of ecosystem processes, and not all combinations of models lead to feasible model structure due to dependencies of the processes. For instance, snow processes are irrelevant if the snowfall is not included in the model structure.
 
 ### Pools and Storages
@@ -34,6 +72,9 @@ In this section, the model setup includes the information for the pools and/or s
 Under ```pools```, each element is the main field, e.g., ```carbon``` and ```water```.
 
 
+:::tabs
+
+== Explanation
 ````json
 "pools": {
     "carbon": {
@@ -57,3 +98,41 @@ Under ```pools```, each element is the main field, e.g., ```carbon``` and ```wat
     }
 }
 ````
+== Example
+````json
+  "pools": {
+    "carbon": {
+      "combine": "cEco",
+      "components": {
+        "cVeg": {
+          "Root": [1, 25.0],
+          "Wood": [1, 25.0],
+          "Leaf": [1, 25.0],
+          "Reserve": [1, 10.0]
+        },
+        "cLit": {
+          "Fast": [1, 100.0],
+          "Slow": [1, 250.0]
+        },
+        "cSoil": {
+          "Slow": [1, 500.0],
+          "Old": [1, 1000.0]
+        }
+      },
+      "state_variables": {}
+    },
+    "water": {
+      "combine": "TWS",
+      "components": {
+        "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
+        "groundW": [1, 1000.0],
+        "snowW": [1, 0.01],
+        "surfaceW": [1, 0.01]
+      },
+      "state_variables": {
+        "Δ": 0.0
+      }
+    }
+  }
+````
+:::
