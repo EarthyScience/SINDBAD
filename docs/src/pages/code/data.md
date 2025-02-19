@@ -2,7 +2,7 @@
 SindbadData
 ```
 
-## Public
+## Exported
 ```@meta
 
 DocTestSetup= quote
