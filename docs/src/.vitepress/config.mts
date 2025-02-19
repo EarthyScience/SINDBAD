@@ -13,6 +13,7 @@ const navTemp = {
       { text: 'Workflows', link: '/pages/manual/modelling_design' }],
     },
     { text: 'Settings',  items: [
+      { text: 'Overview', link: '/pages/settings/overview' },
       { text: 'Experiments', link: '/pages/settings/experiment' },
       { text: 'Forcing', link: '/pages/settings/forcing' },
       { text: 'Models', link: '/pages/settings/model_structure' },
@@ -61,6 +62,7 @@ const sidebar = [
     { text: 'Workflows', link: '/pages/manual/modelling_design' }],
   },
   { text: 'Settings',  items: [
+    { text: 'Overview', link: '/pages/settings/overview' },
     { text: 'Experiments', link: '/pages/settings/experiment' },
     { text: 'Forcing', link: '/pages/settings/forcing' },
     { text: 'Models', link: '/pages/settings/model_structure' },
