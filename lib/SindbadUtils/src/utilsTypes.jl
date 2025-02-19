@@ -1,6 +1,6 @@
 # -------------------------------- time aggregator --------------------------------
 export getTimeAggregatorTypeInstance
-export TimeAggregatorTypes
+export SindbadTimeAggregator
 export TimeAllYears
 export TimeArray
 export TimeDay
@@ -24,30 +24,30 @@ export TimeSizedArray
 export TimeYear
 export TimeYearAnomaly
 
-abstract type TimeAggregatorTypes end
+abstract type SindbadTimeAggregator end
 
-struct TimeAllYears end
-struct TimeArray end
-struct TimeDay end
-struct TimeDayAnomaly end
-struct TimeDayIAV end
-struct TimeDayMSC end
-struct TimeDayMSCAnomaly end
-struct TimeDiff <: TimeAggregatorTypes end
-struct TimeFirstYear end
-struct TimeIndexed <: TimeAggregatorTypes end
-struct TimeMean end
-struct TimeMonth end
-struct TimeMonthAnomaly end
-struct TimeMonthIAV end
-struct TimeMonthMSC end
-struct TimeMonthMSCAnomaly end
-struct TimeNoDiff <: TimeAggregatorTypes end
-struct TimeRandomYear end
-struct TimeShuffleYears end
-struct TimeSizedArray end
-struct TimeYear end
-struct TimeYearAnomaly end
+struct TimeAllYears <: SindbadTimeAggregator end
+struct TimeArray <: SindbadTimeAggregator end
+struct TimeDay <: SindbadTimeAggregator end
+struct TimeDayAnomaly <: SindbadTimeAggregator end
+struct TimeDayIAV <: SindbadTimeAggregator end
+struct TimeDayMSC <: SindbadTimeAggregator end
+struct TimeDayMSCAnomaly <: SindbadTimeAggregator end
+struct TimeDiff <: SindbadTimeAggregator end
+struct TimeFirstYear <: SindbadTimeAggregator end
+struct TimeIndexed <: SindbadTimeAggregator end
+struct TimeMean <: SindbadTimeAggregator end
+struct TimeMonth <: SindbadTimeAggregator end
+struct TimeMonthAnomaly <: SindbadTimeAggregator end
+struct TimeMonthIAV <: SindbadTimeAggregator end
+struct TimeMonthMSC <: SindbadTimeAggregator end
+struct TimeMonthMSCAnomaly <: SindbadTimeAggregator end
+struct TimeNoDiff <: SindbadTimeAggregator end
+struct TimeRandomYear <: SindbadTimeAggregator end
+struct TimeShuffleYears <: SindbadTimeAggregator end
+struct TimeSizedArray <: SindbadTimeAggregator end
+struct TimeYear <: SindbadTimeAggregator end
+struct TimeYearAnomaly <: SindbadTimeAggregator end
 
 
 
