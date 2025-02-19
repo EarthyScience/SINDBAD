@@ -67,42 +67,20 @@ const sidebar = [
   ], 
   },
   { text: 'Code',
-    collapsed: false,
+    collapsed: true,
     items: [
-      { text: 'Exported',
-        collapsed: true,
-        items: [
-          { text: 'Sindbad', link: '/pages/code/sindbad' },
-          { text: ' + Data', link: '/pages/code/data' },
-          { text: ' + Experiment', link: '/pages/code/experiment' },
-          { text: ' + Metrics', link: '/pages/code/metrics' },
-          { text: ' + ML', link: '/pages/code/ml' },
-          { text: ' + Models', link: '/pages/code/models' },
-          { text: ' + Optimization', link: '/pages/code/optimization' },
-          { text: ' + Setup', link: '/pages/code/setup' },
-          { text: ' + TEM', link: '/pages/code/tem' },
-          { text: ' + Utils', link: '/pages/code/utils' },
-          { text: ' + Visuals', link: '/pages/code/visuals' }
-        ]
-      },
-      { text: 'Internal',
-        collapsed: true,
-        items: [
-          { text: 'Sindbad', link: '/pages/code/sindbad_internal' },
-          { text: ' + Data', link: '/pages/code/data_internal' },
-          { text: ' + Experiment', link: '/pages/code/experiment_internal' },
-          { text: ' + Metrics', link: '/pages/code/metrics_internal' },
-          { text: ' + ML', link: '/pages/code/ml_internal' },
-          { text: ' + Models', link: '/pages/code/models_internal' },
-          { text: ' + Optimization', link: '/pages/code/optimization_internal' },
-          { text: ' + Setup', link: '/pages/code/setup_internal' },
-          { text: ' + TEM', link: '/pages/code/tem_internal' },
-          { text: ' + Utils', link: '/pages/code/utils_internal' },
-          { text: ' + Visuals', link: '/pages/code/visuals_internal' }
-        ]
-      },
-
-    ],
+      { text: 'Sindbad', link: '/pages/code/sindbad' },
+      { text: ' + Data', link: '/pages/code/data' },
+      { text: ' + Experiment', link: '/pages/code/experiment' },
+      { text: ' + Metrics', link: '/pages/code/metrics' },
+      { text: ' + ML', link: '/pages/code/ml' },
+      { text: ' + Models', link: '/pages/code/models' },
+      { text: ' + Optimization', link: '/pages/code/optimization' },
+      { text: ' + Setup', link: '/pages/code/setup' },
+      { text: ' + TEM', link: '/pages/code/tem' },
+      { text: ' + Utils', link: '/pages/code/utils' },
+      { text: ' + Visuals', link: '/pages/code/visuals' }
+    ]
   },
 ]
 
