@@ -31,9 +31,10 @@ In this section, the default values of the attributes of each forcing variable a
     "source_variable": a string variable in the data. Note that SINDBAD variable names are the keys listed under variables,
     "space_time_type": a string indicating the data type , e.g., "spatiotemporal" for data with time and space dimensions
   },
-  ````
+````
+
 ### Forcing subset
-This section provides information related to the mask used for spatial subsetting of the forcing from the data in the file. This is envisioned to run the experiment for a small subset without having to create new data every time. Note that the temporal sub-setting is through ```time``` section of the ```experiment``` settings. 
+This section sets information related to the mask used for spatial subsetting of the forcing from the data in the file. This setting is envisioned to run the experiment for a small subset without having to create new data every time. Note that the temporal sub-setting is through ```time``` section of the ```experiment``` settings. 
 
 ````json
 "forcing_mask":  {
