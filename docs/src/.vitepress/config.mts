@@ -17,6 +17,7 @@ const navTemp = {
       { text: 'Forcing', link: '/pages/settings/forcing' },
       { text: 'Models', link: '/pages/settings/model_structure' },
       { text: 'Optimization', link: '/pages/settings/optimization' },
+      { text: 'Parameters', link: '/pages/settings/parameters' },
     ] 
     },
    { text: 'Code', 
@@ -64,6 +65,7 @@ const sidebar = [
     { text: 'Forcing', link: '/pages/settings/forcing' },
     { text: 'Models', link: '/pages/settings/model_structure' },
     { text: 'Optimization', link: '/pages/settings/optimization' },
+    { text: 'Parameters', link: '/pages/settings/parameters' },
   ], 
   },
   { text: 'Code',
