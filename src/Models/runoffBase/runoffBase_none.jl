@@ -16,8 +16,8 @@ end
 @doc """
 sets the base runoff to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for runoffBase_none
+# Instantiate:
+Instantiate time-invariant variables for runoffBase_none
 
 
 ---

@@ -46,7 +46,7 @@ Vpd effect using gppVPD_Maekelae2008
 *Versions*
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 
 *Notes*
  - Equation 5. a negative exponent is introduced to have positive parameter  values

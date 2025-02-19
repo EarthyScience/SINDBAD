@@ -27,8 +27,8 @@ sets the soil moisture stress on gpp_potential to one (no stress)
 *Outputs*
  - land.diagnostics.gpp_f_soilW: soil moisture effect on GPP [] dimensionless, between 0-1
 
-# instantiate:
-instantiate/instantiate time-invariant variables for gppSoilW_none
+# Instantiate:
+Instantiate time-invariant variables for gppSoilW_none
 
 
 ---
@@ -41,6 +41,6 @@ instantiate/instantiate time-invariant variables for gppSoilW_none
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 """
 gppSoilW_none

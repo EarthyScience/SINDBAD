@@ -64,7 +64,7 @@ function define(params::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_nt begin
         soilW ⇐ land.pools
     end
-    ## instantiate variables
+    ## Instantiate variables
     sp_α = zero(soilW)
     sp_β = zero(soilW)
     sp_k_fc = zero(soilW)
@@ -139,8 +139,8 @@ Soil properties (hydraulic properties) using soilProperties_Saxton2006
  - land.soilProperties.sp_θ_sat/k_sat/ψ_sat/sSat
  - land.soilProperties.sp_θ_wp/k_wp/ψ_wp/s_wp
 
-# instantiate:
-instantiate/instantiate time-invariant variables for soilProperties_Saxton2006
+# Instantiate:
+Instantiate time-invariant variables for soilProperties_Saxton2006
 
 
 ---
@@ -155,7 +155,7 @@ instantiate/instantiate time-invariant variables for soilProperties_Saxton2006
  - 1.1 on 03.12.2019 [skoirala]: handling potentail vertical distribution of soil texture  
 
 *Created by:*
- - Nuno Carvalhais [ncarval]
+ - Nuno Carvalhais [ncarvalhais]
  - skoirala
 """
 soilProperties_Saxton2006

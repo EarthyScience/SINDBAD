@@ -3,7 +3,7 @@ export drainage_wFC
 struct drainage_wFC <: drainage end
 
 function define(params::drainage_wFC, forcing, land, helpers)
-    ## instantiate drainage
+    ## Instantiate drainage
     @unpack_nt soilW ⇐ land.pools
     drainage = zero(soilW)
     ## pack land variables
