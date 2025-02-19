@@ -16,8 +16,8 @@ end
 @doc """
 sets the interception evaporation to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for interception_none
+# Instantiate:
+Instantiate time-invariant variables for interception_none
 
 
 ---

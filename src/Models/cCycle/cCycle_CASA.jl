@@ -4,7 +4,7 @@ struct cCycle_CASA <: cCycle end
 
 function define(params::cCycle_CASA, forcing, land, helpers)
     @unpack_nt cEco ⇐ land.pools
-    ## instantiate variables
+    ## Instantiate variables
     c_eco_efflux = zero(cEco) #sujan moved from get states
     c_eco_influx = zero(cEco)
     c_eco_flow = zero(cEco)
@@ -87,8 +87,8 @@ Allocate carbon to vegetation components using cCycle_CASA
  - land.pools.cEco: values for the different carbon pools
  - land.states.c_eco_efflux:
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cCycle_CASA
+# Instantiate:
+Instantiate time-invariant variables for cCycle_CASA
 
 
 ---
@@ -138,7 +138,7 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
 
 # Created by:
 
-  - ncarval
+  - ncarvalhais
   - skoirala
 
 # Notes:

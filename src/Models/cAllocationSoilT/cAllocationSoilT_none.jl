@@ -15,7 +15,7 @@ end
 @doc """
 sets the temperature effect on allocation to one (no effect)
 
-# instantiate:
+# Instantiate:
 
 *Inputs*
 

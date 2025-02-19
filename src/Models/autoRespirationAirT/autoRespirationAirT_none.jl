@@ -14,10 +14,10 @@ function define(params::autoRespirationAirT_none, forcing, land, helpers)
 end
 
 @doc """
-sets the effect of temperature on RA to one [no effect]
+Sets the effect of temperature on the maintenance component of autotrophic respiration (RA) to one (i.e. no effect).
 
-# instantiate:
-instantiate/instantiate time-invariant variables for autoRespirationAirT_none
+# Instantiate:
+Instantiate time-invariant variables for autoRespirationAirT_none
 
 
 ---

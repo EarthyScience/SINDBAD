@@ -3,7 +3,7 @@
 ```@docs
 EVI
 ```
-:::details EVI methods
+:::details EVI approaches
 
 :::tabs
 
@@ -23,7 +23,7 @@ EVI_forcing
 ```@docs
 LAI
 ```
-:::details LAI methods
+:::details LAI approaches
 
 :::tabs
 
@@ -47,7 +47,7 @@ LAI_forcing
 ```@docs
 NDVI
 ```
-:::details NDVI methods
+:::details NDVI approaches
 
 :::tabs
 
@@ -67,7 +67,7 @@ NDVI_forcing
 ```@docs
 NDWI
 ```
-:::details NDWI methods
+:::details NDWI approaches
 
 :::tabs
 
@@ -87,7 +87,7 @@ NDWI_forcing
 ```@docs
 NIRv
 ```
-:::details NIRv methods
+:::details NIRv approaches
 
 :::tabs
 
@@ -107,7 +107,7 @@ NIRv_forcing
 ```@docs
 PET
 ```
-:::details PET methods
+:::details PET approaches
 
 :::tabs
 
@@ -131,7 +131,7 @@ PET_forcing
 ```@docs
 PFT
 ```
-:::details PFT methods
+:::details PFT approaches
 
 :::tabs
 
@@ -147,7 +147,7 @@ PFT_constant
 ```@docs
 WUE
 ```
-:::details WUE methods
+:::details WUE approaches
 
 :::tabs
 
@@ -179,7 +179,7 @@ WUE_expVPDDayCo2
 ```@docs
 ambientCO2
 ```
-:::details ambientCO2 methods
+:::details ambientCO2 approaches
 
 :::tabs
 
@@ -199,7 +199,7 @@ ambientCO2_forcing
 ```@docs
 autoRespiration
 ```
-:::details autoRespiration methods
+:::details autoRespiration approaches
 
 :::tabs
 
@@ -227,7 +227,7 @@ autoRespiration_none
 ```@docs
 autoRespirationAirT
 ```
-:::details autoRespirationAirT methods
+:::details autoRespirationAirT approaches
 
 :::tabs
 
@@ -247,7 +247,7 @@ autoRespirationAirT_none
 ```@docs
 cAllocation
 ```
-:::details cAllocation methods
+:::details cAllocation approaches
 
 :::tabs
 
@@ -275,7 +275,7 @@ cAllocation_none
 ```@docs
 cAllocationLAI
 ```
-:::details cAllocationLAI methods
+:::details cAllocationLAI approaches
 
 :::tabs
 
@@ -295,7 +295,7 @@ cAllocationLAI_none
 ```@docs
 cAllocationNutrients
 ```
-:::details cAllocationNutrients methods
+:::details cAllocationNutrients approaches
 
 :::tabs
 
@@ -315,7 +315,7 @@ cAllocationNutrients_none
 ```@docs
 cAllocationRadiation
 ```
-:::details cAllocationRadiation methods
+:::details cAllocationRadiation approaches
 
 :::tabs
 
@@ -339,7 +339,7 @@ cAllocationRadiation_none
 ```@docs
 cAllocationSoilT
 ```
-:::details cAllocationSoilT methods
+:::details cAllocationSoilT approaches
 
 :::tabs
 
@@ -367,7 +367,7 @@ cAllocationSoilT_none
 ```@docs
 cAllocationSoilW
 ```
-:::details cAllocationSoilW methods
+:::details cAllocationSoilW approaches
 
 :::tabs
 
@@ -395,7 +395,7 @@ cAllocationSoilW_none
 ```@docs
 cAllocationTreeFraction
 ```
-:::details cAllocationTreeFraction methods
+:::details cAllocationTreeFraction approaches
 
 :::tabs
 
@@ -411,7 +411,7 @@ cAllocationTreeFraction_Friedlingstein1999
 ```@docs
 cCycle
 ```
-:::details cCycle methods
+:::details cCycle approaches
 
 :::tabs
 
@@ -435,7 +435,7 @@ cCycle_simple
 ```@docs
 cCycleBase
 ```
-:::details cCycleBase methods
+:::details cCycleBase approaches
 
 :::tabs
 
@@ -459,7 +459,7 @@ cCycleBase_simple
 ```@docs
 cCycleConsistency
 ```
-:::details cCycleConsistency methods
+:::details cCycleConsistency approaches
 
 :::tabs
 
@@ -475,7 +475,7 @@ cCycleConsistency_simple
 ```@docs
 cCycleDisturbance
 ```
-:::details cCycleDisturbance methods
+:::details cCycleDisturbance approaches
 
 :::tabs
 
@@ -495,7 +495,7 @@ cCycleDisturbance_cFlow
 ```@docs
 cFlow
 ```
-:::details cFlow methods
+:::details cFlow approaches
 
 :::tabs
 
@@ -523,7 +523,7 @@ cFlow_simple
 ```@docs
 cFlowSoilProperties
 ```
-:::details cFlowSoilProperties methods
+:::details cFlowSoilProperties approaches
 
 :::tabs
 
@@ -543,7 +543,7 @@ cFlowSoilProperties_none
 ```@docs
 cFlowVegProperties
 ```
-:::details cFlowVegProperties methods
+:::details cFlowVegProperties approaches
 
 :::tabs
 
@@ -563,7 +563,7 @@ cFlowVegProperties_none
 ```@docs
 cTau
 ```
-:::details cTau methods
+:::details cTau approaches
 
 :::tabs
 
@@ -583,7 +583,7 @@ cTau_none
 ```@docs
 cTauLAI
 ```
-:::details cTauLAI methods
+:::details cTauLAI approaches
 
 :::tabs
 
@@ -603,7 +603,7 @@ cTauLAI_none
 ```@docs
 cTauSoilProperties
 ```
-:::details cTauSoilProperties methods
+:::details cTauSoilProperties approaches
 
 :::tabs
 
@@ -623,7 +623,7 @@ cTauSoilProperties_none
 ```@docs
 cTauSoilT
 ```
-:::details cTauSoilT methods
+:::details cTauSoilT approaches
 
 :::tabs
 
@@ -643,7 +643,7 @@ cTauSoilT_none
 ```@docs
 cTauSoilW
 ```
-:::details cTauSoilW methods
+:::details cTauSoilW approaches
 
 :::tabs
 
@@ -667,7 +667,7 @@ cTauSoilW_none
 ```@docs
 cTauVegProperties
 ```
-:::details cTauVegProperties methods
+:::details cTauVegProperties approaches
 
 :::tabs
 
@@ -687,7 +687,7 @@ cTauVegProperties_none
 ```@docs
 capillaryFlow
 ```
-:::details capillaryFlow methods
+:::details capillaryFlow approaches
 
 :::tabs
 
@@ -703,7 +703,7 @@ capillaryFlow_VanDijk2010
 ```@docs
 deriveVariables
 ```
-:::details deriveVariables methods
+:::details deriveVariables approaches
 
 :::tabs
 
@@ -719,7 +719,7 @@ deriveVariables_simple
 ```@docs
 drainage
 ```
-:::details drainage methods
+:::details drainage approaches
 
 :::tabs
 
@@ -743,7 +743,7 @@ drainage_wFC
 ```@docs
 evaporation
 ```
-:::details evaporation methods
+:::details evaporation approaches
 
 :::tabs
 
@@ -779,7 +779,7 @@ evaporation_vegFraction
 ```@docs
 evapotranspiration
 ```
-:::details evapotranspiration methods
+:::details evapotranspiration approaches
 
 :::tabs
 
@@ -795,7 +795,7 @@ evapotranspiration_sum
 ```@docs
 fAPAR
 ```
-:::details fAPAR methods
+:::details fAPAR approaches
 
 :::tabs
 
@@ -831,7 +831,7 @@ fAPAR_vegFraction
 ```@docs
 getPools
 ```
-:::details getPools methods
+:::details getPools approaches
 
 :::tabs
 
@@ -847,7 +847,7 @@ getPools_simple
 ```@docs
 gpp
 ```
-:::details gpp methods
+:::details gpp approaches
 
 :::tabs
 
@@ -879,7 +879,7 @@ gpp_transpirationWUE
 ```@docs
 gppAirT
 ```
-:::details gppAirT methods
+:::details gppAirT approaches
 
 :::tabs
 
@@ -919,7 +919,7 @@ gppAirT_none
 ```@docs
 gppDemand
 ```
-:::details gppDemand methods
+:::details gppDemand approaches
 
 :::tabs
 
@@ -943,7 +943,7 @@ gppDemand_none
 ```@docs
 gppDiffRadiation
 ```
-:::details gppDiffRadiation methods
+:::details gppDiffRadiation approaches
 
 :::tabs
 
@@ -971,7 +971,7 @@ gppDiffRadiation_none
 ```@docs
 gppDirRadiation
 ```
-:::details gppDirRadiation methods
+:::details gppDirRadiation approaches
 
 :::tabs
 
@@ -991,7 +991,7 @@ gppDirRadiation_none
 ```@docs
 gppPotential
 ```
-:::details gppPotential methods
+:::details gppPotential approaches
 
 :::tabs
 
@@ -1007,7 +1007,7 @@ gppPotential_Monteith
 ```@docs
 gppSoilW
 ```
-:::details gppSoilW methods
+:::details gppSoilW approaches
 
 :::tabs
 
@@ -1039,7 +1039,7 @@ gppSoilW_none
 ```@docs
 gppVPD
 ```
-:::details gppVPD methods
+:::details gppVPD approaches
 
 :::tabs
 
@@ -1071,7 +1071,7 @@ gppVPD_none
 ```@docs
 groundWRecharge
 ```
-:::details groundWRecharge methods
+:::details groundWRecharge approaches
 
 :::tabs
 
@@ -1099,7 +1099,7 @@ groundWRecharge_none
 ```@docs
 groundWSoilWInteraction
 ```
-:::details groundWSoilWInteraction methods
+:::details groundWSoilWInteraction approaches
 
 :::tabs
 
@@ -1127,7 +1127,7 @@ groundWSoilWInteraction_none
 ```@docs
 groundWSurfaceWInteraction
 ```
-:::details groundWSurfaceWInteraction methods
+:::details groundWSurfaceWInteraction approaches
 
 :::tabs
 
@@ -1147,7 +1147,7 @@ groundWSurfaceWInteraction_fracGroundW
 ```@docs
 interception
 ```
-:::details interception methods
+:::details interception approaches
 
 :::tabs
 
@@ -1175,7 +1175,7 @@ interception_vegFraction
 ```@docs
 percolation
 ```
-:::details percolation methods
+:::details percolation approaches
 
 :::tabs
 
@@ -1191,7 +1191,7 @@ percolation_WBP
 ```@docs
 rainIntensity
 ```
-:::details rainIntensity methods
+:::details rainIntensity approaches
 
 :::tabs
 
@@ -1211,7 +1211,7 @@ rainIntensity_simple
 ```@docs
 rainSnow
 ```
-:::details rainSnow methods
+:::details rainSnow approaches
 
 :::tabs
 
@@ -1235,7 +1235,7 @@ rainSnow_rain
 ```@docs
 rootMaximumDepth
 ```
-:::details rootMaximumDepth methods
+:::details rootMaximumDepth approaches
 
 :::tabs
 
@@ -1251,7 +1251,7 @@ rootMaximumDepth_fracSoilD
 ```@docs
 rootWaterEfficiency
 ```
-:::details rootWaterEfficiency methods
+:::details rootWaterEfficiency approaches
 
 :::tabs
 
@@ -1283,7 +1283,7 @@ rootWaterEfficiency_k2fvegFraction
 ```@docs
 rootWaterUptake
 ```
-:::details rootWaterUptake methods
+:::details rootWaterUptake approaches
 
 :::tabs
 
@@ -1303,7 +1303,7 @@ rootWaterUptake_topBottom
 ```@docs
 runoff
 ```
-:::details runoff methods
+:::details runoff approaches
 
 :::tabs
 
@@ -1319,7 +1319,7 @@ runoff_sum
 ```@docs
 runoffBase
 ```
-:::details runoffBase methods
+:::details runoffBase approaches
 
 :::tabs
 
@@ -1339,7 +1339,7 @@ runoffBase_none
 ```@docs
 runoffInfiltrationExcess
 ```
-:::details runoffInfiltrationExcess methods
+:::details runoffInfiltrationExcess approaches
 
 :::tabs
 
@@ -1363,7 +1363,7 @@ runoffInfiltrationExcess_none
 ```@docs
 runoffInterflow
 ```
-:::details runoffInterflow methods
+:::details runoffInterflow approaches
 
 :::tabs
 
@@ -1383,7 +1383,7 @@ runoffInterflow_residual
 ```@docs
 runoffOverland
 ```
-:::details runoffOverland methods
+:::details runoffOverland approaches
 
 :::tabs
 
@@ -1411,7 +1411,7 @@ runoffOverland_none
 ```@docs
 runoffSaturationExcess
 ```
-:::details runoffSaturationExcess methods
+:::details runoffSaturationExcess approaches
 
 :::tabs
 
@@ -1455,7 +1455,7 @@ runoffSaturationExcess_satFraction
 ```@docs
 runoffSurface
 ```
-:::details runoffSurface methods
+:::details runoffSurface approaches
 
 :::tabs
 
@@ -1495,7 +1495,7 @@ runoffSurface_none
 ```@docs
 saturatedFraction
 ```
-:::details saturatedFraction methods
+:::details saturatedFraction approaches
 
 :::tabs
 
@@ -1511,7 +1511,7 @@ saturatedFraction_none
 ```@docs
 snowFraction
 ```
-:::details snowFraction methods
+:::details snowFraction approaches
 
 :::tabs
 
@@ -1535,7 +1535,7 @@ snowFraction_none
 ```@docs
 snowMelt
 ```
-:::details snowMelt methods
+:::details snowMelt approaches
 
 :::tabs
 
@@ -1555,7 +1555,7 @@ snowMelt_TairRn
 ```@docs
 soilProperties
 ```
-:::details soilProperties methods
+:::details soilProperties approaches
 
 :::tabs
 
@@ -1575,7 +1575,7 @@ soilProperties_Saxton2006
 ```@docs
 soilTexture
 ```
-:::details soilTexture methods
+:::details soilTexture approaches
 
 :::tabs
 
@@ -1595,7 +1595,7 @@ soilTexture_forcing
 ```@docs
 soilWBase
 ```
-:::details soilWBase methods
+:::details soilWBase approaches
 
 :::tabs
 
@@ -1623,7 +1623,7 @@ soilWBase_uniform
 ```@docs
 sublimation
 ```
-:::details sublimation methods
+:::details sublimation approaches
 
 :::tabs
 
@@ -1643,7 +1643,7 @@ sublimation_none
 ```@docs
 transpiration
 ```
-:::details transpiration methods
+:::details transpiration approaches
 
 :::tabs
 
@@ -1667,7 +1667,7 @@ transpiration_none
 ```@docs
 transpirationDemand
 ```
-:::details transpirationDemand methods
+:::details transpirationDemand approaches
 
 :::tabs
 
@@ -1695,7 +1695,7 @@ transpirationDemand_PETvegFraction
 ```@docs
 transpirationSupply
 ```
-:::details transpirationSupply methods
+:::details transpirationSupply approaches
 
 :::tabs
 
@@ -1723,7 +1723,7 @@ transpirationSupply_wAWCvegFraction
 ```@docs
 treeFraction
 ```
-:::details treeFraction methods
+:::details treeFraction approaches
 
 :::tabs
 
@@ -1743,7 +1743,7 @@ treeFraction_forcing
 ```@docs
 vegAvailableWater
 ```
-:::details vegAvailableWater methods
+:::details vegAvailableWater approaches
 
 :::tabs
 
@@ -1763,7 +1763,7 @@ vegAvailableWater_sigmoid
 ```@docs
 vegFraction
 ```
-:::details vegFraction methods
+:::details vegFraction approaches
 
 :::tabs
 
@@ -1803,7 +1803,7 @@ vegFraction_scaledfAPAR
 ```@docs
 wCycle
 ```
-:::details wCycle methods
+:::details wCycle approaches
 
 :::tabs
 
@@ -1823,7 +1823,7 @@ wCycle_components
 ```@docs
 wCycleBase
 ```
-:::details wCycleBase methods
+:::details wCycleBase approaches
 
 :::tabs
 
@@ -1839,7 +1839,7 @@ wCycleBase_simple
 ```@docs
 waterBalance
 ```
-:::details waterBalance methods
+:::details waterBalance approaches
 
 :::tabs
 

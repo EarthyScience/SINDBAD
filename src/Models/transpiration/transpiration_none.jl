@@ -15,8 +15,8 @@ end
 @doc """
 sets the actual transpiration to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for transpiration_none
+# Instantiate:
+Instantiate time-invariant variables for transpiration_none
 
 
 ---
