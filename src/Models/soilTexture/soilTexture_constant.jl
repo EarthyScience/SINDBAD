@@ -56,8 +56,8 @@ Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_con
 
 *Outputs*
 
-# instantiate:
-instantiate/instantiate time-invariant variables for soilTexture_constant
+# Instantiate:
+Instantiate time-invariant variables for soilTexture_constant
 
 
 ---

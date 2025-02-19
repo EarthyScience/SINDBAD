@@ -8,12 +8,12 @@ include("cAllocation_GSI.jl")
 include("cAllocation_none.jl")
 
 @doc """
-Combine the different effects of carbon allocation
+Compute the allocation of C fixed by photosynthesis to the different vegetation pools (fraction of the net carbon fixation received by each vegetation carbon pool on every times step). Net carbon fixation reduces growth respiratory costs (RA_G) to the gross primary productivity (GPP).
 
 # Approaches:
- - fixed: compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.frac_tree). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to frac_fine_to_coarse.
- - Friedlingstein1999: compute the fraction of npp that is allocated to the different plant organs following the scheme of Friedlingstein et al 1999. Check cAlloc_Friedlingstein1999 for details.
- - GSI: compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is dynamic in time according to temperature; water & radiation stressors computed from GSI approach.
- - none: sets the carbon allocation to zero (nothing to allocated)
+ - fixed: computes a fixed fraction of carbon that is allocated to the different plant organs. The allocation is fixed in time according to the input parameters.
+ - Friedlingstein1999: computes the fraction of carbon that is allocated to the different plant organs following the scheme of Friedlingstein et al 1999. Dynamic in time. Check cAlloc_Friedlingstein1999 for details.
+ - GSI: compute the fraction of carbon that is allocated to the different plant organs according to temperature, water & radiation stressors computed from the GSI approach. Allocation is dynamic in time.
+ - none: sets the carbon allocation to zero (nothing is allocated to vegetation carbon pools).
 """
 cAllocation

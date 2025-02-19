@@ -58,8 +58,8 @@ Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_for
 *Outputs*
  - land.properties.st_sand/silt/clay/orgm
 
-# instantiate:
-instantiate/instantiate time-invariant variables for soilTexture_forcing
+# Instantiate:
+Instantiate time-invariant variables for soilTexture_forcing
 
 
 ---

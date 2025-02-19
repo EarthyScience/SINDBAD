@@ -16,8 +16,8 @@ end
 @doc """
 sets infiltration excess runoff to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for runoffInfiltrationExcess_none
+# Instantiate:
+Instantiate time-invariant variables for runoffInfiltrationExcess_none
 
 
 ---

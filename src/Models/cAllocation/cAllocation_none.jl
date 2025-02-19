@@ -16,7 +16,7 @@ end
 @doc """
 sets the carbon allocation to zero (nothing to allocated)
 
-# instantiate:
+# Instantiate:
 
 *Inputs*
 
