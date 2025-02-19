@@ -38,8 +38,9 @@ const navTemp = {
       items: [
         { text: 'Acknowledgements', link: '.' },
         { text: 'Contact', link: '.' },
-        { text: 'License', link: '.' },
-        { text: 'Team', link: '.' },
+        { text: 'Citation', link: '/pages/about/citation' },
+        { text: 'License', link: 'https://git.bgc-jena.mpg.de/sindbad/sindbad.jl/-/blob/main/LICENSE' },
+        { text: 'Team', link: '/pages/about/team' },
       ]
     },
   ],
