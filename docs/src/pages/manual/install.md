@@ -29,22 +29,3 @@ Sindbad comes with several predefined models, which you can use individually or 
 ```julia
 using Sindbad
 ```
-
-## Authors
-
-### Developers
-
-### Sindbad model and experiments
-SINDBAD is developed at the Department of Biogeochemical Integration of the Max Planck Institute for Biogeochemistry in Jena, Germany. 
-
-- Sujan Koirala (<skoirala@bgc-jena.mpg.de>)
-
-- Lazaro Alonso (<lalonso@bgc-jena.mpg.de>)
-
-- Nuno Carvalhais (<ncarvalhais@bgc-jena.mpg.de>)
-
-### Technical Support
-
-- Fabian Gans (<fgans@bgc-jena.mpg.de>)
-
-- Felix Cremer (<fcremer@bgc-jena.mpg.de>)
