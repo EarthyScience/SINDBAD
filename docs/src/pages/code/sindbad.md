@@ -2,7 +2,7 @@
 Sindbad
 ```
 
-## Public API
+## Public
 ```@meta
 
 DocTestSetup= quote
@@ -14,4 +14,18 @@ end
 Modules = [Sindbad]
 Private = false
 Filter = f -> !(f === Sindbad)
+```
+
+## Internal
+```@meta
+CollapsedDocStrings = true
+
+DocTestSetup= quote
+using Sindbad
+end
+```
+
+```@autodocs
+Modules = [Sindbad]
+Public = false
 ```
