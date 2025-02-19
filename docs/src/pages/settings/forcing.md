@@ -28,7 +28,7 @@ In this section, the default values of the attributes of each forcing variable a
     "source_product": a metadata used to identify data source and improve clarity. Note that it is not used in data processing and calculation, e.g., "FLUXNET",
     "source_to_sindbad_unit": a numerical value used for unit conversion of the variable on the go,
     "source_unit": a metadata used to identify variable units in the source data and improve clarity. Note that it is not used in data processing and calculation.,
-    "source_variable": a string variable in the data. Note that SINDBAD variable names are the keys listed under variables,
+    "source_variable": a string variable name in the data file. Note that SINDBAD variable names are the keys listed under variables,
     "space_time_type": a string indicating the data type , e.g., "spatiotemporal" for data with time and space dimensions
   },
 ````
