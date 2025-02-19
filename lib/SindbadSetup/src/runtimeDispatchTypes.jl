@@ -139,7 +139,7 @@ struct SpinSequenceWithAggregator
     options::NamedTuple
     aggregator_indices::Vector{Int}
     aggregator::Vector{TimeAggregator}
-    aggregator_type::TimeAggregatorTypes
+    aggregator_type::SindbadTimeAggregator
 end
 
 
