@@ -25,7 +25,7 @@ function compute(params::cAllocationLAI_Friedlingstein1999, forcing, land, helpe
 end
 
 @doc """
-LAI effect on allocation based on light limitation from Friedlingstein1999
+Estimate the effect of light limitation on carbon allocation via leaf area index (LAI) based on Friedlingstein et al., 1999.
 
 # Parameters
 $(SindbadParameters)
