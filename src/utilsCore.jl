@@ -87,7 +87,7 @@ end
 """
     addToEachElem(v::SVector, Δv::Real)
 
-
+add Δv to each element of v when v is a StaticVector
 """
 function addToEachElem(v::SVector, Δv::Real)
     v = v .+ Δv
@@ -97,7 +97,7 @@ end
 """
     addToEachElem(v::AbstractVector, Δv::Real)
 
-
+add Δv to each element of v when v is a Vector
 """
 function addToEachElem(v::AbstractVector, Δv::Real)
     v .= v .+ Δv
