@@ -2,7 +2,7 @@
 SindbadData
 ```
 
-## Public API
+## Exported
 ```@meta
 
 DocTestSetup= quote
@@ -14,4 +14,18 @@ end
 Modules = [SindbadData]
 Private = false
 Filter = f -> !(f === SindbadData)
+```
+
+## Internal
+```@meta
+CollapsedDocStrings = true
+
+DocTestSetup= quote
+using SindbadData
+end
+```
+
+```@autodocs
+Modules = [SindbadData]
+Public = false
 ```
