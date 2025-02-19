@@ -42,7 +42,7 @@ Supply-limited transpiration using transpirationSupply_CASA
  - 1.0 on 22.11.2019 [skoirala]: split the original transpiration_supply of CASA into demand  supply: actual [minimum] is now just demSup approach of transpiration  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
  - skoirala
 
 *Notes*

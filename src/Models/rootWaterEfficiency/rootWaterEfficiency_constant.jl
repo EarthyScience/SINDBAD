@@ -15,7 +15,7 @@ function define(params::rootWaterEfficiency_constant, forcing, land, helpers)
     end
 
     cumulative_soil_depths = cumsum(soil_layer_thickness)
-    ## instantiate
+    ## Instantiate
     root_water_efficiency = one.(soilW)
 
     ## pack land variables
@@ -71,8 +71,8 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
 *Outputs*
  - land.states.root_water_efficiency
 
-# instantiate:
-instantiate/instantiate time-invariant variables for rootWaterEfficiency_constant
+# Instantiate:
+Instantiate time-invariant variables for rootWaterEfficiency_constant
 
 
 ---
