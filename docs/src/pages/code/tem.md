@@ -2,7 +2,7 @@
 SindbadTEM
 ```
 
-## Public
+## Exported
 ```@meta
 
 DocTestSetup= quote
