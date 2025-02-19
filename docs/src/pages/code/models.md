@@ -1,4 +1,6 @@
-## EVI
+## Models
+
+### EVI
 
 ```@docs
 EVI
@@ -18,7 +20,7 @@ EVI_forcing
 
 :::
 
-## LAI
+### LAI
 
 ```@docs
 LAI
@@ -42,7 +44,7 @@ LAI_forcing
 
 :::
 
-## NDVI
+### NDVI
 
 ```@docs
 NDVI
@@ -62,7 +64,7 @@ NDVI_forcing
 
 :::
 
-## NDWI
+### NDWI
 
 ```@docs
 NDWI
@@ -82,7 +84,7 @@ NDWI_forcing
 
 :::
 
-## NIRv
+### NIRv
 
 ```@docs
 NIRv
@@ -102,7 +104,7 @@ NIRv_forcing
 
 :::
 
-## PET
+### PET
 
 ```@docs
 PET
@@ -126,7 +128,7 @@ PET_forcing
 
 :::
 
-## PFT
+### PFT
 
 ```@docs
 PFT
@@ -142,7 +144,7 @@ PFT_constant
 
 :::
 
-## WUE
+### WUE
 
 ```@docs
 WUE
@@ -174,7 +176,7 @@ WUE_expVPDDayCo2
 
 :::
 
-## ambientCO2
+### ambientCO2
 
 ```@docs
 ambientCO2
@@ -194,7 +196,7 @@ ambientCO2_forcing
 
 :::
 
-## autoRespiration
+### autoRespiration
 
 ```@docs
 autoRespiration
@@ -222,7 +224,7 @@ autoRespiration_none
 
 :::
 
-## autoRespirationAirT
+### autoRespirationAirT
 
 ```@docs
 autoRespirationAirT
@@ -242,7 +244,7 @@ autoRespirationAirT_none
 
 :::
 
-## cAllocation
+### cAllocation
 
 ```@docs
 cAllocation
@@ -270,7 +272,7 @@ cAllocation_none
 
 :::
 
-## cAllocationLAI
+### cAllocationLAI
 
 ```@docs
 cAllocationLAI
@@ -290,7 +292,7 @@ cAllocationLAI_none
 
 :::
 
-## cAllocationNutrients
+### cAllocationNutrients
 
 ```@docs
 cAllocationNutrients
@@ -310,7 +312,7 @@ cAllocationNutrients_none
 
 :::
 
-## cAllocationRadiation
+### cAllocationRadiation
 
 ```@docs
 cAllocationRadiation
@@ -334,7 +336,7 @@ cAllocationRadiation_none
 
 :::
 
-## cAllocationSoilT
+### cAllocationSoilT
 
 ```@docs
 cAllocationSoilT
@@ -362,7 +364,7 @@ cAllocationSoilT_none
 
 :::
 
-## cAllocationSoilW
+### cAllocationSoilW
 
 ```@docs
 cAllocationSoilW
@@ -390,7 +392,7 @@ cAllocationSoilW_none
 
 :::
 
-## cAllocationTreeFraction
+### cAllocationTreeFraction
 
 ```@docs
 cAllocationTreeFraction
@@ -406,7 +408,7 @@ cAllocationTreeFraction_Friedlingstein1999
 
 :::
 
-## cCycle
+### cCycle
 
 ```@docs
 cCycle
@@ -430,7 +432,7 @@ cCycle_simple
 
 :::
 
-## cCycleBase
+### cCycleBase
 
 ```@docs
 cCycleBase
@@ -454,7 +456,7 @@ cCycleBase_simple
 
 :::
 
-## cCycleConsistency
+### cCycleConsistency
 
 ```@docs
 cCycleConsistency
@@ -470,7 +472,7 @@ cCycleConsistency_simple
 
 :::
 
-## cCycleDisturbance
+### cCycleDisturbance
 
 ```@docs
 cCycleDisturbance
@@ -490,7 +492,7 @@ cCycleDisturbance_cFlow
 
 :::
 
-## cFlow
+### cFlow
 
 ```@docs
 cFlow
@@ -518,7 +520,7 @@ cFlow_simple
 
 :::
 
-## cFlowSoilProperties
+### cFlowSoilProperties
 
 ```@docs
 cFlowSoilProperties
@@ -538,7 +540,7 @@ cFlowSoilProperties_none
 
 :::
 
-## cFlowVegProperties
+### cFlowVegProperties
 
 ```@docs
 cFlowVegProperties
@@ -558,7 +560,7 @@ cFlowVegProperties_none
 
 :::
 
-## cTau
+### cTau
 
 ```@docs
 cTau
@@ -578,7 +580,7 @@ cTau_none
 
 :::
 
-## cTauLAI
+### cTauLAI
 
 ```@docs
 cTauLAI
@@ -598,7 +600,7 @@ cTauLAI_none
 
 :::
 
-## cTauSoilProperties
+### cTauSoilProperties
 
 ```@docs
 cTauSoilProperties
@@ -618,7 +620,7 @@ cTauSoilProperties_none
 
 :::
 
-## cTauSoilT
+### cTauSoilT
 
 ```@docs
 cTauSoilT
@@ -638,7 +640,7 @@ cTauSoilT_none
 
 :::
 
-## cTauSoilW
+### cTauSoilW
 
 ```@docs
 cTauSoilW
@@ -662,7 +664,7 @@ cTauSoilW_none
 
 :::
 
-## cTauVegProperties
+### cTauVegProperties
 
 ```@docs
 cTauVegProperties
@@ -682,7 +684,7 @@ cTauVegProperties_none
 
 :::
 
-## capillaryFlow
+### capillaryFlow
 
 ```@docs
 capillaryFlow
@@ -698,7 +700,7 @@ capillaryFlow_VanDijk2010
 
 :::
 
-## deriveVariables
+### deriveVariables
 
 ```@docs
 deriveVariables
@@ -714,7 +716,7 @@ deriveVariables_simple
 
 :::
 
-## drainage
+### drainage
 
 ```@docs
 drainage
@@ -738,7 +740,7 @@ drainage_wFC
 
 :::
 
-## evaporation
+### evaporation
 
 ```@docs
 evaporation
@@ -774,7 +776,7 @@ evaporation_vegFraction
 
 :::
 
-## evapotranspiration
+### evapotranspiration
 
 ```@docs
 evapotranspiration
@@ -790,7 +792,7 @@ evapotranspiration_sum
 
 :::
 
-## fAPAR
+### fAPAR
 
 ```@docs
 fAPAR
@@ -826,7 +828,7 @@ fAPAR_vegFraction
 
 :::
 
-## getPools
+### getPools
 
 ```@docs
 getPools
@@ -842,7 +844,7 @@ getPools_simple
 
 :::
 
-## gpp
+### gpp
 
 ```@docs
 gpp
@@ -874,7 +876,7 @@ gpp_transpirationWUE
 
 :::
 
-## gppAirT
+### gppAirT
 
 ```@docs
 gppAirT
@@ -914,7 +916,7 @@ gppAirT_none
 
 :::
 
-## gppDemand
+### gppDemand
 
 ```@docs
 gppDemand
@@ -938,7 +940,7 @@ gppDemand_none
 
 :::
 
-## gppDiffRadiation
+### gppDiffRadiation
 
 ```@docs
 gppDiffRadiation
@@ -966,7 +968,7 @@ gppDiffRadiation_none
 
 :::
 
-## gppDirRadiation
+### gppDirRadiation
 
 ```@docs
 gppDirRadiation
@@ -986,7 +988,7 @@ gppDirRadiation_none
 
 :::
 
-## gppPotential
+### gppPotential
 
 ```@docs
 gppPotential
@@ -1002,7 +1004,7 @@ gppPotential_Monteith
 
 :::
 
-## gppSoilW
+### gppSoilW
 
 ```@docs
 gppSoilW
@@ -1034,7 +1036,7 @@ gppSoilW_none
 
 :::
 
-## gppVPD
+### gppVPD
 
 ```@docs
 gppVPD
@@ -1066,7 +1068,7 @@ gppVPD_none
 
 :::
 
-## groundWRecharge
+### groundWRecharge
 
 ```@docs
 groundWRecharge
@@ -1094,7 +1096,7 @@ groundWRecharge_none
 
 :::
 
-## groundWSoilWInteraction
+### groundWSoilWInteraction
 
 ```@docs
 groundWSoilWInteraction
@@ -1122,7 +1124,7 @@ groundWSoilWInteraction_none
 
 :::
 
-## groundWSurfaceWInteraction
+### groundWSurfaceWInteraction
 
 ```@docs
 groundWSurfaceWInteraction
@@ -1142,7 +1144,7 @@ groundWSurfaceWInteraction_fracGroundW
 
 :::
 
-## interception
+### interception
 
 ```@docs
 interception
@@ -1170,7 +1172,7 @@ interception_vegFraction
 
 :::
 
-## percolation
+### percolation
 
 ```@docs
 percolation
@@ -1186,7 +1188,7 @@ percolation_WBP
 
 :::
 
-## rainIntensity
+### rainIntensity
 
 ```@docs
 rainIntensity
@@ -1206,7 +1208,7 @@ rainIntensity_simple
 
 :::
 
-## rainSnow
+### rainSnow
 
 ```@docs
 rainSnow
@@ -1230,7 +1232,7 @@ rainSnow_rain
 
 :::
 
-## rootMaximumDepth
+### rootMaximumDepth
 
 ```@docs
 rootMaximumDepth
@@ -1246,7 +1248,7 @@ rootMaximumDepth_fracSoilD
 
 :::
 
-## rootWaterEfficiency
+### rootWaterEfficiency
 
 ```@docs
 rootWaterEfficiency
@@ -1278,7 +1280,7 @@ rootWaterEfficiency_k2fvegFraction
 
 :::
 
-## rootWaterUptake
+### rootWaterUptake
 
 ```@docs
 rootWaterUptake
@@ -1298,7 +1300,7 @@ rootWaterUptake_topBottom
 
 :::
 
-## runoff
+### runoff
 
 ```@docs
 runoff
@@ -1314,7 +1316,7 @@ runoff_sum
 
 :::
 
-## runoffBase
+### runoffBase
 
 ```@docs
 runoffBase
@@ -1334,7 +1336,7 @@ runoffBase_none
 
 :::
 
-## runoffInfiltrationExcess
+### runoffInfiltrationExcess
 
 ```@docs
 runoffInfiltrationExcess
@@ -1358,7 +1360,7 @@ runoffInfiltrationExcess_none
 
 :::
 
-## runoffInterflow
+### runoffInterflow
 
 ```@docs
 runoffInterflow
@@ -1378,7 +1380,7 @@ runoffInterflow_residual
 
 :::
 
-## runoffOverland
+### runoffOverland
 
 ```@docs
 runoffOverland
@@ -1406,7 +1408,7 @@ runoffOverland_none
 
 :::
 
-## runoffSaturationExcess
+### runoffSaturationExcess
 
 ```@docs
 runoffSaturationExcess
@@ -1450,7 +1452,7 @@ runoffSaturationExcess_satFraction
 
 :::
 
-## runoffSurface
+### runoffSurface
 
 ```@docs
 runoffSurface
@@ -1490,7 +1492,7 @@ runoffSurface_none
 
 :::
 
-## saturatedFraction
+### saturatedFraction
 
 ```@docs
 saturatedFraction
@@ -1506,7 +1508,7 @@ saturatedFraction_none
 
 :::
 
-## snowFraction
+### snowFraction
 
 ```@docs
 snowFraction
@@ -1530,7 +1532,7 @@ snowFraction_none
 
 :::
 
-## snowMelt
+### snowMelt
 
 ```@docs
 snowMelt
@@ -1550,7 +1552,7 @@ snowMelt_TairRn
 
 :::
 
-## soilProperties
+### soilProperties
 
 ```@docs
 soilProperties
@@ -1570,7 +1572,7 @@ soilProperties_Saxton2006
 
 :::
 
-## soilTexture
+### soilTexture
 
 ```@docs
 soilTexture
@@ -1590,7 +1592,7 @@ soilTexture_forcing
 
 :::
 
-## soilWBase
+### soilWBase
 
 ```@docs
 soilWBase
@@ -1618,7 +1620,7 @@ soilWBase_uniform
 
 :::
 
-## sublimation
+### sublimation
 
 ```@docs
 sublimation
@@ -1638,7 +1640,7 @@ sublimation_none
 
 :::
 
-## transpiration
+### transpiration
 
 ```@docs
 transpiration
@@ -1662,7 +1664,7 @@ transpiration_none
 
 :::
 
-## transpirationDemand
+### transpirationDemand
 
 ```@docs
 transpirationDemand
@@ -1690,7 +1692,7 @@ transpirationDemand_PETvegFraction
 
 :::
 
-## transpirationSupply
+### transpirationSupply
 
 ```@docs
 transpirationSupply
@@ -1718,7 +1720,7 @@ transpirationSupply_wAWCvegFraction
 
 :::
 
-## treeFraction
+### treeFraction
 
 ```@docs
 treeFraction
@@ -1738,7 +1740,7 @@ treeFraction_forcing
 
 :::
 
-## vegAvailableWater
+### vegAvailableWater
 
 ```@docs
 vegAvailableWater
@@ -1758,7 +1760,7 @@ vegAvailableWater_sigmoid
 
 :::
 
-## vegFraction
+### vegFraction
 
 ```@docs
 vegFraction
@@ -1798,7 +1800,7 @@ vegFraction_scaledfAPAR
 
 :::
 
-## wCycle
+### wCycle
 
 ```@docs
 wCycle
@@ -1818,7 +1820,7 @@ wCycle_components
 
 :::
 
-## wCycleBase
+### wCycleBase
 
 ```@docs
 wCycleBase
@@ -1834,7 +1836,7 @@ wCycleBase_simple
 
 :::
 
-## waterBalance
+### waterBalance
 
 ```@docs
 waterBalance
@@ -1850,3 +1852,15 @@ waterBalance_simple
 
 :::
 
+## Internal
+
+```@meta
+CollapsedDocStrings = true
+DocTestSetup= quote
+using Sindbad.Models
+end
+```
+```@autodocs
+Modules = [Sindbad.Models]
+Public = false
+```
