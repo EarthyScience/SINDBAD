@@ -16,8 +16,8 @@ end
 @doc """
 Set soil texture effects to ones (ineficient, should be pix zix_mic)
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cTauSoilProperties_none
+# Instantiate:
+Instantiate time-invariant variables for cTauSoilProperties_none
 
 
 ---

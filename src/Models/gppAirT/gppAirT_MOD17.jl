@@ -52,7 +52,7 @@ Effect of temperature using gppAirT_MOD17
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 
 *Notes*
 """

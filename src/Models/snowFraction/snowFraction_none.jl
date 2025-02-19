@@ -16,8 +16,8 @@ end
 @doc """
 sets the snow fraction to zero
 
-# instantiate:
-instantiate/instantiate time-invariant variables for snowFraction_none
+# Instantiate:
+Instantiate time-invariant variables for snowFraction_none
 
 
 ---

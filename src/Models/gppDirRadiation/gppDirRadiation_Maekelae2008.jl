@@ -56,7 +56,7 @@ Effect of direct radiation using gppDirRadiation_Maekelae2008
 
 *Created by:*
  - mjung
- - ncarval
+ - ncarvalhais
 
 *Notes*
  - γ is between [0.007 0.05], median !0.04 [m2/mol] in Maekelae  et al 2008.

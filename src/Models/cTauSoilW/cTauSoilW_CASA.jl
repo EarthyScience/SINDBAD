@@ -10,7 +10,7 @@ function define(params::cTauSoilW_CASA, forcing, land, helpers)
     @unpack_cTauSoilW_CASA params
     @unpack_nt cEco ⇐ land.pools
 
-    ## instantiate variables
+    ## Instantiate variables
     c_eco_k_f_soilW = one.(cEco)
 
     ## pack land variables
@@ -91,8 +91,8 @@ Effect of soil moisture on decomposition rates using cTauSoilW_CASA
 *Outputs*
  - land.diagnostics.fsoilW: values for below ground moisture effect on decomposition processes
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cTauSoilW_CASA
+# Instantiate:
+Instantiate time-invariant variables for cTauSoilW_CASA
 
 
 ---

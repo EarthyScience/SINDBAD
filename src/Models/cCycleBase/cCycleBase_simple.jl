@@ -29,7 +29,7 @@ function define(params::cCycleBase_simple, forcing, land, helpers)
     @unpack_nt begin
         cEco ⇐ land.pools
     end
-    ## instantiate variables
+    ## Instantiate variables
     C_to_N_cVeg = one.(cEco)
 
     ## pack land variables
@@ -77,8 +77,8 @@ Pool structure of the carbon cycle using cCycleBase_simple
 
 *Outputs*
 
-# instantiate:
-instantiate/instantiate time-invariant variables for cCycleBase_simple
+# Instantiate:
+Instantiate time-invariant variables for cCycleBase_simple
 
 
 ---
