@@ -5,7 +5,10 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 
 const conceptItems = [
   { text: 'SINDBAD', link: '/pages/concept/overview' },
-  { text: 'TEM', link: '/pages/concept/TEM' }]
+  { text: 'info', link: '/pages/concept/info' },
+  { text: 'land', link: '/pages/concept/land' },
+  { text: 'TEM', link: '/pages/concept/TEM' },
+  { text: 'Experiment', link: '/pages/concept/experiment' }]
 
 const settingsItems = [
   { text: 'Overview', link: '/pages/settings/overview' },
@@ -37,6 +40,7 @@ const aboutItems = [
 ]
 
 const tutorialItems = [
+  { text: 'Coding Guide', link: '/pages/tutorials/conventions' },
   { text: 'Examples', link: '.' },
   { text: 'Workflows', link: '/pages/tutorials/modelling_design' },
 ]
