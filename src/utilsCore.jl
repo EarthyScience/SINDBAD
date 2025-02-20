@@ -23,6 +23,22 @@ struct BoundFields <: DocStringExtensions.Abbreviation
     types::Bool
 end
 
+"""
+    @add_to_elem
+
+macro to add to an element of a vector or a static vector.    
+    
+# Example
+```julia
+helpers = (; pools =(;
+        zeros=(; cOther = 0.0f0,),
+        ones = (; cOther = 1.0f0 ))
+        )
+cOther = [100.0f0, 1.0f0]
+# and then add 1.0f0 to the first element of cOther
+@add_to_elem 1 ⇒ (cOther, 1, :cOther)
+```    
+"""
 macro add_to_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
     @assert outparams.args[1] == :(⇒)
@@ -49,15 +65,17 @@ end
 
 """
     addToElem(v::SVector, Δv, v_zero, ind::Int)
+    addToElem(v::AbstractVector, Δv, _, ind::Int)
 
+# Arguments
+- `v`: a StaticVector or AbstractVector
+- `Δv`: the value to be added
+- `v_zero`: a StaticVector of zeros
+- `ind::Int`: the index of the element to be added
 
-
-# Arguments:
-- `v`: DESCRIPTION
-- `Δv`: DESCRIPTION
-- `v_zero`: DESCRIPTION
-- `ind`: DESCRIPTION
 """
+function addToElem end
+
 function addToElem(v::SVector, Δv, v_zero, ind::Int)
     n_0 = zero(first(v_zero))
     n_1 = one(first(v_zero))
@@ -67,38 +85,28 @@ function addToElem(v::SVector, Δv, v_zero, ind::Int)
     return v
 end
 
-"""
-    addToElem(v::AbstractVector, Δv, _, _, ind::Int)
-
-
-
-# Arguments:
-- `v`: DESCRIPTION
-- `Δv`: DESCRIPTION
-- `_`: unused argument
-- `_`: unused argument
-- `ind`: DESCRIPTION
-"""
 function addToElem(v::AbstractVector, Δv, _, ind::Int)
     v[ind] = v[ind] + Δv
     return v
 end
 
 """
-    addToEachElem(v::SVector, Δv::Real)
+    addToEachElem(v::SVector, Δv:Real)
+    addToEachElem(v::AbstractVector, Δv:Real)
 
-add Δv to each element of v when v is a StaticVector
+add Δv to each element of v when v is a StaticVector or a Vector.
+
+# Arguments
+- `v`: a StaticVector or AbstractVector
+- `Δv`: the value to be added to each element
 """
+addToEachElem
+
 function addToEachElem(v::SVector, Δv::Real)
     v = v .+ Δv
     return v
 end
 
-"""
-    addToEachElem(v::AbstractVector, Δv::Real)
-
-add Δv to each element of v when v is a Vector
-"""
 function addToEachElem(v::AbstractVector, Δv::Real)
     v .= v .+ Δv
     return v
@@ -106,19 +114,21 @@ end
 
 """
     addVec(v::SVector, Δv::SVector)
+    addVec(v::AbstractVector, Δv::AbstractVector)
 
+add Δv to v when v is a StaticVector or a Vector.
 
+# Arguments
+- `v`: a StaticVector or AbstractVector
+- `Δv`: a StaticVector or AbstractVector
 """
+function addVec end
+
 function addVec(v::SVector, Δv::SVector)
     v = v + Δv
     return v
 end
 
-"""
-    addVec(v::AbstractVector, Δv::AbstractVector)
-
-
-"""
 function addVec(v::AbstractVector, Δv::AbstractVector)
     v .= v .+ Δv
     return v
@@ -288,38 +298,27 @@ end
 
 """
     getZix(dat::SubArray)
+    getZix(dat::SubArray, zixhelpersPool)
+    getZix(dat::Array, zixhelpersPool)
+    getZix(dat::SVector, zixhelpersPool)
 
 returns the indices of a view for a subArray
+
 """
+getZix
+
 function getZix(dat::SubArray)
     return Tuple(first(parentindices(dat)))
 end
 
-
-"""
-    getZix(dat::SubArray, zixhelpersPool)
-
-returns the indices of a view for a subArray
-"""
 function getZix(dat::SubArray, zixhelpersPool)
     return Tuple(first(parentindices(dat)))
 end
 
-"""
-    getZix(dat::Array, zixhelpersPool)
-
-returns the indices of a view for an array
-"""
 function getZix(dat::Array, zixhelpersPool)
     return zixhelpersPool
 end
 
-
-"""
-    getZix(dat::SVector, zixhelpersPool)
-
-returns the indices of a view for a subArray
-"""
 function getZix(dat::SVector, zixhelpersPool)
     return zixhelpersPool
 end
@@ -392,7 +391,23 @@ function offDiagUpper(A::AbstractMatrix)
     @view A[[ι for ι ∈ CartesianIndices(A) if ι[1] < ι[2]]]
 end
 
+"""
+    @pack_nt
 
+macro to pack variables into a named tuple.
+
+# Example
+```julia
+@pack_nt begin
+    (a, b) ⇒ land.diagnostics
+    (c, d, f) ⇒ land.fluxes
+end
+# or 
+@pack_nt (a, b) ⇒ land.diagnostics
+# or 
+@pack_nt a ⇒ land.diagnostics
+```
+"""
 macro pack_nt(outparams)
     @assert outparams.head == :block || outparams.head == :call || outparams.head == :(=)
     if outparams.head == :block
@@ -497,7 +512,21 @@ function processUnpackNT(ex)
     return Expr(:block, lines...)
 end
 
+"""
+    @rep_elem
+macro to replace an element of a vector or a static vector.
 
+# Example
+```julia
+helpers = (; pools =(;
+        zeros=(; cOther = 0.0f0,),
+        ones = (; cOther = 1.0f0 ))
+        )
+cOther = [100.0f0, 1.0f0]
+# and then replace the first element of cOther with 1.0f0
+@rep_elem 1 ⇒ (cOther, 1, :cOther) 
+```
+"""
 macro rep_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
     @assert outparams.args[1] == :(⇒)
@@ -524,33 +553,20 @@ end
 
 """
     repElem(v::AbstractVector, v_elem, _, _, ind::Int)
+    repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
 
-
-
-# Arguments:
-- `v`: DESCRIPTION
-- `v_elem`: DESCRIPTION
-- `_`: unused argument
-- `_`: unused argument
-- `ind`: DESCRIPTION
+# Arguments
+- `v`: a StaticVector or AbstractVector
+- `v_elem`: the value to be replaced with
+- `v_zero`: a StaticVector of zeros
+- `v_one`: a StaticVector of ones
+- `ind::Int`: the index of the element to be replaced
 """
 function repElem(v::AbstractVector, v_elem, _, _, ind::Int)
     v[ind] = v_elem
     return v
 end
 
-"""
-    repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
-
-
-
-# Arguments:
-- `v`: DESCRIPTION
-- `v_elem`: DESCRIPTION
-- `v_zero`: DESCRIPTION
-- `v_one`: DESCRIPTION
-- `ind`: DESCRIPTION
-"""
 function repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
     n_0 = zero(first(v_zero))
     n_1 = one(first(v_zero))
@@ -563,6 +579,20 @@ function repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
     return v
 end
 
+"""
+    @rep_vec
+macro to replace a vector or a static vector with a new value.
+
+# Example
+```julia
+_vec = [100.0f0, 2.0f0]
+# and then replace the vector with 1.0f0
+@rep_vec _vec ⇒ 1.0f0
+# or with a new vector
+@rep_vec _vec ⇒ [3.0f0, 2.0f0]
+
+```
+"""
 macro rep_vec(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
     @assert outparams.args[1] == :(⇒)
@@ -575,19 +605,22 @@ end
 
 """
     repVec(v::AbstractVector, v_new)
+    repVec(v::SVector, v_new)
 
+replaces the values of a vector with a new value
+
+# Arguments:
+- `v`: an AbstractVector or a StaticVector
+- `v_new`: a new value to replace the old one
 
 """
+function repVec end
+
 function repVec(v::AbstractVector, v_new)
     v .= v_new
     return v
 end
 
-"""
-    repVec(v::SVector, v_new)
-
-
-"""
 function repVec(v::SVector, v_new)
     n_0 = zero(first(v))
     v = v .* n_0 + v_new
@@ -596,8 +629,6 @@ end
 
 """
     setComponents(land, helpers, Val{s_main}, Val{s_comps}, Val{zix})
-
-
 
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
@@ -784,7 +815,23 @@ function totalS(s)
 end
 
 
+"""
+    @unpack_nt
 
+macro to unpack variables from a named tuple.
+
+# Example
+
+```julia
+@unpack_nt (f1, f2) ⇐ forcing # named tuple
+@unpack_nt var1 ⇐ land.diagnostics # named tuple
+# or 
+@unpack_nt begin
+    (f1, f2) ⇐ forcing
+    var1 ⇐ land.diagnostics
+end
+```
+"""
 macro unpack_nt(inparams)
     @assert inparams.head == :block || inparams.head == :call || inparams.head == :(=)
     if inparams.head == :block
