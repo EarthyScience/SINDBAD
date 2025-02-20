@@ -42,19 +42,19 @@ This is pretty bad for Julia folks reading even though copy+paste retains the sa
 */
 /* Target elements with class 'mono' */
 .mono-no-substitutions {
-  font-family: "JuliaMono-Light", monospace;
+  font-family: "JuliaMono-Regular", monospace;
   font-feature-settings: "calt" off;
 }
 
 /* Alternatively, you can use the following if you prefer: */
 .mono-no-substitutions-alt {
-  font-family: "JuliaMono-Light", monospace;
+  font-family: "JuliaMono-Regular", monospace;
   font-variant-ligatures: none;
 }
 
 /* If you want to apply this globally to all monospace text: */
 pre, code {
-  font-family: "JuliaMono-Light", monospace;
+  font-family: "JuliaMono-Regular", monospace;
   font-feature-settings: "calt" off;
   white-space : pre-wrap !important;
 }

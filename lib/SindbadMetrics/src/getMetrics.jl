@@ -7,49 +7,45 @@ export prepCostOptions
 
 """
     aggregateData(dat, cost_option, ::TimeSpace)
+    aggregateData(dat, cost_option, ::SpaceTime)
 
-
+aggregate the data based on the order of aggregation.
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
-- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-- `::TimeSpace`: DESCRIPTION
+- `cost_option`: information for a observation constraint on how it should be used to calculate the loss/metric of model performance
+- `::TimeSpace`: appropriate type dispatch for the order of aggregation
+- `::SpaceTime`: appropriate type dispatch for the order of aggregation
 """
+aggregateData
+
 function aggregateData(dat, cost_option, ::TimeSpace)
     dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
     return dat
 end
 
-"""
-    aggregateData(dat, cost_option, ::SpaceTime)
-
-
-
-# Arguments:
-- `dat`: a data array/vector to aggregate
-- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-- `::SpaceTime`: DESCRIPTION
-"""
 function aggregateData(dat, cost_option, ::SpaceTime)
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
     dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     return dat
 end
 
-
 """
     applySpatialWeight(y, yσ, ŷ, cost_option, ::DoSpatialWeight)
+    applySpatialWeight(y, yσ, ŷ, _, ::DoNotSpatialWeight)
 
-return model and obs data after applying the area weight
+return model and obs data after applying the area weight.
 
 # Arguments:
 - `y`: observation data
 - `yσ`: observational uncertainty data
 - `ŷ`: model simulation data/estimate
-- `idxs`: model simulation data/estimate
 - `::DoSpatialWeight`: type dispatch for doing area weight
+- `::DoNotSpatialWeight`: type dispatch for not doing area weight
 """
+applySpatialWeight
+
 function applySpatialWeight(y, yσ, ŷ, cost_option, ::DoSpatialWeight)
     yweight = observations[cost_option.obs_ind+3]
     y .= y .* yweight
@@ -58,103 +54,81 @@ function applySpatialWeight(y, yσ, ŷ, cost_option, ::DoSpatialWeight)
     return y, yσ, ŷ
 end
 
-
-"""
-    applySpatialWeight(y, yσ, ŷ, cost_option, ::DoNotSpatialWeight)
-
-return model and obs data without applying the area weight
-
-# Arguments:
-- `y`: observation data
-- `yσ`: observational uncertainty data
-- `ŷ`: model simulation data/estimate
-- `idxs`: model simulation data/estimate
-- `::DoNotSpatialWeight`: type dispatch for doing area weight
-"""
 function applySpatialWeight(y, yσ, ŷ, _, ::DoNotSpatialWeight)
     return y, yσ, ŷ
 end
 
 """
     combineLoss(loss_vector::AbstractArray, ::CostSum)
+    combineLoss(loss_vector::AbstractArray, ::CostMinimum)
+    combineLoss(loss_vector::AbstractArray, ::CostMaximum)
+    combineLoss(loss_vector::AbstractArray, percentile_value::T)
 
-return the total of cost of each constraint as the overall cost
+combines the loss from all constraints based on the type of combination.
+
+# Arguments:
+- `loss_vector`: a vector of losses for variables
+
+## methods for combining the loss
+- `::CostSum`: return the total sum as the cost.
+- `::CostMinimum`: return the minimum of the `loss_vector` as the cost.
+- `::CostMaximum`: return the maximum of the `loss_vector` as the cost.
+- `percentile_value::T`: `percentile_value^th` percentile of cost of each constraint as the overall cost
+
 """
+function combineLoss end
 function combineLoss(loss_vector::AbstractArray, ::CostSum)
     return sum(loss_vector)
 end
 
-
-"""
-    combineLoss(loss_vector::AbstractArray, ::CostMinimum)
-
-return the minimum of cost of each constraint as the overall cost
-"""
 function combineLoss(loss_vector::AbstractArray, ::CostMinimum)
     return minimum(loss_vector)
 end
 
-"""
-    combineLoss(loss_vector::AbstractArray, ::CostMaximum)
-
-return the maximum of cost of each constraint as the overall cost
-"""
 function combineLoss(loss_vector::AbstractArray, ::CostMaximum)
     return maximum(loss_vector)
 end
 
-"""
-    combineLoss(loss_vector::AbstractArray, percentile_value::T)
-
-return the percentile_value^th percentile of cost of each constraint as the overall cost
-"""
 function combineLoss(loss_vector::AbstractArray, percentile_value::T) where {T<:Real}
     return percentile(loss_vector, percentile_value)
 end
 
 """
     filterCommonNaN(y, yσ, ŷ, idxs)
+    filterCommonNaN(y, yσ, ŷ)
 
-return model and obs data filtering for the common nan
+return model and obs data filtering for the common `NaN`.
 
 # Arguments:
 - `y`: observation data
 - `yσ`: observational uncertainty data
 - `ŷ`: model simulation data/estimate
-- `idxs`: indices of valid data points
+- `idxs`: indices of valid data points    
 """
+filterCommonNaN
+
 function filterCommonNaN(y, yσ, ŷ, idxs)
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
-"""
-    filterCommonNaN(y, yσ, ŷ)
-
-return model and obs data filtering for the common nan
-
-# Arguments:
-- `y`: observation data
-- `yσ`: observational uncertainty data
-- `ŷ`: model simulation data/estimate
-"""
 function filterCommonNaN(y, yσ, ŷ)
     @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
     idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because LandWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
-
-
 """
     getData(model_output::LandWrapper, observations, cost_option)
-
-
+    getData(model_output::NamedTuple, observations, cost_option)
+    getData(model_output::AbstractArray, observations, cost_option)
 
 # Arguments:
-- `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT
+- `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT or as a preallocated array.
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
+- `cost_option`: information for a observation constraint on how it should be used to calculate the loss/metric of model performance
 """
+getData
+
 function getData(model_output::LandWrapper, observations, cost_option)
     obs_ind = cost_option.obs_ind
     mod_field = cost_option.mod_field
@@ -179,17 +153,6 @@ function getData(model_output::LandWrapper, observations, cost_option)
 end
 
 
-
-"""
-    getData(model_output::LandWrapper, observations, cost_option)
-
-
-
-# Arguments:
-- `model_output`: a NT of SINDBAD model output time series as a NT of variable names
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-"""
 function getData(model_output::NamedTuple, observations, cost_option)
     obs_ind = cost_option.obs_ind
     mod_field = cost_option.mod_field
@@ -216,18 +179,6 @@ function getData(model_output::NamedTuple, observations, cost_option)
     return (y, yσ, ŷ)
 end
 
-
-
-"""
-    getData(model_output::AbstractArray, observations, cost_option)
-
-
-
-# Arguments:
-- `model_output`: a collection of SINDBAD model output time series as a preallocated array
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-"""
 function getData(model_output::AbstractArray, observations, cost_option)
     obs_ind = cost_option.obs_ind
     ŷ = model_output[cost_option.mod_ind]
@@ -246,6 +197,19 @@ function getData(model_output::AbstractArray, observations, cost_option)
     return (y, yσ, ŷ)
 end
 
+"""
+    aggregateObsData(y, yσ, cost_option, ::DoAggrObs)
+    aggregateObsData(y, yσ, _, ::DoNotAggrObs)
+
+# Arguments:
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `cost_option`: information for a observation constraint on how it should be used to calculate the loss/metric of model performance
+- `::DoAggrObs`: appropriate type dispatch for aggregation of observation data
+- `::DoNotAggrObs`: appropriate type dispatch for not aggregating observation data
+"""
+aggregateObsData
+
 function aggregateObsData(y, yσ, cost_option, ::DoAggrObs)
     y = aggregateData(y, cost_option, cost_option.aggr_order)
     yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
@@ -257,15 +221,18 @@ function aggregateObsData(y, yσ, _, ::DoNotAggrObs)
 end
 
 """
-    getLossVector(observations, model_output::AbstractArray, cost_options)
-
-returns a vector of losses for variables in info.cost_options.observational_constraints
+    getLossVector(model_output::LandWrapper, observations, cost_options)
+    getLossVector(model_output, observations, cost_options)
+   
+returns a vector of losses for variables in info.cost_options.observational_constraints   
 
 # Arguments:
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `model_output::AbstractArray`: a collection of SINDBAD model output time series as a preallocated array
-- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
+- `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT
+- `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance    
 """
+getLossVector
+
 function getLossVector(model_output, observations, cost_options)
     loss_vector = map(cost_options) do cost_option
         @debug "$(cost_option.variable)"
@@ -325,7 +292,7 @@ remove all the variables that have less than minimum datapoints from being used 
 
 # Arguments:
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
+- `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance
 """
 function prepCostOptions(observations, cost_options)
     valids=[]
@@ -358,8 +325,6 @@ end
 
 """
     spatialAggregation(dat, _, ::ConcatData)
-
-
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
