@@ -3,12 +3,13 @@ using SindbadTEM
 using SindbadData
 using SindbadSetup
 using SindbadMetrics
+using SindbadML
 using InteractiveUtils
 using DocumenterVitepress
 using Documenter
 using DocStringExtensions
 
-# dev ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM
+# dev ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
 
 makedocs(; sitename="Sindbad",
     authors="Sindbad Pirates",

@@ -1,86 +1,49 @@
-export denseNN
-export denseFlattened
-export destructureNN
 export getParamsAct
 export partitionBatches
 export siteNameToID
 export shuffleBatches
 export shuffleList
-export FiniteDifferencesGrad
-export FiniteDiffGrad
-export ForwardDiffGrad
-
-struct FiniteDifferencesGrad end
-struct FiniteDiffGrad end
-struct ForwardDiffGrad end
 
 """
-`denseNN`(`in_dim::Int`, `n_neurons::Int`, `out_dim::Int`;
-    `extra_hlayers`=0, `activation_hidden`=Flux.relu, `activation_out`= Flux.sigmoid, seed=1618)
+    getParamsAct(x, tbl_params)
 
-    - `in_dim` :: input dimension
-    - `n_neurons` :: number of neurons in each hidden layer
-    - `out_dim` :: output dimension
-    - `extra_hlayers`=0 :: controls the number of extra hidden layers, default is `zero` 
-    - `activation_hidden`=Flux.relu :: activation function within hidden layers, default is Relu
-    - `activation_out`= Flux.sigmoid :: activation of output layer, default is sigmoid
-    - seed=1618 :: Random seed, default is ~ (1+√5)/2
+Scales `x` values in the [0,1] interval to some given lower `lo_b` and upper `up_b` bounds.
 
+# Arguments
+- `x`: vector array
+- `tbl_params`: a Table with input fields `default`, `lower` and `upper` that match the `x` vector.
+
+Returns a vector array with new values scaled into the new interval `[lower, upper]`.
 """
-function denseNN(in_dim::Int, n_neurons::Int, out_dim::Int;
-    extra_hlayers=0,
-    activation_hidden =Flux.relu,
-    activation_out= Flux.sigmoid,
-    seed=1618)
-
-    Random.seed!(seed)
-    return Flux.Chain(Flux.Dense(in_dim => n_neurons, activation_hidden),
-        [Flux.Dense(n_neurons, n_neurons, activation_hidden) for _ ∈ 0:(extra_hlayers-1)]...,
-        Flux.Dense(n_neurons => out_dim, activation_out))
+function getParamsAct(x, tbl_params)
+    lo_b = oftype(tbl_params.default, tbl_params.lower)
+    up_b = oftype(tbl_params.default, tbl_params.upper)
+    return scaleToBounds.(x, lo_b, up_b)
 end
 
 """
-denseFlattened(dense_nn::Flux.Chain; opt_nn=Optimisers.Adam())
+    scaleToBounds(x, lo_b, up_b)
 
-- Destructure and flattening of a Dense neural network architecture.
+Scales values in the [0,1] interval to some given lower `lo_b` and upper `up_b` bounds.
 
-Inputs:
-
-    - dense_nn :: a Flux.Chain neural network
-    - opt_nn :: Optimiser, default is Adam
-
-Outputs:
-    - flat :: a flat vector with all network weigths
-    - re :: an object containg the model structure, used later to `re`construct the neural network
-    - opt_state :: the state of the optimiser
-
+# Arguments
+- `x`: vector array
+- `lo_b`: lower bound
+- `up_b`: upper bound
 """
-function denseFlattened(dense_nn::Flux.Chain; opt_nn=Optimisers.Adam())
-    flat, re = Optimisers.destructure(dense_nn)
-    opt_state = Optimisers.setup(opt_nn, flat)
-    return flat, re, opt_state
+function scaleToBounds(x, lo_b, up_b)
+    return x * (up_b - lo_b) + lo_b
 end
 
 
 """
-    destructureNN(model; nn_opt=Optimisers.Adam())
-"""
-function destructureNN(model; nn_opt=Optimisers.Adam())
-    flat, re = Optimisers.destructure(model)
-    opt_state = Optimisers.setup(nn_opt, flat)
-    return flat, re, opt_state
-end
+    partitionBatches(n; batch_size=32)
 
+Return an Iterator partitioning a dataset into batches.
 
-function getParamsAct(pNorm, tbl_params)
-    lb = oftype(tbl_params.default, tbl_params.lower)
-    ub = oftype(tbl_params.default, tbl_params.upper)
-    pVec = pNorm .* (ub .- lb) .+ lb
-    return pVec
-end
-
-"""
-`partitionBatches`(n; `batch_size=32`)
+# Arguments
+- `n`: number of samples
+- `batch_size`: batch size
 """
 function partitionBatches(n; batch_size=32)
     return partition(1:n, batch_size)
@@ -88,7 +51,13 @@ end
 
 
 """
-`siteNameToID`(`site_name`, `sites_forcing`)
+    siteNameToID(site_name, sites_list)
+
+Returns the index of `site_name` in the `sites_list`
+
+# Arguments
+- `site_name`: site name
+- `sites_list`: list of site names
 """
 function siteNameToID(site_name, sites_list)
     return findfirst(s -> s == site_name, sites_list)
@@ -96,9 +65,15 @@ end
 
 
 """
-`shuffleBatches`(list, bs; seed=1)
+    shuffleBatches(list, bs; seed=1)
 
-    - bs :: Batch size
+# Arguments
+- `bs`: Batch size
+- `list`: an array of samples
+- `seed`: Int
+
+Returns shuffled partitioned batches.
+
 """
 function shuffleBatches(list, bs; seed=1)
     bs_idxs = partitionBatches(length(list); batch_size = bs)
@@ -108,10 +83,13 @@ function shuffleBatches(list, bs; seed=1)
 end
 
 """
-`shuffleList`(list; seed=123)
+    shuffleList(list; seed=123)
+
+# Arguments
+- `list`: an array of samples
+- `seed`: Int
 """
 function shuffleList(list; seed=123)
-    # Random.seed!(seed)
     rand_indxs = randperm(MersenneTwister(seed), length(list))
     return list[rand_indxs]
 end
