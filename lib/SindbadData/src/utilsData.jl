@@ -8,7 +8,7 @@ export toDimStackArray
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
 
-Add skipping filter for pixels with all nans or missings in YAXArrays
+Add skipping filter for pixels with all `NaN` or `missing` in YAXArrays
 """
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(ismissing, x) || all(isnan, x)
@@ -58,7 +58,7 @@ end
 """
     cleanData(_data, _data_fill, _data_info, Val{T})
 
-
+Applies a series of cleaning steps to the data, including replacing invalid data, applying unit conversion, and clamping to bounds.
 
 # Arguments:
 - `_data`: data to clean
@@ -81,7 +81,9 @@ end
 """
     getDataDims(c, mappinginfo)
 
-
+# Arguments:
+- `c`: cube (YAXArray) to get dimensions from
+- `mappinginfo`: 
 """
 function getDataDims(c, mappinginfo)
     inax = []
@@ -207,8 +209,6 @@ end
 """
     getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::BackendNetcdf)
 
-
-
 # Arguments:
 - `nc`: DESCRIPTION
 - `data_path`: DESCRIPTION
@@ -245,8 +245,6 @@ end
 
 """
     getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::BackendZarr)
-
-
 
 # Arguments:
 - `nc`: DESCRIPTION
@@ -285,8 +283,6 @@ end
 """
     loadDataFromPath(nc, data_path, data_path_v, source_variable)
 
-
-
 # Arguments:
 - `nc`: DESCRIPTION
 - `data_path`: DESCRIPTION
@@ -305,8 +301,6 @@ end
 
 """
     mapCleanData(_data, _data_qc, _data_fill, bounds_qc, _data_info, Val{T})
-
-
 
 # Arguments:
 - `_data`: DESCRIPTION
@@ -328,7 +322,6 @@ end
 
 """
     subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, Val{num_type}; clean_data = true, fill_nan = false, yax_qc = nothing, bounds_qc = nothing)
-
 
 
 # Arguments:
