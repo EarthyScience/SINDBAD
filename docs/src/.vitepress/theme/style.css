@@ -56,6 +56,7 @@ This is pretty bad for Julia folks reading even though copy+paste retains the sa
 pre, code {
   font-family: "JuliaMono-Light", monospace;
   font-feature-settings: "calt" off;
+  white-space : pre-wrap !important;
 }
 
 /**
@@ -249,4 +250,7 @@ mjx-container > svg {
   cursor: pointer;
   user-select: none;
   margin: 0 0 8px;
+}
+.jldocstring.custom-block summary a {
+  pointer-events: none;
 }
