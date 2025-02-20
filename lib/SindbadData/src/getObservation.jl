@@ -3,7 +3,7 @@ export getObservation
 """
     getAllConstraintData(nc, data_backend, data_path, default_info, v_info, data_sub_field, info; yax = nothing, use_data_sub = true)
 
-
+reads the data from the observation file and returns the data, yax, v_info, and bounds for the observation constraint
 
 # Arguments:
 - `nc`: file/nc object of the data
@@ -64,7 +64,9 @@ end
 """
     getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
 
-
+# Arguments:
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `forcing_helpers`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
 function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     data_path = info.settings.optimization.observations.default_observation.data_path
