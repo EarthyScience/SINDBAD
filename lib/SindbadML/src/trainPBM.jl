@@ -1,16 +1,15 @@
 export gradientPolyester
 export gradientBatchPolyester!
-export trainPBM
+export mixedGradientTraining
 export gradsNaNCheck!
 export loadTrainedNN
 
 """
-    trainPBM(grads_lib, nn_model, train_refs, test_val_refs, loss_fargs, forward_args; n_epochs=3, optimizer=Optimisers.Adam(), path_experiment="/")
+    mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, loss_fargs, forward_args; n_epochs=3, optimizer=Optimisers.Adam(), path_experiment="/")
 
-Mixed-gradient training. Computes model parameters from a neural network which in turn are used by PBMs to estimate parameter gradients. 
-The product of these gradients with the neural network Jacobian output the corresponding neural network weights updates.
+Training function that computes model parameters using a neural network, which are then used by process-based models (PBMs) to estimate parameter gradients. Neural network weights are updated using the product of these gradients with the neural network's Jacobian.
 
-Inputs:
+# Arguments
 - `grads_lib`: Library to compute PBMs parameter gradients.
 - `nn_model`: A `Flux.Chain` neural network.
 - `train_refs`: training data features.
@@ -20,7 +19,7 @@ Inputs:
 - `path_experiment="/"`: save model to path.
 
 """
-function trainPBM(grads_lib, nn_model, train_refs, test_val_refs, total_constraints, loss_fargs, forward_args;
+function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, total_constraints, loss_fargs, forward_args;
     n_epochs=3, optimizer=Optimisers.Adam(), path_experiment="/")
     
     sites_training, indices_sites_training, xfeatures, tbl_params, batch_size, chunk_size, metadata_global = train_refs
@@ -83,6 +82,11 @@ function trainPBM(grads_lib, nn_model, train_refs, test_val_refs, total_constrai
     return nothing
 end
 
+"""
+    batchShuffler(x_forcings, ids_forcings, batch_size; bs_seed=1456)
+
+Shuffles the batches of forcings and their corresponding indices.
+"""
 function batchShuffler(x_forcings, ids_forcings, batch_size; bs_seed=1456)
     x_batches = shuffleBatches(x_forcings, batch_size; seed=bs_seed)
     ids_batches = shuffleBatches(ids_forcings, batch_size; seed=bs_seed)
@@ -90,10 +94,17 @@ function batchShuffler(x_forcings, ids_forcings, batch_size; bs_seed=1456)
 end
 
 """
-    gradientSitePolyester(grads_lib::ForwardDiffGrad, x_vals, chunk_size::Int, loss::F, args...)
+    gradientPolyester(grads_lib::ForwardDiffGrad, x_vals, chunk_size::Int, loss::F, args...)
 
 Computes gradients using `PolyesterForwardDiff.jl` for multi-threaded chunk splits. The optimal speed is ideally achieved with `one thread` when `chunk_size=1` and `n-threads` for `n` parameters.
 However, a good compromise between memory allocations and speed could be to set `chunk_size=3` and use `n-threads` for `2n parameters`.
+
+# Arguments
+- `grads_lib`: uses ForwardDiff.jl for gradients computation.
+- `x_vals`: parameters values.
+- `chunk_size`: Int, chunk size for PolyesterForwardDiff's threads.
+- `loss_f`: loss function to be applied.
+- `args...`: additional arguments for the loss function.
 
 !!! warning
     For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropiate `chunk_size`.
@@ -117,7 +128,7 @@ end
 
 # Computes gradients for a batch of samples.
 
-Inputs:
+# Arguments
 - `grads_lib`: uses ForwardDiff.jl for gradients computation.
 - `dx_batch`: pre-allocated array for batched gradients.
 - `chunk_size`: Int, chunk size for PolyesterForwardDiff's threads.
@@ -125,7 +136,9 @@ Inputs:
 - `get_inner_args`: function to obtain inner values of loss function.
 - `input_args`: global input arguments.
 
-# Returns: A  `n x m` matrix for `n parameters gradients` and `m` samples.
+# Returns: 
+A `n x m` matrix for `n parameters gradients` and `m` samples.
+
 """
 function gradientBatchPolyester!(grads_lib::ForwardDiffGrad, dx_batch, chunk_size::Int,
     loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
@@ -145,6 +158,13 @@ end
 
 Utility function to check if some calculated gradients were NaN (if found please double check your approach).
 This function will replace those NaNs with 0.0f0.
+
+# Arguments
+- `grads_batch`: gradients array.
+- `_params_batch`: parameters values.
+- `sites_batch`: sites names.
+- `tbl_params`: parameters table.
+- `show_params_for_nan=false`: if true, it will show the parameters that caused the NaNs.
 """
 function gradsNaNCheck!(grads_batch, _params_batch, sites_batch, tbl_params; show_params_for_nan=false)
     if sum(isnan.(grads_batch))>0
@@ -162,6 +182,12 @@ function gradsNaNCheck!(grads_batch, _params_batch, sites_batch, tbl_params; sho
     end
 end
 
+"""
+    loadTrainedNN(path_model)
+
+# Arguments
+- `path_model`: path to the model.
+"""
 function loadTrainedNN(path_model)
     model_props = JLD2.load(path_model)
     return (;
