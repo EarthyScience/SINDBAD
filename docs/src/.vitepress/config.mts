@@ -3,45 +3,57 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 
 // https://vitepress.dev/reference/site-config
 
+const conceptItems = [
+  { text: 'SINDBAD', link: '/pages/concept/overview' },
+  { text: 'TEM', link: '/pages/concept/TEM' }]
+
+const settingsItems = [
+  { text: 'Overview', link: '/pages/settings/overview' },
+  { text: 'Experiments', link: '/pages/settings/experiment' },
+  { text: 'Forcing', link: '/pages/settings/forcing' },
+  { text: 'Models', link: '/pages/settings/model_structure' },
+  { text: 'Optimization', link: '/pages/settings/optimization' },
+  { text: 'Parameters', link: '/pages/settings/parameters' },
+]
+
+const codeItems = [
+  { text: 'Sindbad', link: '/pages/code/sindbad' },
+  { text: ' + Data', link: '/pages/code/data' },
+  { text: ' + Experiment', link: '/pages/code/experiment' },
+  { text: ' + Metrics', link: '/pages/code/metrics' },
+  { text: ' + ML', link: '/pages/code/ml' },
+  { text: ' + Models', link: '/pages/code/models' },
+  { text: ' + Optimization', link: '/pages/code/optimization' },
+  { text: ' + Setup', link: '/pages/code/setup' },
+  { text: ' + TEM', link: '/pages/code/tem' },
+  { text: ' + Utils', link: '/pages/code/utils' },
+  { text: ' + Visuals', link: '/pages/code/visuals' }
+]
+const aboutItems = [
+  { text: 'Acknowledgements', link: '.' },
+  { text: 'Contact', link: '.' },
+  { text: 'License', link: '.' },
+  { text: 'Team', link: '.' },
+]
+
+const tutorialItems = [
+  { text: 'Examples', link: '.' },
+  { text: 'Workflows', link: '/pages/tutorials/modelling_design' },
+]
+
 const navTemp = {
   nav: [
-    { text: 'Home', link: '/' },
-    { text: 'Manual', items: [
-      { text: 'Examples', link: '.' },
-      { text: 'Install', link: '/pages/manual/install' },
-      { text: 'Overview', link: '.' },
-      { text: 'Workflows', link: '/pages/manual/modelling_design' }],
+    { text: 'Concept', items: conceptItems,
     },
-    { text: 'Settings',  items: [
-      { text: 'Experiments', link: '/pages/settings/experiment' },
-      { text: 'Forcing', link: '/pages/settings/forcing' },
-      { text: 'Models', link: '/pages/settings/model_structure' },
-      { text: 'Optimization', link: '/pages/settings/optimization' },
-    ] 
+      { text: 'Tutorials', items: tutorialItems,
+    },
+    { text: 'Settings',  items: settingsItems, 
     },
    { text: 'Code', 
-      items: [
-        { text: 'Sindbad', link: '/pages/code/sindbad' },
-        { text: ' + Data', link: '/pages/code/data' },
-        { text: ' + Experiment', link: '/pages/code/experiment' },
-        { text: ' + Metrics', link: '/pages/code/metrics' },
-        { text: ' + ML', link: '/pages/code/ml' },
-        { text: ' + Models', link: '/pages/code/models' },
-        { text: ' + Optimization', link: '/pages/code/optimization' },
-        { text: ' + Setup', link: '/pages/code/setup' },
-        { text: ' + TEM', link: '/pages/code/tem' },
-        { text: ' + Utils', link: '/pages/code/utils' },
-        { text: ' + Visuals', link: '/pages/code/visuals' }
-      ]
+      items: codeItems,
     },
     { text: 'About', 
-      items: [
-        { text: 'Acknowledgements', link: '.' },
-        { text: 'Contact', link: '.' },
-        { text: 'Citation', link: '/pages/about/citation' },
-        { text: 'License', link: 'https://git.bgc-jena.mpg.de/sindbad/sindbad.jl/-/blob/main/LICENSE' },
-        { text: 'Team', link: '/pages/about/team' },
-      ]
+      items: aboutItems
     },
   ],
 }
@@ -54,56 +66,18 @@ const nav = [
 ]
 
 const sidebar = [
-  { text: 'Manual', items: [
-    { text: 'Examples', link: '.' },
-    { text: 'Install', link: '/pages/manual/install' },
-    { text: 'Overview', link: '.' },
-    { text: 'Workflows', link: '/pages/manual/modelling_design' }],
+  { text: 'Concept', items: conceptItems,
   },
-  { text: 'Settings',  items: [
-    { text: 'Experiments', link: '/pages/settings/experiment' },
-    { text: 'Forcing', link: '/pages/settings/forcing' },
-    { text: 'Models', link: '/pages/settings/model_structure' },
-    { text: 'Optimization', link: '/pages/settings/optimization' },
-  ], 
+    { text: 'Tutorials', items: tutorialItems,
+  },
+  { text: 'Settings',  items: settingsItems,
   },
   { text: 'Code',
-    collapsed: false,
-    items: [
-      { text: 'Exported',
-        collapsed: true,
-        items: [
-          { text: 'Sindbad', link: '/pages/code/sindbad' },
-          { text: ' + Data', link: '/pages/code/data' },
-          { text: ' + Experiment', link: '/pages/code/experiment' },
-          { text: ' + Metrics', link: '/pages/code/metrics' },
-          { text: ' + ML', link: '/pages/code/ml' },
-          { text: ' + Models', link: '/pages/code/models' },
-          { text: ' + Optimization', link: '/pages/code/optimization' },
-          { text: ' + Setup', link: '/pages/code/setup' },
-          { text: ' + TEM', link: '/pages/code/tem' },
-          { text: ' + Utils', link: '/pages/code/utils' },
-          { text: ' + Visuals', link: '/pages/code/visuals' }
-        ]
-      },
-      { text: 'Internal',
-        collapsed: true,
-        items: [
-          { text: 'Sindbad', link: '/pages/code/sindbad_internal' },
-          { text: ' + Data', link: '/pages/code/data_internal' },
-          { text: ' + Experiment', link: '/pages/code/experiment_internal' },
-          { text: ' + Metrics', link: '/pages/code/metrics_internal' },
-          { text: ' + ML', link: '/pages/code/ml_internal' },
-          { text: ' + Models', link: '/pages/code/models_internal' },
-          { text: ' + Optimization', link: '/pages/code/optimization_internal' },
-          { text: ' + Setup', link: '/pages/code/setup_internal' },
-          { text: ' + TEM', link: '/pages/code/tem_internal' },
-          { text: ' + Utils', link: '/pages/code/utils_internal' },
-          { text: ' + Visuals', link: '/pages/code/visuals_internal' }
-        ]
-      },
-
-    ],
+    collapsed: true,
+    items: codeItems
+  },
+  { text: 'About',
+    items: aboutItems
   },
 ]
 
