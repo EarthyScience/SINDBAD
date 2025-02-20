@@ -4,6 +4,18 @@ export sindbad_variables
 export whatIs
 
 orD = DataStructures.OrderedDict
+
+"""
+`sindbad_variables`
+
+A dictionary of dictionaries that contains information about the variables in the SINDBAD models. The keys of the outer dictionary are the variable names and the inner dictionaries contain the following keys:
+
+- `standard_name`: the standard name of the variable
+- `long_name`: a longer description of the variable
+- `units`: the units of the variable
+- `land_field`: the field in the SINDBAD model where the variable is used
+- `description`: a description of the variable
+"""
 sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cAllocationTreeFraction__cVeg_names_for_c_allocation_frac_tree => orD(
         :standard_name => "cVeg_names_for_c_allocation_frac_tree",
@@ -1517,7 +1529,7 @@ end
 """
     getFullVariableKey(var_field::String, var_sfield::String)
 
-returns a symbol with field__subfield of land to be used as a key for an entry in variable catalog
+returns a symbol with `field__subfield` of land to be used as a key for an entry in variable catalog
 
 # Arguments:
 - `var_field`: land field of the variable
@@ -1532,7 +1544,7 @@ end
     getUniqueVarNames(var_pairs)
 
 return the list of variable names to be used to write model outputs to a field. - checks if the variable name is duplicated across different fields of SINDBAD land
-- uses field__variablename in case of duplicates, else uses the actual model variable name
+- uses `field__variablename` in case of duplicates, else uses the actual model variable name
 """
 function getUniqueVarNames(var_pairs)
     pure_vars = getVarName.(var_pairs)
@@ -1630,7 +1642,9 @@ end
 """
     getVariableInfo(vari_b, t_step = day)
 
-
+# Arguments:
+- `vari_b`: a variable name in the form of field__subfield
+- `t_step`: time step of the variable, default is "day"
 """
 function getVariableInfo(vari_b, t_step="day")
     vname = getVarFull(vari_b)
@@ -1640,7 +1654,9 @@ end
 """
     getVariableInfo(vari_b::Symbol, t_step = day)
 
-
+# Arguments:
+- `vari_b`: a variable name
+- `t_step`: time step of the variable, default is "day"
 """
 function getVariableInfo(vari_b::Symbol, t_step="day")
     catalog = sindbad_variables
@@ -1713,12 +1729,21 @@ function getVarName(var_pair)
     return last(var_pair)
 end
 
-
 """
     whatIs(var_name::String)
+    whatIs(var_field::String, var_sfield::String)
+    whatIs(var_field::Symbol, var_sfield::Symbol)
 
-a helper function to return the information of a SINDBAD variable
+A helper function to return the information of a SINDBAD variable
+
+# Arguments:
+- `var_name`: name of the variable
+- `var_field`: field of the variable
+- `var_sfield`: subfield of the variable
+
 """
+function whatIs end
+
 function whatIs(var_name::String)
     if startswith(var_name, "land")
         var_name = var_name[6:end]
@@ -1731,11 +1756,6 @@ function whatIs(var_name::String)
     return nothing
 end
 
-"""
-    whatIs(var_field::String, var_sfield::String)
-
-a helper function to return the information of a SINDBAD variable
-"""
 function whatIs(var_field::String, var_sfield::String)
     var_full = getFullVariableKey(var_field, var_sfield)
     println("\nchecking $var_field field and $var_sfield subfield as :$var_full in sindbad_variables catalog...")
@@ -1743,11 +1763,6 @@ function whatIs(var_field::String, var_sfield::String)
     return nothing
 end
 
-"""
-    whatIs(var_field::Symbol, var_sfield::Symbol)
-
-a helper function to return the information of a SINDBAD variable
-"""
 function whatIs(var_field::Symbol, var_sfield::Symbol)
     var_full = getFullVariableKey(string(var_field), string(var_sfield))
     println("\nchecking :$var_field field and :$var_sfield subfield as :$var_full in sindbad_variables catalog...")
