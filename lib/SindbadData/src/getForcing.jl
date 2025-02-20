@@ -3,6 +3,9 @@ export getForcing
 """
     collectForcingSizes(info, in_yax)
 
+# Arguments
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `in_yax`: input YAXArray
 
 """
 function collectForcingSizes(info, in_yax)
@@ -26,12 +29,10 @@ end
 """
     collectForcingHelpers(info, f_sizes, f_dimensions)
 
-
-
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `f_sizes`: DESCRIPTION
-- `f_dimensions`: DESCRIPTION
+- `f_sizes`: forcing sizes
+- `f_dimensions`: forcing dimensions
 """
 function collectForcingHelpers(info, f_sizes, f_dimensions)
     f_helpers = (;)
@@ -49,12 +50,12 @@ end
 """
     createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
 
-
+creates a named tuple with forcing data
 
 # Arguments:
-- `incubes`: DESCRIPTION
-- `f_sizes`: DESCRIPTION
-- `f_dimensions`: DESCRIPTION
+- `incubes`: input cubes (YAXArray)
+- `f_sizes`: forcing sizes
+- `f_dimensions`: forcing dimensions
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
 function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
@@ -90,6 +91,10 @@ end
 """
     getForcing(info::NamedTuple)
 
+reads forcing data from the `data_path` specified in the info NT and returns a named tuple with the forcing data
+
+# Arguments:
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 
 """
 function getForcing(info::NamedTuple)
