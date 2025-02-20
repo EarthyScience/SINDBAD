@@ -1,4 +1,5 @@
 using Revise
+using SindbadSetup
 @time using SindbadExperiment
 using Plots
 toggleStackTraceNT()
