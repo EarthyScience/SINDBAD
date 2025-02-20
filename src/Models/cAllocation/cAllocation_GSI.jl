@@ -70,12 +70,12 @@ function compute(params::cAllocation_GSI, forcing, land, helpers)
 end
 
 @doc """
-compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is dynamic in time according to temperature; water & radiation stressors computed from GSI approach.
+Compute the fraction of fixated C that is allocated to the different plant organs. The allocation is dynamic in time according to temperature, water & radiation stressors estimated following the GSI approach. Inspired by the work of Friedlingstein et al., 1999, based on Sharpe and Rykiel 1991, but here following the growing season index (GSI) as stress diagnostics, following Forkel et al 2014 and 2015, based on Jolly et al., 2005.
 
 ---
 
 # compute:
-Combine the different effects of carbon allocation using cAllocation_GSI
+Combines the different stressors of carbon allocation (moisture, radiation and temperature) using the GSI approach (Forkel et al., 2014).
 
 *Inputs*
  - land.diagnostics.c_allocation_f_cloud: radiation stressors for carbo allocation
@@ -97,7 +97,9 @@ Instantiate time-invariant variables for cAllocation_GSI
 *References*
  - Forkel M, Carvalhais N, Schaphoff S, von Bloh W, Migliavacca M, Thurner M, Thonicke K [2014] Identifying environmental controls on vegetation greenness phenology through model–data integration. Biogeosciences, 11, 7025–7050.
  - Forkel, M., Migliavacca, M., Thonicke, K., Reichstein, M., Schaphoff, S., Weber, U., Carvalhais, N. (2015).  Codominant water control on global interannual variability and trends in land surface phenology & greenness.
+  - Friedlingstein; P.; G. Joel; C.B. Field; & I.Y. Fung; 1999: Toward an allocation scheme for global terrestrial carbon models. Glob. Change Biol.; 5; 755-770; doi:10.1046/j.1365-2486.1999.00269.x.
  - Jolly, William M., Ramakrishna Nemani, & Steven W. Running. "A generalized, bioclimatic index to predict foliar phenology in response to climate." Global Change Biology 11.4 [2005]: 619-632.
+ - Sharpe PJH, Rykiel EJ (1991) Modelling integrated response of plants to multiple stresses. In: Response of Plants to Multiple Stresses (eds Mooney HA, Winner WE, Pell EJ), pp. 205±224, Academic Press, San Diego, CA.
 
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
