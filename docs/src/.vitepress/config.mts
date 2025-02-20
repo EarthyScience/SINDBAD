@@ -30,10 +30,10 @@ const codeItems = [
   { text: ' + Visuals', link: '/pages/code/visuals' }
 ]
 const aboutItems = [
-  { text: 'Acknowledgements', link: '.' },
-  { text: 'Contact', link: '.' },
+  { text: 'Support', link: '/pages/about/support' },
+  { text: 'Contact', link: '/pages/about/contact' },
   { text: 'License', link: '.' },
-  { text: 'Team', link: '.' },
+  { text: 'Team', link: '/pages/about/team' },
 ]
 
 const tutorialItems = [
