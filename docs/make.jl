@@ -12,7 +12,7 @@ using DocStringExtensions
 # dev ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
 
 makedocs(; sitename="Sindbad",
-    authors="Sindbad Pirates",
+    authors="Sindbad Development Team",
     clean=true,
     format=DocumenterVitepress.MarkdownVitepress(
         repo = "",
