@@ -1,15 +1,16 @@
-## Contact
+# Contact
 
-Department of Biogeochemical Integration,
-
-Max Planck Institute for Biogeochemistry
-
-
-Hans Knoell Strasse 10
-
-D-07745 Jena
-
+```@raw html
+<h2>Max Planck Institute for Biogeochemistry<br>
+</h2>
+ 
+<strong> Department of Biogeochemical Integration </strong>
+<p>
+Hans-Knöll-Straße 10<br>
+07745 Jena <br>
 Germany
+</p>
+```
 
 
 SINDBAD Development Team <sindbad@bgc-jena.mpg.de>

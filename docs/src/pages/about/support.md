@@ -15,3 +15,22 @@ Artificial Intelligence and Machine Learning for Enhanced Representation of Proc
 Project Office BIOMASS (grant number `50EE1904`) funded by the German Federal Ministry for Economic Affairs and Climate Action.
 
 :::
+
+## DeepCube
+
+::: info about
+
+This work has received funding from the European Union's Horizon 2020 Research and Innovation Project DeepCube “Explainable AI pipelines for big Copernicus data” (Grant agreement No. 101004188).
+
+:::
+
+## SeasFire
+
+::: info about
+
+This work has been funded by the European Space Agency (ESA) SeasFire project under the ESA Future EO-1 Science for Society Call.
+
+:::
+
+
+TODO: MPG, GrAf, EO-LINCS, MeDiTwin. 
