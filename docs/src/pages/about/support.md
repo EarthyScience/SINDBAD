@@ -16,13 +16,22 @@ Project Office BIOMASS (grant number `50EE1904`) funded by the German Federal Mi
 
 :::
 
-## DeepCube
+## EO-LINCS (2024-)
 
 ::: info about
 
-This work has received funding from the European Union's Horizon 2020 Research and Innovation Project DeepCube “Explainable AI pipelines for big Copernicus data” (Grant agreement No. 101004188).
+Under ESA Carbon Science Cluster: Research Opportunities 2 – Theme 2: Carbon Data Enquiry And Benchmarking, the EO-LINCS (Earth Observation, Local and Integrated data eNquiry for Terrestrial Carbon Science) promotes a community effort towards an enhanced multi-mission assessment of the terrestrial carbon cycle at resolutions in space and time compatible with decision making by improving the access to the Earth Observation (EO) data for the wider carbon scientific community so that key questions related to scale, representativeness, consistency, reliability, as well as the applicability of the multivariate EO data and how they affect our understanding of the carbon cycle processes across spatial and temporal scales can be addressed.
 
 :::
+
+##  MeDiTwin
+
+::: info about
+
+This project has received funding from the European Union’s Horizon Europe WIDERA Coordination and Support Actions under Grant Agreement `no.101159723`. Project duration is September 2024 to February 2027.
+
+:::
+
 
 ## SeasFire
 
@@ -32,5 +41,19 @@ This work has been funded by the European Space Agency (ESA) SeasFire project un
 
 :::
 
+## DeepCube
 
-TODO: MPG, GrAf, EO-LINCS, MeDiTwin. 
+::: info about
+
+This work has received funding from the European Union's Horizon 2020 Research and Innovation Project DeepCube “Explainable AI pipelines for big Copernicus data” (Grant agreement No. `101004188`).
+
+:::
+
+
+## GRAf (2018-2019)
+
+::: info about
+
+Earth System Research: Groundwater Resources in Africa under Global Change (“Erdsystemforschung: Afrikanische Grundwasserressourcen im Zuge des globalen Wandels”) project of the Max Planck Society supported the development of regional models and simulations.
+
+:::
