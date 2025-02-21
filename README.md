@@ -4,28 +4,21 @@ Welcome to the git repository for the development of the framework for **S**trat
 
 SINDBAD is a model data integration framework that encompasses the biogeochemical cycles of water and carbon, allows for extensive and flexible integration of parsimonious models with a diverse set of observational data streams.
 
-## Developers
+### Repository Structure
 
-### Sindbad model and experiments
-SINDBAD is developed at the Department of Biogeochemical Integration of the Max Planck Institute for Biogeochemistry in Jena, Germany. 
+Sindbad.jl includes a core Sindbad package in the root of the repository, and several sub-repositories in the lib directory following the conventions of mono-repo.
 
-- Sujan Koirala (<skoirala@bgc-jena.mpg.de>)
+The packages (under /lib) are as follows:
 
-- Lazaro Alonso (<lalonso@bgc-jena.mpg.de>)
-
-- Nuno Carvalhais (<ncarvalhais@bgc-jena.mpg.de>)
-
-### Technical Support
-
-- Fabian Gans (<fgans@bgc-jena.mpg.de>)
-
-- Felix Cremer (<fcremer@bgc-jena.mpg.de>)
-
-## Details
-
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://git.bgc-jena.mpg.de/sindbad/sindbad.jl)
-[![Build Status](https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl/badges/main/pipeline.svg)](https://git.bgc-jena.mpg.de/sindbad/sindbad.jl/pipelines)
-[![Coverage](https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl/badges/main/coverage.svg)](https://git.bgc-jena.mpg.de/sindbad/sindbad.jl/commits/main)
+- Sindbad: a core package in the root that includes definition of sindbad models and variables, and functions needed for internal model executions
+- SindbadData: includes functions to load the forcing and observation data, and has dev dependency on SindbadUtils
+- SindbadExperiment: includes the dev dependencies on all other Sindbad packages that can be used to run an experiment and save the experiment outputs
+- SindbadML: includes the dev dependencies on SindbadTEM, SindbadMetrics, SindbadSetup, and SindbadUtils as well as external ML libraries to do hybrid modeling
+- SindbadMetrics: includes the calculation of loss metrics and has dependency on SindbadUtils
+- SindbadOptimization: includes the optimization schemes and functions to optimize the model, and has dev dependency on SindbadTEM and SindbadMetrics
+- SindbadSetup: includes the setup of sindbad model structure and info from the json settings, and has dev dependency on Sindbad and SindbadUtils
+- SindbadTEM: includes the main functions to run SINDBAD Terrestrial Ecosystem Model, and and has dev dependency on Sindbad, SindbadSetup, and SindbadUtils
+- SindbadUtils: includes utility functions that are used in other Sindbad lib packages, which has no dev dependency on other lib packages and Sindbad info, and is dependent on external libraries only
 
 ### Installation
 
@@ -91,21 +84,6 @@ Before running the experiments, download the example by running the following sc
 bash download_example_data.sh
 ````
 
-### Package Structure
-
-Sindbad.jl includes a core Sindbad package in the root of the repository, and several sub-repositories in the lib directory.
-
-The packages are as follows:
-
-- Sindbad: a core package in the root that includes definition of sindbad models and variables, and functions needed for internal model executions
-- SindbadData: includes functions to load the forcing and observation data, and has dev dependency on SindbadUtils
-- SindbadExperiment: includes the dev dependencies on all other Sindbad packages that can be used to run an experiment and save the experiment outputs
-- SindbadML: includes the dev dependencies on SindbadTEM, SindbadMetrics, SindbadSetup, and SindbadUtils as well as external ML libraries to do hybrid modeling
-- SindbadMetrics: includes the calculation of loss metrics and has dependency on SindbadUtils
-- SindbadOptimization: includes the optimization schemes and functions to optimize the model, and has dev dependency on SindbadTEM and SindbadMetrics
-- SindbadSetup: includes the setup of sindbad model structure and info from the json settings, and has dev dependency on Sindbad and SindbadUtils
-- SindbadTEM: includes the main functions to run SINDBAD Terrestrial Ecosystem Model, and and has dev dependency on Sindbad, SindbadSetup, and SindbadUtils
-- SindbadUtils: includes utility functions that are used in other Sindbad lib packages, which has no dev dependency on other lib packages and Sindbad info, and is dependent on external libraries only
 
 ### Using Sindbad in your example
 
@@ -119,3 +97,19 @@ For example
 allows to run the full experiment.
 
 Other smaller packages can be imported and put together to build an experiment workflow as needed
+
+## SINDBAD Contributors 
+
+SINDBAD is developed at the Department of Biogeochemical Integration of the Max Planck Institute for Biogeochemistry in Jena, Germany with the following active contributors
+
+- Sujan Koirala (<skoirala@bgc-jena.mpg.de>)
+
+- Lazaro Alonso (<lalonso@bgc-jena.mpg.de>)
+
+- Nuno Carvalhais (<ncarvalhais@bgc-jena.mpg.de>)
+
+- Fabian Gans (<fgans@bgc-jena.mpg.de>)
+
+- Felix Cremer (<fcremer@bgc-jena.mpg.de>)
+
+For a full list of contributors, see https://earthyscience.github.io/Sindbad.jl/dev/pages/about/team
