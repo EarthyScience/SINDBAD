@@ -25,9 +25,12 @@ Welcome to the git repository for the development of the framework for **S**trat
 
 ### Repository Structure
 
-`Sindbad.jl` includes a core Sindbad package in the root of the repository which includes definition of sindbad models and variables and functions needed for internal model executions, and several sub-repositories in the lib directory following the conventions of mono-repo.
+`Sindbad.jl` and its sub-repositories all live in the Sindbad `monorepo`. At the root level of the repository, definitions of Sindbad models, variables, and functions needed for internal model executions are included.
 
-The packages under `/lib/` are as follows:
+For a short description on sub-packages under `/lib/`
+
+<details>
+  <summary><span style="color:orange"> 🔥 Click for details 🔥</span></summary>
 
 - `SindbadData.jl`: includes functions to load the forcing and observation data, and has dev dependency on SindbadUtils.
 
@@ -45,6 +48,8 @@ The packages under `/lib/` are as follows:
 
 - `SindbadUtils.jl`: includes utility functions that are used in other Sindbad lib packages, which has no dev dependency on other lib packages and Sindbad info, and is dependent on external libraries only.
 
+</details>
+
 ### Installation
 
 - with git repo access
@@ -60,14 +65,9 @@ Get the latest sindbad.jl package and browse to the directory (sindbad_root)
 ### How to dev/use the different packages
 
 Start a julia prompt in the sindbad_root
-```
-julia
-```
-Note that you may need to do the following in the new BGC cluster
 
 ```
-ml proxy
-ml julia
+julia
 ```
 
 Go to main example directory
