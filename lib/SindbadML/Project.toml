@@ -1,6 +1,6 @@
 name = "SindbadML"
 uuid = "eb1d8004-2d42-4eef-b369-ed0645c101e8"
-authors = ["Lazaro Alonso <lazarus.alon@gmail.com>"]
+authors = ["SINDBAD <sindbad@bgc-jena.mpg.de> and contributors"]
 version = "0.1.0"
 
 [deps]
