@@ -59,7 +59,7 @@ features:
 
 ::: warning ⏳ Content in active development
 
-To be kept in the loop for updates, register for `SINDBAD` news here: sindbad-news@lists.gwdg.de
+To be kept in the loop for updates, register for `SINDBAD` [news](https://mail.bgc-jena.mpg.de/mailman/listinfo/sindbad-news).
 
 :::
 
