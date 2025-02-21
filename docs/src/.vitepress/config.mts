@@ -30,22 +30,24 @@ const codeItems = [
   { text: ' + Visuals', link: '/pages/code/visuals' }
 ]
 const aboutItems = [
-  { text: 'Support', link: '/pages/about/support' },
   { text: 'Contact', link: '/pages/about/contact' },
   { text: 'License', link: '.' },
+  { text: 'Publications', link: '/pages/about/publications' },
+  { text: 'Support', link: '/pages/about/support' },
   { text: 'Team', link: '/pages/about/team' },
 ]
 
-const tutorialItems = [
+const manualItems = [
+  { text: 'Install', link: '/pages/manual/install' },
   { text: 'Examples', link: '.' },
-  { text: 'Workflows', link: '/pages/tutorials/modelling_design' },
+  { text: 'Workflows', link: '/pages/manual/modelling_design' },
 ]
 
 const navTemp = {
   nav: [
     { text: 'Concept', items: conceptItems,
     },
-      { text: 'Tutorials', items: tutorialItems,
+      { text: 'Manual', items: manualItems,
     },
     { text: 'Settings',  items: settingsItems, 
     },
@@ -68,7 +70,7 @@ const nav = [
 const sidebar = [
   { text: 'Concept', items: conceptItems,
   },
-    { text: 'Tutorials', items: tutorialItems,
+    { text: 'manual', items: manualItems,
   },
   { text: 'Settings',  items: settingsItems,
   },
@@ -88,6 +90,7 @@ export default defineConfig({
   lastUpdated: true,
   cleanUrls: true,
   ignoreDeadLinks: true,
+  outDir: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
   
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
