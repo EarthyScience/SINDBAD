@@ -13,18 +13,18 @@ hero:
   actions:
     - theme: brand
       text: Start
-      link: /install
+      link: pages/concept/overview
+    - theme: alt
+      text: Install
+      link: pages/manual/install
     - theme: alt
       text: Land
-      link: /modelling_design
+      link: pages/concept/land
     - theme: alt
-      text: Repo
-      link: 
-    - theme: alt
-      text: Docs
-      link: /models
+      text: Repository
+      link: https://github.com/orgs/EarthyScience
 features:
-  - icon: <img width="64" height="64" src="https://img.icons8.com/external-xnimrodx-lineal-gradient-xnimrodx/64/external-3d-design-design-tools-xnimrodx-lineal-gradient-xnimrodx.png" alt="modular-icon"/>
+  - icon: <img width="64" height="64" src="https://img.icons8.com/?size=100&id=B1TKpLjVCRyp&format=png&color=000000" alt="modular-icon"/>
     title: Challenge
     details: To represent carbon and water cycles in terrestrial ecosystems models. 
 
@@ -32,8 +32,8 @@ features:
     title: Goal
     details: To develop an agnostic and modular framework for model development and hypothesis testing.
 
-  - icon: <img width="64" height="64" src="https://img.icons8.com/external-filled-outline-geotatah/64/external-appraise-risk-management-color-filled-outline-geotatah.png" alt="community"/>
-    title: Team & Community
+  - icon: <img width="64" height="64" src="https://img.icons8.com/?size=100&id=2-Cf_3f12bcT&format=png&color=000000" alt="community"/>
+    title: Community
     link: /pages/about/team
     details: Use existing models or approaches, build your own, contribute to the package, expand.
 
@@ -43,8 +43,8 @@ features:
     details: Simulate and evaluate carbon and water fluxes with different terrestrial ecosystem models.
 
   - icon: <img width="78" height="78" src="https://img.icons8.com/external-filled-color-icons-papa-vector/78/external-Adjustment-Problem-choosing-business-tools-filled-color-icons-papa-vector.png" alt="optim-icon"/>
-    title: Tutorials
-    link: /pages/about/team
+    title: Manual
+    link: /pages/manual/overview
     details: Integrate observations via parameter inversion approaches or data assimilation methods.
 
   - icon: <img width="50" height="50" src="https://img.icons8.com/bubbles/50/mind-map.png" alt="hybrid-icon"/>
@@ -62,3 +62,4 @@ features:
 To be kept in the loop for updates, register for `SINDBAD` news here: sindbad-news@lists.gwdg.de
 
 :::
+
