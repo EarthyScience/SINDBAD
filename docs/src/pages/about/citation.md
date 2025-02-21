@@ -1,6 +1,5 @@
 ## Citation
-If you found this library to be useful in your academic work, then please cite:
-
+If you use this library, please cite:
 
 ```bibtex
 @article{skoirala2025,
