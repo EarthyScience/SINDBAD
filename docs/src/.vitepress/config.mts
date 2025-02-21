@@ -42,7 +42,7 @@ const aboutItems = [
 
 const manualItems = [
   { text: 'Install', link: '/pages/manual/install' },
-  { text: 'Coding Guide', link: '/pages/tutorials/conventions' },
+  { text: 'Coding Guide', link: '/pages/manual/conventions' },
   { text: 'Examples', link: '.' },
   { text: 'Workflows', link: '/pages/manual/modelling_design' },
 ]
@@ -51,7 +51,7 @@ const navTemp = {
   nav: [
     { text: 'Concept', items: conceptItems,
     },
-      { text: 'Manual', items: manualItems,
+    { text: 'Manual', items: manualItems,
     },
     { text: 'Settings',  items: settingsItems, 
     },
@@ -74,7 +74,7 @@ const nav = [
 const sidebar = [
   { text: 'Concept', items: conceptItems,
   },
-    { text: 'manual', items: manualItems,
+    { text: 'Manual', items: manualItems,
   },
   { text: 'Settings',  items: settingsItems,
   },
