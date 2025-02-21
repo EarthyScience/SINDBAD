@@ -1,6 +1,6 @@
 name = "SindbadTEM"
 uuid = "f6108451-10cb-42fa-b0c1-67671cf08f15"
-authors = ["SINDBAD <sindbad.pirates@bgc-jena.mpg.de>"]
+authors = ["SINDBAD <sindbad@bgc-jena.mpg.de>"]
 version = "0.1.0"
 
 [deps]
