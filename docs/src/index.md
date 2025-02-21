@@ -55,30 +55,10 @@ features:
 ```
 
 
-## Installation
+## 🚧🚧 UNDER CONSTRUCTION 🚧🚧
 
-In the Julia REPL type:
+::: warning ⏳ Content in active development
 
-````julia
-julia> ]
-pkg > add https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl.git
-````
+To be kept in the loop for updates, register for `SINDBAD` news here: sindbad-news@lists.gwdg.de
 
-The ] character starts the Julia package manager. Hit backspace key to return to Julia prompt.
-
-## Check installation
-
-Check Sindbad.jl version with:
-
-````julia
-julia> ]
-pkg > st Sindbad
-````
-
-## Start using Sindbad
-
-Sindbad comes with several predefined models, which you can use individually or in combination.
-
-```julia
-using Sindbad
-```
+:::
