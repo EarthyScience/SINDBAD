@@ -71,7 +71,7 @@ Sindbad Experiments:
 dev ../.. ../../lib/SindbadUtils ../../lib/SindbadData ../../lib/SindbadMetrics ../../lib/SindbadSetup ../../lib/SindbadTEM ../../lib/SindbadOptimization ../../lib/SindbadExperiment
 ```
 
-Sindbad Hybrid:
+SindbadML:
 ```
 dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadML
 ```
@@ -100,7 +100,7 @@ The packages are as follows:
 - Sindbad: a core package in the root that includes definition of sindbad models and variables, and functions needed for internal model executions
 - SindbadData: includes functions to load the forcing and observation data, and has dev dependency on SindbadUtils
 - SindbadExperiment: includes the dev dependencies on all other Sindbad packages that can be used to run an experiment and save the experiment outputs
-- SindbadHybrid: includes the dev dependencies on SindbadTEM, SindbadMetrics, SindbadSetup, and SindbadUtils as well as external ML libraries to do hybrid modeling
+- SindbadML: includes the dev dependencies on SindbadTEM, SindbadMetrics, SindbadSetup, and SindbadUtils as well as external ML libraries to do hybrid modeling
 - SindbadMetrics: includes the calculation of loss metrics and has dependency on SindbadUtils
 - SindbadOptimization: includes the optimization schemes and functions to optimize the model, and has dev dependency on SindbadTEM and SindbadMetrics
 - SindbadSetup: includes the setup of sindbad model structure and info from the json settings, and has dev dependency on Sindbad and SindbadUtils
