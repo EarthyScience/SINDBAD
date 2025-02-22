@@ -101,15 +101,6 @@ Other smaller packages can be imported and put together to build an experiment w
 ## SINDBAD Contributors 
 
 SINDBAD is developed at the Department of Biogeochemical Integration of the Max Planck Institute for Biogeochemistry in Jena, Germany with the following active contributors
+with active contributions from [Sujan Koirala](https://www.bgc-jena.mpg.de/person/skoirala/2206), [Lazaro Alonso](https://www.bgc-jena.mpg.de/person/lalonso/2206), [Xu Shan](https://www.bgc-jena.mpg.de/person/138641/2206), [Hoontaek Lee](https://www.bgc-jena.mpg.de/person/hlee/2206), [Fabian Gans](https://www.bgc-jena.mpg.de/person/fgans/4777761), [Felix Cremer](https://www.bgc-jena.mpg.de/person/fcremer/2206), [Nuno Carvalhais](https://www.bgc-jena.mpg.de/person/ncarval/2206).
 
-- Sujan Koirala (<skoirala@bgc-jena.mpg.de>)
-
-- Lazaro Alonso (<lalonso@bgc-jena.mpg.de>)
-
-- Nuno Carvalhais (<ncarvalhais@bgc-jena.mpg.de>)
-
-- Fabian Gans (<fgans@bgc-jena.mpg.de>)
-
-- Felix Cremer (<fcremer@bgc-jena.mpg.de>)
-
-For a full list of contributors, see https://earthyscience.github.io/Sindbad.jl/dev/pages/about/team
+For a full list of current and previous contributors, see https://earthyscience.github.io/Sindbad.jl/dev/pages/about/team
