@@ -78,7 +78,7 @@ Returns shuffled partitioned batches.
 function shuffleBatches(list, bs; seed=1)
     bs_idxs = partitionBatches(length(list); batch_size = bs)
     s_list = shuffleList(list; seed=seed)
-    xbatches = [s_list[p] for p ∈ bs_idxs if length(p) == bs]
+    xbatches = [s_list[p] for p in bs_idxs if length(p) == bs]
     return xbatches
 end
 

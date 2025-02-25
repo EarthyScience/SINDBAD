@@ -107,7 +107,7 @@ However, a good compromise between memory allocations and speed could be to set 
 - `args...`: additional arguments for the loss function.
 
 !!! warning
-    For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropiate `chunk_size`.
+    For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropriate `chunk_size`.
 
 Returns: a `∇x` array with all parameter's gradients.
 """
