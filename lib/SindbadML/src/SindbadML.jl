@@ -42,6 +42,7 @@ using JLD2
 include("utilsML.jl")
 include("diffCaches.jl")
 include("neuralNetwork.jl")
+include("siteLosses.jl")
 include("trainPBM.jl")
-
+include("oneHots.jl")
 end
