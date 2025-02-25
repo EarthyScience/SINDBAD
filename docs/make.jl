@@ -9,13 +9,13 @@ using DocumenterVitepress
 using Documenter
 using DocStringExtensions
 
-# dev ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
+# dev ../ ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
 
 makedocs(; sitename="Sindbad",
     authors="Sindbad Development Team",
     clean=true,
     format=DocumenterVitepress.MarkdownVitepress(
-        repo = "",
+        repo = "github.com/EarthyScience/Sindbad.jl",
     ),
     remotes=nothing,
     draft=false,
@@ -23,3 +23,11 @@ makedocs(; sitename="Sindbad",
     source="src",
     build="build",
     )
+
+deploydocs(; 
+    repo = "github.com/EarthyScience/Sindbad.jl", # this must be the full URL!
+    target = "build", # this is where Vitepress stores its output
+    branch = "gh-pages",
+    devbranch = "main",
+    push_preview = true
+)
