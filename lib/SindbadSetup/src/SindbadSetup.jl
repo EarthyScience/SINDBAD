@@ -1,6 +1,7 @@
 module SindbadSetup
 
     using Sindbad
+    using ConstructionBase
     @reexport using Accessors
     @reexport using ForwardDiff
     @reexport using CSV: CSV
