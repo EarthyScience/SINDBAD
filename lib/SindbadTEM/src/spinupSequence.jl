@@ -6,7 +6,7 @@ export setSequence
 
 # Arguments:
 - `year_disturbance`: a year date, as an string
-- `year_start`: 1979 [default] start year, as an interger
+- `year_start`: 1979 [default] start year, as an integer
 """
 function nrepeat_age(year_disturbance; year_start = 1979)
     return year_start - year(Date(year_disturbance))
@@ -17,7 +17,7 @@ end
 
 # Arguments:
 - `year_disturbance`: a year date, as an string
-- `year_start`: 1979 [default] start year, as an interger
+- `year_start`: 1979 [default] start year, as an integer
 # Outputs
 - year difference
 """
