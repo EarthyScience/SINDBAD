@@ -65,9 +65,6 @@ Function to calculate the loss for a given site. This is used for optimization, 
 - `loc_obs`: observation data location
 - `cost_options`: cost options
 - `constraint_method`: constraint method
-
-*Created by:*
- - skoirala
 """
 function lossSite(new_params, gradient_lib, models, loc_forcing, loc_spinup_forcing, 
     loc_forcing_t, loc_output, land_init, tem_info, tem_run_spinup, param_to_index, loc_obs, cost_options, constraint_method; optim_mode=true)
@@ -103,9 +100,6 @@ Calculates the loss for all sites. The loss is calculated using the `loss_functi
 - `loc_observations`: observation data location
 - `cost_options`: cost options
 - `constraint_method`: constraint method
-
-*Created by:*
- - skoirala
 """
 function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_array_split, epoch_number,
     scaled_params, sites_list, indices_sites, models, space_forcing, space_spinup_forcing,
