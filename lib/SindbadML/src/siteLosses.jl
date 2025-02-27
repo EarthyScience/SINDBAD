@@ -72,7 +72,7 @@ function lossSite(new_params, gradient_lib, models, loc_forcing, loc_spinup_forc
 end
 
 """
-    getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_array_split, epoch_number, scaled_params, sites_list, indices_sites, models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, tem_run_spinup, param_to_index, loc_observations, cost_options, constraint_method) where {F}
+    getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_array_split, epoch_number, scaled_params, sites_list, indices_sites, models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, tem_run_spinup, param_to_index, space_observations, cost_options, constraint_method) where {F}
 
 Calculates the loss for all sites. The loss is calculated using the `loss_function` function. The `loss_array_sites` and `loss_array_split` arrays are updated with the loss values. The `loss_array_sites` array stores the loss values for each site and epoch, while the `loss_array_split` array stores the loss values for each model output and epoch.
 
@@ -94,13 +94,13 @@ Calculates the loss for all sites. The loss is calculated using the `loss_functi
 - `tem_info`: model information
 - `tem_run_spinup`: spinup information
 - `param_to_index`: parameter to index
-- `loc_observations`: observation data location
+- `space_observations`: observation data location
 - `cost_options`: cost options
 - `constraint_method`: constraint method
 """
 function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_array_split, epoch_number,
     scaled_params, sites_list, indices_sites, models, space_forcing, space_spinup_forcing,
-    loc_forcing_t, space_output, loc_land, tem_info, tem_run_spinup, param_to_index, loc_observations,
+    loc_forcing_t, space_output, loc_land, tem_info, tem_run_spinup, param_to_index, space_observations,
     cost_options, constraint_method) where {F}
     @sync begin
         for idx ∈ eachindex(indices_sites)
@@ -109,7 +109,7 @@ function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_
                 site_name = sites_list[idx]
                 loc_params = scaled_params(site=site_name)
                 loc_forcing = space_forcing[site_location]
-                loc_obs = loc_observations[site_location]
+                loc_obs = space_observations[site_location]
                 loc_output = space_output[site_location]
                 loc_spinup_forcing = space_spinup_forcing[site_location]
                 loc_cost_option = cost_options[site_location]
@@ -125,7 +125,7 @@ function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_
 end
 
 """
-    getInnerArgs(idx, grads_lib, scaled_params_batch, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, tem_run_spinup, param_to_index, loc_observations, cost_options, constraint_method, indices_batch, sites_batch)
+    getInnerArgs(idx, grads_lib, scaled_params_batch, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, tem_run_spinup, param_to_index, space_observations, cost_options, constraint_method, indices_batch, sites_batch)
 
 Function to get inner arguments for the loss function.
     
@@ -159,7 +159,7 @@ function getInnerArgs(idx, grads_lib,
     tem_info,
     tem_run_spinup,
     param_to_index,
-    loc_observations,
+    space_observations,
     cost_options,
     constraint_method,
     indices_batch,
@@ -170,7 +170,7 @@ function getInnerArgs(idx, grads_lib,
     # get site information
     x_vals = scaled_params_batch(site=site_name).data.data
     loc_forcing = space_forcing[site_location]
-    loc_obs = loc_observations[site_location]
+    loc_obs = space_observations[site_location]
     loc_output = space_output[site_location]
     loc_spinup_forcing = space_spinup_forcing[site_location]
     loc_cost_option = cost_options[site_location]
