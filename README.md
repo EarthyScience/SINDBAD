@@ -129,3 +129,11 @@ SINDBAD is developed at the Department of Biogeochemical Integration of the Max 
 with active contributions from [Sujan Koirala](https://www.bgc-jena.mpg.de/person/skoirala/2206), [Lazaro Alonso](https://www.bgc-jena.mpg.de/person/lalonso/2206), [Xu Shan](https://www.bgc-jena.mpg.de/person/138641/2206), [Hoontaek Lee](https://www.bgc-jena.mpg.de/person/hlee/2206), [Fabian Gans](https://www.bgc-jena.mpg.de/person/fgans/4777761), [Felix Cremer](https://www.bgc-jena.mpg.de/person/fcremer/2206), [Nuno Carvalhais](https://www.bgc-jena.mpg.de/person/ncarval/2206).
 
 For a full list of current and previous contributors, see https://earthyscience.github.io/Sindbad.jl/dev/pages/about/team
+
+## Copyright
+SINDBAD (Strategies to Integrate Data and Biogeochemical Models) A model data integration framework
+Copyright (C) 2025  Max-Planck-Gesellschaft zur Förderung der Wissenschaften
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3 of the License.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
