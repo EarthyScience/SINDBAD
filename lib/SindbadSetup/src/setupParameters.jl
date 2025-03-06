@@ -11,7 +11,7 @@ prepare a NT/Table of the SINDBAD models from a longtuple which is converted to 
 - `model_timestep`: time step of model run
 """
 function getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true)
-    selected_models = getTupleFromLongTable(selected_models)
+    selected_models = getTupleFromLongTuple(selected_models)
     return getParameters(selected_models, num_type, model_timestep; return_table=return_table)
 end
 
@@ -26,17 +26,30 @@ prepare a NT/Table of the SINDBAD models from a tuple
 - `model_timestep`: time step of model run
 """
 function getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
-    model_names_list = nameof.(typeof.(selected_models));
-    default = [flatten(selected_models)...]
-    constrains = metaflatten(selected_models, Models.bounds)
+    model_names_list = nameof.(typeof.(selected_models))
+
+    constrains = []
+    default = []
+    name = Symbol[]
+    model_approach = Symbol[]
+    for obj in selected_models
+        k_names = propertynames(obj)
+        push!(constrains, Models.bounds(obj)...)
+        push!(default, [getproperty(obj, name) for name in k_names]...)
+        push!(name, k_names...)
+        push!(model_approach, repeat([nameof(typeof(obj))], length(k_names))...)
+    end
+    # infer types by re-building
+    constrains = [c for c in constrains]
+    default = [d for d in default]
+
     nbounds = length(constrains)
-    lower = [constrains[i][1] for i ∈ 1:nbounds]
-    upper = [constrains[i][2] for i ∈ 1:nbounds]
-    name = [fieldnameflatten(selected_models)...] # SVector(flatten(x))
-    model_approach = [parentnameflatten(selected_models)...]
-    model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
-    name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
-    approach_func = [getfield(Models, m) for m ∈ model_approach]
+    lower = [constrains[i][1] for i in 1:nbounds]
+    upper = [constrains[i][2] for i in 1:nbounds]
+    
+    model = [Symbol(supertype(getproperty(Models, m))) for m in model_approach]
+    name_full = [join((model[i], name[i]), ".") for i in 1:nbounds]
+    approach_func = [getfield(Models, m) for m in model_approach]
     model_prev = model_approach[1]
     m_id = findall(x-> x==model_prev, model_names_list)[1]
     model_id = map(model_approach) do m
