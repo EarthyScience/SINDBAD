@@ -97,8 +97,11 @@ end
 _standard_name, _unit = get_name_units(info.settings.forcing.variables, :f_VPD)
 
 with_theme() do
-    _site_name = "US-Lin"
+    _site_name = Observable(test_names[1])
+    
     fig = Figure(; size=(1200, 1400), fontsize=18)
+    menu = Menu(fig, options = test_names, fontsize=16)
+
     ax = Axis(fig[1,1]; xgridstyle=:dash, ygridstyle=:dash)
     ax_gl = GridLayout(fig[2,1]; xgridstyle=:dash, ygridstyle=:dash)
     ax_t = [Axis(ax_gl[r, 1:7], ylabel="", ylabelrotation = 0,
@@ -122,34 +125,34 @@ with_theme() do
         else
             _units = rich("\n[$(_units)]", color=:steelblue4, font=:regular)
         end
-        lines!(ax_t[i], forcing.data[1].time, forcing.data[f_indx[f_var]](;site="US-Lin"); linewidth=0.5,
+        lines!(ax_t[i], forcing.data[1].time, @lift(forcing.data[f_indx[f_var]](; site= $(_site_name))); linewidth=0.5,
             color=:steelblue, #label = "$(_name) [$(_units)]"
             )
         ax_t[i].ylabel = rich("$(f_var)"[3:end], font=:bold, _units)
     end
     xlims!.(ax_t, forcing.data[1].time[1], forcing.data[1].time[end])
+    linkxaxes!.(ax_t...)
 
     ms = 13
     for (i, f_var) in enumerate(f_no_time)
-        _sdata = forcing.data[f_indx[f_var]](;site="US-Lin")
+        _sdata = @lift(forcing.data[f_indx[f_var]](;site= $(_site_name)))
         # @show f_var
-        if length(size(_sdata)) == 0
-            scatter!(ax_s[i], [Point2f(0, _sdata)];color=:steelblue, markersize=ms)
+        if length(size(_sdata[])) == 0
+            scatter!(ax_s[i], @lift([Point2f(0, $(_sdata))]); color=:steelblue, markersize=ms)
         else
             scatter!(ax_s[i], _sdata; color=:steelblue, markersize=ms)
         end
         _pft = if f_var == :f_pft
-            ": "*SindbadML.PFTlabels[Int(_sdata)]
+            @lift(ax_s[i].title = rich(rich("$(f_var)"[3:end]),
+                rich((": "*SindbadML.PFTlabels[Int($(_sdata))]), color=:steelblue)))
         else
-            ""
+            ax_s[i].title = rich(rich("$(f_var)"[3:end]))
         end
-
-        ax_s[i].title = rich(rich("$(f_var)"[3:end]), rich(_pft, color=:steelblue))
     end
 
     ax.xticks = (1:length(x_keys), x_keys[px])
 
-    ylims!(ax, -0.15, 9.5)
+    ylims!(ax, -0.15, 10.5)
     ylims!.(ax_s[1:6], -0.1, 1)
     ylims!.(ax_s[end], 0, 20)
 
@@ -157,9 +160,10 @@ with_theme() do
     [ax.xticks = 1:7 for ax in ax_s[1:4]]
 
     hidespines!(ax)
+
     Label(fig[1,1], "Test split, fold 1", tellwidth=false, tellheight=false,
         halign=1, valign=1, color=:grey25, font=:bold)
-    Label(fig[1,1], rich("US-Lin", color=:steelblue, font=:bold),
+    Label(fig[1,1], @lift(rich($(_site_name), color=:steelblue, font=:bold)),
         tellwidth=false, tellheight=false,
         halign=0, valign=1,)
     hidespines!.(ax_t)
@@ -167,5 +171,12 @@ with_theme() do
     hidespines!.(ax_s)
     rowsize!(fig.layout, 2, Auto(2))
     rowgap!(ax_gl, 10)
+
+    fig[1, 1, TopLeft()] = vgrid!(
+        GLMakie.Label(fig, "", width = nothing),
+        menu; tellheight = false, width = 100, tellwidth=false)
+    on(menu.selection) do s
+        _site_name[] = s
+    end
     fig
 end
