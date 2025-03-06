@@ -29,9 +29,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Julia
-        uses: julia-actions/setup-julia@v1
+        uses: julia-actions/setup-julia@v2
       - name: Pull Julia cache
-        uses: julia-actions/cache@v1
+        uses: julia-actions/cache@v2
       - name: Install documentation dependencies
         run: julia --project=docs -e 'using Pkg; pkg"dev . ./lib/SindbadUtils ./lib/SindbadData ./lib/SindbadMetrics ./lib/SindbadSetup ./lib/SindbadTEM ./lib/SindbadML"; Pkg.instantiate(); Pkg.precompile(); Pkg.status()'
       - name: Build and deploy docs
