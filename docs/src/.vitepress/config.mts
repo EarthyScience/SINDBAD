@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
+import path from 'path'
 
 // https://vitepress.dev/reference/site-config
 
@@ -101,6 +102,11 @@ export default defineConfig({
   ],
   
   vite: {
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, '../components')
+      }
+    },
     build: {
       assetsInlineLimit: 0, // so we can tell whether we have created inlined images or not, we don't let vite inline them
     },
@@ -143,10 +149,8 @@ export default defineConfig({
     sidebar: sidebar,
     socialLinks: [
       {
-        icon: {
-          svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#30353e"/><path fill="#e24329" d="M84 215l43-133c2-7 12-7 14 0l115 353L371 82c2-7 12-7 14 0l43 133"/><path fill="#fc6d26" d="M256 435L84 215h100.4zm71.7-220H428L256 435l71.6-220z"/><path fill="#fca326" d="M84 215l-22 67c-2 6 0 13 6 16l188 137zm344 0l22 67c2 6 0 13-6 16L256 435z"/></svg>'
-        },
-        link: 'https://git.bgc-jena.mpg.de/sindbad/sindbad.jl',
+        icon: "github",
+        link: 'https://github.com/EarthyScience/SINDBAD',
         // You can include a custom label for accessibility too (optional but recommended):
         ariaLabel: 'repo address'
       },
