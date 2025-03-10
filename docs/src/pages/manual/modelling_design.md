@@ -387,7 +387,8 @@ start_time = DateTime("2025-01-01")
 end_time = DateTime("2025-01-10")
 time_interval = start_time:Day(1):end_time
 # attach a time dimension
-dd_flux = DimArray(g_flux,  (Ti=time_interval, ); name=:g_flux,)
+# the Array view is not working anymore, report issue to DD, note the [:]
+dd_flux = DimArray(g_flux[:],  (Ti=time_interval, ); name=:g_flux,) 
 # plot
 lines(dd_flux; figure = (; size = (600, 300)))
 ```
