@@ -13,6 +13,7 @@ module SindbadData
     using NCDatasets
     using YAXArrays
     using Zarr
+    using YAXArrayBase
 
     include("inputTypes.jl")
     include("utilsData.jl")
