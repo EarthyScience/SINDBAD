@@ -40,7 +40,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => true,
     "experiment.flags.catch_model_errors" => false,
-    "experiment.flags.spinup_TEM" => false,
+    "experiment.flags.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
     "experiment.exe_rules.model_array_type" => model_array_type,
     "experiment.model_output.path" => path_output,
@@ -58,10 +58,10 @@ tbl_params = getParameters(info.models.forward,
     info.helpers.numbers.num_type,
     info.helpers.dates.temporal_resolution)
 
-forcing = getForcing(info)
+forcing = getForcing(info);
 
-run_helpers = prepTEM(forcing, info)
-@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
+run_helpers = prepTEM(forcing, info);
+@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info);
 
 @time output_all = runExperimentFullOutput(experiment_json; replace_info=replace_info);
 output_data = values(output_all.output)
