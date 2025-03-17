@@ -122,7 +122,7 @@ losses = map(costOpt) do var_row
         def_pix = getArrayView(def_var, lsi)
         obs_pix = getArrayView(obs_var, lsi)
         obs_σ_pix = getArrayView(obs_σ, lsi)
-        [loss(obs_pix, obs_σ_pix, def_pix, lossMetric), metric(obs_pix, obs_σ_pix, opt_pix, lossMetric)]
+        [metric(obs_pix, obs_σ_pix, def_pix, lossMetric), metric(obs_pix, obs_σ_pix, opt_pix, lossMetric)]
     end
 
 
@@ -130,9 +130,9 @@ losses = map(costOpt) do var_row
     b_range = range(-1, 1, length=50)
     p_title = "$(var_row.variable) ($(nameof(typeof(lossMetric))))"
     histogram(first.(loss_space); title=p_title, size=(2000, 1000),bins=b_range, alpha=0.5, label="default", color="#FDB311")
-    vline!([loss(obs_var, obs_σ, def_var, lossMetric)], label="default_spatial", color="#FDB311")
+    vline!([metric(obs_var, obs_σ, def_var, lossMetric)], label="default_spatial", color="#FDB311")
     histogram!(last.(loss_space); size=(2000, 1000), bins=b_range, alpha=0.5, label="optimized", color="#18A15C")
-    vline!([loss(obs_var, obs_σ, opt_var, lossMetric)], label="optimized_spatial", color="#18A15C")
+    vline!([metric(obs_var, obs_σ, opt_var, lossMetric)], label="optimized_spatial", color="#18A15C")
     xlabel!("")
     savefig(joinpath(info.output.dirs.figure, "obs_vs_pred_$(var_row.variable).png"))
 
