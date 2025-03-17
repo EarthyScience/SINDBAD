@@ -20,6 +20,7 @@ aggregate the data based on the order of aggregation.
 aggregateData
 
 function aggregateData(dat, cost_option, ::TimeSpace)
+    @debug "aggregating data", size(dat)
     dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
     return dat
@@ -30,6 +31,30 @@ function aggregateData(dat, cost_option, ::SpaceTime)
     dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     return dat
 end
+
+
+"""
+    aggregateObsData(y, yσ, cost_option, ::DoAggrObs)
+    aggregateObsData(y, yσ, _, ::DoNotAggrObs)
+
+# Arguments:
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `cost_option`: information for a observation constraint on how it should be used to calculate the loss/metric of model performance
+- `::DoAggrObs`: appropriate type dispatch for aggregation of observation data
+- `::DoNotAggrObs`: appropriate type dispatch for not aggregating observation data
+"""
+aggregateObsData
+
+function aggregateObsData(y, cost_option, ::DoAggrObs)
+    y = aggregateData(y, cost_option, cost_option.aggr_order)
+    return y
+end
+
+function aggregateObsData(y, _, ::DoNotAggrObs)
+    return y
+end
+
 
 """
     applySpatialWeight(y, yσ, ŷ, cost_option, ::DoSpatialWeight)
@@ -117,6 +142,24 @@ function filterCommonNaN(y, yσ, ŷ)
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
+
+function filterInvalids(ŷ, idxs)
+    ŷ[.!idxs] .= eltype(ŷ)(NaN)
+    return ŷ
+end
+
+function getHarmonizedData(y, yσ, ŷ, cost_option)
+    
+    # ŷ = filterInvalids(ŷ, cost_option.valids)
+    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
+    y = aggregateObsData(y, cost_option, cost_option.aggr_obs)
+    yσ = aggregateObsData(yσ, cost_option, cost_option.aggr_obs)
+
+    (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
+    (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
+    return (y, yσ, ŷ)
+end
+
 """
     getData(model_output::LandWrapper, observations, cost_option)
     getData(model_output::NamedTuple, observations, cost_option)
@@ -143,12 +186,7 @@ function getData(model_output::LandWrapper, observations, cost_option)
         yσ = yσ[:]
     end
     # ymask = observations[obs_ind + 2]
-    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
-
-    y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
-
-    (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
-
+    y, yσ, ŷ = getHarmonizedData(y, yσ, ŷ, cost_option)
     return (y, yσ, ŷ)
 end
 
@@ -170,11 +208,7 @@ function getData(model_output::NamedTuple, observations, cost_option)
     end
     # ymask = observations[obs_ind + 2]
 
-    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
-
-    y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
-
-    (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
+    y, yσ, ŷ = getHarmonizedData(y, yσ, ŷ, cost_option)
 
     return (y, yσ, ŷ)
 end
@@ -187,39 +221,9 @@ function getData(model_output::AbstractArray, observations, cost_option)
     end
     y = observations[obs_ind]
     yσ = observations[obs_ind+1]
-    # ymask = observations[obs_ind + 2]
-
-    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
-
-    y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
-
-    (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
+    y, yσ, ŷ = getHarmonizedData(y, yσ, ŷ, cost_option)
     return (y, yσ, ŷ)
 end
-
-"""
-    aggregateObsData(y, yσ, cost_option, ::DoAggrObs)
-    aggregateObsData(y, yσ, _, ::DoNotAggrObs)
-
-# Arguments:
-- `y`: observation data
-- `yσ`: observational uncertainty data
-- `cost_option`: information for a observation constraint on how it should be used to calculate the loss/metric of model performance
-- `::DoAggrObs`: appropriate type dispatch for aggregation of observation data
-- `::DoNotAggrObs`: appropriate type dispatch for not aggregating observation data
-"""
-aggregateObsData
-
-function aggregateObsData(y, yσ, cost_option, ::DoAggrObs)
-    y = aggregateData(y, cost_option, cost_option.aggr_order)
-    yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
-    return y, yσ
-end
-
-function aggregateObsData(y, yσ, _, ::DoNotAggrObs)
-    return y, yσ
-end
-
 """
     getLossVector(model_output::LandWrapper, observations, cost_options)
     getLossVector(model_output, observations, cost_options)
@@ -235,12 +239,12 @@ getLossVector
 
 function getLossVector(model_output, observations, cost_options)
     loss_vector = map(cost_options) do cost_option
-        @debug "$(cost_option.variable)"
+        @debug "***cost for $(cost_option.variable)***"
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
-        metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
+        # (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
+        metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
             metr = oftype(metr, 1e19)
         end
@@ -258,7 +262,7 @@ function getLossVector(model_output::LandWrapper, observations, cost_options)
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ), size(idxs)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ) ## cannot use the valids because LandWrapper produces vector
-        metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
+        metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
             metr = oftype(metr, 1e19)
         end
