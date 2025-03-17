@@ -98,12 +98,12 @@ reads forcing data from the `data_path` specified in the info NT and returns a n
 
 """
 function getForcing(info::NamedTuple)
-    nc = nothing
+    nc_default = nothing
     data_path = info.settings.forcing.default_forcing.data_path
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
         @info "getForcing: default_data_path: $(data_path)"
-        nc = loadDataFile(data_path)
+        nc_default = loadDataFile(data_path)
     end
     data_backend = getfield(SindbadData, toUpperCaseFirst(info.helpers.run.input_data_backend, "Backend"))()
 
@@ -125,6 +125,7 @@ function getForcing(info::NamedTuple)
     f_dimension = nothing
     num_type = Val{info.helpers.numbers.num_type}()
     incubes = map(forcing_vars) do k
+        nc = nc_default
         vinfo = getCombinedNamedTuple(default_info, info.settings.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)
