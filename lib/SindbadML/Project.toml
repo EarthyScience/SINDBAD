@@ -30,3 +30,11 @@ Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 [compat]
 DiskArrays = "0.4.9"
 PolyesterForwardDiff = "0.1.2"
+
+[sources]
+Sindbad = { path = "../.." }
+SindbadUtils = { path = "../../lib/SindbadUtils"}
+SindbadData = { path = "../../lib/SindbadData"}
+SindbadMetrics = { path = "../../lib/SindbadMetrics"}
+SindbadSetup = { path = "../../lib/SindbadSetup"}
+SindbadTEM = { path = "../../lib/SindbadTEM"}
