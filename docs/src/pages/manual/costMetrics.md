@@ -36,7 +36,7 @@ Note that the ```NewMetirc``` should
 Once the type is defined, it should be used as. dispatch in the loss function in ```metrics.jl```
 
 ````julia
-function loss(y, yσ, ŷ, ::NewMetirc)
+function metric(y, yσ, ŷ, ::NewMetirc)
     new_metric = f(y, yσ, ŷ)
     return new_metric
 end

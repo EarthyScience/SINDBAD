@@ -97,10 +97,21 @@
     "restart_file": null,
     "sequence": [
       {
-        "forcing": "first_year",
-        "n_repeat": 200,
+        "forcing": "mean",
+        "n_repeat": 2000,
+        "spinup_mode": "all_forward_models"
+      },
+      {
+        "forcing": "day_MSC",
+        "n_repeat": 10,
+        "spinup_mode": "all_forward_models"
+      },
+      {
+        "forcing": "all_years",
+        "n_repeat": 1,
         "spinup_mode": "all_forward_models"
       }
     ]
+
   }
 }

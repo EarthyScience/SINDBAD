@@ -3,6 +3,9 @@ export getTimeAggregatorTypeInstance
 export SindbadTimeAggregator
 export TimeAllYears
 export TimeArray
+export TimeHour
+export TimeHourAnomaly
+export TimeHourDayMean
 export TimeDay
 export TimeDayAnomaly
 export TimeDayIAV
@@ -28,6 +31,9 @@ abstract type SindbadTimeAggregator end
 
 struct TimeAllYears <: SindbadTimeAggregator end
 struct TimeArray <: SindbadTimeAggregator end
+struct TimeHour <: SindbadTimeAggregator end
+struct TimeHourAnomaly <: SindbadTimeAggregator end
+struct TimeHourDayMean <: SindbadTimeAggregator end
 struct TimeDay <: SindbadTimeAggregator end
 struct TimeDayAnomaly <: SindbadTimeAggregator end
 struct TimeDayIAV <: SindbadTimeAggregator end
