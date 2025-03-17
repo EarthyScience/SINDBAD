@@ -93,43 +93,49 @@ a function to create a temporal aggregation struct for a given time step
 
 # Arguments:
 - `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `t_step`: a string defining the aggregation time target
+- `t_step`: a string/Symbol/Type defining the aggregation time target with different types as follows:
+  - `::Union{String, Symbol}`: a string/Symbol defining the aggregation time target from the settings
+  - `::TimeMean`: aggregation to mean over all time steps
+  - `::TimeDay`: aggregation to daily time steps
+  - `::TimeDayAnomaly`: aggregation to daily anomalies
+  - `::TimeDayIAV`: aggregation to daily IAV
+  - `::TimeDayMSC`: aggregation to daily MSC
+  - `::TimeDayMSCAnomaly`: aggregation to daily MSC anomalies
+  - `::TimeHour`: aggregation to daily time steps
+  - `::TimeHourAnomaly`: aggregation to daily anomalies
+  - `::TimeHourIAV`: aggregation to daily IAV
+  - `::TimeHourMSC`: aggregation to daily MSC
+  - `::TimeHourMSCAnomaly`: aggregation to daily MSC anomalies
+  - `::TimeFirstYear`: aggregation/slicing of the first year
+  - `::TimeMonth`: aggregation to monthly time steps
+  - `::TimeMonthAnomaly`: aggregation to monthly anomalies
+  - `::TimeMonthIAV`: aggregation to monthly IAV
+  - `::TimeMonthMSC`: aggregation to monthly MSC
+  - `::TimeMonthMSCAnomaly`: aggregation to monthly MSC anomalies
+  - `::TimeRandomYear`: aggregation/slicing of a random year
+  - `::TimeShuffleYears`: aggregation/slicing of shuffled years
+  - `::TimeSizedArray`: aggregation to a sized array
+  - `::TimeYear`: aggregation to yearly time steps
+  - `::TimeYearAnomaly`: aggregation to yearly anomalies
 - `aggr_func`: a function to use for aggregation, defaults to mean
 - `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
+
 """
-function createTimeAggregator(date_vector, t_step, aggr_func=mean, skip_aggregation=false)
+createTimeAggregator
+
+
+function createTimeAggregator(date_vector, t_step::Union{String, Symbol}, aggr_func=mean, skip_aggregation=false)
     return createTimeAggregator(date_vector, getTimeAggregatorTypeInstance(t_step), aggr_func, skip_aggregation)
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeMean, aggr_func = mean)
-
-a function to create a temporal aggregation struct for temporal mean
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeMean`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-"""
-function createTimeAggregator(date_vector, ::TimeMean, aggr_func=mean)
+function createTimeAggregator(date_vector, ::TimeMean, aggr_func=mean, skip_aggregation=false)
     stepvectime = getTimeArray([1:length(date_vector)], getTypeOfTimeIndexArray())
     mean_agg = TimeAggregator(stepvectime, aggr_func)
     return [mean_agg,]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeDay, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for daily time step
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeDay`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeDay, aggr_func=mean, skip_aggregation=false)
-    stepvectime = [getTimeArray([t], getTypeOfTimeIndexArray()) for t in 1:length(date_vector)]
+    stepvectime = getIndicesForTimeGroups(day.(date_vector))
     day_agg = TimeAggregator(stepvectime, aggr_func)
     if skip_aggregation
         day_agg = nothing
@@ -137,34 +143,12 @@ function createTimeAggregator(date_vector, ::TimeDay, aggr_func=mean, skip_aggre
     return [day_agg,]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeDayAnomaly, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for daily anomalies
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeDayAnomaly`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeDayAnomaly, aggr_func=mean, skip_aggregation=false)
     day_agg = createTimeAggregator(date_vector, TimeDay(), aggr_func, skip_aggregation)
     mean_agg = createTimeAggregator(date_vector, TimeMean(), aggr_func)
     return [day_agg[1], mean_agg[1]]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeDayIAV, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for anomalies of daily interannual variability
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeDayIAV`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeDayIAV, aggr_func=mean, skip_aggregation=false)
     days = dayofyear.(date_vector)
     day_aggr = createTimeAggregator(date_vector, TimeDay(), aggr_func, skip_aggregation)
@@ -175,17 +159,6 @@ function createTimeAggregator(date_vector, ::TimeDayIAV, aggr_func=mean, skip_ag
     return [day_aggr[1], dayIav_agg]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeDayMSC, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for daily mean seasonal cycle
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeDayMSC`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeDayMSC, aggr_func=mean, skip_aggregation=false)
     days = dayofyear.(date_vector)
     daysMsc = unique(days)
@@ -194,70 +167,47 @@ function createTimeAggregator(date_vector, ::TimeDayMSC, aggr_func=mean, skip_ag
     return [dat_msc_agg,]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeDayMSCAnomaly, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for anomalies of daily mean seasonal cycle
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeDayMSCAnomaly`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeDayMSCAnomaly, aggr_func=mean, skip_aggregation=false)
     dat_msc_agg = createTimeAggregator(date_vector, TimeDayMSC(), aggr_func, skip_aggregation)
     mean_agg = createTimeAggregator(date_vector, TimeMean(), aggr_func)
     return [dat_msc_agg[1], mean_agg[1]]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeMonth, aggr_func = mean, skip_aggregation = false)
 
-a function to create a temporal aggregation struct for monthly time step
+function createTimeAggregator(date_vector, ::TimeHour, aggr_func=mean, skip_aggregation=false)
+    stepvectime = getIndicesForTimeGroups(hour.(date_vector))
+    hour_agg = TimeAggregator(stepvectime, aggr_func)
+    if skip_aggregation
+        hour_agg = nothing
+    end
+    return [hour_agg,]
+end
 
+function createTimeAggregator(date_vector, ::TimeHourAnomaly, aggr_func=mean, skip_aggregation=false)
+    hour_agg = createTimeAggregator(date_vector, TimeHour(), aggr_func, skip_aggregation)
+    mean_agg = createTimeAggregator(date_vector, TimeMean(), aggr_func)
+    return [hour_agg[1], mean_agg[1]]
+end
 
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeMonth`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
+function createTimeAggregator(date_vector, ::TimeHourDayMean, aggr_func=mean, skip_aggregation=false)
+    hours = hour.(date_vector)
+    hours_day = unique(hours)
+    t_hour_msc_agg = TimeAggregator([getTimeArray(findall(==(hh), hours), getTypeOfTimeIndexArray()) for hh in hours_day], aggr_func)
+    return [t_hour_msc_agg,]
+end
+
 function createTimeAggregator(date_vector, ::TimeMonth, aggr_func=mean, skip_aggregation=false)
     stepvectime = getIndicesForTimeGroups(month.(date_vector))
     month_agg = TimeAggregator(stepvectime, aggr_func)
     return [month_agg,]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeMonthAnomaly, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for anomalies of monthly time series
-
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeMonthAnomaly`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeMonthAnomaly, aggr_func=mean, skip_aggregation=false)
     month_agg = createTimeAggregator(date_vector, TimeMonth(), aggr_func, skip_aggregation)
     mean_agg = createTimeAggregator(date_vector, TimeMean(), aggr_func)
     return [month_agg[1], mean_agg[1]]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeMonthIAV, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for interannual variability of monthly time series
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeMonthIAV`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeMonthIAV, aggr_func=mean, skip_aggregation=false)
     months = month.(date_vector) # month for each time step, size = number of time steps
     month_aggr = createTimeAggregator(date_vector, TimeMonth(), aggr_func, skip_aggregation) #to get the month per month, size = number of months
@@ -269,17 +219,6 @@ function createTimeAggregator(date_vector, ::TimeMonthIAV, aggr_func=mean, skip_
     return [month_aggr[1], monthIav_agg]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeMonthMSC, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for mean seasonal cycle of monthly time series
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeMonthMSC`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeMonthMSC, aggr_func=mean, skip_aggregation=false)
     months = month.(date_vector)
     monthsMsc = unique(months)
@@ -287,85 +226,30 @@ function createTimeAggregator(date_vector, ::TimeMonthMSC, aggr_func=mean, skip_
     return [t_month_msc_agg,]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeMonthMSCAnomaly, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for anomalies of mean seasonal cycle of monthly time series
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeMonthMSCAnomaly`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeMonthMSCAnomaly, aggr_func=mean, skip_aggregation=false)
     t_month_msc_agg = createTimeAggregator(date_vector, TimeMonthMSC(), aggr_func, skip_aggregation)
     mean_agg = createTimeAggregator(date_vector, TimeMean(), aggr_func)
     return [t_month_msc_agg[1], mean_agg[1]]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeYear, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for annual time series
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeYear`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeYear, aggr_func=mean, skip_aggregation=false)
     stepvectime = getTimeArray(getIndicesForTimeGroups(year.(date_vector)), getTypeOfTimeIndexArray())
     year_agg = TimeAggregator(stepvectime, aggr_func)
     return [year_agg,]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeYearAnomaly, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for anomalies of annual time series
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeYearAnomaly`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeYearAnomaly, aggr_func=mean, skip_aggregation=false)
     year_agg = createTimeAggregator(date_vector, TimeYear(), aggr_func, skip_aggregation)
     mean_agg = createTimeAggregator(date_vector, TimeMean(), aggr_func)
     return [year_agg[1], mean_agg[1]]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeallYears, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct returning the data of all years
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeAllYears`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeAllYears, aggr_func=mean, skip_aggregation=false)
     stepvectime = getTimeArray([1:length(date_vector)], getTypeOfTimeIndexArray())
     all_agg = TimeAggregator(stepvectime, aggr_func)
     return [all_agg,]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeFirstYear, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for retrieving the data of the first year in the time series
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeFirstYear`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeFirstYear, aggr_func=mean, skip_aggregation=false)
     years = year.(date_vector)
     first_year = minimum(years)
@@ -374,17 +258,6 @@ function createTimeAggregator(date_vector, ::TimeFirstYear, aggr_func=mean, skip
     return [year_agg,]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeRandomYear, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for retrieving the data of a random year within the time series
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeRandomYear`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeRandomYear, aggr_func=mean, skip_aggregation=false)
     years = year.(date_vector)
     random_year = rand(unique(years))
@@ -393,17 +266,6 @@ function createTimeAggregator(date_vector, ::TimeRandomYear, aggr_func=mean, ski
     return [year_agg,]
 end
 
-"""
-    createTimeAggregator(date_vector, ::TimeShuffleYears, aggr_func = mean, skip_aggregation = false)
-
-a function to create a temporal aggregation struct for shuffling the years of the data
-
-# Arguments:
-- `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeShuffleYears`: a type defining the aggregation time target
-- `aggr_func`: a function to use for aggregation, defaults to mean
-- `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
-"""
 function createTimeAggregator(date_vector, ::TimeShuffleYears, aggr_func=mean, skip_aggregation=false)
     years = year.(date_vector)
     unique_years = unique(years)
@@ -453,20 +315,20 @@ end
 
 
 """
-    getTimeArray(ar, ::TimeSizedArray)
+    getTimeArray(ar, ::TimeSizedArray || ::TimeArray)
 
-a helper function to get the array of indices as static array
+a helper function to get the array of indices
+
+# Arguments:
+- `ar`: an array of time
+- array type: a type defining the type of array to be returned
+    - `::TimeSizedArray`: indices as static array
+    - `::TimeArray`: indices as normal array
 """
 function getTimeArray(ar, ::TimeSizedArray)
     return SizedArray{Tuple{size(ar)...},eltype(ar)}(ar)
 end
 
-
-"""
-    getTimeArray(ar, ::TimeArray)
-
-a helper function to get the array of indices as normal array
-"""
 function getTimeArray(ar, ::TimeArray)
     return ar
 end
@@ -487,92 +349,59 @@ end
 
 
 """
-    temporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim = 1)
+    doTemporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim = 1)
 
 a temporal aggregation function to aggregate the data using a given aggregator when the input data is an array
 
 # Arguments:
-- `dat`: a data array/vector to aggregate
+- `dat`: a data array/vector to aggregate with function for the following types:
+  - `::AbstractArray`: an array
+  - `::SubArray`: a view of an array
+  - `::Nothing`: a dummy type to return the input and do no aggregation data
 - `temporal_aggregator`: a time aggregator struct with indices and function to do aggregation
 - `dim`: the dimension along which the aggregation should be done
 """
-function temporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim=1)
-    dat = view(dat, temporal_aggregator, dim=dim)
-    return dat
-end
+doTemporalAggregation
 
-"""
-    temporalAggregation(dat::SubArray, temporal_aggregator::TimeAggregator, dim = 1)
-
-a temporal aggregation function to aggregate the data using a given aggregator when the input data is a view
-
-# Arguments:
-- `dat`: a data array/vector to aggregate
-- `temporal_aggregator`: a time aggregator struct with indices and function to do aggregation
-- `dim`: the dimension along which the aggregation should be done
-"""
-function temporalAggregation(dat::SubArray, temporal_aggregator::TimeAggregator, dim=1)
+function doTemporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim=1)
     dat = view(dat, temporal_aggregator, dim=dim)
     return getTimeAggrArray(dat)
 end
 
-# works for everything for which no aggregation is needed
-"""
-    temporalAggregation(dat, temporal_aggregator::Nothing, dim = 1)
+function doTemporalAggregation(dat::SubArray, temporal_aggregator::TimeAggregator, dim=1)
+    dat = view(dat, temporal_aggregator, dim=dim)
+    return getTimeAggrArray(dat)
+end
 
-a dummy temporal aggregation function to return the original data
-
-# Arguments:
-- `dat`: a data array/vector to aggregate
-- `temporal_aggregator`: a time aggregator struct with indices and function to do aggregation
-- `dim`: the dimension along which the aggregation should be done
-"""
-function temporalAggregation(dat, temporal_aggregator::Nothing, dim=1)
+function doTemporalAggregation(dat, temporal_aggregator::Nothing, dim=1)
     return dat
 end
 
 """
-    temporalAggregation(dat, temporal_aggregators, TNoDiff)
+    temporalAggregation(dat, temporal_aggregators, aggregation_type)
 
-a temporal aggregation function to index the data using indices in the aggregator
+a temporal aggregation function to aggregate the data using a vector of aggregators
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
 - `temporal_aggregators`: a vector of time aggregator structs with indices and function to do aggregation
-- `::TimeNoDiff`: a type defining that the aggregator does not require removing/reducing values from original time series
+- aggregation_type: a type defining the type of aggregation to be done as follows:
+    - `::TimeNoDiff`: a type defining that the aggregator does not require removing/reducing values from original time series
+    - `::TimeDiff`: a type defining that the aggregator requires removing/reducing values from original time series. First aggregator aggregates the main time series, second aggregator aggregates to the time series to be removed.
+    - `::TimeIndexed`: a type defining that the aggregator requires indexing the original time series
 """
+temporalAggregation
+
 function temporalAggregation(dat, temporal_aggregators, ::TimeIndexed)
     return dat[first(temporal_aggregators).indices...]
-    # return temporalAggregation(dat, first(temporal_aggregators)).indices[1]
 end
 
-
-"""
-    temporalAggregation(dat, temporal_aggregators, TNoDiff)
-
-a temporal aggregation function to aggregate the data using a given aggregator without removing/subtracting a second array
-
-# Arguments:
-- `dat`: a data array/vector to aggregate
-- `temporal_aggregators`: a vector of time aggregator structs with indices and function to do aggregation
-- `::TimeNoDiff`: a type defining that the aggregator does not require removing/reducing values from original time series
-"""
 function temporalAggregation(dat, temporal_aggregators, ::TimeNoDiff)
-    return temporalAggregation(dat, first(temporal_aggregators))
+    return doTemporalAggregation(dat, first(temporal_aggregators))
 end
 
-"""
-    temporalAggregation(dat, temporal_aggregators, TDiff})
-
-a temporal aggregation function to aggregate the data using a given aggregator including removal/subtraction of second array
-
-# Arguments:
-- `dat`: a data array/vector to aggregate
-- `temporal_aggregators`: a vector of time aggregator structs with indices and function to do aggregation
-- `::TimeDiff`: a type defining that the aggregator requires removing/reducing values from original time series. First aggregator aggregates the main time series, second aggregagor aggregates to the time series to be removed.
-"""
 function temporalAggregation(dat, temporal_aggregators, ::TimeDiff)
-    dat_agg = temporalAggregation(dat, first(temporal_aggregators))
-    dat_agg_to_remove = temporalAggregation(dat, last(temporal_aggregators))
+    dat_agg = doTemporalAggregation(dat, first(temporal_aggregators))
+    dat_agg_to_remove = doTemporalAggregation(dat, last(temporal_aggregators))
     return dat_agg .- dat_agg_to_remove
 end

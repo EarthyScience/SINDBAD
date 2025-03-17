@@ -74,12 +74,12 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     default_info = info.settings.optimization.observations.default_observation
     tar_dims = getTargetDimensionOrder(info)
 
-    nc = nothing
+    nc_default = nothing
 
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
         @info "getObservation:  default_observation_data_path: $(data_path)"
-        nc = loadDataFile(data_path)
+        nc_default = loadDataFile(data_path)
     end
 
     varnames = Symbol.(info.settings.optimization.observational_constraints)
@@ -103,7 +103,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         vinfo = getproperty(info.settings.optimization.observations.variables, k)
 
         src_var = vinfo.data.source_variable
-
+        nc = nc_default
         nc, yax, vinfo_data, bounds_data = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :data, info)
 
         # get quality flags data and use it later to mask observations. Set to value of 1 when :qflag field is not given for a data stream or all are turned off by setting info.settings.optimization.observations.use_quality_flag to false

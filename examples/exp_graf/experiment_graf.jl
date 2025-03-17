@@ -122,7 +122,7 @@ losses = map(costOpt) do var_row
         def_pix = getArrayView(def_var, lsi)
         obs_pix = getArrayView(obs_var, lsi)
         obs_σ_pix = getArrayView(obs_σ, lsi)
-        [loss(obs_pix, obs_σ_pix, def_pix, lossMetric), loss(obs_pix, obs_σ_pix, opt_pix, lossMetric)]
+        [loss(obs_pix, obs_σ_pix, def_pix, lossMetric), metric(obs_pix, obs_σ_pix, opt_pix, lossMetric)]
     end
 
 
@@ -138,6 +138,6 @@ losses = map(costOpt) do var_row
 
     # @show "plot obs", v, lossMetric
 
-    # @show "plot obs", v, loss(obs_var, obs_σ, def_var, lossMetric), loss(obs_var, obs_σ, opt_var, lossMetric)
+    # @show "plot obs", v, metric(obs_var, obs_σ, def_var, lossMetric), metric(obs_var, obs_σ, opt_var, lossMetric)
     # @show size(obs_var), size(def_var)
 end
