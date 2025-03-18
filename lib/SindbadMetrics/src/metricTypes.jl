@@ -87,3 +87,13 @@ struct CostMaximum <: SindbadSpatialCostAggr end
 struct CostMinimum <: SindbadSpatialCostAggr end
 struct CostSum <: SindbadSpatialCostAggr end
 struct SpatiallyVariable <: SindbadSpatialCostAggr end
+
+export SindbadParameterScaling
+export DoNotScale
+export ScaleToDefault
+export ScaleToBounds
+
+abstract type SindbadParameterScaling end
+struct DoNotScale <: SindbadParameterScaling end
+struct ScaleToDefault <: SindbadParameterScaling end
+struct ScaleToBounds <: SindbadParameterScaling end
