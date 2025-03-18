@@ -1,7 +1,5 @@
-export combineLoss
 export filterCommonNaN
 export getData
-export lossVector
 export getModelOutputView
 
 """
@@ -82,40 +80,6 @@ function applySpatialWeight(y, yσ, ŷ, _, ::DoNotSpatialWeight)
     return y, yσ, ŷ
 end
 
-"""
-    combineLoss(loss_vector::AbstractArray, ::CostSum)
-    combineLoss(loss_vector::AbstractArray, ::CostMinimum)
-    combineLoss(loss_vector::AbstractArray, ::CostMaximum)
-    combineLoss(loss_vector::AbstractArray, percentile_value::T)
-
-combines the loss from all constraints based on the type of combination.
-
-# Arguments:
-- `loss_vector`: a vector of losses for variables
-
-## methods for combining the loss
-- `::CostSum`: return the total sum as the cost.
-- `::CostMinimum`: return the minimum of the `loss_vector` as the cost.
-- `::CostMaximum`: return the maximum of the `loss_vector` as the cost.
-- `percentile_value::T`: `percentile_value^th` percentile of cost of each constraint as the overall cost
-
-"""
-function combineLoss end
-function combineLoss(loss_vector::AbstractArray, ::CostSum)
-    return sum(loss_vector)
-end
-
-function combineLoss(loss_vector::AbstractArray, ::CostMinimum)
-    return minimum(loss_vector)
-end
-
-function combineLoss(loss_vector::AbstractArray, ::CostMaximum)
-    return maximum(loss_vector)
-end
-
-function combineLoss(loss_vector::AbstractArray, percentile_value::T) where {T<:Real}
-    return percentile(loss_vector, percentile_value)
-end
 
 """
     filterCommonNaN(y, yσ, ŷ, idxs)
@@ -238,56 +202,6 @@ function getModelOutputView(_dat::AbstractArray{<:Any,N}) where N
         ind
     end
     @view _dat[inds...]
-end
-
-
-"""
-    lossVector(model_output::LandWrapper, observations, cost_options)
-    lossVector(model_output, observations, cost_options)
-   
-returns a vector of losses for variables in info.cost_options.observational_constraints   
-
-# Arguments:
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT
-- `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance    
-"""
-lossVector
-
-function lossVector(model_output, observations, cost_options)
-    loss_vector = map(cost_options) do cost_option
-        @debug "***cost for $(cost_option.variable)***"
-        lossMetric = cost_option.cost_metric
-        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        # (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
-        metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
-        if isnan(metr)
-            metr = oftype(metr, 1e19)
-        end
-        @debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
-        metr
-    end
-    @debug "\n-------------------\n"
-    return loss_vector
-end
-
-function lossVector(model_output::LandWrapper, observations, cost_options)
-    loss_vector = map(cost_options) do cost_option
-        @debug "$(cost_option.variable)"
-        lossMetric = cost_option.cost_metric
-        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ), size(idxs)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ) ## cannot use the valids because LandWrapper produces vector
-        metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
-        if isnan(metr)
-            metr = oftype(metr, 1e19)
-        end
-        @debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
-        metr
-    end
-    @debug "\n-------------------\n"
-    return loss_vector
 end
 
 

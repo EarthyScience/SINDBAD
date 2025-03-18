@@ -9,7 +9,8 @@ module SindbadMetrics
     using StatsBase: mean, percentile, cor, corspearman
 
     include("metricTypes.jl")
-    include("metrics.jl")
+    include("handleDataForLoss.jl")
     include("getLoss.jl")
+    include("metrics.jl")
 
 end # module SindbadMetrics
