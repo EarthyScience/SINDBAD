@@ -19,19 +19,19 @@ using SindbadMetrics
 ````
 
 ````Julia
-subtypes(SindbadCostMetric)
+subtypes(SindbadMetric)
 ````
 
 ## add a new metric
 define and export types in ```metricTypes.jl``` as
 ````julia
 export NewMtric
-struct NewMtric <: SindbadCostMetric end
+struct NewMtric <: SindbadMetric end
 ````
 
 Note that the ```NewMetirc``` should 
 - be in PascalCase.
-- be subtype of ```SindbadCostMetric```
+- be subtype of ```SindbadMetric```
 
 Once the type is defined, it should be used as. dispatch in the loss function in ```metrics.jl```
 

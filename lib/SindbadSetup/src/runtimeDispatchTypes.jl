@@ -47,6 +47,13 @@ export IsNotMultiObjectiveAlgorithm
 struct IsMultiObjectiveAlgorithm end
 struct IsNotMultiObjectiveAlgorithm end
 
+
+export SindbadCost
+export CostModelObs
+
+abstract type SindbadCost end
+struct CostModelObs <: SindbadCost end
+
 # ------------------------- running flags -------------------------
 export SindbadRunMethods
 export DoCalcCost
