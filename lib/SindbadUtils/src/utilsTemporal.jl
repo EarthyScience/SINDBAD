@@ -95,6 +95,7 @@ a function to create a temporal aggregation struct for a given time step
 - `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
 - `t_step`: a string/Symbol/Type defining the aggregation time target with different types as follows:
   - `::Union{String, Symbol}`: a string/Symbol defining the aggregation time target from the settings
+  - `::TimeAllYears`: aggregation/slicing to include all years
   - `::TimeMean`: aggregation to mean over all time steps
   - `::TimeDay`: aggregation to daily time steps
   - `::TimeDayAnomaly`: aggregation to daily anomalies
