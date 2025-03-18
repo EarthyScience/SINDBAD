@@ -12,10 +12,12 @@ module SindbadOptimization
     using OptimizationOptimJL
     using OptimizationBBO
     using OptimizationGCMAES
+    using OptimizationCMAEvolutionStrategy
     # using OptimizationQuadDIRECT
     using SindbadTEM
     using SindbadMetrics
 
+    include("prepOpti.jl")
     include("optimizer.jl")
     include("optimizeTEM.jl")
     include("optimizeTEMCube.jl")
