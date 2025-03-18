@@ -37,7 +37,7 @@ function g_loss(x,
     tbl_params,
     cost_options,
     multi_constraint_method)
-    l = getLoss(x,
+    l = loss(x,
         mods,
         forcing_nt_array,
         space_forcing,

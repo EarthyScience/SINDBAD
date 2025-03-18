@@ -10,6 +10,6 @@ module SindbadMetrics
 
     include("metricTypes.jl")
     include("metrics.jl")
-    include("getMetrics.jl")
+    include("getLoss.jl")
 
 end # module SindbadMetrics
