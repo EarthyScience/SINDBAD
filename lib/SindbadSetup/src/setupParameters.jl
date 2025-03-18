@@ -1,30 +1,38 @@
 export getParameters
+export getParameterIndices
+
 
 """
+    getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
     getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true)
+    getParameters(selected_models, model_parameter_default::NamedTuple, num_type, model_timestep)
+    function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type)
+    function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type)
 
-prepare a NT/Table of the SINDBAD models from a longtuple which is converted to tuple before parameters are retrieved
+Retrieves parameters for the specified models with given numerical type and timestep settings.
 
-# Arguments:
-- `selected_models`: a tuple of all models selected in the given model structure
-- `num_type`: a type to set the values to
-- `model_timestep`: time step of model run
+# Arguments
+- `selected_models`: A collection of selected models
+    - `::Tuple`: as a tuple 
+    - `::LongTuple`: as a long tuple
+- `num_type`: The numerical type to be used for parameters
+- `model_parameter_default::NamedTuple`: A named tuple containing the default parameters for the models and their distributions
+- `opt_parameter::Vector`: A vector containing the names of the parameters to be optimized
+- `opt_parameter::NamedTuple`: A named tuple containing the parameters to be optimized with their distributions and whether they are machine learning parameters
+- `model_timestep`: The timestep setting for the model simulation
+- `return_table::Bool=true`: Whether to return results in table format
+
+# Returns
+Parameters configuration for the selected models based on the specified settings.
 """
+getParameters
+
 function getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true)
     selected_models = getTupleFromLongTuple(selected_models)
     return getParameters(selected_models, num_type, model_timestep; return_table=return_table)
 end
 
-"""
-    getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
 
-prepare a NT/Table of the SINDBAD models from a tuple
-
-# Arguments:
-- `selected_models`: a tuple of all models selected in the given model structure
-- `num_type`: a type to set the values to
-- `model_timestep`: time step of model run
-"""
 function getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
     model_names_list = nameof.(typeof.(selected_models))
 
@@ -102,17 +110,7 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
 end
 
 
-"""
-    getParameters(selected_models, model_parameter_default, num_type, model_timestep)
-
-prepare a Table of the SINDBAD models from a tuple
-
-# Arguments:
-- `selected_models`: a tuple of all models selected in the given model structure
-- `num_type`: a type to set the values to
-- `model_timestep`: time step of model run
-"""
-function getParameters(selected_models, model_parameter_default, num_type, model_timestep)
+function getParameters(selected_models, model_parameter_default::NamedTuple, num_type, model_timestep)
     models_tuple = getParameters(selected_models, num_type, model_timestep; return_table=false)
     default = models_tuple.default
     model_approach = models_tuple.model_approach
@@ -123,34 +121,12 @@ function getParameters(selected_models, model_parameter_default, num_type, model
     return Table(; models_tuple... ,dist, p_dist, is_ml)
 end
 
-"""
-    getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type)
-
-
-
-# Arguments:
-- `selected_models`: a tuple of all models selected in the given model structure
-- `model_parameter_default`: DESCRIPTION
-- `opt_parameter`: DESCRIPTION
-- `model_timestep`: time step of model run
-"""
 function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type, model_timestep)
     opt_parameter = replaceCommaSeparatorParams(opt_parameter)
     tbl_parameters = getParameters(selected_models, model_parameter_default, num_type, model_timestep)
     return filter(row -> row.name_full in opt_parameter, tbl_parameters)
 end
 
-"""
-    getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type)
-
-
-
-# Arguments:
-- `selected_models`: a tuple of all models selected in the given model structure
-- `model_parameter_default`: DESCRIPTION
-- `opt_parameter`: DESCRIPTION
-- `model_timestep`: time step of model run
-"""
 function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type, model_timestep)
     param_list = replaceCommaSeparatorParams(keys(opt_parameter))
     tbl_parameters = getParameters(selected_models, model_parameter_default, param_list, num_type, model_timestep)
@@ -179,6 +155,67 @@ function getParameters(selected_models, model_parameter_default, opt_parameter::
     return tbl_parameters_filtered
 end
 
+
+"""
+    getModelParameterIndices(model, tbl_params::Table, r)
+
+Retrieves indices for model parameters from a parameter table.
+
+# Arguments
+
+- `model`: A model object for which parameters are being indexed
+- `tbl_params::Table`: Table containing parameter information
+- `r`: Row index or identifier for the specific parameter set
+
+# Returns
+Indices corresponding to the model parameters in the parameter table for a model.
+"""
+function getModelParameterIndices(model, tbl_params::Table, r)
+    modelName = nameof(typeof(model))
+    empty!(r)
+    for var in propertynames(model)
+
+        pindex = findfirst(row -> row.name == var && row.model_approach == modelName, tbl_params)
+        if !isnothing(pindex)
+            push!(r, var => pindex)
+        end
+    end
+    NamedTuple((modelName => NamedTuple(r),))
+end
+
+
+"""
+    getParameterIndices(selected_models::LongTuple, tbl_params::Table)
+    getParameterIndices(selected_models::Tuple, tbl_params::Table)
+
+Retrieves indices for model parameters from a parameter table.
+
+# Arguments
+- `selected_models`
+    - `::LongTuple`: A long tuple of selected models
+    - `::Tuple`: A tuple of selected models
+- `tbl_params::Table`: Table containing parameter information
+
+# Returns
+A Tuple of Pair of Name and Indices corresponding to the model parameters in the parameter table for  selected models.
+"""
+getModelParameterIndices
+
+function getParameterIndices(selected_models::LongTuple, tbl_params::Table)
+    selected_models_tuple = getTupleFromLongTuple(selected_models)
+    return getParameterIndices(selected_models_tuple, tbl_params)
+end
+
+function getParameterIndices(selected_models::Tuple, tbl_params::Table)
+    r = (;)
+    tempvec = Pair{Symbol,Int}[]
+    for m in selected_models
+        r = (; r..., getModelParameterIndices(m, tbl_params, tempvec)...)
+    end
+    r
+end
+
+
 """
     replaceCommaSeparatorParams(p_names_list)
 
@@ -194,20 +231,27 @@ function replaceCommaSeparatorParams(p_names_list)
 end
 
 """
+    splitRenameParam(p_string::String, _splitter)
     splitRenameParam(_p::Symbol, _splitter)
 
-split a symbol after converting it to a string with a given splitter
+Splits and renames a parameter based on a specified splitter.
+
+# Arguments
+- `p_string: The input parameter to be split and renamed
+    - `::String`: The parameter string to be split
+    - `::Symbol`: The parameter symbol to be split
+- `_splitter`: The delimiter used to split the parameter string
+
+# Returns
+A tuple containing the split and renamed parameter components.
 """
+splitRenameParam
+
 function splitRenameParam(_p::Symbol, _splitter)
     p_string = String(_p)
     return splitRenameParam(p_string, _splitter)
 end
 
-"""
-    splitRenameParam(p_string::String, _splitter)
-
-split a string with a given splitter
-"""
 function splitRenameParam(p_string::String, _splitter)
     p_name = strip(p_string)
     if occursin(_splitter, p_string)
@@ -223,7 +267,14 @@ end
 """
     setInputParameters(original_table::Table, updated_table::Table)
 
-updates the model parameters based on input from params.json
+Updates input parameters by comparing an original table with an updated table from params.json.
+
+# Arguments
+- `original_table::Table`: The reference table containing original parameters
+- `updated_table::Table`: The table containing updated parameters to be compared with original
+
+# Returns
+a merged table with updated parameters
 """
 function setInputParameters(original_table::Table, updated_table::Table)
     upoTable = copy(original_table)

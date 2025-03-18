@@ -24,7 +24,7 @@ run_helpers = prepTEM(forcing, info);
 
 tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
 
-function g_loss(x,
+function g_cost(x,
     mods,
     space_forcing,
     space_spinup_forcing,
@@ -37,7 +37,7 @@ function g_loss(x,
     tbl_params,
     cost_options,
     multi_constraint_method)
-    l = loss(x,
+    l = cost(x,
         mods,
         forcing_nt_array,
         space_forcing,
@@ -56,7 +56,7 @@ function g_loss(x,
 end
 
 mods = info.models.forward;
-g_loss(tbl_params.default,
+g_cost(tbl_params.default,
     mods,
     run_helpers.space_forcing,
     run_helpers.space_spinup_forcing,
@@ -71,7 +71,7 @@ g_loss(tbl_params.default,
     info.optimization.multi_constraint_method)
 
 function l1(p)
-    return g_loss(p,
+    return g_cost(p,
         mods,
         run_helpers.space_forcing,
         run_helpers.space_spinup_forcing,
@@ -91,7 +91,7 @@ dualDefs = ForwardDiff.Dual{info.helpers.numbers.num_type}.(tbl_params.default);
 newmods = updateModelParameters(tbl_params, mods, dualDefs);
 
 function l2(p)
-    return g_loss(p,
+    return g_cost(p,
         newmods,
         run_helpers.space_forcing,
         run_helpers.space_spinup_forcing,
@@ -172,7 +172,7 @@ function full_gradient(x, y_real; NNmodel=NNmodel, g_loss=floss, ps_NN=ps_NN, st
     ps_phys_pred = NNmodel(x, ps_NN, st)[1]
 
     # Gradient of the g_loss w.r.t. the process-based model's parameters
-    f_grad = ForwardDiff.gradient(ps -> g_loss(ps, y_real), ps_phys_pred)
+    f_grad = ForwardDiff.gradient(ps -> g_cost(ps, y_real), ps_phys_pred)
     # Jacobian of the process-based model's parameters w.r.t. the
     # Weights of the NN
     NN_grad = Zygote.jacobian(ps -> NNmodel(x, ps, st)[1], ps_NN)[1]
@@ -199,6 +199,6 @@ for i ∈ 1:300
         println("Distance from real value: $dist")
         push!(dist_arr, dist)
         push!(predicted_vmax, NNmodel(x, ps_NN, st)[1][1])
-        push!(loss_arr, floss(NNmodel(x, ps_NN, st)[1], y))
+        push!(loss_arr, fcost(NNmodel(x, ps_NN, st)[1], y))
     end
 end
