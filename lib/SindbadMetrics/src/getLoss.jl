@@ -1,9 +1,8 @@
 export combineLoss
 export filterCommonNaN
 export getData
-export getLossVector
+export lossVector
 export getModelOutputView
-export prepCostOptions
 
 """
     aggregateData(dat, cost_option, ::TimeSpace)
@@ -224,54 +223,7 @@ function getData(model_output::AbstractArray, observations, cost_option)
     y, yσ, ŷ = getHarmonizedData(y, yσ, ŷ, cost_option)
     return (y, yσ, ŷ)
 end
-"""
-    getLossVector(model_output::LandWrapper, observations, cost_options)
-    getLossVector(model_output, observations, cost_options)
-   
-returns a vector of losses for variables in info.cost_options.observational_constraints   
 
-# Arguments:
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT
-- `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance    
-"""
-getLossVector
-
-function getLossVector(model_output, observations, cost_options)
-    loss_vector = map(cost_options) do cost_option
-        @debug "***cost for $(cost_option.variable)***"
-        lossMetric = cost_option.cost_metric
-        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        # (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
-        metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
-        if isnan(metr)
-            metr = oftype(metr, 1e19)
-        end
-        @debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
-        metr
-    end
-    @debug "\n-------------------\n"
-    return loss_vector
-end
-
-function getLossVector(model_output::LandWrapper, observations, cost_options)
-    loss_vector = map(cost_options) do cost_option
-        @debug "$(cost_option.variable)"
-        lossMetric = cost_option.cost_metric
-        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ), size(idxs)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ) ## cannot use the valids because LandWrapper produces vector
-        metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
-        if isnan(metr)
-            metr = oftype(metr, 1e19)
-        end
-        @debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
-        metr
-    end
-    @debug "\n-------------------\n"
-    return loss_vector
-end
 
 """
      getModelOutputView(_dat::AbstractArray{<:Any,N}) where N
@@ -290,40 +242,52 @@ end
 
 
 """
-    prepCostOptions(obs_array, cost_options)
-
-remove all the variables that have less than minimum datapoints from being used in the optimization
+    lossVector(model_output::LandWrapper, observations, cost_options)
+    lossVector(model_output, observations, cost_options)
+   
+returns a vector of losses for variables in info.cost_options.observational_constraints   
 
 # Arguments:
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance
+- `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT
+- `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance    
 """
-function prepCostOptions(observations, cost_options)
-    valids=[]
-    is_valid = []
-    vars = cost_options.variable
-    obs_inds = cost_options.obs_ind
-    min_data_points = cost_options.min_data_points
-    for vi in eachindex(vars)
-        obs_ind_start = obs_inds[vi]
-        min_point = min_data_points[vi]
-        y = observations[obs_ind_start]
-        yσ = observations[obs_ind_start+1]
-        idxs = Array(.!isInvalid.(y .* yσ))
-        total_point = sum(idxs)
-        if total_point < min_point
-            push!(is_valid, false)
-        else
-            push!(is_valid, true)
+lossVector
+
+function lossVector(model_output, observations, cost_options)
+    loss_vector = map(cost_options) do cost_option
+        @debug "***cost for $(cost_option.variable)***"
+        lossMetric = cost_option.cost_metric
+        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
+        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
+        # (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
+        metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
+        if isnan(metr)
+            metr = oftype(metr, 1e19)
         end
-        push!(valids, idxs)
+        @debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
+        metr
     end
-    cost_options = setTupleField(cost_options, (:valids, valids))
-    cost_options = setTupleField(cost_options, (:is_valid, is_valid))
-    cost_options = dropFields(cost_options, (:min_data_points, :temporal_data_aggr, :aggr_func,))
-    cost_option_table = Table(cost_options)
-    cost_options_table_filtered = filter(row -> row.is_valid === true , cost_option_table)
-    return cost_options_table_filtered
+    @debug "\n-------------------\n"
+    return loss_vector
+end
+
+function lossVector(model_output::LandWrapper, observations, cost_options)
+    loss_vector = map(cost_options) do cost_option
+        @debug "$(cost_option.variable)"
+        lossMetric = cost_option.cost_metric
+        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
+        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ), size(idxs)
+        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ) ## cannot use the valids because LandWrapper produces vector
+        metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
+        if isnan(metr)
+            metr = oftype(metr, 1e19)
+        end
+        @debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
+        metr
+    end
+    @debug "\n-------------------\n"
+    return loss_vector
 end
 
 
