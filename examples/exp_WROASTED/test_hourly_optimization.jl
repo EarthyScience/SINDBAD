@@ -63,16 +63,6 @@ tbl_params = getParameters(info.models.forward,
     info.helpers.numbers.num_type,
     info.helpers.dates.temporal_resolution)
 
-function getScaledParameters!(param_vector, tbl_params, )
-    tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
-
-    param_to_index = getParameterIndices(info.models.forward, tbl_params);
-    
-    # get the default and bounds
-    default_values = tbl_params.default
-    lower_bounds = tbl_params.lower
-    upper_bounds = tbl_params.upper
-end
 forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
@@ -86,9 +76,9 @@ obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for p
 cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
 
 # setLogLevel(:debug)
-# @profview lossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
+# @profview metricVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 # set
-@time lossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
+@time metricVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
 

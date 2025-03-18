@@ -18,6 +18,5 @@ module SindbadUtils
     include("utilsNT.jl")
     include("utilsSpatial.jl")
     include("utilsTemporal.jl")
-    include("updateParameters.jl")
     
 end # module SindbadUtils

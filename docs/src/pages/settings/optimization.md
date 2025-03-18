@@ -128,7 +128,7 @@ In this section, options related to observational variables/constraint, and how 
 == Explanation
 ````json
 {
-"multi_constraint_method": how to combine cost of each variable, e.g., by doing sum as "cost_sum",
+"multi_constraint_method": how to combine cost of each variable, e.g., by doing sum as "metric_sum",
 "multi_objective_algorithm": if the algorithm is multiobjective and hence accepts a vector instead of a number as cost,
 "observational_constraints": a list of variables under "variables" which are used during cost calculation,
 ],
@@ -137,7 +137,7 @@ In this section, options related to observational variables/constraint, and how 
 == Example
 ````json
 {
-"multi_constraint_method": "cost_sum",
+"multi_constraint_method": "metric_sum",
 "multi_objective_algorithm": false,
 "observational_constraints": ["gpp", "nee", "reco", "transpiration", "evapotranspiration", "agb", "ndvi"]
 }
@@ -168,7 +168,7 @@ First, the default cost metric is set to avoid duplication and set common config
     "cost_weight": numeric weight of the cost of a given variable,
     "min_data_points": minimum number of valid data points for calculation of cost for a variable,
     "spatial_data_aggr": method to aggregate data in space , e.g. "concat_data" for concatenating the data in space,
-    "spatial_cost_aggr": method to aggregate cost in multiple pixels/grids were evaluated as once, e.g., "spatially_variable"means returning a cost per pixel,
+    "spatial_cost_aggr": method to aggregate cost in multiple pixels/grids were evaluated as once, e.g., "metric_spatial"means returning a cost per pixel,
     "spatial_weight": if the cost were to be weighted by grid area,
     "temporal_data_aggr": function to temporally aggregate and subset data
 },
@@ -184,7 +184,7 @@ First, the default cost metric is set to avoid duplication and set common config
     "cost_weight": 1.0,
     "min_data_points": 1,
     "spatial_data_aggr": "concat_data",
-    "spatial_cost_aggr": "spatially_variable",
+    "spatial_cost_aggr": "metric_spatial",
     "spatial_weight": false,
     "temporal_data_aggr": "day"
 }
@@ -194,7 +194,7 @@ First, the default cost metric is set to avoid duplication and set common config
 
 ::: tip
 
-- to list all the cost metrics available in SINDBAD, use ```subtypes(SindbadCostMetric)```
+- to list all the cost metrics available in SINDBAD, use ```subtypes(SindbadMetric)```
 - to list all the spatial cost aggregation available in SINDBAD, use ```subtypes(SindbadSpatialCostAggr)```
 - to list all the temporal aggregation and subsetting method, use ```subtypes(SindbadTimeAggregator)```
 

@@ -1,33 +1,87 @@
 
+export scaleParameters
+export deScaleParameters
 export updateModelParameters
-export getParameterIndices
 
 
-function getModelParameterIndices(model, tbl_params, r)
-    modelName = nameof(typeof(model))
-    empty!(r)
-    for var in propertynames(model)
-        pindex = findfirst(row -> row.name == var && row.model_approach == modelName, tbl_params)
-        if !isnothing(pindex)
-            push!(r, var => pindex)
-        end
-    end
-    NamedTuple((modelName => NamedTuple(r),))
+"""
+    deScaleParameters(param_vector_scaled, tbl_params, <:SindbadParameterScaling)
+
+Reverts scaling of parameters using a specified scaling strategy.
+
+# Arguments
+- `param_vector_scaled`: Vector of scaled parameters to be converted back to original scale
+- `tbl_params`: Table containing parameter information and scaling factors
+- `SindbadParameterScaling`: Type indicating the scaling strategy to be used
+    - `::ScaleByDefault`: Type indicating scaling by default values
+    - `::ScaleByBounds`: Type indicating scaling by parameter bounds
+    - `::DoNotScale`: Type indicating no scaling should be applied (parameters remain unchanged)
+
+# Returns
+Returns the unscaled/actual parameter vector in original units.
+"""
+deScaleParameters
+
+function deScaleParameters(param_vector_scaled, tbl_params, ::DoNotScale)
+    return param_vector_scaled
+end
+    
+function deScaleParameters(param_vector_scaled, tbl_params, ::ScaleByDefault)
+    param_vector_scaled .= tbl_params.default .* param_vector_scaled
+    return param_vector_scaled
 end
 
-function getParameterIndices(selected_models::LongTuple, tbl_params)
-    selected_models_tuple = getTupleFromLongTuple(selected_models)
-    return getParameterIndices(selected_models_tuple, tbl_params)
+function deScaleParameters(param_vector_scaled, tbl_params, ::ScaleByBounds)
+    ub = tbl_params.upper  # upper bounds
+    lb = tbl_params.lower   # lower bounds
+    param_vector_scaled .= lb + (ub - lb) * param_vector_scaled
+    return param_vector_scaled
 end
 
-function getParameterIndices(selected_models::Tuple, tbl_params)
-    r = (;)
-    tempvec = Pair{Symbol,Int}[]
-    for m in selected_models
-        r = (; r..., getModelParameterIndices(m, tbl_params, tempvec)...)
-    end
-    r
+
+"""
+    scaleParameters(tbl_params, <:SindbadParameterScaling)
+
+Scale parameters from the input table using default scaling factors.
+
+# Arguments
+- `tbl_params`: Table containing parameters to be scaled
+- `SindbadParameterScaling`: Type indicating the scaling strategy to be used
+    - `::ScaleDefault`: Type indicating scaling by default values
+    - `::ScaleBounds`: Type parameter indicating scaling by parameter bounds 
+    - `::DoNotScale`: Type parameter indicating no scaling should be applied
+
+
+# Returns
+Scaled parameters and their bounds according to default scaling factors
+"""
+scaleParameters
+
+function scaleParameters(tbl_params, ::DoNotScale)
+    default = tbl_params.default
+    ub = tbl_params.upper  # upper bounds
+    lb = tbl_params.lower   # lower bounds
+    return (default, lb, ub)
 end
+    
+function scaleParameters(tbl_params, ::ScaleDefault)
+    default = tbl_params.default
+    default = default ./ default
+    ub = tbl_params.upper ./ default   # upper bounds
+    lb = tbl_params.lower ./ default   # lower bounds
+    return (default, lb, ub)
+end
+
+function scaleParameters(tbl_params, ::ScaleBounds)
+    default = tbl_params.default
+    ub = tbl_params.upper  # upper bounds
+    lb = tbl_params.lower   # lower bounds
+    scalar_def = default - lb  / (ub - lb)
+    lb = zero(lb)
+    ub = ones(ub) 
+    return (scalar_def, lb, ub)
+end
+
 
 
 """
@@ -57,7 +111,7 @@ update models/parameters without mutating the table of parameters
 - `param_vector`: a vector of parameter values to update the models
 """
 function updateModelParameters(tbl_params::Table, selected_models::Tuple, param_vector::AbstractArray)
-    updatedModels = Models.LandEcosystem[]
+    updatedModels = eltype(selected_models)[]
     namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
         approachx = selected_models[idx]

@@ -1,5 +1,5 @@
 # ------------------------- metric -------------------------
-export SindbadCostMetric
+export SindbadMetric
 export MSE
 export NAME1R
 export NMAE1R
@@ -24,30 +24,30 @@ export ScorInv
 export Scor2
 export Scor2Inv
 
-abstract type SindbadCostMetric end
-struct MSE <: SindbadCostMetric end
-struct NAME1R <: SindbadCostMetric end
-struct NMAE1R <: SindbadCostMetric end
-struct NNSE <: SindbadCostMetric end
-struct NNSEInv <: SindbadCostMetric end
-struct NNSEσ <: SindbadCostMetric end
-struct NNSEσInv <: SindbadCostMetric end
-struct NSE <: SindbadCostMetric end
-struct NSEInv <: SindbadCostMetric end
-struct NSEσ <: SindbadCostMetric end
-struct NSEσInv <: SindbadCostMetric end
-struct NPcor <: SindbadCostMetric end
-struct NPcorInv <: SindbadCostMetric end
-struct Pcor <: SindbadCostMetric end
-struct PcorInv <: SindbadCostMetric end
-struct Pcor2 <: SindbadCostMetric end
-struct Pcor2Inv <: SindbadCostMetric end
-struct NScor <: SindbadCostMetric end
-struct NScorInv <: SindbadCostMetric end
-struct Scor <: SindbadCostMetric end
-struct ScorInv <: SindbadCostMetric end
-struct Scor2 <: SindbadCostMetric end
-struct Scor2Inv <: SindbadCostMetric end
+abstract type SindbadMetric end
+struct MSE <: SindbadMetric end
+struct NAME1R <: SindbadMetric end
+struct NMAE1R <: SindbadMetric end
+struct NNSE <: SindbadMetric end
+struct NNSEInv <: SindbadMetric end
+struct NNSEσ <: SindbadMetric end
+struct NNSEσInv <: SindbadMetric end
+struct NSE <: SindbadMetric end
+struct NSEInv <: SindbadMetric end
+struct NSEσ <: SindbadMetric end
+struct NSEσInv <: SindbadMetric end
+struct NPcor <: SindbadMetric end
+struct NPcorInv <: SindbadMetric end
+struct Pcor <: SindbadMetric end
+struct PcorInv <: SindbadMetric end
+struct Pcor2 <: SindbadMetric end
+struct Pcor2Inv <: SindbadMetric end
+struct NScor <: SindbadMetric end
+struct NScorInv <: SindbadMetric end
+struct Scor <: SindbadMetric end
+struct ScorInv <: SindbadMetric end
+struct Scor2 <: SindbadMetric end
+struct Scor2Inv <: SindbadMetric end
 
 # ------------------------- loss calculation -------------------------
 
@@ -76,17 +76,17 @@ export ConcatData
 abstract type SindbadSpatialDataAggr end
 struct ConcatData end
 
-export SindbadSpatialCostAggr
-export CostMaximum
-export CostMinimum
-export CostSum
-export SpatiallyVariable
+export SindbadSpatialMetricAggr
+export MetricMaximum
+export MetricMinimum
+export MetricSum
+export MetricSpatial
 
-abstract type SindbadSpatialCostAggr end
-struct CostMaximum <: SindbadSpatialCostAggr end
-struct CostMinimum <: SindbadSpatialCostAggr end
-struct CostSum <: SindbadSpatialCostAggr end
-struct SpatiallyVariable <: SindbadSpatialCostAggr end
+abstract type SindbadSpatialMetricAggr end
+struct MetricMaximum <: SindbadSpatialMetricAggr end
+struct MetricMinimum <: SindbadSpatialMetricAggr end
+struct MetricSum <: SindbadSpatialMetricAggr end
+struct MetricSpatial <: SindbadSpatialMetricAggr end
 
 export SindbadParameterScaling
 export DoNotScale
@@ -95,5 +95,5 @@ export ScaleToBounds
 
 abstract type SindbadParameterScaling end
 struct DoNotScale <: SindbadParameterScaling end
-struct ScaleToDefault <: SindbadParameterScaling end
-struct ScaleToBounds <: SindbadParameterScaling end
+struct ScaleDefault <: SindbadParameterScaling end
+struct ScaleBounds <: SindbadParameterScaling end
