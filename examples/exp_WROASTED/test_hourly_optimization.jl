@@ -7,7 +7,7 @@ experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "1999"
 end_year = "2010"
 
-domain = "CA-Obs"
+domain = "Fi-Hyy"
 path_input = nothing
 forcing_config = nothing
 optimization_config = nothing
@@ -63,6 +63,16 @@ tbl_params = getParameters(info.models.forward,
     info.helpers.numbers.num_type,
     info.helpers.dates.temporal_resolution)
 
+function getScaledParameters!(param_vector, tbl_params, )
+    tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
+
+    param_to_index = getParameterIndices(info.models.forward, tbl_params);
+    
+    # get the default and bounds
+    default_values = tbl_params.default
+    lower_bounds = tbl_params.lower
+    upper_bounds = tbl_params.upper
+end
 forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
@@ -75,10 +85,10 @@ observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
 
-setLogLevel(:debug)
-# @profview getLossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
+# setLogLevel(:debug)
+# @profview lossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 # set
-@time getLossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
+@time lossVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
 
