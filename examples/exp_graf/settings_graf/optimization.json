@@ -31,8 +31,10 @@
     "WUE,κ"
   ],
   "multi_constraint_method": "metric_sum",
-  "multi_objective_algorithm": false,
-  "observational_constraints": ["gpp", "runoff", "evapotranspiration", "tws"],
+  "subset_model_output": true,
+  "optimization_parameter_scaling": null,
+  "optimization_cost_method": "cost_model_obs",
+  "observational_constraints": ["gpp", "gpp_anom", "runoff", "evapotranspiration", "tws"],
   "observations": {
     "default_cost": {
       "aggr_func": "nanmean",
@@ -62,7 +64,7 @@
     },
     "one_sel_mask": null,
     "optimization_parameter_scaling": null,
-    "optimization_cost_function": "metric_sum",
+    "optimization_cost_method": "CostModelObs",
     "use_quality_flag": true,
     "use_spatial_weight": false,
     "use_uncertainty": false,
@@ -95,7 +97,7 @@
       "gpp_anom": {
         "cost_options": {
           "cost_metric": "NSE_inv",
-          "temporal_data_aggr": "month"
+          "temporal_data_aggr": "month_anomaly"
         },
         "data": {
           "bounds": [-20.0, 20.0],

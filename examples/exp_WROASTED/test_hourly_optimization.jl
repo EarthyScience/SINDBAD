@@ -53,6 +53,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.model_output.save_single_file" => true,
     "experiment.exe_rules.parallelization" => parallelization_lib,
     "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+    "optimization.subset_model_output" => false,
     "optimization.observations.default_observation.data_path" => path_observation)
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
@@ -91,6 +92,8 @@ costOpt = prepCostOptions(observation, info.optimization.cost_options);
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 foreach(costOpt) do var_row
     v = var_row.variable
+    # @show v
+    v_key = v
     println("plot obs::", v)
     v = (var_row.mod_field, var_row.mod_subfield)
     vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
@@ -124,6 +127,6 @@ foreach(costOpt) do var_row
     plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
     plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
     plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
-    savefig(joinpath(info.output.dirs.figure, "wroasted_$(domain)_$(v).png"))
+    savefig(joinpath(info.output.dirs.figure, "wroasted_$(domain)_$(v_key).png"))
 end
 # end

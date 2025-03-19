@@ -19,29 +19,19 @@ optimizeTEM
 
 function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, ::LandOutArray)
     # get the subset of parameters table that consists of only optimized parameters
-    tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
 
-    param_to_index = getParameterIndices(info.models.forward, tbl_params);
-    
-    # get the default and bounds
-    default_values = tbl_params.default
-    lower_bounds = tbl_params.lower
-    upper_bounds = tbl_params.upper
 
-    run_helpers = prepTEM(forcing, info)
-
-    cost_options = prepCostOptions(observations, info.optimization.cost_options)
-
-    # param_model_id_val = info.optimization.param_model_id_val
-    cost_function = x -> cost(x, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method)
+    opti_helpers = prepOpti(forcing, observations, info)
 
     
     # run the optimizer
-    optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, info.optimization.algorithm.options, info.optimization.algorithm.method)
+    optim_para = optimizer(opti_helpers.cost_function, opti_helpers.default_values, opti_helpers.lower_bounds, opti_helpers.upper_bounds, info.optimization.algorithm.options, info.optimization.algorithm.method)
+
+    optim_para = backScaleParameters(optim_para, opti_helpers.tbl_params, info.optimization.optimization_parameter_scaling)
 
     # update the parameter table with the optimized values
-    tbl_params.optim .= optim_para
-    return tbl_params
+    opti_helpers.tbl_params.optim .= optim_para
+    return opti_helpers.tbl_params
 end
 
 function optimizeTEM(forcing::NamedTuple,
