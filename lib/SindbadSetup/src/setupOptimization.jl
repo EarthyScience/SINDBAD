@@ -53,17 +53,20 @@ function getAggrFunc(func_name::String)
     end
 end
 
-
 """
-    getCostOptions(optim_info::NamedTuple, vars_info, number_helpers, dates_helpers)
+    getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number_helpers, dates_helpers)
 
+Sets up cost optimization options based on provided parameters.
 
+# Arguments
+- `optim_info::NamedTuple`: Named tuple containing optimization parameters and settings
+- `vars_info`: Information about variables used in optimization
+- `tem_variables`: Template variables for optimization setup
+- `number_helpers`: Helper functions or values for numerical operations
+- `dates_helpers`: Helper functions or values for date-related operations
 
-# Arguments:
-- `optim_info`: DESCRIPTION
-- `vars_info`: DESCRIPTION
-- `number_helpers`: DESCRIPTION
-- `dates_helpers`: DESCRIPTION
+# Returns
+Cost optimization configuration options.
 """
 function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number_helpers, dates_helpers)
     varlist = Symbol.(optim_info.observational_constraints)
@@ -93,7 +96,7 @@ function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number
             if prop == :temporal_data_aggr
                 t_a = sel_value
                 to_push_type = TimeNoDiff()
-                if endswith(t_a, "_anomaly") || endswith(t_a, "_iav")
+                if endswith(lowercase(t_a), "_anomaly") || endswith(lowercase(t_a), "_iav")
                     to_push_type = TimeDiff()
                 end
                 push!(agg_type, to_push_type)
@@ -190,13 +193,20 @@ function setOptimization(info::NamedTuple)
         :optimization,
         (:multi_constraint_method, getTypeInstanceForNamedOptions(info.settings.optimization.multi_constraint_method)))
 
+    scaling_method = isnothing(info.settings.optimization.optimization_parameter_scaling) ? "scale_none" : info.settings.optimization.optimization_parameter_scaling
+    info = setTupleSubfield(info,
+        :optimization,
+        (:optimization_parameter_scaling, getTypeInstanceForNamedOptions(scaling_method)))
+    info = setTupleSubfield(info,
+        :optimization,
+        (:optimization_cost_method, getTypeInstanceForNamedOptions(info.settings.optimization.optimization_cost_method)))
+        
     # check and set the list of parameters to be optimized
     checkOptimizedParametersInModels(info)
     info = setTupleSubfield(info, :optimization, (:model_parameters_to_optimize, info.settings.optimization.model_parameters_to_optimize))
 
     # set algorithm related options
     tmp_algorithm = (;)
-    tmp_algorithm = setTupleField(tmp_algorithm, (:multi_objective_algorithm, getTypeInstanceForFlags(:multi_objective_algorithm, info.settings.optimization.multi_objective_algorithm, "Is")))
     optim_algorithm = info.settings.optimization.algorithm
     if endswith(optim_algorithm, ".json")
         options_path = optim_algorithm

@@ -89,11 +89,11 @@ struct MetricSum <: SindbadSpatialMetricAggr end
 struct MetricSpatial <: SindbadSpatialMetricAggr end
 
 export SindbadParameterScaling
-export DoNotScale
-export ScaleToDefault
-export ScaleToBounds
+export ScaleNone
+export ScaleDefault
+export ScaleBounds
 
 abstract type SindbadParameterScaling end
-struct DoNotScale <: SindbadParameterScaling end
+struct ScaleNone <: SindbadParameterScaling end
 struct ScaleDefault <: SindbadParameterScaling end
 struct ScaleBounds <: SindbadParameterScaling end

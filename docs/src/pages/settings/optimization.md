@@ -129,7 +129,6 @@ In this section, options related to observational variables/constraint, and how 
 ````json
 {
 "multi_constraint_method": how to combine cost of each variable, e.g., by doing sum as "metric_sum",
-"multi_objective_algorithm": if the algorithm is multiobjective and hence accepts a vector instead of a number as cost,
 "observational_constraints": a list of variables under "variables" which are used during cost calculation,
 ],
 }

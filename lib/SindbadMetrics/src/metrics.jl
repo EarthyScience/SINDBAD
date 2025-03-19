@@ -1,29 +1,8 @@
 export metric
 
 """
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::MSE)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NAME1R)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NMAE1R)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSE)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEInv)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσ)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσInv)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NPcor)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NPcorInv)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NScor)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NScorInv)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSE)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEInv)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEσ)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEσInv)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::PcorInv)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2Inv)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::ScorInv)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2)
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2Inv)
+    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, <:SindbadMetric)
+
 
 Calculate the metric from a given method.
 
@@ -31,31 +10,30 @@ Calculate the metric from a given method.
 - `y`: observation data
 - `yσ`: observational uncertainty data
 - `ŷ`: model simulation data/estimate
-
-## Metrics supported:
-- `::MSE`: mean squared error. ``MSE = {|y - ŷ|}^2``
-- `::NAME1R`: relatively normalized absolute mean error. ``NAME1R = \\frac{(|μ_ŷ - μ_y|)}{1 + μ_y}``
-- `::NMAE1R`: relatively normalized mean absolute error. ``NMAE1R = \\frac{(mean(|y - ŷ|))}{1 + μ_y}``
-- `::NNSE`: normalized Nash-Sutcliffe efficiency
-- `::NNSEInv`: inverse of normalized Nash-Sutcliffe efficiency
-- `::NNSEσ`: normalized Nash-Sutcliffe efficiency with uncertainty
-- `::NNSEσInv`: inverse of normalized Nash-Sutcliffe efficiency with uncertainty
-- `::NPcor`: normalized Pearson's correlation
-- `::NPcorInv`: inverse of normalized Pearson's correlation
-- `::NScor`: normalized Spearman's correlation
-- `::NScorInv`: inverse of normalized Spearman's correlation
-- `::NSE`: Nash-Sutcliffe efficiency
-- `::NSEInv`: inverse of Nash-Sutcliffe efficiency
-- `::NSEσ`: Nash-Sutcliffe efficiency with uncertainty
-- `::NSEσInv`: inverse of Nash-Sutcliffe efficiency with uncertainty
-- `::Pcor`: Pearson's correlation
-- `::PcorInv`: inverse of Pearson's correlation
-- `::Pcor2`: square of Pearson's correlation
-- `::Pcor2Inv`: inverse of square of Pearson's correlation
-- `::Scor`: Spearman's correlation
-- `::ScorInv`: inverse of Spearman's correlation
-- `::Scor2`: square of Spearman's correlation
-- `::Scor2Inv`: inverse of square of Spearman's correlation
+- `::SindbadMetric`: a type that represents a metric to calculate the performance of a model. The following metrics are supported:
+    - `::MSE`: mean squared error. ``MSE = {|y - ŷ|}^2``
+    - `::NAME1R`: relatively normalized absolute mean error. ``NAME1R = \\frac{(|μ_ŷ - μ_y|)}{1 + μ_y}``
+    - `::NMAE1R`: relatively normalized mean absolute error. ``NMAE1R = \\frac{(mean(|y - ŷ|))}{1 + μ_y}``
+    - `::NNSE`: normalized Nash-Sutcliffe efficiency
+    - `::NNSEInv`: inverse of normalized Nash-Sutcliffe efficiency
+    - `::NNSEσ`: normalized Nash-Sutcliffe efficiency with uncertainty
+    - `::NNSEσInv`: inverse of normalized Nash-Sutcliffe efficiency with uncertainty
+    - `::NPcor`: normalized Pearson's correlation
+    - `::NPcorInv`: inverse of normalized Pearson's correlation
+    - `::NScor`: normalized Spearman's correlation
+    - `::NScorInv`: inverse of normalized Spearman's correlation
+    - `::NSE`: Nash-Sutcliffe efficiency
+    - `::NSEInv`: inverse of Nash-Sutcliffe efficiency
+    - `::NSEσ`: Nash-Sutcliffe efficiency with uncertainty
+    - `::NSEσInv`: inverse of Nash-Sutcliffe efficiency with uncertainty
+    - `::Pcor`: Pearson's correlation
+    - `::PcorInv`: inverse of Pearson's correlation
+    - `::Pcor2`: square of Pearson's correlation
+    - `::Pcor2Inv`: inverse of square of Pearson's correlation
+    - `::Scor`: Spearman's correlation
+    - `::ScorInv`: inverse of Spearman's correlation
+    - `::Scor2`: square of Spearman's correlation
+    - `::Scor2Inv`: inverse of square of Spearman's correlation
 """
 metric
 

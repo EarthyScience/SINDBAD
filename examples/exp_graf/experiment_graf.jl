@@ -84,6 +84,11 @@ for (o, v) in enumerate(forc_vars)
     heatmap(plot_data; title="$(v):: mean = $(round(SindbadTEM.mean(def_var), digits=2)), nans=$(sum(isInvalid.(plot_data)))", size=(2000, 1000))
     savefig(joinpath(info.output.dirs.figure, "forc_afr2d_$v.png"))
 end
+#setLogLevel(:debug)
+# @profview metricVector(run_helpers.output_array, obs_array, cost_options) # |> sum
+# set
+# @time metricVector(run_helpers.output_array, obs_array, cost_options) # |> sum
+
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 obs_array = out_opti.observation;
@@ -103,6 +108,7 @@ var_row = costOpt[1]
 
 losses = map(costOpt) do var_row
     v = var_row.variable
+    v_key = v
     v = (var_row.mod_field, var_row.mod_subfield)
     vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
     v = vinfo["standard_name"]
@@ -129,13 +135,13 @@ losses = map(costOpt) do var_row
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
     b_range = range(-1, 1, length=50)
     p_title = "$(var_row.variable) ($(nameof(typeof(lossMetric))))"
-    histogram(first.(loss_space); title=p_title, size=(2000, 1000),bins=b_range, alpha=0.5, label="default", color="#FDB311")
+    histogram(first.(loss_space); title=p_title, size=(2000, 1000),bins=b_range, alpha=0.9, label="default", color="#FDB311")
     vline!([metric(obs_var, obs_σ, def_var, lossMetric)], label="default_spatial", color="#FDB311")
     histogram!(last.(loss_space); size=(2000, 1000), bins=b_range, alpha=0.5, label="optimized", color="#18A15C")
     vline!([metric(obs_var, obs_σ, opt_var, lossMetric)], label="optimized_spatial", color="#18A15C")
     xlabel!("")
-    savefig(joinpath(info.output.dirs.figure, "obs_vs_pred_$(var_row.variable).png"))
-
+    savefig(joinpath(info.output.dirs.figure, "obs_vs_pred_$(v_key).png"))
+    # loss_space
     # @show "plot obs", v, lossMetric
 
     # @show "plot obs", v, metric(obs_var, obs_σ, def_var, lossMetric), metric(obs_var, obs_σ, opt_var, lossMetric)

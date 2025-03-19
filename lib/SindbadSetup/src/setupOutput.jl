@@ -338,14 +338,14 @@ updates the output variables in case of optimization or cost run
 """
 function updateVariablesToStore(info::NamedTuple)
     output_vars = info.settings.experiment.model_output.variables
-    if info.settings.experiment.flags.run_optimization
+    if info.settings.experiment.flags.calc_cost || !info.settings.optimization.subset_model_output
+        output_vars = union(String.(keys(output_vars)),
+                info.optimization.variables.model)
+    else
         output_vars = map(info.optimization.variables.obs) do vo
             vn = getfield(info.optimization.variables.optimization, vo)
             Symbol(string(vn[1]) * "." * string(vn[2]))
-        end
-    elseif info.settings.experiment.flags.calc_cost
-        output_vars = union(String.(keys(info.settings.experiment.model_output.variables)),
-                info.optimization.variables.model)
+        end        
     end
     info = (; info..., temp=(; info.temp..., output=getDepthInfoAndVariables(info, output_vars)))
     return info
