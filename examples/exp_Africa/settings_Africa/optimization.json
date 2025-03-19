@@ -14,7 +14,9 @@
     "gppVPD,sat_ambient_CO2"
   ],
   "multi_constraint_method": "metric_sum",
-  "multi_objective_algorithm": false,
+  "subset_model_output": true,
+  "optimization_parameter_scaling": null,
+  "optimization_cost_method": "cost_model_obs",
   "observational_constraints": ["gpp"],
   "observations": {
     "default_cost": {
