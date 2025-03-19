@@ -3,18 +3,25 @@ export prepOpti
 export prepParameters
 
 """
-    prepCostOptions(obs_array, cost_options)
+    prepCostOptions(obs_array, cost_options, <:SindbadCost)
 
 remove all the variables that have less than minimum datapoints from being used in the optimization
 
 # Arguments:
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance
+- `::SindbadCost`: a value to indicate that the cost function method
+    - `CostModelObs`: a value to indicate that the cost function method is based on observation data
+    - `CostModelObsPriors`: a value to indicate that the cost function method is based on observation data and priors
 """
 prepCostOptions
 
 
 function prepCostOptions(observations, cost_options)
+    return prepCostOptions(observations, cost_options, CostModelObs())
+end
+
+function prepCostOptions(observations, cost_options, ::CostModelObsPriors)
     return prepCostOptions(observations, cost_options, CostModelObs())
 end
 
@@ -56,6 +63,7 @@ Prepares optimization parameters and settings based on provided inputs.
 - `forcing`: Input forcing data for the optimization
 - `observations`: Observed data used for comparison/calibration
 - `info`: Additional information and settings for optimization setup
+- `optimization_cost_method`: Method for calculating the cost function
 
 # Returns
 Configuration parameters and settings for optimization
@@ -65,22 +73,26 @@ This function processes the input data and configuration to set up the optimizat
 problem. It handles the preparation of parameters and settings required for the
 optimization process.
 """
-function  prepOpti(forcing, observations, info)
-    run_helpers = prepTEM(forcing, info)
+prepOpti
 
-    # prepParameters(selected_models, model_parameter_default, model_parameters_to_optimize, num_type, temporal_resolution, parameter_scaling)
+function prepOpti(forcing, observations, info)
+    return prepOpti(forcing, observations, info, CostModelObs())
+end
+
+function  prepOpti(forcing, observations, info, optimization_cost_method)
+    run_helpers = prepTEM(forcing, info)
 
     param_helpers = prepParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution, info.optimization.optimization_parameter_scaling)
     
     tbl_params = param_helpers.tbl_params
-    default_values = tbl_params.default
-    lower_bounds = tbl_params.lower
-    upper_bounds = tbl_params.upper
+    default_values = param_helpers.default_values
+    lower_bounds = param_helpers.lower_bounds
+    upper_bounds = param_helpers.upper_bounds
 
-    cost_options = prepCostOptions(observations, info.optimization.cost_options, info.optimization.optimization_cost_method)
+    cost_options = prepCostOptions(observations, info.optimization.cost_options, optimization_cost_method)
 
     # param_model_id_val = info.optimization.param_model_id_val
-    cost_function = x -> cost(x, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, info.optimization.optimization_cost_method)
+    cost_function = x -> cost(x, default_values, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, optimization_cost_method)
 
     opti_helpers = (; tbl_params=tbl_params, cost_function=cost_function, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds)
     

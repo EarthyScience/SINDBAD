@@ -50,9 +50,11 @@ struct IsNotMultiObjectiveAlgorithm end
 
 export SindbadCost
 export CostModelObs
+export CostModelObsPriors
 
 abstract type SindbadCost end
 struct CostModelObs <: SindbadCost end
+struct CostModelObsPriors <: SindbadCost end
 
 # ------------------------- running flags -------------------------
 export SindbadRunMethods
