@@ -21,7 +21,7 @@ function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, ::Land
     # get the subset of parameters table that consists of only optimized parameters
 
 
-    opti_helpers = prepOpti(forcing, observations, info)
+    opti_helpers = prepOpti(forcing, observations, info, info.optimization.optimization_cost_method)
 
     
     # run the optimizer
@@ -52,7 +52,7 @@ function optimizeTEM(forcing::NamedTuple,
     run_helpers = prepTEM(forcing, info)
 
 
-    cost_function = x -> cost(x, info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], loc_forcing_t, run_helpers.loc_land, run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method)
+    cost_function = x -> costYax(x, info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], loc_forcing_t, run_helpers.loc_land, run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method)
 
     # run the optimizer
     optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, info.optimization.algorithm.options, info.optimization.algorithm.method)
@@ -81,7 +81,7 @@ function optimizeTEM(forcing::NamedTuple,
     run_helpers = prepTEM(forcing, info)
 
 
-    cost_function = x -> cost(x, info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.land_timeseries, run_helpers.loc_land, tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method)
+    cost_function = x -> costYax(x, info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.land_timeseries, run_helpers.loc_land, tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method)
 
     # run the optimizer
     optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, info.optimization.algorithm.options, info.optimization.algorithm.method)
