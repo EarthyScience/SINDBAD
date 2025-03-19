@@ -1,6 +1,6 @@
 
-export scaleParameters
 export backScaleParameters
+export scaleParameters
 export updateModelParameters
 export updateModels
 
