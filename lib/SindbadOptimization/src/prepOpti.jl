@@ -1,5 +1,6 @@
 export prepCostOptions
 export prepOpti
+export prepParameters
 
 """
     prepCostOptions(obs_array, cost_options)
@@ -46,19 +47,68 @@ function prepCostOptions(observations, cost_options, ::CostModelObs)
 end
 
 
+"""
+    prepOpti(forcing, observations, info)
+
+Prepares optimization parameters and settings based on provided inputs.
+
+# Arguments
+- `forcing`: Input forcing data for the optimization
+- `observations`: Observed data used for comparison/calibration
+- `info`: Additional information and settings for optimization setup
+
+# Returns
+Configuration parameters and settings for optimization
+
+# Description
+This function processes the input data and configuration to set up the optimization
+problem. It handles the preparation of parameters and settings required for the
+optimization process.
+"""
 function  prepOpti(forcing, observations, info)
     run_helpers = prepTEM(forcing, info)
 
-    tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
+    # prepParameters(selected_models, model_parameter_default, model_parameters_to_optimize, num_type, temporal_resolution, parameter_scaling)
 
-    # get the default and bounds
+    param_helpers = prepParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution, info.optimization.optimization_parameter_scaling)
+    
+    tbl_params = param_helpers.tbl_params
+    default_values = tbl_params.default
+    lower_bounds = tbl_params.lower
+    upper_bounds = tbl_params.upper
 
-    default_values, lower_bounds, upper_bounds = scaleParameters(tbl_params, info.optimization.optimization_parameter_scaling)
-
-    cost_options = prepCostOptions(observations, info.optimization.cost_options)
+    cost_options = prepCostOptions(observations, info.optimization.cost_options, info.optimization.optimization_cost_method)
 
     # param_model_id_val = info.optimization.param_model_id_val
     cost_function = x -> cost(x, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, info.optimization.optimization_cost_method)
+
     opti_helpers = (; tbl_params=tbl_params, cost_function=cost_function, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds)
+    
     return opti_helpers
+end
+
+
+"""
+    prepParameters(selected_models, model_parameter_default, model_parameters_to_optimize, num_type, temporal_resolution, optimization_parameter_scaling)
+
+Prepare model parameters for optimization by processing default parameters and parameters to be optimized.
+
+# Arguments
+- `selected_models`: Collection of models selected for parameter optimization
+- `model_parameter_default`: Default parameter values for the models
+- `model_parameters_to_optimize`: Parameters that will be optimized
+- `num_type`: Numerical type to be used (e.g., Float64)
+- `temporal_resolution`: Time resolution for the model parameters
+- `optimization_parameter_scaling`: Scaling method/type for parameter optimization
+
+# Returns
+A tuple containing processed parameters ready for optimization
+"""
+function prepParameters(selected_models, model_parameter_default, model_parameters_to_optimize, num_type, temporal_resolution, parameter_scaling)
+    tbl_params = getParameters(selected_models, model_parameter_default, model_parameters_to_optimize, num_type, temporal_resolution)
+    
+    default_values, lower_bounds, upper_bounds = scaleParameters(tbl_params, parameter_scaling)
+
+    param_helpers = (; tbl_params=tbl_params, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds)
+    return param_helpers
 end
