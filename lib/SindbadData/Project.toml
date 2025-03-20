@@ -13,11 +13,5 @@ SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
 YAXArrays = "c21b50f5-aa40-41ea-b809-c0f5e47bfa5c"
 Zarr = "0a941bbe-ad1d-11e8-39d9-ab76183a1d99"
 
-[compat]
-AxisKeys = "0.2.15"
-DimensionalData = "0.29.12"
-FillArrays = "1.13.0"
-NCDatasets = "0.14.6"
-NetCDF = "0.12.1"
-YAXArrays = "0.6.0"
-Zarr = "0.9.4"
+[sources]
+SindbadUtils = { path = "../../lib/SindbadUtils"}
