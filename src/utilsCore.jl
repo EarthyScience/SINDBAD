@@ -5,10 +5,6 @@ export flagUpper, flagLower
 export getFrac
 export getSindbadModelOrder
 export getSindbadModels
-export getVarField
-export getVarFull
-export getVariableInfo
-export getVarName
 export getZix
 export maxZero, maxOne, minZero, minOne
 export offDiag, offDiagUpper, offDiagLower

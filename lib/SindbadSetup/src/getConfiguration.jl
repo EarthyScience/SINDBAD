@@ -10,6 +10,14 @@ const path_separator = Sys.iswindows() ? "\\" : "/"
     convertToAbsolutePath(; inputDict = inputDict)
 
 find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
+
+```julia
+function convertToAbsolutePath(; inputDict=inputDict)
+    #### NOT DONE YET
+    newDict = filter(x -> !occursin("path", first(x)), inputDict)
+    return newDisdadct
+end
+```
 """
 function convertToAbsolutePath(; inputDict=inputDict)
     #### NOT DONE YET
