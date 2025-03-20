@@ -54,14 +54,14 @@ using SindbadTEM
 
 ### How to add a new spinup method
 
-Spinup methods are added as subtypes of ```SindbadSpinupMethods``` in ```SinbadSetup```. The methods defined can be listed as,
+Spinup methods are added as subtypes of ```SindbadSpinupMethod``` in ```SinbadSetup```. The methods defined can be listed as,
 
 ```julia
 using SindbadSetup
-subtypes(SindbadSetup.SindbadSpinupMethods)
+subtypes(SindbadSetup.SindbadSpinupMethod)
 ```
 
-So, the first step to adding a method is to define a subtype of ```SindbadSpinupMethods``` in ```runtimeDispatchTypes.jl``` of ```SinbadSetup```.
+So, the first step to adding a method is to define a subtype of ```SindbadSpinupMethod``` in ```runtimeDispatchTypes.jl``` of ```SinbadSetup```.
 
 
 Once this is defined, a corresponding method has to be added in ```spinupTEM``` in ```SindbadTEM```. Strictly follow the arguments using examples provided in the current methods to implement a new method.

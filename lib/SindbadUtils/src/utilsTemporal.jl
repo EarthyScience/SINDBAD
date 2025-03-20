@@ -1,4 +1,5 @@
 export createTimeAggregator
+export getTimeAggregatorTypeInstance
 export temporalAggregation
 export TimeAggregator
 export TimeAggregatorViewInstance
@@ -274,6 +275,30 @@ function createTimeAggregator(date_vector, ::TimeShuffleYears, aggr_func=mean, s
     year_inds = getIndexForSelectedYear.(Ref(years), shuffled_unique_years)
     year_agg = TimeAggregator(year_inds, aggr_func)
     return [year_agg,]
+end
+
+
+"""
+    getTimeAggregatorTypeInstance(aggr)
+
+Creates and returns a time aggregator instance based on the provided aggregation.
+
+# Arguments
+- `aggr::Symbol`: Symbol specifying the type of time aggregation to be performed
+- `aggr::String`: String specifying the type of time aggregation to be performed
+
+# Returns
+An instance of the corresponding time aggregator type.
+"""
+getTimeAggregatorTypeInstance
+
+function getTimeAggregatorTypeInstance(aggr::Symbol)
+    return getTimeAggregatorTypeInstance(string(aggr))
+end
+
+function getTimeAggregatorTypeInstance(aggr::String)
+    uc_first = toUpperCaseFirst(aggr, "Time")
+    return getfield(SindbadUtils, uc_first)()
 end
 
 

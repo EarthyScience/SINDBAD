@@ -3,14 +3,14 @@ export prepOpti
 export prepParameters
 
 """
-    prepCostOptions(obs_array, cost_options, <:SindbadCost)
+    prepCostOptions(obs_array, cost_options, <:SindbadCostMethod)
 
 remove all the variables that have less than minimum datapoints from being used in the optimization
 
 # Arguments:
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance
-- `::SindbadCost`: a value to indicate that the cost function method
+- `::SindbadCostMethod`: a value to indicate that the cost function method
     - `CostModelObs`: a value to indicate that the cost function method is based on observation data
     - `CostModelObsPriors`: a value to indicate that the cost function method is based on observation data and priors
 """

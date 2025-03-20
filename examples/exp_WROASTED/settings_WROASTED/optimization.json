@@ -50,7 +50,7 @@
   },
   "multi_constraint_method": "metric_sum",
   "subset_model_output": true,
-  "optimization_parameter_scaling": "scale_bounds",
+  "optimization_parameter_scaling": "scale_default",
   "optimization_cost_method": "cost_model_obs",
   "observational_constraints": [
     "gpp",
