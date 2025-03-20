@@ -4,7 +4,6 @@ export getNumberType
 export getTypeInstanceForCostMetric
 export getTypeInstanceForFlags
 export getTypeInstanceForNamedOptions
-export setNumberType
 
 """
     convertRunFlagsToTypes(info)
