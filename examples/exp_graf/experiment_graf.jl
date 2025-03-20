@@ -35,7 +35,7 @@ for x ∈ 1:10
     @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 end
 
-@time spinupTEM(info.models.forward, run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.space_land[1], run_helpers.tem_info);
+@time spinupTEM(info.models.forward, run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.space_land[1], run_helpers.tem_info, run_helpers.tem_info.run.spinup_TEM);
 
 # setLogLevel(:debug)
 
@@ -98,6 +98,12 @@ info = out_opti.info;
 opt_dat = out_opti.output.optimized;
 def_dat = out_opti.output.default;
 costOpt = prepCostOptions(obs_array, info.optimization.cost_options)
+# ──────────────────────────────────────────────────
+#  1 │ gpp                 NSEInv()    0.193419  1.54357
+#  2 │ gpp_anom            NSEInv()    0.313791  0.55399
+#  3 │ runoff              Pcor2Inv()  0.562564  0.586841
+#  4 │ evapotranspiration  NSEInv()    0.589038  1.04692
+#  5 │ tws                 NSEInv()    0.602671  0.805431
 
 # {'gpp'      }    {'mefinv'}    0.17066
 #     {'tws'      }    {'mefinv'}    0.55399
