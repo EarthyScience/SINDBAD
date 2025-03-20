@@ -45,6 +45,9 @@ function addErrorCatcher(loc_land, ::DoDebugModel) # print land when debug model
     return nothing
 end
 
+function addErrorCatcher(_, ::DoNotDebugModel) # do nothing debug model is false/off
+    return nothing
+end
 
 """
     addSpinupLog(loc_land, sequence, ::SpinupLogType)
