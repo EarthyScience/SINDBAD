@@ -55,7 +55,7 @@ that same method can be available through different packages and hence both are 
 
 :::
 
-Internally, the algorithm settings are parsed and optimization settings are defined as different types in SINDBAD under SindbadOptimizationMethods. Convention is ```${package}${method}```. So, the type implementing the optimization from the above settings would be ```CMAEvolutionStrategyCMAES```. And setting that value as ```CMAEvolutionStrategyCMAES``` in algorithm would run the same method with the default option. So, essentially, the ```.json``` method is to allow for over-riding of default options of an implemented method.
+Internally, the algorithm settings are parsed and optimization settings are defined as different types in SINDBAD under SindbadOptimizationMethod. Convention is ```${package}${method}```. So, the type implementing the optimization from the above settings would be ```CMAEvolutionStrategyCMAES```. And setting that value as ```CMAEvolutionStrategyCMAES``` in algorithm would run the same method with the default option. So, essentially, the ```.json``` method is to allow for over-riding of default options of an implemented method.
 
 ````json
 {
@@ -69,7 +69,7 @@ To list all the implemented methods, use
 
 ````julia
 julia> using SindbadOptimization
-julia> subtypes(SindbadOptimizationMethods)
+julia> subtypes(SindbadOptimizationMethod)
 ````
 :::
 

@@ -159,13 +159,20 @@ end
 
 """
     DocStringExtensions.format(abbrv::BoundFields, buf, doc)
+$(SIGNATURES)
 
+Format documentation for bound fields extension.
 
+This method extends the `DocStringExtensions.format` functionality to handle `BoundFields` type.
+It processes and formats the documentation for fields that are bound to a specific type or structure.
 
-# Arguments:
-- `abbrv`: DESCRIPTION
-- `buf`: DESCRIPTION
-- `doc`: DESCRIPTION
+# Arguments
+- `abbrv::BoundFields`: The bound fields abbreviation instance to be formatted
+- `buf`: Buffer where the formatted documentation will be written
+- `doc`: Documentation object containing the information to be formatted
+
+# Note
+This is an extension method for DocStringExtensions.jl package.
 """
 function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
     local docs = get(doc.data, :fields, Dict())

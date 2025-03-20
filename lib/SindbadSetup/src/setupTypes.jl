@@ -34,18 +34,51 @@ end
 
 
 """
-    createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayView)
+    createArrayofType(input_values, pool_array, num_type, indx, ismain, array_type::SindbadModelArrayType)
 
-
+Creates an array or view of the specified type `array_type` based on the input values and configuration.
 
 # Arguments:
-- `input_values`: DESCRIPTION
-- `pool_array`: DESCRIPTION
-- `num_type`: DESCRIPTION
-- `indx`: DESCRIPTION
-- `ismain`: DESCRIPTION
-- `::ModelArrayView`: DESCRIPTION
+- `input_values`: The input data to be converted or used for creating the array.
+- `pool_array`: A preallocated array from which a view may be created.
+- `num_type`: The numerical type to which the input values should be converted (e.g., `Float64`, `Int`).
+- `indx`: A tuple of indices used to create a view from the `pool_array`.
+- `ismain`: A boolean flag indicating whether the main array should be created (`true`) or a view should be created (`false`).
+- `array_type`: A type dispatch that determines the array type to be created:
+    - `ModelArrayView`: Creates a view of the `pool_array` based on the indices `indx`.
+    - `ModelArrayArray`: Creates a new array by converting `input_values` to the specified `num_type`.
+    - `ModelArrayStaticArray`: Creates a static array (`SVector`) from the `input_values`.
+
+# Returns:
+- An array or view of the specified type, created based on the input configuration.
+
+# Notes:
+- When `ismain` is `true`, the function converts `input_values` to the specified `num_type`.
+- When `ismain` is `false`, the function creates a view of the `pool_array` using the indices `indx`.
+- For `ModelArrayStaticArray`, the function ensures that the resulting static array (`SVector`) has the correct type and length.
+
+# Examples:
+1. **Creating a view from a preallocated array**:
+    ```julia
+    pool_array = rand(10, 10)
+    indx = (1:5,)
+    view_array = createArrayofType(nothing, pool_array, Float64, indx, false, ModelArrayView())
+    ```
+
+2. **Creating a new array with a specific numerical type**:
+    ```julia
+    input_values = [1.0, 2.0, 3.0]
+    new_array = createArrayofType(input_values, nothing, Float64, nothing, true, ModelArrayArray())
+    ```
+
+3. **Creating a static array (`SVector`)**:
+    ```julia
+    input_values = [1.0, 2.0, 3.0]
+    static_array = createArrayofType(input_values, nothing, Float64, nothing, true, ModelArrayStaticArray())
+    ```
 """
+createArrayofType
+
 function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayView)
     if ismain
         num_type.(input_values)
@@ -54,36 +87,10 @@ function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::M
     end
 end
 
-"""
-    createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayArray)
-
-
-
-# Arguments:
-- `input_values`: DESCRIPTION
-- `pool_array`: DESCRIPTION
-- `num_type`: DESCRIPTION
-- `indx`: DESCRIPTION
-- `ismain`: DESCRIPTION
-- `::ModelArrayArray`: DESCRIPTION
-"""
 function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayArray)
     return num_type.(input_values)
 end
 
-"""
-    createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayStaticArray)
-
-
-
-# Arguments:
-- `input_values`: DESCRIPTION
-- `pool_array`: DESCRIPTION
-- `num_type`: DESCRIPTION
-- `indx`: DESCRIPTION
-- `ismain`: DESCRIPTION
-- `::ModelArrayStaticArray`: DESCRIPTION
-"""
 function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayStaticArray)
     input_typed = typeof(num_type(1.0)) === eltype(input_values) ? input_values : num_type.(input_values) 
     return SVector{length(input_values)}(input_typed)
