@@ -211,7 +211,7 @@ end
 # Arguments:
 - `dat`: a data array/vector to aggregate
 - `_`: unused argument
-- `::ConcatData`: DESCRIPTION
+- `::ConcatData`: A type indicating that the data should not be aggregated spatially
 """
 function spatialAggregation(dat, _, ::ConcatData)
     return dat

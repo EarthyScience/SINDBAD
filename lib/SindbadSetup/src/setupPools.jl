@@ -364,26 +364,22 @@ end
 
 A helper function to get the information of each pools from info.settings.model_structure.pools and puts them into arrays of information needed to instantiate pool variables.
 
-# Arguments:
-- `main_pools`: list of the main storage pools
-- `pool_info`: information of the pools from the input setttings/JSON
-- `layer_thicknesses`: the thicknesses of the pools
-- `nlayers`: DESCRIPTION
-- `layer`: DESCRIPTION
-- `inits`: DESCRIPTION
-- `sub_pool_name`: DESCRIPTION
-- `main_pool_name`: DESCRIPTION
-- `prename`: DESCRIPTION
+# Arguments
+- `main_pools`: list of main pool configurations
+- `pool_info`: NT containing pool information details
+- `layer_thicknesses`: Array of layer thicknesses in the pools
+- `nlayers`: Number of layers per pool in the model
+- `layer`: Current layer number being processed
+- `inits`: Initial values to be set in the pool
+- `sub_pool_name`: Name of the sub-pool components of a given pool
+- `main_pool_name`: Name of the main pool containing the sub-pool component
+- `prename`: Optional prefix for naming conventions (default: "")
+
+# Returns
+Information specific to the requested pool configuration
 """
-function getPoolInformation(main_pools,
-    pool_info,
-    layer_thicknesses,
-    nlayers,
-    layer,
-    inits,
-    sub_pool_name,
-    main_pool_name;
-    prename="")
+
+function getPoolInformation(main_pools, pool_info, layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name; prename="")
     for main_pool ∈ main_pools
         prefix = prename
         main_pool_info = getproperty(pool_info, main_pool)

@@ -19,7 +19,7 @@ module SindbadOptimization
 
     include("prepOpti.jl")
     include("optimizer.jl")
-    include("getCost.jl")
+    include("cost.jl")
     include("optimizeTEM.jl")
     include("optimizeTEMCube.jl")
 

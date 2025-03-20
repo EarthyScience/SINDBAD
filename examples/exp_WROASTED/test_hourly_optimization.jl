@@ -7,7 +7,7 @@ experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "1999"
 end_year = "2010"
 
-domain = "Fi-Hyy"
+domain = "CA-Obs"
 path_input = nothing
 forcing_config = nothing
 optimization_config = nothing
@@ -70,7 +70,7 @@ run_helpers = prepTEM(forcing, info);
 @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info);
 # @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
 
-
+runExperimentForward(experiment_json; replace_info=replace_info);
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow

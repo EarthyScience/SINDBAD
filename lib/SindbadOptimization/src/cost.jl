@@ -41,7 +41,7 @@ end
 
 
 """
-    cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, <:SindbadCost)
+    cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, <:SindbadCostMethod)
 
 Calculate the cost for a parameter vector.
 
@@ -61,7 +61,7 @@ Calculate the cost for a parameter vector.
 - `cost_options`: Options for cost function calculation
 - `multi_constraint_method`: Method for handling multiple constraints
 - `parameter_scaling_type`: Type of parameter scaling
--  <:SindbadCost: a type parameter indicating cost calculation method
+-  <:SindbadCostMethod: a type parameter indicating cost calculation method
     - `::CostModelObs`: Type parameter indicating cost calculation between model and observations
     - `::CostModelObsPriors`: Type parameter indicating cost calculation between model, observations, and priors. NOTE THAT THIS METHOD IS JUST A PLACEHOLDER AND DOES NOT CALCULATE PRIOR COST PROPERLY YET.
 

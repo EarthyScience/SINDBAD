@@ -34,10 +34,18 @@ struct Spinup_cEco{M,F,T,I,O,N}
 end
 
 
+
 """
-    cEco_spin::Spinup_cEco(pout, p)
+    (cEco_spin::Spinup_cEco)(pout, p)
 
+Custom callable type function for spinning up cEco.
 
+# Arguments
+- `pout`: Output pools
+- `p`: Input pools
+
+# Note
+This method allows a `Spinup_cEco` object to be called as a function, implementing the specific spinup logic for ecosystem carbon pools.
 """
 function (cEco_spin::Spinup_cEco)(pout, p)
     land = cEco_spin.land
@@ -59,11 +67,17 @@ function (cEco_spin::Spinup_cEco)(pout, p)
     return nothing
 end
 
-
 """
-    cEco_TWS_spin::Spinup_cEco_TWS(pout, p)
+    (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
 
+Custom callable type function for spinning up cEco and TWS pools.
 
+# Arguments
+- `pout`: Output pools
+- `p`: Input pools
+
+# Note
+This method allows a `Spinup_cEco_TWS` object to be called as a function, implementing the specific spinup logic for ecosystem carbon pools and the terrestrial water storage components.
 """
 function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
     land = cEco_TWS_spin.land
@@ -96,10 +110,18 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
     return nothing
 end
 
+
 """
-    TWS_spin::Spinup_TWS(pout, p)
+    (TWS_spin::Spinup_TWS)(pout, p)
 
+Custom callable type function for spinning up TWS pools.
 
+# Arguments
+- `pout`: Output pools
+- `p`: Input pools
+
+# Note
+This method allows a `Spinup_TWS` object to be called as a function, implementing the specific spinup logic for the terrestrial water storage components.
 """
 function (TWS_spin::Spinup_TWS)(pout, p)
     land = TWS_spin.land
@@ -126,9 +148,8 @@ helper function to run the spinup models and return the delta in a given pool ov
 
 
 # Arguments:
-- `pool_dat`: DESCRIPTION
-- `spinup_info`: DESCRIPTION
-- `t`: DESCRIPTION
+- `pool_dat`: new values of the storage pools
+- `spinup_info`: NT with all the necessary information to run the spinup models
 """
 function getDeltaPool(pool_dat::AbstractArray, spinup_info, _)
     land = spinup_info.land
@@ -155,7 +176,8 @@ helper function to create a NamedTuple with all the variables needed to run the 
 - `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
 - `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
 - `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten- `spinup_pool_name`: DESCRIPTION
+- `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
+- `spinup_pool_name`: name of the land.pool storage component intended for spinup
 - `tem_info`: helper NT with necessary objects for model run and type consistencies
 """
 function getSpinupInfo(spinup_models, spinup_forcing, loc_forcing_t, land, spinup_pool_name, tem_info, n_timesteps)
@@ -170,64 +192,75 @@ function getSpinupInfo(spinup_models, spinup_forcing, loc_forcing_t, land, spinu
     return spinup_info
 end
 
-"""
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, _, SelSpinupModels)
 
-do/run the spinup and update the state using a simple timeloop through the input models given in spinup_models. In case of :spinup, only the models chosen as use_in_spinup in model_structure.json are run.
+"""
+    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, spinup_mode::SindbadSpinupMethod)
+
+Runs the spinup process for the SINDBAD Terrestrial Ecosystem Model (TEM) to initialize the model to a steady state. The spinup process updates the state variables (e.g., pools) using various spinup methods.
 
 # Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `_`: unused argument
-- `::SelSpinupModels`: DESCRIPTION
+- `spinup_models`: A tuple of a subset of all models in the given model structure that are selected for spinup.
+- `spinup_forcing`: A forcing NamedTuple containing the time series of environmental drivers for the spinup process.
+- `loc_forcing_t`: A forcing NamedTuple for a single location and a single time step.
+- `land`: A SINDBAD NamedTuple containing all variables for a given time step, which is overwritten at every timestep.
+- `tem_info`: A helper NamedTuple containing necessary objects for model execution and type consistencies.
+- `n_timesteps`: The number of timesteps for the spinup process.
+- `spinup_mode::SindbadSpinupMethod`: A type dispatch that determines the spinup method to be used. Supported modes include:
+    - `SelSpinupModels`: Runs only the models selected for spinup in the model structure. This excludes models that are not used in the spinup process by setting use_in_spinup as `false` in model_structure.json.
+    - `AllForwardModels`: Runs all models in the forward mode.
+    - `NlsolveFixedpointTrustregionTWS`: Uses a fixed-point solver with trust region for Total Water Storage (TWS).
+    - `NlsolveFixedpointTrustregionCEco`: Uses a fixed-point solver with trust region for carbon pools (cEco).
+    - `NlsolveFixedpointTrustregionCEcoTWS`: Uses a fixed-point solver with trust region for both cEco and TWS.
+    - `ODETsit5`: Uses the Tsit5 method from DifferentialEquations.jl for solving ODEs.
+    - `ODEDP5`: Uses the DP5 method from DifferentialEquations.jl for solving ODEs.
+    - `ODEAutoTsit5Rodas5`: Uses the AutoVern7(Rodas5) method from DifferentialEquations.jl for solving ODEs.
+    - `SSPDynamicSSTsit5`: Uses the SteadyState solver with DynamicSS and Tsit5 methods.
+    - `SSPSSRootfind`: Uses the SteadyState solver with SSRootfind method.
+    - `EtaScaleAH`: Scales carbon pools using diagnostic scalars for ηH and ηA.
+    - `EtaScaleA0H`: Scales carbon pools using diagnostic scalars for ηH and c_remain.
+
+# Returns:
+- `land`: The updated SINDBAD NamedTuple containing the final state of the model after the spinup process.
+
+# Notes:
+- The spinup process can use different methods depending on the `spinup_mode`, including fixed-point solvers, ODE solvers, and steady-state solvers.
+- The function dynamically selects the appropriate spinup method based on the `spinup_mode` dispatch type.
+- For ODE-based methods, the function uses DifferentialEquations.jl to solve the spinup equations.
+- For steady-state solvers, the function uses methods like `DynamicSS` or `SSRootfind` to find equilibrium states.
+
+# Examples:
+1. **Running spinup with selected models**:
+    ```julia
+    land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, SelSpinupModels())
+    ```
+
+2. **Running spinup with ODE solver (Tsit5)**:
+    ```julia
+    land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ODETsit5())
+    ```
+
+3. **Running spinup with fixed-point solver for cEco and TWS**:
+    ```julia
+    land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, NlsolveFixedpointTrustregionCEcoTWS())
+    ```
+
+4. **Running spinup with steady-state solver (SSRootfind)**:
+    ```julia
+    land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, SSPSSRootfind())
+    ```
 """
+spinup
+
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::SelSpinupModels)
     land = timeLoopTEMSpinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps)
     return land
 end
 
-"""
-spinup(all_models, spinup_forcing, land, tem, ::AllForwardModels})
-do/run the spinup and update the state using a simple timeloop through the input models given in spinup_models. In case of :forward, all the models chosen in model_structure.json are run.
-"""
-
-"""
-    spinup(all_models, spinup_forcing, loc_forcing_t, land, tem_info, _, ::AllForwardModels)
-
-
-
-# Arguments:
-- `all_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `_`: unused argument
-- `::AllForwardModels`: a dispatch type of run all models
-"""
 function spinup(all_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::AllForwardModels)
     land = timeLoopTEMSpinup(all_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps)
     return land
 end
 
-
-"""
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, _, ::NlsolveFixedpointTrustregionTWS)
-
-
-
-# Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `_`: unused argument
-- `::NlsolveFixedpointTrustregionTWS`: DESCRIPTION
-"""
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::NlsolveFixedpointTrustregionTWS)
     TWS_spin = Spinup_TWS(spinup_models, spinup_forcing, tem_info, land, loc_forcing_t, n_timesteps)
     r = fixedpoint(TWS_spin, Vector(deepcopy(land.pools.TWS)); method=:trust_region)
@@ -238,20 +271,6 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
     return land
 end
 
-"""
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, _, ::NlsolveFixedpointTrustregionCEcoTWS)
-
-
-
-# Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `_`: unused argument
-- `::NlsolveFixedpointTrustregionCEcoTWS`: DESCRIPTION
-"""
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::NlsolveFixedpointTrustregionCEcoTWS)
     cEco_TWS_spin = Spinup_cEco_TWS(spinup_models, spinup_forcing, tem_info, deepcopy(land), loc_forcing_t, n_timesteps, Vector(deepcopy(land.pools.TWS)))
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
@@ -275,20 +294,6 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
 end
 
 
-"""
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, _, ::NlsolveFixedpointTrustregionCEco)
-
-
-
-# Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `_`: unused argument
-- `::NlsolveFixedpointTrustregionCEco`: DESCRIPTION
-"""
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::NlsolveFixedpointTrustregionCEco)
     cEco_spin = Spinup_cEco(spinup_models, spinup_forcing, tem_info, deepcopy(land), loc_forcing_t, n_timesteps)
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
@@ -300,22 +305,6 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
     return land
 end
 
-
-
-"""
-    spinup(_, _, _, land, helpers, _, ::EtaScaleAH)
-
-scale the carbon pools using the scalars from diagnostics
-
-# Arguments:
-- `_`: unused argument
-- `_`: unused argument
-- `_`: unused argument
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `helpers`: helper NT with necessary objects for model run and type consistencies
-- `_`: unused argument
-- `::EtaScaleAH`: DESCRIPTION
-"""
 function spinup(_, _, _, land, helpers, _, ::EtaScaleAH)
     @unpack_nt cEco ⇐ land.pools
     helpers = helpers.model_helpers
@@ -347,20 +336,6 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleAH)
 end
 
 
-"""
-    spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
-
-scale the carbon pools using the scalars from diagnostics
-
-# Arguments:
-- `_`: unused argument
-- `_`: unused argument
-- `_`: unused argument
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `helpers`: helper NT with necessary objects for model run and type consistencies
-- `_`: unused argument
-- `EtaScaleA0H`: DESCRIPTION
-"""
 function spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     @unpack_nt cEco ⇐ land.pools
     helpers = helpers.model_helpers
@@ -393,22 +368,7 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     return land
 end
 
-#=
 
-
-"""
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, tem_spinup, ::ODEAutoTsit5Rodas5)
-
-do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl
-
-# Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `::ODEAutoTsit5Rodas5`: DESCRIPTION
-"""
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::ODEAutoTsit5Rodas5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(spinup_models, spinup_forcing, loc_forcing_t, land, Symbol(sel_pool), tem_info, n_timesteps)
@@ -424,20 +384,6 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
     return land
 end
 
-
-"""
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, tem_spinup, ::ODEDP5)
-
-do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
-
-# Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `::ODEDP5`: DESCRIPTION
-"""
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::ODEDP5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(spinup_models, spinup_forcing, loc_forcing_t, land, Symbol(sel_pool), tem_info, n_timesteps)
@@ -454,20 +400,6 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
 end
 
 
-
-"""
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, tem_spinup, ::ODETsit5)
-
-do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
-
-# Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `::ODETsit5`: DESCRIPTION
-"""
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::ODETsit5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(spinup_models, spinup_forcing, loc_forcing_t, land, Symbol(sel_pool), tem_info, n_timesteps)
@@ -484,19 +416,6 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
 end
 
 
-"""
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, tem_spinup, ::SSPDynamicSSTsit5)
-
-do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of DifferentialEquations.jl
-
-# Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `::SSPDynamicSSTsit5`: DESCRIPTION
-"""
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::SSPDynamicSSTsit5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(spinup_models, spinup_forcing, loc_forcing_t, land, Symbol(sel_pool), tem_info, n_timesteps)
@@ -510,19 +429,6 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
 end
 
 
-"""
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, tem_spinup, ::SSPSSRootfind)
-
-do/run the spinup using SteadyState solver and SSRootfind method of DifferentialEquations.jl
-
-# Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
-- `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
-- `loc_forcing_t`: a forcing NT for a single location and a single time step
-- `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
-- `tem_info`: helper NT with necessary objects for model run and type consistencies
-- `::SSPSSRootfind`: DESCRIPTION
-"""
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::SSPSSRootfind)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(spinup_models, spinup_forcing, loc_forcing_t, land, Symbol(sel_pool), tem_info, n_timesteps)
@@ -535,14 +441,114 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
     return land
 end
 
-=#
+"""
+    sequenceForcing(spinup_forcings::NamedTuple, forc_name::Symbol)
 
+Processes and sequences forcing data for spinup simulations.
+
+# Arguments
+- `spinup_forcings::NamedTuple`: A named tuple containing the forcing data for different spinup sequence
+- `forc_name::Symbol`: Symbol indicating the name of the forcing data set to be extracted from the NT for the given sequence
+"""
 function sequenceForcing(spinup_forcings::NamedTuple, forc_name::Symbol)
     return spinup_forcings[forc_name]::NamedTuple
 end
 
+"""
+    setSpinupLog(land, log_index, spinup_log_mode)
 
-function sequenceLoop(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_loop, n_repeat, spinup_mode)
+Stores or skips the spinup log during the spinup process, depending on the specified `spinup_log_mode`.
+
+# Arguments:
+- `land`: A SINDBAD NamedTuple containing all variables for a given time step, which is overwritten at every timestep.
+- `log_index`: The index in the spinup log where the current state of `land.pools` will be stored.
+- `spinup_log_mode`: A type dispatch that determines whether to store the spinup log:
+    - `DoStoreSpinup`: Enables storing the spinup log at the specified `log_index`. Set the `store_spinup` flag to `true` in flag section of experiment_json.
+    - `DoNotStoreSpinup`: Skips storing the spinup log. Set the `store_spinup` flag to `false` in flag section of experiment_json.
+
+# Returns:
+- `land`: The updated SINDBAD NamedTuple, potentially with the spinup log stored.
+
+# Notes:
+- When `DoStoreSpinup` is used:
+    - The function stores the current state of `land.pools` in `land.states.spinuplog` at the specified `log_index`.
+- When `DoNotStoreSpinup` is used:
+    - The function does nothing and simply returns the input `land`.
+
+# Examples:
+1. **Storing the spinup log**:
+    ```julia
+    land = (pools = ..., states = (spinuplog = Vector{Any}(undef, 10)))
+    log_index = 1
+    land = setSpinupLog(land, log_index, DoStoreSpinup())
+    ```
+
+2. **Skipping the spinup log**:
+    ```julia
+    land = (pools = ..., states = (spinuplog = Vector{Any}(undef, 10)))
+    log_index = 1
+    land = setSpinupLog(land, log_index, DoNotStoreSpinup())
+    ```
+"""
+setSpinupLog
+
+function setSpinupLog(land, log_index, ::DoStoreSpinup)
+    land.states.spinuplog[log_index] = land.pools
+    return land
+end
+
+function setSpinupLog(land, _, ::DoNotStoreSpinup)
+    return land
+end
+
+"""
+    spinupSequence(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, spinup_mode)
+
+Executes a sequence of model spinup iterations for the Terrestrial Ecosystem Model (TEM).
+
+# Arguments
+- `spinup_models`: Collection of model configurations for spinup
+- `sel_forcing`: Selected forcing data
+- `loc_forcing_t`: Localized forcing data with temporal component
+- `land`: Land surface parameters
+- `tem_info`: TEM model information and parameters
+- `n_timesteps`: Number of timesteps for the spinup
+- `log_index`: Index for logging purposes
+- `n_repeat`: Number of times to repeat the spinup sequence
+- `spinup_mode`: Mode of spinup operation (e.g., "normal", "accelerated")
+
+# Description
+Performs model spinup by running multiple iterations of the TEM model to achieve
+steady state conditions. The function handles different spinup modes and manages
+the sequence of model runs according to specified parameters.
+
+# Returns
+land with the updated pools after the spinup sequence.
+"""
+function spinupSequence(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, spinup_mode)
+    land = spinupSequenceLoop(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, spinup_mode)
+    # end
+    return land
+end
+
+
+"""
+    spinupSequenceLoop(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_loop, n_repeat, spinup_mode)
+
+Runs sequential loops for model spin-up simulations for each repeat of a spinup sequence.
+
+# Arguments
+- `spinup_models`: Collection of spin-up model instances
+- `sel_forcing`: Selected forcing data
+- `loc_forcing_t`: Localized forcing data in temporal dimension
+- `land`: Land surface parameters/conditions
+- `tem_info`: Model configuration and parameters for TEM
+- `n_timesteps`: Number of timesteps to simulate
+- `log_loop`: Boolean flag for logging loop information
+- `n_repeat`: Number of times to repeat the spin-up loop
+- `spinup_mode`: Mode of spin-up simulation (e.g., "normal", "accelerated")
+"""
+function spinupSequenceLoop(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_loop, n_repeat, spinup_mode)
     for loop_index ∈ 1:n_repeat
         @debug "        Loop: $(loop_index)/$(n_repeat)"
         land = spinup(spinup_models,
@@ -560,43 +566,7 @@ end
 
 
 """
-    setSpinupLog(land, log_index, ::DoStoreSpinup)
-
-
-
-# Arguments:
-- `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
-- `log_index`: DESCRIPTION
-- `::DoStoreSpinup`: DESCRIPTION
-"""
-function setSpinupLog(land, log_index, ::DoStoreSpinup)
-    land.states.spinuplog[log_index] = land.pools
-    return land
-end
-
-"""
-    setSpinupLog(land, _, ::DoNotStoreSpinup)
-
-
-
-# Arguments:
-- `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
-- `_`: unused argument
-- `::DoNotStoreSpinup`: DESCRIPTION
-"""
-function setSpinupLog(land, _, ::DoNotStoreSpinup)
-    return land
-end
-
-function spinupSequence(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, spinup_mode)
-    land = sequenceLoop(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, spinup_mode)
-    # end
-    return land
-end
-
-
-"""
-    spinupTEM(selected_models, forcing, loc_forcing_t, land, tem_info)
+    spinupTEM(selected_models, forcing, loc_forcing_t, land, tem_info, spinup_mode)
 
 The main spinup function that handles the spinup method based on inputs from spinup.json. Either the spinup is loaded or/and run using spinup functions for different spinup methods.
 
@@ -607,8 +577,19 @@ The main spinup function that handles the spinup method based on inputs from spi
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `tem_info`: helper NT with necessary objects for model run and type consistencies
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
+- `spinup_mode`: A type dispatch that determines whether spinup is included or excluded:
+    - `::DoSpinupTEM`: Runs the spinup process before the main simulation. Set `spinup_TEM` to `true` in the flag section of experiment_json.
+    - `::DoNotSpinupTEM`: Skips the spinup process and directly runs the main simulation. Set `spinup_TEM` to `false` in the flag section of experiment_json.
+
+# Notes:
+- When `DoSpinupTEM` is used:
+    - The function runs the spinup sequences
+- When `DoNotSpinupTEM` is used:
+    - The function skips the spinup process returns the land as is`
 """
-function spinupTEM(selected_models, spinup_forcings, loc_forcing_t, land, tem_info)
+spinupTEM
+
+function spinupTEM(selected_models, spinup_forcings, loc_forcing_t, land, tem_info, ::DoSpinupTEM)
     log_index = 1
     for spin_seq ∈ tem_info.spinup_sequence
         forc_name = spin_seq.forcing
@@ -623,6 +604,9 @@ function spinupTEM(selected_models, spinup_forcings, loc_forcing_t, land, tem_in
     return land
 end
 
+function spinupTEM(selected_models, spinup_forcings, loc_forcing_t, land, tem_info, ::DoNotSpinupTEM)
+    return land
+end
 
 
 """
