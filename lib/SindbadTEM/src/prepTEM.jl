@@ -442,13 +442,15 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     land_init = output.land_init
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     loc_forcing = getLocData(forcing_nt_array, space_ind[1])
+    loc_spinup_forcing = getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
     loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
     addErrorCatcher(loc_land, info.helpers.run.debug_model)
 
     output_vars = output.variables
     output_dims = output.dims
 
-    run_helpers = (; loc_forcing, loc_forcing_t, loc_land, space_ind, output_dims, output_vars, tem_info)
+    land_time_series = nothing
+    run_helpers = (; loc_forcing, loc_forcing_t, loc_spinup_forcing, loc_land, land_time_series, space_ind, output_dims, output_vars, tem_info)
     return run_helpers
 end
 

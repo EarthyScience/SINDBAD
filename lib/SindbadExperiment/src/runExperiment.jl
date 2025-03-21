@@ -107,7 +107,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimizatio
     else
         @info "runExperiment: do spatial optimization..."
         obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
-        optim_params = optimizeTEM(forcing, obs_array, info, info.helpers.run.land_output_type)
+        optim_params = optimizeTEM(forcing, obs_array, info)
         optim_file_prefix = joinpath(info.output.dirs.optimization, info.experiment.basics.name * "_" * info.experiment.basics.domain)
         CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
         run_output = optim_params.optim

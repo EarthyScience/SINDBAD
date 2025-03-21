@@ -1,5 +1,7 @@
 export defaultVariableInfo
 export getUniqueVarNames
+export getVarFull
+export getVariableInfo
 export sindbad_variables
 export whatIs
 

@@ -133,11 +133,11 @@ function doNothing(_data)
 end
 
 """
-    entertainMe(n=10, disp_text="Sindbad.jl")
+    entertainMe(n=10, disp_text="SINDBAD")
 
 display the disp_text n times
 """
-function entertainMe(n=10, disp_text="Sindbad.jl", c_olor=false)
+function entertainMe(n=10, disp_text="SINDBAD", c_olor=false)
     for _x in 1:n
         sindbadBanner(disp_text, c_olor)
         sleep(0.1)
@@ -226,11 +226,11 @@ function setLogLevel(log_level::Symbol)
 end
 
 """
-    sindbadBanner(disp_text="Sindbad.jl")
+    sindbadBanner(disp_text="SINDBAD")
 
 displays display text as a banner using Figlets
 """
-function sindbadBanner(disp_text="Sindbad.jl", c_olor=false)
+function sindbadBanner(disp_text="SINDBAD", c_olor=false)
     if c_olor
         print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
     end

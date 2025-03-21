@@ -79,6 +79,26 @@ function prepOpti(forcing, observations, info)
     return prepOpti(forcing, observations, info, CostModelObs())
 end
 
+function  prepOpti(forcing, observations, info, ::CostModelObsLandTS)
+    run_helpers = prepTEM(forcing, info)
+
+    param_helpers = prepParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution, info.optimization.optimization_parameter_scaling)
+    
+    tbl_params = param_helpers.tbl_params
+    default_values = param_helpers.default_values
+    lower_bounds = param_helpers.lower_bounds
+    upper_bounds = param_helpers.upper_bounds
+
+    cost_options = prepCostOptions(observations, info.optimization.cost_options)
+
+    cost_function = x -> costLand(x, info.models.forward, run_helpers.loc_forcing, run_helpers.loc_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.land_time_series, run_helpers.loc_land, run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)
+
+    opti_helpers = (; tbl_params=tbl_params, cost_function=cost_function, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds)
+    
+    return opti_helpers
+end
+
+
 function  prepOpti(forcing, observations, info, optimization_cost_method)
     run_helpers = prepTEM(forcing, info)
 

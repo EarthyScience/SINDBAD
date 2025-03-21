@@ -1,4 +1,4 @@
-# SINDBAD
+# SINDBAD-RnD (Research and Development Repo)
 
 [![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![License: GPL-3.0](https://img.shields.io/badge/License-GPLv3-blue)](https://github.com/EarthyScience/SINDBAD/blob/main/LICENSE)
 
@@ -21,33 +21,35 @@
 
 Welcome to the git repository for the **research and development** of `SINDBAD`. 
 
-`SINDBAD-RnD` will operate as a private fork shared within the core SINDBAD team to foster an environment of maximized internal collaboration. 
+SINDBAD-RnD will operate as a private fork shared within the core [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team) to foster an environment of maximized internal collaboration. 
 
-This setup ensures that members can freely exchange ideas, work closely on ongoing research, and develop new capabilities while safeguarding unpublished code from unauthorized public release. By maintaining this private and protected framework, `SINDBAD-RnD` aims to uphold both the integrity of collaborative efforts and the security of its scientific advancements.
+This setup ensures that members can freely exchange ideas, work closely on ongoing research, and develop new capabilities while safeguarding unpublished code from unauthorized public release. By maintaining this private and protected framework, SINDBAD-RnD aims to uphold both the integrity of collaborative efforts and the security of its scientific advancements.
 
-This repository will ONLY be accessible to the members of the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team).
+This repository will ONLY be accessible to the members of the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team)
 
-### Governance Principles of SINDBAD
+### Governance Principles of SINDBAD-RnD
 
 1. **Purpose and Structure**:
-   - The governance structure of SINDBAD fosters collaboration, community building, and supports continuous research and development at BGI.
+   - The governance structure of `SINDBAD` fosters collaboration, community building, and supports continuous research and development at BGI.
    - It is designed to be simple and clear.
 
 2. **Repository Framework**:
-   - `SINDBAD-RnD` governance applies to members of the `SINDBAD-RnD` repository. Upon the public release of SINDBAD, `SINDBAD-RnD` will be established as a fork of the main SINDBAD repository where internal development will be carried out.
+   - SINDBAD-RnD governance applies to members of the [SINDBAD-RnD repository](https://github.com/EarthyScience/SINDBAD-RnD). Upon the public release of SINDBAD, SINDBAD-RnD will be established as a fork of the main SINDBAD repository where internal development will be carried out.
+   
 
 3. **Function of SINDBAD-RnD**:
-   - `SINDBAD-RnD` serves as a collaborative, protected space for advancing SINDBAD both technically and scientifically within SINDBAD-RnD Team. *Expansion beyond BGI may be considered in the future but only agreed upon code will be released*.
+   SINDBAD-RnD serves as a collaborative, protected space for advancing SINDBAD both technically and scientifically within [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team). *Expansion of [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team) beyond BGI members may be considered in the future but only agreed upon code will be released*.
+   
+4. **SINDBAD-RnD-Team Guidelines**:
 
-4. **RnD-Team Guidelines**:
-   Members of the `SINDBAD-RnD` group, forming the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team), adhere to the following principles:
+   Members of the SINDBAD-RnD group, forming the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team), adhere to the following principles:
    - Participation is voluntary, with a commitment to follow the guidelines.
-   - Members may *privately* fork the `SINDBAD-RnD` repository but must share it exclusively within the `SINDBAD-RnD-Team`. This will ensure that the research overlap are transparent and non-conflicting.
-   - Research and development scopes must be transparently shared across the `SINDBAD-RnD-Team`.
-   - Members must consult the `SINDBAD-RnD-Team` before:
-     - Collaborating on SINDBAD-related projects outside the team.
-     - Submitting research proposals leveraging `SINDBAD-RnD`, preferably including SINDBAD.
+   - Members may privately fork the SINDBAD-RnD repository and when sharing it commit do so exclusively within the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team). 
+   - Research and development scopes must be transparently shared across the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team).
+   - [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team) members must consult the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team) before:
+      - Releasing code of their developments in SINDBAD-RnD 
+      - Collaborating on SINDBAD-related projects outside the team.
+      - Submitting research proposals leveraging SINDBAD-RnD, preferably including SINDBAD.
    - All members adhere to the [Max Planck Society's guidelines for good scientific practice](https://www.mr.mpg.de/14263212/scientificpractice).
 
-5. **Collaboration Note**:
-   Collaboration is nuanced. As a guideline, any activity beyond SINDBAD's FAQ, documentation, or workflows/examples qualifies as collaboration.
+5.	**Note on the definition of collaboration**: Collaboration is nuanced. As a guideline, any activity beyond SINDBAD's FAQ, documentation, or workflows/examples qualifies as collaboration.
