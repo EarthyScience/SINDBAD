@@ -4,14 +4,14 @@ In the Julia REPL type:
 
 ````julia
 julia> ]
-pkg > add https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl.git
+pkg > add https://git.bgc-jena.mpg.de/sindbad/SINDBAD.git
 ````
 
 The ] character starts the Julia package manager. Hit backspace key to return to Julia prompt.
 
 ## Check installation
 
-Check Sindbad.jl version with:
+Check SINDBAD version with:
 
 ````julia
 julia> ]
