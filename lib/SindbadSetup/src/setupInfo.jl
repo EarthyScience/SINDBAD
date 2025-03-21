@@ -379,10 +379,12 @@ function setupInfo(info::NamedTuple)
     land_init = createInitLand(info.pools, info.temp)
     info = setTupleField(info, (:land_init, land_init)) 
 
-    if info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost
+    if (info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost) && hasproperty(info.settings.optimization, :algorithm)
         @info "  setupInfo: setting Optimization and Observation info..."
         info = setOptimization(info)
-    end
+    else
+        getParameters(info.temp.models.forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution);
+     end
 
     if !isnothing(info.settings.experiment.exe_rules.longtuple_size)
         selected_approach_forward = makeLongTuple(info.temp.models.forward, info.settings.experiment.exe_rules.longtuple_size)

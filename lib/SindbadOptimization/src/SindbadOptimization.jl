@@ -34,9 +34,7 @@ This module is designed to support optimization tasks in SINDBAD, such as calibr
 
 4. **`optimizeTEM.jl`**:
    - Provides functions for optimizing SINDBAD TEM parameters for single locations or small spatial grids.
-
-5. **`optimizeTEMCube.jl`**:
-   - Extends optimization functionality to handle large-scale 3D data cubes, enabling parameter calibration across spatial dimensions.
+   - Functionality to handle optimization using large-scale 3D data YAXArrays cubes, enabling parameter calibration across spatial dimensions.
 
 # Notes:
 - The module integrates multiple optimization libraries, allowing users to choose the most suitable algorithm for their problem.
@@ -56,13 +54,6 @@ This module is designed to support optimization tasks in SINDBAD, such as calibr
     using SindbadOptimization
 
     results = optimizeTEM(model, forcing, observations, info)
-    ```
-
-3. **Optimizing parameters for a 3D data cube**:
-    ```julia
-    using SindbadOptimization
-
-    results = optimizeTEMCube(model, cube_data, observations, info)
     ```
 """
 module SindbadOptimization
@@ -88,6 +79,5 @@ module SindbadOptimization
     include("optimizer.jl")
     include("cost.jl")
     include("optimizeTEM.jl")
-    include("optimizeTEMCube.jl")
 
 end # module SindbadOptimization

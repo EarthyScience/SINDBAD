@@ -2,7 +2,7 @@ export runoffBase_Zhang2008
 
 #! format: off
 @bounds @describe @units @timescale @with_kw struct runoffBase_Zhang2008{T1} <: runoffBase
-    k_baseflow::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1" | ""
+    k_baseflow::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1" | "day"
 end
 #! format: on
 

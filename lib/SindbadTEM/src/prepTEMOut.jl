@@ -1,3 +1,4 @@
+
 export getOutDims
 export getOutDimsArrays
 export prepTEMOut
@@ -5,16 +6,28 @@ export setupOptiOutput
 
 
 """
-    getNumericArrays(output_vars, info, tem_helpers, land, forcing_sizes)
+    getNumericArrays(info, forcing_sizes)
 
-a helper function to define/instantiate arrays for output
+Defines and instantiates numeric arrays for SINDBAD output variables.
 
 # Arguments:
-- `output_vars`: a vector of pairs for each output variable with land field as the key and land subfield as the value
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `land`: SINDBAD land with all fields and subfields
-- `forcing_sizes`: a NT with forcing dimensions and their sizes
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `forcing_sizes`: A NamedTuple with forcing dimensions and their sizes.
+
+# Returns:
+- A vector of numeric arrays initialized with `NaN` values, where each array corresponds to an output variable.
+
+# Notes:
+- The arrays are created with dimensions based on the forcing sizes and the depth information of the output variables.
+- The numeric type of the arrays is determined by the model settings (`info.helpers.numbers.num_type`).
+- If forward differentiation is enabled (`info.helpers.run.use_forward_diff`), the array type is adjusted accordingly.
+
+# Examples:
+1. **Creating numeric arrays for output variables**:
+    ```julia
+    forcing_sizes = (time=10, lat=5, lon=5)
+    numeric_arrays = getNumericArrays(info, forcing_sizes)
+    ```
 """
 function getNumericArrays(info, forcing_sizes)
     tem_output = info.output
@@ -26,11 +39,7 @@ function getNumericArrays(info, forcing_sizes)
         depth_size = first(depth_info)
         ar = nothing
         ax_vals = values(forcing_sizes)
-        ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.helpers.run.use_forward_diff),
-            length(values(forcing_sizes)) + 1}(undef,
-            ax_vals[1],
-            depth_size,
-            ax_vals[2:end]...)
+        ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.helpers.run.use_forward_diff), length(values(forcing_sizes)) + 1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...)
         v_ind += 1
         ar .= info.helpers.numbers.num_type(NaN)
     end
@@ -38,61 +47,90 @@ function getNumericArrays(info, forcing_sizes)
     return outarray
 end
 
-
 """
-    getOutArrayType(num_type, ::DoUseForwardDiff)
+    getOutArrayType(num_type, ::DoUseForwardDiff | ::DoNotUseForwardDiff)
 
-return the type of elements to be used in the output array
+Determines the type of elements to be used in the output array based on whether forward differentiation is enabled.
 
 # Arguments:
-- `num_type`: the given type from the given model settings
-- `::DoUseForwardDiff`: a type dispatch to use a special type for forwarddiff cases
+- `num_type`: The numeric type specified in the model settings (e.g., `Float64`).
+- `::DoUseForwardDiff`: A type dispatch indicating that forward differentiation is enabled. Returns a generic type (`Real`) to support differentiation.
+- `::DoNotUseForwardDiff`: A type dispatch indicating that forward differentiation is not enabled. Returns the specified numeric type (`num_type`).
+
+# Returns:
+- The type of elements to be used in the output array:
+  - `Real` if forward differentiation is enabled.
+  - `num_type` if forward differentiation is not enabled.
+
+# Examples:
+1. **Forward differentiation enabled**:
+    ```julia
+    num_type = Float64
+    array_type = getOutArrayType(num_type, DoUseForwardDiff())
+    # array_type = Real
+    ```
+
+2. **Forward differentiation not enabled**:
+    ```julia
+    num_type = Float64
+    array_type = getOutArrayType(num_type, DoNotUseForwardDiff())
+    # array_type = Float64
+    ```
 """
+getOutArrayType
+
 function getOutArrayType(_, ::DoUseForwardDiff)
     return Real
 end
 
-
-"""
-    getOutArrayType(num_type, ::DoNotUseForwardDiff)
-
-return the type of elements to be used in the output array
-
-# Arguments:
-- `num_type`: the given type from the given model settings
-- `::DoNotUseForwardDiff`: a type dispatch to not use a special type for forwarddiff cases
-"""
 function getOutArrayType(num_type, ::DoNotUseForwardDiff)
     return num_type
 end
 
-
 """
-    getOutDims(info, forcing_helpers)
+    getOutDims(info, forcing_helpers[, ::OutputArray | ::OutputMArray | ::OutputSizedArray | ::OutputYAXArray])
 
-intermediary helper function to only get the the dimensions for SINDBAD output
+Retrieves the dimensions for SINDBAD output based on the specified array backend.
 
 # Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `forcing_helpers`: A NamedTuple with information on forcing sizes and dimensions.
+- `::OutputArray`: (Optional) A type dispatch for using a base Array as the array backend.
+- `::OutputMArray`: (Optional) A type dispatch for using MArray as the array backend.
+- `::OutputSizedArray`: (Optional) A type dispatch for using SizedArray as the array backend.
+- `::OutputYAXArray`: (Optional) A type dispatch for using YAXArray as the array backend.
+
+# Returns:
+- A vector of output dimensions, where each dimension is represented as a tuple of `Dim` objects.
+
+# Notes:
+- For `OutputArray`, `OutputMArray`, and `OutputSizedArray`, all dimensions are included.
+- For `OutputYAXArray`, spatial dimensions are excluded, and metadata is added for each variable.
+
+# Examples:
+1. **Using a base Array**:
+    ```julia
+    outdims = getOutDims(info, forcing_helpers, OutputArray())
+    ```
+
+2. **Using YAXArray**:
+    ```julia
+    outdims = getOutDims(info, forcing_helpers, OutputYAXArray())
+    ```
+
+3. **Default behavior**:
+    ```julia
+    outdims = getOutDims(info, forcing_helpers)
+    ```
 """
+getOutDims
+
 function getOutDims(info, forcing_helpers)
     outdims = getOutDims(info, forcing_helpers, info.helpers.run.output_array_type)
     return outdims
 end
 
 
-
-"""
-    getOutDims(info, forcing_helpers, ::OutputArray)
-
-get the dimensions for SINDBAD output using base Array as array backend
-
-# Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `::Union{OutputArray, OutputMArray, OutputSizedArray`: a type dispatch for using base Array, MArray or SizedArray as output data
-"""
 function getOutDims(info, forcing_helpers, ::Union{OutputArray, OutputMArray, OutputSizedArray})
     outdims_pairs = getOutDimsPairs(info.output, forcing_helpers)
     outdims = map(outdims_pairs) do dim_pairs
@@ -105,16 +143,6 @@ function getOutDims(info, forcing_helpers, ::Union{OutputArray, OutputMArray, Ou
     return outdims
 end
 
-"""
-    getOutDims(info, forcing_helpers, ::OutputYaxArray)
-
-get the dimensions for SINDBAD output using YAXArray as array backend
-
-# Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `::OutputYAXArray`: a type dispatch for using YAXArray as output data
-"""
 function getOutDims(info, forcing_helpers, ::OutputYAXArray)
     outdims_pairs = getOutDimsPairs(info.output, forcing_helpers);
     space_dims = Symbol.(info.settings.forcing.data_dimension.space)
@@ -147,47 +175,66 @@ end
 
 
 """
-    getOutDimsArrays(info, forcing_helpers)
+    getOutDimsArrays(info, forcing_helpers[, ::OutputArray | ::OutputMArray | ::OutputSizedArray | ::OutputYAXArray])
 
-intermediary function to get the dimensions and corresponding data for SINDBAD output
+Retrieves the dimensions and corresponding data for SINDBAD output based on the specified array backend.
 
 # Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `forcing_helpers`: A NamedTuple with information on forcing sizes and dimensions.
+- `::OutputArray`: (Optional) A type dispatch for using a base Array as the array backend.
+- `::OutputMArray`: (Optional) A type dispatch for using MArray as the array backend.
+- `::OutputSizedArray`: (Optional) A type dispatch for using SizedArray as the array backend.
+- `::OutputYAXArray`: (Optional) A type dispatch for using YAXArray as the array backend.
+
+# Returns:
+- A tuple `(outdims, outarray)`:
+  - `outdims`: A vector of output dimensions, where each dimension is represented as a tuple of `Dim` objects.
+  - `outarray`: The corresponding data array, initialized based on the specified array backend.
+
+# Notes:
+- For `OutputArray`, `OutputMArray`, and `OutputSizedArray`, the data array is initialized with the appropriate backend type.
+- For `OutputYAXArray`, the data array is set to `nothing`, as YAXArray handles data differently.
+
+# Examples:
+1. **Using a base Array**:
+    ```julia
+    outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputArray())
+    ```
+
+2. **Using MArray**:
+    ```julia
+    outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputMArray())
+    ```
+
+3. **Using SizedArray**:
+    ```julia
+    outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputSizedArray())
+    ```
+
+4. **Using YAXArray**:
+    ```julia
+    outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputYAXArray())
+    ```
+
+5. **Default behavior**:
+    ```julia
+    outdims, outarray = getOutDimsArrays(info, forcing_helpers)
+    ```
 """
+getOutDimsArrays
+
 function getOutDimsArrays(info, forcing_helpers)
     outdims, outarray = getOutDimsArrays(info, forcing_helpers, info.helpers.run.output_array_type)
     return outdims, outarray
 end
 
-
-"""
-    getOutDimsArrays(info, forcing_helpers, ::OutputArray)
-
-get the dimensions and corresponding data for SINDBAD output using base Array as array backend
-
-# Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `::OutputArray`: a type dispatch for using base Array as output data
-"""
 function getOutDimsArrays(info, forcing_helpers, oarr::OutputArray)
     outdims = getOutDims(info, forcing_helpers, oarr)
     outarray = getNumericArrays(info, forcing_helpers.sizes)
     return outdims, outarray
 end
 
-
-"""
-    getOutDimsArrays(info, forcing_helpers, ::OutputMArray)
-
-get the dimensions and corresponding data for SINDBAD output using MArray as array backend
-
-# Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `::OutputMArray`: a type dispatch for using MArray as output data
-"""
 function getOutDimsArrays(info, forcing_helpers, omarr::OutputMArray)
     outdims = getOutDims(info, forcing_helpers, omarr)
     outarray = getNumericArrays(info, forcing_helpers.sizes)
@@ -195,17 +242,6 @@ function getOutDimsArrays(info, forcing_helpers, omarr::OutputMArray)
     return outdims, marray
 end
 
-
-"""
-    getOutDimsArrays(info, forcing_helpers, ::OutputSizedArray)
-
-get the dimensions and corresponding data for SINDBAD output using SizedArray as array backend
-
-# Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `::OutputSizedArray`: a type dispatch for using SizedArray as output data
-"""
 function getOutDimsArrays(info, forcing_helpers, osarr::OutputSizedArray)
     outdims = getOutDims(info, forcing_helpers, osarr)
     outarray = getNumericArrays(info, forcing_helpers.sizes)
@@ -213,33 +249,48 @@ function getOutDimsArrays(info, forcing_helpers, osarr::OutputSizedArray)
     return outdims, sized_array
 end
 
-
-"""
-    getOutDimsArrays(info, _, ::OutputYaxArray)
-
-get the dimensions and corresponding data for SINDBAD output using YAXArray as array backend
-
-# Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `::OutputYAXArray`: a type dispatch for using YAXArray as output data
-"""
 function getOutDimsArrays(info, forcing_helpers, oayax::OutputYAXArray)
     outdims = getOutDims(info, forcing_helpers, oayax)
     outarray = nothing
     return outdims, outarray
 end
 
-
 """
-    getOutDimsPairs(tem_output, forcing_helpers; dthres = 1)
+    getOutDimsPairs(tem_output, forcing_helpers; dthres=1)
 
-creates a pair for each dimension of output variables from the information of forcing dimensions
+Creates dimension pairs for each output variable based on forcing dimensions and depth information.
 
 # Arguments:
-- `tem_output`: helper NT with necessary information of output variables and z dimension of output arrays
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `dthres`: threshold for number of depth layers to define depth as a new dimension
+- `tem_output`: A NamedTuple containing information about output variables and depth dimensions of output arrays.
+- `forcing_helpers`: A NamedTuple with information on forcing sizes, dimensions, and optional permutations.
+- `dthres`: (Optional) A threshold for the number of depth layers to define depth as a new dimension. Defaults to `1`.
+
+# Returns:
+- A vector of tuples, where each tuple contains dimension pairs for an output variable. Each dimension pair is represented as a `Pair` of a dimension name and its corresponding range or size.
+
+# Notes:
+- If `forcing_helpers.dimensions.permute` is provided, the function reorders dimensions based on the permutation.
+- Depth dimensions are included if their size exceeds the threshold `dthres`. If the depth size is `1`, the depth dimension is labeled as `"idx"`.
+- The function processes each output variable independently, combining forcing dimensions and depth information.
+
+# Examples:
+1. **Basic usage**:
+    ```julia
+    tem_output = (variables=[:var1, :var2], depth_info=[(3, "depth"), (1, "depth")])
+    forcing_helpers = (axes=[(:time, 10), (:lat, 5), (:lon, 5)], dimensions=(permute=nothing))
+    outdims_pairs = getOutDimsPairs(tem_output, forcing_helpers)
+    ```
+
+2. **With dimension permutation**:
+    ```julia
+    forcing_helpers = (axes=[(:time, 10), (:lat, 5), (:lon, 5)], dimensions=(permute=["lon", "lat", "time"]))
+    outdims_pairs = getOutDimsPairs(tem_output, forcing_helpers)
+    ```
+
+3. **With depth threshold**:
+    ```julia
+    outdims_pairs = getOutDimsPairs(tem_output, forcing_helpers; dthres=2)
+    ```
 """
 function getOutDimsPairs(tem_output, forcing_helpers; dthres=1)
     forcing_axes = forcing_helpers.axes
@@ -283,16 +334,41 @@ end
 
 
 """
-    setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
+    prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
 
-base function to prepare the output NT for the forward run
+Prepares the output NamedTuple required for running the Terrestrial Ecosystem Model (TEM) in SINDBAD.
 
 # Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `forcing_helpers`: A NamedTuple with information on forcing sizes and dimensions.
+
+# Returns:
+- A NamedTuple `output_tuple` containing:
+  - `land_init`: The initial land state from `info.land_init`.
+  - `dims`: A vector of output dimensions, where each dimension is represented as a tuple of `Dim` objects.
+  - `data`: A vector of numeric arrays initialized for output variables.
+  - `variables`: A list of output variable names.
+  - Additional fields for optimization output if optimization is enabled.
+
+# Notes:
+- The function initializes the output dimensions and data arrays based on the specified array backend (`info.helpers.run.output_array_type`).
+- If optimization is enabled (`info.helpers.run.run_optimization`), additional fields for optimized parameters are added to the output.
+- The function uses helper functions like `getOutDimsArrays` and `setupOptiOutput` to prepare the output.
+
+# Examples:
+1. **Basic usage**:
+    ```julia
+    output_tuple = prepTEMOut(info, forcing_helpers)
+    ```
+
+2. **Accessing output fields**:
+    ```julia
+    dims = output_tuple.dims
+    data = output_tuple.data
+    variables = output_tuple.variables
+    ```
 """
-function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple)
+function prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
     @info "  prepTEMOut: preparing output and helpers..."
     land = info.land_init
     output_tuple = (;)
@@ -308,29 +384,40 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple)
     return output_tuple
 end
 
-"""
-    prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
 
-prepare the output NT needed to run TEM using the base helpers
+"""
+    setupOptiOutput(info::NamedTuple, output::NamedTuple[, ::DoRunOptimization | ::DoNotRunOptimization])
+
+Creates the output fields needed for the optimization experiment.
 
 # Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a NT with information on forcing sizes and dimensions
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `output`: A base output NamedTuple to which optimization-specific fields will be added.
+- `::DoRunOptimization`: (Optional) A type dispatch indicating that optimization is enabled. Adds fields for optimized parameters.
+- `::DoNotRunOptimization`: (Optional) A type dispatch indicating that optimization is not enabled. Returns the base output unchanged.
+
+# Returns:
+- A NamedTuple containing the base output fields, with additional fields for optimization if enabled.
+
+# Notes:
+- When optimization is enabled, the function:
+  - Adds a `parameter_dim` field to the output, which includes the parameter dimension and metadata.
+  - Creates an `OutDims` object for storing optimized parameters, with the appropriate backend and file path.
+- When optimization is not enabled, the function simply returns the input `output` NamedTuple unchanged.
+
+# Examples:
+1. **With optimization enabled**:
+    ```julia
+    output = setupOptiOutput(info, output, DoRunOptimization())
+    ```
+
+2. **Without optimization**:
+    ```julia
+    output = setupOptiOutput(info, output, DoNotRunOptimization())
+    ```
 """
-function prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
-    return setupBaseOutput(info, forcing_helpers)
-end
+setupOptiOutput
 
-
-"""
-    setupOptiOutput(info::NamedTuple, output::NamedTuple)
-
-create the output fields needed for the optimization experiment
-
-# Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `output`: a base output NT
-"""
 function setupOptiOutput(info::NamedTuple, output::NamedTuple, ::DoRunOptimization)
     @debug "     prepTEMOut: getting parameter output for optimization..."
     params = info.optimization.model_parameters_to_optimize
@@ -347,30 +434,43 @@ function setupOptiOutput(info::NamedTuple, output::NamedTuple, ::DoRunOptimizati
     return output
 end
 
-
-"""
-    setupOptiOutput(info::NamedTuple, output::NamedTuple)
-
-create the output fields needed for the optimization experiment
-
-# Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `output`: a base output NT
-"""
 function setupOptiOutput(info::NamedTuple, output::NamedTuple, ::DoNotRunOptimization)
     return output
 end
 
-"""
-collectMetadata(info, vname)
 
-This function collects metadata regarding the experiment's OS as well as details about output variables.
+"""
+    collectMetadata(info, vname)
+
+Collects metadata for a specific output variable in the SINDBAD experiment.
 
 # Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `vname`: a tuple of symbols, i.e., `(:diagnostics, :water_balance)`.
-- `output`: a Dictionary, `Dict{String, Any}` with all relevant metadata.
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `vname`: A tuple of symbols representing the variable name, e.g., `(:diagnostics, :water_balance)`.
 
+# Returns:
+- A dictionary `Dict{String, Any}` containing metadata for the specified variable, including:
+  - Metadata from the variable catalog (if available).
+  - Global metadata about the platform from `info.output.file_info.global_metadata`.
+
+# Notes:
+- If the variable is not found in the catalog, a warning is issued, and the metadata dictionary will not include catalog-specific information.
+- The metadata includes platform information for every output variable. For datasets, this should ideally be added once, not for every variable.
+
+# Examples:
+1. **Collecting metadata for a variable**:
+    ```julia
+    metadata = collectMetadata(info, (:diagnostics, :water_balance))
+    ```
+
+2. **Accessing specific metadata fields**:
+    ```julia
+    platform_info = metadata["platform_info"]
+    variable_units = metadata["units"]
+    ```
+
+# Warnings:
+- If the variable is not found in the catalog, a warning is logged:
 """
 function collectMetadata(info, vname)
     metadata_platform = info.output.file_info.global_metadata

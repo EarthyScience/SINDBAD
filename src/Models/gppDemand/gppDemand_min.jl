@@ -29,7 +29,6 @@ function compute(params::gppDemand_min, forcing, land, helpers)
         (gpp_f_cloud, gpp_potential, gpp_f_light, gpp_climate_stressors, gpp_f_airT) ⇐ land.diagnostics
     end
 
-    # @show gpp_f_airT, gpp_f_vpd, gpp_climate_stressors
     # set 3d scalar matrix with current scalars
     gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_airT, gpp_climate_stressors, gpp_climate_stressors, 1)
     gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_vpd, gpp_climate_stressors, gpp_climate_stressors, 2)
