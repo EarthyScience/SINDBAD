@@ -6,8 +6,8 @@ export getParameterIndices
     getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
     getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true)
     getParameters(selected_models, model_parameter_default::NamedTuple, num_type, model_timestep)
-    function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type)
-    function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type)
+    getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type)
+    getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type)
 
 Retrieves parameters for the specified models with given numerical type and timestep settings.
 
@@ -35,17 +35,18 @@ end
 
 function getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
     model_names_list = nameof.(typeof.(selected_models))
-
     constrains = []
     default = []
     name = Symbol[]
     model_approach = Symbol[]
+    timescale=String[]
     for obj in selected_models
         k_names = propertynames(obj)
         push!(constrains, Models.bounds(obj)...)
         push!(default, [getproperty(obj, name) for name in k_names]...)
         push!(name, k_names...)
         push!(model_approach, repeat([nameof(typeof(obj))], length(k_names))...)
+        push!(timescale, Models.timescale(obj)...)
     end
     # infer types by re-building
     constrains = [c for c in constrains]
@@ -70,6 +71,8 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
 
     unts=[]
     unts_ori=[]
+    # checkParameterBounds(::Vector{Symbol}, ::Vector{Any}, ::Vector{Float64}, ::Vector{Float64}, ::Bool)
+    # function checkParameterBounds(p_name, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false)
     for m in eachindex(name)
         prm_name = Symbol(name[m])
         appr = approach_func[m]()
@@ -92,19 +95,11 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     # default = num_type.(default)
     lower = num_type.(lower)
     upper = num_type.(upper)
-    output = (;
-    model_id,
-    name,
-    default,
-    optim=default,
-    lower,
-    upper,
-    units=unts,
-    units_ori=unts_ori,
-    model,
-    model_approach,
-    approach_func,
-    name_full)
+    timescale_run = map(timescale) do ts
+        isempty(ts) ? ts : model_timestep
+    end
+    checkParameterBounds(name, default, lower, upper, ScaleNone(),show_info=true)
+    output = (; model_id, name, default, optim=default, lower, upper, timescale_run=timescale_run, units=unts, timescale_ori=timescale, units_ori=unts_ori, model, model_approach, approach_func, name_full)
     output = return_table ? Table(output) : output
     return output
 end

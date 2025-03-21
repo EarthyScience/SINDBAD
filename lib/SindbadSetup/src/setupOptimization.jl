@@ -4,17 +4,12 @@ export setOptimization
 
 
 """
-    checkOptimizedParametersInModels(info::NamedTuple)
+    checkOptimizedParametersInModels(info::NamedTuple, tbl_params)
 
 checks if the parameters listed in model_parameters_to_optimize of optimization.json exists in the selected model structure of model_structure.json
 """
-function checkOptimizedParametersInModels(info::NamedTuple)
+function checkOptimizedParametersInModels(info::NamedTuple, tbl_params)
     # @show info.settings.optimization.observations, info.settings.optimization.model_parameters_to_optimize
-    tbl_params = getParameters(info.temp.models.forward,
-        info.settings.optimization.model_parameter_default,
-        info.settings.optimization.model_parameters_to_optimize,
-        info.temp.helpers.numbers.num_type,
-        info.temp.helpers.dates.temporal_resolution)
     model_parameters = tbl_params.name_full
     # @show model_parameters
     optim_parameters = info.settings.optimization.model_parameters_to_optimize
@@ -202,7 +197,6 @@ function setOptimization(info::NamedTuple)
         (:optimization_cost_method, getTypeInstanceForNamedOptions(info.settings.optimization.optimization_cost_method)))
         
     # check and set the list of parameters to be optimized
-    checkOptimizedParametersInModels(info)
     info = setTupleSubfield(info, :optimization, (:model_parameters_to_optimize, info.settings.optimization.model_parameters_to_optimize))
 
     # set algorithm related options
@@ -226,10 +220,8 @@ function setOptimization(info::NamedTuple)
     info = setTupleSubfield(info, :optimization, (:algorithm, tmp_algorithm))
 
     tbl_params = getParameters(info.temp.models.forward,
-    info.settings.optimization.model_parameter_default,
-    info.settings.optimization.model_parameters_to_optimize,
-    info.temp.helpers.numbers.num_type,
-    info.temp.helpers.dates.temporal_resolution);
+    info.settings.optimization.model_parameter_default, info.settings.optimization.model_parameters_to_optimize, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution);
+    checkOptimizedParametersInModels(info, tbl_params)
 
     param_model_id_val = getParamModelIDVal(tbl_params)
     info = setTupleSubfield(info, :optimization, (:param_model_id_val, param_model_id_val))

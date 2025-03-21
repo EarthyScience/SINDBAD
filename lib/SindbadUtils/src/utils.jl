@@ -18,25 +18,54 @@ figlet_fonts = ("3D Diagonal", "3D-ASCII", "3d", "4max", "5 Line Oblique", "5x7"
 """
     LandWrapper{S}
 
-Wrap the nested fields of namedtuple output of sindbad land into a nested structure of views that can be easily accessed with a dot notation
+Wraps the nested fields of a NamedTuple output of SINDBAD land into a nested structure of views that can be easily accessed with dot notation.
+
+# Fields:
+- `s::S`: The underlying NamedTuple or data structure being wrapped.
 """
 struct LandWrapper{S}
     s::S
 end
+
+"""
+    GroupView{S}
+
+Represents a group of data within a `LandWrapper`, allowing access to specific groups of variables.
+
+# Fields:
+- `groupname::Symbol`: The name of the group being accessed.
+- `s::S`: The underlying data structure containing the group.
+"""
 struct GroupView{S}
     groupname::Symbol
     s::S
 end
+
+"""
+    ArrayView{T,N,S<:AbstractArray{<:Any,N}}
+
+A view into a specific array within a group of data, enabling efficient access and manipulation.
+
+# Fields:
+- `s::S`: The underlying array being viewed.
+- `groupname::Symbol`: The name of the group containing the array.
+- `arrayname::Symbol`: The name of the array being accessed.
+"""
 struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
     s::S
     groupname::Symbol
     arrayname::Symbol
 end
+
 Base.getproperty(s::LandWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfield(s, :s))
+
 """
     Base.getproperty(g::GroupView, aggr_func::Symbol)
 
+Accesses a specific array within a group of data in a `GroupView`.
 
+# Returns:
+An `ArrayView` object for the specified array.
 """
 function Base.getproperty(g::GroupView, aggr_func::Symbol)
     allarrays = getfield(g, :s)
@@ -44,6 +73,7 @@ function Base.getproperty(g::GroupView, aggr_func::Symbol)
     T = typeof(first(allarrays)[groupname][aggr_func])
     return ArrayView{T,ndims(allarrays),typeof(allarrays)}(allarrays, groupname, aggr_func)
 end
+
 Base.size(a::ArrayView) = size(a.s)
 Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
 Base.getindex(a::ArrayView, i::Int) = a.s[i][a.groupname][a.arrayname]
@@ -54,16 +84,22 @@ Base.getindex(o::LandWrapper, s::Symbol) = getproperty(o, s)
 """
     Base.propertynames(o::GroupView)
 
-
+Returns the property names of a group in a `GroupView`.
 """
 function Base.propertynames(o::GroupView)
     return propertynames(first(getfield(o, :s))[getfield(o, :groupname)])
 end
+
 Base.keys(o::GroupView) = propertynames(o)
 Base.getindex(o::GroupView, i::Symbol) = getproperty(o, i)
 Base.size(g::GroupView) = size(getfield(g, :s))
 Base.length(g::GroupView) = prod(size(g))
 
+"""
+    Base.show(io::IO, gv::GroupView)
+
+Displays a summary of the contents of a `GroupView`.
+"""
 function Base.show(io::IO, gv::GroupView)
     print(io, "GroupView with")
     printstyled(io, ":"; color=:red)
@@ -113,7 +149,13 @@ end
 """
     booleanizeArray(_array)
 
+Converts an array into a boolean array where elements greater than zero are `true`.
 
+# Arguments:
+- `_array`: The input array to be converted.
+
+# Returns:
+A boolean array with the same dimensions as `_array`.
 """
 function booleanizeArray(_array)
     _data_fill = 0.0
@@ -122,11 +164,16 @@ function booleanizeArray(_array)
     return _array_bits
 end
 
-
 """
     doNothing(dat)
 
-return the input as is
+Returns the input as is, without any modifications.
+
+# Arguments:
+- `dat`: The input data.
+
+# Returns:
+The same input data.
 """
 function doNothing(_data)
     return _data
@@ -135,9 +182,14 @@ end
 """
     entertainMe(n=10, disp_text="SINDBAD")
 
-display the disp_text n times
+Displays the given text `disp_text` as a banner `n` times.
+
+# Arguments:
+- `n`: Number of times to display the banner (default: 10).
+- `disp_text`: The text to display (default: "SINDBAD").
+- `c_olor`: Whether to display the text in random colors (default: `false`).
 """
-function entertainMe(n=10, disp_text="SINDBAD", c_olor=false)
+function entertainMe(n=10, disp_text="SINDBAD"; c_olor=true)
     for _x in 1:n
         sindbadBanner(disp_text, c_olor)
         sleep(0.1)
@@ -147,7 +199,14 @@ end
 """
     getAbsDataPath(info, data_path)
 
+Converts a relative data path to an absolute path based on the experiment directory.
 
+# Arguments:
+- `info`: The SINDBAD experiment information object.
+- `data_path`: The relative or absolute data path.
+
+# Returns:
+An absolute data path.
 """
 function getAbsDataPath(info, data_path)
     if !isabspath(data_path)
@@ -156,21 +215,31 @@ function getAbsDataPath(info, data_path)
     return data_path
 end
 
-
 """
     isInvalid(_data::Number)
 
-returns if the input number is invalid
+Checks if a number is invalid (e.g., `nothing`, `missing`, `NaN`, or `Inf`).
+
+# Arguments:
+- `_data`: The input number.
+
+# Returns:
+`true` if the number is invalid, otherwise `false`.
 """
 function isInvalid(_data)
     return isnothing(_data) || ismissing(_data) || isnan(_data) || isinf(_data)
 end
 
-
 """
     nonUnique(x::AbstractArray{T}) where T
 
-returns a vector of duplicates in the input vector
+Finds and returns a vector of duplicate elements in the input array.
+
+# Arguments:
+- `x`: The input array.
+
+# Returns:
+A vector of duplicate elements.
 """
 function nonUnique(x::AbstractArray{T}) where {T}
     xs = sort(x)
@@ -186,22 +255,27 @@ function nonUnique(x::AbstractArray{T}) where {T}
     return duplicatedvector
 end
 
-
 """
     replaceInvalid(_data, _data_fill)
 
-replace invalid number with a replace/fill value
+Replaces invalid numbers in the input with a specified fill value.
+
+# Arguments:
+- `_data`: The input number.
+- `_data_fill`: The value to replace invalid numbers with.
+
+# Returns:
+The input number if valid, otherwise the fill value.
 """
 function replaceInvalid(_data, _data_fill)
     _data = isInvalid(_data) ? _data_fill : _data
     return _data
 end
 
-
 """
     setLogLevel()
 
-change the display level to Info
+Sets the logging level to `Info`.
 """
 function setLogLevel()
     logger = ConsoleLogger(stderr, Logging.Info)
@@ -211,7 +285,10 @@ end
 """
     setLogLevel(log_level::Symbol)
 
-change the display level to specifed level input level
+Sets the logging level to the specified level.
+
+# Arguments:
+- `log_level`: The desired logging level (`:debug`, `:warn`, `:error`).
 """
 function setLogLevel(log_level::Symbol)
     logger = ConsoleLogger(stderr, Logging.Info)
@@ -228,7 +305,11 @@ end
 """
     sindbadBanner(disp_text="SINDBAD")
 
-displays display text as a banner using Figlets
+Displays the given text as a banner using Figlets.
+
+# Arguments:
+- `disp_text`: The text to display (default: "SINDBAD").
+- `c_olor`: Whether to display the text in random colors (default: `false`).
 """
 function sindbadBanner(disp_text="SINDBAD", c_olor=false)
     if c_olor
@@ -240,11 +321,16 @@ function sindbadBanner(disp_text="SINDBAD", c_olor=false)
     return nothing
 end
 
-
 """
     tabularizeList(_list)
 
-convert a list/tuple to a Table from TypedTables
+Converts a list or tuple into a table using `TypedTables`.
+
+# Arguments:
+- `_list`: The input list or tuple.
+
+# Returns:
+A table representation of the input list.
 """
 function tabularizeList(_list)
     table = Table((; name=[_list...]))
@@ -252,9 +338,12 @@ function tabularizeList(_list)
 end
 
 """
-    toggleStackTraceNT()
+    toggleStackTraceNT(toggle=true)
 
-Modifies Base.show to reduce the size of error stacktrace of sindbad
+Modifies the display of stack traces to reduce verbosity for NamedTuples.
+
+# Arguments:
+- `toggle`: Whether to enable or disable the modification (default: `true`).
 """
 function toggleStackTraceNT(toggle=true)
     if toggle
@@ -262,27 +351,38 @@ function toggleStackTraceNT(toggle=true)
         eval(:(Base.show(io::IO, nt::Type{<:Tuple}) = print(io, "T")))
         eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = print(io, "NT")))
     else
-        #TODO this does not seem to restore the base show to default
+        # TODO: Restore the default behavior (currently not implemented).
         eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = Base.show(io::IO, nt::Type{<:NTuple})))
     end
     return nothing
 end
 
-
 """
-    toUpperCaseFirst(s::String, prefix=")
+    toUpperCaseFirst(s::String, prefix="")
 
-returns the uppercase first Symbol from input string with _ removed and prefix at the beginning
+Converts the first letter of each word in a string to uppercase, removes underscores, and adds a prefix.
+
+# Arguments:
+- `s`: The input string.
+- `prefix`: A prefix to add to the resulting string (default: "").
+
+# Returns:
+A `Symbol` with the transformed string.
 """
 function toUpperCaseFirst(s::String, prefix="")
     return Symbol(prefix * join(uppercasefirst.(split(s,"_"))))
 end
 
-
 """
     valToSymbol(val)
 
-returns the symbol from which val was created for a type dispatch based on name
+Returns the symbol corresponding to the type of the input value.
+
+# Arguments:
+- `val`: The input value.
+
+# Returns:
+A `Symbol` representing the type of the input value.
 """
 function valToSymbol(val)
     return typeof(val).parameters[1]
