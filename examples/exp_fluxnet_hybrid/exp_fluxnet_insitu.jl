@@ -93,7 +93,24 @@ function lossSite2(new_params, models, loc_forcing, loc_spinup_forcing,
     return t_loss
 end
 
-default_values = tbl_params.default
+function lossSiteFD(new_params, models, loc_forcing, loc_spinup_forcing,
+    loc_forcing_t, loc_output, land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem)
+
+    new_models = updateModelParameters(param_to_index, models, new_params)
+
+    out_data = SindbadML.getOutputFromCache(loc_output, new_params, ForwardDiffGrad())
+
+    coreTEM!(new_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, out_data, land_init, tem...)
+    lossVec = getLossVector(out_data, loc_obs, loc_cost_options)
+    t_loss = combineLoss(lossVec, constraint_method)
+    return t_loss
+end
+
+default_values = Float32.(tbl_params.default)
+
+lossSiteFD(default_values, selected_models, loc_forcing, loc_spinup_forcing,
+    loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs,
+    loc_cost_options, constraint_method, tem)
 
 lossSite2(default_values, selected_models, loc_forcing, loc_spinup_forcing,
     loc_forcing_t, loc_output, land_init, param_to_index, loc_obs,
@@ -103,7 +120,13 @@ cost_function = x -> lossSite2(x, selected_models, loc_forcing, loc_spinup_forci
     loc_forcing_t, loc_output, land_init, param_to_index, loc_obs,
     loc_cost_options, constraint_method, tem)
 
+cost_functionFD = x -> lossSiteFD(x, selected_models, loc_forcing, loc_spinup_forcing,
+    loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()),
+    land_init, param_to_index, loc_obs,
+    loc_cost_options, constraint_method, tem)
+
 @time cost_function(default_values)
+@time cost_functionFD(default_values)
 
 #? run the optimizer
 lower_bounds = tbl_params.lower
@@ -111,3 +134,38 @@ upper_bounds = tbl_params.upper
 
 optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds,
     info.optimization.algorithm.options, info.optimization.algorithm.method)
+
+
+# ? https://github.com/jbrea/CMAEvolutionStrategy.jl
+# and compare output and performance
+# use: (go for parallel/threaded approaches)
+
+using CMAEvolutionStrategy
+
+results = minimize(cost_function,
+    default_values,
+    1;
+    lower=lower_bounds,
+    upper=upper_bounds,
+    maxiter =5,
+    multi_threading = true,
+    )
+
+optim_para = xbest(results)
+
+# ? https://github.com/AStupidBear/GCMAES.jl
+
+using GCMAES
+x0 = default_values
+σ0 = 0.2
+lo = lower_bounds
+hi = upper_bounds
+maxiter = 5
+
+xmin, fmin, status = GCMAES.minimize(cost_function, x0, σ0, lo, hi, maxiter=maxiter)
+
+# ? now speedup convergence with some gradient information
+using ForwardDiff
+∇loss(x) = ForwardDiff.gradient(cost_functionFD, x)
+
+xmin, fmin, status = GCMAES.minimize((cost_functionFD, ∇loss), x0, σ0, lo, hi, maxiter = 5);
