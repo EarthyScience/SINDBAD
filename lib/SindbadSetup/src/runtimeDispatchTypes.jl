@@ -37,9 +37,11 @@ struct OptimizationQuadDirect <: SindbadOptimizationMethod end
 
 export SindbadCostMethod
 export CostModelObs
+export CostModelObsLandTS
 export CostModelObsPriors
 
 abstract type SindbadCostMethod end
+struct CostModelObsLandTS <: SindbadCostMethod end
 struct CostModelObs <: SindbadCostMethod end
 struct CostModelObsPriors <: SindbadCostMethod end
 

@@ -283,7 +283,7 @@ helper function to return the default order of a sindbad model
 """
 function getSindbadModelOrder(model_name)
     mo = findall(x -> x == model_name, sindbad_models)[1]
-    println("The order [default] of $(model_name) in models.jl of core Sindbad.jl is $(mo)")
+    println("The order [default] of $(model_name) in models.jl of core SINDBAD is $(mo)")
 end
 
 """
