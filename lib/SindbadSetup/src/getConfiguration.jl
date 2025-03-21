@@ -11,13 +11,6 @@ const path_separator = Sys.iswindows() ? "\\" : "/"
 
 find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
 
-```julia
-function convertToAbsolutePath(; inputDict=inputDict)
-    #### NOT DONE YET
-    newDict = filter(x -> !occursin("path", first(x)), inputDict)
-    return newDisdadct
-end
-```
 """
 function convertToAbsolutePath(; inputDict=inputDict)
     #### NOT DONE YET
@@ -29,13 +22,7 @@ end
 """
     createNestedDict(dict::AbstractDict)
 
-Creates a nested dict from one-depth dict, when string keys are strings separated by a .
-
-dict = Dict("a.b.c" => 2)
-
-nested_dict = createNestedDict(dict)
-
-nested_dict["a"]["b"]["c"]
+Creates a nested dict from one-depth dict, when string keys are strings separated.
 """
 function createNestedDict(dict::AbstractDict)
     nested_dict = Dict()
@@ -54,9 +41,7 @@ function createNestedDict(dict::AbstractDict)
             else
                 if !haskey(key_dict, subkey_name)
                     key_dict[subkey_name] = Dict()
-                    key_dict[subkey_name][key_list[key_index+1]] =
-                        key_dict[key_list[key_index+1]*string(key_index +
-                                                              1)]
+                    key_dict[subkey_name][key_list[key_index+1]] = key_dict[key_list[key_index+1]*string(key_index+1)]
                 else
                     tmp = Dict()
                     tmp[subkey_name] = key_dict[key_list[key_index+1]*string(key_index + 1)]
@@ -122,6 +107,12 @@ function getConfiguration(sindbad_experiment::String; replace_info=Dict())
             info = replaceInfoFields(info, non_exp_dict)
         end
     end
+    if !haskey(info["experiment"]["basics"]["config_files"], "optimization")
+        @warn "The config files in experiment_json and changes in replace_info do not include optimization_json. But, the settings for flags to run_optimization [set as $(info["experiment"]["flags"]["run_optimization"])] and/or calc_cost [set as $(info["experiment"]["flags"]["calc_cost"])] are set to true. These flags will be set to false from now on. The experiment will not run as intended further downstream. Cannot run optimization or calculate cost without the optimization settings. "
+        info["experiment"]["flags"]["run_optimization"] = false
+        info["experiment"]["flags"]["calc_cost"] = false
+    end
+
     new_info = DataStructures.OrderedDict()
     new_info["settings"] = DataStructures.OrderedDict()
     for (k,v) in info
