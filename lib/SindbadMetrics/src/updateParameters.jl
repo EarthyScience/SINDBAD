@@ -28,7 +28,7 @@ function backScaleParameters(param_vector_scaled, tbl_params, ::ScaleNone)
 end
     
 function backScaleParameters(param_vector_scaled, tbl_params, ::ScaleDefault)
-    param_vector_scaled .= abs.(tbl_params.default) .* param_vector_scaled
+    param_vector_scaled = abs.(tbl_params.default) .* param_vector_scaled
     return param_vector_scaled
 end
 

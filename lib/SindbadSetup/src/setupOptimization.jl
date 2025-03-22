@@ -6,7 +6,14 @@ export setOptimization
 """
     checkOptimizedParametersInModels(info::NamedTuple, tbl_params)
 
-checks if the parameters listed in model_parameters_to_optimize of optimization.json exists in the selected model structure of model_structure.json
+Checks if the parameters listed in `model_parameters_to_optimize` from `optimization.json` exist in the selected model structure from `model_structure.json`.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+- `tbl_params`: A table of parameters extracted from the model structure.
+
+# Notes:
+- Issues a warning and throws an error if any parameter in `model_parameters_to_optimize` does not exist in the model structure.
 """
 function checkOptimizedParametersInModels(info::NamedTuple, tbl_params)
     # @show info.settings.optimization.observations, info.settings.optimization.model_parameters_to_optimize
@@ -34,7 +41,16 @@ end
 """
     getAggrFunc(func_name::String)
 
-return a function for a given name to aggregate
+Returns an aggregation function corresponding to the given function name.
+
+# Arguments:
+- `func_name`: A string specifying the name of the aggregation function (e.g., "mean", "sum").
+
+# Returns:
+- The corresponding aggregation function (e.g., `mean`, `sum`).
+
+# Notes:
+- Supports common aggregation functions such as `mean`, `sum`, `nanmean`, and `nansum`.
 """
 function getAggrFunc(func_name::String)
     if func_name == "nanmean"
@@ -51,17 +67,20 @@ end
 """
     getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number_helpers, dates_helpers)
 
-Sets up cost optimization options based on provided parameters.
+Sets up cost optimization options based on the provided parameters.
 
-# Arguments
-- `optim_info::NamedTuple`: Named tuple containing optimization parameters and settings
-- `vars_info`: Information about variables used in optimization
-- `tem_variables`: Template variables for optimization setup
-- `number_helpers`: Helper functions or values for numerical operations
-- `dates_helpers`: Helper functions or values for date-related operations
+# Arguments:
+- `optim_info`: A NamedTuple containing optimization parameters and settings.
+- `vars_info`: Information about variables used in optimization.
+- `tem_variables`: Template variables for optimization setup.
+- `number_helpers`: Helper functions or values for numerical operations.
+- `dates_helpers`: Helper functions or values for date-related operations.
 
-# Returns
-Cost optimization configuration options.
+# Returns:
+- A NamedTuple containing cost optimization configuration options.
+
+# Notes:
+- Configures temporal and spatial aggregation, cost metrics, and other optimization-related settings.
 """
 function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number_helpers, dates_helpers)
     varlist = Symbol.(optim_info.observational_constraints)
@@ -143,10 +162,17 @@ end
 """
     getConstraintNames(optim::NamedTuple)
 
-- obs_vars: a list of observation variables that will be used to calculate cost
-- optim_vars: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
-- storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
+Extracts observation and model variable names for optimization constraints.
 
+# Arguments:
+- `optim`: A NamedTuple containing optimization settings and observation constraints.
+
+# Returns:
+- A tuple containing:
+  - `obs_vars`: A list of observation variables used to calculate cost.
+  - `optim_vars`: A lookup mapping observation variables to model variables.
+  - `store_vars`: A lookup of model variables for which time series will be stored.
+  - `model_vars`: A list of model variable names.
 """
 function getConstraintNames(optim::NamedTuple)
     obs_vars = Symbol.(optim.observational_constraints)
@@ -162,6 +188,20 @@ function getConstraintNames(optim::NamedTuple)
     return obs_vars, optim_vars, store_vars, model_vars
 end
 
+"""
+    getParamModelIDVal(tbl_params)
+
+Generates a `Val` object containing tuples of parameter names and their corresponding model IDs.
+
+# Arguments:
+- `tbl_params`: A table of parameters with their names and model IDs.
+
+# Returns:
+- A `Val` object containing tuples of parameter names and model IDs.
+
+# Notes:
+- Parameter names are transformed to a unique format by replacing dots with underscores.
+"""
 function getParamModelIDVal(tbl_params)
     param_names = Symbol.(replace.(tbl_params.name_full, "." => "____"))
     model_id = tbl_params.model_id;
@@ -172,11 +212,20 @@ function getParamModelIDVal(tbl_params)
 end
 
 
-
 """
     setOptimization(info::NamedTuple)
 
+Sets up optimization-related fields in the experiment configuration.
 
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with optimization-related fields added.
+
+# Notes:
+- Configures cost metrics, optimization parameters, algorithms, and variables to store during optimization.
+- Validates the parameters to be optimized against the model structure.
 """
 function setOptimization(info::NamedTuple)
     info = setTupleField(info, (:optimization, (;)))

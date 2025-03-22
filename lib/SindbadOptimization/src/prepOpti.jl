@@ -112,7 +112,7 @@ function  prepOpti(forcing, observations, info, optimization_cost_method)
     cost_options = prepCostOptions(observations, info.optimization.cost_options, optimization_cost_method)
 
     # param_model_id_val = info.optimization.param_model_id_val
-    cost_function = x -> cost(x, default_values, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, optimization_cost_method)
+    cost_function = x -> cost(x, default_values, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, deepcopy(run_helpers.space_land), run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, optimization_cost_method)
 
     opti_helpers = (; tbl_params=tbl_params, cost_function=cost_function, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds)
     
