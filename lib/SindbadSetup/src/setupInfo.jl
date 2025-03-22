@@ -3,17 +3,20 @@ export createInitLand
 export getSpinupSequenceWithTypes
 
 """
-    createInitLand(tem)
+    createInitLand(pool_info, tem)
 
-create the initial out named tuple with subfields for pools, states, and all selected models.
+Initializes the land state by creating a NamedTuple with pools, states, and selected models.
 
 # Arguments:
-- `tem`: a helper NT with necessary objects for pools and numbers
+- `pool_info`: Information about the pools to initialize.
+- `tem`: A helper NamedTuple with necessary objects for pools and numbers.
+
+# Returns:
+- A NamedTuple containing initialized pools, states, fluxes, diagnostics, properties, models, and constants.
 """
 function createInitLand(pool_info, tem)
     init_pools = createInitPools(pool_info, tem.helpers)
     initial_states = createInitStates(pool_info, tem.helpers)
-    # out = (; fluxes=(;), pools=init_pools, states=initial_states)::NamedTuple
     out = (; fluxes=(;), pools=(; init_pools..., initial_states...), states=(;), diagnostics=(;), properties=(;), models=(;), constants=(;))
     sortedModels = sort([_sm for _sm ∈ tem.models.selected_models.model])
     for model ∈ sortedModels
@@ -26,7 +29,14 @@ end
 """
     parseSaveCode(info)
 
-parse and save the code and structs of selected model structure for the given experiment
+Parses and saves the code and structs of the selected model structure for the given experiment.
+
+# Arguments:
+- `info`: The experiment configuration NamedTuple containing model and output information.
+
+# Notes:
+- Writes the `define`, `precompute`, and `compute` functions for the selected models to separate files.
+- Also writes the parameter structs for the models.
 """
 function parseSaveCode(info)
     models = info.temp.models.forward
@@ -37,11 +47,12 @@ function parseSaveCode(info)
     fallback_code_precompute = nothing
     fallback_code_compute = nothing
 
-    # write define
+    # Write define functions
     open(outfile_define, "w") do o_file
-        mod_string = "# code for define functions (variable definition) in models of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain. These functions are called just ONCE for variable/array definitions\n"
+        mod_string = "# Code for define functions (variable definition) in models of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain.\n"
+        mod_string *= "# These functions are called just ONCE for variable/array definitions.\n"
         write(o_file, mod_string)
-        mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in define functions of model approaches in src/Models/[model]/[approach].jl\n"
+        mod_string = "# Based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in define functions of model approaches in src/Models/[model]/[approach].jl\n"
         write(o_file, mod_string)
         for (mi, _mod) in enumerate(models)
             mod_name = string(nameof(supertype(typeof(_mod))))
@@ -50,7 +61,7 @@ function parseSaveCode(info)
             write(o_file, mod_string)
             mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
             write(o_file, "# " * mod_file * "\n")
-            mod_string = "# call order: $mi\n\n"
+            mod_string = "# Call order: $mi\n\n"
             write(o_file, mod_string)
 
             mod_ending = "\n\n"
@@ -67,19 +78,18 @@ function parseSaveCode(info)
             end
             mod_string = "# --------------------------------------\n"
             write(o_file, mod_string)
-
         end
-        mod_string = "\n# fallback define function for LandEcosystem\n"
+        mod_string = "\n# Fallback define function for LandEcosystem\n"
         write(o_file, mod_string)
         write(o_file, fallback_code_define)
     end
 
-    #write precompute and compute
+    # Write precompute and compute functions
     open(outfile_code, "w") do o_file
-        mod_string = "# code for precompute and compute functions in models of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
-        mod_string = "# code for models of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain\n"
+        mod_string = "# Code for precompute and compute functions in models of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain.\n"
+        mod_string *= "# Precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step.\n"
         write(o_file, mod_string)
-        mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
+        mod_string = "# Based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
         write(o_file, mod_string)
         for (mi, _mod) in enumerate(models)
             mod_name = string(nameof(supertype(typeof(_mod))))
@@ -88,7 +98,7 @@ function parseSaveCode(info)
             write(o_file, mod_string)
             mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
             write(o_file, "# " * mod_file * "\n")
-            mod_string = "# call order: $mi\n\n"
+            mod_string = "# Call order: $mi\n\n"
             write(o_file, mod_string)
 
             mod_ending = "\n\n"
@@ -103,7 +113,6 @@ function parseSaveCode(info)
                 write(o_file, mod_code * mod_ending)
             end
 
-
             mod_code = @code_string Models.compute(_mod, nothing, nothing, nothing)
             if occursin("LandEcosystem", mod_code)
                 if isnothing(fallback_code_compute)
@@ -114,19 +123,17 @@ function parseSaveCode(info)
             end
             mod_string = "# --------------------------------------\n"
             write(o_file, mod_string)
-
         end
-        mod_string = "\n# fallback precompute and compute functions for LandEcosystem\n"
+        mod_string = "\n# Fallback precompute and compute functions for LandEcosystem\n"
         write(o_file, mod_string)
         write(o_file, fallback_code_precompute)
         write(o_file, fallback_code_compute)
     end
 
-    # write structs
+    # Write structs
     open(outfile_struct, "w") do o_file
-        mod_string = "# code for parameter structs of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain\n"
-        write(o_file, mod_string)
-        mod_string = "# based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
+        mod_string = "# Code for parameter structs of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain.\n"
+        mod_string *= "# Based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
         write(o_file, mod_string)
         write(o_file, "abstract type LandEcosystem end\n")
 
@@ -137,13 +144,13 @@ function parseSaveCode(info)
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
             write(o_file, "# " * mod_file * "\n")
-            mod_string = "# call order: $mi\n\n"
+            mod_string = "# Call order: $mi\n\n"
             write(o_file, mod_string)
 
             write(o_file, "abstract type $mod_name <: LandEcosystem end\n")
 
             mod_string = string(@code_expr typeof(_mod)())
-            for xx = 1:100 # maximum line number with parameter definition. Change here if with crazy model with large number of parameters still show file path in generated struct.
+            for xx = 1:100
                 if occursin(mod_file, mod_string)
                     mod_string = replace(mod_string, "#= $(mod_file):$(xx) =#\n" => "")
                     mod_string = replace(mod_string, "#= $(mod_file):$(xx) =#" => "")
@@ -160,15 +167,11 @@ function parseSaveCode(info)
             mod_string = replace(mod_string, "                                                " => "    ")
             mod_string = replace(mod_string, " = (((" => " = ")
             mod_string = replace(mod_string, ") |" => " |")
-            # mod_string = "\n # todo get model structs here \n"
             write(o_file, mod_string * "\n\n")
-            # mod_code = @code_string Models.compute(_mod, nothing, nothing, nothing)
-            # write(o_file, mod_code * "\n")
             mod_string = "# --------------------------------------\n"
             if mi == lastindex(models)
                 mod_string = "# --------------------------------------"
             end
-
             write(o_file, mod_string)
         end
     end
@@ -180,8 +183,13 @@ end
 """
     setDatesInfo(info::NamedTuple)
 
-fills info.temp.helpers.dates with date and time related fields needed in the models.
+Fills `info.temp.helpers.dates` with date and time-related fields needed in the models.
 
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with date-related fields added.
 """
 function setDatesInfo(info::NamedTuple)
     tmp_dates = (;)
@@ -208,7 +216,13 @@ end
 """
     setModelRunInfo(info::NamedTuple)
 
-sets info.temp.output.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
+Sets up model run flags and output array types for the experiment.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with model run flags and output array types added.
 """
 function setModelRunInfo(info::NamedTuple)
     if info.settings.experiment.flags.run_optimization
@@ -230,11 +244,17 @@ function setModelRunInfo(info::NamedTuple)
     return info
 end
 
-
 """
     setNumericHelpers(info::NamedTuple, ttype)
 
-prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run
+Prepares numeric helpers for maintaining consistent data types across models.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+- `ttype`: The numeric type to use (default: `info.settings.experiment.exe_rules.model_number_type`).
+
+# Returns:
+- The updated `info` NamedTuple with numeric helpers added.
 """
 function setNumericHelpers(info::NamedTuple, ttype=info.settings.experiment.exe_rules.model_number_type)
     num_type = getNumberType(ttype)
@@ -249,7 +269,13 @@ end
 """
     setRestartFilePath(info::NamedTuple)
 
-Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses roots.experiment as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
+Validates and sets the absolute path for the restart file used in spinup.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with the absolute restart file path set.
 """
 function setRestartFilePath(info::NamedTuple)
     restart_file_in = info.settings.experiment.model_spinup.restart_file
@@ -271,7 +297,18 @@ function setRestartFilePath(info::NamedTuple)
     return info
 end
 
+"""
+    getSpinupSequenceWithTypes(seqq, helpers_dates)
 
+Processes the spinup sequence and assigns types for temporal aggregators for spinup forcing.
+
+# Arguments:
+- `seqq`: The spinup sequence from the experiment configuration.
+- `helpers_dates`: A NamedTuple containing date-related helpers.
+
+# Returns:
+- A processed spinup sequence with forcing types for temporal aggregators.
+"""
 function getSpinupSequenceWithTypes(seqq, helpers_dates)
     seqq_typed = []
     for seq in seqq
@@ -306,9 +343,15 @@ function getSpinupSequenceWithTypes(seqq, helpers_dates)
 end
 
 """
-    setupInfo(info::NamedTuple)
+    setSpinupInfo(info::NamedTuple)
 
-uses the configuration info and processes information for spinup
+Processes the spinup configuration and prepares the spinup sequence.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with spinup-related fields added.
 """
 function setSpinupInfo(info)
     info = setRestartFilePath(info)
@@ -323,9 +366,15 @@ end
 
 
 """
-    setupInfo(info::NamedTuple)
+    setExperimentBasics(info::NamedTuple)
 
-uses the configuration read from the json files, and copies a set of useful basic experiment info into the tem.experiment
+Copies basic experiment information into the temporary experiment configuration.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with basic experiment information added.
 """
 function setExperimentBasics(info)
     ex_basics = info.settings.experiment.basics
@@ -346,7 +395,13 @@ end
 """
     setupInfo(info::NamedTuple)
 
-uses the configuration read from the json files, and consolidates and sets info tem fields needed for model simulation
+Processes the experiment configuration and sets up all necessary fields for model simulation.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with all necessary fields for model simulation.
 """
 function setupInfo(info::NamedTuple)
     @info "  setupInfo: setting Basic Experiment Info..."

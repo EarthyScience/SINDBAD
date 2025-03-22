@@ -289,6 +289,9 @@ Creates and returns a time aggregator instance based on the provided aggregation
 
 # Returns
 An instance of the corresponding time aggregator type.
+
+# Notes:
+- A similar approach `getTypeInstanceForNamedOptions` is used in `SindbadSetup` for creating types of other named option
 """
 getTimeAggregatorTypeInstance
 

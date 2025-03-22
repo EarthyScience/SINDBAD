@@ -4,11 +4,21 @@ export setSpinupAndForwardModels
 """
     changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
 
-returns a list of models reordered according to orders provided in model_structure json.
+Reorders the list of models based on the order specified in the `model_structure.json` file.
 
-- default order is taken from sindbad_models
-- models cannot be set before getPools or after cCycle
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+- `selected_models`: An array of selected models to reorder.
+
+# Returns:
+- A reordered list of models based on the specified order.
+
+# Notes:
 - USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
+- The default order is taken from `sindbad_models`.
+- Models cannot be set before `getPools` or after `cCycle`.
+- Changing the order may result in model inconsistency, so use with caution.
+- Issues warnings if the model order is changed or duplicates are found in the order.
 """
 function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
     all_sindbad_models = [sindbad_models...]
@@ -78,11 +88,20 @@ function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
     return full_models_reordered
 end
 
-
 """
     checkSelectedModels(all_sindbad_models::AbstractArray, selected_models::AbstractArray)
 
-checks if the list of selected models in model_structure.json are available in the full list of sindbad_models defined in models.jl
+Validates that the selected models in `model_structure.json` exist in the full list of `sindbad_models`.
+
+# Arguments:
+- `all_sindbad_models`: An array of all available SINDBAD models.
+- `selected_models`: An array of selected models to validate.
+
+# Returns:
+- `true` if all selected models are valid; otherwise, throws an error.
+
+# Notes:
+- Ensures that the selected models are consistent with the available SINDBAD models.
 """
 function checkSelectedModels(all_sindbad_models, selected_models::AbstractArray)
     for sm ∈ selected_models
@@ -100,9 +119,17 @@ end
 """
     setOrderedSelectedModels(info::NamedTuple)
 
-gets the ordered list of selected models from info.settings.model_structure.models
-- orders them as given in sindbad_models in models.jl.
-- consistency check using checkSelectedModels for the existence of user-provided model.
+Retrieves and orders the list of selected models based on the configuration in `model_structure.json`.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with the ordered list of selected models added to `info.temp.models`.
+
+# Notes:
+- Ensures consistency by validating the selected models using `checkSelectedModels`.
+- Orders the models as specified in `sindbad_models`.
 """
 function setOrderedSelectedModels(info::NamedTuple)
     selected_models = collect(propertynames(info.settings.model_structure.models))
@@ -121,15 +148,21 @@ function setOrderedSelectedModels(info::NamedTuple)
     return info
 end
 
-
 """
     setSpinupAndForwardModels(info::NamedTuple)
 
-sets the spinup and forward subfields of info.temp.models to select a separated set of model for spinup and forward run.
+Configures the spinup and forward models for the experiment.
 
-  - allows for a faster spinup if some models can be turned off
-  - relies on use_in_spinup flag in model_structure
-  - by design, the spinup models should be subset of forward models
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with the spinup and forward models added to `info.temp.models`.
+
+# Notes:
+- Allows for faster spinup by turning off certain models using the `use_in_spinup` flag in `model_structure.json`.
+- Ensures that spinup models are a subset of forward models.
+- Updates model parameters if additional parameter values are provided in the experiment configuration.
 """
 function setSpinupAndForwardModels(info::NamedTuple)
     selected_approach_forward = ()
