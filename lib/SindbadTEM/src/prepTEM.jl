@@ -1,3 +1,4 @@
+export getSpatialInfo
 export prepTEM
 
 
@@ -196,18 +197,21 @@ end
 
 
 """
+    getSpatialInfo(forcing_helpers)
     getSpatialInfo(forcing, filterNanPixels)
 
-get the information of the indices of the data to run the model for
+get the information of the indices of the data to run the model for. The second variant additionally filter pixels with all nan data
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 """
-function getSpatialInfo(forcing, filter_nan_pixels)
+getSpatialInfo
+
+function getSpatialInfo(forcing_helpers)
     @debug "     getting the space locations to run the model loop"
-    forcing_sizes = forcing.helpers.sizes
+    forcing_sizes = forcing_helpers.sizes
     loopvars = collect(keys(forcing_sizes))
-    additionaldims = setdiff(loopvars, [Symbol(forcing.helpers.dimensions.time)])
+    additionaldims = setdiff(loopvars, [Symbol(forcing_helpers.dimensions.time)])
     spacesize = values(forcing_sizes[additionaldims])
     loc_space_maps = vec(collect(Iterators.product(Base.OneTo.(spacesize)...)))
     loc_space_maps = map(loc_space_maps) do loc_names
@@ -216,6 +220,12 @@ function getSpatialInfo(forcing, filter_nan_pixels)
         end
     end
     loc_space_maps = Tuple(loc_space_maps)
+    space_ind = Tuple([Tuple(last.(loc_space_map)) for loc_space_map ∈ loc_space_maps])
+    return space_ind, loc_space_maps
+end
+
+function getSpatialInfo(forcing, filter_nan_pixels)
+    space_ind, loc_space_maps = getSpatialInfo(forcing.helpers)
     loc_space_maps = filterNanPixels(forcing, loc_space_maps, filter_nan_pixels)
     space_ind = Tuple([Tuple(last.(loc_space_map)) for loc_space_map ∈ loc_space_maps])
     return space_ind
@@ -428,6 +438,57 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
 end
 
 
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArrayParamSet)
+
+    forcing_helpers_with_param_set = updateForcingHelpers(deepcopy(forcing.helpers), info.optimization.n_threads_cost);
+
+    output = prepTEMOut(info, forcing_helpers_with_param_set)
+
+    @info "     preparing spatial and tem helpers"
+
+    space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
+
+    # generate vals for dispatch of forcing and output
+    tem_info = getRunTEMInfo(info, forcing);
+
+
+    ## run the model for one time step
+    @info "     model run for one location and time step"
+    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
+    land_init = output.land_init
+    loc_forcing = getLocData(forcing_nt_array, space_ind[1])
+    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
+
+    addErrorCatcher(loc_land, info.helpers.run.debug_model)
+
+    output_array = output.data
+    output_vars = output.variables
+    output_dims = output.dims
+
+    # collect local data and create copies
+    @info "     preallocating local, threaded, and spatial data"
+    space_forcing = map([space_ind...]) do lsi
+        getLocData(forcing_nt_array, lsi)
+    end
+    space_spinup_forcing = map(space_forcing) do loc_forcing
+        getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
+    end
+
+
+    space_ind_output, _ = getSpatialInfo(forcing_helpers_with_param_set)
+
+    space_output = map([space_ind_output...]) do lsi
+        getLocData(output_array, lsi)
+    end
+
+    space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
+
+    forcing_nt_array = nothing
+
+    run_helpers = (; space_forcing, space_ind, space_ind_output, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_info)
+    return run_helpers
+end
+
 function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutStacked)
     
     # get the output things
@@ -578,4 +639,14 @@ function runTEMOne(selected_models, loc_forcing, land_init, tem)
         # tem.model_helpers)
     # loc_land = computeTEM(selected_models, loc_forcing_t, loc_land, tem.model_helpers)
     return loc_forcing_t, loc_land
+end
+
+function updateForcingHelpers(new_forcing_helpers, param_set_size)
+    data_dimensions = new_forcing_helpers.dimensions
+    insert!(data_dimensions.permute, 2, "param_set")
+    insert!(data_dimensions.space, 1, "param_set")
+    insert!(new_forcing_helpers.axes, 2, Pair(:param_set, 1:param_set_size))
+    new_sizes = (; new_forcing_helpers.sizes..., param_set=param_set_size)
+    new_forcing_helpers = setTupleField(new_forcing_helpers, (:sizes, new_sizes))
+    return new_forcing_helpers
 end

@@ -197,6 +197,7 @@ export SindbadLandOutType
 export LandOutArray
 export LandOutArrayAll
 export LandOutArrayFD
+export LandOutArrayParamSet
 export LandOutStacked
 export LandOutTimeseries
 export LandOutYAXArray
@@ -205,6 +206,7 @@ abstract type SindbadLandOutType end
 struct LandOutArray <:SindbadLandOutType end
 struct LandOutArrayAll <:SindbadLandOutType end
 struct LandOutArrayFD <:SindbadLandOutType end
+struct LandOutArrayParamSet <:SindbadLandOutType end
 struct LandOutStacked <:SindbadLandOutType end
 struct LandOutTimeseries <:SindbadLandOutType end
 struct LandOutYAXArray <:SindbadLandOutType end

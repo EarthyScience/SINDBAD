@@ -238,12 +238,16 @@ function setOptimization(info::NamedTuple)
         (:multi_constraint_method, getTypeInstanceForNamedOptions(info.settings.optimization.multi_constraint_method)))
 
     scaling_method = isnothing(info.settings.optimization.optimization_parameter_scaling) ? "scale_none" : info.settings.optimization.optimization_parameter_scaling
+    n_threads_cost = info.settings.optimization.multithreaded_cost ? Threads.nthreads() : 1
     info = setTupleSubfield(info,
         :optimization,
         (:optimization_parameter_scaling, getTypeInstanceForNamedOptions(scaling_method)))
     info = setTupleSubfield(info,
         :optimization,
         (:optimization_cost_method, getTypeInstanceForNamedOptions(info.settings.optimization.optimization_cost_method)))
+    info = setTupleSubfield(info,
+        :optimization,
+        (:n_threads_cost, n_threads_cost))
         
     # check and set the list of parameters to be optimized
     info = setTupleSubfield(info, :optimization, (:model_parameters_to_optimize, info.settings.optimization.model_parameters_to_optimize))
