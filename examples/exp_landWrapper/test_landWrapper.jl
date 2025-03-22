@@ -43,6 +43,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 forcing = getForcing(info);
+
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
@@ -57,8 +58,8 @@ run_helpers = prepTEM(forcing, info);
 
 land_stacked_prealloc = Vector{typeof(run_helpers.loc_land)}(undef, info.helpers.dates.size);
 
-@time land_stacked_prealloc = runTEM(info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, deepcopy(run_helpers.loc_land), run_helpers.tem_info);
-
+@time land_stacked_prealloc = runTEM(info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, run_helpers.loc_land, run_helpers.tem_info);
+runTEM(info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, run_helpers.loc_land, run_helpers.tem_info);
 
 tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
 
