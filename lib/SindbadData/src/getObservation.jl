@@ -1,19 +1,30 @@
 export getObservation
 
 """
-    getAllConstraintData(nc, data_backend, data_path, default_info, v_info, data_sub_field, info; yax = nothing, use_data_sub = true)
+    getAllConstraintData(nc, data_backend, data_path, default_info, v_info, data_sub_field, info; yax=nothing, use_data_sub=true)
 
-reads the data from the observation file and returns the data, yax, v_info, and bounds for the observation constraint
+Reads data from the observation file and returns the data, YAXArray, variable info, and bounds for the observation constraint.
 
 # Arguments:
-- `nc`: file/nc object of the data
-- `data_path`: path for the data file
-- `default_info`: default variable info for constraints
-- `v_info`: info of the observation constraint that will overwrite default_info
-- `data_sub_field`: subfile of the observation
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `yax`: the base observation yax array
-- `use_data_sub`: flag to use the subfield of observation constraint
+- `nc`: The file or NetCDF object containing the observation data.
+- `data_backend`: The backend used to process the data (e.g., NetCDF, Zarr).
+- `data_path`: The path to the observation data file.
+- `default_info`: Default variable information for constraints.
+- `v_info`: Variable-specific information for the observation constraint, which can overwrite `default_info`.
+- `data_sub_field`: The subfield of the observation data to process (e.g., `:data`, `:qflag`, `:unc`).
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `yax`: (Optional) The base observation YAXArray.
+- `use_data_sub`: A flag indicating whether to use the subfield of the observation constraint.
+
+# Returns:
+- `nc_sub`: The NetCDF object for the subfield.
+- `yax_sub`: The YAXArray for the subfield.
+- `v_info_sub`: The variable information for the subfield.
+- `bounds_sub`: The bounds for the subfield.
+
+# Notes:
+- If the subfield is not provided or `use_data_sub` is `false`, default values are used.
+- Handles quality flags, uncertainty, spatial weights, and selection masks for observation constraints.
 """
 function getAllConstraintData(nc, data_backend, data_path, default_info, v_info, data_sub_field, info; yax=nothing, use_data_sub=true)
     nc_sub = nothing
@@ -64,9 +75,22 @@ end
 """
     getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
 
+Processes observation data and returns a NamedTuple containing the observation data, dimensions, and variables.
+
 # Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing_helpers`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `forcing_helpers`: A SINDBAD NamedTuple containing helper information for forcing data.
+
+# Returns:
+- A NamedTuple with the following fields:
+  - `data`: The processed observation data as an input array.
+  - `dims`: The dimensions of the observation data.
+  - `variables`: A tuple of variable names for the observation data.
+
+# Notes:
+- Reads observation data from the path specified in the experiment configuration.
+- Handles quality flags, uncertainty, spatial weights, and selection masks for each observation variable.
+- Subsets and harmonizes the observation data based on the target dimensions and masks.
 """
 function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     data_path = info.settings.optimization.observations.default_observation.data_path
