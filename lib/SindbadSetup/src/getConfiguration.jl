@@ -7,10 +7,18 @@ export readConfiguration
 const path_separator = Sys.iswindows() ? "\\" : "/"
 
 """
-    convertToAbsolutePath(; inputDict = inputDict)
+    convertToAbsolutePath(; inputDict=inputDict)
 
-find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
+Converts all relative paths in the input dictionary to absolute paths, assuming all non-absolute paths are relative to the SINDBAD root directory.
 
+# Arguments:
+- `inputDict`: A dictionary containing paths as values.
+
+# Returns:
+- A new dictionary with all paths converted to absolute paths.
+
+# Notes:
+- This function is currently incomplete and does not perform the conversion yet.
 """
 function convertToAbsolutePath(; inputDict=inputDict)
     #### NOT DONE YET
@@ -22,7 +30,19 @@ end
 """
     createNestedDict(dict::AbstractDict)
 
-Creates a nested dict from one-depth dict, when string keys are strings separated.
+Creates a nested dictionary from a flat dictionary where keys are strings separated by dots (`.`).
+
+# Arguments:
+- `dict::AbstractDict`: A flat dictionary with keys as dot-separated strings.
+
+# Returns:
+- A nested dictionary where each dot-separated key is converted into nested dictionaries.
+
+# Example:
+```julia
+dict = Dict("a.b.c" => 2)
+nested_dict = createNestedDict(dict)
+````
 """
 function createNestedDict(dict::AbstractDict)
     nested_dict = Dict()
@@ -57,16 +77,32 @@ end
 
 """
     deepMerge(d::AbstractDict...) = merge(deepMerge, d...)
+    deepMerge(d...) = d[end]
 
-recursively merge nested dictionary fields with priority for the second dictionary
+Recursively merges multiple dictionaries, giving priority to the last dictionary.
+
+# Arguments:
+- `d::AbstractDict...`: One or more dictionaries to merge.
+
+# Returns:
+- A single dictionary with merged fields, where the last dictionary's values take precedence.
 """
+deepMerge
+
 deepMerge(d::AbstractDict...) = merge(deepMerge, d...)
 deepMerge(d...) = d[end]
 
 """
-    getRootDirs(info)
+    getRootDirs(local_root, sindbad_experiment)
 
-a basic function to guesstimate the experiment and sindbad roots
+Determines the root directories for the SINDBAD framework and the experiment.
+
+# Arguments:
+- `local_root`: The local root directory of the SINDBAD project.
+- `sindbad_experiment`: The path to the experiment configuration file.
+
+# Returns:
+- A NamedTuple containing the root directories for the experiment, SINDBAD, and settings.
 """
 function getRootDirs(local_root, sindbad_experiment)
     sindbad_root = join(split(local_root, path_separator)[1:(end-2)] |> collect, path_separator)
@@ -77,9 +113,20 @@ end
 
 
 """
-    getConfiguration(sindbad_experiment::String; replace_info = nothing)
+    getConfiguration(sindbad_experiment::String; replace_info=Dict())
 
-get the experiment info from either json or load the named tuple
+Loads the experiment configuration from a JSON or JLD2 file.
+
+# Arguments:
+- `sindbad_experiment::String`: Path to the experiment configuration file.
+- `replace_info::Dict`: A dictionary of fields to replace in the configuration.
+
+# Returns:
+- A NamedTuple containing the experiment configuration.
+
+# Notes:
+- Supports both JSON and JLD2 formats.
+- If `replace_info` is provided, the specified fields are replaced in the configuration.
 """
 function getConfiguration(sindbad_experiment::String; replace_info=Dict())
     local_root = dirname(Base.active_project())
@@ -130,11 +177,17 @@ function getConfiguration(sindbad_experiment::String; replace_info=Dict())
 end
 
 
-
 """
-    getExperimentConfiguration(experiment_json::String; replace_info = nothing)
+    getExperimentConfiguration(experiment_json::String; replace_info=Dict())
 
-get the basic configuration from experiment json
+Loads the basic configuration from an experiment JSON file.
+
+# Arguments:
+- `experiment_json::String`: Path to the experiment JSON file.
+- `replace_info::Dict`: A dictionary of fields to replace in the configuration.
+
+# Returns:
+- A dictionary containing the experiment configuration.
 """
 function getExperimentConfiguration(experiment_json::String; replace_info=Dict())
     parseFile = parsefile(experiment_json; dicttype=DataStructures.OrderedDict)
@@ -156,7 +209,14 @@ end
 """
     readConfiguration(info_exp::AbstractDict, base_path::String)
 
-read configuration experiment json and return dictionary
+Reads the experiment configuration files (JSON or CSV) and returns a dictionary.
+
+# Arguments:
+- `info_exp::AbstractDict`: The experiment configuration dictionary.
+- `base_path::String`: The base path for resolving relative file paths.
+
+# Returns:
+- A dictionary containing the parsed configuration files.
 """
 function readConfiguration(info_exp::AbstractDict, base_path::String)
     info = DataStructures.OrderedDict()
@@ -193,7 +253,13 @@ end
 """
     removeComments(inputDict::AbstractDict)
 
-remove unnecessary comment files starting with certain expressions from the dictionary keys
+Removes unnecessary comment fields from a dictionary.
+
+# Arguments:
+- `inputDict`: The input dictionary.
+
+# Returns:
+- A new dictionary with comment fields removed.
 """
 function removeComments(inputDict::AbstractDict)
     newDict = filter(x -> !occursin(".c", first(x)), inputDict)
@@ -206,7 +272,14 @@ removeComments(input) = input
 """
     replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
 
-replace the fields of info from json with the values providded in the replace dictionary
+Replaces fields in the `info` dictionary with values from the `replace_dict`.
+
+# Arguments:
+- `info::AbstractDict`: The original dictionary.
+- `replace_dict::AbstractDict`: The dictionary containing replacement values.
+
+# Returns:
+- A new dictionary with the replaced fields.
 """
 function replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
     nested_replace_dict = createNestedDict(replace_dict)

@@ -8,7 +8,19 @@ export getTypeInstanceForNamedOptions
 """
     convertRunFlagsToTypes(info)
 
-converts the model running related flags to types for dispatch
+Converts model run-related flags from the experiment configuration into types for dispatch.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration, including model run flags.
+
+# Returns:
+- A NamedTuple `new_run` where each flag is converted into a corresponding type instance.
+
+# Notes:
+- Flags are processed recursively:
+  - If a flag is a `NamedTuple`, its subfields are converted into types.
+  - If a flag is a scalar, it is directly converted into a type using `getTypeInstanceForFlags`.
+- The resulting `new_run` NamedTuple is used for type-based dispatch in SINDBAD's model execution.
 """
 function convertRunFlagsToTypes(info)
     new_run = (;)
@@ -96,32 +108,50 @@ function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::M
     # return SVector{length(input_values)}(num_type(ix) for ix ∈ input_values)
 end
 
-
 """
-    getNumberType(t::String)
+    getNumberType(t)
 
-A helper function to get the number type from the specified string
+Retrieves the numerical type based on the input, which can be a string or a data type.
+
+# Arguments:
+- `t`: The input specifying the numerical type. Can be:
+  - A `String` representing the type (e.g., `"Float64"`, `"Int"`).
+  - A `DataType` directly specifying the type (e.g., `Float64`, `Int`).
+
+# Returns:
+- The corresponding numerical type as a `DataType`.
+
+# Notes:
+- If the input is a string, it is parsed and evaluated to return the corresponding type.
+- If the input is already a `DataType`, it is returned as-is.
 """
+getNumberType
+
 function getNumberType(t::String)
     ttype = eval(Meta.parse(t))
     return ttype
 end
 
-"""
-    getNumberType(t::DataType)
-
-A helper function to get the number type from the specified type
-"""
 function getNumberType(t::DataType)
     return t
 end
 
 
-
 """
-    getTypeInstanceForCostMetric(mode_name)
+    getTypeInstanceForCostMetric(mode_name::String)
 
-a helper function to get the type for spinup mode
+Retrieves the type instance for a given cost metric based on its name.
+
+# Arguments:
+- `mode_name::String`: The name of the cost metric (e.g., `"RMSE"`, `"MAE"`).
+
+# Returns:
+- An instance of the corresponding cost metric type.
+
+# Notes:
+- The function converts the cost metric name to a type by capitalizing the first letter of each word and removing underscores.
+- The type is retrieved from the `SindbadMetrics` module and instantiated.
+- Used for dispatching cost metric calculations in SINDBAD.
 """
 function getTypeInstanceForCostMetric(option_name::String)
     opt_ss = toUpperCaseFirst(option_name)
@@ -131,9 +161,24 @@ end
 
 
 """
-    getTypeInstanceForFlags(mode_name)
+    getTypeInstanceForFlags(option_name::Symbol, option_value, opt_pref="Do")
 
-a helper function to get the type for boolean flags. In this, the names are converted to string, split by "_", and prefixed to generate a true and false case type
+Generates a type instance for boolean flags based on the flag name and value.
+
+# Arguments:
+- `option_name::Symbol`: The name of the flag (e.g., `:run_optimization`, `:save_info`).
+- `option_value`: A boolean value (`true` or `false`) indicating the state of the flag.
+- `opt_pref::String`: (Optional) A prefix for the type name. Defaults to `"Do"`.
+
+# Returns:
+- An instance of the corresponding type:
+  - If `option_value` is `true`, the type name is prefixed with `opt_pref` (e.g., `DoRunOptimization`).
+  - If `option_value` is `false`, the type name is prefixed with `opt_pref * "Not"` (e.g., `DoNotRunOptimization`).
+
+# Notes:
+- The function converts the flag name to a string, capitalizes the first letter of each word, and appends the appropriate prefix (`Do` or `DoNot`).
+- The resulting type is retrieved from the `SindbadSetup` module and instantiated.
+- This is used for type-based dispatch in SINDBAD's model execution.
 """
 function getTypeInstanceForFlags(option_name::Symbol, option_value, opt_pref="Do")
     opt_s = string(option_name)
@@ -145,24 +190,37 @@ function getTypeInstanceForFlags(option_name::Symbol, option_value, opt_pref="Do
     return struct_instance
 end
 
+"""
+    getTypeInstanceForNamedOptions(option_name)
+
+Retrieves a type instance for a named option based on its string or symbol representation. These options are mainly within the optimization and temporal aggregation.
+
+# Arguments:
+- `option_name`: The name of the option, provided as either a `String` or a `Symbol`.
+
+# Returns:
+- An instance of the corresponding type from the `SindbadSetup` module.
+
+# Notes:
+- If the input is a `Symbol`, it is converted to a `String` before processing.
+- The function capitalizes the first letter of each word in the option name and removes underscores to match the type naming convention.
+- This is used for type-based dispatch in SINDBAD's configuration and execution.
+- The type for temporal aggregation is set using `getTimeAggregatorTypeInstance` in `SindbadUtils`. It uses a similar approach and prefixes `Time` to type.
+
+# Example:
+- A named option for 
+    - "cost_metric": "NSE_inv" would be converted to NSEInv type
+    - "temporal_data_aggr": "month_anomaly" would be converted to MonthAnomaly
 
 """
-    getTypeInstanceForNamedOptions(::String)
+getTypeInstanceForNamedOptions
 
-a helper function to get the type for named option with string values. In this, the string is split by "_" and join after capitalizing the first letter
-"""
 function getTypeInstanceForNamedOptions(option_name::String)
     opt_ss = toUpperCaseFirst(option_name)
     struct_instance = getfield(SindbadSetup, opt_ss)()
     return struct_instance
 end
 
-
-"""
-    getTypeInstanceForNamedOptions(option_name::Symbol)
-
-a helper function to get the type for named option with string values. In this, the option name is converted to string, and the function for string type is called
-"""
 function getTypeInstanceForNamedOptions(option_name::Symbol)
     getTypeInstanceForNamedOptions(string(option_name))
     return struct_instance

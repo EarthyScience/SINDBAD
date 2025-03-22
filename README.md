@@ -21,11 +21,11 @@
 
 Welcome to the git repository for the **research and development** of `SINDBAD`. 
 
-SINDBAD-RnD will operate as a private fork shared within the core [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team) to foster an environment of maximized internal collaboration. 
+SINDBAD-RnD will operate as a private fork shared within the core [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team) to foster an environment of maximized internal collaboration. 
 
 This setup ensures that members can freely exchange ideas, work closely on ongoing research, and develop new capabilities while safeguarding unpublished code from unauthorized public release. By maintaining this private and protected framework, SINDBAD-RnD aims to uphold both the integrity of collaborative efforts and the security of its scientific advancements.
 
-This repository will ONLY be accessible to the members of the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team)
+This repository will ONLY be accessible to the members of the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team)
 
 ### Governance Principles of SINDBAD-RnD
 
@@ -38,16 +38,16 @@ This repository will ONLY be accessible to the members of the [SINDBAD-RnD-Team]
    
 
 3. **Function of SINDBAD-RnD**:
-   SINDBAD-RnD serves as a collaborative, protected space for advancing SINDBAD both technically and scientifically within [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team). *Expansion of [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team) beyond BGI members may be considered in the future but only agreed upon code will be released*.
+   SINDBAD-RnD serves as a collaborative, protected space for advancing SINDBAD both technically and scientifically within [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team). *Expansion of [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team) beyond BGI members may be considered in the future but only agreed upon code will be released*.
    
 4. **SINDBAD-RnD-Team Guidelines**:
 
-   Members of the SINDBAD-RnD group, forming the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team), adhere to the following principles:
+   Members of the SINDBAD-RnD group, forming the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team), adhere to the following principles:
    - Participation is voluntary, with a commitment to follow the guidelines.
-   - Members may privately fork the SINDBAD-RnD repository and when sharing it commit do so exclusively within the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team). 
-   - Research and development scopes must be transparently shared across the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team).
-   - [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team) members must consult the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-coo-team) before:
-      - Releasing code of their developments in SINDBAD-RnD 
+   - Members may privately fork the SINDBAD-RnD repository and when sharing it commit do so exclusively within the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team). 
+   - Research and development scopes must be transparently shared across the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team).
+   - [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team) members must consult the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team) before:
+      - Releasing code of their developments in SINDBAD-RnD.
       - Collaborating on SINDBAD-related projects outside the team.
       - Submitting research proposals leveraging SINDBAD-RnD, preferably including SINDBAD.
    - All members adhere to the [Max Planck Society's guidelines for good scientific practice](https://www.mr.mpg.de/14263212/scientificpractice).
