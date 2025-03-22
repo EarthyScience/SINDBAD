@@ -48,6 +48,7 @@
     "WUE,κ": null
   },
   "multi_constraint_method": "metric_sum",
+  "multithreaded_cost": false,
   "subset_model_output": true,
   "optimization_parameter_scaling": null,
   "optimization_cost_method": "cost_model_obs",

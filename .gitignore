@@ -25,6 +25,9 @@
 *.mem
 *.png
 *.jpg
+*.svg
+*.pdf
+*.PDF
 .*
 ~*
 *_tmp

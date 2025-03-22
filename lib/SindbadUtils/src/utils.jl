@@ -59,6 +59,21 @@ end
 
 Base.getproperty(s::LandWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfield(s, :s))
 
+# Define the setindex! method
+function Base.setindex!(obj::LandWrapper{Vector{Any}}, value::LandWrapper, index::Int)
+    obj.data[index] = value
+end
+
+# Define the setindex method
+function Base.setindex(obj::LandWrapper{Vector{Any}}, value::LandWrapper, index::Int)
+    obj.data[index] = value
+end
+
+# Define the getindex method
+function Base.getindex(obj::LandWrapper{Vector{Any}}, value::LandWrapper, index::Int)
+    return obj.data[index]
+end
+
 """
     Base.getproperty(g::GroupView, aggr_func::Symbol)
 

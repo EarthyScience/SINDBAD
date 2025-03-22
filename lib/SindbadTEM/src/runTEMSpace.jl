@@ -2,7 +2,7 @@ export coreTEM!
 export runTEM!
 
 """
-    coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, loc_land, tem_info, spinup_mode)
+    coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, loc_land, tem_info)
 
 Executes the core SINDBAD Terrestrial Ecosystem Model (TEM) for a single location, including precomputations, spinup, and the main time loop.
 
@@ -15,7 +15,6 @@ Executes the core SINDBAD Terrestrial Ecosystem Model (TEM) for a single locatio
 - `loc_output`: An output array or view for storing the model outputs for a single location.
 - `loc_land`: Initial SINDBAD land NamedTuple with all fields and subfields.
 - `tem_info`: A helper NamedTuple containing necessary objects for model execution and type consistencies.
-- `spinup_mode`: A type dispatch that determines whether spinup is included or excluded:
 
 # Details
 Executes the main TEM simulation logic with the provided parameters and data. Handles both
@@ -25,13 +24,13 @@ regular simulation and spinup modes based on the spinup_mode flag.
 - **Precomputations**:
     - The function runs `precomputeTEM` to prepare the land state for the simulation.
 """
-function coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, loc_land, tem_info, spinup_mode)
+function coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, loc_land, tem_info)
     # update the loc_forcing with the actual location
     loc_forcing_t = getForcingForTimeStep(loc_forcing, loc_forcing_t, 1, tem_info.vals.forcing_types)
     # run precompute
     land_prec = precomputeTEM(selected_models, loc_forcing_t, loc_land, tem_info.model_helpers) 
     # run spinup
-    land_spin = spinupTEM(selected_models, loc_spinup_forcing, loc_forcing_t, land_prec, tem_info, spinup_mode)
+    land_spin = spinupTEM(selected_models, loc_spinup_forcing, loc_forcing_t, land_prec, tem_info, tem_info.run.spinup_TEM)
 
     timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land_spin, tem_info.vals.forcing_types, tem_info.model_helpers, tem_info.vals.output_vars, tem_info.n_timesteps, tem_info.run.debug_model)
     return nothing
@@ -82,7 +81,7 @@ parallelizeTEM!
 
 function parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::UseThreadsParallelization)
     Threads.@threads for space_index ∈ eachindex(space_forcing)
-        coreTEM!(selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info, tem_info.run.spinup_TEM)
+        coreTEM!(selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
     end
     return nothing
 end
@@ -90,7 +89,7 @@ end
 function parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::UseQbmapParallelization)
     space_index = 1
     qbmap(space_forcing) do _
-        coreTEM!(selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info, tem_info.run.spinup_TEM)
+        coreTEM!(selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
         space_index += 1
     end
     return nothing
