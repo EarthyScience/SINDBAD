@@ -88,39 +88,44 @@ end
 
 function checkInRange(n, d::AbstractArray, l, u, show_info)
     if show_info
-        @info "           $(n): $(d) is a matrix. Skipping check as bounds can be numbers and these parameters cannot be optimized by optimizers."
+        @info "           $(n) is a matrix parameter. Skipping check as bounds can be numbers and these parameters cannot be optimized by optimizers."
     end
     return true
 end
 
 
 """
-    checkParameterBounds(p_name, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false)
+    checkParameterBounds(p_names, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
 
 Check and display the parameter bounds information for given parameters.
 
 # Arguments
-- `p_name`: Name or identifier of the parameter. Vector of strings.
+- `p_names`: Names or identifier of the parameters. Vector of strings.
 - `default_values`: Default values of the parameters. Vector of Numbers.
 - `lower_bounds`: Lower bounds for the parameters. Vector of Numbers.
 - `upper_bounds`: Upper bounds for the parameters. Vector of Numbers.
 - `_sc::SindbadParameterScaling`: Scaling Type for the parameters
 - `show_info`: a flag to display model parameters and their bounds. Boolean.
+- `model_names`: Names or identifier of the approaches where the parameters are defined.
 
 # Returns
 Displays a formatted output of parameter bounds information or returns an error when they are violated
 """
-function checkParameterBounds(p_name, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false)
+function checkParameterBounds(p_names, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
     if show_info
         @info "  Parameters Info: $(nameof(typeof(_sc)))"
     end
-    for (i,n) in enumerate(p_name)
+    for (i,n) in enumerate(p_names)
         in_range = checkInRange(n, default_values[i], lower_bounds[i], upper_bounds[i], show_info)
         if !in_range
             error("$(String(n)) => $(default_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])] violates the parameter bounds")
         end
         if show_info
-            @info "           $(String(n)) => $(default_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
+            ps = String(n)
+            if !isnothing(model_names)
+                ps = String(model_names[i]) * " : " * String(n)
+            end
+            @info "           $(ps) => $(default_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
         end
     end
 end
@@ -149,7 +154,7 @@ function scaleParameters(tbl_params, _sc::ScaleNone)
     default = copy(tbl_params.default)
     ub = copy(tbl_params.upper)  # upper bounds
     lb = copy(tbl_params.lower)   # lower bounds
-    checkParameterBounds(tbl_params.name, default, lb, ub, _sc, show_info=true)
+    checkParameterBounds(tbl_params.name, default, lb, ub, _sc, show_info=true, model_names=tbl_params.model_approach)
     return (default, lb, ub)
 end
     
@@ -158,7 +163,7 @@ function scaleParameters(tbl_params, _sc::ScaleDefault)
     ub = copy(tbl_params.upper ./ default)   # upper bounds
     lb = copy(tbl_params.lower ./ default)   # lower bounds
     default = tbl_params.default ./ default
-    checkParameterBounds(tbl_params.name, default, lb, ub, _sc, show_info=true)
+    checkParameterBounds(tbl_params.name, default, lb, ub, _sc, show_info=true, model_names=tbl_params.model_approach)
     return (default, lb, ub)
 end
 
@@ -169,7 +174,7 @@ function scaleParameters(tbl_params, _sc::ScaleBounds)
     default = (default - lb)  ./ (ub - lb)
     lb = zero(lb)
     ub = one.(ub)
-    checkParameterBounds(tbl_params.name, default, lb, ub, _sc, show_info=true)
+    checkParameterBounds(tbl_params.name, default, lb, ub, _sc, show_info=true, model_names=tbl_params.model_approach)
     return (default, lb, ub)
 end
 

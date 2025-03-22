@@ -98,7 +98,7 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     timescale_run = map(timescale) do ts
         isempty(ts) ? ts : model_timestep
     end
-    checkParameterBounds(name, default, lower, upper, ScaleNone(),show_info=true)
+    checkParameterBounds(name, default, lower, upper, ScaleNone(),show_info=true, model_names=model_approach)
     output = (; model_id, name, default, optim=default, lower, upper, timescale_run=timescale_run, units=unts, timescale_ori=timescale, units_ori=unts_ori, model, model_approach, approach_func, name_full)
     output = return_table ? Table(output) : output
     return output
