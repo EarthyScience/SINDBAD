@@ -120,7 +120,7 @@ o_set = :set1
         "forcing.default_forcing.data_path" => path_input,
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
-        "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
+        "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
         "optimization.observations.default_observation.data_path" => path_observation,
         "optimization.observational_constraints" => opti_sets[o_set],)
     info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info

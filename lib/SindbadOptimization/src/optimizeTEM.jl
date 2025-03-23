@@ -18,7 +18,7 @@ function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple)
     opti_helpers = prepOpti(forcing, observations, info, info.optimization.optimization_cost_method)
 
     # run the optimizer
-    optim_para = optimizer(opti_helpers.cost_function, opti_helpers.default_values, opti_helpers.lower_bounds, opti_helpers.upper_bounds, info.optimization.algorithm.options, info.optimization.algorithm.method)
+    optim_para = optimizer(opti_helpers.cost_function, opti_helpers.default_values, opti_helpers.lower_bounds, opti_helpers.upper_bounds, info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
 
     optim_para = backScaleParameters(optim_para, opti_helpers.tbl_params, info.optimization.optimization_parameter_scaling)
 

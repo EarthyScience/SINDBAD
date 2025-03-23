@@ -124,7 +124,7 @@ for site_index in sites
         "experiment.model_spinup.sequence" => sequence[2:end],
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
-        "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+        "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
         "optimization.observations.default_observation.data_path" => path_observation,)
 
 

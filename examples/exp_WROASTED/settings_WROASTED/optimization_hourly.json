@@ -1,5 +1,6 @@
 {
-  "algorithm": "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+  "algorithm_optimization": "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+  "algorithm_sensitivity_analysis": null,
   "model_parameter_default": {
     "distribution": ["normal", [0.0, 1.0]],
     "is_ml": false
@@ -49,10 +50,10 @@
     "WUE,κ": null
   },
   "multi_constraint_method": "metric_sum",
-  "multithreaded_cost": false,
   "subset_model_output": true,
   "optimization_parameter_scaling": null,
   "optimization_cost_method": "cost_model_obs",
+  "optimization_cost_threaded": true,
   "observational_constraints": [
     "gpp",
     "nee",
