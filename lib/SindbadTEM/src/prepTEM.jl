@@ -438,54 +438,22 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
 end
 
 
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArrayParamSet)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArrayMT)
+
+    run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutArray())
 
     forcing_helpers_with_param_set = updateForcingHelpers(deepcopy(forcing.helpers), info.optimization.n_threads_cost);
 
     output = prepTEMOut(info, forcing_helpers_with_param_set)
-
-    @info "     preparing spatial and tem helpers"
-
-    space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
-
-    # generate vals for dispatch of forcing and output
-    tem_info = getRunTEMInfo(info, forcing);
-
-
-    ## run the model for one time step
-    @info "     model run for one location and time step"
-    forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
-    land_init = output.land_init
-    loc_forcing = getLocData(forcing_nt_array, space_ind[1])
-    loc_forcing_t, loc_land = runTEMOne(selected_models, loc_forcing, land_init, tem_info)
-
-    addErrorCatcher(loc_land, info.helpers.run.debug_model)
-
     output_array = output.data
-    output_vars = output.variables
-    output_dims = output.dims
 
-    # collect local data and create copies
-    @info "     preallocating local, threaded, and spatial data"
-    space_forcing = map([space_ind...]) do lsi
-        getLocData(forcing_nt_array, lsi)
-    end
-    space_spinup_forcing = map(space_forcing) do loc_forcing
-        getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
-    end
+    space_ind_mt, _ = getSpatialInfo(forcing_helpers_with_param_set)
 
-
-    space_ind_output, _ = getSpatialInfo(forcing_helpers_with_param_set)
-
-    space_output = map([space_ind_output...]) do lsi
+    space_output_mt = map([space_ind_mt...]) do lsi
         getLocData(output_array, lsi)
     end
 
-    space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
-
-    forcing_nt_array = nothing
-
-    run_helpers = (; space_forcing, space_ind, space_ind_output, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_info)
+    run_helpers = (; run_helpers..., space_output_mt=space_output_mt)
     return run_helpers
 end
 

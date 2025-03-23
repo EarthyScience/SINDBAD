@@ -38,13 +38,13 @@ struct OptimizationQuadDirect <: SindbadOptimizationMethod end
 export SindbadCostMethod
 export CostModelObs
 export CostModelObsLandTS
-export CostModelObsMultiThread
+export CostModelObsMT
 export CostModelObsPriors
 
 abstract type SindbadCostMethod end
 struct CostModelObs <: SindbadCostMethod end
 struct CostModelObsLandTS <: SindbadCostMethod end
-struct CostModelObsMultiThread <: SindbadCostMethod end
+struct CostModelObsMT <: SindbadCostMethod end
 struct CostModelObsPriors <: SindbadCostMethod end
 
 # ------------------------- running flags -------------------------
@@ -199,7 +199,7 @@ export SindbadLandOutType
 export LandOutArray
 export LandOutArrayAll
 export LandOutArrayFD
-export LandOutArrayParamSet
+export LandOutArrayMT
 export LandOutStacked
 export LandOutTimeseries
 export LandOutYAXArray
@@ -208,7 +208,7 @@ abstract type SindbadLandOutType end
 struct LandOutArray <:SindbadLandOutType end
 struct LandOutArrayAll <:SindbadLandOutType end
 struct LandOutArrayFD <:SindbadLandOutType end
-struct LandOutArrayParamSet <:SindbadLandOutType end
+struct LandOutArrayMT <:SindbadLandOutType end
 struct LandOutStacked <:SindbadLandOutType end
 struct LandOutTimeseries <:SindbadLandOutType end
 struct LandOutYAXArray <:SindbadLandOutType end

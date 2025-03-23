@@ -79,27 +79,33 @@ function prepOpti(forcing, observations, info)
     return prepOpti(forcing, observations, info, CostModelObs())
 end
 
-function  prepOpti(forcing, observations, info, ::CostModelObsLandTS)
-    run_helpers = prepTEM(forcing, info)
+function  prepOpti(forcing, observations, info, ::CostModelObsMT)
+    opti_helpers = prepOpti(forcing, observations, info, CostModelObs())
+    run_helpers = opti_helpers.run_helpers
 
-    param_helpers = prepParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution, info.optimization.optimization_parameter_scaling)
+    cost_vector = zeros(info.optimization.n_threads_cost)
     
-    tbl_params = param_helpers.tbl_params
-    default_values = param_helpers.default_values
-    lower_bounds = param_helpers.lower_bounds
-    upper_bounds = param_helpers.upper_bounds
+    space_index = 1 # the parallelization of cost computation only runs in single pixel runs
 
-    cost_options = prepCostOptions(observations, info.optimization.cost_options)
+    cost_function = x -> cost(x, opti_helpers.default_values, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, deepcopy(run_helpers.space_land[space_index]), run_helpers.tem_info, observations, opti_helpers.tbl_params, opti_helpers.cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, cost_vector, info.optimization.optimization_cost_method)
 
-    cost_function = x -> costLand(x, info.models.forward, run_helpers.loc_forcing, run_helpers.loc_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.land_time_series, run_helpers.loc_land, run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)
+    opti_helpers = (; opti_helpers..., cost_function=cost_function)
+    return opti_helpers
+end
 
-    opti_helpers = (; tbl_params=tbl_params, cost_function=cost_function, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds)
+function  prepOpti(forcing, observations, info, ::CostModelObsLandTS)
+    opti_helpers = prepOpti(forcing, observations, info, CostModelObs())
+    run_helpers = opti_helpers.run_helpers
+
+    cost_function = x -> costLand(x, info.models.forward, run_helpers.loc_forcing, run_helpers.loc_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.land_time_series, run_helpers.loc_land, run_helpers.tem_info, observations, opti_helpers.tbl_params, opti_helpers.cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)
+
+    opti_helpers = (; opti_helpers..., cost_function=cost_function)
     
     return opti_helpers
 end
 
 
-function  prepOpti(forcing, observations, info, optimization_cost_method)
+function  prepOpti(forcing, observations, info, optimization_cost_method::CostModelObs)
     run_helpers = prepTEM(forcing, info)
 
     param_helpers = prepParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution, info.optimization.optimization_parameter_scaling)
@@ -114,7 +120,7 @@ function  prepOpti(forcing, observations, info, optimization_cost_method)
     # param_model_id_val = info.optimization.param_model_id_val
     cost_function = x -> cost(x, default_values, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, deepcopy(run_helpers.space_land), run_helpers.tem_info, observations, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, optimization_cost_method)
 
-    opti_helpers = (; tbl_params=tbl_params, cost_function=cost_function, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds)
+    opti_helpers = (; tbl_params=tbl_params, cost_function=cost_function, cost_options=cost_options, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds, run_helpers=run_helpers)
     
     return opti_helpers
 end

@@ -238,22 +238,29 @@ function setOptimization(info::NamedTuple)
         (:multi_constraint_method, getTypeInstanceForNamedOptions(info.settings.optimization.multi_constraint_method)))
 
     scaling_method = isnothing(info.settings.optimization.optimization_parameter_scaling) ? "scale_none" : info.settings.optimization.optimization_parameter_scaling
-    n_threads_cost = info.settings.optimization.optimization_cost_threaded ? Threads.nthreads() : 1
+
+    if info.settings.optimization.optimization_cost_threaded > 0 && info.settings.experiment.flags.run_optimization
+        n_threads_cost = info.settings.optimization.optimization_cost_threaded > 1 ? info.settings.optimization.optimization_cost_threaded : Threads.nthreads()
+        # overwrite land array type when threaded optimization is set
+        info = @set info.temp.helpers.run.land_output_type = LandOutArrayMT()
+        info = setTupleSubfield(info,
+        :optimization,
+        (:n_threads_cost, n_threads_cost))
+    end
+
     info = setTupleSubfield(info,
         :optimization,
         (:optimization_parameter_scaling, getTypeInstanceForNamedOptions(scaling_method)))
     info = setTupleSubfield(info,
         :optimization,
         (:optimization_cost_method, getTypeInstanceForNamedOptions(info.settings.optimization.optimization_cost_method)))
-    info = setTupleSubfield(info,
-        :optimization,
-        (:n_threads_cost, n_threads_cost))
         
     # check and set the list of parameters to be optimized
     info = setTupleSubfield(info, :optimization, (:model_parameters_to_optimize, info.settings.optimization.model_parameters_to_optimize))
 
     # set algorithm related options
     tmp_algorithm = (;)
+    algo_options = (;)
     optim_algorithm = info.settings.optimization.algorithm_optimization
     if endswith(optim_algorithm, ".json")
         options_path = optim_algorithm
@@ -264,12 +271,11 @@ function setOptimization(info::NamedTuple)
         options = dictToNamedTuple(options)
         algo_method = options.package * "_" * options.method
         tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(algo_method)))
-        tmp_algorithm = setTupleField(tmp_algorithm, (:options, options.options))
+        algo_options = options.options
     else
-        options = (;)
         tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(info.settings.optimization.algorithm_optimization)))
-        tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     end
+    tmp_algorithm = setTupleField(tmp_algorithm, (:options, algo_options))
     info = setTupleSubfield(info, :optimization, (:algorithm_optimization, tmp_algorithm))
 
     tbl_params = getParameters(info.temp.models.forward,
