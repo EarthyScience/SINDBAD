@@ -48,7 +48,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.flags.catch_model_errors" => false,
     "experiment.flags.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
-    "experiment.exe_rules.land_output_type" => "array_param_set",
+    "experiment.exe_rules.land_output_type" => "array_MT",
     "experiment.exe_rules.model_array_type" => model_array_type,
     "experiment.model_output.path" => path_output,
     "experiment.model_output.format" => "nc",
@@ -59,12 +59,6 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "optimization.observations.default_observation.data_path" => path_observation)
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
-
-tbl_params = getParameters(info.models.forward,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution)
 
 forcing = getForcing(info);
 
@@ -99,15 +93,15 @@ space_index = 1
     idx = Threads.threadid()
     param_vector = param_samples[:, param_index]
     updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
-    coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output[idx], run_helpers.space_land[space_index], run_helpers.tem_info)
-    cost_vector = metricVector(run_helpers.space_output[idx], obs_array, cost_options)
+    coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output_mt[idx], run_helpers.space_land[space_index], run_helpers.tem_info)
+    cost_vector = metricVector(run_helpers.space_output_mt[idx], obs_array, cost_options)
     cost_metric = combineMetric(cost_vector, multi_constraint_method)
     cost_samples_t[param_index] = cost_metric
     @show idx, cost_metric
 end
 
 
-@time cost(param_samples, defaults, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land[space_index], run_helpers.tem_info, obs_array, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_samples_c,  CostModelObsMultiThread())
+@time cost(param_samples, defaults, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, run_helpers.space_land[space_index], run_helpers.tem_info, obs_array, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_samples_c,  CostModelObsMT())
 
 
 
@@ -131,5 +125,5 @@ if do_serial
 
     plot!(cost_samples_s, label="serial call")
     @show cost_samples_t - cost_samples_s |> sum
-    fig
 end
+fig
