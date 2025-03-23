@@ -50,13 +50,27 @@ end
 function cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, ::CostModelObsPriors)
     # prior has to be calculated before the parameters are backscaled and models are updated
     cost_prior = metric(param_vector, param_vector, default_values, MSE())
-    updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, selected_models)
-    runTEM!(updated_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info)
-    cost_vector = metricVector(output_array, observations, cost_options)
-    cost_metric = combineMetric(cost_vector, multi_constraint_method)
+    cost_metric = cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, CostModelObs())
     cost_metric = cost_metric + cost_prior
     @debug cost_vector, cost_metric
     return cost_metric
+end
+
+function cost(param_matrix::Matrix, _, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_out::Vector, ::CostModelObsMultiThread)
+    @debug param_matrix
+    param_set_size = size(param_matrix, 2)
+    Threads.@threads for param_index in eachindex(1:param_set_size)
+        idx = Threads.threadid()
+        param_vector = param_matrix[:, param_index]
+        @debug param_vector
+        updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, selected_models)
+        coreTEM!(updated_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output[idx], space_land, tem_info)
+        cost_vector = metricVector(space_output[idx], observations, cost_options)
+        cost_metric = combineMetric(cost_vector, multi_constraint_method)
+        cost_out[param_index] = cost_metric
+        @debug idx, cost_vector, cost_metric
+    end
+    return cost_out
 end
 
 function cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type)
