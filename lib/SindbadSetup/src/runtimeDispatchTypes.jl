@@ -38,11 +38,13 @@ struct OptimizationQuadDirect <: SindbadOptimizationMethod end
 export SindbadCostMethod
 export CostModelObs
 export CostModelObsLandTS
+export CostModelObsMultiThread
 export CostModelObsPriors
 
 abstract type SindbadCostMethod end
-struct CostModelObsLandTS <: SindbadCostMethod end
 struct CostModelObs <: SindbadCostMethod end
+struct CostModelObsLandTS <: SindbadCostMethod end
+struct CostModelObsMultiThread <: SindbadCostMethod end
 struct CostModelObsPriors <: SindbadCostMethod end
 
 # ------------------------- running flags -------------------------

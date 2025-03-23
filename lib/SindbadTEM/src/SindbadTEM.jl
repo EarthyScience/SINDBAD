@@ -60,7 +60,7 @@ module SindbadTEM
     using SindbadSetup
     @reexport using SindbadSetup
 
-    using ThreadPools
+    @reexport using ThreadPools
     using YAXArrays
 
     include("utilsTEM.jl")

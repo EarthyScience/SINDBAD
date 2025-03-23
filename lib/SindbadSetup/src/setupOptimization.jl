@@ -238,7 +238,7 @@ function setOptimization(info::NamedTuple)
         (:multi_constraint_method, getTypeInstanceForNamedOptions(info.settings.optimization.multi_constraint_method)))
 
     scaling_method = isnothing(info.settings.optimization.optimization_parameter_scaling) ? "scale_none" : info.settings.optimization.optimization_parameter_scaling
-    n_threads_cost = info.settings.optimization.multithreaded_cost ? Threads.nthreads() : 1
+    n_threads_cost = info.settings.optimization.optimization_cost_threaded ? Threads.nthreads() : 1
     info = setTupleSubfield(info,
         :optimization,
         (:optimization_parameter_scaling, getTypeInstanceForNamedOptions(scaling_method)))
@@ -254,7 +254,7 @@ function setOptimization(info::NamedTuple)
 
     # set algorithm related options
     tmp_algorithm = (;)
-    optim_algorithm = info.settings.optimization.algorithm
+    optim_algorithm = info.settings.optimization.algorithm_optimization
     if endswith(optim_algorithm, ".json")
         options_path = optim_algorithm
         if !isabspath(options_path)
@@ -267,10 +267,10 @@ function setOptimization(info::NamedTuple)
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options.options))
     else
         options = (;)
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(info.settings.optimization.algorithm)))
+        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(info.settings.optimization.algorithm_optimization)))
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     end
-    info = setTupleSubfield(info, :optimization, (:algorithm, tmp_algorithm))
+    info = setTupleSubfield(info, :optimization, (:algorithm_optimization, tmp_algorithm))
 
     tbl_params = getParameters(info.temp.models.forward,
     info.settings.optimization.model_parameter_default, info.settings.optimization.model_parameters_to_optimize, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution);

@@ -54,7 +54,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.model_output.format" => "nc",
     "experiment.model_output.save_single_file" => true,
     "experiment.exe_rules.parallelization" => parallelization_lib,
-    "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+    "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.subset_model_output" => false,
     "optimization.observations.default_observation.data_path" => path_observation)
 
@@ -78,8 +78,9 @@ tbl_params = getParameters(info.models.forward, info.optimization.model_paramete
 defaults = tbl_params.default;
 
 param_set_size = info.optimization.n_threads_cost
-param_set_size = 20
+param_set_size = 200
 param_samples = QuasiMonteCarlo.sample(param_set_size, tbl_params.lower, tbl_params.upper, LatinHypercubeSample());
+cost_samples_c = Array{Float32}(undef, param_set_size) # serial
 cost_samples_s = Array{Float32}(undef, param_set_size) # serial
 cost_samples_t = Array{Float32}(undef, param_set_size) # threaded
 # opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method);
@@ -105,23 +106,30 @@ space_index = 1
     @show idx, cost_metric
 end
 
-for param_index in eachindex(1:param_set_size)
-    param_vector = param_samples[:, param_index]
-    updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
-    coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output[space_index], run_helpers.space_land[space_index], run_helpers.tem_info)
-    cost_vector = metricVector(run_helpers.space_output[space_index], obs_array, cost_options)
-    cost_metric = combineMetric(cost_vector, multi_constraint_method)
-    cost_samples_s[param_index] = cost_metric
-    @show param_index, cost_metric
+
+@time cost(param_samples, defaults, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land[space_index], run_helpers.tem_info, obs_array, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_samples_c,  CostModelObsMultiThread())
+
+
+
+fig=plot(cost_samples_t, label="threads loop")
+plot!(cost_samples_c, label="threaded cost")
+
+cost_samples_t - cost_samples_c |> sum
+
+do_serial = true
+do_serial = false
+if do_serial
+    @time for param_index in eachindex(1:param_set_size)
+        param_vector = param_samples[:, param_index]
+        updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
+        coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output[space_index], run_helpers.space_land[space_index], run_helpers.tem_info)
+        cost_vector = metricVector(run_helpers.space_output[space_index], obs_array, cost_options)
+        cost_metric = combineMetric(cost_vector, multi_constraint_method)
+        cost_samples_s[param_index] = cost_metric
+        @show param_index, cost_metric
+    end
+
+    plot!(cost_samples_s, label="serial call")
+    @show cost_samples_t - cost_samples_s |> sum
+    fig
 end
-
-foreach(cost_samples_t) do c_t
-    in_c = c_t in cost_samples_s
-    @show in_c
-end
-plot(cost_samples_s)
-plot!(cost_samples_t)
-
-cost_samples_t - cost_samples_s |> sum
-a = 1
-

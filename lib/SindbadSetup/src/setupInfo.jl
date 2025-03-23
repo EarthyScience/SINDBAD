@@ -434,7 +434,7 @@ function setupInfo(info::NamedTuple)
     land_init = createInitLand(info.pools, info.temp)
     info = setTupleField(info, (:land_init, land_init)) 
 
-    if (info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost) && hasproperty(info.settings.optimization, :algorithm)
+    if (info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost) && hasproperty(info.settings.optimization, :algorithm_optimization)
         @info "  setupInfo: setting Optimization and Observation info..."
         info = setOptimization(info)
     else

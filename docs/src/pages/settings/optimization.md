@@ -8,13 +8,13 @@ In the settings file contains information on the optimization, such as the optim
 == Explanation
 ````json
 {
-  "algorithm": a string with name of the optimization algorithm or a path to a json file with the information,
+  "algorithm_optimization": a string with name of the optimization algorithm or a path to a json file with the information,
 }
 ````
 == Example
 ````json
 {
-"algorithm": "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+"algorithm_optimization": "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
 }
 ````
 :::
@@ -59,7 +59,7 @@ Internally, the algorithm settings are parsed and optimization settings are defi
 
 ````json
 {
-"algorithm": "CMAEvolutionStrategyCMAES",
+"algorithm_optimization": "CMAEvolutionStrategyCMAES",
 }
 ````
 
