@@ -89,6 +89,19 @@ param_updater = tbl_params
 
 space_index = 1
 
+p_indices = eachindex(1:param_set_size)
+@time cost_samples_q = qbmap(p_indices) do param_index 
+    idx = Threads.threadid()
+    param_vector = param_samples[:, param_index]
+    updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
+    coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output_mt[idx], run_helpers.space_land[space_index], run_helpers.tem_info)
+    cost_vector = metricVector(run_helpers.space_output_mt[idx], obs_array, cost_options)
+    cost_metric = combineMetric(cost_vector, multi_constraint_method)
+    # cost_samples_t[param_index] = cost_metric
+    # @show idx, cost_metric
+    cost_metric
+end
+
 @time Threads.@threads for param_index in eachindex(1:param_set_size)
     idx = Threads.threadid()
     param_vector = param_samples[:, param_index]
@@ -97,7 +110,7 @@ space_index = 1
     cost_vector = metricVector(run_helpers.space_output_mt[idx], obs_array, cost_options)
     cost_metric = combineMetric(cost_vector, multi_constraint_method)
     cost_samples_t[param_index] = cost_metric
-    @show idx, cost_metric
+    # @show idx, cost_metric
 end
 
 

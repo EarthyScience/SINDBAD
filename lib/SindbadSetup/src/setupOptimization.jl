@@ -211,6 +211,35 @@ function getParamModelIDVal(tbl_params)
     return Val(param_id_tuple)
 end
 
+function setAlgorithmOptions(info, which_algorithm)
+    optim_algorithm = getproperty(info.settings.optimization, which_algorithm)
+    tmp_algorithm = (;)
+    algo_options = (;)
+    algo_method = nothing
+    if !isnothing(optim_algorithm)
+        if endswith(optim_algorithm, ".json")
+            options_path = optim_algorithm
+            if !isabspath(options_path)
+                options_path = joinpath(info.temp.experiment.dirs.settings, options_path)
+            end
+            options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
+            options = dictToNamedTuple(options)
+            algo_method = options.package * "_" * options.method
+            algo_method = getTypeInstanceForNamedOptions(algo_method)
+            algo_options = options.options
+        else
+            algo_method = getTypeInstanceForNamedOptions(optim_algorithm)
+        end
+    else
+        if which_algorithm == :algorithm_sensitivity_analysis
+            algo_method = GlobalSensitivityMorris()
+        end
+    end
+    tmp_algorithm = setTupleField(tmp_algorithm, (:method, algo_method))
+    tmp_algorithm = setTupleField(tmp_algorithm, (:options, algo_options))
+    info = setTupleSubfield(info, :optimization, (which_algorithm, tmp_algorithm))
+    return info
+end
 
 """
     setOptimization(info::NamedTuple)
@@ -259,24 +288,8 @@ function setOptimization(info::NamedTuple)
     info = setTupleSubfield(info, :optimization, (:model_parameters_to_optimize, info.settings.optimization.model_parameters_to_optimize))
 
     # set algorithm related options
-    tmp_algorithm = (;)
-    algo_options = (;)
-    optim_algorithm = info.settings.optimization.algorithm_optimization
-    if endswith(optim_algorithm, ".json")
-        options_path = optim_algorithm
-        if !isabspath(options_path)
-            options_path = joinpath(info.temp.experiment.dirs.settings, options_path)
-        end
-        options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
-        options = dictToNamedTuple(options)
-        algo_method = options.package * "_" * options.method
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(algo_method)))
-        algo_options = options.options
-    else
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(info.settings.optimization.algorithm_optimization)))
-    end
-    tmp_algorithm = setTupleField(tmp_algorithm, (:options, algo_options))
-    info = setTupleSubfield(info, :optimization, (:algorithm_optimization, tmp_algorithm))
+    info = setAlgorithmOptions(info, :algorithm_optimization)
+    info = setAlgorithmOptions(info, :algorithm_sensitivity_analysis)
 
     tbl_params = getParameters(info.temp.models.forward,
     info.settings.optimization.model_parameter_default, info.settings.optimization.model_parameters_to_optimize, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution);

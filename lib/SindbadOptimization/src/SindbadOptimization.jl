@@ -62,6 +62,7 @@ module SindbadOptimization
     # using BayesOpt: ConfigParameters, set_kernel!, bayes_optimization, SC_MAP
     using Evolutionary: Evolutionary
     using ForwardDiff
+    using GlobalSensitivity
     using InteractiveUtils
     using MultistartOptimization: MultistartOptimization
     using NLopt: NLopt
@@ -79,5 +80,6 @@ module SindbadOptimization
     include("optimizer.jl")
     include("cost.jl")
     include("optimizeTEM.jl")
+    include("sensitivityAnalysis.jl")
 
 end # module SindbadOptimization
