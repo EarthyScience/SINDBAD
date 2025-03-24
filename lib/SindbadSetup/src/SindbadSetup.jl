@@ -1,11 +1,11 @@
 
 """
-    module SindbadSetup
+    SindbadSetup
 
-The `SindbadSetup` module provides tools for setting up and configuring SINDBAD experiments and runs. It handles the creation of experiment configurations, model structures, parameters, and output setups, ensuring a streamlined workflow for SINDBAD simulations.
+The `SindbadSetup` package provides tools for setting up and configuring SINDBAD experiments and runs. It handles the creation of experiment configurations, model structures, parameters, and output setups, ensuring a streamlined workflow for SINDBAD simulations.
 
 # Purpose:
-This module is designed to produce the SINDBAD `info` object, which contains all the necessary configurations and metadata for running SINDBAD experiments. It facilitates reading configurations, building model structures, and preparing outputs.
+This package is designed to produce the SINDBAD `info` object, which contains all the necessary configurations and metadata for running SINDBAD experiments. It facilitates reading configurations, building model structures, and preparing outputs.
 
 # Dependencies:
 - `Sindbad`: Provides the core SINDBAD models.
@@ -23,35 +23,38 @@ This module is designed to produce the SINDBAD `info` object, which contains all
 1. **`runtimeDispatchTypes.jl`**:
    - Defines runtime dispatch types used for configuring functions and their dispatches.
 
-2. **`getConfiguration.jl`**:
+2. **`default_options.jl`**:
+   - Defines default configuration options for various optimization and global sensitivity analysis methods in SINDBAD.
+
+3. **`getConfiguration.jl`**:
    - Contains functions for reading and parsing configuration files (e.g., JSON or CSV) to initialize SINDBAD experiments.
 
-3. **`setupExperimentInfo.jl`**:
+4. **`setupExperimentInfo.jl`**:
    - Builds the `info` object, which contains all the metadata and configurations required for running SINDBAD experiments.
 
-4. **`setupTypes.jl`**:
+5. **`setupTypes.jl`**:
    - Defines instances of data types in SINDBAD after reading the information from settings files.
 
-5. **`setupPools.jl`**:
+6. **`setupPools.jl`**:
    - Handles the initialization of SINDBAD land by creating model pools, including state variables.
 
-6. **`setupParameters.jl`**:
+7. **`setupParameters.jl`**:
    - Manages the loading and setup of model parameters, including bounds, scaling, and initial values.
 
-7. **`setupModels.jl`**:
+8. **`setupModels.jl`**:
    - Constructs the model structure, including the selection and configuration of orders SINDBAD models.
 
-8. **`setupOutput.jl`**:
+9. **`setupOutput.jl`**:
    - Prepares the output structure for SINDBAD experiments.
 
-9. **`setupOptimization.jl`**:
-   - Configures optimization settings for parameter estimation and model calibration.
+10. **`setupOptimization.jl`**:
+    - Configures optimization settings for parameter estimation and model calibration.
 
-10. **`setupInfo.jl`**:
-    - Calls various function to collect the `info` object by integrating all configurations, models, parameters, and outputs.
+11. **`setupInfo.jl`**:
+    - Calls various functions to collect the `info` object by integrating all configurations, models, parameters, and outputs.
 
 # Notes:
-- The module re-exports several key packages (`Sindbad`, `Accessors`, `ForwardDiff`, `CSV`, `Dates`, `JLD2`, `SindbadUtils`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadSetup`.
+- The package re-exports several key packages (`Sindbad`, `Accessors`, `ForwardDiff`, `CSV`, `Dates`, `JLD2`, `SindbadUtils`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadSetup`.
 - Designed to be modular and extensible, enabling users to customize and expand the setup process for specific use cases.
 
 # Examples:
@@ -94,6 +97,7 @@ module SindbadSetup
     @reexport using SindbadMetrics
 
     include("runtimeDispatchTypes.jl")
+    include("default_options.jl")
     include("getConfiguration.jl")
     include("setupExperimentInfo.jl")
     include("setupTypes.jl")

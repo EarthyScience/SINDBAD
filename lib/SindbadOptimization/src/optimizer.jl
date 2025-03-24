@@ -1,82 +1,4 @@
 export optimizer
-export mergeAlgoOptions
-
-"""
-Merges algorithm options by combining default options with user-provided options.
-
-This function takes two option dictionaries and combines them, with user options
-taking precedence over default options.
-
-# Arguments
-- `def_o`: Default options object (NamedTuple/Struct/Dictionary) containing baseline algorithm parameters
-- `u_o`: User options object containing user-specified overrides
-
-# Returns
-- A merged object containing the combined algorithm options
-"""
-function mergeAlgoOptions(def_o, u_o)
-    c_o = deepcopy(def_o)
-    for p in keys(u_o)
-
-        c_o = mergeAlgoOptionsSetValue(c_o, p, getproperty(u_o, p))
-    end
-    return c_o
-end
-
-"""
-    mergeAlgoOptionsSetValue(o, p, v)
-
-Helper function to set the value of a field in the options object.
-
-# Arguments:
-- `o`: The options object, which can be a `NamedTuple` or a mutable struct.
-- `p`: The field name to be updated.
-- `v`: The new value to assign to the field.
-
-# Variants:
-1. **For `NamedTuple` options**:
-   - Updates the field in an immutable `NamedTuple` by creating a new `NamedTuple` with the updated value.
-   - Uses the `@set` macro for immutability handling.
-
-2. **For mutable struct options (e.g., BayesOpt)**:
-   - Directly updates the field in the mutable struct using `Base.setproperty!`.
-
-# Returns:
-- The updated options object with the specified field modified.
-
-# Notes:
-- This function is used internally by `mergeAlgoOptions` to handle field updates in both mutable and immutable options objects.
-- Ensures compatibility with different types of optimization algorithm configurations.
-
-# Examples:
-1. **Updating a `NamedTuple`**:
-    ```julia
-    options = (max_iters = 100, tol = 1e-6)
-    updated_options = mergeAlgoOptionsSetValue(options, :tol, 1e-8)
-    ```
-
-2. **Updating a mutable struct**:
-    ```julia
-    mutable struct BayesOptConfig
-        max_iters::Int
-        tol::Float64
-    end
-    config = BayesOptConfig(100, 1e-6)
-    updated_config = mergeAlgoOptionsSetValue(config, :tol, 1e-8)
-    `
-"""
-mergeAlgoOptionsSetValue
-
-function mergeAlgoOptionsSetValue(o::NamedTuple, p, v)
-    o = @set o[p] = v
-    return o
-end
-
-
-function mergeAlgoOptionsSetValue(o, p, v)
-    Base.setproperty!(o, p, v);
-    return o
-end
 
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, algorithm <:SindbadOptimizationMethod)
@@ -143,7 +65,7 @@ optimizer
 
 function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::BayesOptKMaternARD5)
     config = ConfigParameters()   # calls initialize_parameters_to_default of the C API
-    config = mergeAlgoOptions(config, algo_options)
+    config = mergeNamedTuple(config, algo_options)
     set_kernel!(config, "kMaternARD5")  # calls set_kernel of the C API
     config.sc_type = SC_MAP
     _, optimum = bayes_optimization(cost_function, lower_bounds, upper_bounds, config)
@@ -191,7 +113,7 @@ end
 
 function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimizationBBOxnes)
     default_options = (; maxiters = 100)
-    opt_options = mergeAlgoOptions(default_options, algo_options)
+    opt_options = mergeNamedTuple(default_options, algo_options)
     optim_cost = (p, tmp=nothing) -> cost_function(p)
     optim_prob = OptimizationProblem(optim_cost, default_values; lb=lower_bounds, ub=upper_bounds)
     optim_para = solve(optim_prob, BBO_xnes(); opt_options...)

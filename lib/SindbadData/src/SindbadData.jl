@@ -1,10 +1,10 @@
 """
-    module SindbadData
+    SindbadData
 
-The `SindbadData` module provides tools for handling and processing SINDBAD-related input data and processing. It supports reading, cleaning, masking, and managing data for SINDBAD experiments, with a focus on spatial and temporal dimensions.
+The `SindbadData` package provides tools for handling and processing SINDBAD-related input data and processing. It supports reading, cleaning, masking, and managing data for SINDBAD experiments, with a focus on spatial and temporal dimensions.
 
 # Purpose:
-This module is designed to streamline the ingestion and preprocessing of input data for SINDBAD experiments. 
+This package is designed to streamline the ingestion and preprocessing of input data for SINDBAD experiments. 
 
 # Dependencies:
 - `SindbadUtils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
@@ -31,7 +31,7 @@ This module is designed to streamline the ingestion and preprocessing of input d
    - Implements utilities for reading and processing observational data, enabling model validation and performance evaluation.
 
 # Notes:
-- The module re-exports key packages (`NetCDF`, `YAXArrays`, `Zarr`) for convenience, allowing users to access their functionality directly through `SindbadData`.
+- The package re-exports key packages (`NetCDF`, `YAXArrays`, `Zarr`) for convenience, allowing users to access their functionality directly through `SindbadData`.
 - Designed to handle large datasets efficiently, leveraging chunked and compressed data formats like NetCDF and Zarr.
 - Ensures compatibility with SINDBAD's experimental framework by integrating spatial and temporal data management tools.
 
