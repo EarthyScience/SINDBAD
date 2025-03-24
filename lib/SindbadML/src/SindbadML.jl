@@ -1,11 +1,11 @@
 """
     SindbadML
 
-This module provides the tools to train neural networks to predict model parameters from `process-based models (PBMs)` using automatic differentiation and finite differences. It also includes functions to train PBMs using a mixed gradient approach to optimize the neural network weights and the PBM parameters simultaneously.
+This package provides the tools to train neural networks to predict model parameters from `process-based models (PBMs)` using automatic differentiation and finite differences. It also includes functions to train PBMs using a mixed gradient approach to optimize the neural network weights and the PBM parameters simultaneously.
 
 ::: danger
 
-This module is still under development and is not yet ready for production use.
+This package is still under development and is not yet ready for production use.
 
 :::
 

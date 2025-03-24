@@ -1,10 +1,10 @@
 """
-    module SindbadOptimization
+    SindbadOptimization
 
-The `SindbadOptimization` module provides tools for optimizing SINDBAD models, including parameter estimation, model calibration, and cost function evaluation. It integrates various optimization algorithms and utilities to streamline the optimization workflow for SINDBAD experiments.
+The `SindbadOptimization` package provides tools for optimizing SINDBAD models, including parameter estimation, model calibration, and cost function evaluation. It integrates various optimization algorithms and utilities to streamline the optimization workflow for SINDBAD experiments.
 
 # Purpose:
-This module is designed to support optimization tasks in SINDBAD, such as calibrating model parameters to match observations or minimizing cost functions. It leverages multiple optimization libraries and provides a unified interface for running optimization routines.
+This package is designed to support optimization tasks in SINDBAD, such as calibrating model parameters to match observations or minimizing cost functions. It leverages multiple optimization libraries and provides a unified interface for running optimization routines.
 
 # Dependencies:
 - `CMAEvolutionStrategy`: Provides the CMA-ES (Covariance Matrix Adaptation Evolution Strategy) algorithm for global optimization.
@@ -37,7 +37,7 @@ This module is designed to support optimization tasks in SINDBAD, such as calibr
    - Functionality to handle optimization using large-scale 3D data YAXArrays cubes, enabling parameter calibration across spatial dimensions.
 
 # Notes:
-- The module integrates multiple optimization libraries, allowing users to choose the most suitable algorithm for their problem.
+- The package integrates multiple optimization libraries, allowing users to choose the most suitable algorithm for their problem.
 - Designed to be modular and extensible, enabling users to customize optimization workflows for specific use cases.
 - Supports both gradient-based and derivative-free optimization methods, ensuring flexibility for different types of cost functions.
 
@@ -73,6 +73,8 @@ module SindbadOptimization
     using OptimizationGCMAES
     using OptimizationCMAEvolutionStrategy
     # using OptimizationQuadDIRECT
+    using QuasiMonteCarlo
+    using StableRNGs
     using SindbadTEM
     using SindbadMetrics
 

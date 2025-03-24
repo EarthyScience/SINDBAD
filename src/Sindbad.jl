@@ -1,15 +1,15 @@
 """
-    module Sindbad
+    Sindbad
 
-A Julia module for the terrestrial ecosystem models within **S**trategies to **IN**tegrate **D**ata and **B**iogeochemic**A**l mo**D**els `(SINDBAD)` framework.
+A Julia package for the terrestrial ecosystem models within **S**trategies to **IN**tegrate **D**ata and **B**iogeochemic**A**l mo**D**els `(SINDBAD)` framework.
 
-The `Sindbad` module serves as the core of the SINDBAD framework, providing foundational types, utilities, and tools for building and managing SINDBAD models.
+The `Sindbad` package serves as the core of the SINDBAD framework, providing foundational types, utilities, and tools for building and managing SINDBAD models.
 
 # Purpose:
-This module defines the `LandEcosystem` supertype, which serves as the base for all SINDBAD models. It also provides utilities for managing model variables, tools for model operations, and a catalog of variables used in SINDBAD workflows.
+This package defines the `LandEcosystem` supertype, which serves as the base for all SINDBAD models. It also provides utilities for managing model variables, tools for model operations, and a catalog of variables used in SINDBAD workflows.
 
 # Dependencies:
-- `Reexport`: Simplifies re-exporting functionality from other modules, ensuring a clean and modular design.
+- `Reexport`: Simplifies re-exporting functionality from other packages, ensuring a clean and modular design.
 - `CodeTracking`: Enables tracking of code definitions, useful for debugging and development workflows.
 - `DataStructures`: Provides advanced data structures (e.g., `OrderedDict`, `Deque`) for efficient data handling in SINDBAD models.
 - `DocStringExtensions`: Facilitates the creation of structured and extensible docstrings for improved documentation.
@@ -33,8 +33,8 @@ This module defines the `LandEcosystem` supertype, which serves as the base for 
 
 # Notes:
 - The `LandEcosystem` supertype serves as the foundation for all SINDBAD models, enabling extensibility and modularity.
-- The module re-exports key functionality from other packages (e.g., `Flatten`, `StaticArraysCore`, `DataStructures`) to simplify usage and integration.
-- Designed to be lightweight and modular, allowing seamless integration with other SINDBAD modules.
+- The package re-exports key functionality from other packages (e.g., `Flatten`, `StaticArraysCore`, `DataStructures`) to simplify usage and integration.
+- Designed to be lightweight and modular, allowing seamless integration with other SINDBAD packages.
 
 # Examples:
 1. **Defining a new SINDBAD model**:
@@ -44,7 +44,7 @@ This module defines the `LandEcosystem` supertype, which serves as the base for 
     end
     ```
 
-2. **Using utilities from the module**:
+2. **Using utilities from the package**:
     ```julia
     using Sindbad
 
@@ -59,8 +59,6 @@ This module defines the `LandEcosystem` supertype, which serves as the base for 
     catalog = getVariableCatalog()
     ```
 """
-
-
 module Sindbad
     using Reexport: @reexport
     @reexport using CodeTracking

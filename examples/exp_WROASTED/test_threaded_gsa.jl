@@ -4,6 +4,7 @@ using SindbadExperiment
 using Plots
 using QuasiMonteCarlo
 using GlobalSensitivity
+using StableRNGs
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "1999"
@@ -34,11 +35,6 @@ path_output = nothing
 
 setLogLevel(:info)
 
-morris_total_num_trajectory = 1000
-morris_num_trajectory = 150
-morris_len_design_mat = 20
-size_land_array_param_set = morris_len_design_mat * morris_num_trajectory
-
 parallelization_lib = "threads"
 model_array_type = "static_array"
 replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
@@ -61,11 +57,27 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.model_output.save_single_file" => true,
     "experiment.exe_rules.parallelization" => parallelization_lib,
     "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+    "optimization.algorithm_sensitivity_analysis" => "sa_methods/GSA_Morris.json",
     "optimization.subset_model_output" => false,
     "optimization.optimization_cost_method" => "CostModelObsMT",
     "optimization.optimization_cost_threaded"  => true,
     "optimization.observations.default_observation.data_path" => path_observation)
 
-info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-out_sensitivity = runExperimentSensitivity(experiment_json; replace_info=replace_info)
+out_sensitivity = runExperimentSensitivity(experiment_json; replace_info=replace_info);
+
+# calls to look at inner objects in the experiment for dev purposes
+info, forcing = prepExperiment(experiment_json; replace_info=replace_info);
+observations = getObservation(info, forcing.helpers);
+
+obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
+
+opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method; algorithm_info_field=:algorithm_sensitivity_analysis);
+
+cost_function = opti_helpers.cost_function
+p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds));
+method_options = info.optimization.algorithm_sensitivity_analysis.options;
+
+sampler = getproperty(SindbadOptimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options..., method_options.method_options... )
+results = gsa(cost_function, sampler, p_bounds; method_options..., batch=true)
+

@@ -60,11 +60,12 @@ end
 function getCostVectorSize(algo_options, param_vector, ::GlobalSensitivitySobol)
     default_opt = sindbad_default_options(GlobalSensitivitySobol())
     samples = default_opt.samples
-    nparam = len(param_vector)
+    nparam = length(param_vector)
+    norder = length(algo_options.method_options.order) - 1
     if hasproperty(algo_options, :samples)
         samples = algo_options.samples
     end
-    cost_vector_size = (nparam + 2) * samples
+    cost_vector_size = samples * (norder * nparam + 2)
     return cost_vector_size
 end
 

@@ -1,10 +1,10 @@
 """
-    module SindbadUtils
+    SindbadUtils
 
-The `SindbadUtils` module provides a collection of utility functions and tools for handling data, managing NamedTuples, and performing spatial and temporal operations in the SINDBAD framework. It serves as a foundational module for simplifying common tasks and ensuring consistency across SINDBAD experiments.
+The `SindbadUtils` package provides a collection of utility functions and tools for handling data, managing NamedTuples, and performing spatial and temporal operations in the SINDBAD framework. It serves as a foundational package for simplifying common tasks and ensuring consistency across SINDBAD experiments.
 
 # Purpose:
-This module is designed to provide reusable utilities for data manipulation, statistical operations, and spatial/temporal processing. 
+This package is designed to provide reusable utilities for data manipulation, statistical operations, and spatial/temporal processing. 
     
 # Dependencies:
 - `Crayons`: Enables colored terminal output, improving the readability of logs and messages.
@@ -38,8 +38,8 @@ This module is designed to provide reusable utilities for data manipulation, sta
    - Handles temporal operations, including time-based filtering and aggregation.
 
 # Notes:
-- The module re-exports key packages (`NaNStatistics`, `StatsBase`, `TypedTables`) for convenience, allowing users to access their functionality directly through `SindbadUtils`.
-- Designed to be lightweight and modular, enabling seamless integration with other SINDBAD modules.
+- The package re-exports key packages (`NaNStatistics`, `StatsBase`, `TypedTables`) for convenience, allowing users to access their functionality directly through `SindbadUtils`.
+- Designed to be lightweight and modular, enabling seamless integration with other SINDBAD packages.
 
 # Examples:
 1. **Performing spatial subsetting**:
@@ -64,7 +64,7 @@ This module is designed to provide reusable utilities for data manipulation, sta
     ```
 """
 module SindbadUtils
-
+    using Accessors: @set
     using Crayons
     using StyledStrings
     using DataStructures

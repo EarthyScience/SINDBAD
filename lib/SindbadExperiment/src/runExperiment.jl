@@ -257,9 +257,8 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
     cost_function = opti_helpers.cost_function
 
     # d_opt = getproperty(SindbadSetup, :GlobalSensitivityMorris)()
-    d_opt = sindbad_default_options(info.optimization.algorithm_sensitivity_analysis.method)
-    merged_options = mergeAlgoOptions(d_opt, info.optimization.algorithm_sensitivity_analysis.options)
-
-    sensitivity = globalSensitivity(cost_function, merged_options, p_bounds, info.optimization.algorithm_sensitivity_analysis.method, batch=batch)
+    method_options =info.optimization.algorithm_sensitivity_analysis.options
+    
+    sensitivity = globalSensitivity(cost_function, method_options, p_bounds, info.optimization.algorithm_sensitivity_analysis.method, batch=batch)
     return (; opti_helpers..., sensitivity=sensitivity)
 end

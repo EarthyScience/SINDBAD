@@ -32,6 +32,7 @@ optimize_it = true
 path_output = nothing
 
 setLogLevel(:info)
+param_set_size = 2000
 
 parallelization_lib = "threads"
 model_array_type = "static_array"
@@ -56,6 +57,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.exe_rules.parallelization" => parallelization_lib,
     "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.subset_model_output" => false,
+    "optimization.optimization_cost_threaded" => param_set_size,
     "optimization.observations.default_observation.data_path" => path_observation)
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
@@ -63,22 +65,19 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 forcing = getForcing(info);
 
 run_helpers = prepTEM(forcing, info);
-@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info);
-# @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
+# @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info);
+
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because 
 
 tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
 defaults = tbl_params.default;
 
-param_set_size = info.optimization.n_threads_cost
-param_set_size = 200
 param_samples = QuasiMonteCarlo.sample(param_set_size, tbl_params.lower, tbl_params.upper, LatinHypercubeSample());
-cost_samples_c = Array{Float32}(undef, param_set_size) # serial
-cost_samples_s = Array{Float32}(undef, param_set_size) # serial
+cost_samples_c = Array{Float32}(undef, param_set_size) # cost_func
+cost_samples_b = Array{Float32}(undef, param_set_size) # brute/serial
+cost_samples_s = Array{Float32}(undef, param_set_size) # spawn
 cost_samples_t = Array{Float32}(undef, param_set_size) # threaded
-# opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method);
-
 
 
 cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
@@ -98,7 +97,7 @@ p_indices = eachindex(1:param_set_size)
     cost_vector = metricVector(run_helpers.space_output_mt[idx], obs_array, cost_options)
     cost_metric = combineMetric(cost_vector, multi_constraint_method)
     # cost_samples_t[param_index] = cost_metric
-    # @show idx, cost_metric
+    @info "qbmap: idx: $(idx), param_index: $(param_index), cost: $(cost_metric)"
     cost_metric
 end
 
@@ -110,33 +109,58 @@ end
     cost_vector = metricVector(run_helpers.space_output_mt[idx], obs_array, cost_options)
     cost_metric = combineMetric(cost_vector, multi_constraint_method)
     cost_samples_t[param_index] = cost_metric
-    # @show idx, cost_metric
+    @info "@threads: idx: $(idx), param_index: $(param_index), cost: $(cost_metric)"
+end
+
+param_indices = 1:param_set_size
+
+@sync begin
+    for idx in eachindex(param_indices)
+        Threads.@spawn begin
+            param_index = param_indices[idx]
+            param_vector = param_samples[:, param_index]
+            updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
+            coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output_mt[param_index], run_helpers.space_land[space_index], run_helpers.tem_info)
+            cost_vector = metricVector(run_helpers.space_output_mt[param_index], obs_array, cost_options)
+            cost_metric = combineMetric(cost_vector, multi_constraint_method)
+            @info "@spawn: idx: $(idx), param_index: $(param_index), cost: $(cost_metric)"
+            cost_samples_s[param_index] = cost_metric
+        end
+    end
 end
 
 
 @time cost(param_samples, defaults, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, run_helpers.space_land[space_index], run_helpers.tem_info, obs_array, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_samples_c,  CostModelObsMT())
+for idx in eachindex(cost_samples_c) 
+    cost_metric = cost_samples_c[idx]
+    @info "@costfunction: idx: $(idx), cost: $(cost_metric)"
+    idx += 1
+end
 
 
 
-fig=plot(cost_samples_t, label="threads loop")
-plot!(cost_samples_c, label="threaded cost")
+fig=plot(cost_samples_t, label="threads loop : diff-threads = $(sum(cost_samples_t - cost_samples_t))", size=(2000, 1000))
+plot!(cost_samples_c, label="threaded cost : diff-threads = $(sum(cost_samples_t - cost_samples_c))")
+plot!(cost_samples_q, label="qbmap cost : diff-threads = $(sum(cost_samples_t - cost_samples_q))")
+plot!(cost_samples_s, label="spawn cost : diff-threads = $(sum(cost_samples_t - cost_samples_s))")
 
 cost_samples_t - cost_samples_c |> sum
 
 do_serial = true
-do_serial = false
+# do_serial = false
 if do_serial
-    @time for param_index in eachindex(1:param_set_size)
+    @time for param_index in param_indices
+        idx = param_index
         param_vector = param_samples[:, param_index]
         updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
-        coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output[space_index], run_helpers.space_land[space_index], run_helpers.tem_info)
-        cost_vector = metricVector(run_helpers.space_output[space_index], obs_array, cost_options)
+        coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output_mt[idx], run_helpers.space_land[space_index], run_helpers.tem_info)
+        cost_vector = metricVector(run_helpers.space_output_mt[idx], obs_array, cost_options)
         cost_metric = combineMetric(cost_vector, multi_constraint_method)
-        cost_samples_s[param_index] = cost_metric
-        @show param_index, cost_metric
+        cost_samples_b[param_index] = cost_metric
+        @info "serial: idx: $(idx), param_index: $(param_index), cost: $(cost_metric)"
     end
-
-    plot!(cost_samples_s, label="serial call")
-    @show cost_samples_t - cost_samples_s |> sum
+    plot!(cost_samples_b, label="serial cost : diff-threads = $(sum(cost_samples_t - cost_samples_b))")
 end
+savefig(joinpath(info.output.dirs.figure, "comparison_threads_$(param_set_size).png"))
+
 fig
