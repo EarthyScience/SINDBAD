@@ -1,13 +1,13 @@
 """
-    module SindbadMetrics
+    SindbadMetrics
 
-The `SindbadMetrics` module provides tools for evaluating the performance of SINDBAD models. It includes a variety of metrics for comparing model outputs with observations, calculating statistical measures, and updating model parameters based on evaluation results.
+The `SindbadMetrics` package provides tools for evaluating the performance of SINDBAD models. It includes a variety of metrics for comparing model outputs with observations, calculating statistical measures, and updating model parameters based on evaluation results.
 
 
 # Purpose:
-This module is designed to define and compute metrics that assess the accuracy and reliability of SINDBAD models. It supports a wide range of statistical and performance metrics, enabling robust model evaluation and calibration.
+This package is designed to define and compute metrics that assess the accuracy and reliability of SINDBAD models. It supports a wide range of statistical and performance metrics, enabling robust model evaluation and calibration.
 
-It has heavy usage in `SindbadOptimization` but the module is separated to reduce to import burdens of optimization schemes. This allows for import into independent workflows for model evaluation and parameter estimation, e.g., in hybrid modeling.
+It has heavy usage in `SindbadOptimization` but the package is separated to reduce to import burdens of optimization schemes. This allows for import into independent workflows for model evaluation and parameter estimation, e.g., in hybrid modeling.
 
 # Dependencies:
 - `SindbadUtils`: Provides utility functions for handling data and NamedTuples, which are essential for metric calculations.
@@ -30,7 +30,7 @@ It has heavy usage in `SindbadOptimization` but the module is separated to reduc
    - Implements logic for updating model parameters based on metric evaluations, enabling iterative model calibration.
 
 # Notes:
-- The module is designed to be extensible, allowing users to define custom metrics for specific use cases.
+- The package is designed to be extensible, allowing users to define custom metrics for specific use cases.
 - Metrics are computed in a modular fashion, ensuring compatibility with SINDBAD's optimization and evaluation workflows.
 - Supports both standard statistical metrics and domain-specific metrics tailored to SINDBAD experiments.
 

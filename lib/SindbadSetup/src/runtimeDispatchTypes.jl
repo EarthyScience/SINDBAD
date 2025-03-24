@@ -1,4 +1,3 @@
-export sindbad_default_options
 # ------------------------- optimization TEM and algorithm -------------------------
 export SindbadOptimizationMethod
 export BayesOptKMaternARD5
@@ -43,10 +42,6 @@ abstract type SindbadGlobalSensitivityMethod end
 struct GlobalSensitivityMorris <: SindbadGlobalSensitivityMethod end
 struct GlobalSensitivitySobol <: SindbadGlobalSensitivityMethod end
 struct GlobalSensitivitySobolDM <: SindbadGlobalSensitivityMethod end
-
-sindbad_default_options(::GlobalSensitivityMorris) = (; total_num_trajectory = 200, num_trajectory = 15, len_design_mat=10)
-
-sindbad_default_options(::GlobalSensitivitySobol) = (; samples = 10)
 
 # ------------------------- loss calculation -------------------------
 

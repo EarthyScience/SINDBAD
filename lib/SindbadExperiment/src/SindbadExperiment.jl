@@ -1,13 +1,13 @@
 """
-    module SindbadExperiment
+    SindbadExperiment
 
-The `SindbadExperiment` module provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates core SINDBAD modules and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
+The `SindbadExperiment` package provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates core SINDBAD packages and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
 
 # Purpose:
-This module acts as a high-level interface for conducting experiments using the SINDBAD framework. It leverages the functionality of core SINDBAD modules and provides additional utilities for running experiments and managing outputs.
+This package acts as a high-level interface for conducting experiments using the SINDBAD framework. It leverages the functionality of core SINDBAD packages and provides additional utilities for running experiments and managing outputs.
 
 # Dependencies:
-- `Sindbad`: The core SINDBAD module, providing foundational types and utilities for the SINDBAD framework.
+- `Sindbad`: The core SINDBAD package, providing foundational types and utilities for the SINDBAD framework.
 - `SindbadUtils`: Provides utility functions for handling data, spatial operations, and other helper tasks.
 - `SindbadSetup`: Manages setup configurations, parameter handling, and shared types for SINDBAD experiments.
 - `SindbadData`: Handles data ingestion, preprocessing, and management for SINDBAD experiments.
@@ -23,7 +23,7 @@ This module acts as a high-level interface for conducting experiments using the 
    - Provides utilities for saving experiment outputs in various formats, ensuring compatibility with downstream analysis tools.
 
 # Notes:
-- The module re-exports core SINDBAD modules (`Sindbad`, `SindbadUtils`, `SindbadSetup`, `SindbadData`, `SindbadTEM`, `SindbadOptimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadExperiment`.
+- The package re-exports core SINDBAD packages (`Sindbad`, `SindbadUtils`, `SindbadSetup`, `SindbadData`, `SindbadTEM`, `SindbadOptimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadExperiment`.
 - Designed to be extensible, enabling users to customize and expand the experimental workflow as needed.
 - Future extensions may include support for additional data formats (e.g., NetCDF, Zarr) and advanced output handling.
 

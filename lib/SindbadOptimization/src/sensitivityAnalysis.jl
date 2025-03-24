@@ -3,7 +3,7 @@ export globalSensitivity
 
 
 """
-    globalSensitivity(cost_function, method_options, p_bounds, ::SindbadGlobalSensitivityMethod; batch=false)
+    globalSensitivity(cost_function, method_options, p_bounds, ::SindbadGlobalSensitivityMethod; batch=true)
 
 Performs global sensitivity analysis using the specified method.
 
@@ -15,7 +15,7 @@ Performs global sensitivity analysis using the specified method.
   - `GlobalSensitivityMorris`: Uses the Morris method for sensitivity analysis.
   - `GlobalSensitivitySobol`: Uses the Sobol method for sensitivity analysis.
   - `GlobalSensitivitySobolDM`: Uses the Sobol method with Design Matrices.
-- `batch`: A boolean flag indicating whether to perform batch processing (default: `false`).
+- `batch`: A boolean flag indicating whether to perform batch processing (default: `true`).
 
 # Returns:
 - A `results` object containing the sensitivity indices and other relevant outputs for the specified method.
@@ -27,19 +27,25 @@ Performs global sensitivity analysis using the specified method.
 """
 globalSensitivity
 
-function globalSensitivity(cost_function, method_options, p_bounds, ::GlobalSensitivityMorris; batch=false)
+function globalSensitivity(cost_function, method_options, p_bounds, ::GlobalSensitivityMorris; batch=true)
     results = gsa(cost_function, Morris(; method_options...), p_bounds, batch=batch)
     return results
 end
 
 
-function globalSensitivity(cost_function, method_options, p_bounds, ::GlobalSensitivitySobol; batch=false)
-    results = gsa(cost_function, Sobol(; method_options...), p_bounds, batch=batch)
+function globalSensitivity(cost_function, method_options, p_bounds, ::GlobalSensitivitySobol; batch=true)
+    sampler = getproperty(SindbadOptimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options..., method_options.method_options... )
+    results = gsa(cost_function, sampler, p_bounds; method_options..., batch=batch)
     return results
 end
 
 
-function globalSensitivity(cost_function, method_options, p_bounds, ::GlobalSensitivitySobolDM; batch=false)
-    results = gsa(cost_function, Sobol(; method_options...), p_bounds, batch=batch)
+function globalSensitivity(cost_function, method_options, p_bounds, ::GlobalSensitivitySobolDM; batch=true)
+    sampler = getproperty(SindbadOptimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options...)
+    samples = method_options.samples
+    lb = first.(p_bounds)
+    ub = last.(p_bounds)
+    A, B = QuasiMonteCarlo.generate_design_matrices(samples, lb, ub, sampler)
+    results = gsa(cost_function, Sobol(; method_options.method_options...), A, B; method_options..., batch=batch)
     return results
 end
