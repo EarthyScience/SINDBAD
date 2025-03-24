@@ -4,6 +4,7 @@ export runExperimentCost
 export runExperimentForward
 export runExperimentFullOutput
 export runExperimentOpti
+export runExperimentSensitivity
 
 """
     prepExperiment(sindbad_experiment::String; replace_info = nothing)
@@ -225,3 +226,40 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=Dict())
     return (; forcing, info=fp_output.info, loss=loss_table, observation=opti_output.observation, output=fp_output.output, params=opti_output.params)
 end
 
+
+
+"""
+    runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOptimization)
+
+uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
+
+# Arguments:
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
+- `::DoRunOptimization`: a type dispatch for running optimization
+"""
+function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(), batch=true)
+    println("-------------------Sensitivity Analysis Mode---------------------------\n")
+    replace_info["experiment.flags.run_optimization"] = true
+    replace_info["experiment.flags.calc_cost"] = false
+    replace_info["experiment.flags.run_forward"] = false
+    info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+    observations = getObservation(info, forcing.helpers)
+
+    obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
+
+    opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method; algorithm_info_field=:algorithm_sensitivity_analysis);
+
+    # tbl_params = opti_helpers.tbl_params
+    p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds))
+    
+    cost_function = opti_helpers.cost_function
+
+    # d_opt = getproperty(SindbadSetup, :GlobalSensitivityMorris)()
+    d_opt = sindbad_default_options(info.optimization.algorithm_sensitivity_analysis.method)
+    merged_options = mergeAlgoOptions(d_opt, info.optimization.algorithm_sensitivity_analysis.options)
+
+    sensitivity = globalSensitivity(cost_function, merged_options, p_bounds, info.optimization.algorithm_sensitivity_analysis.method, batch=batch)
+    return (; opti_helpers..., sensitivity=sensitivity)
+end
