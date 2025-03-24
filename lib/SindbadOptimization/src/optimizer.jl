@@ -1,5 +1,5 @@
 export optimizer
-
+export mergeAlgoOptions
 
 """
 Merges algorithm options by combining default options with user-provided options.
@@ -153,13 +153,6 @@ end
 
 
 function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::CMAEvolutionStrategyCMAES)
-    if hasproperty(algo_options, :multi_threading)
-        if algo_options.multi_threading
-            popsize = Threads.nthreads()
-            algo_options = (; algo_options..., popsize=popsize)
-        end
-    end
-        
     results = minimize(cost_function, default_values, 1; lower=lower_bounds, upper=upper_bounds, algo_options...)
     optim_para = xbest(results)
     return optim_para

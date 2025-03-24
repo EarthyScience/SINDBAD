@@ -1,0 +1,10 @@
+{
+  "method": "Morris",
+  "options": {
+    "total_num_trajectory": 10000,
+    "num_trajectory": 150,
+    "len_design_mat": 20,
+    "batch": true
+  },
+  "package": "GlobalSensitivity"
+}

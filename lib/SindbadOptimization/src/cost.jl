@@ -25,7 +25,9 @@ Calculate the cost for a parameter vector.
 - `parameter_scaling_type`: Type of parameter scaling
 -  <:SindbadCostMethod: a type parameter indicating cost calculation method
     - `::CostModelObs`: Type parameter indicating cost calculation between model and observations
+    - `::CostModelObsMT`: Type parameter indicating multi-threaded cost calculation from CostModelObs
     - `::CostModelObsPriors`: Type parameter indicating cost calculation between model, observations, and priors. NOTE THAT THIS METHOD IS JUST A PLACEHOLDER AND DOES NOT CALCULATE PRIOR COST PROPERLY YET.
+
 
 # Returns
 Cost value representing the difference between model outputs and observations
@@ -47,17 +49,8 @@ function cost(param_vector, _, selected_models, space_forcing, space_spinup_forc
 end
 
 
-function cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, ::CostModelObsPriors)
-    # prior has to be calculated before the parameters are backscaled and models are updated
-    cost_prior = metric(param_vector, param_vector, default_values, MSE())
-    cost_metric = cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, CostModelObs())
-    cost_metric = cost_metric + cost_prior
-    @debug cost_vector, cost_metric
-    return cost_metric
-end
-
 function cost(param_matrix, _, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_out::Vector, ::CostModelObsMT)
-    @debug param_matrix, size(param_matrix)
+    @debug size(param_matrix)
     param_set_size = size(param_matrix, 2)
     Threads.@threads for param_index in eachindex(1:param_set_size)
         idx = Threads.threadid()
@@ -72,6 +65,17 @@ function cost(param_matrix, _, selected_models, space_forcing, space_spinup_forc
     end
     return cost_out
 end
+
+
+function cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, ::CostModelObsPriors)
+    # prior has to be calculated before the parameters are backscaled and models are updated
+    cost_prior = metric(param_vector, param_vector, default_values, MSE())
+    cost_metric = cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, CostModelObs())
+    cost_metric = cost_metric + cost_prior
+    @debug cost_vector, cost_metric
+    return cost_metric
+end
+
 
 function cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type)
     cost_metric = cost(param_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, CostModelObs())

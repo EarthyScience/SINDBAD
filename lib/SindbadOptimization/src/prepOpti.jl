@@ -1,18 +1,100 @@
+export getCostVectorSize
 export prepCostOptions
 export prepOpti
 export prepParameters
 
 """
-    prepCostOptions(obs_array, cost_options, <:SindbadCostMethod)
+    getCostVectorSize(algo_options, param_vector, ::SindbadOptimizationMethod || SindbadGlobalSensitivityMethod)
 
-remove all the variables that have less than minimum datapoints from being used in the optimization
+Calculates the size of the cost vector required for a specific optimization or sensitivity analysis method.
 
 # Arguments:
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance
-- `::SindbadCostMethod`: a value to indicate that the cost function method
-    - `CostModelObs`: a value to indicate that the cost function method is based on observation data
-    - `CostModelObsPriors`: a value to indicate that the cost function method is based on observation data and priors
+- `algo_options`: A NamedTuple or dictionary containing algorithm-specific options (e.g., population size, number of trajectories).
+- `param_vector`: A vector of parameters used in the optimization or sensitivity analysis.
+- `::OptimizationMethod`: The optimization or sensitivity analysis method. Supported methods include:
+    - `CMAEvolutionStrategyCMAES`: Covariance Matrix Adaptation Evolution Strategy.
+    - `GlobalSensitivityMorris`: Morris method for global sensitivity analysis.
+    - `GlobalSensitivitySobol`: Sobol method for global sensitivity analysis.
+    - `GlobalSensitivitySobolDM`: Sobol method with Design Matrices.
+
+# Returns:
+- An integer representing the size of the cost vector required for the specified method.
+
+# Notes:
+- For `CMAEvolutionStrategyCMAES`, the size is determined by the population size or a default formula based on the parameter vector length.
+- For `GlobalSensitivityMorris`, the size is calculated as the product of the number of trajectories and the length of the design matrix.
+- For `GlobalSensitivitySobol`, the size is determined by the number of parameters and the number of samples.
+- For `GlobalSensitivitySobolDM`, the size is equivalent to that of `GlobalSensitivitySobol`.
+"""
+getCostVectorSize
+
+function getCostVectorSize(algo_options, param_vector, ::CMAEvolutionStrategyCMAES)
+    cost_vector_size = Threads.nthreads()
+    if hasproperty(algo_options, :multi_threading)
+        if algo_options.multi_threading
+            if hasproperty(algo_options, :popsize)
+                cost_vector_size = algo_options.popsize
+            else
+                cost_vector_size = 4 + floor(Int, 3 * log(length(param_vector)))
+            end
+        end
+    end
+    return cost_vector_size
+end
+
+function getCostVectorSize(algo_options, param_vector, ::GlobalSensitivityMorris)
+    default_opt = sindbad_default_options(GlobalSensitivityMorris())
+    num_trajectory = default_opt.num_trajectory
+    len_design_mat = default_opt.len_design_mat
+    if hasproperty(algo_options, :num_trajectory)
+        num_trajectory = algo_options.num_trajectory
+    end
+    if hasproperty(algo_options, :len_design_mat)
+        len_design_mat = algo_options.len_design_mat
+    end
+    cost_vector_size = num_trajectory * len_design_mat
+    return cost_vector_size
+end
+
+
+function getCostVectorSize(algo_options, param_vector, ::GlobalSensitivitySobol)
+    default_opt = sindbad_default_options(GlobalSensitivitySobol())
+    samples = default_opt.samples
+    nparam = len(param_vector)
+    if hasproperty(algo_options, :samples)
+        samples = algo_options.samples
+    end
+    cost_vector_size = (nparam + 2) * samples
+    return cost_vector_size
+end
+
+
+function getCostVectorSize(algo_options, param_vector, ::GlobalSensitivitySobolDM)
+    return getCostVectorSize(algo_options, param_vector, GlobalSensitivitySobol())
+end
+
+"""
+    prepCostOptions(observations, cost_options, ::SindbadCostMethod)
+
+Prepares cost options for optimization by filtering variables with insufficient data points and setting up the required configurations.
+
+# Arguments:
+- `observations`: A NamedTuple or a vector of arrays containing observation data, uncertainties, and masks used for calculating performance metrics or loss.
+- `cost_options`: A table listing each observation constraint and its configuration for calculating the loss or performance metric.
+- `::SindbadCostMethod`: A type indicating the cost function method. Supported methods include:
+    - `CostModelObs`: Cost based on observation data.
+    - `CostModelObsPriors`: Cost based on observation data and priors.
+
+# Returns:
+- A filtered table of `cost_options` containing only valid variables with sufficient data points.
+
+# Notes:
+- The function iterates through the observation variables and checks if the number of valid data points meets the minimum threshold specified in `cost_options.min_data_points`.
+- Variables with insufficient data points are excluded from the returned `cost_options`.
+- The function modifies the `cost_options` table by adding:
+  - `valids`: Indices of valid data points for each variable.
+  - `is_valid`: A boolean flag indicating whether the variable meets the minimum data point requirement.
+- Unnecessary fields such as `min_data_points`, `temporal_data_aggr`, and `aggr_func` are removed from the final `cost_options`.
 """
 prepCostOptions
 
@@ -55,23 +137,34 @@ end
 
 
 """
-    prepOpti(forcing, observations, info)
+    prepOpti(forcing, observations, info, optimization_cost_method::CostModelObs)
 
-Prepares optimization parameters and settings based on provided inputs.
+Prepares optimization parameters, settings, and helper functions based on the provided inputs.
 
-# Arguments
-- `forcing`: Input forcing data for the optimization
-- `observations`: Observed data used for comparison/calibration
-- `info`: Additional information and settings for optimization setup
-- `optimization_cost_method`: Method for calculating the cost function
+# Arguments:
+- `forcing`: Input forcing data used for the optimization process.
+- `observations`: Observed data used for comparison or calibration during optimization.
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of the experiment.
+- `optimization_cost_method`: The method used to calculate the cost function. Supported methods include:
+    - `CostModelObs`: Cost based on observation data.
+    - `CostModelObsPriors`: Cost based on observation data and priors.
+    - `CostModelObsLandTS`: Cost based on land time series data.
+    - `CostModelObsMT`: Cost with multi-threaded computation.
 
-# Returns
-Configuration parameters and settings for optimization
+# Returns:
+- A NamedTuple `opti_helpers` containing:
+  - `tbl_params`: Processed model parameters for optimization.
+  - `cost_function`: A function to compute the cost for optimization.
+  - `cost_options`: Options and settings for the cost function.
+  - `default_values`: Default parameter values for the models.
+  - `lower_bounds`: Lower bounds for the parameters.
+  - `upper_bounds`: Upper bounds for the parameters.
+  - `run_helpers`: Helper information for running the optimization.
 
-# Description
-This function processes the input data and configuration to set up the optimization
-problem. It handles the preparation of parameters and settings required for the
-optimization process.
+# Notes:
+- The function processes the input data and configuration to set up the optimization problem.
+- It prepares model parameters, cost options, and helper functions required for the optimization process.
+- Depending on the `optimization_cost_method`, the cost function is customized to handle specific data types or computation methods.
 """
 prepOpti
 
@@ -79,17 +172,18 @@ function prepOpti(forcing, observations, info)
     return prepOpti(forcing, observations, info, CostModelObs())
 end
 
-function  prepOpti(forcing, observations, info, ::CostModelObsMT)
+function  prepOpti(forcing, observations, info, ::CostModelObsMT; algorithm_info_field=:algorithm_optimization)
+    algorithm_info = getproperty(info.optimization, algorithm_info_field)
     opti_helpers = prepOpti(forcing, observations, info, CostModelObs())
     run_helpers = opti_helpers.run_helpers
-
-    cost_vector = zeros(info.optimization.n_threads_cost)
+    cost_vector_size = getCostVectorSize(getproperty(algorithm_info, :options), opti_helpers.default_values, getproperty(algorithm_info, :method))
+    cost_vector = Vector{eltype(opti_helpers.default_values)}(undef, cost_vector_size)
     
     space_index = 1 # the parallelization of cost computation only runs in single pixel runs
 
     cost_function = x -> cost(x, opti_helpers.default_values, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, deepcopy(run_helpers.space_land[space_index]), run_helpers.tem_info, observations, opti_helpers.tbl_params, opti_helpers.cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, cost_vector, info.optimization.optimization_cost_method)
 
-    opti_helpers = (; opti_helpers..., cost_function=cost_function)
+    opti_helpers = (; opti_helpers..., cost_function=cost_function, cost_vector=cost_vector)
     return opti_helpers
 end
 
