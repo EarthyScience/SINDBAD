@@ -9,7 +9,7 @@ using ProgressMeter
 include("load_covariates.jl")
 
 # load folds # $nfold $nlayer $neuron $batchsize
-_nfold = 5 #B ase.parse(Int, ARGS[1])
+_nfold = 5 #Base.parse(Int, ARGS[1])
 nlayers = 3 # Base.parse(Int, ARGS[2])
 n_neurons = 32 # Base.parse(Int, ARGS[3])
 batch_size = 32 # Base.parse(Int, ARGS[4])
@@ -17,6 +17,7 @@ batch_size = 32 # Base.parse(Int, ARGS[4])
 batch_seed = 123 * batch_size
 
 file_folds = load(joinpath(@__DIR__, "nfolds_sites_indices.jld2"))
+
 xtrain, xval, xtest = file_folds["unfold_training"][_nfold], file_folds["unfold_validation"][_nfold], file_folds["unfold_tests"][_nfold]
 
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
