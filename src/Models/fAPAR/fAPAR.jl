@@ -8,6 +8,7 @@ include("fAPAR_EVI.jl")
 include("fAPAR_forcing.jl")
 include("fAPAR_LAI.jl")
 include("fAPAR_vegFraction.jl")
+include("fAPAR_cVegLeafBareFrac.jl")
 
 @doc """
 Fraction of absorbed photosynthetically active radiation
