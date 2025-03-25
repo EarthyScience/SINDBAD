@@ -135,7 +135,7 @@
           "bounds": [0.0, 100.0],
           "standard_name": "Gross Primary Productivity",
           "sindbad_unit": "gC m-2 hour-1",
-          "source_to_sindbad_unit": 0.0432,
+          "source_to_sindbad_unit": 1.0377504,
           "source_unit": "micro mol CO2/m2/s",
           "source_variable": "GPP_DT"
         },
@@ -222,9 +222,10 @@
           "bounds": [0.0, 100.0],
           "data_path": "../data/fn/CA-Obs.1979.2017.daily.nc",
           "standard_name": "transpiration",
-          "sindbad_unit": "mm day-1",
+          "sindbad_unit": "mm hr-1",
           "source_unit": "mm day-1",
-          "source_variable": "T_NT_TEA"
+          "source_variable": "T_NT_TEA",
+          "source_to_sindbad_unit": 0.041666666666666664
         },
         "model_full_var": "fluxes.transpiration",
         "qflag": {
