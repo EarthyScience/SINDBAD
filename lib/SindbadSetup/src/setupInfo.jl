@@ -25,7 +25,6 @@ function createInitLand(pool_info, tem)
     return out
 end
 
-
 """
     parseSaveCode(info)
 
@@ -415,6 +414,7 @@ function setupInfo(info::NamedTuple)
     @info "  setupInfo: setting Dates Helpers..."
     info = setDatesInfo(info)
     @info "  setupInfo: setting Model Structure..."
+    @show propertynames(info)
     info = setOrderedSelectedModels(info)
     info = setSpinupAndForwardModels(info)
 
