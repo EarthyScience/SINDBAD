@@ -15,7 +15,7 @@ makedocs(; sitename="Sindbad",
     authors="Sindbad Development Team",
     clean=true,
     format=DocumenterVitepress.MarkdownVitepress(
-        repo = "github.com/EarthyScience/Sindbad.jl",
+        repo = "github.com/EarthyScience/SINDBAD",
     ),
     remotes=nothing,
     draft=false,
@@ -25,7 +25,7 @@ makedocs(; sitename="Sindbad",
     )
 
 deploydocs(; 
-    repo = "github.com/EarthyScience/Sindbad.jl", # this must be the full URL!
+    repo = "github.com/EarthyScience/SINDBAD", # this must be the full URL!
     target = "build", # this is where Vitepress stores its output
     branch = "gh-pages",
     devbranch = "main",

@@ -25,6 +25,9 @@
 *.mem
 *.png
 *.jpg
+*.svg
+*.pdf
+*.PDF
 .*
 ~*
 *_tmp
@@ -51,7 +54,8 @@ docs/build/
 .DS_Store
 node_modules
 package-lock.json
-!logo.png
+!docs/src/assets/logo.png
+!docs/src/assets/logo-RnD.png
 !.vitepress
 !logo_mpi_grey.png
 !.github

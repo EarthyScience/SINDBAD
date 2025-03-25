@@ -1,14 +1,8 @@
 # ------------------------- optimization TEM and algorithm -------------------------
-export SindbadOptimizationMethods
+export SindbadOptimizationMethod
 export BayesOptKMaternARD5
 export CMAEvolutionStrategyCMAES
 export EvolutionaryCMAES
-export LandOutArray
-export LandOutArrayAll
-export LandOutArrayFD
-export LandOutStacked
-export LandOutTimeseries
-export LandOutYAXArray
 export OptimLBFGS
 export OptimBFGS
 export OptimizationBBOadaptive
@@ -22,33 +16,49 @@ export OptimizationMultistartOptimization
 export OptimizationNelderMead
 export OptimizationQuadDirect
 
-abstract type SindbadOptimizationMethods end
-struct BayesOptKMaternARD5 <: SindbadOptimizationMethods end
-struct CMAEvolutionStrategyCMAES <: SindbadOptimizationMethods end
-struct EvolutionaryCMAES <: SindbadOptimizationMethods end
-struct OptimLBFGS <: SindbadOptimizationMethods end
-struct OptimBFGS <: SindbadOptimizationMethods end
-struct OptimizationBBOadaptive <: SindbadOptimizationMethods end
-struct OptimizationBBOxnes <: SindbadOptimizationMethods end
-struct OptimizationBFGS <: SindbadOptimizationMethods end
-struct OptimizationFminboxGradientDescent <: SindbadOptimizationMethods end
-struct OptimizationFminboxGradientDescentFD <: SindbadOptimizationMethods end
-struct OptimizationGCMAESDef <: SindbadOptimizationMethods end
-struct OptimizationGCMAESFD <: SindbadOptimizationMethods end
-struct OptimizationMultistartOptimization <: SindbadOptimizationMethods end
-struct OptimizationNelderMead <: SindbadOptimizationMethods end
-struct OptimizationQuadDirect <: SindbadOptimizationMethods end
+abstract type SindbadOptimizationMethod end
+struct BayesOptKMaternARD5 <: SindbadOptimizationMethod end
+struct CMAEvolutionStrategyCMAES <: SindbadOptimizationMethod end
+struct EvolutionaryCMAES <: SindbadOptimizationMethod end
+struct OptimLBFGS <: SindbadOptimizationMethod end
+struct OptimBFGS <: SindbadOptimizationMethod end
+struct OptimizationBBOadaptive <: SindbadOptimizationMethod end
+struct OptimizationBBOxnes <: SindbadOptimizationMethod end
+struct OptimizationBFGS <: SindbadOptimizationMethod end
+struct OptimizationFminboxGradientDescent <: SindbadOptimizationMethod end
+struct OptimizationFminboxGradientDescentFD <: SindbadOptimizationMethod end
+struct OptimizationGCMAESDef <: SindbadOptimizationMethod end
+struct OptimizationGCMAESFD <: SindbadOptimizationMethod end
+struct OptimizationMultistartOptimization <: SindbadOptimizationMethod end
+struct OptimizationNelderMead <: SindbadOptimizationMethod end
+struct OptimizationQuadDirect <: SindbadOptimizationMethod end
+
+export SindbadGlobalSensitivityMethod
+export GlobalSensitivityMorris
+export GlobalSensitivitySobol
+export GlobalSensitivitySobolDM
+
+abstract type SindbadGlobalSensitivityMethod end
+struct GlobalSensitivityMorris <: SindbadGlobalSensitivityMethod end
+struct GlobalSensitivitySobol <: SindbadGlobalSensitivityMethod end
+struct GlobalSensitivitySobolDM <: SindbadGlobalSensitivityMethod end
 
 # ------------------------- loss calculation -------------------------
 
-export IsMultiObjectiveAlgorithm
-export IsNotMultiObjectiveAlgorithm
+export SindbadCostMethod
+export CostModelObs
+export CostModelObsLandTS
+export CostModelObsMT
+export CostModelObsPriors
 
-struct IsMultiObjectiveAlgorithm end
-struct IsNotMultiObjectiveAlgorithm end
+abstract type SindbadCostMethod end
+struct CostModelObs <: SindbadCostMethod end
+struct CostModelObsLandTS <: SindbadCostMethod end
+struct CostModelObsMT <: SindbadCostMethod end
+struct CostModelObsPriors <: SindbadCostMethod end
 
 # ------------------------- running flags -------------------------
-export SindbadRunMethods
+export SindbadRunMethod
 export DoCalcCost
 export DoNotCalcCost
 export DoDebugModel
@@ -69,36 +79,39 @@ export DoSpinupTEM
 export DoNotSpinupTEM
 export DoStoreSpinup
 export DoNotStoreSpinup
+
+abstract type SindbadRunMethod end
+struct DoCalcCost <:SindbadRunMethod end
+struct DoNotCalcCost <:SindbadRunMethod end
+struct DoDebugModel <:SindbadRunMethod end
+struct DoNotDebugModel <:SindbadRunMethod end
+struct DoFilterNanPixels <:SindbadRunMethod end
+struct DoNotFilterNanPixels <:SindbadRunMethod end
+struct DoInlineUpdate <:SindbadRunMethod end
+struct DoNotInlineUpdate <:SindbadRunMethod end
+struct DoRunForward <:SindbadRunMethod end
+struct DoNotRunForward <:SindbadRunMethod end
+struct DoRunOptimization <:SindbadRunMethod end
+struct DoNotRunOptimization <:SindbadRunMethod end
+struct DoSaveInfo <:SindbadRunMethod end
+struct DoNotSaveInfo <:SindbadRunMethod end
+struct DoSpinupTEM <:SindbadRunMethod end
+struct DoNotSpinupTEM <:SindbadRunMethod end
+struct DoStoreSpinup <:SindbadRunMethod end
+struct DoNotStoreSpinup <:SindbadRunMethod end
+struct DoUseForwardDiff <:SindbadRunMethod end
+struct DoNotUseForwardDiff <:SindbadRunMethod end
+
+export SindbadParallelizationMethod
 export UseQbmapParallelization
 export UseThreadsParallelization
 
-
-abstract type SindbadRunMethods end
-struct DoCalcCost <:SindbadRunMethods end
-struct DoNotCalcCost <:SindbadRunMethods end
-struct DoDebugModel <:SindbadRunMethods end
-struct DoNotDebugModel <:SindbadRunMethods end
-struct DoFilterNanPixels <:SindbadRunMethods end
-struct DoNotFilterNanPixels <:SindbadRunMethods end
-struct DoInlineUpdate <:SindbadRunMethods end
-struct DoNotInlineUpdate <:SindbadRunMethods end
-struct DoRunForward <:SindbadRunMethods end
-struct DoNotRunForward <:SindbadRunMethods end
-struct DoRunOptimization <:SindbadRunMethods end
-struct DoNotRunOptimization <:SindbadRunMethods end
-struct DoSaveInfo <:SindbadRunMethods end
-struct DoNotSaveInfo <:SindbadRunMethods end
-struct DoSpinupTEM <:SindbadRunMethods end
-struct DoNotSpinupTEM <:SindbadRunMethods end
-struct DoStoreSpinup <:SindbadRunMethods end
-struct DoNotStoreSpinup <:SindbadRunMethods end
-struct DoUseForwardDiff <:SindbadRunMethods end
-struct DoNotUseForwardDiff <:SindbadRunMethods end
-struct UseQbmapParallelization <:SindbadRunMethods end
-struct UseThreadsParallelization <:SindbadRunMethods end
+abstract type SindbadParallelizationMethod end
+struct UseQbmapParallelization <:SindbadParallelizationMethod end
+struct UseThreadsParallelization <:SindbadParallelizationMethod end
 
 # ------------------------- spinup methods -------------------------
-export SindbadSpinupMethods
+export SindbadSpinupMethod
 export AllForwardModels
 export SelSpinupModels
 export EtaScaleA0H
@@ -112,19 +125,19 @@ export ODETsit5
 export SSPDynamicSSTsit5
 export SSPSSRootfind
 
-abstract type SindbadSpinupMethods end
-struct AllForwardModels <: SindbadSpinupMethods end
-struct EtaScaleA0H <: SindbadSpinupMethods end
-struct EtaScaleAH <: SindbadSpinupMethods end
-struct NlsolveFixedpointTrustregionCEco <: SindbadSpinupMethods end
-struct NlsolveFixedpointTrustregionCEcoTWS <: SindbadSpinupMethods end
-struct NlsolveFixedpointTrustregionTWS <: SindbadSpinupMethods end
-struct ODEAutoTsit5Rodas5 <: SindbadSpinupMethods end
-struct ODEDP5 <: SindbadSpinupMethods end
-struct ODETsit5 <: SindbadSpinupMethods end
-struct SelSpinupModels <: SindbadSpinupMethods end
-struct SSPDynamicSSTsit5 <: SindbadSpinupMethods end
-struct SSPSSRootfind <: SindbadSpinupMethods end
+abstract type SindbadSpinupMethod end
+struct AllForwardModels <: SindbadSpinupMethod end
+struct EtaScaleA0H <: SindbadSpinupMethod end
+struct EtaScaleAH <: SindbadSpinupMethod end
+struct NlsolveFixedpointTrustregionCEco <: SindbadSpinupMethod end
+struct NlsolveFixedpointTrustregionCEcoTWS <: SindbadSpinupMethod end
+struct NlsolveFixedpointTrustregionTWS <: SindbadSpinupMethod end
+struct ODEAutoTsit5Rodas5 <: SindbadSpinupMethod end
+struct ODEDP5 <: SindbadSpinupMethod end
+struct ODETsit5 <: SindbadSpinupMethod end
+struct SelSpinupModels <: SindbadSpinupMethod end
+struct SSPDynamicSSTsit5 <: SindbadSpinupMethod end
+struct SSPSSRootfind <: SindbadSpinupMethod end
 
 
 # spinup sequence and types
@@ -135,7 +148,7 @@ struct SpinSequenceWithAggregator
     forcing::Symbol
     n_repeat::Int
     n_timesteps::Int
-    spinup_mode::SindbadSpinupMethods
+    spinup_mode::SindbadSpinupMethod
     options::NamedTuple
     aggregator_indices::Vector{Int}
     aggregator::Vector{TimeAggregator}
@@ -147,13 +160,12 @@ struct SpinSequence
     forcing::Symbol
     n_repeat::Int
     n_timesteps::Int
-    spinup_mode::SindbadSpinupMethods
+    spinup_mode::SindbadSpinupMethod
     options::NamedTuple
 end
 
 # ------------------------- parallelization and model output options-------------------------
-export SindbadOutputMethods
-abstract type SindbadOutputMethods end
+export SindbadOutputStrategyType
 export DoOutputAll
 export DoNotOutputAll
 export DoSaveSingleFile
@@ -161,43 +173,52 @@ export DoNotSaveSingleFile
 export UseQbmapParallelization
 export UseThreadsParallelization
 
-struct DoOutputAll <:SindbadOutputMethods end
-struct DoNotOutputAll <:SindbadOutputMethods end
-struct DoSaveSingleFile <:SindbadOutputMethods end
-struct DoNotSaveSingleFile <:SindbadOutputMethods end
+abstract type SindbadOutputStrategyType end
+struct DoOutputAll <:SindbadOutputStrategyType end
+struct DoNotOutputAll <:SindbadOutputStrategyType end
+struct DoSaveSingleFile <:SindbadOutputStrategyType end
+struct DoNotSaveSingleFile <:SindbadOutputStrategyType end
 
 # ------------------------- model array types for internal model variables -------------------------
-
+export SindbadModelArrayType
 export ModelArrayArray
 export ModelArrayStaticArray
 export ModelArrayView
 
-struct ModelArrayArray <:SindbadOutputMethods end
-struct ModelArrayStaticArray <:SindbadOutputMethods end
-struct ModelArrayView <:SindbadOutputMethods end
+abstract type SindbadModelArrayType end
+struct ModelArrayArray <:SindbadModelArrayType end
+struct ModelArrayStaticArray <:SindbadModelArrayType end
+struct ModelArrayView <:SindbadModelArrayType end
 
 
 # ------------------------- output array types preallocated arrays -------------------------
 
+export SindbadOutputArrayType
 export OutputArray
 export OutputMArray
 export OutputSizedArray
 export OutputYAXArray
+
+abstract type SindbadOutputArrayType end
+struct OutputArray <:SindbadOutputArrayType end
+struct OutputMArray <:SindbadOutputArrayType end
+struct OutputSizedArray <:SindbadOutputArrayType end
+struct OutputYAXArray <:SindbadOutputArrayType end
+
+export SindbadLandOutType
 export LandOutArray
 export LandOutArrayAll
 export LandOutArrayFD
+export LandOutArrayMT
 export LandOutStacked
 export LandOutTimeseries
 export LandOutYAXArray
 
-struct OutputArray <:SindbadOutputMethods end
-struct OutputMArray <:SindbadOutputMethods end
-struct OutputSizedArray <:SindbadOutputMethods end
-struct OutputYAXArray <:SindbadOutputMethods end
-
-struct LandOutArray <:SindbadOutputMethods end
-struct LandOutArrayAll <:SindbadOutputMethods end
-struct LandOutArrayFD <:SindbadOutputMethods end
-struct LandOutStacked <:SindbadOutputMethods end
-struct LandOutTimeseries <:SindbadOutputMethods end
-struct LandOutYAXArray <:SindbadOutputMethods end
+abstract type SindbadLandOutType end
+struct LandOutArray <:SindbadLandOutType end
+struct LandOutArrayAll <:SindbadLandOutType end
+struct LandOutArrayFD <:SindbadLandOutType end
+struct LandOutArrayMT <:SindbadLandOutType end
+struct LandOutStacked <:SindbadLandOutType end
+struct LandOutTimeseries <:SindbadLandOutType end
+struct LandOutYAXArray <:SindbadLandOutType end

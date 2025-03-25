@@ -1,60 +1,40 @@
 export saveOutCubes
 
 
-# """
-#      getModelDataArray(_dat::AbstractArray{<:Any,N}) where N
-
-
-# """
-# function getModelDataArray(_dat::AbstractArray{<:Any,N}) where N
-#     dim = 1
-#     inds = map(size(_dat)) do _
-#         ind = dim == 2 ? 1 : Colon()
-#         dim += 1
-#         ind
-#     end
-#     _dat[Colon(), inds...]
-# end
-
 """
-    getModelDataArray(model_data::AbstractArray{T, 2})
+Converts an N-dimensional array of any size into a output-compatible data array without the unnecessary dimension.
 
-return model data with 1 sized dimension removed in case of 2-dimensional matrix
-"""
-function getModelDataArray(model_data::AbstractArray{T,2}) where {T}
-    return model_data[:, 1]
-end
+# Arguments
+- `_dat::AbstractArray{<:Any,N}`: Input N-dimensional array of arbitrary type
 
+# Returns
+Output-compatible data array
 """
-    getModelDataArray(model_data::AbstractArray{T, 3})
-
-return model data with 1 sized dimension removed in case of 3-dimensional matrix
-"""
-function getModelDataArray(model_data::AbstractArray{T,3}) where {T}
-    return model_data[:, 1, :]
-end
-
-"""
-    getModelDataArray(model_data::AbstractArray{T, 4})
-
-return model data with 1 sized dimension removed in case of 4-dimensional matrix
-"""
-function getModelDataArray(model_data::AbstractArray{T,4}) where {T}
-    return model_data[:, 1, :, :]
+function getModelDataArray(_dat::AbstractArray{<:Any,N}) where N
+    dim = 1
+    inds = map(size(_dat)) do _
+        ind = dim == 2 ? 1 : Colon()
+        dim += 1
+        ind
+    end
+    _dat[inds...]
 end
 
 
 """
     getYaxForVariable(data_out, data_dim, variable_name, catalog_name, t_step)
 
+Processes YAXArray for a specific variable from simulation output.
 
+# Arguments
+- `data_out`: Output data from the simulation
+- `data_dim`: Dimensions of the data output variable
+- `variable_name`: Name of the variable to save as
+- `catalog_name`: Name in the SINDBAD catalog of variables
+- `t_step`: Time resolution for which to extract the data
 
-# Arguments:
-- `data_out`: DESCRIPTION
-- `data_dim`: DESCRIPTION
-- `variable_name`: DESCRIPTION
-- `catalog_name`: DESCRIPTION
-- `t_step`: a string for time step of the model run to be used in the units attribute of variables
+# Returns
+YAXArray specified variable at the given time resolution.
 """
 function getYaxForVariable(data_out, data_dim, variable_name, catalog_name, t_step)
     data_prop = getVariableInfo(catalog_name, t_step)
@@ -67,7 +47,8 @@ end
 
 
 """
-    saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, ::DoSaveSingleFile)
+    saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, <:SindbadOutputStrategyType)
+    saveOutCubes(info, out_cubes, output_dims, output_vars)
 
 saves the output variables from the run as one file
 
@@ -79,8 +60,14 @@ saves the output variables from the run as one file
 - `var_pairs`: a tuple of pairs of sindbad variables to write including the field and subfield of land as the first and last element
 - `out_format`: format of the output file
 - `t_step`: a string for time step of the model run to be used in the units attribute of variables
-- `::DoSaveSingleFile`: DESCRIPTION
+- `<:SindbadOutputStrategyType`: Dispatch type indicating file output mode with the following options:
+    - `::DoSaveSingleFile`: single file with all the variables
+    - `::DoNotSaveSingleFile`: single file per variable
+
+# note: this function is overloaded to handle different dispatch types and the version with fewer arguments is used as a shorthand for the single file output mode
 """
+saveOutCubes
+
 function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pairs, out_format, t_step, ::DoSaveSingleFile)
     @info "saving one file for all variables"
     catalog_names = getVarFull.(var_pairs)
@@ -93,21 +80,6 @@ function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pair
     return nothing
 end
 
-"""
-    saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, ::DoNotSaveSingleFile)
-
-saves the output variables from the run as one file per variable
-
-# Arguments:
-- `data_path_base`: base path of the output file including the directory and file prefix
-- `global_metadata`: a collection of  global metadata information to write to the output file
-- `data`: data to be written to file
-- `data_dims`: a vector of dimension of data for each variable to be written to a file
-- `var_pairs`: a tuple of pairs of sindbad variables to write including the field and subfield of land as the first and last element
-- `out_format`: format of the output file
-- `t_step`: a string for time step of the model run to be used in the units attribute of variables
-- `::DoNotSaveSingleFile`: DESCRIPTION
-"""
 function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pairs, out_format, t_step, ::DoNotSaveSingleFile)
     @info "saving one file per variable"
     catalog_names = getVarFull.(var_pairs)
@@ -125,17 +97,6 @@ function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pair
 end
 
 
-"""
-    saveOutCubes(info, out_cubes, output)
-
-saves the output variables from the run from the information in info
-
-# Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `out_cubes`: a collection of output data to be written to file
-- `output_dims`: output dimensions with list of dimensions for each variable pair
-- `output_vars`: output variable name pairs with field and subfield
-"""
 function saveOutCubes(info, out_cubes, output_dims, output_vars)
     saveOutCubes(info.output.file_info.file_prefix, info.output.file_info.global_metadata, out_cubes, output_dims, output_vars, info.output.format, info.experiment.basics.temporal_resolution, info.helpers.run.save_single_file)
 end
