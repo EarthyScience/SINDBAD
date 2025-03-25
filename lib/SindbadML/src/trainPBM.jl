@@ -47,7 +47,7 @@ function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, t
             
             grads_batch = zeros(Float32, n_params, length(sites_batch))
             x_feat_batch = xfeatures(; site=sites_batch)
-            new_params, pullback_func = Zygote.pullback(p -> re(p)(x_feat_batch), flat)            
+            new_params, pullback_func = getPullback(flat, re, x_feat_batch)
             _params_batch = getParamsAct(new_params, tbl_params)
 
             input_args = (_params_batch, forward_args..., indices_sites_batch, sites_batch)
@@ -107,7 +107,7 @@ However, a good compromise between memory allocations and speed could be to set 
 - `args...`: additional arguments for the loss function.
 
 !!! warning
-    For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropiate `chunk_size`.
+    For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropriate `chunk_size`.
 
 Returns: a `∇x` array with all parameter's gradients.
 """
