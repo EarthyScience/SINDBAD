@@ -159,7 +159,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=Dict())
     @info "runExperimentForwardParams: forward run of the model with default/settings and input/optimized parameters..."
-    setLogLevel(:error)
+    # setLogLevel(:error)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = true
@@ -212,11 +212,13 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function runExperimentOpti(sindbad_experiment::String; replace_info=Dict())
+    setLogLevel(:warn)
     replace_info["experiment.flags.run_optimization"] = true
     replace_info["experiment.flags.calc_cost"] = false
     replace_info["experiment.flags.run_forward"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization)
+    setLogLevel(:info)
     fp_output = runExperimentForwardParams(opti_output.params, sindbad_experiment; replace_info=replace_info)
     cost_options = prepCostOptions(opti_output.observation, info.optimization.cost_options)
     loss_vector = metricVector(fp_output.output.optimized, opti_output.observation, cost_options)
