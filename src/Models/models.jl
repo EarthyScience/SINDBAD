@@ -14,7 +14,7 @@ export DoCatchModelErrors
 export DoNotCatchModelErrors
 export @describe, @bounds, @units, @timescale
 export @with_kw
-export sindbad_models
+export standard_sindbad_models
 # define dispatch structs for catching model errors
 struct DoCatchModelErrors end
 struct DoNotCatchModelErrors end
@@ -42,7 +42,7 @@ end
 ## List all models of SINDBAD in the order they are called. 
 ## Note that a new model is only executed if it is added to this list. 
 ## When adding a new model, create a new copy of this jl file to work with.
-sindbad_models = (:wCycleBase,
+standard_sindbad_models = (:wCycleBase,
     :rainSnow,
     :rainIntensity,
     :PET,
@@ -123,7 +123,7 @@ sindbad_models = (:wCycleBase,
     :deriveVariables)
 
 ## Import all models.
-for model_name_symbol ∈ sindbad_models
+for model_name_symbol ∈ standard_sindbad_models
     model_name = string(model_name_symbol)
     model_path = joinpath(model_name, model_name * ".jl")
     include(model_path)

@@ -15,17 +15,17 @@ Reorders the list of models based on the order specified in the `model_structure
 
 # Notes:
 - USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
-- The default order is taken from `sindbad_models`.
+- The default order is taken from `standard_sindbad_models`.
 - Models cannot be set before `getPools` or after `cCycle`.
 - Changing the order may result in model inconsistency, so use with caution.
 - Issues warnings if the model order is changed or duplicates are found in the order.
 """
-function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
-    all_sindbad_models = [sindbad_models...]
-    checkSelectedModels(all_sindbad_models, selected_models)
+function changeModelOrder(info::NamedTuple, selected_models::AbstractArray; sindbad_models=standard_sindbad_models::Tuple)
+    sindbad_models = [sindbad_models...]
+    checkSelectedModels(sindbad_models, selected_models)
     # get orders of fixed models that cannot be changed
-    order_getPools = findfirst(e -> e == :getPools, all_sindbad_models)
-    order_cCycle = findfirst(e -> e == :cCycle, all_sindbad_models)
+    order_getPools = findfirst(e -> e == :getPools, sindbad_models)
+    order_cCycle = findfirst(e -> e == :cCycle, sindbad_models)
 
     # get the new orders and models from model_structure.json
     new_orders = Int64[]
@@ -47,10 +47,10 @@ function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
                 )
             end
             if order_changed_warn
-                @warn "changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.models.selected_models and comparing it with sindbad_models"
+                @warn "changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.models.selected_models and comparing it with standard_sindbad_models"
                 order_changed_warn = false
             end
-            @warn "$(sm) [$(Pair(findfirst(e->e==sm, all_sindbad_models), model_info.order))]"
+            @warn "$(sm) [$(Pair(findfirst(e->e==sm, sindbad_models), model_info.order))]"
         end
     end
 
@@ -66,7 +66,7 @@ function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
     new_orders = sort(new_orders; rev=true)
 
     # create re-ordered list of full models
-    full_models_reordered = deepcopy(all_sindbad_models)
+    full_models_reordered = deepcopy(sindbad_models)
     for new_order ∈ new_orders
         sm = nothing
         for nm ∈ keys(new_models)
@@ -89,12 +89,12 @@ function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
 end
 
 """
-    checkSelectedModels(all_sindbad_models::AbstractArray, selected_models::AbstractArray)
+    checkSelectedModels(sindbad_models::AbstractArray, selected_models::AbstractArray)
 
-Validates that the selected models in `model_structure.json` exist in the full list of `sindbad_models`.
+Validates that the selected models in `model_structure.json` exist in the full list of `standard_sindbad_models`.
 
 # Arguments:
-- `all_sindbad_models`: An array of all available SINDBAD models.
+- `sindbad_models`: An array of all available SINDBAD models.
 - `selected_models`: An array of selected models to validate.
 
 # Returns:
@@ -103,16 +103,42 @@ Validates that the selected models in `model_structure.json` exist in the full l
 # Notes:
 - Ensures that the selected models are consistent with the available SINDBAD models.
 """
-function checkSelectedModels(all_sindbad_models, selected_models::AbstractArray)
+function checkSelectedModels(sindbad_models, selected_models::AbstractArray)
     for sm ∈ selected_models
-        if sm ∉ all_sindbad_models
-            @show all_sindbad_models
+        if sm ∉ sindbad_models
+            @show sindbad_models
             error(sm,
-                " is not a valid model from all_sindbad_models [Sindbad.sindbad_models]. check model_structure settings in json")
+                " is not a valid model from sindbad_models [Sindbad.standard_sindbad_models]. check model_structure settings in json")
             return false
         end
     end
     return true
+end
+
+"""
+    getAllSindbadModels(info; all_models_default=standard_sindbad_models)
+
+Retrieves the list of all SINDBAD models, either from the provided `info` object or a default list.
+
+# Arguments:
+- `info`: A NamedTuple or object containing experiment configuration and metadata.
+- `all_models_default`: (Optional) The default list of SINDBAD models to use if `info` does not specify a custom list. Defaults to `standard_sindbad_models`.
+
+# Returns:
+- A list of all SINDBAD models, either from `info.sindbad_models` (if available) or `all_models_default`.
+
+# Notes:
+- If the `info` object has a property `sindbad_models`, it overrides the default list.
+- This function ensures flexibility by allowing custom model lists to be specified in the experiment configuration.
+"""
+function getAllSindbadModels(info; all_models_default=standard_sindbad_models)
+    sindbad_models = all_models_default
+    @show propertynames(info.temp)
+    if hasproperty(info.temp, :sindbad_models)
+        sindbad_models = info.temp.sindbad_models
+        @show "I am here...", sindbad_models
+    end
+    return sindbad_models
 end
 
 
@@ -129,11 +155,12 @@ Retrieves and orders the list of selected models based on the configuration in `
 
 # Notes:
 - Ensures consistency by validating the selected models using `checkSelectedModels`.
-- Orders the models as specified in `sindbad_models`.
+- Orders the models as specified in `standard_sindbad_models`.
 """
 function setOrderedSelectedModels(info::NamedTuple)
     selected_models = collect(propertynames(info.settings.model_structure.models))
-    all_sindbad_models_reordered = changeModelOrder(info, selected_models)
+    sindbad_models = getAllSindbadModels(info)
+    all_sindbad_models_reordered = changeModelOrder(info, selected_models; sindbad_models=sindbad_models)
     checkSelectedModels(all_sindbad_models_reordered, selected_models)
     order_selected_models = []
     for msm ∈ all_sindbad_models_reordered

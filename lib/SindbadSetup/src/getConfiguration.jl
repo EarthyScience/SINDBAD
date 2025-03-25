@@ -284,6 +284,7 @@ Replaces fields in the `info` dictionary with values from the `replace_dict`.
 function replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
     nested_replace_dict = createNestedDict(replace_dict)
     info = deepMerge(Dict(info), nested_replace_dict)
+    @show keys(info)
     return info
 end
 
