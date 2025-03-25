@@ -9,12 +9,16 @@ domain = "Global";
 optimize_it = true;
 optimize_it = false;
 
+include("Trautmann2022_models.jl");
+
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.basics.config_files.forcing" => "forcing.json",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => false,
     "experiment.flags.spinup_TEM" => true,
-    "experiment.flags.debug_model" => false);
+    "experiment.flags.debug_model" => false,
+    "model_structure.sindbad_models" => Trautmann2022_models
+    );
 
 experiment_json = "../exp_Trautmann2022/settings_Trautmann2022/experiment.json";
 
