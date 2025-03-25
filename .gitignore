@@ -45,7 +45,8 @@ examples/*/Manifest.toml
 docs/Manifest.toml
 lib/*/Manifest.toml
 lib/Manifest.toml
-
+README.md
+GettingStarted.md
 examples/data/
 docs/build/
 
