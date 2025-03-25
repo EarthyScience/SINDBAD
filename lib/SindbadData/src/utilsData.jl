@@ -9,6 +9,10 @@ export toDimStackArray
     AllNaN <: YAXArrays.DAT.ProcFilter
 
 Add skipping filter for pixels with all `NaN` or `missing` in YAXArrays
+
+A filter type that inherits from `YAXArrays.DAT.ProcFilter`.
+
+This struct is used as a specialized filter in data processing pipelines to identify or handle cases where all values in a data segment are NaN (Not a Number).
 """
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(ismissing, x) || all(isnan, x)
@@ -17,13 +21,16 @@ YAXArrays.DAT.checkskip(::AllNaN, x) = all(ismissing, x) || all(isnan, x)
 """
     applyQCBound(_data, data_qc, bounds_qc, _data_fill)
 
-Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
+Apply quality control bounds to data values.
 
-# Arguments:
-- `_data`: data to check
-- `data_qc`: data of quality flag
-- `bounds_qc`: validity bounds of quality flag
-- `_data_fill`: data to replace with in case outside quality bounds
+# Arguments
+- `_data`: Input data array to be quality controlled
+- `data_qc`: Quality control flags associated with the data
+- `bounds_qc`: Bounds/thresholds for quality control checks
+- `_data_fill`: Fill value to use for data points that fail QC
+
+# Returns
+The quality controlled data array with values outside bounds replaced by fill value
 """
 function applyQCBound(_data, data_qc, bounds_qc, _data_fill)
     _data_out = _data
@@ -35,14 +42,17 @@ end
 
 
 """
-    applyUnitConversion(_data, conversion, isadditive = false)
+    applyUnitConversion(_data, conversion, isadditive=false)
 
 Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
 
-# Arguments:
-- `_data`: data to convert
-- `conversion`: conversion factor
-- `isadditive`: whether to apply the factor as addition or multiplication
+# Arguments
+- `_data`: Input data to be converted
+- `conversion`: Conversion factor or function to be applied
+- `isadditive`: Boolean flag indicating whether the conversion is additive (default: false) or multiplicative
+
+# Returns
+Converted data with the applied unit transformation
 """
 function applyUnitConversion(_data, conversion, isadditive=false)
     if isadditive
@@ -56,15 +66,18 @@ end
 
 
 """
-    cleanData(_data, _data_fill, _data_info, Val{T})
+    cleanData(_data, _data_fill, _data_info, ::Val{T}) where {T}
 
 Applies a series of cleaning steps to the data, including replacing invalid data, applying unit conversion, and clamping to bounds.
 
-# Arguments:
-- `_data`: data to clean
-- `_data_fill`: value for filling invalid data
-- `_data_info`: information of data such as bounds and unit conversion factors
-- `::Val{T}`: type converter for data
+# Arguments
+- `_data`: The raw data to be cleaned
+- `_data_fill`: Fill values or parameters for handling missing/invalid data
+- `_data_info`: Information about the data structure and cleaning requirements
+- `::Val{T}`: Value type parameter for dispatch
+
+# Returns
+Cleaned data according to the specified type parameter T
 """
 function cleanData(_data, _data_fill, _data_info, ::Val{T}) where {T}
     _data = replaceInvalid(_data, _data_fill)
@@ -81,9 +94,14 @@ end
 """
     getDataDims(c, mappinginfo)
 
-# Arguments:
-- `c`: cube (YAXArray) to get dimensions from
-- `mappinginfo`: 
+Retrieves the dimensions of data based on provided mapping information.
+
+# Arguments
+- `c`: The container or data structure to get dimensions from
+- `mappinginfo`: Information about how the data is mapped
+
+# Returns
+The dimensions of the data specified by the mapping information.
 """
 function getDataDims(c, mappinginfo)
     inax = []
@@ -95,8 +113,14 @@ end
 
 """
     getDimPermutation(datDims, permDims)
+Returns the permutation indices required to rearrange dimensions from `datDims` to match `permDims`.
 
+# Arguments
+- `datDims`: Array of current dimension names or indices
+- `permDims`: Array of target dimension names or indices in desired order
 
+# Returns
+- Array of indices representing the required permutation
 """
 function getDimPermutation(datDims, permDims)
     new_dim = Int[]
@@ -111,10 +135,23 @@ function getDimPermutation(datDims, permDims)
 end
 
 """
-    getInputArrayOfType(input_data, ::InputArray})
+    getInputArrayOfType(input_data, <:SindbadInputDataType)
 
+Converts the provided input data into a specific input array type.
 
+# Arguments
+- `input_data`: The data to be converted into an input array
+- <:SindbadInputDataType: The specific input array type to convert the data into
+    - `::InputArray`: Specifies the input array type as a simple array
+    - `::InputKeyedArray`: Specifies the input array type as a keyed array
+    - `::InputNamedDimsArray`: Specifies the input array type as a named dims array
+    - `::InputYaxArray`: Specifies the input array type as a YAX array
+
+# Returns
+Returns the input data converted to the specified input array type.
 """
+getInputArrayOfType
+
 function getInputArrayOfType(input_data, ::InputArray)
     array_data = map(input_data) do c
         Array(c.data)
@@ -122,11 +159,6 @@ function getInputArrayOfType(input_data, ::InputArray)
     return array_data
 end
 
-"""
-    getInputArrayOfType(input_data, ::InputKeyedArray})
-
-
-"""
 function getInputArrayOfType(input_data, ::InputKeyedArray)
     keyed_array_data = map(input_data) do c
         t_dims = getSindbadDims(c)
@@ -135,11 +167,6 @@ function getInputArrayOfType(input_data, ::InputKeyedArray)
     return keyed_array_data
 end
 
-"""
-    getInputArrayOfType(input_data, ::InputNamedDimsArray})
-
-
-"""
 function getInputArrayOfType(input_data, ::InputNamedDimsArray)
     named_array_data = map(input_data) do c
         t_dims = getSindbadDims(c)
@@ -148,11 +175,6 @@ function getInputArrayOfType(input_data, ::InputNamedDimsArray)
     return named_array_data
 end
 
-"""
-    getInputArrayOfType(input_data, ::InputYaxArray})
-
-
-"""
 function getInputArrayOfType(input_data, ::InputYaxArray)
     return input_data
 end
@@ -162,6 +184,12 @@ end
     getSindbadDims(c)
 
 prepare the dimensions of data and name them appropriately for use in internal SINDBAD functions
+
+# Arguments
+- `c`: input data cube
+
+# Returns
+Dimensions for use in SINDBAD
 """
 function getSindbadDims(c)
     dimnames = DimensionalData.name(dims(c))
@@ -181,7 +209,14 @@ end
 """
     getNumberOfTimeSteps(incubes, time_name)
 
+Returns the number of time steps in the input data cubes.
 
+# Arguments
+- `incubes`: Input data cubes containing temporal information
+- `time_name`: Name of the time dimension/variable
+
+# Returns
+Integer representing the total number of time steps in the data
 """
 function getNumberOfTimeSteps(incubes, time_name)
     i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
@@ -192,7 +227,13 @@ end
 """
     getTargetDimensionOrder(info)
 
+Retrieves the target dimension order to organize the forcing data from the provided information.
 
+# Arguments
+- `info`: Input information containing dimension order details.
+
+# Returns
+The ordered sequence of dimensions for the target.
 """
 function getTargetDimensionOrder(info)
     tar_dims = nothing
@@ -207,16 +248,29 @@ function getTargetDimensionOrder(info)
 end
 
 """
-    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::BackendNetcdf)
+    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, <:SindbadInputBackend)
 
-# Arguments:
-- `nc`: DESCRIPTION
-- `data_path`: DESCRIPTION
-- `data_path_v`: DESCRIPTION
-- `source_variable`: DESCRIPTION
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `::BackendNetcdf`: DESCRIPTION
+Retrieve the data from a specified source.
+
+# Arguments
+- `nc`: The NetCDF file or object to read data from.
+- `data_path`: The path to the data within the NetCDF file.
+- `data_path_v`: The path to the variable within the NetCDF file.
+- `source_variable`: The name of the source variable to extract data for.
+- `info`: Additional information or metadata required for processing.
+- `<:SindbadInputBackend`: Specifies the SINDBAD backend being used.
+    - `::BackendNetcdf`: Specifies that the function operates on a NetCDF backend.
+    - `::BackendZarr`: Specifies that the backend being used is Zarr.
+
+# Returns
+- The file object and extracted YAX data from the specified source.
+
+# Notes
+- Ensure that the `nc` object and paths provided are valid and accessible.
+- The functions are specific to the NetCDF and Zarr backend and may not work with other backends.
 """
+getYaxFromSource
+
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::BackendNetcdf)
     if endswith(data_path_v, ".zarr")
         error("data path $(data_path_v) ends with .zarr (zarr data) but input data backend in experiment.exe_rules.input_data_backend is set as netcdf. Change input_data_backend or data_path.")
@@ -243,17 +297,6 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::B
     return nc, yax
 end
 
-"""
-    getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::BackendZarr)
-
-# Arguments:
-- `nc`: DESCRIPTION
-- `data_path`: DESCRIPTION
-- `data_path_v`: DESCRIPTION
-- `source_variable`: DESCRIPTION
-- `_`: unused argument
-- `::BackendZarr`: DESCRIPTION
-"""
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::BackendZarr)
     if endswith(data_path_v, ".nc")
         error("data path $(data_path_v) ends with .nc (netCDF data) but input data backend in experiment.exe_rules.input_data_backend is set as zarr. Using zopen to open a nc data will crash the session. Change input_data_backend or data_path.")
@@ -265,9 +308,19 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::Back
 end
 
 """
-    loadDataFile(data_path)
+    loadDataFile(data_path::String) -> Any
 
+Load data from the specified file path.
 
+# Arguments
+- `data_path::String`: The path to the data file to be loaded.
+
+# Returns
+- The data loaded from the specified file. The return type depends on the file format and its contents.
+
+# Notes
+- Ensure that the file exists and is accessible at the given path.
+- The function assumes the file format is supported by the implementation.
 """
 function loadDataFile(data_path)
     if endswith(data_path, ".nc")
@@ -283,11 +336,16 @@ end
 """
     loadDataFromPath(nc, data_path, data_path_v, source_variable)
 
-# Arguments:
-- `nc`: DESCRIPTION
-- `data_path`: DESCRIPTION
-- `data_path_v`: DESCRIPTION
-- `source_variable`: DESCRIPTION
+Load data from specified NetCDF paths using given parameters.
+
+# Arguments
+- `nc`: NetCDF file handle
+- `data_path`: Path to the main data in NetCDF file
+- `data_path_v`: Path to the variable data in NetCDF file
+- `source_variable`: Name of the source variable to load
+
+# Returns
+Data loaded from the specified paths in the NetCDF file.
 """
 function loadDataFromPath(nc, data_path, data_path_v, source_variable)
     if isnothing(data_path_v) || (data_path_v === data_path)
@@ -300,15 +358,22 @@ function loadDataFromPath(nc, data_path, data_path_v, source_variable)
 end
 
 """
-    mapCleanData(_data, _data_qc, _data_fill, bounds_qc, _data_info, Val{T})
+Maps and cleans data based on quality control parameters and fills missing values.
 
-# Arguments:
-- `_data`: DESCRIPTION
-- `_data_qc`: DESCRIPTION
-- `_data_fill`: DESCRIPTION
-- `bounds_qc`: DESCRIPTION
-- `_data_info`: DESCRIPTION
-- `nothing`: DESCRIPTION
+# Arguments
+- `_data`: Raw input data to be cleaned
+- `_data_qc`: Quality control data corresponding to input data
+- `_data_fill`: Fill values for replacing invalid/missing data
+- `bounds_qc`: Quality control bounds/thresholds
+- `_data_info`: Additional information about the data
+- `::Val{T}`: Value type parameter for dispatch
+
+# Returns
+Cleaned and mapped data with invalid values replaced according to QC criteria
+
+# Note
+This function performs quality control checks and data cleaning based on the provided
+bounds and fill values. The exact behavior depends on the value type T.
 """
 function mapCleanData(_data, _data_qc, _data_fill, bounds_qc, _data_info, ::Val{T}) where {T}
     if !isnothing(bounds_qc) && !isnothing(_data_qc)
@@ -321,20 +386,27 @@ end
 
 
 """
-    subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, Val{num_type}; clean_data = true, fill_nan = false, yax_qc = nothing, bounds_qc = nothing)
+    subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Val{num_type}; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing) where {num_type}
 
+Subset and process YAX data according to specified parameters and quality control criteria.
 
-# Arguments:
-- `yax`: DESCRIPTION
-- `forcing_mask`: DESCRIPTION
-- `tar_dims`: DESCRIPTION
-- `_data_info`: DESCRIPTION
+# Arguments
+- `yax`: YAX data to be processed
+- `forcing_mask`: Mask to apply to the data
+- `tar_dims`: Target dimensions
+- `_data_info`: Data information
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `nothing`: DESCRIPTION
-- `clean_data`: DESCRIPTION
-- `fill_nan`: DESCRIPTION
-- `yax_qc`: DESCRIPTION
-- `bounds_qc`: DESCRIPTION
+- `::Val{num_type}`: Value type parameter for numerical type specification
+- `clean_data=true`: Boolean flag to enable/disable data cleaning
+- `fill_nan=false`: Boolean flag to control NaN filling
+- `yax_qc=nothing`: Optional quality control parameters for YAX data
+- `bounds_qc=nothing`: Optional boundary quality control parameters
+
+# Returns
+Processed and subset YAX data according to specified parameters and quality controls.
+
+# Type Parameters
+- `num_type`: Numerical type specification for the processed data
 """
 function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Val{num_type}; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing) where {num_type}
 
@@ -373,7 +445,19 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Va
 end
 
 """
-yaxCubeToKeyedArray(c)
+    yaxCubeToKeyedArray(c)
+
+Convert a YAXArray cube to a KeyedArray.
+
+# Arguments
+- `c`: YAXArray input cube to be converted
+
+# Returns
+KeyedArray representation of the input YAXArray cube
+
+# Description
+Transforms a YAXArray data cube into a KeyedArray format, preserving the dimensional
+structure and associated metadata of the original cube.
 """
 function yaxCubeToKeyedArray(c)
     t_dims = getSindbadDims(c);
@@ -381,13 +465,19 @@ function yaxCubeToKeyedArray(c)
 end
 
 """
-    toDimStackArray(stackArr, time_interval, p_names; name=:pools)
+Convert a stacked array into a DimensionalArray with specified dimensions and metadata.
 
-Input Arguments
-- `stackArr`: an stacked array, usually the output of `stackArray(d_pool)`
-- `time_interval`:
-- `p_names`: names for each pool
-- `name`: name of the output DimArray, default is `:pools`
+# Arguments
+- `stackArr`: The input stacked array to be converted
+- `time_interval`: Time interval information for temporal dimension
+- `p_names`: Names of pools/variables
+- `name`: Optional keyword argument to specify the name of the dimension (default: :pools)
+
+# Returns
+A DimensionalArray with proper dimensions and labels.
+
+This function is useful for converting raw stacked arrays into properly dimensioned
+arrays with metadata, particularly for time series data with multiple pools or variables.
 """
 function toDimStackArray(stackArr, time_interval, p_names; name=:pools)
     return DimArray(stackArr,  (p_names=p_names, Ti=time_interval,); name=name,)

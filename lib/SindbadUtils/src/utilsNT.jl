@@ -284,6 +284,88 @@ function makeNamedTuple(input_data, input_names)
     return (; Pair.(input_names, input_data)...)
 end
 
+
+
+export mergeNamedTuple
+
+"""
+Merges algorithm options by combining default options with user-provided options.
+
+This function takes two option dictionaries and combines them, with user options
+taking precedence over default options.
+
+# Arguments
+- `def_o`: Default options object (NamedTuple/Struct/Dictionary) containing baseline algorithm parameters
+- `u_o`: User options object containing user-specified overrides
+
+# Returns
+- A merged object containing the combined algorithm options
+"""
+function mergeNamedTuple(def_o, u_o)
+    c_o = deepcopy(def_o)
+    for p in keys(u_o)
+
+        c_o = mergeNamedTupleSetValue(c_o, p, getproperty(u_o, p))
+    end
+    return c_o
+end
+
+"""
+    mergeNamedTupleSetValue(o, p, v)
+
+Helper function to set the value of a field in the options object.
+
+# Arguments:
+- `o`: The options object, which can be a `NamedTuple` or a mutable struct.
+- `p`: The field name to be updated.
+- `v`: The new value to assign to the field.
+
+# Variants:
+1. **For `NamedTuple` options**:
+   - Updates the field in an immutable `NamedTuple` by creating a new `NamedTuple` with the updated value.
+   - Uses the `@set` macro for immutability handling.
+
+2. **For mutable struct options (e.g., BayesOpt)**:
+   - Directly updates the field in the mutable struct using `Base.setproperty!`.
+
+# Returns:
+- The updated options object with the specified field modified.
+
+# Notes:
+- This function is used internally by `mergeNamedTuple` to handle field updates in both mutable and immutable options objects.
+- Ensures compatibility with different types of optimization algorithm configurations.
+
+# Examples:
+1. **Updating a `NamedTuple`**:
+    ```julia
+    options = (max_iters = 100, tol = 1e-6)
+    updated_options = mergeNamedTupleSetValue(options, :tol, 1e-8)
+    ```
+
+2. **Updating a mutable struct**:
+    ```julia
+    mutable struct BayesOptConfig
+        max_iters::Int
+        tol::Float64
+    end
+    config = BayesOptConfig(100, 1e-6)
+    updated_config = mergeNamedTupleSetValue(config, :tol, 1e-8)
+    `
+"""
+mergeNamedTupleSetValue
+
+function mergeNamedTupleSetValue(o::NamedTuple, p, v)
+    o = @set o[p] = v
+    return o
+end
+
+
+function mergeNamedTupleSetValue(o, p, v)
+    Base.setproperty!(o, p, v);
+    return o
+end
+
+
 """
     removeEmptyTupleFields(tpl::NamedTuple)
 

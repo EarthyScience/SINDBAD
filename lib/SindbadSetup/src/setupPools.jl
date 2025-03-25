@@ -5,8 +5,17 @@ export setPoolsInfo
 """
     setPoolsInfo(info::NamedTuple)
 
-generates the info.temp.helpers.pools and info.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
+Generates `info.temp.helpers.pools` and `info.pools`. 
 
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with pool-related fields added.
+
+# Notes:
+- `info.temp.helpers.pools` is used in the models.
+- `info.pools` is used for instantiating the pools for the initial output tuple.
 """
 function setPoolsInfo(info::NamedTuple)
     elements = keys(info.settings.model_structure.pools)
@@ -243,17 +252,17 @@ function setPoolsInfo(info::NamedTuple)
     return info
 end
 
-
 """
     createInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
-returns a named tuple with initial pool variables as subfields that is used in out.pools. Uses @view to create components of pools as a view of main pool that just references the original array.
-"""
+Creates a NamedTuple with initial pool variables as subfields, used in `land.pools`.
 
-"""
-    createInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
+# Arguments:
+- `info_pools`: A NamedTuple containing pool information from the experiment configuration.
+- `tem_helpers`: A NamedTuple containing helper information for numerical operations.
 
-
+# Returns:
+- A NamedTuple with initialized pool variables.
 """
 function createInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
     init_pools = (;)
@@ -300,9 +309,20 @@ function createInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
 end
 
 """
-    createInitStates(info)
+    createInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
-returns a named tuple with initial state variables as subfields that is used in out.states. Extended from createInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from state_variables in model_structure.json. The entries their are prefix to parent pool, when the state variables are created.
+Creates a NamedTuple with initial state variables as subfields, used in `land.states`.
+
+# Arguments:
+- `info_pools`: A NamedTuple containing pool information from the experiment configuration.
+- `tem_helpers`: A NamedTuple containing helper information for numerical operations.
+
+# Returns:
+- A NamedTuple with initialized state variables.
+
+# Notes:
+- Extended from `createInitPools``
+- State variables are derived from the `state_variables` field in `model_structure.json`.
 """
 function createInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
     initial_states = (;)
@@ -348,7 +368,6 @@ function createInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                             indx,
                             false,
                             model_array_type)
-                        # Δ_compdat::AbstractArray = @view Δ_pool_array[indx]
                         initial_states = setTupleField(initial_states, (Δ_component, Δ_compdat))
                     end
                 end
@@ -360,30 +379,28 @@ end
 
 
 """
-    getPoolInformation(main_pools, pool_info, layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name; prename = "")
+    getPoolInformation(main_pools, pool_info, layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name; prename="")
 
 A helper function to get the information of each pools from info.settings.model_structure.pools and puts them into arrays of information needed to instantiate pool variables.
 
 # Arguments:
-- `main_pools`: list of the main storage pools
-- `pool_info`: information of the pools from the input setttings/JSON
-- `layer_thicknesses`: the thicknesses of the pools
-- `nlayers`: DESCRIPTION
-- `layer`: DESCRIPTION
-- `inits`: DESCRIPTION
-- `sub_pool_name`: DESCRIPTION
-- `main_pool_name`: DESCRIPTION
-- `prename`: DESCRIPTION
+- `main_pools`: A list of main pool configurations.
+- `pool_info`: A NamedTuple containing pool information details.
+- `layer_thicknesses`: An array of layer thicknesses in the pools.
+- `nlayers`: An array representing the number of layers per pool in the model.
+- `layer`: An array representing the current layer number being processed.
+- `inits`: An array of initial values to be set in the pool.
+- `sub_pool_name`: An array of sub-pool component names for a given pool.
+- `main_pool_name`: An array of main pool names containing the sub-pool components.
+- `prename`: (Optional) A prefix for naming conventions (default: `""`).
+
+# Returns:
+- Updated list of information specific to the requested pool configuration.
+
+# Notes:
+- Processes hierarchical pool structures and extracts relevant details for initialization.
 """
-function getPoolInformation(main_pools,
-    pool_info,
-    layer_thicknesses,
-    nlayers,
-    layer,
-    inits,
-    sub_pool_name,
-    main_pool_name;
-    prename="")
+function getPoolInformation(main_pools, pool_info, layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name; prename="")
     for main_pool ∈ main_pools
         prefix = prename
         main_pool_info = getproperty(pool_info, main_pool)

@@ -8,10 +8,13 @@ export updateVariablesToStore
 """
     getAllLandVars(land)
 
-a helper to collect model variable fields and subfields from land
+Collects model variable fields and subfields from the `land` NamedTuple.
 
 # Arguments:
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `land`: A core SINDBAD NamedTuple containing all variables for a given time step, overwritten at every timestep.
+
+# Returns:
+- A tuple of variable field and subfield pairs.
 """
 function getAllLandVars(land)
     av=[]
@@ -27,16 +30,20 @@ function getAllLandVars(land)
     return Tuple(av)
 end
 
-
 """
-    getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land::NamedTuple)
+    getDepthDimensionSizeName(vname::Symbol, info::NamedTuple)
 
-a helper function to get the name and size of the depth dimension for a given variable
+Retrieves the name and size of the depth dimension for a given variable.
 
 # Arguments:
-- `vname`: variable name
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `land`: SINDBAD land with all fields and subfields
+- `vname`: The variable name.
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+
+# Returns:
+- A tuple containing the size and name of the depth dimension.
+
+# Notes:
+- Validates the depth dimension against the `depth_dimensions` field in the experiment configuration.
 """
 function getDepthDimensionSizeName(v_full_pair, info::NamedTuple)
     v_full_str = getVariableString(v_full_pair)
@@ -81,9 +88,16 @@ end
 
 
 """
-    getDepthInfo(output_vars)
+    getDepthInfoAndVariables(info, output_vars)
 
-return a vector of tuple with size and name as the first and the second element
+Generates depth information and variable pairs for the output variables.
+
+# Arguments:
+- `info`: A SINDBAD NamedTuple containing experiment configuration.
+- `output_vars`: A list of output variables.
+
+# Returns:
+- A NamedTuple containing depth information and variable pairs.
 """
 function getDepthInfoAndVariables(info, output_vars)
     out_vars_pairs = Tuple(getVariablePair.(output_vars))
@@ -94,14 +108,21 @@ function getDepthInfoAndVariables(info, output_vars)
     return output_info
 end
 
+
 """
     getPoolSize(info_pools::NamedTuple, pool_name::Symbol)
 
-get the size of a pool variable from the information in model structure settings 
+Retrieves the size of a pool variable from the model structure settings.
 
 # Arguments:
-- `info_pools`: part of info with information of the pool in the selected model structure
-- `pool_name`: the name of the pool
+- `info_pools`: A NamedTuple containing information about the pools in the selected model structure.
+- `pool_name`: The name of the pool.
+
+# Returns:
+- The size of the specified pool.
+
+# Notes:
+- Throws an error if the pool does not exist in the model structure.
 """
 function getPoolSize(info_pools::NamedTuple, pool_name::Symbol)
     poolsize = nothing
@@ -118,15 +139,17 @@ function getPoolSize(info_pools::NamedTuple, pool_name::Symbol)
     end
 end
 
-
 """
     getOrderedOutputList(varlist, var_o::Symbol)
 
-return the corresponding variable from the full list
+Finds and returns the corresponding variable from the full list of variables.
 
 # Arguments:
-- `varlist`: the full variable list 
-- `var_o`: the variable to find
+- `varlist`: The full list of variables.
+- `var_o`: The variable to find.
+
+# Returns:
+- The corresponding variable from the list.
 """
 function getOrderedOutputList(varlist, var_o::Symbol)
     for var ∈ varlist
@@ -141,7 +164,13 @@ end
 """
     getVariableGroups(var_list::AbstractArray)
 
-get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land
+Groups variables into a NamedTuple based on their field and subfield structure.
+
+# Arguments:
+- `var_list`: A list of variables in the `field.subfield` format.
+
+# Returns:
+- A NamedTuple containing grouped variables by field.
 """
 function getVariableGroups(var_list::AbstractArray)
     var_dict = Dict()
@@ -167,8 +196,20 @@ end
 """
     getVariablePair(out_var)
 
-return a vector of pairs with field and subfield of land from the list of variables (output_vars) in field.subfield convention
+Splits a variable name into a pair of field and subfield.
+
+# Arguments:
+- `out_var`: The variable name, provided as either a `String` or a `Symbol`, in the format `field.subfield`.
+
+# Returns:
+- A tuple containing the field and subfield as `Symbol` values.
+
+# Notes:
+- If the variable name contains a comma (`,`), it is used as the separator instead of a dot (`.`).
+- This function is used to parse variable names into their hierarchical components for further processing.
 """
+getVariablePair
+
 function getVariablePair(out_var::String)
     sep = "."
     if occursin(",", out_var)
@@ -177,32 +218,39 @@ function getVariablePair(out_var::String)
     return Tuple(Symbol.(split(string(out_var), sep)))
 end
 
-"""
-    getVariablePair(out_var)
-
-return a vector of pairs with field and subfield of land from the list of variables (output_vars) in field.subfield convention
-"""
 function getVariablePair(out_var::Symbol)
     getVariablePair(string(out_var))
 end
 
 
+
 """
     getVariableString(var_pair)
 
-return a vector of pairs with field and subfield of land from the list of variables (output_vars) in field.subfield convention
+Converts a variable pair into a string representation.
+
+# Arguments:
+- `var_pair`: A tuple containing the field and subfield.
+- `sep`: The separator to use between the field and subfield (default: ".").
+
+# Returns:
+- A string representation of the variable pair.
 """
 function getVariableString(var_pair::Tuple, sep=".")
     return string(first(var_pair)) * sep * string(last(var_pair))
 end
 
 
-
 """
-    setExperimentOutput(info)
+    saveExperimentSettings(info)
 
-save a copy of experiment settings to the output folder
-    
+Saves a copy of the experiment settings to the output folder.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Notes:
+- Copies the JSON settings and configuration files to the output directory.
 """
 function saveExperimentSettings(info)
     sindbad_experiment = info.temp.experiment.dirs.sindbad_experiment
@@ -216,12 +264,20 @@ function saveExperimentSettings(info)
     end
 end
 
-
 """
     setExperimentOutput(info)
 
-setup and create output directory for the experiment
-    
+Sets up and creates the output directory for the experiment.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with output directory information added.
+
+# Notes:
+- Creates subdirectories for code, data, figures, and settings.
+- Validates the output path and ensures it is not within the SINDBAD root directory.
 """
 function setExperimentOutput(info)
     path_output = info[:settings][:experiment][:model_output][:path]
@@ -276,11 +332,16 @@ function setExperimentOutput(info)
     return info
 end
 
-
 """
     setModelOutput(info::NamedTuple)
 
-sets info.temp.output.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
+Sets the output variables to be written and stored based on the experiment configuration.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with output variables and depth information added.
 """
 function setModelOutput(info::NamedTuple)
     output_vars = collect(propertynames(info.settings.experiment.model_output.variables))
@@ -289,15 +350,17 @@ function setModelOutput(info::NamedTuple)
 end
 
 
-
 """
     setModelOutputLandAll(info, land)
 
-get all model variables from land amd overwrite output information in info
+Retrieves all model variables from `land` and overwrites the output information in `info`.
 
 # Arguments:
-- `info`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `info`: A NamedTuple containing experiment configuration and helper information.
+- `land`: A core SINDBAD NamedTuple containing variables for a given time step.
+
+# Returns:
+- The updated `info` NamedTuple with output variables and depth information updated.
 """
 function setModelOutputLandAll(info, land)
     output_vars = getAllLandVars(land)
@@ -334,18 +397,24 @@ end
 """
     updateVariablesToStore(info::NamedTuple)
 
-updates the output variables in case of optimization or cost run
+Updates the output variables to store based on optimization or cost run settings.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with updated output variables.
 """
 function updateVariablesToStore(info::NamedTuple)
     output_vars = info.settings.experiment.model_output.variables
-    if info.settings.experiment.flags.run_optimization
+    if info.settings.experiment.flags.calc_cost || !info.settings.optimization.subset_model_output
+        output_vars = union(String.(keys(output_vars)),
+                info.optimization.variables.model)
+    else
         output_vars = map(info.optimization.variables.obs) do vo
             vn = getfield(info.optimization.variables.optimization, vo)
             Symbol(string(vn[1]) * "." * string(vn[2]))
-        end
-    elseif info.settings.experiment.flags.calc_cost
-        output_vars = union(String.(keys(info.settings.experiment.model_output.variables)),
-                info.optimization.variables.model)
+        end        
     end
     info = (; info..., temp=(; info.temp..., output=getDepthInfoAndVariables(info, output_vars)))
     return info

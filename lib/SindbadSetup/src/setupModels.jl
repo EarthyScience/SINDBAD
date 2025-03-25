@@ -2,134 +2,137 @@ export setOrderedSelectedModels
 export setSpinupAndForwardModels
 
 """
-    changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
+    checkSelectedModels(sindbad_models::AbstractArray, selected_models::AbstractArray)
 
-returns a list of models reordered according to orders provided in model_structure json.
+Validates that the selected models in `model_structure.json` exist in the full list of `standard_sindbad_models`.
 
-- default order is taken from sindbad_models
-- models cannot be set before getPools or after cCycle
-- USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
+# Arguments:
+- `sindbad_models`: An array of all available SINDBAD models.
+- `selected_models`: An array of selected models to validate.
+
+# Returns:
+- `true` if all selected models are valid; otherwise, throws an error.
+
+# Notes:
+- Ensures that the selected models are consistent with the available SINDBAD models.
 """
-function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
-    all_sindbad_models = [sindbad_models...]
-    checkSelectedModels(all_sindbad_models, selected_models)
-    # get orders of fixed models that cannot be changed
-    order_getPools = findfirst(e -> e == :getPools, all_sindbad_models)
-    order_cCycle = findfirst(e -> e == :cCycle, all_sindbad_models)
-
-    # get the new orders and models from model_structure.json
-    new_orders = Int64[]
-    new_models = (;)
-    order_changed_warn = true
+function checkSelectedModels(sindbad_models, selected_models::AbstractArray)
     for sm ∈ selected_models
-        model_info = getfield(info.settings.model_structure.models, sm)
-        if :order in propertynames(model_info)
-            push!(new_orders, model_info.order)
-            new_models = setTupleField(new_models, (sm, model_info.order))
-            if model_info.order <= order_getPools
-                error(
-                    "The model order for $(sm) is set at $(model_info.order). Any order earlier than or same as getPools ($order_getPools) is not permitted."
-                )
-            end
-            if model_info.order >= order_cCycle
-                error(
-                    "The model order for $(sm) is set at $(model_info.order). Any order later than or same as cCycle ($order_cCycle) is not permitted."
-                )
-            end
-            if order_changed_warn
-                @warn "changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.models.selected_models and comparing it with sindbad_models"
-                order_changed_warn = false
-            end
-            @warn "$(sm) [$(Pair(findfirst(e->e==sm, all_sindbad_models), model_info.order))]"
-        end
-    end
-
-    #check for duplicates in the order
-    if length(new_orders) != length(unique(new_orders))
-        nun = nonUnique(new_orders)
-        error(
-            "There are duplicates in the order [$(nun)] set in model_structure.json. Cannot set the same order for different models."
-        )
-    end
-
-    # sort the orders
-    new_orders = sort(new_orders; rev=true)
-
-    # create re-ordered list of full models
-    full_models_reordered = deepcopy(all_sindbad_models)
-    for new_order ∈ new_orders
-        sm = nothing
-        for nm ∈ keys(new_models)
-            if getproperty(new_models, nm) == new_order
-                sm = nm
-            end
-        end
-        old_order = findfirst(e -> e == sm, full_models_reordered)
-        # get the models without the model to be re-ordered
-        tmp = filter!(e -> e ≠ sm, full_models_reordered)
-        # insert the re-ordered model to the right place
-        if old_order >= new_order
-            insert!(tmp, new_order, sm)
-        else
-            insert!(tmp, new_order - 1, sm)
-        end
-        full_models_reordered = deepcopy(tmp)
-    end
-    return full_models_reordered
-end
-
-
-"""
-    checkSelectedModels(all_sindbad_models::AbstractArray, selected_models::AbstractArray)
-
-checks if the list of selected models in model_structure.json are available in the full list of sindbad_models defined in models.jl
-"""
-function checkSelectedModels(all_sindbad_models, selected_models::AbstractArray)
-    for sm ∈ selected_models
-        if sm ∉ all_sindbad_models
-            @show all_sindbad_models
+        if sm ∉ sindbad_models
+            @show sindbad_models
             error(sm,
-                " is not a valid model from all_sindbad_models [Sindbad.sindbad_models]. check model_structure settings in json")
+                " is not a valid model from sindbad_models [Sindbad.standard_sindbad_models]. check model_structure settings in json")
             return false
         end
     end
     return true
 end
 
+"""
+    getAllSindbadModels(info; all_models_default=standard_sindbad_models)
+
+Retrieves the list of all SINDBAD models, either from the provided `info` object or a default list.
+
+# Arguments:
+- `info`: A NamedTuple or object containing experiment configuration and metadata.
+- `all_models_default`: (Optional) The default list of SINDBAD models to use if `info` does not specify a custom list. Defaults to `standard_sindbad_models`.
+
+# Returns:
+- A list of all SINDBAD models, either from `info.sindbad_models` (if available) or `all_models_default`.
+
+# Notes:
+- If the `info` object has a property `sindbad_models`, it overrides the default list.
+- This function ensures flexibility by allowing custom model lists to be specified in the experiment configuration.
+"""
+function getAllSindbadModels(info; sindbad_models=standard_sindbad_models)
+    if hasproperty(info.settings.model_structure, :sindbad_models)
+        sindbad_models = info.settings.model_structure.sindbad_models
+        @info "Using non-standard model order and list from model_structure.sindbad_models: "
+    else
+        @info "Using standard model order and list from standard_sindbad_models: "
+    end
+        @info "         $(sindbad_models)"
+    return sindbad_models
+end
+
+"""
+    getModelImplicitTRepeat(info::NamedTuple, selected_models)
+
+Retrieves the `implicit_t_repeat` values for the specified models from the experiment configuration.
+
+# Arguments:
+- `info::NamedTuple`: A SINDBAD NamedTuple containing the experiment configuration, including model structure details.
+- `selected_models`: A list of model names (symbols) for which the `implicit_t_repeat` values are to be retrieved.
+
+# Returns:
+- A vector of `implicit_t_repeat` values corresponding to the `selected_models`.
+
+# Notes:
+- If a model has an `implicit_t_repeat` property defined in its configuration, that value is used.
+- If the property is not defined for a model, the default value from `info.settings.model_structure.default_model.implicit_t_repeat` is used.
+"""
+function getModelImplicitTRepeat(info::NamedTuple, selected_models)
+    t_repeat = Int64[]
+    for sm ∈ selected_models
+        model_info = getfield(info.settings.model_structure.models, sm)
+        if :implicit_t_repeat in propertynames(model_info)
+            push!(t_repeat, model_info.implicit_t_repeat)
+        else
+            push!(t_repeat, info.settings.model_structure.default_model.implicit_t_repeat)
+        end
+    end
+    return t_repeat
+end
+
 
 """
     setOrderedSelectedModels(info::NamedTuple)
 
-gets the ordered list of selected models from info.settings.model_structure.models
-- orders them as given in sindbad_models in models.jl.
-- consistency check using checkSelectedModels for the existence of user-provided model.
+Retrieves and orders the list of selected models based on the configuration in `model_structure.json`.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with the ordered list of selected models added to `info.temp.models`.
+
+# Notes:
+- Ensures consistency by validating the selected models using `checkSelectedModels`.
+- Orders the models as specified in `standard_sindbad_models`.
 """
 function setOrderedSelectedModels(info::NamedTuple)
     selected_models = collect(propertynames(info.settings.model_structure.models))
-    all_sindbad_models_reordered = changeModelOrder(info, selected_models)
-    checkSelectedModels(all_sindbad_models_reordered, selected_models)
+    sindbad_models = getAllSindbadModels(info)
+    checkSelectedModels(sindbad_models, selected_models)
+    t_repeat_models = getModelImplicitTRepeat(info, selected_models)
+    checkSelectedModels(sindbad_models, selected_models)
     order_selected_models = []
-    for msm ∈ all_sindbad_models_reordered
+    for msm ∈ sindbad_models
         if msm in selected_models
             push!(order_selected_models, msm)
         end
     end
     @debug "     setupInfo: creating initial out/land..."
 
-    info = (; info..., temp=(; info.temp..., models=(; selected_models=Table((; model=[order_selected_models...])))))
-    info = (; info..., temp=(; info.temp..., models=(; selected_models=Table((; model=[order_selected_models...])))))
+    info = (; info..., temp=(; info.temp..., models=(; sindbad_models=sindbad_models, selected_models=Table((; model=[order_selected_models...],t_repeat=t_repeat_models)))))
     return info
 end
-
 
 """
     setSpinupAndForwardModels(info::NamedTuple)
 
-sets the spinup and forward subfields of info.temp.models to select a separated set of model for spinup and forward run.
+Configures the spinup and forward models for the experiment.
 
-  - allows for a faster spinup if some models can be turned off
-  - relies on use_in_spinup flag in model_structure
-  - by design, the spinup models should be subset of forward models
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with the spinup and forward models added to `info.temp.models`.
+
+# Notes:
+- Allows for faster spinup by turning off certain models using the `use_in_spinup` flag in `model_structure.json`.
+- Ensures that spinup models are a subset of forward models.
+- Updates model parameters if additional parameter values are provided in the experiment configuration.
 """
 function setSpinupAndForwardModels(info::NamedTuple)
     selected_approach_forward = ()

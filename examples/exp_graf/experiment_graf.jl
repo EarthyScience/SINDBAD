@@ -35,7 +35,7 @@ for x ∈ 1:10
     @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 end
 
-@time spinupTEM(info.models.forward, run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.space_land[1], run_helpers.tem_info);
+@time spinupTEM(info.models.forward, run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.space_land[1], run_helpers.tem_info, run_helpers.tem_info.run.spinup_TEM);
 
 # setLogLevel(:debug)
 
@@ -84,6 +84,11 @@ for (o, v) in enumerate(forc_vars)
     heatmap(plot_data; title="$(v):: mean = $(round(SindbadTEM.mean(def_var), digits=2)), nans=$(sum(isInvalid.(plot_data)))", size=(2000, 1000))
     savefig(joinpath(info.output.dirs.figure, "forc_afr2d_$v.png"))
 end
+#setLogLevel(:debug)
+# @profview metricVector(run_helpers.output_array, obs_array, cost_options) # |> sum
+# set
+# @time metricVector(run_helpers.output_array, obs_array, cost_options) # |> sum
+
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 obs_array = out_opti.observation;
@@ -93,6 +98,12 @@ info = out_opti.info;
 opt_dat = out_opti.output.optimized;
 def_dat = out_opti.output.default;
 costOpt = prepCostOptions(obs_array, info.optimization.cost_options)
+# ──────────────────────────────────────────────────
+#  1 │ gpp                 NSEInv()    0.193419  1.54357
+#  2 │ gpp_anom            NSEInv()    0.313791  0.55399
+#  3 │ runoff              Pcor2Inv()  0.562564  0.586841
+#  4 │ evapotranspiration  NSEInv()    0.589038  1.04692
+#  5 │ tws                 NSEInv()    0.602671  0.805431
 
 # {'gpp'      }    {'mefinv'}    0.17066
 #     {'tws'      }    {'mefinv'}    0.55399
@@ -103,6 +114,7 @@ var_row = costOpt[1]
 
 losses = map(costOpt) do var_row
     v = var_row.variable
+    v_key = v
     v = (var_row.mod_field, var_row.mod_subfield)
     vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
     v = vinfo["standard_name"]
@@ -122,22 +134,22 @@ losses = map(costOpt) do var_row
         def_pix = getArrayView(def_var, lsi)
         obs_pix = getArrayView(obs_var, lsi)
         obs_σ_pix = getArrayView(obs_σ, lsi)
-        [loss(obs_pix, obs_σ_pix, def_pix, lossMetric), loss(obs_pix, obs_σ_pix, opt_pix, lossMetric)]
+        [metric(obs_pix, obs_σ_pix, def_pix, lossMetric), metric(obs_pix, obs_σ_pix, opt_pix, lossMetric)]
     end
 
 
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
     b_range = range(-1, 1, length=50)
     p_title = "$(var_row.variable) ($(nameof(typeof(lossMetric))))"
-    histogram(first.(loss_space); title=p_title, size=(2000, 1000),bins=b_range, alpha=0.5, label="default", color="#FDB311")
-    vline!([loss(obs_var, obs_σ, def_var, lossMetric)], label="default_spatial", color="#FDB311")
+    histogram(first.(loss_space); title=p_title, size=(2000, 1000),bins=b_range, alpha=0.9, label="default", color="#FDB311")
+    vline!([metric(obs_var, obs_σ, def_var, lossMetric)], label="default_spatial", color="#FDB311")
     histogram!(last.(loss_space); size=(2000, 1000), bins=b_range, alpha=0.5, label="optimized", color="#18A15C")
-    vline!([loss(obs_var, obs_σ, opt_var, lossMetric)], label="optimized_spatial", color="#18A15C")
+    vline!([metric(obs_var, obs_σ, opt_var, lossMetric)], label="optimized_spatial", color="#18A15C")
     xlabel!("")
-    savefig(joinpath(info.output.dirs.figure, "obs_vs_pred_$(var_row.variable).png"))
-
+    savefig(joinpath(info.output.dirs.figure, "obs_vs_pred_$(v_key).png"))
+    # loss_space
     # @show "plot obs", v, lossMetric
 
-    # @show "plot obs", v, loss(obs_var, obs_σ, def_var, lossMetric), loss(obs_var, obs_σ, opt_var, lossMetric)
+    # @show "plot obs", v, metric(obs_var, obs_σ, def_var, lossMetric), metric(obs_var, obs_σ, opt_var, lossMetric)
     # @show size(obs_var), size(def_var)
 end

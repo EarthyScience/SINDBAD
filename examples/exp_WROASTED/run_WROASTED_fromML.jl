@@ -124,7 +124,7 @@ for site_index in sites
         "experiment.model_spinup.sequence" => sequence[2:end],
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
-        "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+        "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
         "optimization.observations.default_observation.data_path" => path_observation,)
 
 
@@ -223,8 +223,8 @@ for site_index in sites
             ml_dat = ml_dat[tspan]
             obs_var_n, obs_σ_n, ml_dat_n = filterCommonNaN(obs_var, obs_σ, ml_dat)
             obs_var_n, obs_σ_n, jl_dat_n = filterCommonNaN(obs_var, obs_σ, jl_dat)
-            metr_def = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
-            metr_opt = loss(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
+            metr_def = metric(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
+            metr_opt = metric(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
             v = (var_row.mod_field, var_row.mod_subfield)
             vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
             v = vinfo["standard_name"]
