@@ -1,5 +1,6 @@
 {
-  "algorithm": "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+  "algorithm_optimization": "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+  "algorithm_sensitivity_analysis": null,
   "model_parameter_default": {
     "distribution": ["normal", [0.0, 1.0]],
     "is_ml": false
@@ -15,6 +16,7 @@
     "cCycleBase,c_τ_SoilOld": null,
     "cCycleBase,c_τ_SoilSlow": null,
     "cCycleBase,c_τ_Wood": null,
+    "cCycleBase,c_τ_Leaf": null,
     "cCycleBase,ηH": null,
     "cFlow,f_τ": null,
     "cFlow,k_shedding": null,
@@ -47,10 +49,14 @@
     "WUE,WUE_one_hpa": null,
     "WUE,κ": null
   },
-  "multi_constraint_method": "cost_sum",
-  "multi_objective_algorithm": false,
+  "multi_constraint_method": "metric_sum",
+  "subset_model_output": true,
+  "optimization_parameter_scaling": "scale_default",
+  "optimization_cost_method": "cost_model_obs",
+  "optimization_cost_threaded": false,
   "observational_constraints": [
     "gpp",
+    "gpp_iav",
     "nee",
     "reco",
     "transpiration",
@@ -67,7 +73,7 @@
       "cost_weight": 1.0,
       "min_data_points": 1,
       "spatial_data_aggr": "concat_data",
-      "spatial_cost_aggr": "spatially_variable",
+      "spatial_cost_aggr": "metric_spatial",
       "spatial_weight": false,
       "temporal_data_aggr": "day"
     },
@@ -125,6 +131,31 @@
           "data_path": null,
           "source_to_sindbad_unit": 0.4081632653,
           "source_variable": "LE_RANDUNC"
+        }
+      },
+      "gpp_iav": {
+        "cost_options": {
+          "cost_metric": "NNSE_inv",
+          "temporal_data_aggr": "day_IAV",
+          "aggr_obs": true
+        },
+        "data": {
+          "bounds": [0.0, 100.0],
+          "standard_name": "Gross Primary Productivity",
+          "sindbad_unit": "gC m-2 day-1",
+          "source_unit": "gC m-2 day-1",
+          "source_variable": "GPP_NT"
+        },
+        "model_full_var": "fluxes.gpp",
+        "qflag": {
+          "bounds": [0.85, 1.0],
+          "data_path": null,
+          "source_variable": "GPP_QC_NT_merged"
+        },
+        "unc": {
+          "bounds": [0.0, 400.0],
+          "data_path": null,
+          "source_variable": "NEE_RANDUNC"
         }
       },
       "gpp": {

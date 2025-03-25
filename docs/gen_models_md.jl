@@ -2,7 +2,7 @@ using Sindbad
 
 open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
     write(o_file, "## Models\n\n")
-    foreach(sort(collect(sindbad_models))) do sm
+    foreach(sort(collect(standard_sindbad_models))) do sm
         sms = string(sm)
         write(o_file, "### $(sm)\n\n")
         # write(o_file, "== $(sm)\n")

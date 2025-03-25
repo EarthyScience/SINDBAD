@@ -3,10 +3,18 @@ export getForcing
 """
     collectForcingSizes(info, in_yax)
 
-# Arguments
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `in_yax`: input YAXArray
+Collects the sizes of forcing dimensions from the input YAXArray.
 
+# Arguments:
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `in_yax`: The input YAXArray containing forcing data.
+
+# Returns:
+- A NamedTuple `f_sizes` where each dimension name is paired with its size.
+
+# Notes:
+- The function retrieves the size of the time dimension and spatial dimensions specified in the experiment configuration.
+- If the dimension is not directly accessible, it uses `DimensionalData.lookup` to retrieve the size.
 """
 function collectForcingSizes(info, in_yax)
     time_dim_name = Symbol(info.settings.forcing.data_dimension.time)
@@ -29,10 +37,18 @@ end
 """
     collectForcingHelpers(info, f_sizes, f_dimensions)
 
+Generates a NamedTuple of helper information for forcing data.
+
 # Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `f_sizes`: forcing sizes
-- `f_dimensions`: forcing dimensions
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+- `f_sizes`: A NamedTuple containing the sizes of forcing dimensions.
+- `f_dimensions`: A NamedTuple containing the dimensions of the forcing data.
+
+# Returns:
+- A NamedTuple `f_helpers` containing helper information for forcing data.
+
+# Notes:
+- Includes dimensions, axes, subset information, and sizes for the forcing data.
 """
 function collectForcingHelpers(info, f_sizes, f_dimensions)
     f_helpers = (;)
@@ -50,13 +66,25 @@ end
 """
     createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
 
-creates a named tuple with forcing data
+Creates a NamedTuple containing forcing data and metadata.
 
 # Arguments:
-- `incubes`: input cubes (YAXArray)
-- `f_sizes`: forcing sizes
-- `f_dimensions`: forcing dimensions
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `incubes`: A collection of input cubes (YAXArray) containing forcing data.
+- `f_sizes`: A NamedTuple containing the sizes of forcing dimensions.
+- `f_dimensions`: A NamedTuple containing the dimensions of the forcing data.
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
+
+# Returns:
+- A NamedTuple `forcing` containing:
+  - `data`: The processed input cubes.
+  - `dims`: The dimensions of the forcing data.
+  - `variables`: The names of the forcing variables.
+  - `f_types`: The types of the forcing data (e.g., `ForcingWithTime` or `ForcingWithoutTime`).
+  - `helpers`: Helper information for the forcing data.
+
+# Notes:
+- Processes the input cubes to determine their types and dimensions.
+- Helper information is generated using `collectForcingHelpers`.
 """
 function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @info "getForcing: processing forcing helpers..."
@@ -91,19 +119,31 @@ end
 """
     getForcing(info::NamedTuple)
 
-reads forcing data from the `data_path` specified in the info NT and returns a named tuple with the forcing data
+Reads forcing data from the `data_path` specified in the experiment configuration and returns a NamedTuple with the forcing data.
 
 # Arguments:
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment.
 
+# Returns:
+- A NamedTuple `forcing` containing:
+  - `data`: The processed input cubes.
+  - `dims`: The dimensions of the forcing data.
+  - `variables`: The names of the forcing variables.
+  - `f_types`: The types of the forcing data (e.g., `ForcingWithTime` or `ForcingWithoutTime`).
+  - `helpers`: Helper information for the forcing data.
+
+# Notes:
+- Reads forcing data from the specified data path and processes it using the SINDBAD framework.
+- Handles spatiotemporal and spatial-only forcing data.
+- Applies masks and subsets to the forcing data if specified in the configuration.
 """
 function getForcing(info::NamedTuple)
-    nc = nothing
+    nc_default = nothing
     data_path = info.settings.forcing.default_forcing.data_path
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
         @info "getForcing: default_data_path: $(data_path)"
-        nc = loadDataFile(data_path)
+        nc_default = loadDataFile(data_path)
     end
     data_backend = getfield(SindbadData, toUpperCaseFirst(info.helpers.run.input_data_backend, "Backend"))()
 
@@ -125,6 +165,7 @@ function getForcing(info::NamedTuple)
     f_dimension = nothing
     num_type = Val{info.helpers.numbers.num_type}()
     incubes = map(forcing_vars) do k
+        nc = nc_default
         vinfo = getCombinedNamedTuple(default_info, info.settings.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)

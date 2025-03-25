@@ -1,6 +1,6 @@
 {
   "default_model": {
-    "order": 0,
+    "implicit_t_repeat": 1,
     "use_in_spinup": true
   },
   "models": {
@@ -107,8 +107,7 @@
       "approach": "sigmoid"
     },
     "vegFraction": {
-      "approach": "forcing",
-      "order": 12
+      "approach": "forcing"
     },
     "waterBalance": {
       "approach": "simple"

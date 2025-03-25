@@ -115,7 +115,7 @@ for o_set in opti_set
         "forcing.default_forcing.data_path" => path_input,
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
-        "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
+        "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
         "optimization.observations.default_observation.data_path" => path_observation,
         "optimization.observational_constraints" => opti_sets[o_set],)
 
@@ -174,9 +174,9 @@ for o_set in opti_set
         obs_var_n, obs_σ_n, ml_dat_n = filterCommonNaN(obs_var, obs_σ, ml_dat)
         obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
         obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
-        metr_ml = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
-        metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
-        metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
+        metr_ml = metric(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
+        metr_def = metric(obs_var_n, obs_σ_n, def_var_n, lossMetric)
+        metr_opt = metric(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
         plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
         plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric))), $(forcing_set), $(o_set)")
         plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)

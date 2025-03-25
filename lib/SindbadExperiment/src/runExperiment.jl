@@ -4,6 +4,7 @@ export runExperimentCost
 export runExperimentForward
 export runExperimentFullOutput
 export runExperimentOpti
+export runExperimentSensitivity
 
 """
     prepExperiment(sindbad_experiment::String; replace_info = nothing)
@@ -48,7 +49,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     println("----------------------------------------------\n")
     forward_output = (; Pair.(getUniqueVarNames(info.output.variables), output_array)...)
     cost_options = prepCostOptions(obs_array, info.optimization.cost_options)
-    loss_vector = getLossVector(forward_output, obs_array, cost_options)
+    loss_vector = metricVector(forward_output, obs_array, cost_options)
     for _cp in Pair.(Pair.(cost_options.variable, nameof.(typeof.(cost_options.cost_metric))),  loss_vector)
         println(_cp)
     end
@@ -107,7 +108,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimizatio
     else
         @info "runExperiment: do spatial optimization..."
         obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
-        optim_params = optimizeTEM(forcing, obs_array, info, info.helpers.run.land_output_type)
+        optim_params = optimizeTEM(forcing, obs_array, info)
         optim_file_prefix = joinpath(info.output.dirs.optimization, info.experiment.basics.name * "_" * info.experiment.basics.domain)
         CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
         run_output = optim_params.optim
@@ -218,10 +219,52 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=Dict())
     opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization)
     fp_output = runExperimentForwardParams(opti_output.params, sindbad_experiment; replace_info=replace_info)
     cost_options = prepCostOptions(opti_output.observation, info.optimization.cost_options)
-    loss_vector = getLossVector(fp_output.output.optimized, opti_output.observation, cost_options)
-    loss_vector_def = getLossVector(fp_output.output.default, opti_output.observation, cost_options)
+    loss_vector = metricVector(fp_output.output.optimized, opti_output.observation, cost_options)
+    loss_vector_def = metricVector(fp_output.output.default, opti_output.observation, cost_options)
     loss_table = Table((; variable=cost_options.variable, metric=cost_options.cost_metric, loss_opt=loss_vector, loss_def=loss_vector_def))
     display(loss_table)
     return (; forcing, info=fp_output.info, loss=loss_table, observation=opti_output.observation, output=fp_output.output, params=opti_output.params)
 end
 
+
+
+"""
+    runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOptimization)
+
+uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
+
+# Arguments:
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
+- `::DoRunOptimization`: a type dispatch for running optimization
+"""
+function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(), batch=true, log_level=:warn)
+    println("-------------------Sensitivity Analysis Mode---------------------------\n")
+    replace_info["experiment.flags.run_optimization"] = true
+    replace_info["experiment.flags.calc_cost"] = false
+    replace_info["experiment.flags.run_forward"] = false
+    info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+    observations = getObservation(info, forcing.helpers)
+
+    obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
+
+    opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method; algorithm_info_field=:algorithm_sensitivity_analysis);
+
+    # tbl_params = opti_helpers.tbl_params
+    p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds))
+    
+    cost_function = opti_helpers.cost_function
+
+    # d_opt = getproperty(SindbadSetup, :GlobalSensitivityMorris)()
+    method_options =info.optimization.algorithm_sensitivity_analysis.options
+    setLogLevel(log_level)
+
+    sensitivity = globalSensitivity(cost_function, method_options, p_bounds, info.optimization.algorithm_sensitivity_analysis.method, batch=batch)
+    sensitivity_output = (; opti_helpers..., info=info, forcing=forcing, obs_array=obs_array, observations=observations,sensitivity=sensitivity, p_bounds=p_bounds)
+    setLogLevel(:info)
+    sensitivity_output_file = joinpath(info.output.dirs.data, "sensitivity_analysis_$(nameof(typeof(info.optimization.algorithm_sensitivity_analysis.method)))_$(length(opti_helpers.cost_vector))-cost_evals.jld2")
+    @info "saving output for sensitivity: "
+    @save  sensitivity_output_file sensitivity_output
+    return sensitivity_output
+end

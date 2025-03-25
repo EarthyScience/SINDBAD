@@ -21,7 +21,7 @@ using Test
     @test typeof(dense_flat[3]) <: SindbadML.Optimisers.Leaf
 
     # ForwardDiff_grads
-    f_loss(x, a, b) = a*x[1]^2 + b*x[2]
+    f_cost(x, a, b) = a*x[1]^2 + b*x[2]
     args = (; a=2, b = 1)
     @test ForwardDiff_grads(f_loss, [1,0], args...) == [4,1]
 end

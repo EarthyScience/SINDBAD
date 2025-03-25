@@ -1,0 +1,12 @@
+{
+  "method": "SobolDM",
+  "options": {
+    "samples": 5,
+    "method_options": {
+      "order": [0, 1, 2]
+    },
+    "sampler": "SobolSample",
+    "sampler_options": {}
+  },
+  "package": "GlobalSensitivity"
+}
