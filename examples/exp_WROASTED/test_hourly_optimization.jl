@@ -11,8 +11,8 @@ domain = "CA-Obs"
 path_input = nothing
 forcing_config = nothing
 optimization_config = nothing
-mod_step = "day"
-# mod_step = "hour"
+# mod_step = "day"
+mod_step = "hour"
 # foreach(["day", "hour"]) do mod_step
 if mod_step == "day"
     path_input = "../data/fn/$(domain).1979.2017.daily.nc"
@@ -52,7 +52,9 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.model_output.format" => "nc",
     "experiment.model_output.save_single_file" => true,
     "experiment.exe_rules.parallelization" => parallelization_lib,
-    "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+    "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES_mt.json",
+    "optimization.optimization_cost_method" => "CostModelObsMT",
+    "optimization.optimization_cost_threaded"  => true,
     "optimization.subset_model_output" => false,
     "optimization.observations.default_observation.data_path" => path_observation)
 
