@@ -239,7 +239,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `::DoRunOptimization`: a type dispatch for running optimization
 """
-function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(), batch=true)
+function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(), batch=true, log_level=:warn)
     println("-------------------Sensitivity Analysis Mode---------------------------\n")
     replace_info["experiment.flags.run_optimization"] = true
     replace_info["experiment.flags.calc_cost"] = false
@@ -258,7 +258,13 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
 
     # d_opt = getproperty(SindbadSetup, :GlobalSensitivityMorris)()
     method_options =info.optimization.algorithm_sensitivity_analysis.options
-    
+    setLogLevel(log_level)
+
     sensitivity = globalSensitivity(cost_function, method_options, p_bounds, info.optimization.algorithm_sensitivity_analysis.method, batch=batch)
-    return (; opti_helpers..., sensitivity=sensitivity)
+    sensitivity_output = (; opti_helpers..., info=info, forcing=forcing, obs_array=obs_array, observations=observations,sensitivity=sensitivity, p_bounds=p_bounds)
+    setLogLevel(:info)
+    sensitivity_output_file = joinpath(info.output.dirs.data, "sensitivity_analysis_$(nameof(typeof(info.optimization.algorithm_sensitivity_analysis.method)))_$(length(opti_helpers.cost_vector))-cost_evals.jld2")
+    @info "saving output for sensitivity: "
+    @save  sensitivity_output_file sensitivity_output
+    return sensitivity_output
 end
