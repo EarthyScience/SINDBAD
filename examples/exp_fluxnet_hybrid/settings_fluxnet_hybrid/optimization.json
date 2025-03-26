@@ -43,7 +43,7 @@
   },
   "multi_constraint_method": "metric_sum",
   "subset_model_output": true,
-  "optimization_parameter_scaling": "scale_bounds",
+  "optimization_parameter_scaling": null,
   "optimization_cost_method": "cost_model_obs",
   "optimization_cost_threaded": false,
   "observational_constraints": [
