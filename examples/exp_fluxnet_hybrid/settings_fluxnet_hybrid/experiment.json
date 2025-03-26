@@ -10,9 +10,7 @@
     "time": {
       "date_begin": "1979-01-01",
       "date_end": "2017-12-31",
-      "temporal_resolution": "day",
-      "timesteps_in_day": 1,
-      "timesteps_in_year": 365
+      "temporal_resolution": "day"
     }
   },
   "exe_rules": {
@@ -49,6 +47,7 @@
     "format": "zarr",
     "output_array_type": "array",
     "path": null,
+    "plot_model_output": false,
     "save_single_file": true,
     "variables": {
       "diagnostics.auto_respiration_f_airT": null,

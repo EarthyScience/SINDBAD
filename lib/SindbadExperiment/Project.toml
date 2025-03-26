@@ -14,3 +14,13 @@ SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
 SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
 YAXArrays = "c21b50f5-aa40-41ea-b809-c0f5e47bfa5c"
 Zarr = "0a941bbe-ad1d-11e8-39d9-ab76183a1d99"
+
+
+[sources]
+Sindbad = {path = "../.."}
+SindbadData = {path = "../../lib/SindbadData"}
+SindbadMetrics = {path = "../../lib/SindbadMetrics"}
+SindbadOptimization = {path = "../../lib/SindbadOptimization"}
+SindbadSetup = {path = "../../lib/SindbadSetup"}
+SindbadTEM = {path = "../../lib/SindbadTEM"}
+SindbadUtils = {path = "../../lib/SindbadUtils"}
