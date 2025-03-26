@@ -14,7 +14,6 @@ export DoCatchModelErrors
 export DoNotCatchModelErrors
 export @describe, @bounds, @units, @timescale
 export @with_kw
-export standard_sindbad_models
 # define dispatch structs for catching model errors
 struct DoCatchModelErrors end
 struct DoNotCatchModelErrors end
@@ -49,6 +48,6 @@ for model_name ∈ all_dir_models
 end
 
 # now having this ordered list is independent from the step including the models into this `module`.
-include(joinpath(@__DIR__, "orderedModels.jl"))
+include(joinpath(@__DIR__, "standardSindbadModels.jl"))
 
 end

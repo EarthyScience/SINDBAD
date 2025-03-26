@@ -58,10 +58,11 @@ This package is designed to support optimization tasks in SINDBAD, such as calib
 """
 module SindbadOptimization
 
-    using CMAEvolutionStrategy: minimize, xbest
+    using CMAEvolutionStrategy
     # using BayesOpt: ConfigParameters, set_kernel!, bayes_optimization, SC_MAP
     using Evolutionary: Evolutionary
     using ForwardDiff
+    using GCMAES
     using GlobalSensitivity
     using InteractiveUtils
     using MultistartOptimization: MultistartOptimization

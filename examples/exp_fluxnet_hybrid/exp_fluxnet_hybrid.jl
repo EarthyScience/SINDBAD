@@ -56,8 +56,7 @@ space_ind = run_helpers.space_ind;
 # ? land_init and helpers
 land_init = run_helpers.loc_land;
 tem = (;
-    tem_info = run_helpers.tem_info,
-    tem_run_spinup = run_helpers.tem_info.run.spinup_TEM,
+    tem_info = run_helpers.tem_info
 );
 loc_forcing_t = run_helpers.loc_forcing_t;
 
@@ -104,7 +103,6 @@ scaled_params_batch = getParamsAct(params_batch, tbl_params);
 
 # TODO: debug and benchmark again, one site!
 tem_info = run_helpers.tem_info;
-tem_run_spinup = run_helpers.tem_info.run.spinup_TEM;
 
 # ! full training
 # ? training
@@ -141,7 +139,6 @@ input_args = (
     space_output,
     land_init,
     tem_info,
-    tem_run_spinup,
     param_to_index,
     space_observations,
     cost_options,
@@ -173,7 +170,6 @@ in_gargs=(;
         space_output,
         land_init,
         tem_info,
-        tem_run_spinup,
         param_to_index,
         loc_observations,
         cost_options,
