@@ -61,10 +61,11 @@ Function to calculate the loss for a given site. This is used for optimization, 
 - `constraint_method`: constraint method
 """
 function lossSite(new_params, gradient_lib, models, loc_forcing, loc_spinup_forcing, 
-    loc_forcing_t, loc_output, land_init, tem_info, param_to_index, loc_obs, cost_options, constraint_method; optim_mode=true)
+    loc_forcing_t, loc_output, land_init, tem_info, param_to_index, parameter_scaling_type,
+    loc_obs, cost_options, constraint_method; optim_mode=true)
 
     out_data = getOutputFromCache(loc_output, new_params, gradient_lib)
-    new_models = updateModelParameters(param_to_index, models, new_params)
+    new_models = updateModels(new_params, param_to_index, parameter_scaling_type, models)
     return getLoss(new_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, out_data, land_init, tem_info, loc_obs, cost_options, constraint_method; optim_mode)
 end
 
@@ -121,7 +122,7 @@ function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_
 end
 
 """
-    getInnerArgs(idx, grads_lib, scaled_params_batch, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, param_to_index, space_observations, cost_options, constraint_method, indices_batch, sites_batch)
+    getInnerArgs(idx, grads_lib, scaled_params_batch, parameter_scaling_type, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, param_to_index, space_observations, cost_options, constraint_method, indices_batch, sites_batch)
 
 Function to get inner arguments for the loss function.
     
@@ -137,6 +138,7 @@ Function to get inner arguments for the loss function.
 - `loc_land`: initial land state
 - `tem_info`: model information
 - `param_to_index`: parameter to index
+- `parameter_scaling_type`: type determining parameter scaling
 - `loc_observations`: observation data location
 - `cost_options`: cost options
 - `constraint_method`: constraint method
@@ -153,6 +155,7 @@ function getInnerArgs(idx, grads_lib,
     loc_land,
     tem_info,
     param_to_index,
+    parameter_scaling_type,
     space_observations,
     cost_options,
     constraint_method,
@@ -180,6 +183,7 @@ function getInnerArgs(idx, grads_lib,
             deepcopy(loc_land),
             tem_info,
             param_to_index,
+            parameter_scaling_type,
             loc_obs,
             loc_cost_option,
             constraint_method)
