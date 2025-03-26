@@ -1,7 +1,7 @@
-export sindbad_default_options
+export sindbadDefaultOptions
 
 """
-    sindbad_default_options(::MethodType)
+    sindbadDefaultOptions(::MethodType)
 
 Retrieves the default configuration options for a given optimization or sensitivity analysis method in SINDBAD.
 
@@ -20,14 +20,16 @@ Retrieves the default configuration options for a given optimization or sensitiv
 - Each method type has its own set of default options, such as the number of trajectories, samples, or design matrix length.
 - For `GlobalSensitivitySobolDM`, the defaults are inherited from `GlobalSensitivitySobol`.
 """
-sindbad_default_options
+sindbadDefaultOptions
 
-sindbad_default_options(::SindbadOptimizationMethod) = (;)
+sindbadDefaultOptions(::SindbadOptimizationMethod) = (;)
 
-sindbad_default_options(::SindbadGlobalSensitivityMethod) = (;)
+sindbadDefaultOptions(::SindbadGlobalSensitivityMethod) = (;)
 
-sindbad_default_options(::GlobalSensitivityMorris) = (; total_num_trajectory = 200, num_trajectory = 15, len_design_mat=10)
+sindbadDefaultOptions(::CMAEvolutionStrategyCMAES) = (; popsize = 5, maxiter = 5, maxfevals = 50)
 
-sindbad_default_options(::GlobalSensitivitySobol) = (; samples = 5, method_options=(; order=[0, 1]), sampler="Sobol", sampler_options=(;))
+sindbadDefaultOptions(::GlobalSensitivityMorris) = (; total_num_trajectory = 200, num_trajectory = 15, len_design_mat=10)
 
-sindbad_default_options(::GlobalSensitivitySobolDM) = sindbad_default_options(GlobalSensitivitySobol())
+sindbadDefaultOptions(::GlobalSensitivitySobol) = (; samples = 5, method_options=(; order=[0, 1]), sampler="Sobol", sampler_options=(;))
+
+sindbadDefaultOptions(::GlobalSensitivitySobolDM) = sindbadDefaultOptions(GlobalSensitivitySobol())

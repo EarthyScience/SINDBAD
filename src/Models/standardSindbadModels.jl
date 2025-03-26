@@ -1,4 +1,5 @@
-export sindbad_models
+export standard_sindbad_models
+
 
 # List all models of SINDBAD in the order they would be normally be called. 
 # ? Let's not do this ? And better be consistent and get the order from the model_structure.json file
@@ -7,11 +8,12 @@ export sindbad_models
 # ? Relying on this hinders the addition of new models at will by new users.
 
 """
-sindbad_models
+    standard_sindbad_models
+
 
 Default ordered list of SINDBAD models
 """
-sindbad_models = (:wCycleBase,
+standard_sindbad_models = (:wCycleBase,
     :rainSnow,
     :rainIntensity,
     :PET,
