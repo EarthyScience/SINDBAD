@@ -6,6 +6,7 @@ using SindbadTEM
 using SindbadML
 using SindbadML.JLD2
 using ProgressMeter
+using SindbadOptimization
 include("load_covariates.jl")
 
 # load folds # $nfold $nlayer $neuron $batchsize
@@ -31,7 +32,10 @@ if Sys.islinux()
 end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
-selected_models = info.models.forward
+selected_models = info.models.forward;
+parameter_scaling_type = info.optimization.optimization_parameter_scaling
+
+
 
 tbl_params = getParameters(
     selected_models,
@@ -90,19 +94,12 @@ mlBaseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=batc
 # 
 parameters_sites = mlBaseline(xfeatures);
 
-## test for gradients in batch
-sites_common = xfeatures.site.data
-sites_training = shuffleList(sites_common; seed=batch_seed)
-indices_sites_training = siteNameToID.(sites_training, Ref(sites_forcing));
+tem_info = run_helpers.tem_info;
 
-grads_batch = zeros(Float32, n_params, length(sites_training));
-sites_batch = sites_training;#[1:n_sites_train];
-indices_sites_batch = indices_sites_training;
-params_batch = parameters_sites(; site=sites_batch);
-scaled_params_batch = getParamsAct(params_batch, tbl_params);
+## test for gradients in batch
+sites_common = xfeatures.site.data;
 
 # TODO: debug and benchmark again, one site!
-tem_info = run_helpers.tem_info;
 
 # ! full training
 # ? training
@@ -128,6 +125,7 @@ grads_batch = zeros(Float32, n_params, length(sites_training));
 sites_batch = sites_training;#[1:n_sites_train];
 indices_sites_batch = indices_sites_training;
 params_batch = parameters_sites(; site=sites_batch);
+# scaled_params_batch = params_batch;
 scaled_params_batch = getParamsAct(params_batch, tbl_params);
 
 input_args = (
@@ -140,6 +138,7 @@ input_args = (
     land_init,
     tem_info,
     param_to_index,
+    parameter_scaling_type,
     space_observations,
     cost_options,
     constraint_method,
@@ -183,6 +182,11 @@ in_gargs=(;
 remote_raven = "/ptmp/lalonso/HybridOutput/HyALL_ALL_fold_$(_nfold)_nlayers_$(nlayers)_n_neurons_$(n_neurons)_batch_size_$(batch_size)/"
 mkpath(remote_raven)
 checkpoint_path = remote_raven
+
+checkpoint_path = "$(info.output.dirs.data)/HyALL_ALL_fold_$(_nfold)_nlayers_$(nlayers)_n_neurons_$(n_neurons)_batch_size_$(batch_size)/"
+
+mkpath(checkpoint_path)
+
 
 mixedGradientTraining(grads_lib, ml_baseline, in_gargs.train_refs, in_gargs.test_val_refs,
     in_gargs.total_constraints, in_gargs.loss_fargs, in_gargs.forward_args;
