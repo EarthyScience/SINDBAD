@@ -1,33 +1,34 @@
 export fAPAR_cVegLeaf
 
-@bounds @describe @units @with_kw struct fAPAR_cVegLeaf{T1} <: fAPAR
-	kEffExt::T1 = 0.005 | (0.0005, 0.05) | "effective light extinction coefficient" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct fAPAR_cVegLeaf{T1} <: fAPAR
+    k_extinction::T1 = 0.005 | (0.0005, 0.05) | "effective light extinction coefficient" | "" | ""
 end
+#! format: on
 
-function compute(o::fAPAR_cVegLeaf, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_fAPAR_cVegLeaf o
+function compute(params::fAPAR_cVegLeaf, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_fAPAR_cVegLeaf params
 
-	## unpack land variables
-	@unpack_land begin
-		cVegLeaf ∈ land.pools
-		𝟙 ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_nt begin
+        cVegLeaf ⇐ land.pools
+    end
 
-	## calculate variables
-	cVegLeaf = sum(cVegLeaf)
-	fAPAR = 𝟙 - exp(-(cVegLeaf * kEffExt))
+    ## calculate variables
+    cVegLeaf_sum = totalS(cVegLeaf)
+    fAPAR = one(k_extinction) - exp(-(cVegLeaf_sum * k_extinction))
 
-	## pack land variables
-	@pack_land fAPAR => land.states
-	return land
+    ## pack land variables
+    @pack_nt fAPAR ⇒ land.states
+    return land
 end
 
 @doc """
 Compute FAPAR based on carbon pool of the leave; SLA; kLAI
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

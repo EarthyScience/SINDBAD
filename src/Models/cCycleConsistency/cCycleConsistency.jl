@@ -8,6 +8,6 @@ include("cCycleConsistency_simple.jl")
 Consistency checks on the c allocation and transfers between pools
 
 # Approaches:
- - simple: check consistency in cCycle matrix: cAlloc; cFlow
+ - simple: check consistency in cCycle matrix: c_allocation; cFlow
 """
 cCycleConsistency

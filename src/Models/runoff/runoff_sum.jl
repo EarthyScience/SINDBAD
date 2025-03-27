@@ -1,32 +1,34 @@
 export runoff_sum
 
-struct runoff_sum <: runoff
+struct runoff_sum <: runoff end
+
+function define(params::runoff_sum, forcing, land, helpers)
+
+    @unpack_nt z_zero ⇐ land.constants
+
+    ## set variables to zero
+    base_runoff = z_zero
+    runoff = z_zero
+    surface_runoff = z_zero
+
+    ## pack land variables
+    @pack_nt begin
+        (runoff, base_runoff, surface_runoff) ⇒ land.fluxes
+    end
+    return land
 end
 
-function precompute(o::runoff_sum, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::runoff_sum, forcing, land, helpers)
 
-	## set variables to zero
-	runoffBase = helpers.numbers.𝟘
-	runoffSurface = helpers.numbers.𝟘
+    ## unpack land variables
+    @unpack_nt (base_runoff, surface_runoff) ⇐ land.fluxes
 
-	## pack land variables
-	@pack_land begin
-		(runoffBase, runoffSurface) => land.fluxes
-	end
-	return land
-end
+    ## calculate variables
+    runoff = surface_runoff + base_runoff
 
-function compute(o::runoff_sum, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land (runoffBase, runoffSurface) ∈ land.fluxes
-
-	## calculate variables
-	runoff = runoffSurface + runoffBase
-
-	## pack land variables
-	@pack_land runoff => land.fluxes
-	return land
+    ## pack land variables
+    @pack_nt runoff ⇒ land.fluxes
+    return land
 end
 
 @doc """
@@ -38,14 +40,14 @@ calculates runoff as a sum of all potential components
 Calculate the total runoff as a sum of components using runoff_sum
 
 *Inputs*
- - land.fluxes.runoffBase
- - land.fluxes.runoffSurface
+ - land.fluxes.base_runoff
+ - land.fluxes.surface_runoff
 
 *Outputs*
  - land.fluxes.runoff
 
-# precompute:
-precompute/instantiate time-invariant variables for runoff_sum
+# Instantiate:
+Instantiate time-invariant variables for runoff_sum
 
 
 ---

@@ -1,40 +1,43 @@
 export WUE_VPDDayCo2
 
-@bounds @describe @units @with_kw struct WUE_VPDDayCo2{T1, T2, T3} <: WUE
-	WUEatOnehPa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
-	Ca0::T2 = 380.0 | (300.0, 500.0) | "" | "ppm"
-	Cm::T3 = 500.0 | (100.0, 2000.0) | "" | "ppm"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct WUE_VPDDayCo2{T1,T2,T3,T4} <: WUE
+    WUE_one_hpa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O" | ""
+    base_ambient_CO2::T2 = 380.0 | (300.0, 500.0) | "" | "ppm" | ""
+    sat_ambient_CO2::T3 = 500.0 | (100.0, 2000.0) | "" | "ppm" | ""
+    kpa_to_hpa::T4 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | "" | ""
 end
+#! format: on
 
-function compute(o::WUE_VPDDayCo2, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters and forcing
-	@unpack_WUE_VPDDayCo2 o
-	@unpack_forcing VPDDay ∈ forcing
+function compute(params::WUE_VPDDayCo2, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_WUE_VPDDayCo2 params
+    @unpack_nt f_VPD_day ⇐ forcing
 
+    ## unpack land variables
+    @unpack_nt begin
+        ambient_CO2 ⇐ land.states
+        tolerance ⇐ helpers.numbers
+        (z_zero, o_one) ⇐ land.constants
+    end
 
-	## unpack land variables
-	@unpack_land begin
-		ambCO2 ∈ land.states
-		(𝟘, 𝟙, tolerance, sNT) ∈ helpers.numbers
-	end
+    ## calculate variables
+    # "WUEat1hPa" | ""
+    WUENoCO2 = WUE_one_hpa * o_one / sqrt(kpa_to_hpa * (f_VPD_day + tolerance))
+    fCO2_CO2 = o_one + (ambient_CO2 - base_ambient_CO2) / (ambient_CO2 - base_ambient_CO2 + sat_ambient_CO2)
+    WUE = WUENoCO2 * fCO2_CO2
 
-	## calculate variables
-	# "WUEat1hPa"
-	kpa_to_hpa = sNT(10) * 𝟙
-	AoENoCO2 = WUEatOnehPa * 𝟙 / sqrt(kpa_to_hpa * (VPDDay + tolerance))
-	fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
-	AoE = AoENoCO2 * fCO2_CO2
-
-	## pack land variables
-	@pack_land (AoE, AoENoCO2) => land.WUE
-	return land
+    ## pack land variables
+    @pack_nt WUENoCO2 ⇒ land.diagnostics
+    @pack_nt WUE ⇒ land.diagnostics
+    return land
 end
 
 @doc """
 calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -43,10 +46,10 @@ Estimate wue using WUE_VPDDayCo2
 
 *Inputs*
  - WUEat1hPa: the VPD at 1 hpa
- - forcing.VPDDay: daytime mean VPD [kPa]
+ - forcing.f_VPD_day: daytime mean VPD [kPa]
 
 *Outputs*
- - land.WUE.AoENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
+ - land.diagnostics.WUENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
 
 ---
 

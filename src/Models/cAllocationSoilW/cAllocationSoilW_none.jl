@@ -2,26 +2,27 @@ export cAllocationSoilW_none
 
 struct cAllocationSoilW_none <: cAllocationSoilW end
 
-function precompute(o::cAllocationSoilW_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cAllocationSoilW_none, forcing, land, helpers)
+
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    fW = helpers.numbers.𝟙
+    c_allocation_f_soilW = one(first(cEco))
 
     ## pack land variables
-    @pack_land fW => land.cAllocationSoilW
+    @pack_nt c_allocation_f_soilW ⇒ land.diagnostics
     return land
 end
 
 @doc """
 sets the moisture effect on allocation to one (no effect)
 
-# precompute:
+# Instantiate:
 
 *Inputs*
-- helpers.numbers.𝟙
 
 *Outputs*
-- land.cAllocationSoilW.fW: moisture effect on cAllocation (0-1)
+- land.diagnostics.c_allocation_f_soilW: moisture effect on cAllocation (0-1)
 
 ---
 

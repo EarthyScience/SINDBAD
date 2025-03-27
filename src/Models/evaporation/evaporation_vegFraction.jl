@@ -1,71 +1,73 @@
 export evaporation_vegFraction
 
-@bounds @describe @units @with_kw struct evaporation_vegFraction{T1, T2} <: evaporation
-	α::T1 = 1.0 | (0.0, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
-	supLim::T2 = 0.2 | (0.03, 0.98) | "fraction of soil water that can be used for soil evaporation" | "1/time"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct evaporation_vegFraction{T1,T2} <: evaporation
+    α::T1 = 1.0 | (0.0, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | "" | ""
+    k_evaporation::T2 = 0.2 | (0.03, 0.98) | "fraction of soil water that can be used for soil evaporation" | "day-1" | "day"
+end
+#! format: on
+
+function compute(params::evaporation_vegFraction, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_evaporation_vegFraction params
+
+    ## unpack land variables
+    @unpack_nt begin
+        frac_vegetation ⇐ land.states
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        PET ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
+    end
+
+    # multiply equilibrium PET with αSoil & [1.0 - frac_vegetation] to get potential soil evap
+    tmp = PET * α * (o_one - frac_vegetation)
+    PET_evaporation = maxZero(tmp)
+
+    # scale the potential with the a fraction of available water & get the minimum of the current moisture
+    evaporation = min(PET_evaporation, k_evaporation * (soilW[1] + ΔsoilW[1]))
+
+    # update soil moisture changes
+    @add_to_elem -evaporation ⇒ (ΔsoilW, 1, :soilW)
+
+    ## pack land variables
+    @pack_nt begin
+        PET_evaporation ⇒ land.fluxes
+        evaporation ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
+    end
+    return land
 end
 
-function compute(o::evaporation_vegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_evaporation_vegFraction o
+function update(params::evaporation_vegFraction, forcing, land, helpers)
+    @unpack_evaporation_bareFraction params
 
-	## unpack land variables
-	@unpack_land begin
-		vegFraction ∈ land.states
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		PET ∈ land.PET
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
+    ## unpack variables
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+    end
 
-	# multiply equilibrium PET with αSoil & [1.0 - vegFraction] to get potential soil evap
-	tmp = PET * α * (𝟙 - vegFraction)
-	PETsoil = max(tmp, 𝟘)
+    ## update variables
+    # update soil moisture of the first layer
+    soilW[1] = soilW[1] + ΔsoilW[1]
 
-	# scale the potential with the a fraction of available water & get the minimum of the current moisture
-	evaporation = min(PETsoil, supLim * (soilW[1] + ΔsoilW[1]))
+    # reset soil moisture changes to zero
+    ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
-	# update soil moisture changes
-	ΔsoilW[1] = ΔsoilW[1] - evaporation
-
-	## pack land variables
-	@pack_land begin
-		PETsoil => land.evaporation
-		evaporation => land.fluxes
-		# ΔsoilW => land.states
-	end
-	return land
-end
-
-function update(o::evaporation_vegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_evaporation_bareFraction o
-
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
-
-	## update variables
-	# update soil moisture of the first layer
-	soilW[1] = soilW[1] + ΔsoilW[1]
-
-	# reset soil moisture changes to zero
-	ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
-
-	## pack land variables
-	@pack_land begin
-		# soilW => land.pools
-		# ΔsoilW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_nt begin
+        soilW ⇒ land.pools
+        ΔsoilW ⇒ land.pools
+    end
+    return land
 end
 
 @doc """
-calculates the bare soil evaporation from 1-vegFraction & PET soil
+calculates the bare soil evaporation from 1-frac_vegetation & PET soil
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -73,12 +75,12 @@ $(PARAMFIELDS)
 Soil evaporation using evaporation_vegFraction
 
 *Inputs*
- - land.PET.PET: forcing data set
- - land.states.vegFraction [output of vegFraction module]
+ - land.fluxes.PET: forcing data set
+ - land.states.frac_vegetation [output of frac_vegetation module]
  - α
 
 *Outputs*
- - land.evaporation.PETSoil
+ - land.fluxes.PETSoil
  - land.fluxes.evaporation
 
 # update
@@ -94,7 +96,7 @@ update pools and states in evaporation_vegFraction
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.vegFraction  
+ - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.frac_vegetation  
 
 *Created by:*
  - mjung

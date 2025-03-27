@@ -1,19 +1,19 @@
 export PET_forcing
 
-struct PET_forcing <: PET
-end
+struct PET_forcing <: PET end
 
-function compute(o::PET_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing PET ∈ forcing
+function compute(params::PET_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_PET ⇐ forcing
 
-	## pack land variables
-	@pack_land PET => land.PET
-	return land
+    PET = f_PET
+    ## pack land variables
+    @pack_nt PET ⇒ land.fluxes
+    return land
 end
 
 @doc """
-sets the value of land.PET.PET from the forcing
+sets the value of land.fluxes.PET from the forcing
 
 ---
 
@@ -24,7 +24,7 @@ Set potential evapotranspiration using PET_forcing
  - forcing.PET read from the forcing data set
 
 *Outputs*
- - land.PET.PET: the value of PET for current time step
+ - land.fluxes.PET: the value of PET for current time step
 
 ---
 

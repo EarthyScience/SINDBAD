@@ -1,34 +1,37 @@
 export snowFraction_HTESSEL
 
-@bounds @describe @units @with_kw struct snowFraction_HTESSEL{T1} <: snowFraction
-	CoverParam::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct snowFraction_HTESSEL{T1} <: snowFraction
+    snow_cover_param::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm" | ""
 end
+#! format: on
 
-function compute(o::snowFraction_HTESSEL, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_snowFraction_HTESSEL o
+function compute(params::snowFraction_HTESSEL, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_snowFraction_HTESSEL params
 
-	## unpack land variables
-	@unpack_land begin
-		snowW ∈ land.pools
-        ΔsnowW ∈ land.states
-		𝟙 ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
+        o_one ⇐ land.constants
+    end
 
-	## calculate variables
-	# suggested by Sujan [after HTESSEL GHM]
-	snowFraction = min(𝟙, sum(snowW + ΔsnowW) / CoverParam)
+    ## calculate variables
+    # suggested by Sujan [after HTESSEL GHM]
 
-	## pack land variables
-	@pack_land snowFraction => land.states
-	return land
+    frac_snow = min(o_one, sum(snowW) / snow_cover_param)
+
+    ## pack land variables
+    @pack_nt frac_snow ⇒ land.states
+    return land
 end
 
 @doc """
 computes the snow pack & fraction of snow cover following the HTESSEL approach
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -36,12 +39,12 @@ $(PARAMFIELDS)
 Calculate snow cover fraction using snowFraction_HTESSEL
 
 *Inputs*
- - land.rainSnow.snow: snowfall
+ - land.fluxes.snow: snowfall
 
 *Outputs*
  - land.fluxes.evaporation: soil evaporation flux
  - land.pools.snowW: adds snow fall to the snow pack
- - land.states.snowFraction: updates snow cover fraction
+ - land.states.frac_snow: updates snow cover fraction
 
 ---
 

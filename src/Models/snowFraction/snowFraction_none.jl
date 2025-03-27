@@ -1,23 +1,23 @@
 export snowFraction_none
 
-struct snowFraction_none <: snowFraction
-end
+struct snowFraction_none <: snowFraction end
 
-function precompute(o::snowFraction_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::snowFraction_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
-	## calculate variables
-	snowFraction = helpers.numbers.𝟘
+    ## calculate variables
+    frac_snow = z_zero
 
-	## pack land variables
-	@pack_land snowFraction => land.states
-	return land
+    ## pack land variables
+    @pack_nt frac_snow ⇒ land.states
+    return land
 end
 
 @doc """
 sets the snow fraction to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for snowFraction_none
+# Instantiate:
+Instantiate time-invariant variables for snowFraction_none
 
 
 ---

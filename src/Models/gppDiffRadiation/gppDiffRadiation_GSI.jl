@@ -1,69 +1,66 @@
 export gppDiffRadiation_GSI
 
-@bounds @describe @units @with_kw struct gppDiffRadiation_GSI{T1,T2,T3} <: gppDiffRadiation
-    fR_τ::T1 = 0.2 | (0.01, 1.0) | "contribution factor for current stressor" | "fraction"
-    fR_slope::T2 = 58.0 | (1.0, 100.0) | "slope of sigmoid" | "fraction"
-    fR_base::T3 = 59.78 | (1.0, 120.0) | "base of sigmoid" | "fraction"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct gppDiffRadiation_GSI{T1,T2,T3} <: gppDiffRadiation
+    fR_τ::T1 = 0.2 | (0.01, 1.0) | "contribution factor for current stressor" | "fraction" | ""
+    fR_slope::T2 = 58.0 | (1.0, 100.0) | "slope of sigmoid" | "fraction" | ""
+    fR_base::T3 = 59.78 | (1.0, 120.0) | "base of sigmoid" | "fraction" | ""
 end
+#! format: on
 
-
-function precompute(o::gppDiffRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_GSI o
-    @unpack_forcing Rg ∈ forcing
-    @unpack_land (𝟙, 𝟘) ∈ helpers.numbers
+    @unpack_gppDiffRadiation_GSI params
+    @unpack_nt f_rg ⇐ forcing
+    @unpack_nt o_one ⇐ land.constants
 
-
-    f_smooth = (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
-    CloudScGPP_prev = 𝟘
-
+    gpp_f_cloud_prev = o_one
+    gpp_f_cloud = o_one
+    MJ_to_W = oftype(fR_base, 11.57407)
 
     ## pack land variables
-    @pack_land (CloudScGPP_prev, f_smooth) => land.gppDiffRadiation
+    @pack_nt (gpp_f_cloud, gpp_f_cloud_prev, MJ_to_W) ⇒ land.diagnostics
     return land
 end
 
-function compute(o::gppDiffRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_GSI o
-    @unpack_forcing Rg ∈ forcing
-
+    @unpack_gppDiffRadiation_GSI params
+    @unpack_nt f_rg ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        (CloudScGPP_prev, f_smooth) ∈ land.gppDiffRadiation
-        (𝟘, 𝟙) ∈ helpers.numbers
+    @unpack_nt begin
+        (gpp_f_cloud_prev, MJ_to_W) ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
-
-
     ## calculate variables
-    f_prev = CloudScGPP_prev
-    Rg = Rg * 11.57407 # multiplied by a scalar to covert MJ/m2/day to W/m2
-    fR = f_smooth(f_prev, Rg, fR_τ, fR_slope, fR_base)
-    CloudScGPP = clamp(fR, 𝟘, 𝟙)
-    CloudScGPP_prev = CloudScGPP
+    f_prev = gpp_f_cloud_prev
+    f_rg = f_rg * MJ_to_W # multiplied by a scalar to covert MJ/m2/day to W/m2
+    fR = (o_one - fR_τ) * f_prev + fR_τ * (o_one / (o_one + exp(-fR_slope * (f_rg - fR_base))))
+    gpp_f_cloud = clampZeroOne(fR)
+    gpp_f_cloud_prev = gpp_f_cloud
 
     ## pack land variables
-    @pack_land (CloudScGPP, CloudScGPP_prev) => land.gppDiffRadiation
+    @pack_nt (gpp_f_cloud, gpp_f_cloud_prev) ⇒ land.diagnostics
     return land
 end
 
 @doc """
-cloudiness scalar [radiation diffusion] on gppPot based on GSI implementation of LPJ
+cloudiness scalar [radiation diffusion] on gpp_potential based on GSI implementation of LPJ
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
 # compute:
 
 *Inputs*
- - Rg: shortwave radiation incoming
+ - f_rg: shortwave radiation incoming
  - fR_τ: contribution of current time step
 
 *Outputs*
- - land.gppDiffRadiation.CloudScGPP: light effect on GPP between 0-1
+ - land.diagnostics.gpp_f_cloud: light effect on GPP between 0-1
 
 ---
 

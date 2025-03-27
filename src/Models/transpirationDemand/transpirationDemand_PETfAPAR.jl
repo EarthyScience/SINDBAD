@@ -1,30 +1,32 @@
 export transpirationDemand_PETfAPAR
 
-@bounds @describe @units @with_kw struct transpirationDemand_PETfAPAR{T1} <: transpirationDemand
-	α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct transpirationDemand_PETfAPAR{T1} <: transpirationDemand
+    α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | "" | ""
 end
+#! format: on
 
-function compute(o::transpirationDemand_PETfAPAR, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_transpirationDemand_PETfAPAR o
+function compute(params::transpirationDemand_PETfAPAR, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_transpirationDemand_PETfAPAR params
 
-	## unpack land variables
-	@unpack_land begin
-		fAPAR ∈ land.states
-		PET ∈ land.PET
-	end
-	tranDem = PET * α * fAPAR
+    ## unpack land variables
+    @unpack_nt begin
+        fAPAR ⇐ land.states
+        PET ⇐ land.fluxes
+    end
+    transpiration_demand = PET * α * fAPAR
 
-	## pack land variables
-	@pack_land tranDem => land.transpirationDemand
-	return land
+    ## pack land variables
+    @pack_nt transpiration_demand ⇒ land.diagnostics
+    return land
 end
 
 @doc """
 calculate the climate driven demand for transpiration as a function of PET & fAPAR
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -32,12 +34,12 @@ $(PARAMFIELDS)
 Demand-driven transpiration using transpirationDemand_PETfAPAR
 
 *Inputs*
- - land.PET.PET : potential evapotranspiration out of PET module
+ - land.fluxes.PET : potential evapotranspiration out of PET module
  - land.states.fAPAR: fAPAR
  - α: α parameter for potential transpiration
 
 *Outputs*
- - land.transpirationDemand.tranDem: demand driven transpiration
+ - land.diagnostics.transpiration_demand: demand driven transpiration
 
 ---
 
@@ -49,7 +51,7 @@ Demand-driven transpiration using transpirationDemand_PETfAPAR
  - 1.0 on 30.04.2020 [skoirala]
 
 *Created by:*
- - sbesnard; skoirala; ncarval
+ - sbesnard; skoirala; ncarvalhais
 
 *Notes*
  - Assumes that the transpiration demand scales with vegetated fraction

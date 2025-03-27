@@ -9,7 +9,7 @@ include("ambientCO2_forcing.jl")
 Set/get ambient co2 concentration
 
 # Approaches:
- - constant: sets the value of ambCO2 as a constant
- - forcing: sets the value of land.states.ambCO2 from the forcing in every time step
+ - constant: sets the value of ambient_CO2 as a constant
+ - forcing: sets the value of ambient_CO2 from the forcing in every time step
 """
 ambientCO2

@@ -1,26 +1,24 @@
 export runoffSaturationExcess_satFraction
 
-struct runoffSaturationExcess_satFraction <: runoffSaturationExcess
-end
+struct runoffSaturationExcess_satFraction <: runoffSaturationExcess end
 
-function compute(o::runoffSaturationExcess_satFraction, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::runoffSaturationExcess_satFraction, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land (WBP, satFrac) ∈ land.states
+    ## unpack land variables
+    @unpack_nt (WBP, satFrac) ⇐ land.states
 
+    ## calculate variables
+    sat_excess_runoff = WBP * satFrac
 
-	## calculate variables
-	runoffSatExc = WBP * satFrac
+    # update the WBP
+    WBP = WBP - sat_excess_runoff
 
-	# update the WBP
-	WBP = WBP - runoffSatExc
-
-	## pack land variables
-	@pack_land begin
-		runoffSatExc => land.fluxes
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_nt begin
+        sat_excess_runoff ⇒ land.fluxes
+        WBP ⇒ land.states
+    end
+    return land
 end
 
 @doc """
@@ -36,7 +34,7 @@ Saturation runoff using runoffSaturationExcess_satFraction
  - land.states.satFrac: fraction of the grid cell that is saturated from saturatedFraction model
 
 *Outputs*
- - land.fluxes.runoffSatExc: saturation excess runoff in mm/day
+ - land.fluxes.sat_excess_runoff: saturation excess runoff in mm/day
  - land.states.WBP
 
 ---

@@ -1,33 +1,33 @@
 export vegFraction_scaledNIRv
 
-@bounds @describe @units @with_kw struct vegFraction_scaledNIRv{T1} <: vegFraction
-	NIRvscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NIRv" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct vegFraction_scaledNIRv{T1} <: vegFraction
+    NIRvscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NIRv" | "" | ""
 end
+#! format: on
 
-function compute(o::vegFraction_scaledNIRv, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_vegFraction_scaledNIRv o
+function compute(params::vegFraction_scaledNIRv, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_vegFraction_scaledNIRv params
 
-	## unpack land variables
-	@unpack_land begin
-		NIRv ∈ land.states
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_nt begin
+        NIRv ⇐ land.states
+    end
 
+    ## calculate variables
+    frac_vegetation = clampZeroOne(NIRv * NIRvscale)
 
-	## calculate variables
-	vegFraction = clamp(NIRv * NIRvscale, 𝟘, 𝟙)
-
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
+    ## pack land variables
+    @pack_nt frac_vegetation ⇒ land.states
+    return land
 end
 
 @doc """
-sets the value of vegFraction by scaling the NIRv value
+sets the value of frac_vegetation by scaling the NIRv value
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -38,7 +38,7 @@ Fractional coverage of vegetation using vegFraction_scaledNIRv
  - land.states.NIRv : current NIRv value
 
 *Outputs*
- - land.states.vegFraction: current vegetation fraction
+ - land.states.frac_vegetation: current vegetation fraction
 
 ---
 

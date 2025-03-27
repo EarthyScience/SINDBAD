@@ -8,6 +8,6 @@ include("saturatedFraction_none.jl")
 Saturated fraction of a grid cell
 
 # Approaches:
- - none: sets the land.states.soilWSatFrac [saturated soil fraction] to 𝟘  (pix, 1)
+ - none: sets the land.states.soilWSatFrac [saturated soil fraction] toz_zero (pix, 1)
 """
 saturatedFraction

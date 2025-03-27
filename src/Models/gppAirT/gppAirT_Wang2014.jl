@@ -1,28 +1,30 @@
 export gppAirT_Wang2014
 
-@bounds @describe @units @with_kw struct gppAirT_Wang2014{T1} <: gppAirT
-	Tmax::T1 = 10.0 | (5.0, 45.0) | "maximum temperature at which GPP ceases" | "°C"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct gppAirT_Wang2014{T1} <: gppAirT
+    Tmax::T1 = 10.0 | (5.0, 45.0) | "maximum temperature at which GPP ceases" | "°C" | ""
 end
+#! format: on
 
-function compute(o::gppAirT_Wang2014, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::gppAirT_Wang2014, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_Wang2014 o
-    @unpack_forcing TairDay ∈ forcing
-    @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
+    @unpack_gppAirT_Wang2014 params
+    @unpack_nt f_airT_day ⇐ forcing
+    @unpack_nt (z_zero, o_one) ⇐ land.diagnostics
 
     ## calculate variables
-    TempScGPP = clamp(TairDay / Tmax, 𝟘, 𝟙)
+    gpp_f_airT = clampZeroOne(f_airT_day / Tmax)
 
     ## pack land variables
-    @pack_land TempScGPP => land.gppAirT
+    @pack_nt gpp_f_airT ⇒ land.diagnostics
     return land
 end
 
 @doc """
-temperature stress on gppPot based on Wang2014
+temperature stress on gpp_potential based on Wang2014
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -30,10 +32,10 @@ $(PARAMFIELDS)
 Effect of temperature using gppAirT_Wang2014
 
 *Inputs*
- - forcing.TairDay: daytime temperature [°C]
+ - forcing.f_airT_day: daytime temperature [°C]
 
 *Outputs*
- - land.gppAirT.TempScGPP: effect of temperature on potential GPP
+ - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
 
 ---
 
@@ -46,6 +48,6 @@ Effect of temperature using gppAirT_Wang2014
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 """
 gppAirT_Wang2014

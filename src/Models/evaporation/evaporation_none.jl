@@ -1,24 +1,24 @@
 export evaporation_none
 
-struct evaporation_none <: evaporation
-end
+struct evaporation_none <: evaporation end
 
-function precompute(o::evaporation_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::evaporation_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
-	## calculate variables
-	evaporation = helpers.numbers.𝟘
+    ## calculate variables
+    evaporation = z_zero
 
-	## pack land variables
-	@pack_land evaporation => land.fluxes
-	return land
+    ## pack land variables
+    @pack_nt evaporation ⇒ land.fluxes
+    return land
 end
 
 @doc """
 sets the soil evaporation to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for evaporation_none
-
+# Instantiate:
+Instantiate time-invariant variables for evaporation_none
+    
 
 ---
 

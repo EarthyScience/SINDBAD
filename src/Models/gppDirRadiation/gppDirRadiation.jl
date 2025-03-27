@@ -9,7 +9,7 @@ include("gppDirRadiation_none.jl")
 Effect of direct radiation
 
 # Approaches:
- - Maekelae2008: light saturation scalar [light effect] on gppPot based on Maekelae2008
- - none: sets the light saturation scalar [light effect] on gppPot to one
+ - Maekelae2008: light saturation scalar [light effect] on gpp_potential based on Maekelae2008
+ - none: sets the light saturation scalar [light effect] on gpp_potential to one
 """
 gppDirRadiation

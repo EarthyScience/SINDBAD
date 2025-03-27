@@ -1,31 +1,32 @@
 export gppAirT_MOD17
 
-@bounds @describe @units @with_kw struct gppAirT_MOD17{T1, T2} <: gppAirT
-	Tmax::T1 = 20.0 | (10.0, 35.0) | "temperature for max GPP" | "°C"
-	Tmin::T2 = 5.0 | (0.0, 15.0) | "temperature for min GPP" | "°C"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct gppAirT_MOD17{T1,T2} <: gppAirT
+    Tmax::T1 = 20.0 | (10.0, 35.0) | "temperature for max GPP" | "°C" | ""
+    Tmin::T2 = 5.0 | (0.0, 15.0) | "temperature for min GPP" | "°C" | ""
 end
+#! format: on
 
-function compute(o::gppAirT_MOD17, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::gppAirT_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_MOD17 o
-    @unpack_forcing TairDay ∈ forcing
-    @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
-
+    @unpack_gppAirT_MOD17 params
+    @unpack_nt f_airT_day ⇐ forcing
+    @unpack_nt o_one ⇐ land.constants
 
     ## calculate variables
-    tsc = TairDay / ((𝟙 - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation
-    TempScGPP = clamp(tsc, 𝟘, 𝟙)
+    tsc = f_airT_day / ((o_one - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation
+    gpp_f_airT = clampZeroOne(tsc)
 
     ## pack land variables
-    @pack_land TempScGPP => land.gppAirT
+    @pack_nt gpp_f_airT ⇒ land.diagnostics
     return land
 end
 
 @doc """
-temperature stress on gppPot based on GPP - MOD17 model
+temperature stress on gpp_potential based on GPP - MOD17 model
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -33,10 +34,10 @@ $(PARAMFIELDS)
 Effect of temperature using gppAirT_MOD17
 
 *Inputs*
- - forcing.TairDay: daytime temperature [°C]
+ - forcing.f_airT_day: daytime temperature [°C]
 
 *Outputs*
- - land.gppAirT.TempScGPP: effect of temperature on potential GPP
+ - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
 
 ---
 
@@ -51,7 +52,7 @@ Effect of temperature using gppAirT_MOD17
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 
 *Notes*
 """

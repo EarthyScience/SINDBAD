@@ -1,23 +1,23 @@
 export interception_none
 
-struct interception_none <: interception
-end
+struct interception_none <: interception end
 
-function precompute(o::interception_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::interception_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
-	## calculate variables
-	interception = helpers.numbers.𝟘
+    ## calculate variables
+    interception = z_zero
 
-	## pack land variables
-	@pack_land interception => land.fluxes
-	return land
+    ## pack land variables
+    @pack_nt interception ⇒ land.fluxes
+    return land
 end
 
 @doc """
 sets the interception evaporation to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for interception_none
+# Instantiate:
+Instantiate time-invariant variables for interception_none
 
 
 ---

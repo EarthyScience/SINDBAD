@@ -9,7 +9,7 @@ include("sublimation_none.jl")
 Calculate sublimation and update snow water equivalent
 
 # Approaches:
- - GLEAM: precomputes the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM
+ - GLEAM: instantiates the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM
  - none: sets the snow sublimation to zero
 """
 sublimation

@@ -1,15 +1,15 @@
 export LAI_forcing
 
-struct LAI_forcing <: LAI
-end
+struct LAI_forcing <: LAI end
 
-function compute(o::LAI_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing LAI ∈ forcing
+function compute(params::LAI_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_LAI ⇐ forcing
 
-	## pack land variables
-	@pack_land LAI => land.states
-	return land
+    LAI = f_LAI
+    ## pack land variables
+    @pack_nt LAI ⇒ land.states
+    return land
 end
 
 @doc """

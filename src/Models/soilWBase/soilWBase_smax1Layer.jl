@@ -1,62 +1,63 @@
 export soilWBase_smax1Layer
 
-@bounds @describe @units @with_kw struct soilWBase_smax1Layer{T1} <: soilWBase
-	smax::T1 = 1.0 | (0.001, 10.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct soilWBase_smax1Layer{T1} <: soilWBase
+    smax::T1 = 1.0 | (0.001, 10.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | "" | ""
 end
+#! format: on
 
-function precompute(o::soilWBase_smax1Layer, forcing, land::NamedTuple, helpers::NamedTuple)
-    @unpack_soilWBase_smax1Layer o
+function define(params::soilWBase_smax1Layer, forcing, land, helpers)
+    @unpack_soilWBase_smax1Layer params
 
-    @unpack_land begin
-        soilW ∈ land.pools
-        numType ∈ helpers.numbers
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        n_soilW ⇐ land.constants
     end
     ## precomputations/check
-    n_soilW = length(soilW)
     # get the soil thickness & root distribution information from input
-    soilLayerThickness = helpers.pools.water.layerThickness.soilW
+    soil_layer_thickness = helpers.pools.layer_thickness.soilW
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 1 
-    if length(soilLayerThickness) != 1
-        error(["soilWBase_smax1Layer needs eactly 1 soil layer in modelStructure.json."])
+    if n_soilW != 1
+        error(["soilWBase_smax1Layer needs eactly 1 soil layer in model_structure.json."])
     end
 
-    ## instantiate variables
-    p_wSat = ones(numType, n_soilW)
-    p_wFC = ones(numType, n_soilW)
-    p_wWP = zeros(numType, n_soilW)
+    ## Instantiate variables
+    w_sat = zero(soilW)
+    w_fc = zero(soilW)
+    w_wp = zero(soilW)
 
     ## pack land variables
-    @pack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) => land.soilWBase
+    @pack_nt (soil_layer_thickness, w_sat, w_fc, w_wp) ⇒ land.properties
     return land
 end
 
-function compute(o::soilWBase_smax1Layer, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_soilWBase_smax1Layer o
+function compute(params::soilWBase_smax1Layer, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_soilWBase_smax1Layer params
 
-	## unpack land variables
-	@unpack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
+    ## unpack land variables
+    @unpack_nt (soil_layer_thickness, w_sat, w_fc, w_wp) ⇐ land.properties
 
-	## calculate variables
-	
-	# set the properties for each soil layer
-	# 1st layer
-	p_wSat[1] = smax * soilLayerThickness[1]
-	p_wFC[1] = smax * soilLayerThickness[1]
+    ## calculate variables
 
-	# get the plant available water available (all the water is plant available)
-	p_wAWC = p_wSat
+    # set the properties for each soil layer
+    # 1st layer
+    w_sat[1] = smax * soil_layer_thickness[1]
+    w_fc[1] = smax * soil_layer_thickness[1]
 
-	## pack land variables
-	@pack_land (p_wAWC, p_wFC, p_wSat, p_wWP, n_soilW) => land.soilWBase
-	return land
+    # get the plant available water available (all the water is plant available)
+    w_awc = w_sat
+
+    ## pack land variables
+    @pack_nt (w_awc, w_fc, w_sat, w_wp) ⇒ land.properties
+    return land
 end
 
 @doc """
-defines the maximum soil water content of 1 soil layer as fraction of the soil depth defined in the ModelStructure.json based on the TWS model for the Northern Hemisphere
+defines the maximum soil water content of 1 soil layer as fraction of the soil depth defined in the model_structure.json based on the TWS model for the Northern Hemisphere
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -64,17 +65,17 @@ $(PARAMFIELDS)
 Distribution of soil hydraulic properties over depth using soilWBase_smax1Layer
 
 *Inputs*
- - helpers.pools.water.: soil layers & depths
+ - helpers.pools.: soil layers & depths
 
 *Outputs*
- - land.soilWBase.p_nsoilLayers
- - land.soilWBase.soilLayerThickness
- - land.soilWBase.p_wAWC: = land.soilWBase.p_wSat
- - land.soilWBase.p_wFC : = land.soilWBase.p_wSat
- - land.soilWBase.p_wWP: wilting point set to zero for all layers
+ - land.properties.p_nsoilLayers
+ - land.properties.soil_layer_thickness
+ - land.properties.w_awc: = land.properties.w_sat
+ - land.properties.w_fc : = land.properties.w_sat
+ - land.properties._wp: wilting point set to zero for all layers
 
-# precompute:
-precompute/instantiate time-invariant variables for soilWBase_smax1Layer
+# Instantiate:
+Instantiate time-invariant variables for soilWBase_smax1Layer
 
 
 ---

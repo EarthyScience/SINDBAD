@@ -1,33 +1,33 @@
 export vegFraction_scaledEVI
 
-@bounds @describe @units @with_kw struct vegFraction_scaledEVI{T1} <: vegFraction
-	EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct vegFraction_scaledEVI{T1} <: vegFraction
+    EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | "" | ""
 end
+#! format: on
 
-function compute(o::vegFraction_scaledEVI, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_vegFraction_scaledEVI o
+function compute(params::vegFraction_scaledEVI, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_vegFraction_scaledEVI params
 
-	## unpack land variables
-	@unpack_land begin
-		EVI ∈ land.states
-		𝟙 ∈ helpers.numbers		
-	end
+    ## unpack land variables
+    @unpack_nt begin
+        EVI ⇐ land.states
+    end
 
+    ## calculate variables
+    frac_vegetation = minOne(EVI * EVIscale)
 
-	## calculate variables
-	vegFraction = min(EVI * EVIscale, 𝟙)
-
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
+    ## pack land variables
+    @pack_nt frac_vegetation ⇒ land.states
+    return land
 end
 
 @doc """
-sets the value of vegFraction by scaling the EVI value
+sets the value of frac_vegetation by scaling the EVI value
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -38,7 +38,7 @@ Fractional coverage of vegetation using vegFraction_scaledEVI
  - land.states.EVI : current EVI value
 
 *Outputs*
- - land.states.vegFraction: current vegetation fraction
+ - land.states.frac_vegetation: current vegetation fraction
 
 ---
 

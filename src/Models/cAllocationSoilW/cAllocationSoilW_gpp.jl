@@ -2,18 +2,17 @@ export cAllocationSoilW_gpp
 
 struct cAllocationSoilW_gpp <: cAllocationSoilW end
 
-function compute(o::cAllocationSoilW_gpp, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::cAllocationSoilW_gpp, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land SMScGPP ∈ land.gppSoilW
-
+    @unpack_nt gpp_f_soilW ⇐ land.diagnostics
 
     ## calculate variables
     # computation for the moisture effect on decomposition/mineralization
-    fW = SMScGPP
+    c_allocation_f_soilW = gpp_f_soilW
 
     ## pack land variables
-    @pack_land fW => land.cAllocationSoilW
+    @pack_nt c_allocation_f_soilW ⇒ land.diagnostics
     return land
 end
 
@@ -25,10 +24,10 @@ moisture effect on allocation = the same as gpp
 # compute:
 
 *Inputs*
- - land.gppSoilW.SMScGPP: moisture stressor on GPP
+ - land.diagnostics.gpp_f_soilW: moisture stressor on GPP
 
 *Outputs*
- - land.cAllocationSoilW.fW: moisture effect on allocation
+ - land.diagnostics.c_allocation_f_soilW: moisture effect on allocation
 
 ---
 
