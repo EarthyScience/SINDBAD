@@ -71,8 +71,6 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
 
     unts=[]
     unts_ori=[]
-    # checkParameterBounds(::Vector{Symbol}, ::Vector{Any}, ::Vector{Float64}, ::Vector{Float64}, ::Bool)
-    # function checkParameterBounds(p_name, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false)
     for m in eachindex(name)
         prm_name = Symbol(name[m])
         appr = approach_func[m]()

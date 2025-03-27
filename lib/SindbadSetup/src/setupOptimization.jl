@@ -128,6 +128,7 @@ function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number
     mod_field = [Symbol(split(_a, ".")[1]) for _a in mod_vars]
     mod_subfield = [Symbol(split(_a, ".")[2]) for _a in mod_vars]
     mod_ind = collect(1:length(varlist))
+    obs_sn = [i for i in mod_ind]
     obs_ind = [i + 3 * (i - 1) for i in mod_ind]
 
     mod_ind = [findfirst(s -> first(s) === mf && last(s) === msf, tem_variables) for (mf, msf) in zip(mod_field, mod_subfield)]
@@ -149,12 +150,13 @@ function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number
         push!(agg_indices, aggInd)
     end
     push!(all_options, obs_ind)
+    push!(all_options, obs_sn)
     push!(all_options, mod_ind)
     push!(all_options, mod_field)
     push!(all_options, mod_subfield)
     push!(all_options, agg_indices)
     push!(all_options, agg_type)
-    all_props = [:variable, props_to_keep..., :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggr, :temporal_aggr_type]
+    all_props = [:variable, props_to_keep..., :obs_ind, :obs_sn, :mod_ind, :mod_field, :mod_subfield, :temporal_aggr, :temporal_aggr_type]
     return (; Pair.(all_props, all_options)...)
 end
 
