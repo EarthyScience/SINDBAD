@@ -170,7 +170,8 @@ in_gargs=(;
         land_init,
         tem_info,
         param_to_index,
-        loc_observations,
+        parameter_scaling_type,
+        space_observations,
         cost_options,
         constraint_method
         ),
@@ -188,6 +189,6 @@ checkpoint_path = "$(info.output.dirs.data)/HyALL_ALL_fold_$(_nfold)_nlayers_$(n
 mkpath(checkpoint_path)
 
 
-mixedGradientTraining(grads_lib, ml_baseline, in_gargs.train_refs, in_gargs.test_val_refs,
+mixedGradientTraining(grads_lib, mlBaseline, in_gargs.train_refs, in_gargs.test_val_refs,
     in_gargs.total_constraints, in_gargs.loss_fargs, in_gargs.forward_args;
-    n_epochs=500, path_experiment=checkpoint_path)
+    n_epochs=5, path_experiment=checkpoint_path)
