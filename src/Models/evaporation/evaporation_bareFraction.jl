@@ -1,66 +1,69 @@
 export evaporation_bareFraction
 
-@bounds @describe @units @with_kw struct evaporation_bareFraction{T1} <: evaporation
-	ks::T1 = 0.5 | (0.1, 0.95) | "resistance against soil evaporation" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct evaporation_bareFraction{T1} <: evaporation
+    ks::T1 = 0.5 | (0.1, 0.95) | "resistance against soil evaporation" | "" | ""
+end
+#! format: on
+
+function compute(params::evaporation_bareFraction, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_evaporation_bareFraction params
+
+    ## unpack land variables
+    @unpack_nt begin
+        frac_vegetation ⇐ land.states
+        ΔsoilW ⇐ land.pools
+        soilW ⇐ land.pools
+        PET ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
+    end
+    # scale the potential ET with bare soil fraction
+    PET_evaporation = PET * (o_one - frac_vegetation)
+    # calculate actual ET as a fraction of PET_evaporation
+    evaporation = min(PET_evaporation, (soilW[1] + ΔsoilW[1]) * ks)
+
+    # update soil moisture changes
+    @add_to_elem -evaporation ⇒ (ΔsoilW, 1, :soilW)
+
+    ## pack land variables
+    @pack_nt begin
+        PET_evaporation ⇒ land.fluxes
+        evaporation ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
+    end
+    return land
 end
 
-function compute(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_evaporation_bareFraction o
+function update(params::evaporation_bareFraction, forcing, land, helpers)
+    @unpack_evaporation_bareFraction params
 
-	## unpack land variables
-	@unpack_land begin
-		vegFraction ∈ land.states
-		ΔsoilW ∈ land.states
-		soilW ∈ land.pools
-		PET ∈ land.PET
-	end
-	# scale the potential ET with bare soil fraction
-	PETsoil = PET * (helpers.numbers.𝟙 - vegFraction)
-	# calculate actual ET as a fraction of PETsoil
-	evaporation = min(PETsoil, (soilW[1] + ΔsoilW[1]) * ks)
+    ## unpack variables
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+    end
 
-	# update soil moisture changes
-	ΔsoilW[1] = ΔsoilW[1] - evaporation
+    ## update variables
+    # update soil moisture of the first layer
+    soilW[1] = soilW[1] + ΔsoilW[1]
 
-	## pack land variables
-	@pack_land begin
-		PETsoil => land.evaporation
-		evaporation => land.fluxes
-		# ΔsoilW => land.states
-	end
-	return land
-end
+    # reset soil moisture changes to zero
+    ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
-function update(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_evaporation_bareFraction o
-
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
-
-	## update variables
-	# update soil moisture of the first layer
-	soilW[1] = soilW[1] + ΔsoilW[1]
-
-	# reset soil moisture changes to zero
-	ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
-
-	## pack land variables
-	@pack_land begin
-		# soilW => land.pools
-		# ΔsoilW => land.states
-	end
-	return land
+    # ## pack land variables
+    # @pack_nt begin
+    # 	soilW ⇒ land.pools
+    # 	ΔsoilW ⇒ land.pools
+    # end
+    return land
 end
 
 @doc """
-calculates the bare soil evaporation from 1-vegFraction of the grid & PETsoil
+calculates the bare soil evaporation from 1-frac_vegetation of the grid & PET_evaporation
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -68,11 +71,11 @@ $(PARAMFIELDS)
 Soil evaporation using evaporation_bareFraction
 
 *Inputs*
- - land.PET.PET: forcing data set
- - land.states.vegFraction [output of vegFraction module]
+ - land.fluxes.PET: forcing data set
+ - land.states.frac_vegetation [output of frac_vegetation module]
 
 *Outputs*
- - land.evaporation.PETSoil
+ - land.fluxes.PETSoil
  - land.fluxes.evaporation
 
 # update
@@ -88,7 +91,7 @@ update pools and states in evaporation_bareFraction
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.vegFraction  
+ - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.frac_vegetation  
 
 *Created by:*
  - mjung

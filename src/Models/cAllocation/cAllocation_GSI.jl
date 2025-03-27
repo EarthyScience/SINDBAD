@@ -2,67 +2,92 @@ export cAllocation_GSI
 
 struct cAllocation_GSI <: cAllocation end
 
-function precompute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cAllocation_GSI, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
+    ## Instantiate variables
+    c_allocation = zero(cEco)
+    cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
 
-    ## instantiate variables
-    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
-
+    c_allocation_to_veg = zero(cEco)
+    cVeg_zix = Tuple{Int}[]
+    cVeg_nzix = eltype(cEco)[]
+    cpI = 1
+    for cpName ∈ cVeg_names
+        zix = getZix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))
+        nZix = oftype(first(c_allocation), length(zix))
+        push!(cVeg_zix, zix)
+        push!(cVeg_nzix, nZix)
+    end
+    cVeg_zix = Tuple(cVeg_zix)
+    cVeg_nzix = Tuple(cVeg_nzix)
     ## pack land variables
-    @pack_land cAlloc => land.states
+    @pack_nt begin
+        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg) ⇒ land.cAllocation
+        c_allocation ⇒ land.diagnostics
+    end
     return land
 end
 
-function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::cAllocation_GSI, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land cAlloc ∈ land.states
-
-    ## unpack land variables
-    @unpack_land begin
-        fW ∈ land.cAllocationSoilW
-        fT ∈ land.cAllocationSoilT
-        sNT ∈ helpers.numbers
+    @unpack_nt begin
+        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg) ⇐ land.cAllocation
+        c_allocation ⇐ land.diagnostics
+        c_allocation_f_soilW ⇐ land.diagnostics
+        c_allocation_f_soilT ⇐ land.diagnostics
+        t_two ⇐ land.constants
     end
-    cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
-
+    c_two = one(c_allocation_f_soilT) + one(c_allocation_f_soilT)
     # allocation to root; wood & leaf
-    cVegLeaf = fW / ((fW + fT) * 2.0)
-    cVegWood = fW / ((fW + fT) * 2.0)
-    cVegRoot = fT / (fW + fT)
-    cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
+    a_cVegLeaf = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * c_two)
+    a_cVegWood = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * c_two)
+    a_cVegRoot = c_allocation_f_soilT / ((c_allocation_f_soilW + c_allocation_f_soilT))
+
+    # @needscheck. from semda l and w are allocated more when there is no water stress
+    # % change a2L a2R a2W according to DAS components...
+    #     a2L = DASW./(DASW+DAST)./2;
+    #     a2W = DASW./(DASW+DAST)./2;
+    #     a2R = DAST./(DASW+DAST);
+
+    @rep_elem a_cVegRoot ⇒ (c_allocation_to_veg, 1, :cEco)
+    @rep_elem a_cVegWood ⇒ (c_allocation_to_veg, 2, :cEco)
+    @rep_elem a_cVegLeaf ⇒ (c_allocation_to_veg, 3, :cEco)
 
     # distribute the allocation according to pools
-    for cpName in cpNames
-        zix = getzix(land.pools, cpName)
-        cAlloc[zix] .= getfield(cf2, cpName) / length(zix)
+    for cl in eachindex(cVeg_names)
+        zix = cVeg_zix[cl]
+        nZix = cVeg_nzix[cl]
+        for ix ∈ zix
+            c_allocation_to_veg_ix = c_allocation_to_veg[cl] / nZix
+            @rep_elem c_allocation_to_veg_ix ⇒ (c_allocation, ix, :cEco)
+        end
     end
 
-    ## pack land variables
-    @pack_land begin
-        cAlloc => land.states
-    end
+    @pack_nt c_allocation ⇒ land.diagnostics
+
     return land
 end
 
 @doc """
-compute the fraction of NPP that is allocated to the different plant organs. In this case; the allocation is dynamic in time according to temperature; water & radiation stressors computed from GSI approach.
+Compute the fraction of fixated C that is allocated to the different plant organs. The allocation is dynamic in time according to temperature, water & radiation stressors estimated following the GSI approach. Inspired by the work of Friedlingstein et al., 1999, based on Sharpe and Rykiel 1991, but here following the growing season index (GSI) as stress diagnostics, following Forkel et al 2014 and 2015, based on Jolly et al., 2005.
 
 ---
 
 # compute:
-Combine the different effects of carbon allocation using cAllocation_GSI
+Combines the different stressors of carbon allocation (moisture, radiation and temperature) using the GSI approach (Forkel et al., 2014).
 
 *Inputs*
- - land.cAllocationRadiation.fR: radiation stressors for carbo allocation
- - land.cAllocationSoilW.fT: temperature stressors for carbon allocation
- - land.cAllocationSoilW.fW: water stressors for carbon allocation
+ - land.diagnostics.c_allocation_f_cloud: radiation stressors for carbo allocation
+ - land.diagnostics.c_allocation_f_soilT: temperature stressors for carbon allocation
+ - land.diagnostics.c_allocation_f_soilW: water stressors for carbon allocation
 
 *Outputs*
- - land.states.cAlloc: the fraction of NPP that is allocated to the different plant organs
- - land.states.cAlloc
+ - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
+ - land.diagnostics.c_allocation
 
-# precompute:
-precompute/instantiate time-invariant variables for cAllocation_GSI
+# Instantiate:
+Instantiate time-invariant variables for cAllocation_GSI
 
 
 ---
@@ -72,7 +97,9 @@ precompute/instantiate time-invariant variables for cAllocation_GSI
 *References*
  - Forkel M, Carvalhais N, Schaphoff S, von Bloh W, Migliavacca M, Thurner M, Thonicke K [2014] Identifying environmental controls on vegetation greenness phenology through model–data integration. Biogeosciences, 11, 7025–7050.
  - Forkel, M., Migliavacca, M., Thonicke, K., Reichstein, M., Schaphoff, S., Weber, U., Carvalhais, N. (2015).  Codominant water control on global interannual variability and trends in land surface phenology & greenness.
+  - Friedlingstein; P.; G. Joel; C.B. Field; & I.Y. Fung; 1999: Toward an allocation scheme for global terrestrial carbon models. Glob. Change Biol.; 5; 755-770; doi:10.1046/j.1365-2486.1999.00269.x.
  - Jolly, William M., Ramakrishna Nemani, & Steven W. Running. "A generalized, bioclimatic index to predict foliar phenology in response to climate." Global Change Biology 11.4 [2005]: 619-632.
+ - Sharpe PJH, Rykiel EJ (1991) Modelling integrated response of plants to multiple stresses. In: Response of Plants to Multiple Stresses (eds Mooney HA, Winner WE, Pell EJ), pp. 205±224, Academic Press, San Diego, CA.
 
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  

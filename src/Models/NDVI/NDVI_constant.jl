@@ -1,26 +1,28 @@
 export NDVI_constant
 
-@bounds @describe @units @with_kw struct NDVI_constant{T1} <: NDVI
-	constantNDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct NDVI_constant{T1} <: NDVI
+    constant_NDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | "" | ""
 end
+#! format: on
 
-function compute(o::NDVI_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_NDVI_constant o
+function precompute(params::NDVI_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_NDVI_constant params
 
-	## calculate variables
-	NDVI = constantNDVI
+    ## calculate variables
+    NDVI = constant_NDVI
 
-	## pack land variables
-	@pack_land NDVI => land.states
-	return land
+    ## pack land variables
+    @pack_nt NDVI ⇒ land.states
+    return land
 end
 
 @doc """
 sets the value of NDVI as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -2,26 +2,26 @@ export cAllocationNutrients_none
 
 struct cAllocationNutrients_none <: cAllocationNutrients end
 
-function precompute(o::cAllocationNutrients_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cAllocationNutrients_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    minWLNL = helpers.numbers.𝟙
+    c_allocation_f_W_N = one(first(cEco))
 
     ## pack land variables
-    @pack_land minWLNL => land.cAllocationNutrients
+    @pack_nt c_allocation_f_W_N ⇒ land.diagnostics
     return land
 end
 
 @doc """
 sets the pseudo-nutrient limitation to one (no effect)
 
-# precompute:
+# Instantiate:
 
 *Inputs*
-- helpers.numbers.𝟙
 
 *Outputs*
-- land.cAllocationNutrients.minWLNL: Nutrient effect on cAllocation (0-1)
+- land.diagnostics.c_allocation_f_W_N: Nutrient effect on cAllocation (0-1)
 ---
 
 # Extended help

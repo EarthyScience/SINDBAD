@@ -1,23 +1,23 @@
 export runoffSaturationExcess_none
 
-struct runoffSaturationExcess_none <: runoffSaturationExcess
-end
+struct runoffSaturationExcess_none <: runoffSaturationExcess end
 
-function precompute(o::runoffSaturationExcess_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::runoffSaturationExcess_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
-	## calculate variables
-	runoffSatExc = helpers.numbers.𝟘
+    ## calculate variables
+    sat_excess_runoff = z_zero
 
-	## pack land variables
-	@pack_land runoffSatExc => land.fluxes
-	return land
+    ## pack land variables
+    @pack_nt sat_excess_runoff ⇒ land.fluxes
+    return land
 end
 
 @doc """
 set the saturation excess runoff to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffSaturationExcess_none
+# Instantiate:
+Instantiate time-invariant variables for runoffSaturationExcess_none
 
 
 ---

@@ -1,49 +1,52 @@
 export gppDemand_mult
 
-struct gppDemand_mult <: gppDemand
+struct gppDemand_mult <: gppDemand end
+
+function define(params::gppDemand_mult, forcing, land, helpers)
+    @unpack_nt f_VPD_day ⇐ forcing
+    gpp_climate_stressors = ones(typeof(f_VPD_day), 4)
+
+    if hasproperty(land.pools, :soilW)
+        @unpack_nt soilW ⇐ land.pools
+        if soilW isa SVector
+            gpp_climate_stressors = SVector{4}(gpp_climate_stressors)
+        end
+    end
+
+    @pack_nt gpp_climate_stressors ⇒ land.diagnostics
+
+    return land
 end
 
-function precompute(o::gppDemand_mult, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::gppDemand_mult, forcing, land, helpers)
 
+    ## unpack land variables
+    @unpack_nt begin
+        gpp_f_cloud ⇐ land.diagnostics
+        fAPAR ⇐ land.states
+        gpp_potential ⇐ land.diagnostics
+        gpp_f_light ⇐ land.diagnostics
+        gpp_climate_stressors ⇐ land.diagnostics
+        gpp_f_airT ⇐ land.diagnostics
+        gpp_f_vpd ⇐ land.diagnostics
+    end
 
-	## unpack land variables
+    # @show gpp_f_airT, gpp_f_vpd, gpp_climate_stressors
+    # set 3d scalar matrix with current scalars
+    gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_airT, gpp_climate_stressors, gpp_climate_stressors, 1)
+    gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_vpd, gpp_climate_stressors, gpp_climate_stressors, 2)
+    gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_light, gpp_climate_stressors, gpp_climate_stressors, 3)
+    gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_cloud, gpp_climate_stressors, gpp_climate_stressors, 4)
 
-	# set 3d scalar matrix with current scalars
-	scall = ones(helpers.numbers.numType, 4)
+    # compute the product of all the scalars
+    gpp_f_climate = gpp_f_light * gpp_f_cloud * gpp_f_airT * gpp_f_vpd
 
-	@pack_land scall => land.gppDemand
+    # compute demand GPP
+    gpp_demand = fAPAR * gpp_potential * gpp_f_climate
 
-	return land
-end
-
-function compute(o::gppDemand_mult, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land begin
-		CloudScGPP ∈ land.gppDiffRadiation
-		fAPAR ∈ land.states
-		gppPot ∈ land.gppPotential
-		LightScGPP ∈ land.gppDirRadiation
-		scall ∈ land.gppDemand
-		TempScGPP ∈ land.gppAirT
-		VPDScGPP ∈ land.gppVPD
-	end
-
-	# set 3d scalar matrix with current scalars
-	scall[1] = TempScGPP
-	scall[2] = VPDScGPP
-	scall[3] = LightScGPP
-	scall[4] = CloudScGPP
-
-	# compute the product of all the scalars
-	AllDemScGPP = prod(scall)
-	
-	# compute demand GPP
-	gppE = fAPAR * gppPot * AllDemScGPP
-
-	## pack land variables
-	@pack_land (AllDemScGPP, gppE) => land.gppDemand
-	return land
+    ## pack land variables
+    @pack_nt (gpp_climate_stressors, gpp_f_climate, gpp_demand) ⇒ land.diagnostics
+    return land
 end
 
 @doc """
@@ -55,16 +58,16 @@ compute the demand GPP as multipicative stress scalars
 Combine effects as multiplicative or minimum using gppDemand_mult
 
 *Inputs*
- - land.gppAirT.TempScGPP: temperature effect on GPP [-], between 0-1
- - land.gppDiffRadiation.CloudScGPP: cloudiness scalar [-], between 0-1
- - land.gppDirRadiation.LightScGPP: light saturation scalar [-], between 0-1
- - land.gppPotential.gppPot: maximum potential GPP based on radiation use efficiency
- - land.gppVPD.VPDScGPP: VPD effect on GPP [-], between 0-1
- - land.states.fAPAR: fraction of absorbed photosynthetically active radiation  [-] (equivalent to "canopy cover" in Gash & Miralles)
+ - land.diagnostics.gpp_f_airT: temperature effect on GPP [-], between 0-1
+ - land.diagnostics.gpp_f_cloud: cloudiness scalar [-], between 0-1
+ - land.diagnostics.gpp_f_light: light saturation scalar [-], between 0-1
+ - land.diagnostics.gpp_potential: maximum potential GPP based on radiation use efficiency
+ - land.diagnostics.gpp_f_vpd: VPD effect on GPP [-], between 0-1
+ - land.states.fAPAR: fraction of absorbed photosynthetically active radiation (equivalent to "canopy cover" in Gash & Miralles)
 
 *Outputs*
- - land.gppDemand.AllDemScGPP [effective scalar, 0-1]
- - land.gppDemand.gppE: demand GPP [gC/m2/time]
+ - land.diagnostics.gpp_f_climate [effective scalar, 0-1]
+ - land.diagnostics.gpp_demand: demand GPP [gC/m2/time]
 
 ---
 
@@ -76,7 +79,7 @@ Combine effects as multiplicative or minimum using gppDemand_mult
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 
 *Notes*
 """

@@ -1,31 +1,32 @@
 export cTauSoilT_Q10
 
-@bounds @describe @units @with_kw struct cTauSoilT_Q10{T1, T2, T3} <: cTauSoilT
-	Q10::T1 = 1.4 | (1.05, 3.0) | "" | ""
-	Tref::T2 = 30.0 | (0.01, 40.0) | "" | "°C"
-    Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cTauSoilT_Q10{T1,T2,T3} <: cTauSoilT
+    Q10::T1 = 1.4 | (1.05, 3.0) | "" | "" | ""
+    ref_airT::T2 = 30.0 | (0.01, 40.0) | "" | "°C" | ""
+    Q10_base::T3 = 10.0 | (-Inf, Inf) | "base temperature difference" | "°C" | ""
 end
+#! format: on
 
-function compute(o::cTauSoilT_Q10, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters and forcing
-	@unpack_cTauSoilT_Q10 o
-	@unpack_forcing Tair ∈ forcing
+function compute(params::cTauSoilT_Q10, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_cTauSoilT_Q10 params
+    @unpack_nt f_airT ⇐ forcing
 
+    ## calculate variables
+    # CALCULATE EFFECT OF TEMPERATURE ON SOIL CARBON FLUXES
+    c_eco_k_f_soilT = Q10^((f_airT - ref_airT) / Q10_base)
 
-	## calculate variables
-	# CALCULATE EFFECT OF TEMPERATURE ON psoil CARBON FLUXES
-	fT = Q10 ^ ((Tair - Tref) / Q10_base)
-
-	## pack land variables
-	@pack_land fT => land.cTauSoilT
-	return land
+    ## pack land variables
+    @pack_nt c_eco_k_f_soilT ⇒ land.diagnostics
+    return land
 end
 
 @doc """
 Compute effect of temperature on psoil carbon fluxes
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -33,10 +34,10 @@ $(PARAMFIELDS)
 Effect of soil temperature on decomposition rates using cTauSoilT_Q10
 
 *Inputs*
- - forcing.Tair: values for air temperature
+ - forcing.f_airT: values for air temperature
 
 *Outputs*
- - land.cTauSoilT.fT: air temperature stressor on turnover rates [k]
+ - land.diagnostics.c_eco_k_f_soilT: air temperature stressor on turnover rates [k]
 
 ---
 

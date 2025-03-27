@@ -1,63 +1,63 @@
 export cAllocationRadiation_GSI
 
-@bounds @describe @units @with_kw struct cAllocationRadiation_GSI{T1, T2, T3} <: cAllocationRadiation
-	τ_Rad::T1 = 0.02 | (0.001, 1.0) | "temporal change rate for the light-limiting function" | ""
-	slope_Rad::T2 = 1.0 | (0.01, 200.0) | "slope parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
-	base_Rad::T3 = 10.0 | (0.0, 100.0) | "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cAllocationRadiation_GSI{T1,T2,T3} <: cAllocationRadiation
+    τ_rad::T1 = 0.02 | (0.001, 1.0) | "temporal change rate for the light-limiting function" | "" | ""
+    slope_rad::T2 = 1.0 | (0.01, 200.0) | "slope parameters of a logistic function based on mean daily y shortwave downward radiation" | "" | ""
+    base_rad::T3 = 10.0 | (0.0, 100.0) | "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation" | "" | ""
 end
+#! format: on
 
-function precompute(o::cAllocationRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack helper
-    @unpack_land 𝟙 ∈ helpers.numbers
 
     ## calculate variables
-    # assume the initial fR as one
-    fR_prev = 𝟙 
+    # assume the initial c_allocation_c_allocation_f_cloud as one
+    c_allocation_f_cloud_prev = one(slope_rad)
 
     ## pack land variables
-    @pack_land fR_prev => land.cAllocationRadiation
+    @pack_nt c_allocation_f_cloud_prev ⇒ land.diagnostics
     return land
 end
 
-function compute(o::cAllocationRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters and forcing
-	@unpack_cAllocationRadiation_GSI o
-	@unpack_forcing PAR ∈ forcing
+function compute(params::cAllocationRadiation_GSI, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_cAllocationRadiation_GSI params
+    @unpack_nt f_PAR ⇐ forcing
 
-	## unpack land variables
-	@unpack_land begin
-		fR_prev ∈ land.cAllocationRadiation
-		𝟙 ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_nt begin
+        c_allocation_f_cloud_prev ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
+    end
+    ## calculate variables
+    # computation for the radiation effect on decomposition/mineralization
+    c_allocation_c_allocation_f_cloud = (one(slope_rad) / (one(slope_rad) + exp(-slope_rad * (f_PAR - base_rad))))
+    c_allocation_c_allocation_f_cloud = c_allocation_f_cloud_prev + (c_allocation_c_allocation_f_cloud - c_allocation_f_cloud_prev) * τ_rad
+    # set the prev
+    c_allocation_f_cloud_prev = c_allocation_c_allocation_f_cloud
 
-	## calculate variables
-	# computation for the radiation effect on decomposition/mineralization
-	fR = (𝟙 / (𝟙 + exp(-slope_Rad * (PAR - base_Rad))))
-	fR = fR_prev + (fR - fR_prev) * τ_Rad
-	# set the prev
-	fR_prev = fR
-
-	## pack land variables
-	@pack_land (fR, fR_prev) => land.cAllocationRadiation
-	return land
+    ## pack land variables
+    @pack_nt (c_allocation_c_allocation_f_cloud, c_allocation_f_cloud_prev) ⇒ land.diagnostics
+    return land
 end
 
 @doc """
 radiation effect on decomposition/mineralization using GSI method
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
 # compute:
 
 *Inputs*
- - forcing.PAR: Photosynthetically Active Radiation
- - land.cAllocationRadiation.fR_prev: radiation effect on decomposition/mineralization from the previous time step
+ - forcing.f_PAR: Photosynthetically Active Radiation
+ - land.diagnostics.c_allocation_f_cloud_prev: radiation effect on decomposition/mineralization from the previous time step
 
 *Outputs*
- - land.cAllocationRadiation.fR: radiation effect on decomposition/mineralization
+ - land.diagnostics.c_allocation_c_allocation_f_cloud: radiation effect on decomposition/mineralization
 
 ---
 

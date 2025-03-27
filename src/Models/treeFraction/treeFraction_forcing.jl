@@ -1,19 +1,18 @@
 export treeFraction_forcing
 
-struct treeFraction_forcing <: treeFraction
-end
+struct treeFraction_forcing <: treeFraction end
 
-function compute(o::treeFraction_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing treeFraction ∈ forcing
+function compute(params::treeFraction_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt frac_tree ⇐ forcing
 
-	## pack land variables
-	@pack_land treeFraction => land.states
-	return land
+    ## pack land variables
+    @pack_nt frac_tree ⇒ land.states
+    return land
 end
 
 @doc """
-sets the value of land.states.treeFraction from the forcing in every time step
+sets the value of land.states.frac_tree from the forcing in every time step
 
 ---
 
@@ -21,10 +20,10 @@ sets the value of land.states.treeFraction from the forcing in every time step
 Fractional coverage of trees using treeFraction_forcing
 
 *Inputs*
- - forcing.treeFraction read from the forcing data set
+ - forcing.frac_tree read from the forcing data set
 
 *Outputs*
- - land.states.treeFraction: the value of treeFraction for current time step
+ - land.states.frac_tree: the value of frac_tree for current time step
 
 ---
 

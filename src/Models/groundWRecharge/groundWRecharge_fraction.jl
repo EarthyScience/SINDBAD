@@ -1,65 +1,66 @@
 export groundWRecharge_fraction
 
-@bounds @describe @units @with_kw struct groundWRecharge_fraction{T1} <: groundWRecharge
-	rf::T1 = 0.1 | (0.01, 0.99) | "fraction of land runoff that percolates to groundwater" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct groundWRecharge_fraction{T1} <: groundWRecharge
+    rf::T1 = 0.1 | (0.02, 0.98) | "fraction of land runoff that percolates to groundwater" | "" | ""
+end
+#! format: on
+
+function compute(params::groundWRecharge_fraction, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_groundWRecharge_fraction params
+
+    ## unpack land variables
+    @unpack_nt begin
+        (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
+        n_groundW ⇐ land.constants
+    end
+
+    ## calculate variables
+    # calculate recharge
+    gw_recharge = rf * (soilW[end] + ΔsoilW[end])
+
+    ΔgroundW .= ΔgroundW .+ gw_recharge / n_groundW
+    ΔsoilW[end] = ΔsoilW[end] - gw_recharge
+
+    ## pack land variables
+    @pack_nt begin
+        gw_recharge ⇒ land.fluxes
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
+    end
+    return land
 end
 
-function compute(o::groundWRecharge_fraction, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_groundWRecharge_fraction o
+function update(params::groundWRecharge_fraction, forcing, land, helpers)
+    @unpack_groundWRecharge_fraction params
 
-	## unpack land variables
-	@unpack_land begin
-		(groundW, soilW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-	end
+    ## unpack variables
+    @unpack_nt begin
+        (soilW, groundW) ⇐ land.pools
+        (ΔsoilW, ΔgroundW) ⇐ land.states
+    end
 
-	## calculate variables
-	# calculate recharge
-	groundWRec = rf * (soilW[end] + ΔsoilW[end])
+    ## update storage pools
+    soilW[end] = soilW[end] + ΔsoilW[end]
+    groundW .= groundW .+ ΔgroundW
 
-	ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
-	ΔsoilW[end] = ΔsoilW[end] - groundWRec
+    # reset ΔsoilW[end] and ΔgroundW to zero
+    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
+    ΔgroundW .= ΔgroundW .- ΔgroundW
 
-	## pack land variables
-	@pack_land begin
-		groundWRec => land.fluxes
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
-end
-
-function update(o::groundWRecharge_fraction, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_groundWRecharge_fraction o
-
-	## unpack variables
-	@unpack_land begin
-		(soilW, groundW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-	end
-
-	## update storage pools
-	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW .= groundW .+ ΔgroundW
-
-	# reset ΔsoilW[end] and ΔgroundW to zero
-	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW .= ΔgroundW .- ΔgroundW
-
-
-	## pack land variables
-	@pack_land begin
-		(groundW, soilW) => land.pools
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_nt begin
+        (groundW, soilW) ⇒ land.pools
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
+    end
+    return land
 end
 
 @doc """
 GW recharge as a fraction of moisture of the lowermost soil layer
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -70,7 +71,7 @@ Recharge the groundwater using groundWRecharge_fraction
  - land.pools.soilW
 
 *Outputs*
- - land.fluxes.groundWRec
+ - land.fluxes.gw_recharge
 
 # update
 

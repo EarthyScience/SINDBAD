@@ -1,26 +1,28 @@
 export NIRv_constant
 
-@bounds @describe @units @with_kw struct NIRv_constant{T1} <: NIRv
-	constantNIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct NIRv_constant{T1} <: NIRv
+    constant_NIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | "" | ""
 end
+#! format: on
 
-function compute(o::NIRv_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_NIRv_constant o
+function precompute(params::NIRv_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_NIRv_constant params
 
-	## calculate variables
-	NIRv = constantNIRv
+    ## calculate variables
+    NIRv = constant_NIRv
 
-	## pack land variables
-	@pack_land NIRv => land.states
-	return land
+    ## pack land variables
+    @pack_nt NIRv ⇒ land.states
+    return land
 end
 
 @doc """
 sets the value of NIRv as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

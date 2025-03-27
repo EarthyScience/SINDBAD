@@ -1,21 +1,23 @@
 export cAllocationSoilT_Friedlingstein1999
 
-@bounds @describe @units @with_kw struct cAllocationSoilT_Friedlingstein1999{T1,T2} <: cAllocationSoilT
-    minL_fT::T1 = 0.5 | (0.0, 1.0) | "minimum allocation coefficient from temperature stress" | ""
-    maxL_fT::T2 = 1.0 | (0.0, 1.0) | "maximum allocation coefficient from temperature stress" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cAllocationSoilT_Friedlingstein1999{T1,T2} <: cAllocationSoilT
+    min_f_soilT::T1 = 0.5 | (0.0, 1.0) | "minimum allocation coefficient from temperature stress" | "" | ""
+    max_f_soilT::T2 = 1.0 | (0.0, 1.0) | "maximum allocation coefficient from temperature stress" | "" | ""
 end
+#! format: on
 
-function compute(o::cAllocationSoilT_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::cAllocationSoilT_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilT_Friedlingstein1999 o
+    @unpack_cAllocationSoilT_Friedlingstein1999 params
 
     ## unpack land variables
-    @unpack_land fT ∈ land.cTauSoilT
+    @unpack_nt c_allocation_f_soilT ⇐ land.diagnostics
 
-    fT = clamp(fT, minL_fT, maxL_fT)
+    c_allocation_f_soilT = clamp(c_allocation_f_soilT, min_f_soilT, max_f_soilT)
 
     ## pack land variables
-    @pack_land fT => land.cAllocationSoilT
+    @pack_nt c_allocation_f_soilT ⇒ land.diagnostics
     return land
 end
 
@@ -23,17 +25,17 @@ end
 partial temperature effect on decomposition/mineralization based on Friedlingstein1999
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
 # compute:
 
 *Inputs*
- - land.cTauSoilT.fT: temperature effect on soil decomposition
+ - land.diagnostics.c_allocation_f_soilT: temperature effect on soil decomposition
 
 *Outputs*
- - land.cAllocationSoilT.fT: temperature stressor on carbon allocation
+ - land.diagnostics.c_allocation_f_soilT: temperature stressor on carbon allocation
 
 ---
 

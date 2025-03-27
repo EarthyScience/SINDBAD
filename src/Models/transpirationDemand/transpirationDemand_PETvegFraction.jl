@@ -1,30 +1,32 @@
 export transpirationDemand_PETvegFraction
 
-@bounds @describe @units @with_kw struct transpirationDemand_PETvegFraction{T1} <: transpirationDemand
-	α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct transpirationDemand_PETvegFraction{T1} <: transpirationDemand
+    α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | "" | ""
 end
+#! format: on
 
-function compute(o::transpirationDemand_PETvegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_transpirationDemand_PETvegFraction o
+function compute(params::transpirationDemand_PETvegFraction, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_transpirationDemand_PETvegFraction params
 
-	## unpack land variables
-	@unpack_land begin
-		vegFraction ∈ land.states
-		PET ∈ land.PET
-	end
-	tranDem = PET * α * vegFraction
+    ## unpack land variables
+    @unpack_nt begin
+        frac_vegetation ⇐ land.states
+        PET ⇐ land.fluxes
+    end
+    transpiration_demand = PET * α * frac_vegetation
 
-	## pack land variables
-	@pack_land tranDem => land.transpirationDemand
-	return land
+    ## pack land variables
+    @pack_nt transpiration_demand ⇒ land.diagnostics
+    return land
 end
 
 @doc """
 calculate the climate driven demand for transpiration as a function of PET & α for vegetation; & vegetation fraction
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -32,12 +34,12 @@ $(PARAMFIELDS)
 Demand-driven transpiration using transpirationDemand_PETvegFraction
 
 *Inputs*
- - land.PET.PET : potential evapotranspiration out of PET module
- - land.states.vegFraction: vegetation fraction
+ - land.fluxes.PET : potential evapotranspiration out of PET module
+ - land.states.frac_vegetation: vegetation fraction
  - α: α parameter for potential transpiration
 
 *Outputs*
- - land.transpirationDemand.tranDem: demand driven transpiration
+ - land.diagnostics.transpiration_demand: demand driven transpiration
 
 ---
 

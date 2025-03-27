@@ -1,15 +1,16 @@
 export NIRv_forcing
 
-struct NIRv_forcing <: NIRv
-end
+struct NIRv_forcing <: NIRv end
 
-function compute(o::NIRv_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing NIRv ∈ forcing
+function compute(params::NIRv_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_NIRv ⇐ forcing
 
-	## pack land variables
-	@pack_land NIRv => land.states
-	return land
+    NIRv = f_NIRv
+    
+    ## pack land variables
+    @pack_nt NIRv ⇒ land.states
+    return land
 end
 
 @doc """

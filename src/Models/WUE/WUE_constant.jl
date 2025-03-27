@@ -1,26 +1,28 @@
 export WUE_constant
 
-@bounds @describe @units @with_kw struct WUE_constant{T1} <: WUE
-	constantWUE::T1 = 4.1 | (1.0, 10.0) | "mean FluxNet WUE" | "gC/mmH2O"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct WUE_constant{T1} <: WUE
+    constant_WUE::T1 = 4.1 | (1.0, 10.0) | "mean FluxNet WUE" | "gC/mmH2O" | ""
 end
+#! format: on
 
-function compute(o::WUE_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_WUE_constant o
+function precompute(params::WUE_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_WUE_constant params
 
-	## calculate variables
-	AoE = constantWUE
+    ## calculate variables
+    WUE = constant_WUE
 
-	## pack land variables
-	@pack_land AoE => land.WUE
-	return land
+    ## pack land variables
+    @pack_nt WUE ⇒ land.diagnostics
+    return land
 end
 
 @doc """
 calculates the WUE/AOE as a constant in space & time
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -30,7 +32,7 @@ Estimate wue using WUE_constant
 *Inputs*
 
 *Outputs*
- - land.WUE.AoE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
+ - land.diagnostics.WUE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
 
 ---
 

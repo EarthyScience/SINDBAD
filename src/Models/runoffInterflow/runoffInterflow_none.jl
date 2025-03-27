@@ -1,23 +1,23 @@
 export runoffInterflow_none
 
-struct runoffInterflow_none <: runoffInterflow
-end
+struct runoffInterflow_none <: runoffInterflow end
 
-function precompute(o::runoffInterflow_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::runoffInterflow_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
-	## calculate variables
-	runoffInterflow = helpers.numbers.𝟘
+    ## calculate variables
+    interflow_runoff = z_zero
 
-	## pack land variables
-	@pack_land runoffInterflow => land.fluxes
-	return land
+    ## pack land variables
+    @pack_nt interflow_runoff ⇒ land.fluxes
+    return land
 end
 
 @doc """
 sets interflow runoff to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffInterflow_none
+# Instantiate:
+Instantiate time-invariant variables for runoffInterflow_none
 
 
 ---

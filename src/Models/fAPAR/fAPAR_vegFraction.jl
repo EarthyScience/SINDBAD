@@ -1,37 +1,38 @@
 export fAPAR_vegFraction
 
-@bounds @describe @units @with_kw struct fAPAR_vegFraction{T1} <: fAPAR
-	vegFracTofAPAR::T1 = 0.00002 | (0.00001, 0.99) | "linear fraction of fAPAR and vegFraction" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct fAPAR_vegFraction{T1} <: fAPAR
+    frac_vegetation_to_fAPAR::T1 = 0.989 | (0.00001, 0.99) | "linear fraction of fAPAR and frac_vegetation" | "" | ""
 end
+#! format: on
 
+function compute(params::fAPAR_vegFraction, forcing, land, helpers)
+    @unpack_fAPAR_vegFraction params
 
-function compute(o::fAPAR_vegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_fAPAR_vegFraction o
+    ## unpack land variables
+    @unpack_nt frac_vegetation ⇐ land.states
 
-	## unpack land variables
-	@unpack_land vegFraction ∈ land.states
+    ## calculate variables
+    fAPAR = frac_vegetation_to_fAPAR * frac_vegetation
 
-	## calculate variables
-	fAPAR = vegFracTofAPAR * vegFraction
-
-	## pack land variables
-	@pack_land fAPAR => land.states
-	return land
+    ## pack land variables
+    @pack_nt fAPAR ⇒ land.states
+    return land
 end
 
 @doc """
 sets the value of fAPAR as a linear function of vegetation fraction
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
 # compute:
-Fraction of absorbed photosynthetically active radiation from vegFraction
+Fraction of absorbed photosynthetically active radiation from frac_vegetation
 
 *Inputs*
- - land.states.vegFraction: vegetated fraction, which needs vegFraction module to be activated
+ - land.states.frac_vegetation: vegetated fraction, which needs frac_vegetation module to be activated
 
 *Outputs*
  - land.states.fAPAR: fAPAR as a fraction of vegetation fraction

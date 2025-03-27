@@ -1,23 +1,23 @@
 export saturatedFraction_none
 
-struct saturatedFraction_none <: saturatedFraction
-end
+struct saturatedFraction_none <: saturatedFraction end
 
-function precompute(o::saturatedFraction_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::saturatedFraction_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
-	## calculate variables
-	satFrac = helpers.numbers.𝟘
+    ## calculate variables
+    satFrac = z_zero
 
-	## pack land variables
-	@pack_land satFrac => land.states
-	return land
+    ## pack land variables
+    @pack_nt satFrac ⇒ land.states
+    return land
 end
 
 @doc """
-sets the land.states.soilWSatFrac [saturated soil fraction] to 𝟘  (pix, 1)
+sets the land.states.soilWSatFrac [saturated soil fraction] toz_zero (pix, 1)
 
-# precompute:
-precompute/instantiate time-invariant variables for saturatedFraction_none
+# Instantiate:
+Instantiate time-invariant variables for saturatedFraction_none
 
 
 ---

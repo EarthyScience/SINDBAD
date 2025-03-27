@@ -1,66 +1,68 @@
 export gppDiffRadiation_Turner2006
 
-@bounds @describe @units @with_kw struct gppDiffRadiation_Turner2006{T1} <: gppDiffRadiation
-	rueRatio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct gppDiffRadiation_Turner2006{T1} <: gppDiffRadiation
+    rue_ratio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | "" | ""
 end
+#! format: on
 
-function precompute(o::gppDiffRadiation_Turner2006, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Turner2006 o
-    @unpack_forcing (Rg, RgPot) ∈ forcing
+    @unpack_gppDiffRadiation_Turner2006 params
+    @unpack_nt (f_rg, f_rg_pot) ⇐ forcing
 
     ## calculate variables
-    CI = Rg / RgPot
+    CI = f_rg / f_rg_pot
     CI_min = CI
     CI_max = CI
     ## pack land variables
-    @pack_land (CI_min, CI_max) => land.gppDiffRadiation
+    @pack_nt (CI_min, CI_max) ⇒ land.diagnostics
     return land
 end
 
-function compute(o::gppDiffRadiation_Turner2006, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Turner2006 o
-    @unpack_forcing (Rg, RgPot) ∈ forcing
-    @unpack_land begin
-        (CI_min, CI_max) ∈ land.gppDiffRadiation
-        (𝟘, 𝟙, tolerance) ∈ helpers.numbers
+    @unpack_gppDiffRadiation_Turner2006 params
+    @unpack_nt (f_rg, f_rg_pot) ⇐ forcing
+    @unpack_nt begin
+        (CI_min, CI_max) ⇐ land.diagnostics
+        z_zero ⇐ land.constants
+        tolerance ⇐ helpers.numbers
     end
 
-
     ## calculate variables
-    CI = Rg / RgPot
-    
-	# update the minimum and maximum on the go
-	CI_min = min(CI, CI_min)
+    CI = f_rg / f_rg_pot
+
+    # update the minimum and maximum on the go
+    CI_min = min(CI, CI_min)
     CI_max = min(CI, CI_max)
 
-    SCI = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were calculated in the precompute using the full time series of Rg and RgPot. Now, this is not possible, and thus min and max need to be updated on the go, and once the simulation is complete in the first cycle of forcing, it will work...
+    SCI = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were calculated in the instantiate using the full time series of f_rg and f_rg_pot. Now, this is not possible, and thus min and max need to be updated on the go, and once the simulation is complete in the first cycle of forcing, it will work...
 
-	cScGPP = (𝟙 - rueRatio) * SCI + rueRatio
-    CloudScGPP = RgPot > 𝟘  ? cScGPP : 𝟘
+    cScGPP = (one(rue_ratio) - rue_ratio) * SCI + rue_ratio
+    gpp_f_cloud = f_rg_pot > z_zero ? cScGPP : zero(cScGPP)
 
-	## pack land variables
-    @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation
+    ## pack land variables
+    @pack_nt (gpp_f_cloud, CI_min, CI_max) ⇒ land.diagnostics
     return land
 end
 
 @doc """
-cloudiness scalar [radiation diffusion] on gppPot based on Turner2006
+cloudiness scalar [radiation diffusion] on gpp_potential based on Turner2006
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
 # compute:
 
 *Inputs*
- - forcing.Rg: Global radiation [SW incoming] [MJ/m2/time]
- - forcing.RgPot: Potential radiation [MJ/m2/time]
+ - forcing.f_rg: Global radiation [SW incoming] [MJ/m2/time]
+ - forcing.f_rg_pot: Potential radiation [MJ/m2/time]
 
 *Outputs*
- - land.gppDiffRadiation.CloudScGPP: effect of cloudiness on potential GPP
+ - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
 
 ---
 
@@ -74,6 +76,6 @@ $(PARAMFIELDS)
 
 *Created by:*
  - mjung
- - ncarval
+ - ncarvalhais
 """
 gppDiffRadiation_Turner2006

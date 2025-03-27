@@ -1,31 +1,35 @@
 export rootMaximumDepth_fracSoilD
 
-@bounds @describe @units @with_kw struct rootMaximumDepth_fracSoilD{T1} <: rootMaximumDepth
-    fracRootD2SoilD::T1 = 0.5 | (0.1, 0.8) | "root depth as a fraction of soil depth" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct rootMaximumDepth_fracSoilD{T1} <: rootMaximumDepth
+    constant_frac_max_root_depth::T1 = 0.5 | (0.1, 0.8) | "root depth as a fraction of soil depth" | "" | ""
 end
+#! format: on
 
-function precompute(o::rootMaximumDepth_fracSoilD, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootMaximumDepth_fracSoilD o
-    @unpack_land soilLayerThickness ∈ land.soilWBase
+    @unpack_rootMaximumDepth_fracSoilD params
+    @unpack_nt soil_layer_thickness ⇐ land.properties
     ## calculate variables
-    sumSoilDepth = sum(soilLayerThickness)
+    ∑soil_depth = sum(soil_layer_thickness)
     ## pack land variables
-    @pack_land sumSoilDepth => land.rootMaximumDepth
+    @pack_nt begin
+        ∑soil_depth ⇒ land.properties
+    end
     return land
 end
 
-function compute(o::rootMaximumDepth_fracSoilD, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(params::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootMaximumDepth_fracSoilD o
-    @unpack_land sumSoilDepth ∈ land.rootMaximumDepth
+    @unpack_rootMaximumDepth_fracSoilD params
+    @unpack_nt ∑soil_depth ⇐ land.properties
     ## calculate variables
     # get the soil thickness & root distribution information from input
-    maxRootDepth = sumSoilDepth * fracRootD2SoilD
-    # disp(["the maxRootD scalar: " fracRootD2SoilD])
+    max_root_depth = ∑soil_depth * constant_frac_max_root_depth
+    # disp(["the maxRootD scalar: " constant_frac_max_root_depth])
 
     ## pack land variables
-    @pack_land maxRootDepth => land.states
+    @pack_nt max_root_depth ⇒ land.diagnostics
     return land
 end
 
@@ -33,7 +37,7 @@ end
 sets the maximum rooting depth as a fraction of total soil depth. rootMaximumDepth_fracSoilD
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -41,10 +45,10 @@ $(PARAMFIELDS)
 Maximum rooting depth using rootMaximumDepth_fracSoilD
 
 *Inputs*
- - soilLayerThickness
+ - soil_layer_thickness
 
 *Outputs*
- - land.states.maxRootDepth: The maximum rooting depth in mm
+ - land.states.max_root_depth: The maximum rooting depth in mm
 
 ---
 

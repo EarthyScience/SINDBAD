@@ -1,51 +1,54 @@
 export snowMelt_Tair
 
-@bounds @describe @units @with_kw struct snowMelt_Tair{T1} <: snowMelt
-	rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct snowMelt_Tair{T1} <: snowMelt
+    rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C" | "day"
 end
+#! format: on
 
-function compute(o::snowMelt_Tair, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::snowMelt_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_snowMelt_Tair o
-    @unpack_forcing Tair ∈ forcing
+    @unpack_snowMelt_Tair params
+    @unpack_nt f_airT ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        (WBP, snowFraction) ∈ land.states
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
-		𝟘 ∈ helpers.numbers
+    @unpack_nt begin
+        (WBP, frac_snow) ⇐ land.states
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
+        z_zero ⇐ land.constants
+        n_snowW ⇐ land.constants
     end
-    # effect of temperature on snow melt = snowMeltRate * Tair
-    pRate = (rate * helpers.dates.nStepsDay)
-    Tterm = max(pRate * Tair, 𝟘)
+    # effect of temperature on snow melt = snowMeltRate * f_airT
+    pRate = rate
+    Tterm = maxZero(pRate * f_airT)
 
     # snow melt [mm/day] is calculated as a simple function of temperature & scaled with the snow covered fraction
-    snowMelt = min(sum(snowW + ΔsnowW), Tterm * snowFraction)
+    snow_melt = min(totalS(snowW, ΔsnowW), Tterm * frac_snow)
 
-	# divide snowmelt loss equally from all layers
-    ΔsnowW .= ΔsnowW .- snowMelt / length(snowW)
+    # divide snowmelt loss equally from all layers
+    ΔsnowW .= ΔsnowW .- snow_melt / n_snowW
 
-    # a Water Balance Pool variable that tracks how much water is still "available"
-    WBP = WBP + snowMelt
+    # a Water Balance Pool variable that tracks how much water is still "available" | ""
+    WBP = WBP + snow_melt
 
     ## pack land variables
-    @pack_land begin
-        snowMelt => land.fluxes
-        Tterm => land.snowMelt
-        WBP => land.states
-        ΔsnowW => land.states
+    @pack_nt begin
+        snow_melt ⇒ land.fluxes
+        Tterm ⇒ land.fluxes
+        WBP ⇒ land.states
+        ΔsnowW ⇒ land.pools
     end
     return land
 end
 
-function update(o::snowMelt_Tair, forcing, land::NamedTuple, helpers::NamedTuple)
-    @unpack_snowMelt_Tair o
+function update(params::snowMelt_Tair, forcing, land, helpers)
+    @unpack_snowMelt_Tair params
 
     ## unpack variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
 
     # update snow pack
@@ -55,9 +58,9 @@ function update(o::snowMelt_Tair, forcing, land::NamedTuple, helpers::NamedTuple
     ΔsnowW .= ΔsnowW .- ΔsnowW
 
     ## pack land variables
-    @pack_land begin
-        # snowW => land.pools
-        ΔsnowW => land.states
+    @pack_nt begin
+        snowW ⇒ land.pools
+        ΔsnowW ⇒ land.pools
     end
     return land
 end
@@ -66,7 +69,7 @@ end
 computes the snow melt term as function of air temperature
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -74,10 +77,9 @@ $(PARAMFIELDS)
 Calculate snowmelt and update s.w.wsnow using snowMelt_Tair
 
 *Inputs*
- - forcing.Tair: temperature [C]
- - helpers.dates.nStepsDay: model time steps per day
- - land.snowMelt.Tterm: effect of temperature on snow melt [mm/time]
- - land.states.snowFraction: snow cover fraction [-]
+ - forcing.f_airT: temperature [C]
+ - land.fluxes.Tterm: effect of temperature on snow melt [mm/time]
+ - land.states.frac_snow: snow cover fraction [-]
 
 *Outputs*
  - land.fluxes.snowMelt: snow melt [mm/time]

@@ -1,29 +1,31 @@
 export LAI_cVegLeaf
 
-@bounds @describe @units @with_kw struct LAI_cVegLeaf{T1} <: LAI
-	SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct LAI_cVegLeaf{T1} <: LAI
+    SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1" | ""
 end
+#! format: on
 
-function compute(o::LAI_cVegLeaf, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_LAI_cVegLeaf o
+function compute(params::LAI_cVegLeaf, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_LAI_cVegLeaf params
 
-	@unpack_land cVegLeaf ∈ land.pools
+    @unpack_nt cVegLeaf ⇐ land.pools
 
-	## calculate variables
-	cVegLeafTotal = sum(cVegLeaf)
-	LAI = cVegLeafTotal* SLA
+    ## calculate variables
+    cVegLeafTotal = totalS(cVegLeaf)
+    LAI = cVegLeafTotal * SLA
 
-	## pack land variables
-	@pack_land LAI => land.states
-	return land
+    ## pack land variables
+    @pack_nt LAI ⇒ land.states
+    return land
 end
 
 @doc """
 sets the value of land.states.LAI from the carbon in the leaves of the previous time step
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

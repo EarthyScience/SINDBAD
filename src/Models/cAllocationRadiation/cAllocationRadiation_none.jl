@@ -2,26 +2,26 @@ export cAllocationRadiation_none
 
 struct cAllocationRadiation_none <: cAllocationRadiation end
 
-function precompute(o::cAllocationRadiation_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cAllocationRadiation_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    fR = helpers.numbers.𝟙
+    c_allocation_f_cloud = one(first(cEco))
 
     ## pack land variables
-    @pack_land fR => land.cAllocationRadiation
+    @pack_nt c_allocation_f_cloud ⇒ land.diagnostics
     return land
 end
 
 @doc """
 sets the radiation effect on allocation to one (no effect)
 
-# precompute:
+# Instantiate:
 
 *Inputs*
-- helpers.numbers.𝟙
 
 *Outputs*
-- land.Radiation.fR: radiation effect on cAllocation (0-1)
+- land.diagnostics.c_allocation_f_cloud: radiation effect on cAllocation (0-1)
 
 
 ---
