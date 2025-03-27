@@ -33,9 +33,9 @@ function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, t
     loss_validation = fill(zero(Float32), length(sites_validation), n_epochs)
     loss_testing = fill(zero(Float32), length(sites_testing), n_epochs)
     # ? save also the individual losses
-    loss_split_training = fill(zero(Float32), length(sites_training), total_constraints, n_epochs)
-    loss_split_validation = fill(zero(Float32), length(sites_validation), total_constraints, n_epochs)
-    loss_split_testing = fill(zero(Float32), length(sites_testing), total_constraints, n_epochs)
+    loss_split_training = fill(NaN32, length(sites_training), total_constraints, n_epochs)
+    loss_split_validation = fill(NaN32, length(sites_validation), total_constraints, n_epochs)
+    loss_split_testing = fill(NaN32, length(sites_testing), total_constraints, n_epochs)
 
     path_checkpoint = joinpath(path_experiment, "checkpoint")
     f_path = mkpath(path_checkpoint)
@@ -64,7 +64,7 @@ function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, t
         # ? validation
         getLossForSites(grads_lib, lossSite, loss_validation, loss_split_validation, epoch, params_epoch, sites_validation, indices_sites_validation, forward_args...)
         # ? test 
-       getLossForSites(grads_lib, lossSite, loss_testing, loss_split_testing, epoch, params_epoch, sites_testing, indices_sites_testing, forward_args...)
+        getLossForSites(grads_lib, lossSite, loss_testing, loss_split_testing, epoch, params_epoch, sites_testing, indices_sites_testing, forward_args...)
 
         jldsave(joinpath(f_path, "checkpoint_epoch_$(epoch).jld2");
             lower_bound=tbl_params.lower, upper_bound=tbl_params.upper, ps_names=tbl_params.name,
@@ -170,7 +170,7 @@ function gradsNaNCheck!(grads_batch, _params_batch, sites_batch, tbl_params; sho
     if sum(isnan.(grads_batch))>0
         if show_params_for_nan
             foreach(findall(x->isnan(x), grads_batch)) do ci
-                p_index_tmp, si = ci
+                p_index_tmp, si = Tuple(ci)
                 site_name_tmp = sites_batch[si]
                 p_vec_tmp = _params_batch(site=site_name_tmp)
                 param_values =  Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp]))
@@ -178,7 +178,7 @@ function gradsNaNCheck!(grads_batch, _params_batch, sites_batch, tbl_params; sho
             end
         end
         @warn "NaNs in grads, replacing all by 0.0f0"
-        replace!(grads_batch, NaN => 0.0f0)
+        replace!(grads_batch, NaN => one(eltype(grads_batch)))
     end
 end
 
