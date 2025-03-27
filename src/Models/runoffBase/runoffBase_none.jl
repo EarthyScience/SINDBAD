@@ -1,23 +1,23 @@
 export runoffBase_none
 
-struct runoffBase_none <: runoffBase
-end
+struct runoffBase_none <: runoffBase end
 
-function precompute(o::runoffBase_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::runoffBase_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
 
-	## calculate variables
-	runoffBase = helpers.numbers.𝟘
+    ## calculate variables
+    base_runoff = z_zero
 
-	## pack land variables
-	@pack_land runoffBase => land.fluxes
-	return land
+    ## pack land variables
+    @pack_nt base_runoff ⇒ land.fluxes
+    return land
 end
 
 @doc """
 sets the base runoff to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffBase_none
+# Instantiate:
+Instantiate time-invariant variables for runoffBase_none
 
 
 ---

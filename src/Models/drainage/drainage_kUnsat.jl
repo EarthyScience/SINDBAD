@@ -1,66 +1,70 @@
 export drainage_kUnsat
 
-struct drainage_kUnsat <: drainage
+struct drainage_kUnsat <: drainage end
+
+function define(params::drainage_kUnsat, forcing, land, helpers)
+    @unpack_nt soilW ⇐ land.pools
+    ## Instantiate drainage
+    drainage = zero(soilW)
+    ## pack land variables
+    @pack_nt drainage ⇒ land.fluxes
+    return land
 end
 
-function precompute(o::drainage_kUnsat, forcing, land::NamedTuple, helpers::NamedTuple)
-	## instantiate drainage
-	drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
-	## pack land variables
-	@pack_land drainage => land.drainage
-	return land
+function compute(params::drainage_kUnsat, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt begin
+        drainage ⇐ land.fluxes
+        unsat_k_model ⇐ land.models
+        (w_sat, w_fc, soil_β, k_fc, k_sat) ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        (z_zero, o_one) ⇐ land.constants
+        tolerance ⇐ helpers.numbers
+    end
+
+    ## calculate drainage
+    for sl ∈ 1:(length(soilW)-1)
+        holdCap = w_sat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        max_drain = w_sat[sl] - w_fc[sl]
+        lossCap = min(soilW[sl] + ΔsoilW[sl], max_drain)
+        k = unsatK(land, helpers, sl, unsat_k_model)
+        drain = min(k, holdCap, lossCap)
+        drainage[sl] = drain > tolerance ? drain : zero(drain)
+        ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
+        ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
+    end
+
+    ## pack land variables
+    # @pack_nt begin
+    # 	drainage ⇒ land.fluxes
+    # 	# ΔsoilW ⇒ land.pools
+    # end
+    return land
 end
 
-function compute(o::drainage_kUnsat, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(params::drainage_kUnsat, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		drainage ∈ land.drainage
-		unsatK ∈ land.soilProperties
-		(p_wSat, p_β, p_kFC, p_kSat) ∈ land.soilWBase
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+    end
 
-	## calculate drainage
-	for sl in 1:length(land.pools.soilW)-1
-		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
-		lossCap = soilW[sl] + ΔsoilW[sl]
-		drainage[sl] = unsatK(land, helpers, sl)
-		drainage[sl] = min(drainage[sl], holdCap, lossCap)
-		ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
-		ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
-	end
+    ## update variables
+    # update soil moisture
+    soilW .= soilW .+ ΔsoilW
 
-	## pack land variables
-	@pack_land begin
-		drainage => land.drainage
-		# ΔsoilW => land.states
-	end
-	return land
-end
+    # reset soil moisture changes to zero
+    ΔsoilW .= ΔsoilW .- ΔsoilW
 
-function update(o::drainage_kUnsat, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
-
-	## update variables
-	# update soil moisture
-	soilW = soilW + ΔsoilW
-
-	# reset soil moisture changes to zero
-	ΔsoilW = ΔsoilW - ΔsoilW
-
-	## pack land variables
-	@pack_land begin
-		# soilW => land.pools
-		# ΔsoilW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_nt begin
+        soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
+    end
+    return land
 end
 
 @doc """
@@ -73,10 +77,10 @@ Recharge the soil using drainage_kUnsat
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conductivity.
+ - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conductivity.
 
 *Outputs*
-- land.drainage.drainage
+- land.fluxes.drainage
 - drainage from the last layer is calculated in groundWrecharge
 
 

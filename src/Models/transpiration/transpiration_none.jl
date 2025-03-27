@@ -1,23 +1,22 @@
 export transpiration_none
 
-struct transpiration_none <: transpiration
-end
+struct transpiration_none <: transpiration end
 
-function precompute(o::transpiration_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::transpiration_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
+    ## calculate variables
+    transpiration = z_zero
 
-	## calculate variables
-	transpiration = helpers.numbers.𝟘
-
-	## pack land variables
-	@pack_land transpiration => land.fluxes
-	return land
+    ## pack land variables
+    @pack_nt transpiration ⇒ land.fluxes
+    return land
 end
 
 @doc """
 sets the actual transpiration to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for transpiration_none
+# Instantiate:
+Instantiate time-invariant variables for transpiration_none
 
 
 ---

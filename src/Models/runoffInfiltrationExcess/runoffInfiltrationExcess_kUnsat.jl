@@ -1,29 +1,28 @@
 export runoffInfiltrationExcess_kUnsat
 
-struct runoffInfiltrationExcess_kUnsat <: runoffInfiltrationExcess
-end
+struct runoffInfiltrationExcess_kUnsat <: runoffInfiltrationExcess end
 
-function compute(o::runoffInfiltrationExcess_kUnsat, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::runoffInfiltrationExcess_kUnsat, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		WBP ∈ land.states
-		unsatK ∈ land.soilProperties
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	# get the unsaturated hydraulic conductivity based on soil properties for the first soil layer
-	k_unsat = unsatK(land, helpers, 1)
-	# minimum of the conductivity & the incoming water
-	runoffInfExc = max(WBP-k_unsat, 𝟘)
-	# update remaining water
-	WBP = WBP - runoffInfExc
+    ## unpack land variables
+    @unpack_nt begin
+        WBP ⇐ land.states
+        unsat_k_model ⇐ land.models
+        (z_zero, o_one) ⇐ land.constants
+    end
+    # get the unsaturated hydraulic conductivity based on soil properties for the first soil layer
+    k_unsat = unsatK(land, helpers, 1, unsat_k_model)
+    # minimum of the conductivity & the incoming water
+    inf_excess_runoff = maxZero(WBP - k_unsat)
+    # update remaining water
+    WBP = WBP - inf_excess_runoff
 
-	## pack land variables
-	@pack_land begin
-		runoffInfExc => land.fluxes
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_nt begin
+        inf_excess_runoff ⇒ land.fluxes
+        WBP ⇒ land.states
+    end
+    return land
 end
 
 @doc """
@@ -39,7 +38,7 @@ Infiltration excess runoff using runoffInfiltrationExcess_kUnsat
  - land.pools.soilW of first layer
 
 *Outputs*
- - land.evaporation.PETSoil
+ - land.fluxes.PETSoil
  - land.fluxes.evaporation
  - land.pools.soilW[1]: bare soil evaporation is only allowed from first soil layer
 

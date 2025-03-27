@@ -1,43 +1,55 @@
 export WUE_Medlyn2011
 
-@bounds @describe @units @with_kw struct WUE_Medlyn2011{T1, T2} <: WUE
-	g1::T1 = 3.0 | (0.5, 12.0) | "stomatal conductance parameter" | "kPa^0.5"
-	ζ::T2 = 1.0 | (0.85, 3.5) | "sensitivity of WUE to ambient co2" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct WUE_Medlyn2011{T1,T2,T3} <: WUE
+    g1::T1 = 3.0 | (0.5, 12.0) | "stomatal conductance parameter" | "kPa^0.5" | ""
+    ζ::T2 = 1.0 | (0.85, 3.5) | "sensitivity of WUE to ambient co2" | "" | ""
+    diffusivity_ratio::T3 = 1.6 | (-Inf, Inf) | "Ratio of the molecular diffusivities for water vapor and CO2" | "" | ""
+end
+#! format: on
+
+function define(params::WUE_Medlyn2011, forcing, land, helpers)
+    @unpack_WUE_Medlyn2011 params
+
+    # umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
+    umol_to_gC = oftype(diffusivity_ratio, 6.6667e-004)
+    ## pack land variables
+    @pack_nt umol_to_gC ⇒ land.WUE
+    return land
 end
 
-function compute(o::WUE_Medlyn2011, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters and forcing
-	@unpack_WUE_Medlyn2011 o
-	@unpack_forcing (PsurfDay, VPDDay) ∈ forcing
+function compute(params::WUE_Medlyn2011, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_WUE_Medlyn2011 params
+    @unpack_nt (f_psurf_day, f_VPD_day) ⇐ forcing
 
+    ## unpack land variables
+    @unpack_nt begin
+        ambient_CO2 ⇐ land.states
+        tolerance ⇐ helpers.numbers
+        umol_to_gC ⇐ land.WUE
+    end
 
-	## unpack land variables
-	@unpack_land begin
-		ambCO2 ∈ land.states
-		(𝟘, 𝟙, tolerance) ∈ helpers.numbers
-	end
+    ## calculate variables
+    f_VPD_day = max(f_VPD_day, tolerance)
+    # umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
+    # umol_to_gC = 12 * 100/(18 * 1000)
+    ciNoCO2 = g1 / (g1 + sqrt(f_VPD_day)) # RHS eqn 13 in corrigendum
+    WUENoCO2 = umol_to_gC * f_psurf_day / (diffusivity_ratio * (f_VPD_day + g1 * sqrt(f_VPD_day))) # eqn 14 #? gC/mol of H2o?
+    WUE = WUENoCO2 * ζ * ambient_CO2
+    ci = ciNoCO2 * ambient_CO2
 
-
-	## calculate variables
-	VPDDay = max(VPDDay, tolerance)
-	umol_to_gC = 𝟙 * 6.6667e-004
-	# umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
-	# umol_to_gC = 12 * 100/(18 * 1000)
-	ciNoCO2 = g1 / (g1 + sqrt(VPDDay)); # RHS eqn 13 in corrigendum
-	AoENoCO2 = umol_to_gC * PsurfDay / (1.6 * (VPDDay + g1 * sqrt(VPDDay))); # eqn 14 #? gC/mol of H2o?
-	AoE = AoENoCO2 * ζ * ambCO2
-	ci = ciNoCO2 * ambCO2
-
-	## pack land variables
-	@pack_land (AoE, AoENoCO2, ci, ciNoCO2) => land.WUE
-	return land
+    ## pack land variables
+    @pack_nt (ci, ciNoCO2) ⇒ land.states
+    @pack_nt (WUENoCO2, WUE) ⇒ land.diagnostics
+    return land
 end
 
 @doc """
 calculates the WUE/AOE ci/ca as a function of daytime mean VPD. calculates the WUE/AOE ci/ca as a function of daytime mean VPD & ambient co2
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -45,14 +57,14 @@ $(PARAMFIELDS)
 Estimate wue using WUE_Medlyn2011
 
 *Inputs*
- - forcing.PsurfDay: daytime mean atmospheric pressure [kPa]
- - forcing.VPDDay: daytime mean VPD [kPa]
+ - forcing.f_psurf_day: daytime mean atmospheric pressure [kPa]
+ - forcing.f_VPD_day: daytime mean VPD [kPa]
 
 *Outputs*
- - land.WUE.AoE: water use efficiency A/E [gC/mmH2O] with ambient co2
- - land.WUE.ci: internal co2 with ambient co2
- - land.WUE.AoENoCO2: precomputed A/E [gC/mmH2O] without ambient co2
- - land.WUE.ciNoCO2: precomputed internal co2 scalar without ambient co2
+ - land.diagnostics.WUE: water use efficiency A/E [gC/mmH2O] with ambient co2
+ - land.states.ci: internal co2 with ambient co2
+ - land.diagnostics.WUENoCO2: instantiated A/E [gC/mmH2O] without ambient co2
+ - land.states.ciNoCO2: instantiated internal co2 scalar without ambient co2
 
 ---
 

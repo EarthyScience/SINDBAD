@@ -1,15 +1,15 @@
 export NDWI_forcing
 
-struct NDWI_forcing <: NDWI
-end
+struct NDWI_forcing <: NDWI end
 
-function compute(o::NDWI_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing NDWI ∈ forcing
+function compute(params::NDWI_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_NDWI ⇐ forcing
 
-	## pack land variables
-	@pack_land NDWI => land.states
-	return land
+    NDWI = f_NDWI
+    ## pack land variables
+    @pack_nt NDWI ⇒ land.states
+    return land
 end
 
 @doc """

@@ -1,40 +1,42 @@
 export gppVPD_MOD17
 
-@bounds @describe @units @with_kw struct gppVPD_MOD17{T1, T2} <: gppVPD
-	VPDmax::T1 = 4.0 | (2.0, 8.0) | "Max VPD with GPP > 0" | "kPa"
-	VPDmin::T2 = 0.65 | (0.0, 1.0) | "Min VPD with GPP > 0" | "kPa"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct gppVPD_MOD17{T1,T2} <: gppVPD
+    VPD_max::T1 = 4.0 | (2.0, 8.0) | "Max VPD with GPP > 0" | "kPa" | ""
+    VPD_min::T2 = 0.65 | (0.0, 1.0) | "Min VPD with GPP > 0" | "kPa" | ""
 end
+#! format: on
 
-function compute(o::gppVPD_MOD17, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::gppVPD_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppVPD_MOD17 o
-    @unpack_forcing VPDDay ∈ forcing
-    @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
+    @unpack_gppVPD_MOD17 params
+    @unpack_nt f_VPD_day ⇐ forcing
+    @unpack_nt (z_zero, o_one) ⇐ land.constants
 
     ## calculate variables
-    vsc = (VPDmax - VPDDay) / (VPDmax - VPDmin)
-    VPDScGPP = clamp(vsc, 𝟘, 𝟙)
+    vsc = (VPD_max - f_VPD_day) / (VPD_max - VPD_min)
+    gpp_f_vpd = clampZeroOne(vsc)
 
     ## pack land variables
-    @pack_land VPDScGPP => land.gppVPD
+    @pack_nt gpp_f_vpd ⇒ land.diagnostics
     return land
 end
 
 @doc """
-VPD stress on gppPot based on MOD17 model
+VPD stress on gpp_potential based on MOD17 model
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
 # compute:
 
 *Inputs*
- - forcing.VPDDay: daytime vapor pressure deficit [kPa]
+ - forcing.f_VPD_day: daytime vapor pressure deficit [kPa]
 
 *Outputs*
- - land.gppVPD.VPDScGPP: VPD effect on GPP between 0-1
+ - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
 
 ---
 
@@ -49,7 +51,7 @@ $(PARAMFIELDS)
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 
 *Notes*
 """

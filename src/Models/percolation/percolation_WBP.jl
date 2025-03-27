@@ -1,65 +1,62 @@
 export percolation_WBP
 
-struct percolation_WBP <: percolation
+struct percolation_WBP <: percolation end
+
+function compute(params::percolation_WBP, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt begin
+        (ΔgroundW, ΔsoilW, soilW, groundW) ⇐ land.pools
+        WBP ⇐ land.states
+        (o_one, n_groundW) ⇐ land.constants
+        tolerance ⇐ helpers.numbers
+        w_sat ⇐ land.properties
+    end
+
+    # set WBP as the soil percolation
+    percolation = WBP
+    to_allocate = o_one * percolation
+    for sl ∈ eachindex(land.pools.soilW)
+        allocated = min(w_sat[sl] - (soilW[sl] + ΔsoilW[sl]), to_allocate)
+        @add_to_elem allocated ⇒ (ΔsoilW, sl, :soilW)
+        to_allocate = to_allocate - allocated
+    end
+    to_groundW = to_allocate / n_groundW
+    ΔgroundW = addToEachElem(ΔgroundW, to_groundW)
+    # to_groundW = abs(to_allocate)
+    # ΔgroundW = addToEachElem(ΔgroundW, to_groundW / n_groundW)
+    to_allocate = to_allocate - to_groundW
+    WBP = to_allocate
+
+    ## pack land variables
+    @pack_nt begin
+        percolation ⇒ land.fluxes
+        WBP ⇒ land.states
+        (ΔgroundW, ΔsoilW) ⇒ land.pools
+    end
+    return land
 end
 
-function compute(o::percolation_WBP, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(params::percolation_WBP, forcing, land, helpers)
+    ## unpack variables
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+    end
 
-	## unpack land variables
-	@unpack_land begin
-		(soilW, groundW) ∈ land.pools
-		(ΔsoilW, WBP) ∈ land.states
-		(𝟘, tolerance) ∈ helpers.numbers
-		p_wSat ∈ land.soilWBase
-	end
+    ## update variables
+    # update soil moisture of the first layer
+    soilW .= soilW .+ ΔsoilW
 
-	# set WBP as the soil percolation
-	percolation = WBP
-	holdCapacity = p_wSat - (soilW + ΔsoilW)
-	toAllocate = percolation
-	if toAllocate > 𝟘
-		for sl in 1:length(land.pools.soilW)
-			allocated = min(holdCapacity[sl], toAllocate)
-			ΔsoilW[sl] = ΔsoilW[sl] + allocated
-			toAllocate = toAllocate - allocated
-		end
-	end
+    # reset soil moisture changes to zero
+    ΔsoilW .= ΔsoilW .- ΔsoilW
 
-	if abs(toAllocate) > tolerance
-		WBP = toAllocate
-	else
-		WBP = 𝟘
-	end
-
-	## pack land variables
-	@pack_land begin
-		percolation => land.percolation
-		(ΔsoilW, WBP) => land.states
-	end
-	return land
-end
-
-function update(o::percolation_WBP, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
-
-	## update variables
-	# update soil moisture of the first layer
-	soilW = soilW + ΔsoilW
-
-	# reset soil moisture changes to zero
-	ΔsoilW = ΔsoilW - ΔsoilW
-
-	## pack land variables
-	@pack_land begin
-		# soilW => land.pools
-		# ΔsoilW => land.states
-	end
-	return land
-
+    ## pack land variables
+    @pack_nt begin
+        soilW ⇒ land.pools
+        # ΔsoilW ⇒ land.pools
+    end
+    return land
 end
 @doc """
 computes the percolation into the soil after the surface runoff process
@@ -73,7 +70,7 @@ Calculate the soil percolation = wbp at this point using percolation_WBP
  - land.states.WBP: water budget pool
 
 *Outputs*
- - land.fluxes.percolation: soil percolation
+ - land.land.fluxes: soil percolation
 
 # update
 

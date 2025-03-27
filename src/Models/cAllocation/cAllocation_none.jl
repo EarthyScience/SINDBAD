@@ -2,26 +2,26 @@ export cAllocation_none
 
 struct cAllocation_none <: cAllocation end
 
-function precompute(o::cAllocation_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cAllocation_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
+    c_allocation = zero(cEco)
 
     ## pack land variables
-    @pack_land cAlloc => land.states
+    @pack_nt c_allocation ⇒ land.diagnostics
     return land
 end
 
 @doc """
 sets the carbon allocation to zero (nothing to allocated)
 
-# precompute:
+# Instantiate:
 
 *Inputs*
-- helpers.numbers.𝟙
 
 *Outputs*
-- land.cAllocation.cAlloc: carbon allocation
+- land.cAllocation.c_allocation: carbon allocation
 
 ---
 

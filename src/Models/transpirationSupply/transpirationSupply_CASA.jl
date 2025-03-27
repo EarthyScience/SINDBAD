@@ -1,20 +1,18 @@
 export transpirationSupply_CASA
 
-struct transpirationSupply_CASA <: transpirationSupply
-end
+struct transpirationSupply_CASA <: transpirationSupply end
 
-function compute(o::transpirationSupply_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::transpirationSupply_CASA, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land PAW ∈ land.states
+    ## unpack land variables
+    @unpack_nt PAW ⇐ land.states
 
+    ## calculate variables
+    transpiration_supply = sum(PAW)
 
-	## calculate variables
-	tranSup = sum(PAW)
-
-	## pack land variables
-	@pack_land tranSup => land.transpirationSupply
-	return land
+    ## pack land variables
+    @pack_nt transpiration_supply ⇒ land.diagnostics
+    return land
 end
 
 @doc """
@@ -27,12 +25,12 @@ Supply-limited transpiration using transpirationSupply_CASA
 
 *Inputs*
  - land.pools.soilW : total soil moisture
- - land.soilWBase.p_[α/β]: moisture retention characteristics
- - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
+ - land.properties.soil_[α/β]: moisture retention characteristics
+ - land.properties.w_awc: total maximum plant available water [_fc-_wp]
  - land.states.PAW: actual extractable water
 
 *Outputs*
- - land.transpirationSupply.tranSup: supply limited transpiration
+ - land.states.transpiration_supply: supply limited transpiration
 
 ---
 
@@ -41,10 +39,10 @@ Supply-limited transpiration using transpirationSupply_CASA
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: split the original tranSup of CASA into demand  supply: actual [minimum] is now just demSup approach of transpiration  
+ - 1.0 on 22.11.2019 [skoirala]: split the original transpiration_supply of CASA into demand  supply: actual [minimum] is now just demSup approach of transpiration  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
  - skoirala
 
 *Notes*

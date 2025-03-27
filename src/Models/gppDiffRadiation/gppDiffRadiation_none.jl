@@ -1,21 +1,21 @@
 export gppDiffRadiation_none
 
-struct gppDiffRadiation_none <: gppDiffRadiation
-end
+struct gppDiffRadiation_none <: gppDiffRadiation end
 
-function precompute(o::gppDiffRadiation_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::gppDiffRadiation_none, forcing, land, helpers)
+    @unpack_nt o_one ⇐ land.constants
 
-	## calculate variables
-	# set scalar to a constant one [no effect on potential GPP]
-	CloudScGPP = helpers.numbers.𝟙
+    ## calculate variables
+    # set scalar to a constant one [no effect on potential GPP]
+    gpp_f_cloud = o_one
 
-	## pack land variables
-	@pack_land CloudScGPP => land.gppDiffRadiation
-	return land
+    ## pack land variables
+    @pack_nt gpp_f_cloud ⇒ land.diagnostics
+    return land
 end
 
 @doc """
-sets the cloudiness scalar [radiation diffusion] for gppPot to one
+sets the cloudiness scalar [radiation diffusion] for gpp_potential to one
 
 ---
 
@@ -26,10 +26,10 @@ Effect of diffuse radiation using gppDiffRadiation_none
  - helpers
 
 *Outputs*
- - land.gppDiffRadiation.CloudScGPP: effect of cloudiness on potential GPP
+ - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
 
-# precompute:
-precompute/instantiate time-invariant variables for gppDiffRadiation_none
+# Instantiate:
+Instantiate time-invariant variables for gppDiffRadiation_none
 
 
 ---
@@ -43,6 +43,6 @@ precompute/instantiate time-invariant variables for gppDiffRadiation_none
 
 *Created by:*
  - mjung
- - ncarval
+ - ncarvalhais
 """
 gppDiffRadiation_none

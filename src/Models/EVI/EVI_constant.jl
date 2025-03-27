@@ -1,26 +1,28 @@
 export EVI_constant
 
-@bounds @describe @units @with_kw struct EVI_constant{T1} <: EVI
-	constantEVI::T1 = 1.0 | (0.0, 1.0) | "EVI" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct EVI_constant{T1} <: EVI
+    constant_EVI::T1 = 1.0 | (0.0, 1.0) | "EVI" | "" | ""
 end
+#! format: on
 
-function compute(o::EVI_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_EVI_constant o
+function precompute(params::EVI_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_EVI_constant params
 
-	## calculate variables
-	EVI = constantEVI
+    ## calculate variables
+    EVI = constant_EVI
 
-	## pack land variables
-	@pack_land EVI => land.states
-	return land
+    ## pack land variables
+    @pack_nt EVI ⇒ land.states
+    return land
 end
 
 @doc """
 sets the value of EVI as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

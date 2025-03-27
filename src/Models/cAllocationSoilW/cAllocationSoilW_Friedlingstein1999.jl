@@ -1,23 +1,25 @@
 export cAllocationSoilW_Friedlingstein1999
 
-@bounds @describe @units @with_kw struct cAllocationSoilW_Friedlingstein1999{T1,T2} <: cAllocationSoilW
-    minL_fW::T1 = 0.5 | (0.0, 1.0) | "minimum value for moisture stressor" | ""
-    maxL_fW::T2 = 0.8 | (0.0, 1.0) | "maximum value for moisture stressor" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cAllocationSoilW_Friedlingstein1999{T1,T2} <: cAllocationSoilW
+    min_f_soilW::T1 = 0.5 | (0.0, 1.0) | "minimum value for moisture stressor" | "" | ""
+    max_f_soilW::T2 = 0.8 | (0.0, 1.0) | "maximum value for moisture stressor" | "" | ""
 end
+#! format: on
 
-function compute(o::cAllocationSoilW_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::cAllocationSoilW_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilW_Friedlingstein1999 o
+    @unpack_cAllocationSoilW_Friedlingstein1999 params
 
     ## unpack land variables
-    @unpack_land fW_cTau = fW ∈ land.cTauSoilW
+    @unpack_nt c_eco_k_f_soilW ⇐ land.diagnostics
 
     ## calculate variables
     # computation for the moisture effect on decomposition/mineralization
-    fW = clamp(fW_cTau, minL_fW, maxL_fW)
+    c_allocation_f_soilW = clamp(mean(c_eco_k_f_soilW), min_f_soilW, max_f_soilW)
 
     ## pack land variables
-    @pack_land fW => land.cAllocationSoilW
+    @pack_nt c_allocation_f_soilW ⇒ land.diagnostics
     return land
 end
 
@@ -25,17 +27,17 @@ end
 partial moisture effect on decomposition/mineralization based on Friedlingstein1999
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
 # compute:
 
 *Inputs*
- - land.cTauSoilW.fW: moisture effect on soil decomposition rate
+ - land.diagnostics.c_allocation_f_soilW: moisture effect on soil decomposition rate
 
 *Outputs*
- - land.cAllocationSoilW.fW: moisture stressor on C allocation
+ - land.diagnostics.c_allocation_f_soilW: moisture stressor on C allocation
 
 ---
 

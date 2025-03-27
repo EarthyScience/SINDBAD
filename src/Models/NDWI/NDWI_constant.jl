@@ -1,26 +1,28 @@
 export NDWI_constant
 
-@bounds @describe @units @with_kw struct NDWI_constant{T1} <: NDWI
-	constantNDWI::T1 = 1.0 | (0.0, 1.0) | "NDWI" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct NDWI_constant{T1} <: NDWI
+    constant_NDWI::T1 = 1.0 | (0.0, 1.0) | "NDWI" | "" | ""
 end
+#! format: on
 
-function compute(o::NDWI_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_NDWI_constant o
+function precompute(params::NDWI_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_NDWI_constant params
 
-	## calculate variables
-	NDWI = constantNDWI
+    ## calculate variables
+    NDWI = constant_NDWI
 
-	## pack land variables
-	@pack_land NDWI => land.states
-	return land
+    ## pack land variables
+    @pack_nt NDWI ⇒ land.states
+    return land
 end
 
 @doc """
 sets the value of NDWI as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

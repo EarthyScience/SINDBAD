@@ -1,25 +1,24 @@
 export transpirationDemand_CASA
 
-struct transpirationDemand_CASA <: transpirationDemand
-end
+struct transpirationDemand_CASA <: transpirationDemand end
 
-function compute(o::transpirationDemand_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::transpirationDemand_CASA, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		PAW ∈ land.vegAvailableWater
-		(p_wAWC, p_α, p_β) ∈ land.soilWBase
-		percolation ∈ land.percolation
-		PET ∈ land.PET
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	VMC = clamp(sum(PAW) / sum(p_wAWC), 𝟘, 𝟙)
-	RDR = (𝟙 + mean(p_α)) / (𝟙 + mean(p_α) * (VMC ^ mean(p_β)))
-	tranDem = percolation + (PET - percolation) * RDR
+    ## unpack land variables
+    @unpack_nt begin
+        PAW ⇐ land.states
+        (w_awc, soil_α, soil_β) ⇐ land.properties
+        percolation ⇐ land.fluxes
+        PET ⇐ land.fluxes
+    end
+    VMC = clampZeroOne(sum(PAW) / sum(w_awc))
+    o_one = one(VMC)
+    RDR = (o_one + mean(soil_α)) / (o_one + mean(soil_α) * (VMC^mean(soil_β)))
+    transpiration_demand = percolation + (PET - percolation) * RDR
 
-	## pack land variables
-	@pack_land tranDem => land.transpirationDemand
-	return land
+    ## pack land variables
+    @pack_nt transpiration_demand ⇒ land.diagnostics
+    return land
 end
 
 @doc """
@@ -32,12 +31,12 @@ Demand-driven transpiration using transpirationDemand_CASA
 
 *Inputs*
  - land.pools.PAW : plant avaiable water
- - land.soilWBase.p_[α/β]: moisture retention characteristics
- - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
+ - land.properties.p_[α/β]: moisture retention characteristics
+ - land.properties.w_awc: total maximum plant available water [_fc-_wp]
  - land.states.PAW: actual extractable water
 
 *Outputs*
- - land.tranDem.transpirationDemand: supply limited transpiration
+ - land.transpiration_demand.transpirationDemand: supply limited transpiration
 
 ---
 
@@ -46,10 +45,10 @@ Demand-driven transpiration using transpirationDemand_CASA
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: split the original tranSup of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
+ - 1.0 on 22.11.2019 [skoirala]: split the original transpiration_supply of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
  - skoirala
 
 *Notes*

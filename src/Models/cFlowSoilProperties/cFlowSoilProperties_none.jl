@@ -1,24 +1,34 @@
 export cFlowSoilProperties_none
 
-struct cFlowSoilProperties_none <: cFlowSoilProperties
-end
+struct cFlowSoilProperties_none <: cFlowSoilProperties end
 
-function precompute(o::cFlowSoilProperties_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cFlowSoilProperties_none, forcing, land, helpers)
+    @unpack_nt begin
+        c_taker ⇐ land.constants
+        cEco ⇐ land.pools
+    end 
+    ## calculate variables
+    p_E_vec = eltype(cEco).(zero([c_taker...]))
 
-	## calculate variables
-	p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, length(land.pools.cEco))
-	p_F = copy(p_E)
+    if cEco isa SVector
+        p_E_vec = SVector{length(p_E_vec)}(p_E_vec)
+    end
 
-	## pack land variables
-	@pack_land (p_E, p_F) => land.cFlowSoilProperties
-	return land
+    p_F_vec = eltype(cEco).(zero([c_taker...]))
+    if cEco isa SVector
+        p_F_vec = SVector{length(p_F_vec)}(p_F_vec)
+    end
+
+    ## pack land variables
+    @pack_nt (p_E_vec, p_F_vec) ⇒ land.diagnostics
+    return land
 end
 
 @doc """
 set transfer between pools to 0 [i.e. nothing is transfered]
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlowSoilProperties_none
+# Instantiate:
+Instantiate time-invariant variables for cFlowSoilProperties_none
 
 
 ---

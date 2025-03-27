@@ -1,20 +1,19 @@
 export cAllocationSoilT_gpp
 
-struct cAllocationSoilT_gpp <: cAllocationSoilT
-end
+struct cAllocationSoilT_gpp <: cAllocationSoilT end
 
-function compute(o::cAllocationSoilT_gpp, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::cAllocationSoilT_gpp, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land TempScGPP ∈ land.gppAirT
+    ## unpack land variables
+    @unpack_nt gpp_f_airT ⇐ land.diagnostics
 
-	## calculate variables
-	# computation for the temperature effect on decomposition/mineralization
-	fT = TempScGPP
+    ## calculate variables
+    # computation for the temperature effect on decomposition/mineralization
+    c_allocation_f_soilT = gpp_f_airT
 
-	## pack land variables
-	@pack_land fT => land.cAllocationSoilT
-	return land
+    ## pack land variables
+    @pack_nt c_allocation_f_soilT ⇒ land.diagnostics
+    return land
 end
 
 @doc """
@@ -25,10 +24,10 @@ temperature effect on allocation = the same as gpp
 # compute:
 
 *Inputs*
- - land.gppAirT.TempScGPP: temperature stressors on GPP
+ - land.diagnostics.gpp_f_airT: temperature stressors on GPP
 
 *Outputs*
- - land.cAllocationSoilT.fT: temperature effect on decomposition/mineralization
+ - land.diagnostics.c_allocation_f_soilT: temperature effect on decomposition/mineralization
 
 ---
 

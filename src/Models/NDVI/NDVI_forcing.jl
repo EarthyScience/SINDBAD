@@ -1,15 +1,16 @@
 export NDVI_forcing
 
-struct NDVI_forcing <: NDVI
-end
+struct NDVI_forcing <: NDVI end
 
-function compute(o::NDVI_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing NDVI ∈ forcing
+function compute(params::NDVI_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_NDVI ⇐ forcing
 
-	## pack land variables
-	@pack_land NDVI => land.states
-	return land
+    NDVI = f_NDVI
+
+    ## pack land variables
+    @pack_nt NDVI ⇒ land.states
+    return land
 end
 
 @doc """

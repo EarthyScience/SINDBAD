@@ -1,26 +1,28 @@
 export vegFraction_constant
 
-@bounds @describe @units @with_kw struct vegFraction_constant{T1} <: vegFraction
-	constantVegFrac::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct vegFraction_constant{T1} <: vegFraction
+    constant_frac_vegetation::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | "" | ""
 end
+#! format: on
 
-function compute(o::vegFraction_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_vegFraction_constant o
+function precompute(params::vegFraction_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_vegFraction_constant params
 
-	## calculate variables
-	vegFraction = constantVegFrac
+    ## calculate variables
+    frac_vegetation = constant_frac_vegetation
 
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
+    ## pack land variables
+    @pack_nt frac_vegetation ⇒ land.states
+    return land
 end
 
 @doc """
-sets the value of vegFraction as a constant
+sets the value of frac_vegetation as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -28,10 +30,10 @@ $(PARAMFIELDS)
 Fractional coverage of vegetation using vegFraction_constant
 
 *Inputs*
- - constantvegFraction
+ - constant_frac_vegetationtion
 
 *Outputs*
- - land.states.vegFraction: an extra forcing with a constant vegFraction
+ - land.states.frac_vegetation: an extra forcing with a constant frac_vegetation
 
 ---
 

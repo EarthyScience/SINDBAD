@@ -1,15 +1,16 @@
 export rainIntensity_forcing
 
-struct rainIntensity_forcing <: rainIntensity
-end
+struct rainIntensity_forcing <: rainIntensity end
 
-function compute(o::rainIntensity_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing rainInt ∈ forcing
+function compute(params::rainIntensity_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_rain_int ⇐ forcing
 
-	## pack land variables
-	@pack_land rainInt => land.rainIntensity
-	return land
+    rain_int = f_rain_int
+
+    ## pack land variables
+    @pack_nt rain_int ⇒ land.states
+    return land
 end
 
 @doc """
@@ -21,10 +22,10 @@ stores the time series of rainfall & snowfall from forcing
 Set rainfall intensity using rainIntensity_forcing
 
 *Inputs*
- - land.rainIntensity.rainInt
+ - land.states.rainInt
 
 *Outputs*
- - land.rainIntensity.rainInt: liquid rainfall from forcing input  threshold
+ - land.states.rainInt: liquid rainfall from forcing input  threshold
  - forcing.Snow using the snowfall scaling parameter which can be optimized
 
 ---

@@ -1,21 +1,21 @@
 export gppAirT_none
 
-struct gppAirT_none <: gppAirT
-end
+struct gppAirT_none <: gppAirT end
 
-function precompute(o::gppAirT_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::gppAirT_none, forcing, land, helpers)
+    @unpack_nt o_one ⇐ land.constants
 
-	## calculate variables
-	# set scalar to a constant 𝟙 [no effect on potential GPP]
-	TempScGPP = helpers.numbers.𝟙
+    ## calculate variables
+    # set scalar to a constant o_one [no effect on potential GPP]
+    gpp_f_airT = o_one
 
-	## pack land variables
-	@pack_land TempScGPP => land.gppAirT
-	return land
+    ## pack land variables
+    @pack_nt gpp_f_airT ⇒ land.diagnostics
+    return land
 end
 
 @doc """
-sets the temperature stress on gppPot to one (no stress)
+sets the temperature stress on gpp_potential to one (no stress)
 
 ---
 
@@ -26,10 +26,10 @@ Effect of temperature using gppAirT_none
  - helpers
 
 *Outputs*
- - land.gppAirT.TempScGPP: effect of temperature on potential GPP
+ - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
 
-# precompute:
-precompute/instantiate time-invariant variables for gppAirT_none
+# Instantiate:
+Instantiate time-invariant variables for gppAirT_none
 
 
 ---
@@ -42,6 +42,6 @@ precompute/instantiate time-invariant variables for gppAirT_none
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
 *Created by:*
- - ncarval
+ - ncarvalhais
 """
 gppAirT_none

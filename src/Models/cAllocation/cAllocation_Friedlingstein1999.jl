@@ -1,76 +1,102 @@
 export cAllocation_Friedlingstein1999
 
-@bounds @describe @units @with_kw struct cAllocation_Friedlingstein1999{T1, T2, T3} <: cAllocation
-	so::T1 = 0.3 | (0.0, 1.0) | "" | ""
-	ro::T2 = 0.3 | (0.0, 1.0) | "" | ""
-	RelY::T3 = 2.0 | (1.0, Inf) | "" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cAllocation_Friedlingstein1999{T1,T2,T3} <: cAllocation
+    so::T1 = 0.3 | (0.0, 1.0) | "fractional carbon allocation to stem for non-limiting conditions" | "fractional" | ""
+    ro::T2 = 0.3 | (0.0, 1.0) | "fractional carbon allocation to root for non-limiting conditions" | "fractional" | ""
+    rel_Y::T3 = 2.0 | (1.0, Inf) | "normalization parameter" | "dimensionless" | ""
+end
+#! format: on
+
+function define(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
+    @unpack_cAllocation_Friedlingstein1999 params
+    @unpack_nt begin 
+        cEco ⇐ land.pools
+        cEcoZix = zix ⇐ helpers.pools 
+    end
+
+    ## Instantiate variables
+    c_allocation = zero(cEco) #sujan
+    c_allocation_to_veg = zero(cEco)
+    cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
+    cVeg_nzix = []
+    cVeg_zix = []
+    land_pools = getfield(land, :pools)
+    for cpName ∈ cVeg_names
+        zix = getZix(getfield(land_pools, cpName), cEcoZix, cpName)
+        nZix = oftype(first(c_allocation), length(zix))
+        push!(cVeg_nzix, nZix)
+        push!(cVeg_zix, zix)
+    end
+    cVeg_nzix = Tuple(cVeg_nzix)
+    cVeg_zix = Tuple(cVeg_zix)
+    ## pack land variables
+    @pack_nt begin
+        c_allocation ⇒ land.diagnostics
+        (cVeg_names, cVeg_nzix, cVeg_zix, c_allocation_to_veg) ⇒ land.cAllocation
+    end
+    return land
 end
 
-function precompute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_cAllocation_Friedlingstein1999 o
-
-	## instantiate variables
-	cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco)); #sujan
-
-	## pack land variables
-	@pack_land cAlloc => land.states
-	return land
-end
-
-function compute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocation_Friedlingstein1999 o
+    @unpack_cAllocation_Friedlingstein1999 params
 
     ## unpack land variables
-    @unpack_land begin
-        cAlloc ∈ land.states
-        𝟙 ∈ helpers.numbers
+    @unpack_nt begin
+        c_allocation ⇐ land.states
+        (cVeg_names, cVeg_nzix, cVeg_zix, c_allocation_to_veg) ⇐ land.cAllocation
+        c_allocation_f_W_N ⇐ land.diagnostics
+        c_allocation_f_LAI ⇐ land.diagnostics
+        (z_zero, o_one) ⇐ land.constants
     end
     ## unpack land variables
-    @unpack_land begin
-        minWLNL ∈ land.cAllocationNutrients
-        LL ∈ land.cAllocationLAI
-    end
     # allocation to root; wood & leaf
-    cVegRoot = ro * (RelY + 𝟙) * LL / (LL + RelY * minWLNL)
-    cVegWood = so * (RelY + 𝟙) * minWLNL / (RelY * LL + minWLNL)
-    cVegLeaf = 𝟙 - cVegRoot - cVegWood
-    cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
+    a_cVegRoot = ro * (rel_Y + o_one) * c_allocation_f_LAI / (c_allocation_f_LAI + rel_Y * c_allocation_f_W_N)
+    a_cVegWood = so * (rel_Y + o_one) * c_allocation_f_W_N / (rel_Y * c_allocation_f_LAI + c_allocation_f_W_N)
+    a_cVegLeaf = o_one - cVegRoot - cVegWood
+
+    @rep_elem a_cVegRoot ⇒ (c_allocation_to_veg, 1, :cEco)
+    @rep_elem a_cVegWood ⇒ (c_allocation_to_veg, 2, :cEco)
+    @rep_elem a_cVegLeaf ⇒ (c_allocation_to_veg, 3, :cEco)
+
 
     # distribute the allocation according to pools
-    cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
-    for cpName in cpNames
-        zix = getzix(pools.carbon, cpName)
-        nZix = length(zix) * 𝟙
-        cAlloc[zix] .= getfield(cf2, cpName) / nZix
+    for cl in eachindex(cVeg_names)
+        zix = cVeg_zix[cl]
+        nZix = cVeg_nzix[cl]
+        for ix ∈ zix
+            c_allocation_to_veg_ix = c_allocation_to_veg[cl] / nZix
+            @rep_elem c_allocation_to_veg_ix ⇒ (c_allocation, ix, :cEco)
+        end
     end
 
     ## pack land variables
-    @pack_land cAlloc => land.states
+    @pack_nt c_allocation ⇒ land.diagnostics
     return land
 end
 
 @doc """
-compute the fraction of NPP that is allocated to the different plant organs following the scheme of Friedlingstein et al 1999. Check cAlloc_Friedlingstein1999 for details.
+Compute the fraction of fixed C that is allocated to the different plant organs following the scheme of Friedlingstein et al., 1999 (section "Allocation response to multiple stresses").
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
 # compute:
-Combine the different effects of carbon allocation using cAllocation_Friedlingstein1999
+Puts together the different effects, "multiple stresses", that control the allocation of fixated carbon to the different vegetation C pools according to Friedlingstein et al., 1999.
 
 *Inputs*
- - land.cAllocationLAI.LL: values for light limitation
- - land.cAllocationNutrients.minWLNL: values for the pseudo-nutrient limitation
+ - land.diagnostics.c_allocation_f_LAI: values for light limitation
+ - land.diagnostics.c_allocation_f_W_N: values for the pseudo-nutrient limitation
 
 *Outputs*
- - land.states.cAlloc: the fraction of NPP that is allocated to the different plant organs
- - land.states.cAlloc
+ - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
+ - land.diagnostics.c_allocation
 
-# precompute:
-precompute/instantiate time-invariant variables for cAllocation_Friedlingstein1999
+# Instantiate:
+Instantiate time-invariant variables for cAllocation_Friedlingstein1999
 
 
 ---

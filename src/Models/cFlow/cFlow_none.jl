@@ -1,28 +1,30 @@
 export cFlow_none
 
-struct cFlow_none <: cFlow
-end
+struct cFlow_none <: cFlow end
 
-function precompute(o::cFlow_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cFlow_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
+    ## calculate variables
+    tmp = repeat(zero(cEco),
+        1,
+        1,
+        length(cEco))
+    c_flow_A_vec = tmp
+    p_E_vec = tmp
+    p_F_vec = tmp
+    p_taker = []
+    p_giver = []
 
-	## calculate variables
-	tmp = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))
-	p_A = tmp
-	p_E = tmp
-	p_F = tmp
-	p_taker = []
-	p_giver = []
-
-	## pack land variables
-	@pack_land (p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
-	return land
+    ## pack land variables
+    @pack_nt (c_flow_A_vec, p_E_vec, p_F_vec) ⇒ land.diagnostics
+    return land
 end
 
 @doc """
-set transfer between pools to 0 [i.e. nothing is transfered] set giver & taker matrices to [] get the transfer matrix transfers
+set transfer between pools to 0 [i.e. nothing is transfered] set c_giver & c_taker matrices to [] get the transfer matrix transfers
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlow_none
+# Instantiate:
+Instantiate time-invariant variables for cFlow_none
 
 
 ---
