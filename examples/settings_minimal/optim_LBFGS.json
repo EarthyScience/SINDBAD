@@ -1,5 +1,0 @@
-{
-    "show_trace": true, 
-    "iterations": 50,
-    "autodiff": "forward"
-}
