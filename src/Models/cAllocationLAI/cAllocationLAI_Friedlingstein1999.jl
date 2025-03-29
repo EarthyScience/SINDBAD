@@ -28,7 +28,7 @@ purpose(::Type{cAllocationLAI_Friedlingstein1999}) = "Estimate the effect of lig
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocationLAI_Friedlingstein1999))
 
 ---
 

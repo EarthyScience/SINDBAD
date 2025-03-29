@@ -27,7 +27,7 @@ purpose(::Type{transpirationDemand_CASA}) = "calculate the supply limited transp
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(transpirationDemand_CASA))
 
 ---
 

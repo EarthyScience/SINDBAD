@@ -15,7 +15,7 @@ purpose(::Type{treeFraction_forcing}) = "sets the value of land.states.frac_tree
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(treeFraction_forcing))
 
 ---
 

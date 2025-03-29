@@ -99,7 +99,7 @@ purpose(::Type{sublimation_GLEAM}) = "instantiates the Priestley-Taylor term for
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(sublimation_GLEAM))
 
 ---
 

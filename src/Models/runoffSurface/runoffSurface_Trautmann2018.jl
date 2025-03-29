@@ -83,7 +83,7 @@ purpose(::Type{runoffSurface_Trautmann2018}) = "calculates the delay coefficient
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoffSurface_Trautmann2018))
 
 ---
 

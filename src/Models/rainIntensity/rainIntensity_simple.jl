@@ -23,7 +23,7 @@ purpose(::Type{rainIntensity_simple}) = "stores the time series of rainfall inte
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(rainIntensity_simple))
 
 ---
 

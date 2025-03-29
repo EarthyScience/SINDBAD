@@ -17,7 +17,7 @@ purpose(::Type{groundWRecharge_none}) = "sets the GW recharge to zero"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(groundWRecharge_none))
 
 ---
 

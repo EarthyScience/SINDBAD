@@ -25,7 +25,7 @@ purpose(::Type{LAI_cVegLeaf}) = "sets the value of land.states.LAI from the carb
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(LAI_cVegLeaf))
 
 ---
 

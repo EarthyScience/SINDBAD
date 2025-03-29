@@ -78,7 +78,7 @@ purpose(::Type{interception_Miralles2010}) = "computes canopy interception evapo
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(interception_Miralles2010))
 
 ---
 

@@ -17,7 +17,7 @@ purpose(::Type{cTauSoilProperties_none}) = "Set soil texture effects to ones (in
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cTauSoilProperties_none))
 
 ---
 

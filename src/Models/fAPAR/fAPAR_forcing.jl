@@ -17,7 +17,7 @@ purpose(::Type{fAPAR_forcing}) = "sets the value of land.states.fAPAR from the f
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(fAPAR_forcing))
 
 ---
 

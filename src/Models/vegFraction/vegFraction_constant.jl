@@ -22,7 +22,7 @@ purpose(::Type{vegFraction_constant}) = "sets the value of frac_vegetation as a 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(vegFraction_constant))
 
 ---
 

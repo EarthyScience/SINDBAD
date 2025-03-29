@@ -23,7 +23,7 @@ purpose(::Type{treeFraction_constant}) = "sets the value of frac_tree as a const
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(treeFraction_constant))
 
 ---
 

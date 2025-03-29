@@ -29,7 +29,7 @@ purpose(::Type{gppDirRadiation_Maekelae2008}) = "light saturation scalar [light 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppDirRadiation_Maekelae2008))
 
 ---
 

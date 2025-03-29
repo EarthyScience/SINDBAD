@@ -67,7 +67,7 @@ purpose(::Type{evaporation_vegFraction}) = "calculates the bare soil evaporation
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(evaporation_vegFraction))
 
 ---
 

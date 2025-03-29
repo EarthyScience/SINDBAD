@@ -26,7 +26,7 @@ purpose(::Type{transpirationSupply_Federer1982}) = "calculate the supply limited
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(transpirationSupply_Federer1982))
 
 ---
 

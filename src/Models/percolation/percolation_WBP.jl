@@ -63,7 +63,7 @@ purpose(::Type{percolation_WBP}) = "computes the percolation into the soil after
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(percolation_WBP))
 
 ---
 

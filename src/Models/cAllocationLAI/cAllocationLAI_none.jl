@@ -17,7 +17,7 @@ purpose(::Type{cAllocationLAI_none}) = "sets the LAI effect on allocation to one
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocationLAI_none))
 
 ---
 

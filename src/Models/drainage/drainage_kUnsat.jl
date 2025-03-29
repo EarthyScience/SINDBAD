@@ -71,7 +71,7 @@ purpose(::Type{drainage_kUnsat}) = "downward flow of moisture [drainage] in soil
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(drainage_kUnsat))
 
 ---
 

@@ -19,7 +19,7 @@ purpose(::Type{PFT_constant}) = "sets a uniform PFT class"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(PFT_constant))
 
 ---
 

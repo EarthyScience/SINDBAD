@@ -32,7 +32,7 @@ purpose(::Type{gppVPD_expco2}) = "VPD stress on gpp_potential based on Maekelae2
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppVPD_expco2))
 
 ---
 

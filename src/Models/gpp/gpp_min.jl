@@ -28,7 +28,7 @@ purpose(::Type{gpp_min}) = "compute the actual GPP with potential scaled by mini
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gpp_min))
 
 ---
 

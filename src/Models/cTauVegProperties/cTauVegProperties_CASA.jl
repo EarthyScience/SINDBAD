@@ -90,7 +90,7 @@ purpose(::Type{cTauVegProperties_CASA}) = "Compute effect of vegetation type on 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cTauVegProperties_CASA))
 
 ---
 

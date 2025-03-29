@@ -16,7 +16,7 @@ purpose(::Type{EVI_forcing}) = "sets the value of land.states.EVI from the forci
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(EVI_forcing))
 
 ---
 

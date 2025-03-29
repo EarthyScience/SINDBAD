@@ -17,7 +17,7 @@ purpose(::Type{cTauSoilW_none}) = "set the moisture stress for all carbon pools 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cTauSoilW_none))
 
 ---
 

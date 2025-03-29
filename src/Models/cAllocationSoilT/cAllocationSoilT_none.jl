@@ -16,7 +16,7 @@ purpose(::Type{cAllocationSoilT_none}) = "sets the temperature effect on allocat
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocationSoilT_none))
 
 ---
 

@@ -26,7 +26,7 @@ purpose(::Type{fAPAR_LAI}) = "sets the value of fAPAR as a function of LAI"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(fAPAR_LAI))
 
 ---
 

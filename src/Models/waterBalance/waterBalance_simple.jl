@@ -62,7 +62,7 @@ purpose(::Type{waterBalance_simple}) = "check the water balance in every time st
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(waterBalance_simple))
 
 ---
 

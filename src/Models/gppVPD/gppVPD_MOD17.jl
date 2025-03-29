@@ -26,7 +26,7 @@ purpose(::Type{gppVPD_MOD17}) = "VPD stress on gpp_potential based on MOD17 mode
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppVPD_MOD17))
 
 ---
 

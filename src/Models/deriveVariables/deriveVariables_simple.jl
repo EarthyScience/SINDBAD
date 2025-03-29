@@ -14,7 +14,7 @@ purpose(::Type{deriveVariables_simple}) = "derives variables from other sindbad 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(deriveVariables_simple))
 
 ----
 

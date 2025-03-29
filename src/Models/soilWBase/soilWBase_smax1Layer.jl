@@ -57,7 +57,7 @@ purpose(::Type{soilWBase_smax1Layer}) = "defines the maximum soil water content 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(soilWBase_smax1Layer))
 
 ---
 

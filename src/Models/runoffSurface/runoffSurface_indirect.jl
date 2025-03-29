@@ -62,7 +62,7 @@ purpose(::Type{runoffSurface_indirect}) = "assumes all overland runoff is rechar
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoffSurface_indirect))
 
 ---
 

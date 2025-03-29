@@ -18,7 +18,7 @@ purpose(::Type{gppDiffRadiation_none}) = "sets the cloudiness scalar [radiation 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppDiffRadiation_none))
 
 ---
 

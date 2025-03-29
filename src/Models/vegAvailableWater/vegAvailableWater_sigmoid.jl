@@ -58,7 +58,7 @@ purpose(::Type{vegAvailableWater_sigmoid}) = "calculate the actual amount of wat
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(vegAvailableWater_sigmoid))
 
 ---
 

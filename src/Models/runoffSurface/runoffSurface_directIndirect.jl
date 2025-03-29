@@ -69,7 +69,7 @@ purpose(::Type{runoffSurface_directIndirect}) = "assumes surface runoff is the s
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoffSurface_directIndirect))
 
 ---
 

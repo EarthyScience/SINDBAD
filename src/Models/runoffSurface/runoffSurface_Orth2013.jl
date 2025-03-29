@@ -76,7 +76,7 @@ purpose(::Type{runoffSurface_Orth2013}) = "calculates the delay coefficient of f
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoffSurface_Orth2013))
 
 ---
 

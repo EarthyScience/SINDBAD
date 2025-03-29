@@ -16,7 +16,7 @@ purpose(::Type{NDWI_forcing}) = "sets the value of land.states.NDWI from the for
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(NDWI_forcing))
 
 ---
 

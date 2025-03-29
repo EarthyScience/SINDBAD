@@ -73,7 +73,7 @@ purpose(::Type{cFlowSoilProperties_CASA}) = "effects of soil that change the tra
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cFlowSoilProperties_CASA))
 
 ---
 

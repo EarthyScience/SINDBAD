@@ -27,7 +27,7 @@ purpose(::Type{cAllocationSoilW_Friedlingstein1999}) = "partial moisture effect 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocationSoilW_Friedlingstein1999))
 
 ---
 

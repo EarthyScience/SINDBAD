@@ -22,7 +22,7 @@ purpose(::Type{NDWI_constant}) = "sets the value of NDWI as a constant"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(NDWI_constant))
 
 ---
 

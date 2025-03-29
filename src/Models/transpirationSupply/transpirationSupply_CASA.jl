@@ -20,7 +20,7 @@ purpose(::Type{transpirationSupply_CASA}) = "calculate the supply limited transp
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(transpirationSupply_CASA))
 
 ---
 

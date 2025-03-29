@@ -48,7 +48,7 @@ purpose(::Type{gppAirT_Maekelae2008}) = "temperature stress on gpp_potential bas
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppAirT_Maekelae2008))
 
 ---
 

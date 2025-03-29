@@ -51,7 +51,7 @@ purpose(::Type{runoffSaturationExcess_Bergstroem1992VegFractionFroSoil}) = "satu
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoffSaturationExcess_Bergstroem1992VegFractionFroSoil))
 
 ---
 

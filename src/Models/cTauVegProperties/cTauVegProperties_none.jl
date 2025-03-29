@@ -28,7 +28,7 @@ purpose(::Type{cTauVegProperties_none}) = "set the outputs to ones"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cTauVegProperties_none))
 
 ---
 

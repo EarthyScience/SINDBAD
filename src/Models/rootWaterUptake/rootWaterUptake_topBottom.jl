@@ -71,7 +71,7 @@ purpose(::Type{rootWaterUptake_topBottom}) = "rootUptake from each of the soil l
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(rootWaterUptake_topBottom))
 
 ---
 
