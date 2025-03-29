@@ -25,7 +25,7 @@ purpose(::Type{transpirationSupply_wAWCvegFraction}) = "calculate the supply lim
 
 @doc """
 
-$(getBaseDocString(fraction))
+$(getBaseDocString(transpirationSupply_wAWCvegFraction))
 
 ---
 
