@@ -115,33 +115,11 @@ function precompute(params::soilProperties_Saxton2006, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{soilProperties_Saxton2006}) = "assigns the soil hydraulic properties based on Saxton; 2006 to land.soilProperties.sp_"
+
 @doc """
-assigns the soil hydraulic properties based on Saxton; 2006 to land.soilProperties.sp_
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Soil properties (hydraulic properties) using soilProperties_Saxton2006
-
-*Inputs*
- - : texture-based Saxton parameters
- - calcSoilParamsSaxton2006: function to calculate hydraulic properties
- - info
- - land.properties.sp_[clay/sand]
-
-*Outputs*
- - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [_fc], & wilting point  ( w_wp)
- - land.soilProperties.sp_[α/β]: properties of moisture-retention curves
- - land.soilProperties.sp_θ_fc/k_fc/ψ_fc/s_fc
- - land.soilProperties.sp_θ_sat/k_sat/ψ_sat/sSat
- - land.soilProperties.sp_θ_wp/k_wp/ψ_wp/s_wp
-
-# Instantiate:
-Instantiate time-invariant variables for soilProperties_Saxton2006
-
+$(getBaseDocString())
 
 ---
 

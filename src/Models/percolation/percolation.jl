@@ -2,12 +2,11 @@ export percolation
 
 abstract type percolation <: LandEcosystem end
 
-include("percolation_WBP.jl")
+purpose(::Type{percolation}) = "Calculate the soil percolation = wbp at this point"
 
-@doc """
-Calculate the soil percolation = wbp at this point
+includeApproaches(percolation, @__DIR__)
 
-# Approaches:
- - WBP: computes the percolation into the soil after the surface runoff & evaporation processes are complete
+@doc """ 
+	$(getBaseDocString(percolation))
 """
 percolation

@@ -68,27 +68,11 @@ function precompute(params::cAllocation_fixed, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocation_fixed}) = "compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.frac_tree). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to frac_fine_to_coarse."
+
 @doc """
-compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.frac_tree). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to frac_fine_to_coarse.
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Combine the different effects of carbon allocation using cAllocation_fixed
-
-*Inputs*
- - land.c_allocation: fraction of npp that is allocated to the  different plant organs
-
-*Outputs*
- - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
- - land.diagnostics.c_allocation
-
-# Instantiate:
-Instantiate time-invariant variables for cAllocation_fixed
-
+$(getBaseDocString())
 
 ---
 

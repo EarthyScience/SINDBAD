@@ -79,22 +79,11 @@ function compute(params::cAllocationTreeFraction_Friedlingstein1999, forcing, la
     return land
 end
 
+purpose(::Type{cAllocationTreeFraction_Friedlingstein1999}) = "adjust the allocation coefficients according to the fraction of trees to herbaceous & fine to coarse root partitioning"
+
 @doc """
-adjust the allocation coefficients according to the fraction of trees to herbaceous & fine to coarse root partitioning
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
- - land.states.frac_tree: tree cover
-
-*Outputs*
- - land.diagnostics.c_allocation: adjusted fraction of npp that is allocated to the different plant organs
+$(getBaseDocString())
 
 ---
 

@@ -33,28 +33,11 @@ function compute(params::rainSnow_rain, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{rainSnow_rain}) = "set all precip to rain"
+
 @doc """
-set all precip to rain
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Set all precip to rain
-
-*Inputs*
- - forcing.f_rain
-
-*Outputs*
- - land.fluxes.rain: liquid rainfall from forcing input
- - land.fluxes.snow: 0
-
-# update
-
-update pools and states in rainSnow_rain
-
+$(getBaseDocString())
 
 ---
 

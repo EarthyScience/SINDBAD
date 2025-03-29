@@ -23,22 +23,11 @@ function compute(params::vegFraction_scaledEVI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{vegFraction_scaledEVI}) = "sets the value of frac_vegetation by scaling the EVI value"
+
 @doc """
-sets the value of frac_vegetation by scaling the EVI value
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fractional coverage of vegetation using vegFraction_scaledEVI
-
-*Inputs*
- - land.states.EVI : current EVI value
-
-*Outputs*
- - land.states.frac_vegetation: current vegetation fraction
+$(getBaseDocString())
 
 ---
 

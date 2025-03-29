@@ -75,26 +75,11 @@ function update(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{capillaryFlow_VanDijk2010}) = "computes the upward water flow in the soil layers"
+
 @doc """
-computes the upward water flow in the soil layers
 
----
-
-# compute:
-Flux of water from lower to upper soil layers (upward soil moisture movement) using capillaryFlow_VanDijk2010
-
-*Inputs*
- - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
-
-*Outputs*
-
-# update
-
-update pools and states in capillaryFlow_VanDijk2010
-
- - land.pools.soilW
- - land.states.soilWFlow: drainage flux between soil layers [from soilWRec] is adjusted to reflect  upward capillary flux
+$(getBaseDocString())
 
 ---
 

@@ -2,14 +2,11 @@ export sublimation
 
 abstract type sublimation <: LandEcosystem end
 
-include("sublimation_GLEAM.jl")
-include("sublimation_none.jl")
+purpose(::Type{sublimation}) = "Calculate sublimation and update snow water equivalent"
 
-@doc """
-Calculate sublimation and update snow water equivalent
+includeApproaches(sublimation, @__DIR__)
 
-# Approaches:
- - GLEAM: instantiates the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM
- - none: sets the snow sublimation to zero
+@doc """ 
+	$(getBaseDocString(sublimation))
 """
 sublimation

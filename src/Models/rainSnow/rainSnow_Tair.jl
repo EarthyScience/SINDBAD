@@ -59,29 +59,11 @@ function update(params::rainSnow_Tair, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{rainSnow_Tair}) = "separates the rain & snow based on temperature threshold"
+
 @doc """
-separates the rain & snow based on temperature threshold
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Set rain and snow to fe.rainsnow. using rainSnow_Tair
-
-*Inputs*
- - forcing.f_rain
- - forcing.f_airT
-
-*Outputs*
- - land.fluxes.rain: liquid rainfall from forcing input
- - land.fluxes.snow: snowfall estimated as the rain when airT <  threshold
-
-# update
-
-update pools and states in rainSnow_Tair
-
+$(getBaseDocString())
 
 ---
 

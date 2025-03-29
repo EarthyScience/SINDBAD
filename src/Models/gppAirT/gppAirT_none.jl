@@ -14,23 +14,11 @@ function define(params::gppAirT_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppAirT_none}) = "sets the temperature stress on gpp_potential to one (no stress)"
+
 @doc """
-sets the temperature stress on gpp_potential to one (no stress)
 
----
-
-# compute:
-Effect of temperature using gppAirT_none
-
-*Inputs*
- - helpers
-
-*Outputs*
- - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
-
-# Instantiate:
-Instantiate time-invariant variables for gppAirT_none
-
+$(getBaseDocString())
 
 ---
 

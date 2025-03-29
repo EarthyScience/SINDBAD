@@ -13,12 +13,11 @@ function define(params::runoffInterflow_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffInterflow_none}) = "sets interflow runoff to zero"
+
 @doc """
-sets interflow runoff to zero
 
-# Instantiate:
-Instantiate time-invariant variables for runoffInterflow_none
-
+$(getBaseDocString())
 
 ---
 

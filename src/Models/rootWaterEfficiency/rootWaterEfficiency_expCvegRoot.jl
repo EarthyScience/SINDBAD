@@ -74,31 +74,11 @@ function compute(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers
     return land
 end
 
+purpose(::Type{rootWaterEfficiency_expCvegRoot}) = "maximum root water fraction that plants can uptake from soil layers according to total carbon in root [cVegRoot]. sets the maximum fraction of water that root can uptake from soil layers according to total carbon in root [cVegRoot]"
+
 @doc """
-maximum root water fraction that plants can uptake from soil layers according to total carbon in root [cVegRoot]. sets the maximum fraction of water that root can uptake from soil layers according to total carbon in root [cVegRoot]
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Distribution of water uptake fraction/efficiency by root per soil layer using rootWaterEfficiency_expCvegRoot
-
-*Inputs*
- - soil_layer_thickness
- - land.pools.cEco
- - land.states.maxRootD [from rootWaterEfficiency_expCvegRoot]
- - max_root_depth [from rootWaterEfficiency_expCvegRoot]
-
-*Outputs*
- - initiates land.states.root_water_efficiency as ones
- - land.states.root_water_efficiency as nZix for soilW
- - land.states.root_water_efficiency
-
-# Instantiate:
-Instantiate time-invariant variables for rootWaterEfficiency_expCvegRoot
-
+$(getBaseDocString())
 
 ---
 

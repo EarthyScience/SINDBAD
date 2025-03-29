@@ -13,12 +13,11 @@ function define(params::runoffSurface_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffSurface_none}) = "sets surface runoff [surface_runoff] from the storage to zero"
+
 @doc """
-sets surface runoff [surface_runoff] from the storage to zero
 
-# Instantiate:
-Instantiate time-invariant variables for runoffSurface_none
-
+$(getBaseDocString())
 
 ---
 

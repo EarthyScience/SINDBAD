@@ -65,26 +65,11 @@ function update(params::runoffSurface_directIndirect, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffSurface_directIndirect}) = "assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage"
+
 @doc """
-assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_directIndirect
-
-*Inputs*
- - land.fluxes.overland_runoff
-
-*Outputs*
-
-# update
-
-update pools and states in runoffSurface_directIndirect
-
+$(getBaseDocString())
 
 ---
 

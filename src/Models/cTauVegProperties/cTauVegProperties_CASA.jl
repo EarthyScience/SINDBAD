@@ -86,31 +86,11 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTauVegProperties_CASA}) = "Compute effect of vegetation type on turnover rates [k]"
+
 @doc """
-Compute effect of vegetation type on turnover rates [k]
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of vegetation properties on soil decomposition rates using cTauVegProperties_CASA
-
-*Inputs*
- - land.properties.PFT:
-
-*Outputs*
- - land.properties.LIGEFF:
- - land.properties.LIGNIN:
- - land.properties.LITC2N:
- - land.properties.MTF:
- - land.properties.SCLIGNIN:
- - land.diagnostics.c_eco_k_f_veg_props:
-
-# Instantiate:
-Instantiate time-invariant variables for cTauVegProperties_CASA
-
+$(getBaseDocString())
 
 ---
 

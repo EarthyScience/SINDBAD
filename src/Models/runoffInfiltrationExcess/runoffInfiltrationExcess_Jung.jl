@@ -30,22 +30,11 @@ function compute(params::runoffInfiltrationExcess_Jung, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffInfiltrationExcess_Jung}) = "infiltration excess runoff as a function of rainintensity and vegetated fraction"
+
 @doc """
-infiltration excess runoff as a function of rainintensity and vegetated fraction
 
----
-
-# compute:
-Infiltration excess runoff using runoffInfiltrationExcess_Jung
-
-*Inputs*
- - land.states.rainInt: rain intensity [mm/h]
- - land.fluxes.rain : rainfall [mm/time]
- - land.properties.k_sat: infiltration capacity [mm/day]
- - land.states.fAPAR: fraction of absorbed photosynthetically active radiation  (equivalent to "canopy cover" in Gash & Miralles)
-
-*Outputs*
- - land.fluxes.runoffInfiltration: infiltration excess runoff [mm/time] - what runs off because  the precipitation intensity is to high for it to inflitrate in  the soil
+$(getBaseDocString())
 
 ---
 

@@ -22,23 +22,11 @@ function compute(params::fAPAR_LAI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{fAPAR_LAI}) = "sets the value of fAPAR as a function of LAI"
+
 @doc """
-sets the value of fAPAR as a function of LAI
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fraction of absorbed photosynthetically active radiation from LAI
-
-*Inputs*
- - k_extinction: light extinction coefficient
- - land.states.LAI: needs the LAI module to be activated
-
-*Outputs*
- - land.states.fAPAR: fAPAR as a function of LAI
+$(getBaseDocString())
 
 ---
 

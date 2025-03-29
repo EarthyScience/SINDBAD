@@ -51,28 +51,11 @@ function update(params::groundWRecharge_kUnsat, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{groundWRecharge_kUnsat}) = "GW recharge as the unsaturated hydraulic conductivity of the lowermost soil layer"
+
 @doc """
-GW recharge as the unsaturated hydraulic conductivity of the lowermost soil layer
 
----
-
-# compute:
-Recharge the groundwater using groundWRecharge_kUnsat
-
-*Inputs*
- - land.pools.soilW: soil moisture
- - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
- - land.properties.w_sat: moisture at saturation
-
-*Outputs*
- - land.fluxes.gw_recharge
-
-# update
-
-update pools and states in groundWRecharge_kUnsat
-
- - land.pools.groundW[1]
- - land.pools.soilW
+$(getBaseDocString())
 
 ---
 

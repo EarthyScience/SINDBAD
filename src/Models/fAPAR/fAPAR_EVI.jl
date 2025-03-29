@@ -22,22 +22,12 @@ function compute(params::fAPAR_EVI, forcing, land, helpers)
     return land
 end
 
+
+purpose(::Type{fAPAR_EVI}) = "calculates the value of fAPAR as a linear function of EVI"
+
 @doc """
-calculates the value of fAPAR as a linear function of EVI
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fraction of absorbed photosynthetically active radiation from EVI
-
-*Inputs*
- - land.states.EVI: vegetated fraction, which needs EVI module to be activated
-
-*Outputs*
- - land.states.fAPAR: fAPAR as a fraction of vegetation fraction
+$(getBaseDocString())
 
 ---
 

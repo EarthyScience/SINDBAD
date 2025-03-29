@@ -54,22 +54,11 @@ function compute(params::vegAvailableWater_sigmoid, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{vegAvailableWater_sigmoid}) = "calculate the actual amount of water that is available for plants"
+
 @doc """
-calculate the actual amount of water that is available for plants
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Plant available water using vegAvailableWater_sigmoid
-
-*Inputs*
- - land.pools.soilW
-
-*Outputs*
- - land.states.root_water_efficiency as nZix for soilW
+$(getBaseDocString())
 
 ---
 

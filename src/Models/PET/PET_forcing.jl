@@ -12,19 +12,11 @@ function compute(params::PET_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{PET_forcing}) = "sets the value of land.fluxes.PET from the forcing"
+
 @doc """
-sets the value of land.fluxes.PET from the forcing
 
----
-
-# compute:
-Set potential evapotranspiration using PET_forcing
-
-*Inputs*
- - forcing.PET read from the forcing data set
-
-*Outputs*
- - land.fluxes.PET: the value of PET for current time step
+$(getBaseDocString())
 
 ---
 

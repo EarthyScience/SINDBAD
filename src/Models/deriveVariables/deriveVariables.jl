@@ -2,12 +2,11 @@ export deriveVariables
 
 abstract type deriveVariables <: LandEcosystem end
 
-include("deriveVariables_simple.jl")
+purpose(::Type{deriveVariables}) = "Derive extra variables"
 
-@doc """
-Derive extra variables
+includeApproaches(deriveVariables, @__DIR__)
 
-# Approaches:
- - simple: simply add variables on the go
+@doc """ 
+	$(getBaseDocString(deriveVariables))
 """
 deriveVariables

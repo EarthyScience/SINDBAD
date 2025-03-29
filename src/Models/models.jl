@@ -14,7 +14,7 @@ export DoCatchModelErrors
 export DoNotCatchModelErrors
 export @describe, @bounds, @units, @timescale
 export @with_kw
-export getDocStringForApproach
+export getBaseDocStringForApproach
 export purpose
 export purposes
 export sindbad_models
@@ -47,10 +47,10 @@ function addDocStringForIO!(doc_string, io_list)
     return doc_string
 end
 
-function getDocStringForApproach(appr)
+function getBaseDocStringForApproach(appr)
     doc_string = "\n"
 
-    doc_string *= "\t $(purpose(appr))\n\n"
+    doc_string *= "\t$(purpose(appr))\n\n"
     in_out_model = getInOutModel(appr, verbose=false)
     doc_string *= "# Parameters\n"
     params = in_out_model[:parameters]
@@ -87,28 +87,53 @@ function getDocStringForApproach(appr)
     return doc_string
 end
 
+function getBaseDocString()
+    stack = stacktrace()
+    
+    # Extract the file and line number of the caller
+    if length(stack) > 1
+        caller_info = string(stack[2]) # The second entry is the caller
+        c_name = split(caller_info, "at ")[2]
+        c_name = split(c_name, ".jl")[1]
+        c_type = getproperty(Sindbad.Models, Symbol(c_name))
+        return getBaseDocString(c_type)
+    else
+        return ("No caller information available.")
+    end
+end
 
 
-function getDocStringForModel(modl)
+function getBaseDocStringForModel(modl)
     doc_string = "\n"
 
-    doc_string *= "\t $(purpose(modl))\n\n"
+    doc_string *= "\t$(purpose(modl))\n\n"
 
     doc_string *= "\n---\n"
 
     doc_string *= "# Approaches\n"
     foreach(subtypes(modl)) do subtype
         mod_name = string(nameof(subtype))
-        mod_name = replace(mod_name, "_" => "\\_")
+        # mod_name = replace(mod_name, "_" => "\\_")
         p_s = purpose(subtype)
         p_s_w = p_s
         p_s_w = isnothing(p_s) ? missing_approach_purpose(subtype) : p_s
-        doc_string *= " - $(mod_name): $(p_s_w)\n"
+        doc_string *= " - ```$(mod_name)```: " * "$(p_s_w)\n"
     end
     return doc_string
 end
 
-function includeAllApproaches(modl, dir)
+
+function getBaseDocString(modl_appr)
+    doc_string = ""
+    if supertype(modl_appr) == LandEcosystem
+        doc_string = getBaseDocStringForModel(modl_appr)
+    else
+        doc_string = getBaseDocStringForApproach(modl_appr)
+    end
+    return doc_string
+end
+
+function includeApproaches(modl, dir)
     include.(filter(contains("$(nameof(modl))_"), readdir(dir; join=true)))
     # include.(fids)
     return
@@ -240,19 +265,10 @@ for model_name_symbol ∈ sindbad_models
     include(model_path)
 end
 
-
-function get_method_types(fn)
-    # Get the method table for the function
-    mt = methods(fn)
-    # Extract the types of the first method
-    method_types = map(m -> m.sig.parameters[2], mt)
-    return method_types
-end
-
-sindbad_define_methods = get_method_types(define)
-sindbad_compute_methods = get_method_types(compute)
-sindbad_precompute_methods = get_method_types(precompute)
-sindbad_update_methods = get_method_types(update)
+sindbad_define_methods = getMethodTypes(define)
+sindbad_compute_methods = getMethodTypes(compute)
+sindbad_precompute_methods = getMethodTypes(precompute)
+sindbad_update_methods = getMethodTypes(update)
 
 
 end

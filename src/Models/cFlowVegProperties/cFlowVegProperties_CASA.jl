@@ -53,30 +53,11 @@ function compute(params::cFlowVegProperties_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cFlowVegProperties_CASA}) = "effects of vegetation that change the transfers between carbon pools"
+
 @doc """
-effects of vegetation that change the transfers between carbon pools
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of vegetation properties on the c transfers between pools using cFlowVegProperties_CASA
-
-*Inputs*
- - land.properties.MTF: fraction of C in structural litter pools  that will be metabolic from lignin:N ratio
- - land.properties.SCLIGNIN: fraction of C in structural litter pools from lignin
-
-*Outputs*
- - land.cFlowVegProperties.p_E_vec: effect of vegetation on transfer efficiency between pools
- - land.cFlowVegProperties.p_F_vec: effect of vegetation on transfer fraction between pools
- - land.cFlowVegProperties.p_E_vec
- - land.cFlowVegProperties.p_F_vec
-
-# Instantiate:
-Instantiate time-invariant variables for cFlowVegProperties_CASA
-
+$(getBaseDocString())
 
 ---
 

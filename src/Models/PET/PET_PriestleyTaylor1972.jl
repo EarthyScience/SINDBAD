@@ -33,23 +33,11 @@ function compute(params::PET_PriestleyTaylor1972, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{PET_PriestleyTaylor1972}) = "Calculates the value of land.fluxes.PET from the forcing variables"
+
 @doc """
-Calculates the value of land.fluxes.PET from the forcing variables
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Set potential evapotranspiration using PET_PriestleyTaylor1972
-
-*Inputs*
- - forcing.f_rn: Net radiation
- - forcing.f_airT: Air temperature
-
-*Outputs*
- - land.fluxes.PET: the value of PET for current time step
+$(getBaseDocString())
 
 ---
 

@@ -27,24 +27,11 @@ function compute(params::snowFraction_HTESSEL, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{snowFraction_HTESSEL}) = "computes the snow pack & fraction of snow cover following the HTESSEL approach"
+
 @doc """
-computes the snow pack & fraction of snow cover following the HTESSEL approach
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Calculate snow cover fraction using snowFraction_HTESSEL
-
-*Inputs*
- - land.fluxes.snow: snowfall
-
-*Outputs*
- - land.fluxes.evaporation: soil evaporation flux
- - land.pools.snowW: adds snow fall to the snow pack
- - land.states.frac_snow: updates snow cover fraction
+$(getBaseDocString())
 
 ---
 

@@ -64,23 +64,11 @@ function compute(params::gppDiffRadiation_Wang2015, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppDiffRadiation_Wang2015}) = "cloudiness scalar [radiation diffusion] on gpp_potential based on Wang2015"
+
 @doc """
-cloudiness scalar [radiation diffusion] on gpp_potential based on Wang2015
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - forcing.f_rg: Global radiation [SW incoming] [MJ/m2/time]
- - forcing.f_rg_pot: Potential radiation [MJ/m2/time]
- - rue_ratio : ratio of clear sky LUE to max LUE  in turner et al., appendix A, e_[g_cs] / e_[g_max], should be between 0 & 1
-
-*Outputs*
- - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
+$(getBaseDocString())
 
 ---
 

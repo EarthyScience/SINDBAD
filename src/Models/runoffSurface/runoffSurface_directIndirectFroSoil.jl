@@ -67,27 +67,11 @@ function update(params::runoffSurface_directIndirectFroSoil, forcing, land, help
     return land
 end
 
+purpose(::Type{runoffSurface_directIndirectFroSoil}) = "assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid"
+
 @doc """
-assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_directIndirectFroSoil
-
-*Inputs*
- - land.fluxes.overland_runoff
- - land.runoffSaturationExcess.frac_frozen
-
-*Outputs*
-
-# update
-
-update pools and states in runoffSurface_directIndirectFroSoil
-
+$(getBaseDocString())
 
 ---
 

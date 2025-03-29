@@ -35,20 +35,11 @@ function compute(params::vegAvailableWater_rootWaterEfficiency, forcing, land, h
     return land
 end
 
+purpose(::Type{vegAvailableWater_rootWaterEfficiency}) = "sets the maximum fraction of water that root can uptake from soil layers as constant. calculate the actual amount of water that is available for plants"
+
 @doc """
-sets the maximum fraction of water that root can uptake from soil layers as constant. calculate the actual amount of water that is available for plants
 
----
-
-# compute:
-Plant available water using vegAvailableWater_rootWaterEfficiency
-
-*Inputs*
- - land.pools.soilW
-
-*Outputs*
- - land.states.root_water_efficiency
- - land.states.PAW
+$(getBaseDocString())
 
 ---
 

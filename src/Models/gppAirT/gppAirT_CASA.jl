@@ -41,22 +41,11 @@ function compute(params::gppAirT_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppAirT_CASA}) = "temperature stress for gpp_potential based on CASA & Potter"
+
 @doc """
-temperature stress for gpp_potential based on CASA & Potter
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of temperature using gppAirT_CASA
-
-*Inputs*
- - forcing.f_airT_day: daytime temperature [°C]
-
-*Outputs*
- - land.diagnostics.gpp_f_light: effect of light saturation on potential GPP
+$(getBaseDocString())
 
 ---
 

@@ -2,7 +2,6 @@
 export getInOutModel
 export getInOutModels
 export getTypedModel
-export getDocStringForApproach
 export getUnitConversionForParameter
 export modelParameter
 export modelParameters

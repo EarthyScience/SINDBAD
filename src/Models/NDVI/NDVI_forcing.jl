@@ -13,20 +13,11 @@ function compute(params::NDVI_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{NDVI_forcing}) = "sets the value of land.states.NDVI from the forcing in every time step"
+
 @doc """
-sets the value of land.states.NDVI from the forcing in every time step
 
----
-
-# compute:
-Normalized difference vegetation index using NDVI_forcing
-
-*Inputs*
- - forcing.NDVI read from the forcing data set
-
-*Outputs*
- - land.states.NDVI: the value of NDVI for current time step
- - land.states.NDVI
+$(getBaseDocString())
 
 ---
 

@@ -16,18 +16,11 @@ function compute(params::cAllocationRadiation_gpp, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocationRadiation_gpp}) = "radiation effect on decomposition/mineralization = the same for GPP"
+
 @doc """
-radiation effect on decomposition/mineralization = the same for GPP
 
----
-
-# compute:
-
-*Inputs*
- - land.diagnostics.gpp_f_cloud: radiation effect for GPP
-
-*Outputs*
- - land.diagnostics.c_allocation_f_cloud: radiation effect on decomposition/mineralization
+$(getBaseDocString())
 
 ---
 

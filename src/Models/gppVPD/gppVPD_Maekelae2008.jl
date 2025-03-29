@@ -21,21 +21,11 @@ function compute(params::gppVPD_Maekelae2008, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppVPD_Maekelae2008}) = "calculate the VPD stress on gpp_potential based on Maekelae2008 [eqn 5]"
+
 @doc """
-calculate the VPD stress on gpp_potential based on Maekelae2008 [eqn 5]
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Vpd effect using gppVPD_Maekelae2008
-
-*Inputs*
-
-*Outputs*
- - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
+$(getBaseDocString())
 
 ---
 

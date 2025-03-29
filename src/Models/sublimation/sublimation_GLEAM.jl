@@ -95,34 +95,11 @@ function update(params::sublimation_GLEAM, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{sublimation_GLEAM}) = "instantiates the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM"
+
 @doc """
-instantiates the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Calculate sublimation and update snow water equivalent using sublimation_GLEAM
-
-*Inputs*
- - forcing.f_psurf_day : atmospheric pressure during the daytime [kPa]
- - forcing.f_rn : net radiation [MJ/m2/time]
- - forcing.f_airT_day : daytime temperature [C]
- - land.states.frac_snow: snow cover fraction []
- - land.sublimation.PTtermSub: Priestley-Taylor term [mm/MJ]
- - α: α coefficient for sublimation
-
-*Outputs*
- - land.fluxes.sublimation: sublimation [mm/time]
-
-# update
-
-update pools and states in sublimation_GLEAM
-
- -
- - land.pools.snowW: snow pack [mm]
+$(getBaseDocString())
 
 ---
 

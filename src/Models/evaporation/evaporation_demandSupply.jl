@@ -60,31 +60,11 @@ function update(params::evaporation_demandSupply, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{evaporation_demandSupply}) = "calculates the bare soil evaporation from demand-supply limited approach. "
+
 @doc """
-calculates the bare soil evaporation from demand-supply limited approach. 
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Soil evaporation using evaporation_demandSupply
-
-*Inputs*
- - land.fluxes.PET: extra forcing from prec
- - land.fluxes.PET_evaporation: extra forcing from prec
- - α:
-
-*Outputs*
- - land.fluxes.PETSoil
- - land.fluxes.evaporation
-
-# update
-
-update pools and states in evaporation_demandSupply
-
- - land.pools.soilW[1]: bare soil evaporation is only allowed from first soil layer
+$(getBaseDocString())
 
 ---
 

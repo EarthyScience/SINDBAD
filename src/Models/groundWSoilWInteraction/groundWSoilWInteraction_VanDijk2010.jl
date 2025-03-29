@@ -79,29 +79,11 @@ function update(params::groundWSoilWInteraction_VanDijk2010, forcing, land, help
     return land
 end
 
+purpose(::Type{groundWSoilWInteraction_VanDijk2010}) = "calculates the upward flow of water from groundwater to lowermost soil layer using VanDijk method"
+
 @doc """
-calculates the upward flow of water from groundwater to lowermost soil layer using VanDijk method
 
----
-
-# compute:
-Groundwater soil moisture interactions (capilary flux) using groundWSoilWInteraction_VanDijk2010
-
-*Inputs*
- - soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
-
-*Outputs*
- - land.fluxes.gw_capillary_flux: capillary flux
- - land.fluxes.gw_recharge: net groundwater recharge
-
-# update
-
-update pools and states in groundWSoilWInteraction_VanDijk2010
-
- - land.fluxes.gw_recharge
- - groundW[1]
- - soilW
+$(getBaseDocString())
 
 ---
 

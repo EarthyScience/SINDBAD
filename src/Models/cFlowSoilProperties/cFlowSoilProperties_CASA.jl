@@ -69,30 +69,11 @@ function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cFlowSoilProperties_CASA}) = "effects of soil that change the transfers between carbon pools"
+
 @doc """
-effects of soil that change the transfers between carbon pools
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of soil properties on the c transfers between pools using cFlowSoilProperties_CASA
-
-*Inputs*
- - land.properties.st_clay: soil hydraulic properties for clay layer
- - land.properties.st_silt: soil hydraulic properties for silt layer
-
-*Outputs*
- - land.diagnostics.p_E_vec: effect of soil on transfer efficiency between pools
- - land.diagnostics.p_F_vec: effect of soil on transfer fraction between pools
- - land.diagnostics.p_E_vec
- - land.diagnostics.p_F_vec
-
-# Instantiate:
-Instantiate time-invariant variables for cFlowSoilProperties_CASA
-
+$(getBaseDocString())
 
 ---
 

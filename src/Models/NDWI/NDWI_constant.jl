@@ -18,22 +18,11 @@ function precompute(params::NDWI_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{NDWI_constant}) = "sets the value of NDWI as a constant"
+
 @doc """
-sets the value of NDWI as a constant
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Normalized difference water index using NDWI_constant
-
-*Inputs*
-
-*Outputs*
- - land.states.NDWI: an extra forcing that creates a time series of constant NDWI
- - land.states.NDWI
+$(getBaseDocString())
 
 ---
 

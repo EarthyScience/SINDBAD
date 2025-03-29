@@ -28,22 +28,11 @@ function compute(params::gppAirT_TEM, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppAirT_TEM}) = "temperature stress for gpp_potential based on TEM"
+
 @doc """
-temperature stress for gpp_potential based on TEM
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of temperature using gppAirT_TEM
-
-*Inputs*
- - forcing.f_airT_day: daytime temperature [°C]
-
-*Outputs*
- - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
+$(getBaseDocString())
 
 ---
 

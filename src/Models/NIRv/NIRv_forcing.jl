@@ -13,20 +13,11 @@ function compute(params::NIRv_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{NIRv_forcing}) = "sets the value of land.states.NIRv from the forcing in every time step"
+
 @doc """
-sets the value of land.states.NIRv from the forcing in every time step
 
----
-
-# compute:
-Near-infrared reflectance of terrestrial vegetation using NIRv_forcing
-
-*Inputs*
- - forcing.NIRv read from the forcing data set
-
-*Outputs*
- - land.states.NIRv: the value of NIRv for current time step
- - land.states.NIRv
+$(getBaseDocString())
 
 ---
 

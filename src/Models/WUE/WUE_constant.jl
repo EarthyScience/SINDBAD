@@ -18,21 +18,11 @@ function precompute(params::WUE_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{WUE_constant}) = "calculates the WUE/AOE as a constant in space & time"
+
 @doc """
-calculates the WUE/AOE as a constant in space & time
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Estimate wue using WUE_constant
-
-*Inputs*
-
-*Outputs*
- - land.diagnostics.WUE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
+$(getBaseDocString())
 
 ---
 

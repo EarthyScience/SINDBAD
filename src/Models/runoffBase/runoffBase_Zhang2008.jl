@@ -57,27 +57,11 @@ function update(params::runoffBase_Zhang2008, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffBase_Zhang2008}) = "computes baseflow from a linear ground water storage"
+
 @doc """
-computes baseflow from a linear ground water storage
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Baseflow using runoffBase_Zhang2008
-
-*Inputs*
-
-*Outputs*
- - land.fluxes.base_runoff: base flow [mm/time]
-
-# update
-
-update pools and states in runoffBase_Zhang2008
-
- - land.pools.groundW: groundwater storage [mm]
+$(getBaseDocString())
 
 ---
 

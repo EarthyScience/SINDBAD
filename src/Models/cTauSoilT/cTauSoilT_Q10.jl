@@ -22,22 +22,11 @@ function compute(params::cTauSoilT_Q10, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTauSoilT_Q10}) = "Compute effect of temperature on psoil carbon fluxes"
+
 @doc """
-Compute effect of temperature on psoil carbon fluxes
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of soil temperature on decomposition rates using cTauSoilT_Q10
-
-*Inputs*
- - forcing.f_airT: values for air temperature
-
-*Outputs*
- - land.diagnostics.c_eco_k_f_soilT: air temperature stressor on turnover rates [k]
+$(getBaseDocString())
 
 ---
 

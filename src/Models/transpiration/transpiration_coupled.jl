@@ -17,20 +17,11 @@ function compute(params::transpiration_coupled, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{transpiration_coupled}) = "calculate the actual transpiration as function of gpp & WUE"
+
 @doc """
-calculate the actual transpiration as function of gpp & WUE
 
----
-
-# compute:
-If coupled, computed from gpp and aoe from wue using transpiration_coupled
-
-*Inputs*
- - land.diagnostics.WUE: water use efficiency in gC/mmH2O
- - land.fluxes.gpp: GPP based on a minimum of demand & stressors (except water  limitation) out of gpp_coupled in which transpiration_supply is used to get  supply limited GPP
-
-*Outputs*
- - land.fluxes.transpiration: actual transpiration
+$(getBaseDocString())
 
 ---
 

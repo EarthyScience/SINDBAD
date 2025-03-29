@@ -44,23 +44,11 @@ function precompute(params::soilTexture_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{soilTexture_forcing}) = "sets the soil texture properties from input"
+
 @doc """
-sets the soil texture properties from input
 
----
-
-# compute:
-Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_forcing
-
-*Inputs*
- - forcing.sand/silt/clay/orgm
-
-*Outputs*
- - land.properties.st_sand/silt/clay/orgm
-
-# Instantiate:
-Instantiate time-invariant variables for soilTexture_forcing
-
+$(getBaseDocString())
 
 ---
 

@@ -13,12 +13,11 @@ function define(params::groundWRecharge_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{groundWRecharge_none}) = "sets the GW recharge to zero"
+
 @doc """
-sets the GW recharge to zero
 
-# Instantiate:
-Instantiate time-invariant variables for groundWRecharge_none
-
+$(getBaseDocString())
 
 ---
 

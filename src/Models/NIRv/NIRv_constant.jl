@@ -18,22 +18,11 @@ function precompute(params::NIRv_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{NIRv_constant}) = "sets the value of NIRv as a constant"
+
 @doc """
-sets the value of NIRv as a constant
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Near-infrared reflectance of terrestrial vegetation using NIRv_constant
-
-*Inputs*
-
-*Outputs*
- - land.states.NIRv: an extra forcing that creates a time series of constant NIRv
- - land.states.NIRv
+$(getBaseDocString())
 
 ---
 

@@ -22,24 +22,11 @@ function compute(params::transpirationSupply_Federer1982, forcing, land, helpers
     return land
 end
 
+purpose(::Type{transpirationSupply_Federer1982}) = "calculate the supply limited transpiration as a function of max rate parameter & avaialable water"
+
 @doc """
-calculate the supply limited transpiration as a function of max rate parameter & avaialable water
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Supply-limited transpiration using transpirationSupply_Federer1982
-
-*Inputs*
- - land.pools.soilW : total soil moisture
- - land.properties.w_awc: total maximum plant available water [_fc-_wp]
- - land.states.PAW: actual extractable water
-
-*Outputs*
- - land.states.transpiration_supply: demand driven transpiration
+$(getBaseDocString())
 
 ---
 

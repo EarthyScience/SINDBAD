@@ -13,20 +13,11 @@ function compute(params::rainIntensity_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{rainIntensity_forcing}) = "stores the time series of rainfall & snowfall from forcing"
+
 @doc """
-stores the time series of rainfall & snowfall from forcing
 
----
-
-# compute:
-Set rainfall intensity using rainIntensity_forcing
-
-*Inputs*
- - land.states.rainInt
-
-*Outputs*
- - land.states.rainInt: liquid rainfall from forcing input  threshold
- - forcing.Snow using the snowfall scaling parameter which can be optimized
+$(getBaseDocString())
 
 ---
 

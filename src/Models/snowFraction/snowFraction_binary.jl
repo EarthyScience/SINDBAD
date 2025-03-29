@@ -20,19 +20,11 @@ function compute(params::snowFraction_binary, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{snowFraction_binary}) = "compute the fraction of snow cover."
+
 @doc """
-compute the fraction of snow cover.
 
----
-
-# compute:
-Calculate snow cover fraction using snowFraction_binary
-
-*Inputs*
- - land.fluxes.snow : snow fall [mm/time]
-
-*Outputs*
- - land.states.frac_snow: sets frac_snow to 1 if there is snow; to 0 if there  is now snow
+$(getBaseDocString())
 
 ---
 

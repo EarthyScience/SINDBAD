@@ -43,23 +43,11 @@ function compute(params::gppSoilW_GSI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppSoilW_GSI}) = "soil moisture stress on gpp_potential based on GSI implementation of LPJ"
+
 @doc """
-soil moisture stress on gpp_potential based on GSI implementation of LPJ
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - f_soilW_τ: contribution of current time step
- - land.pools.soilW: values of soil moisture current time step
- - land.properties._wp: wilting point
-
-*Outputs*
- - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
+$(getBaseDocString())
 
 ---
 

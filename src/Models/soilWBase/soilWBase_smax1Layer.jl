@@ -53,30 +53,11 @@ function compute(params::soilWBase_smax1Layer, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{soilWBase_smax1Layer}) = "defines the maximum soil water content of 1 soil layer as fraction of the soil depth defined in the model_structure.json based on the TWS model for the Northern Hemisphere"
+
 @doc """
-defines the maximum soil water content of 1 soil layer as fraction of the soil depth defined in the model_structure.json based on the TWS model for the Northern Hemisphere
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Distribution of soil hydraulic properties over depth using soilWBase_smax1Layer
-
-*Inputs*
- - helpers.pools.: soil layers & depths
-
-*Outputs*
- - land.properties.p_nsoilLayers
- - land.properties.soil_layer_thickness
- - land.properties.w_awc: = land.properties.w_sat
- - land.properties.w_fc : = land.properties.w_sat
- - land.properties._wp: wilting point set to zero for all layers
-
-# Instantiate:
-Instantiate time-invariant variables for soilWBase_smax1Layer
-
+$(getBaseDocString())
 
 ---
 

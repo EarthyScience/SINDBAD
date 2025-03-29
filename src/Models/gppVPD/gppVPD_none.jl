@@ -14,22 +14,11 @@ function define(params::gppVPD_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppVPD_none}) = "sets the VPD stress on gpp_potential to one (no stress)"
+
 @doc """
-sets the VPD stress on gpp_potential to one (no stress)
 
----
-
-# compute:
-
-*Inputs*
- - helpers
-
-*Outputs*
- - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
-
-# Instantiate:
-Instantiate time-invariant variables for gppVPD_none
-
+$(getBaseDocString())
 
 ---
 

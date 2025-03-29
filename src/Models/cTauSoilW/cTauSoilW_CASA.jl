@@ -70,30 +70,11 @@ function compute(params::cTauSoilW_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTauSoilW_CASA}) = "Compute effect of soil moisture on soil decomposition as modelled in CASA [BGME - below grounf moisture effect]. The below ground moisture effect; taken directly from the century model; uses soil moisture from the previous month to determine a scalar that is then used to determine the moisture effect on below ground carbon fluxes. BGME is dependent on PET; Rainfall. This approach is designed to work for Rainfall & PET values at the monthly time step & it is necessary to scale it to meet that criterion."
+
 @doc """
-Compute effect of soil moisture on soil decomposition as modelled in CASA [BGME - below grounf moisture effect]. The below ground moisture effect; taken directly from the century model; uses soil moisture from the previous month to determine a scalar that is then used to determine the moisture effect on below ground carbon fluxes. BGME is dependent on PET; Rainfall. This approach is designed to work for Rainfall & PET values at the monthly time step & it is necessary to scale it to meet that criterion.
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of soil moisture on decomposition rates using cTauSoilW_CASA
-
-*Inputs*
- - helpers.dates.timesteps_in_year: number of time steps per year
- - land.fluxes.PET: potential evapotranspiration [mm]
- - land.diagnostics.fsoilW_prev: previous time step below ground moisture effect on decomposition processes
- - soilW_prev: soil moisture sum of all layers of previous time step [mm]
- - land.fluxes.rain: rainfall
-
-*Outputs*
- - land.diagnostics.fsoilW: values for below ground moisture effect on decomposition processes
-
-# Instantiate:
-Instantiate time-invariant variables for cTauSoilW_CASA
-
+$(getBaseDocString())
 
 ---
 

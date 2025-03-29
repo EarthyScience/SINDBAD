@@ -31,24 +31,11 @@ function compute(params::runoff_sum, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoff_sum}) = "calculates runoff as a sum of all potential components"
+
 @doc """
-calculates runoff as a sum of all potential components
 
----
-
-# compute:
-Calculate the total runoff as a sum of components using runoff_sum
-
-*Inputs*
- - land.fluxes.base_runoff
- - land.fluxes.surface_runoff
-
-*Outputs*
- - land.fluxes.runoff
-
-# Instantiate:
-Instantiate time-invariant variables for runoff_sum
-
+$(getBaseDocString())
 
 ---
 

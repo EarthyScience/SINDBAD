@@ -13,15 +13,11 @@ function define(params::cAllocationLAI_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocationLAI_none}) = "sets the LAI effect on allocation to one (no effect)"
+
 @doc """
-sets the LAI effect on allocation to one (no effect)
 
-# Instantiate:
-
-*Inputs*
-
-*Outputs*
-- land.diagnostics.c_allocation_f_LAI: LAI effect on cAllocation (0-1)
+$(getBaseDocString())
 
 ---
 

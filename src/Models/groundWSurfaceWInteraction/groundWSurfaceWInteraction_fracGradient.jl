@@ -54,32 +54,11 @@ function update(params::groundWSurfaceWInteraction_fracGradient, forcing, land, 
     return land
 end
 
+purpose(::Type{groundWSurfaceWInteraction_fracGradient}) = "calculates the moisture exchange between groundwater & surface water as a fraction of difference between the storages"
+
 @doc """
-calculates the moisture exchange between groundwater & surface water as a fraction of difference between the storages
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Water exchange between surface and groundwater using groundWSurfaceWInteraction_fracGradient
-
-*Inputs*
- - land.pools.groundW: groundwater storage
- - land.pools.surfaceW: surface water storage
-
-*Outputs*
- - land.fluxes.groundW2surfaceW:
- - negative: surfaceW to groundW
- - positive: groundW to surfaceW
-
-# update
-
-update pools and states in groundWSurfaceWInteraction_fracGradient
-
- - land.pools.groundW
- - land.pools.surfaceW
+$(getBaseDocString())
 
 ---
 

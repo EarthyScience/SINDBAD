@@ -53,31 +53,11 @@ function update(params::rainSnow_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{rainSnow_forcing}) = "stores the time series of rainfall and snowfall from forcing & scale snowfall if snowfall_scalar parameter is optimized"
+
 @doc """
-stores the time series of rainfall and snowfall from forcing & scale snowfall if snowfall_scalar parameter is optimized
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Set rain and snow to fe.rainsnow. using rainSnow_forcing
-
-*Inputs*
- - forcing.f_rain
- - forcing.Snow
- - info
-
-*Outputs*
- - land.fluxes.rain: liquid rainfall from forcing input
- - land.fluxes.snow: snowfall estimated as the rain when airT <  threshold
-
-# update
-
-update pools and states in rainSnow_forcing
-
- - forcing.Snow using the snowfall scaling parameter which can be optimized
+$(getBaseDocString())
 
 ---
 

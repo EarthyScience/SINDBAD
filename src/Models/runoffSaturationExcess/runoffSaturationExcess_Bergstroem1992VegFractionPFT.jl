@@ -68,28 +68,11 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionPFT, fo
     return land
 end
 
+purpose(::Type{runoffSaturationExcess_Bergstroem1992VegFractionPFT}) = "saturation excess runoff using Bergström method with parameter scaled by vegetation fraction and PFT"
+
 @doc """
-saturation excess runoff using Bergström method with parameter scaled by vegetation fraction and PFT
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Saturation runoff using runoffSaturationExcess_Bergstroem1992VegFractionPFT
-
-*Inputs*
- - forcing.PFT : PFT classes
- - land.runoffSaturationExcess.p_berg_scale : scalar for land.states.frac_vegetation to define shape parameter of runoff-infiltration curve []
- - land.states.frac_vegetation : vegetation fraction
- - smax1 : maximum water capacity of first soil layer [mm]
- - smax2 : maximum water capacity of second soil layer [mm]
-
-*Outputs*
- - land.fluxes.sat_excess_runoff : runoff from land [mm/time]
- - land.runoffSaturationExcess.β_veg : scaled berg parameter
- - land.states.WBP : water balance pool [mm]
+$(getBaseDocString())
 
 ---
 

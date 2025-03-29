@@ -127,18 +127,12 @@ function adjustPackMainPool(land, helpers, ::WCycleBaseSimple)
 
     return land
 end
+
+purpose(::Type{wCycleBase_simple}) = "counts the number of layers in each water storage pools"
+
 @doc """
-counts the number of layers in each water storage pools
 
-
----
-
-
-*Inputs*
-- land.pools.storages: water storages
-
-*Outputs*
- - land.constants.n_storage: number of layers
+$(getBaseDocString())
 
 ---
 
