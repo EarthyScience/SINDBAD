@@ -14,25 +14,19 @@ function compute(params::ambientCO2_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{ambientCO2_forcing}) = "sets the value of ambient_CO2 from the forcing in every time step"
+
 @doc """
-sets the value of ambient_CO2 from the forcing in every time step
 
----
-
-# compute:
-Set/get ambient co2 concentration using ambientCO2_forcing
-
-*Inputs*
- - forcing.f_ambient_CO2 read from the forcing data set
-
-*Outputs*
- - land.states.ambient_CO2: the value of ambient_CO2 for current time step
+$(getDocStringForApproach(ambientCO2_forcing))
 
 ---
 
 # Extended help
+This function assigns the value of ambient CO2 concentration from the forcing data (`f_ambient_CO2`) to the land model state for the current time step.
 
 *References*
+ - None
 
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]

@@ -13,15 +13,9 @@ function define(params::autoRespiration_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{autoRespiration_none}) = "No RA. Sets the C respiration flux from all vegetation pools to zero."
 @doc """
-No RA. Sets the C respiration flux from all vegetation pools to zero.
-
-# Instantiate:
-Instantiate time-invariant variables for autoRespiration_none
-
----
-
-# Extended help
+    $(getDocStringForApproach(autoRespiration_none))
 
 *Notes*
 Applicability: no C cycle; or computing/inputing NPP directly, e.g. like in Potter et al., (1993) and follow up approaches.

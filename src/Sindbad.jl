@@ -15,7 +15,7 @@ abstract type LandEcosystem end
 
 include("utilsCore.jl")
 include("sindbadVariableCatalog.jl")
-include("Models/models.jl")
 include("modelTools.jl")
+include("Models/models.jl")
 @reexport using .Models
 end

@@ -164,27 +164,11 @@ function adjustPackPoolComponents(land, helpers, ::CCycleBaseGSI)
         cEco) ⇒ land.pools
     return land
 end
+
+purpose(::Type{cCycleBase_GSI}) = "sets the basics for carbon cycle in the GSI approach"
+
 @doc """
-Compute carbon to nitrogen ratio & annual turnover rates
-
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Pool structure of the carbon cycle using cCycleBase_GSI
-
-*Inputs*
- - annk: turnover rate of ecosystem carbon pools
-
-*Outputs*
- - land.diagnostics.c_eco_τ _Pool: turnover rate of each ecosystem carbon pool
-
-# Instantiate:
-Instantiate time-invariant variables for cCycleBase_GSI
-
-
+$(getDocStringForApproach(cCycleBase_GSI))
 ---
 
 # Extended help
