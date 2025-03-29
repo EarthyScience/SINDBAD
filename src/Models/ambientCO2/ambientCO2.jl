@@ -2,14 +2,11 @@ export ambientCO2
 
 abstract type ambientCO2 <: LandEcosystem end
 
-include("ambientCO2_constant.jl")
-include("ambientCO2_forcing.jl")
+purpose(::Type{ambientCO2}) = "set/get ambient CO2 concentration"
+
+includeAllApproaches(ambientCO2, @__DIR__)
 
 @doc """
-Set/get ambient co2 concentration
-
-# Approaches:
- - constant: sets the value of ambient_CO2 as a constant
- - forcing: sets the value of ambient_CO2 from the forcing in every time step
+$(getDocStringForModel(ambientCO2))
 """
 ambientCO2
