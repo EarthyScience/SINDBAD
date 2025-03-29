@@ -75,25 +75,6 @@ function compute(params::sublimation_GLEAM, forcing, land, helpers)
     return land
 end
 
-function update(params::sublimation_GLEAM, forcing, land, helpers)
-    ## unpack variables
-    @unpack_nt begin
-        snowW ⇐ land.pools
-        ΔsnowW ⇐ land.pools
-    end
-    # update snow pack
-    snowW[1] = snowW[1] + ΔsnowW[1]
-
-    # reset delta storage	
-    ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
-
-    ## pack land variables
-    @pack_nt begin
-        snowW ⇒ land.pools
-        ΔsnowW ⇒ land.pools
-    end
-    return land
-end
 
 purpose(::Type{sublimation_GLEAM}) = "instantiates the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM"
 

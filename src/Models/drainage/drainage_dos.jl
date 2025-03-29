@@ -58,29 +58,6 @@ function compute(params::drainage_dos, forcing, land, helpers)
     return land
 end
 
-function update(params::drainage_dos, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        soilW ⇐ land.pools
-        ΔsoilW ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture
-    soilW .= soilW .+ ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-
-    ## pack land variables
-    # @pack_nt begin
-    # 	soilW ⇒ land.pools
-    # 	ΔsoilW ⇒ land.pools
-    # end
-    return land
-end
-
 purpose(::Type{drainage_dos}) = "downward flow of moisture [drainage] in soil layers based on exponential function of soil moisture degree of saturation"
 
 @doc """

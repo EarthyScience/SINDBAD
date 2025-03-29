@@ -47,29 +47,6 @@ function compute(params::rootWaterUptake_proportion, forcing, land, helpers)
     return land
 end
 
-function update(params::rootWaterUptake_proportion, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        soilW ⇐ land.pools
-        ΔsoilW ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture
-    soilW .= soilW .+ ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-
-    ## pack land variables
-    @pack_nt begin
-        soilW ⇒ land.pools
-        # ΔsoilW ⇒ land.pools
-    end
-    return land
-end
-
 
 purpose(::Type{rootWaterUptake_proportion}) = "rootUptake from each soil layer proportional to the relative plant water availability in the layer"
 

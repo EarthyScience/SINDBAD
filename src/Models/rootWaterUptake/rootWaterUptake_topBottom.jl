@@ -44,29 +44,6 @@ function compute(params::rootWaterUptake_topBottom, forcing, land, helpers)
     return land
 end
 
-function update(params::rootWaterUptake_topBottom, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        soilW ⇐ land.pools
-        ΔsoilW ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture
-    soilW .= soilW .+ ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-
-    ## pack land variables
-    @pack_nt begin
-        soilW ⇒ land.pools
-        ΔsoilW ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{rootWaterUptake_topBottom}) = "rootUptake from each of the soil layer from top to bottom using all water in each layer"
 
 @doc """

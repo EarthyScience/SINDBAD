@@ -27,30 +27,6 @@ function compute(params::groundWRecharge_kUnsat, forcing, land, helpers)
     return land
 end
 
-function update(params::groundWRecharge_kUnsat, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        (soilW, groundW) ⇐ land.pools
-        (ΔsoilW, ΔgroundW) ⇐ land.states
-    end
-
-    ## update storage pools
-    soilW[end] = soilW[end] + ΔsoilW[end]
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔsoilW[end] and ΔgroundW to zero
-    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (groundW, soilW) ⇒ land.pools
-        (ΔsoilW, ΔgroundW) ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{groundWRecharge_kUnsat}) = "GW recharge as the unsaturated hydraulic conductivity of the lowermost soil layer"
 
 @doc """

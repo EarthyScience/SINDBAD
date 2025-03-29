@@ -10,3 +10,26 @@ includeApproaches(runoffSurface, @__DIR__)
 	$(getBaseDocString(runoffSurface))
 """
 runoffSurface
+
+# define a common update interface for all runoffSurface models
+function update(::runoffSurface, forcing, land, helpers)
+    ## unpack variables
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
+    end
+
+    ## update storage pools
+    surfaceW = addVec(surfaceW, ΔsurfaceW)
+
+    for l in eachindex(ΔsurfaceW)
+        @rep_elem zero(eltype(ΔsurfaceW)) ⇒ (ΔsurfaceW, l, :surfaceW)
+    end
+
+    ## pack land variables
+    @pack_nt begin
+        surfaceW ⇒ land.pools
+        ΔsurfaceW ⇒ land.pools
+    end
+    return land
+end

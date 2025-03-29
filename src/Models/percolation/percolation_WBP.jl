@@ -37,28 +37,6 @@ function compute(params::percolation_WBP, forcing, land, helpers)
     return land
 end
 
-function update(params::percolation_WBP, forcing, land, helpers)
-    ## unpack variables
-    @unpack_nt begin
-        soilW ⇐ land.pools
-        ΔsoilW ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture of the first layer
-    soilW .= soilW .+ ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-
-    ## pack land variables
-    @pack_nt begin
-        soilW ⇒ land.pools
-        # ΔsoilW ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{percolation_WBP}) = "computes the percolation into the soil after the surface runoff process"
 
 @doc """

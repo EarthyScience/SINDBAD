@@ -32,28 +32,6 @@ function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land,
     return land
 end
 
-function update(params::groundWSurfaceWInteraction_fracGradient, forcing, land, helpers)
-    ## unpack variables
-    @unpack_nt begin
-        (groundW, surfaceW) ⇐ land.pools
-        (ΔgroundW, ΔsurfaceW) ⇐ land.states
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔgroundW and ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (groundW, ΔgroundW, surfaceW, ΔsurfaceW) ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{groundWSurfaceWInteraction_fracGradient}) = "calculates the moisture exchange between groundwater & surface water as a fraction of difference between the storages"
 
 @doc """

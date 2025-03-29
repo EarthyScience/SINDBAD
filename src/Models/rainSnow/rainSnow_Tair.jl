@@ -35,30 +35,6 @@ function compute(params::rainSnow_Tair, forcing, land, helpers)
     return land
 end
 
-function update(params::rainSnow_Tair, forcing, land, helpers)
-    @unpack_rainSnow_Tair params
-
-    ## unpack variables
-    @unpack_nt begin
-        snowW ⇐ land.pools
-        ΔsnowW ⇐ land.pools
-    end
-
-    ## update variables
-    # update snow pack
-    snowW[1] = snowW[1] + ΔsnowW[1]
-
-    # reset delta storage	
-    ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
-
-    ## pack land variables
-    @pack_nt begin
-        snowW ⇒ land.pools
-        # ΔsnowW ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{rainSnow_Tair}) = "separates the rain & snow based on temperature threshold"
 
 @doc """

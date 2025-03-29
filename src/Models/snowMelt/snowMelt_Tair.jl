@@ -42,29 +42,6 @@ function compute(params::snowMelt_Tair, forcing, land, helpers)
     return land
 end
 
-function update(params::snowMelt_Tair, forcing, land, helpers)
-    @unpack_snowMelt_Tair params
-
-    ## unpack variables
-    @unpack_nt begin
-        snowW ⇐ land.pools
-        ΔsnowW ⇐ land.pools
-    end
-
-    # update snow pack
-    snowW .= snowW .+ ΔsnowW
-
-    # reset delta storage	
-    ΔsnowW .= ΔsnowW .- ΔsnowW
-
-    ## pack land variables
-    @pack_nt begin
-        snowW ⇒ land.pools
-        ΔsnowW ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{snowMelt_Tair}) = "computes the snow melt term as function of air temperature"
 
 @doc """

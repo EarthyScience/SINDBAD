@@ -33,26 +33,6 @@ function compute(params::rainSnow_forcing, forcing, land, helpers)
     return land
 end
 
-function update(params::rainSnow_forcing, forcing, land, helpers)
-    ## unpack variables
-    @unpack_nt begin
-        snowW ⇐ land.pools
-        ΔsnowW ⇐ land.pools
-    end
-    # update snow pack
-    snowW[1] = snowW[1] + ΔsnowW[1]
-
-    # reset delta storage	
-    ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
-
-    ## pack land variables
-    @pack_nt begin
-        snowW ⇒ land.pools
-        ΔsnowW ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{rainSnow_forcing}) = "stores the time series of rainfall and snowfall from forcing & scale snowfall if snowfall_scalar parameter is optimized"
 
 @doc """
