@@ -26,7 +26,7 @@ purpose(::Type{transpirationDemand_PETfAPAR}) = "calculate the climate driven de
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(transpirationDemand_PETfAPAR))
 
 ---
 

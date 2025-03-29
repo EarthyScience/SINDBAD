@@ -39,7 +39,7 @@ purpose(::Type{vegAvailableWater_rootWaterEfficiency}) = "sets the maximum fract
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(vegAvailableWater_rootWaterEfficiency))
 
 ---
 

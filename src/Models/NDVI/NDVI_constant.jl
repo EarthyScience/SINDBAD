@@ -22,7 +22,7 @@ purpose(::Type{NDVI_constant}) = "sets the value of NDVI as a constant"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(NDVI_constant))
 
 ---
 

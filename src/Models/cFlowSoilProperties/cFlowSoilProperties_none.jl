@@ -28,7 +28,7 @@ purpose(::Type{cFlowSoilProperties_none}) = "set transfer between pools to 0 [i.
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cFlowSoilProperties_none))
 
 ---
 

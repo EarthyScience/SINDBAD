@@ -45,7 +45,7 @@ purpose(::Type{gppAirT_CASA}) = "temperature stress for gpp_potential based on C
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppAirT_CASA))
 
 ---
 

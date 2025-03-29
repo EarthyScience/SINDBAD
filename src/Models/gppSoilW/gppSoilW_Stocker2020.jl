@@ -44,7 +44,7 @@ purpose(::Type{gppSoilW_Stocker2020}) = "soil moisture stress on gpp_potential b
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppSoilW_Stocker2020))
 
 ---
 

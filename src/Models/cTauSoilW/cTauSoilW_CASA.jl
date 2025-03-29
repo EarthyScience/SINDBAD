@@ -74,7 +74,7 @@ purpose(::Type{cTauSoilW_CASA}) = "Compute effect of soil moisture on soil decom
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cTauSoilW_CASA))
 
 ---
 

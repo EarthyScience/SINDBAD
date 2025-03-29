@@ -26,7 +26,7 @@ purpose(::Type{transpirationDemand_PETvegFraction}) = "calculate the climate dri
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(transpirationDemand_PETvegFraction))
 
 ---
 

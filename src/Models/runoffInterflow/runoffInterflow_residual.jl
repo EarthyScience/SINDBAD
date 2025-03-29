@@ -31,7 +31,7 @@ purpose(::Type{runoffInterflow_residual}) = "interflow as a fraction of the avai
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoffInterflow_residual))
 
 ---
 

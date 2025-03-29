@@ -19,7 +19,7 @@ purpose(::Type{runoffOverland_InfIntSat}) = "assumes overland flow to be sum of 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoffOverland_InfIntSat))
 
 ---
 

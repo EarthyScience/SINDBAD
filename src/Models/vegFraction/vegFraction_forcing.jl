@@ -16,7 +16,7 @@ purpose(::Type{vegFraction_forcing}) = "sets the value of land.states.frac_veget
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(vegFraction_forcing))
 
 ---
 

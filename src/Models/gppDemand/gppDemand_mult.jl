@@ -53,7 +53,7 @@ purpose(::Type{gppDemand_mult}) = "compute the demand GPP as multipicative stres
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppDemand_mult))
 
 ---
 

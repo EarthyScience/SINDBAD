@@ -61,7 +61,7 @@ purpose(::Type{gppAirT_GSI}) = "temperature stress on gpp_potential based on GSI
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppAirT_GSI))
 
 ---
 

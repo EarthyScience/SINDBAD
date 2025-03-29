@@ -77,7 +77,7 @@ purpose(::Type{cTauSoilW_GSI}) = "calculate the moisture stress for cTau based o
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cTauSoilW_GSI))
 
 ---
 

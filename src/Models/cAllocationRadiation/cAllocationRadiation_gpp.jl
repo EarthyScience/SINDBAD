@@ -20,7 +20,7 @@ purpose(::Type{cAllocationRadiation_gpp}) = "radiation effect on decomposition/m
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocationRadiation_gpp))
 
 ---
 

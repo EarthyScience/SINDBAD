@@ -72,7 +72,7 @@ purpose(::Type{runoffSaturationExcess_Bergstroem1992VegFractionPFT}) = "saturati
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoffSaturationExcess_Bergstroem1992VegFractionPFT))
 
 ---
 

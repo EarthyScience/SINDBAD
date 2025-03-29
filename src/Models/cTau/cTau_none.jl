@@ -17,7 +17,7 @@ purpose(::Type{cTau_none}) = "set the actual τ to ones"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cTau_none))
 
 ---
 

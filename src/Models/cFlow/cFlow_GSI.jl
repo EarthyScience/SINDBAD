@@ -161,7 +161,7 @@ purpose(::Type{cFlow_GSI}) = "Precomputations for the transfers between carbon p
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cFlow_GSI))
 
 
 ---

@@ -46,7 +46,7 @@ purpose(::Type{cAllocationRadiation_GSI}) = "radiation effect on decomposition/m
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocationRadiation_GSI))
 
 ---
 

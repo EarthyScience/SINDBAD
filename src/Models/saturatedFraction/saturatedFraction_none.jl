@@ -17,7 +17,7 @@ purpose(::Type{saturatedFraction_none}) = "sets the land.states.soilWSatFrac [sa
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(saturatedFraction_none))
 
 ---
 

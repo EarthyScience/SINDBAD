@@ -37,7 +37,7 @@ purpose(::Type{PET_PriestleyTaylor1972}) = "Calculates the value of land.fluxes.
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(PET_PriestleyTaylor1972))
 
 ---
 

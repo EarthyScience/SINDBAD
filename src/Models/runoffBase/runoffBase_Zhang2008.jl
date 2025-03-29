@@ -61,7 +61,7 @@ purpose(::Type{runoffBase_Zhang2008}) = "computes baseflow from a linear ground 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoffBase_Zhang2008))
 
 ---
 

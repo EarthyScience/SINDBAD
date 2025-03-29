@@ -17,7 +17,7 @@ purpose(::Type{snowFraction_none}) = "sets the snow fraction to zero"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(snowFraction_none))
 
 ---
 

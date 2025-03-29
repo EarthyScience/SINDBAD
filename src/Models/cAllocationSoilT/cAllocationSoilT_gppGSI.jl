@@ -44,7 +44,7 @@ purpose(::Type{cAllocationSoilT_gppGSI}) = "temperature effect on allocation fro
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocationSoilT_gppGSI))
 
 ---
 

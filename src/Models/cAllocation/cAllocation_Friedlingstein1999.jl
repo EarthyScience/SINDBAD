@@ -80,7 +80,7 @@ purpose(::Type{cAllocation_Friedlingstein1999}) = "Compute the fraction of fixed
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocation_Friedlingstein1999))
 
 ---
 

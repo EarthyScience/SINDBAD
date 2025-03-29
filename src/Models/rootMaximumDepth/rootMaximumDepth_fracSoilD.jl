@@ -37,7 +37,7 @@ purpose(::Type{rootMaximumDepth_fracSoilD}) = "sets the maximum rooting depth as
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(rootMaximumDepth_fracSoilD))
 
 ---
 

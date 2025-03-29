@@ -25,7 +25,7 @@ purpose(::Type{gppVPD_Maekelae2008}) = "calculate the VPD stress on gpp_potentia
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppVPD_Maekelae2008))
 
 ---
 

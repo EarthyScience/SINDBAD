@@ -83,7 +83,7 @@ purpose(::Type{groundWSoilWInteraction_VanDijk2010}) = "calculates the upward fl
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(groundWSoilWInteraction_VanDijk2010))
 
 ---
 

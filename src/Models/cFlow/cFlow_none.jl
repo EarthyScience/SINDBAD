@@ -24,7 +24,7 @@ purpose(::Type{cFlow_none}) = "set transfer between pools to 0 [i.e. nothing is 
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cFlow_none))
 
 ---
 

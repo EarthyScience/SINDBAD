@@ -72,7 +72,7 @@ purpose(::Type{cAllocation_fixed}) = "compute the fraction of npp that is alloca
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocation_fixed))
 
 ---
 

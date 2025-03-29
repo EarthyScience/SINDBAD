@@ -48,7 +48,7 @@ purpose(::Type{soilTexture_forcing}) = "sets the soil texture properties from in
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(soilTexture_forcing))
 
 ---
 

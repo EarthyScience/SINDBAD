@@ -17,7 +17,7 @@ purpose(::Type{gpp_none}) = "sets the actual GPP to zero"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gpp_none))
 
 ---
 

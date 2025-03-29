@@ -125,7 +125,7 @@ purpose(::Type{cCycleConsistency_simple}) = "check consistency in cCycle vector:
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cCycleConsistency_simple))
 
 ---
 

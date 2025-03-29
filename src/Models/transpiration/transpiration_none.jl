@@ -16,7 +16,7 @@ purpose(::Type{transpiration_none}) = "sets the actual transpiration to zero"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(transpiration_none))
 
 ---
 

@@ -32,7 +32,7 @@ purpose(::Type{getPools_simple}) = "gets the amount of water available for the c
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(getPools_simple))
 
 ---
 

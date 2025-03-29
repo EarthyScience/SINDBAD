@@ -76,7 +76,7 @@ purpose(::Type{groundWRecharge_dos}) = "GW recharge as a exponential functions o
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(groundWRecharge_dos))
 
 ---
 

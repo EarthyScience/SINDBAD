@@ -74,7 +74,7 @@ purpose(::Type{snowMelt_TairRn}) = "instantiate the potential snow melt based on
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(snowMelt_TairRn))
 
 ---
 

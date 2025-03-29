@@ -31,7 +31,7 @@ purpose(::Type{snowFraction_HTESSEL}) = "computes the snow pack & fraction of sn
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(snowFraction_HTESSEL))
 
 ---
 

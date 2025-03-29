@@ -55,7 +55,7 @@ purpose(::Type{groundWRecharge_kUnsat}) = "GW recharge as the unsaturated hydrau
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(groundWRecharge_kUnsat))
 
 ---
 

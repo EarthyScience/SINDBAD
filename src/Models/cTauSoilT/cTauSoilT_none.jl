@@ -17,7 +17,7 @@ purpose(::Type{cTauSoilT_none}) = "set the outputs to ones"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cTauSoilT_none))
 
 ---
 

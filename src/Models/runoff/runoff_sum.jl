@@ -35,7 +35,7 @@ purpose(::Type{runoff_sum}) = "calculates runoff as a sum of all potential compo
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(runoff_sum))
 
 ---
 

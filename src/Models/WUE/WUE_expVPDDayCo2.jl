@@ -35,7 +35,7 @@ purpose(::Type{WUE_expVPDDayCo2}) = "calculates the WUE/AOE as a function of WUE
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(WUE_expVPDDayCo2))
 
 ---
 

@@ -17,7 +17,7 @@ purpose(::Type{cAllocation_none}) = "sets the carbon allocation to zero (nothing
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cAllocation_none))
 
 ---
 

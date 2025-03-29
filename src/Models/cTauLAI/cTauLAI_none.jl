@@ -17,7 +17,7 @@ purpose(::Type{cTauLAI_none}) = "set values to ones"
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(cTauLAI_none))
 
 ---
 

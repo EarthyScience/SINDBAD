@@ -19,7 +19,7 @@ purpose(::Type{gppDemand_none}) = "sets the scalar for demand GPP to ones & dema
 
 @doc """
 
-$(getBaseDocString())
+$(getBaseDocString(gppDemand_none))
 
 ---
 
