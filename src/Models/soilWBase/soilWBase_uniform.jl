@@ -91,29 +91,11 @@ function precompute(params::soilWBase_uniform, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{soilWBase_uniform}) = "distributes the soil hydraulic properties for different soil layers assuming an uniform vertical distribution of all soil properties"
+
 @doc """
-distributes the soil hydraulic properties for different soil layers assuming an uniform vertical distribution of all soil properties
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Distribution of soil hydraulic properties over depth using soilWBase_uniform
-
-*Inputs*
- - helpers.pools.: soil layers & depths
- - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
- - land.properties.p_[sand/silt/clay/orgm]: texture properties [nZix]
-
-*Outputs*
- - all soil hydraulic properties in land.properties.p_[parameterName]
- - makeLookup: to switch on/off the creation of lookup table of  unsaturated hydraulic conductivity
-
-# Instantiate:
-Instantiate time-invariant variables for soilWBase_uniform
-
+$(getBaseDocString())
 
 ---
 

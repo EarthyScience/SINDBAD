@@ -19,22 +19,11 @@ function precompute(params::treeFraction_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{treeFraction_constant}) = "sets the value of frac_tree as a constant"
+
 @doc """
-sets the value of frac_tree as a constant
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fractional coverage of trees using treeFraction_constant
-
-*Inputs*
- - info helper for array
-
-*Outputs*
- - land.states.frac_tree: an extra forcing that creates a time series of constant frac_tree
+$(getBaseDocString())
 
 ---
 

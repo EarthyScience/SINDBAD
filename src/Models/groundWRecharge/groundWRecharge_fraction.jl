@@ -56,28 +56,11 @@ function update(params::groundWRecharge_fraction, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{groundWRecharge_fraction}) = "GW recharge as a fraction of moisture of the lowermost soil layer"
+
 @doc """
-GW recharge as a fraction of moisture of the lowermost soil layer
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Recharge the groundwater using groundWRecharge_fraction
-
-*Inputs*
- - land.pools.soilW
-
-*Outputs*
- - land.fluxes.gw_recharge
-
-# update
-
-update pools and states in groundWRecharge_fraction
-
- - land.pools.groundW[1]
+$(getBaseDocString())
 
 ---
 

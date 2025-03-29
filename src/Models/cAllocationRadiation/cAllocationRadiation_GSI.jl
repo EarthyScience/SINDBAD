@@ -42,22 +42,11 @@ function compute(params::cAllocationRadiation_GSI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocationRadiation_GSI}) = "radiation effect on decomposition/mineralization using GSI method"
+
 @doc """
-radiation effect on decomposition/mineralization using GSI method
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - forcing.f_PAR: Photosynthetically Active Radiation
- - land.diagnostics.c_allocation_f_cloud_prev: radiation effect on decomposition/mineralization from the previous time step
-
-*Outputs*
- - land.diagnostics.c_allocation_c_allocation_f_cloud: radiation effect on decomposition/mineralization
+$(getBaseDocString())
 
 ---
 

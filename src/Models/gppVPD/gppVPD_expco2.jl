@@ -28,25 +28,11 @@ function compute(params::gppVPD_expco2, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppVPD_expco2}) = "VPD stress on gpp_potential based on Maekelae2008 and with co2 effect"
+
 @doc """
-VPD stress on gpp_potential based on Maekelae2008 and with co2 effect
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Vpd effect using gppVPD_expco2
-
-*Inputs*
- - Cam: parameter modulation mean co2 effect on GPP
- - cKappa: parameter modulating co2 effect on VPD response to GPP
- - forcing.f_VPD_day: daytime vapor pressure deficit [kPa]
- - κ: parameter of the exponential decay function of GPP with  VPD [kPa-1] dimensionless [0.06 0.7]; median !0.4, same as k from  Maekaelae 2008
-
-*Outputs*
- - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
+$(getBaseDocString())
 
 ---
 

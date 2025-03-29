@@ -2,14 +2,11 @@ export NDVI
 
 abstract type NDVI <: LandEcosystem end
 
-include("NDVI_constant.jl")
-include("NDVI_forcing.jl")
+purpose(::Type{NDVI}) = "Normalized difference vegetation index"
 
-@doc """
-Normalized difference vegetation index
+includeApproaches(NDVI, @__DIR__)
 
-# Approaches:
- - constant: sets the value of NDVI as a constant
- - forcing: sets the value of land.states.NDVI from the forcing in every time step
+@doc """ 
+	$(getBaseDocString(NDVI))
 """
 NDVI

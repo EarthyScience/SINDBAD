@@ -53,27 +53,11 @@ function precompute(params::rootWaterEfficiency_constant, forcing, land, helpers
     return land
 end
 
+purpose(::Type{rootWaterEfficiency_constant}) = "sets the maximum fraction of water that root can uptake from soil layers as constant"
 
 @doc """
-sets the maximum fraction of water that root can uptake from soil layers as constant
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Distribution of water uptake fraction/efficiency by root per soil layer using rootWaterEfficiency_constant
-
-*Inputs*
- - land.states.maxRootD
-
-*Outputs*
- - land.states.root_water_efficiency
-
-# Instantiate:
-Instantiate time-invariant variables for rootWaterEfficiency_constant
-
+$(getBaseDocString())
 
 ---
 

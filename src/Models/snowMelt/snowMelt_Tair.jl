@@ -65,32 +65,11 @@ function update(params::snowMelt_Tair, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{snowMelt_Tair}) = "computes the snow melt term as function of air temperature"
+
 @doc """
-computes the snow melt term as function of air temperature
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Calculate snowmelt and update s.w.wsnow using snowMelt_Tair
-
-*Inputs*
- - forcing.f_airT: temperature [C]
- - land.fluxes.Tterm: effect of temperature on snow melt [mm/time]
- - land.states.frac_snow: snow cover fraction [-]
-
-*Outputs*
- - land.fluxes.snowMelt: snow melt [mm/time]
-
-# update
-
-update pools and states in snowMelt_Tair
-
- -
- - land.pools.snowW: water storage [mm]
- - land.states.WBP: water balance pool [mm]
+$(getBaseDocString())
 
 ---
 

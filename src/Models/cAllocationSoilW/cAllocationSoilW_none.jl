@@ -14,15 +14,11 @@ function define(params::cAllocationSoilW_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocationSoilW_none}) = "sets the moisture effect on allocation to one (no effect)"
+
 @doc """
-sets the moisture effect on allocation to one (no effect)
 
-# Instantiate:
-
-*Inputs*
-
-*Outputs*
-- land.diagnostics.c_allocation_f_soilW: moisture effect on cAllocation (0-1)
+$(getBaseDocString())
 
 ---
 

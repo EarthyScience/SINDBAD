@@ -62,24 +62,11 @@ function compute(params::cCycleBase_simple, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cCycleBase_simple}) = "Compute carbon to nitrogen ratio & annual turnover rates"
+
 @doc """
-Compute carbon to nitrogen ratio & annual turnover rates
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Pool structure of the carbon cycle using cCycleBase_simple
-
-*Inputs*
-
-*Outputs*
-
-# Instantiate:
-Instantiate time-invariant variables for cCycleBase_simple
-
+$(getBaseDocString())
 
 ---
 

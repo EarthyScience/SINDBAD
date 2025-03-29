@@ -2,12 +2,11 @@ export evapotranspiration
 
 abstract type evapotranspiration <: LandEcosystem end
 
-include("evapotranspiration_sum.jl")
+purpose(::Type{evapotranspiration}) = "Calculate the evapotranspiration as a sum of components"
 
-@doc """
-Calculate the evapotranspiration as a sum of components
+includeApproaches(evapotranspiration, @__DIR__)
 
-# Approaches:
- - sum: calculates evapotranspiration as a sum of all potential components
+@doc """ 
+	$(getBaseDocString(evapotranspiration))
 """
 evapotranspiration

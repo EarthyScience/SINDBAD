@@ -81,31 +81,11 @@ function update(params::groundWSoilWInteraction_gradient, forcing, land, helpers
     return land
 end
 
+purpose(::Type{groundWSoilWInteraction_gradient}) = "calculates a buffer storage that gives water to the soil when the soil dries up; while the soil gives water to the buffer when the soil is wet but the buffer low"
+
 @doc """
-calculates a buffer storage that gives water to the soil when the soil dries up; while the soil gives water to the buffer when the soil is wet but the buffer low
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Groundwater soil moisture interactions (capilary flux) using groundWSoilWInteraction_gradient
-
-*Inputs*
- - info : length(land.pools.soilW) = number of soil layers
- - land.groundWSoilWInteraction.p_gwmax : maximum storage capacity of the groundwater
- - land.properties.w_sat : maximum storage capacity of soil [mm]
-
-*Outputs*
- - land.fluxes.GW2Soil : flux between groundW & soilW (positive from groundwater to soil, and negative from soil to groundwater)
-
-# update
-
-update pools and states in groundWSoilWInteraction_gradient
-
- - land.pools.groundW
- - land.pools.soilW
+$(getBaseDocString())
 
 ---
 

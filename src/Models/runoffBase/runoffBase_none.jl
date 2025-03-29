@@ -13,12 +13,11 @@ function define(params::runoffBase_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffBase_none}) = "sets the base runoff to zero"
+
 @doc """
-sets the base runoff to zero
 
-# Instantiate:
-Instantiate time-invariant variables for runoffBase_none
-
+$(getBaseDocString())
 
 ---
 

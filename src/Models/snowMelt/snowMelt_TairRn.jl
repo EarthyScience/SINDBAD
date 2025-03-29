@@ -70,39 +70,11 @@ function update(params::snowMelt_TairRn, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{snowMelt_TairRn}) = "instantiate the potential snow melt based on temperature & net radiation on days with f*airT > 0.0°C. instantiate the potential snow melt based on temperature & net radiation on days with f*airT > 0.0 °C"
+
 @doc """
-instantiate the potential snow melt based on temperature & net radiation on days with f_airT > 0.0°C. instantiate the potential snow melt based on temperature & net radiation on days with f_airT > 0.0 °C
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Calculate snowmelt and update s.w.wsnow using snowMelt_TairRn
-
-*Inputs*
- - forcing.f_rn: net radiation [MJ/m2/day]
- - forcing.f_airT: temperature [C]
- - info structure
- - land.fluxes.potential_snow_melt : potential snow melt based on temperature & net radiation [mm/time]
- - land.states.frac_snow : snow cover fraction []
-
-*Outputs*
- - land.fluxes.snowMelt : snow melt [mm/time]
- - land.fluxes.potential_snow_melt: potential snow melt [mm/time]
-
-# update
-
-update pools and states in snowMelt_TairRn
-
- -
- - land.pools.snowW[1] : snowpack [mm]
- - land.states.WBP : water balance pool [mm]
-
-# Instantiate:
-Instantiate time-invariant variables for snowMelt_TairRn
-
+$(getBaseDocString())
 
 ---
 

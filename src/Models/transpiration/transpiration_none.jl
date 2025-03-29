@@ -12,12 +12,11 @@ function define(params::transpiration_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{transpiration_none}) = "sets the actual transpiration to zero"
+
 @doc """
-sets the actual transpiration to zero
 
-# Instantiate:
-Instantiate time-invariant variables for transpiration_none
-
+$(getBaseDocString())
 
 ---
 

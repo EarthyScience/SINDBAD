@@ -59,27 +59,11 @@ function compute(params::cCycleDisturbance_WROASTED, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cCycleDisturbance_WROASTED}) = "move all vegetation carbon pools except reserve to respective flow target when there is disturbance"
+
 @doc """
-move all vegetation carbon pools except reserve to respective flow target when there is disturbance
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Disturb the carbon cycle pools using cCycleDisturbance_WROASTED
-
-*Inputs*
- - land.pools.cEco: carbon pool at the end of spinup
-
-*Outputs*
-
-# update
-
-update pools and states in cCycleDisturbance_WROASTED
-
- - land.pools.cEco
+$(getBaseDocString())
 
 ---
 

@@ -13,12 +13,11 @@ function define(params::snowFraction_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{snowFraction_none}) = "sets the snow fraction to zero"
+
 @doc """
-sets the snow fraction to zero
 
-# Instantiate:
-Instantiate time-invariant variables for snowFraction_none
-
+$(getBaseDocString())
 
 ---
 

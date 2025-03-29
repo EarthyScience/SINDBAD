@@ -58,29 +58,11 @@ function update(params::runoffSurface_indirect, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffSurface_indirect}) = "assumes all overland runoff is recharged to surface water first, which then generates surface runoff"
+
 @doc """
-assumes all overland runoff is recharged to surface water first, which then generates surface runoff
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_indirect
-
-*Inputs*
- - land.fluxes.overland_runoff
- - land.states.surfaceW[1]
-
-*Outputs*
- - land.fluxes.surface_runoff & its indirect/slow component
-
-# update
-
-update pools and states in runoffSurface_indirect
-
- - land.pools.surfaceW[1]
+$(getBaseDocString())
 
 ---
 

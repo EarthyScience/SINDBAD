@@ -19,22 +19,11 @@ function compute(params::rainIntensity_simple, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{rainIntensity_simple}) = "stores the time series of rainfall intensity"
+
 @doc """
-stores the time series of rainfall intensity
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Set rainfall intensity using rainIntensity_simple
-
-*Inputs*
- - forcing.f_rain
-
-*Outputs*
- - land.states.rainInt: Intesity of rainfall during the day
+$(getBaseDocString())
 
 ---
 

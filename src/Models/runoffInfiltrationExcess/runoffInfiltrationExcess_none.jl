@@ -13,12 +13,11 @@ function define(params::runoffInfiltrationExcess_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffInfiltrationExcess_none}) = "sets infiltration excess runoff to zero"
+
 @doc """
-sets infiltration excess runoff to zero
 
-# Instantiate:
-Instantiate time-invariant variables for runoffInfiltrationExcess_none
-
+$(getBaseDocString())
 
 ---
 

@@ -13,12 +13,11 @@ function define(params::cTauLAI_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTauLAI_none}) = "set values to ones"
+
 @doc """
-set values to ones
 
-# Instantiate:
-Instantiate time-invariant variables for cTauLAI_none
-
+$(getBaseDocString())
 
 ---
 

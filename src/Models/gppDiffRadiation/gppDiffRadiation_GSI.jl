@@ -45,22 +45,11 @@ function compute(params::gppDiffRadiation_GSI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppDiffRadiation_GSI}) = "cloudiness scalar [radiation diffusion] on gpp_potential based on GSI implementation of LPJ"
+
 @doc """
-cloudiness scalar [radiation diffusion] on gpp_potential based on GSI implementation of LPJ
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - f_rg: shortwave radiation incoming
- - fR_τ: contribution of current time step
-
-*Outputs*
- - land.diagnostics.gpp_f_cloud: light effect on GPP between 0-1
+$(getBaseDocString())
 
 ---
 

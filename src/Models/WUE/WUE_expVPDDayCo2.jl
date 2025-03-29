@@ -31,23 +31,11 @@ function compute(params::WUE_expVPDDayCo2, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{WUE_expVPDDayCo2}) = "calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD"
+
 @doc """
-calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Estimate wue using WUE_expVPDDayCo2
-
-*Inputs*
- - WUEat1hPa: the VPD at 1 hpa
- - forcing.f_VPD_day: daytime mean VPD [kPa]
-
-*Outputs*
- - land.diagnostics.WUENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
+$(getBaseDocString())
 
 ---
 

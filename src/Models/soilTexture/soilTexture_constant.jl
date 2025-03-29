@@ -41,24 +41,11 @@ function precompute(params::soilTexture_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{soilTexture_constant}) = "sets the soil texture properties as constant"
+
 @doc """
-sets the soil texture properties as constant
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_constant
-
-*Inputs*
-
-*Outputs*
-
-# Instantiate:
-Instantiate time-invariant variables for soilTexture_constant
-
+$(getBaseDocString())
 
 ---
 

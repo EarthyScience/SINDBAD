@@ -58,24 +58,12 @@ function update(params::percolation_WBP, forcing, land, helpers)
     end
     return land
 end
+
+purpose(::Type{percolation_WBP}) = "computes the percolation into the soil after the surface runoff process"
+
 @doc """
-computes the percolation into the soil after the surface runoff process
 
----
-
-# compute:
-Calculate the soil percolation = wbp at this point using percolation_WBP
-
-*Inputs*
- - land.states.WBP: water budget pool
-
-*Outputs*
- - land.land.fluxes: soil percolation
-
-# update
-
-update pools and states in percolation_WBP
- - land.states.WBP
+$(getBaseDocString())
 
 ---
 

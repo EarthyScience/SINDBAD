@@ -63,31 +63,11 @@ function update(params::evaporation_vegFraction, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{evaporation_vegFraction}) = "calculates the bare soil evaporation from 1-frac_vegetation & PET soil"
+
 @doc """
-calculates the bare soil evaporation from 1-frac_vegetation & PET soil
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Soil evaporation using evaporation_vegFraction
-
-*Inputs*
- - land.fluxes.PET: forcing data set
- - land.states.frac_vegetation [output of frac_vegetation module]
- - α
-
-*Outputs*
- - land.fluxes.PETSoil
- - land.fluxes.evaporation
-
-# update
-
-update pools and states in evaporation_vegFraction
-
- - land.pools.soilW[1]: bare soil evaporation is only allowed from first soil layer
+$(getBaseDocString())
 
 ---
 

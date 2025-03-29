@@ -23,21 +23,11 @@ function compute(params::cAllocationSoilW_Friedlingstein1999, forcing, land, hel
     return land
 end
 
+purpose(::Type{cAllocationSoilW_Friedlingstein1999}) = "partial moisture effect on decomposition/mineralization based on Friedlingstein1999"
+
 @doc """
-partial moisture effect on decomposition/mineralization based on Friedlingstein1999
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - land.diagnostics.c_allocation_f_soilW: moisture effect on soil decomposition rate
-
-*Outputs*
- - land.diagnostics.c_allocation_f_soilW: moisture stressor on C allocation
+$(getBaseDocString())
 
 ---
 

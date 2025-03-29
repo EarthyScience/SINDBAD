@@ -48,22 +48,11 @@ function compute(params::wCycle_combined, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{wCycle_combined}) = "computes the algebraic sum of storage and delta storage"
+
 @doc """
-computes the algebraic sum of storage and delta storage
 
-
----
-
-# compute:
-- apply the delta storage changes
-- check if there is overflow or over extraction
-
-*Inputs*
-- land.pools.storages: water storages
-- land.states.Δstorages: water storage changes
-
-*Outputs*
- - land.states.Δstorages: soil percolation
+$(getBaseDocString())
 
 ---
 

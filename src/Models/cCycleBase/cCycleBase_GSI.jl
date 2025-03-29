@@ -168,7 +168,9 @@ end
 purpose(::Type{cCycleBase_GSI}) = "sets the basics for carbon cycle in the GSI approach"
 
 @doc """
-$(getDocStringForApproach(cCycleBase_GSI))
+
+$(getBaseDocString(cCycleBase_GSI))
+
 ---
 
 # Extended help

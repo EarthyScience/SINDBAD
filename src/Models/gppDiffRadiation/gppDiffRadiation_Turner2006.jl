@@ -47,22 +47,11 @@ function compute(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppDiffRadiation_Turner2006}) = "cloudiness scalar [radiation diffusion] on gpp_potential based on Turner2006"
+
 @doc """
-cloudiness scalar [radiation diffusion] on gpp_potential based on Turner2006
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - forcing.f_rg: Global radiation [SW incoming] [MJ/m2/time]
- - forcing.f_rg_pot: Potential radiation [MJ/m2/time]
-
-*Outputs*
- - land.diagnostics.gpp_f_cloud: effect of cloudiness on potential GPP
+$(getBaseDocString())
 
 ---
 

@@ -18,22 +18,11 @@ function precompute(params::EVI_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{EVI_constant}) = "sets the value of EVI as a constant"
+
 @doc """
-sets the value of EVI as a constant
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Enhanced vegetation index using EVI_constant
-
-*Inputs*
-
-*Outputs*
- - land.states.EVI: an extra forcing that creates a time series of constant EVI
- - land.states.EVI
+$(getBaseDocString())
 
 ---
 

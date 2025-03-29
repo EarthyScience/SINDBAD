@@ -2,14 +2,11 @@ export groundWSurfaceWInteraction
 
 abstract type groundWSurfaceWInteraction <: LandEcosystem end
 
-include("groundWSurfaceWInteraction_fracGradient.jl")
-include("groundWSurfaceWInteraction_fracGroundW.jl")
+purpose(::Type{groundWSurfaceWInteraction}) = "Water exchange between surface and groundwater"
 
-@doc """
-Water exchange between surface and groundwater
+includeApproaches(groundWSurfaceWInteraction, @__DIR__)
 
-# Approaches:
- - fracGradient: calculates the moisture exchange between groundwater & surface water as a fraction of difference between the storages
- - fracGroundW: calculates the depletion of groundwater to the surface water as a fraction of groundwater storage
+@doc """ 
+	$(getBaseDocString(groundWSurfaceWInteraction))
 """
 groundWSurfaceWInteraction

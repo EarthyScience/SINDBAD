@@ -58,20 +58,11 @@ function compute(params::waterBalance_simple, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{waterBalance_simple}) = "check the water balance in every time step"
+
 @doc """
-check the water balance in every time step
 
----
-
-# compute:
-Calculate the water balance using waterBalance_simple
-
-*Inputs*
- - variables to sum for runoff[total runoff] & evapotranspiration [total evap]
- - TWS and TWS_prev
-
-*Outputs*
- - land.diagnostics.water_balance
+$(getBaseDocString())
 
 ---
 

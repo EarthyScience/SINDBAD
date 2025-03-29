@@ -2,14 +2,11 @@ export rootWaterUptake
 
 abstract type rootWaterUptake <: LandEcosystem end
 
-include("rootWaterUptake_proportion.jl")
-include("rootWaterUptake_topBottom.jl")
+purpose(::Type{rootWaterUptake}) = "Root water uptake (extract water from soil)"
 
-@doc """
-Root water uptake (extract water from soil)
+includeApproaches(rootWaterUptake, @__DIR__)
 
-# Approaches:
- - proportion: rootUptake from each soil layer proportional to the relative plant water availability in the layer
- - topBottom: rootUptake from each of the soil layer from top to bottom using all water in each layer
+@doc """ 
+	$(getBaseDocString(rootWaterUptake))
 """
 rootWaterUptake

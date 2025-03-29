@@ -15,22 +15,12 @@ function compute(params::transpirationSupply_CASA, forcing, land, helpers)
     return land
 end
 
+
+purpose(::Type{transpirationSupply_CASA}) = "calculate the supply limited transpiration as function of volumetric soil content & soil properties; as in the CASA model"
+
 @doc """
-calculate the supply limited transpiration as function of volumetric soil content & soil properties; as in the CASA model
 
----
-
-# compute:
-Supply-limited transpiration using transpirationSupply_CASA
-
-*Inputs*
- - land.pools.soilW : total soil moisture
- - land.properties.soil_[α/β]: moisture retention characteristics
- - land.properties.w_awc: total maximum plant available water [_fc-_wp]
- - land.states.PAW: actual extractable water
-
-*Outputs*
- - land.states.transpiration_supply: supply limited transpiration
+$(getBaseDocString())
 
 ---
 

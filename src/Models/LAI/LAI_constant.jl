@@ -18,21 +18,11 @@ function precompute(params::LAI_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{LAI_constant}) = "sets the value of LAI as a constant"
+
 @doc """
-sets the value of LAI as a constant
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Leaf area index using LAI_constant
-
-*Inputs*
-
-*Outputs*
- - land.states.LAI: an extra forcing that creates a time series of constant LAI
+$(getBaseDocString())
 
 ---
 

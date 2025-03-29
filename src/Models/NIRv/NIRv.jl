@@ -2,14 +2,11 @@ export NIRv
 
 abstract type NIRv <: LandEcosystem end
 
-include("NIRv_constant.jl")
-include("NIRv_forcing.jl")
+purpose(::Type{NIRv}) = "Near-infrared reflectance of terrestrial vegetation"
 
-@doc """
-Near-infrared reflectance of terrestrial vegetation
+includeApproaches(NIRv, @__DIR__)
 
-# Approaches:
- - constant: sets the value of NIRv as a constant
- - forcing: sets the value of land.states.NIRv from the forcing in every time step
+@doc """ 
+	$(getBaseDocString(NIRv))
 """
 NIRv

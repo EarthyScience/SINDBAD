@@ -57,23 +57,11 @@ function compute(params::gppAirT_GSI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppAirT_GSI}) = "temperature stress on gpp_potential based on GSI implementation of LPJ"
+
 @doc """
-temperature stress on gpp_potential based on GSI implementation of LPJ
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of temperature using gppAirT_GSI
-
-*Inputs*
- - f_rg: shortwave radiation incoming for the current time step
- - f_airT_c_τ: contribution of current time step
-
-*Outputs*
- - land.diagnostics.gpp_f_airT: light effect on GPP between 0-1
+$(getBaseDocString())
 
 ---
 

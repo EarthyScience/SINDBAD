@@ -21,25 +21,11 @@ function compute(params::transpirationSupply_wAWCvegFraction, forcing, land, hel
     return land
 end
 
+purpose(::Type{transpirationSupply_wAWCvegFraction}) = "calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture; scaled by vegetated fractions"
+
 @doc """
-calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture; scaled by vegetated fractions
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Supply-limited transpiration using transpirationSupply_wAWCvegFraction
-
-*Inputs*
- - land.pools.soilW : total soil moisture
- - land.properties.w_awc: total maximum plant available water [_fc-_wp]
- - land.states.PAW: actual extractable water
- - land.states.frac_vegetation: vegetation fraction
-
-*Outputs*
- - land.states.transpiration_supply: supply limited transpiration
+$(getBaseDocString())
 
 ---
 

@@ -25,24 +25,11 @@ function compute(params::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppDirRadiation_Maekelae2008}) = "light saturation scalar [light effect] on gpp_potential based on Maekelae2008"
+
 @doc """
-light saturation scalar [light effect] on gpp_potential based on Maekelae2008
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of direct radiation using gppDirRadiation_Maekelae2008
-
-*Inputs*
- - forcing.f_PAR: photosynthetically active radiation [MJ/m2/time]
- - land.states.fAPAR: fraction of absorbed photosynthetically active radiation []
- - γ: light response curve parameter to account for light  saturation [m2/MJ-1 of APAR]. The smaller γ the smaller  the effect; no effect if it becomes 0 [i.e. linear light response]
-
-*Outputs*
- - land.diagnostics.gpp_f_light: effect of light saturation on potential GPP
+$(getBaseDocString())
 
 ---
 

@@ -12,19 +12,11 @@ function compute(params::vegFraction_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{vegFraction_forcing}) = "sets the value of land.states.frac_vegetation from the forcing in every time step"
+
 @doc """
-sets the value of land.states.frac_vegetation from the forcing in every time step
 
----
-
-# compute:
-Fractional coverage of vegetation using vegFraction_forcing
-
-*Inputs*
- - forcing.frac_vegetation read from the forcing data set
-
-*Outputs*
- - land.states.frac_vegetation: the value of frac_vegetation for current time step
+$(getBaseDocString())
 
 ---
 

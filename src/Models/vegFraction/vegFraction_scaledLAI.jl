@@ -23,22 +23,11 @@ function compute(params::vegFraction_scaledLAI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{vegFraction_scaledLAI}) = "sets the value of frac_vegetation by scaling the LAI value"
+
 @doc """
-sets the value of frac_vegetation by scaling the LAI value
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fractional coverage of vegetation using vegFraction_scaledLAI
-
-*Inputs*
- - land.states.LAI : LAI
-
-*Outputs*
- - land.states.frac_vegetation: current vegetation fraction
+$(getBaseDocString())
 
 ---
 

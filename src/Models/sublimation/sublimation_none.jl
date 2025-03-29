@@ -12,12 +12,11 @@ function define(params::sublimation_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{sublimation_none}) = "sets the snow sublimation to zero"
+
 @doc """
-sets the snow sublimation to zero
 
-# Instantiate:
-Instantiate time-invariant variables for sublimation_none
-
+$(getBaseDocString())
 
 ---
 

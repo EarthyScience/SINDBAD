@@ -67,27 +67,11 @@ function update(params::rootWaterUptake_topBottom, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{rootWaterUptake_topBottom}) = "rootUptake from each of the soil layer from top to bottom using all water in each layer"
+
 @doc """
-rootUptake from each of the soil layer from top to bottom using all water in each layer
 
----
-
-# compute:
-Root water uptake (extract water from soil) using rootWaterUptake_topBottom
-
-*Inputs*
- - land.fluxes.transpiration: actual transpirationiration
- - land.pools.soilW: soil moisture
- - land.states.PAW: plant available water
-
-*Outputs*
- - land.states.root_water_uptake: moisture uptake from each soil layer [nZix of soilW]
-
-# update
-
-update pools and states in rootWaterUptake_topBottom
-
- - land.pools.soilW
+$(getBaseDocString())
 
 ---
 

@@ -20,21 +20,11 @@ function compute(params::gppPotential_Monteith, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppPotential_Monteith}) = "set the potential GPP based on radiation use efficiency"
+
 @doc """
-set the potential GPP based on radiation use efficiency
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Maximum instantaneous radiation use efficiency using gppPotential_Monteith
-
-*Inputs*
-
-*Outputs*
- - land.diagnostics.rueGPP: potential GPP based on RUE
+$(getBaseDocString())
 
 ---
 

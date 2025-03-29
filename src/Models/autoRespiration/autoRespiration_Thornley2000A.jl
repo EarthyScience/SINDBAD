@@ -87,8 +87,8 @@ end
 purpose(::Type{autoRespiration_Thornley2000A}) = "Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper]."
 
 @doc """
-    $(getDocStringForApproach(autoRespiration_Thornley2000A))
 
+$(getBaseDocString(autoRespiration_Thornley2000A))
 
 ---
 

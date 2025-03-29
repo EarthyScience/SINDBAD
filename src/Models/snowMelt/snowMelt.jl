@@ -2,14 +2,11 @@ export snowMelt
 
 abstract type snowMelt <: LandEcosystem end
 
-include("snowMelt_Tair.jl")
-include("snowMelt_TairRn.jl")
+purpose(::Type{snowMelt}) = "Calculate snowmelt and update s.w.wsnow"
 
-@doc """
-Calculate snowmelt and update s.w.wsnow
+includeApproaches(snowMelt, @__DIR__)
 
-# Approaches:
- - f_airT: computes the snow melt term as function of air temperature.
- - TairRn: snowmelt based on temperature & net radiation on days with f_airT > 0.0°C.
+@doc """ 
+	$(getBaseDocString(snowMelt))
 """
 snowMelt

@@ -72,7 +72,7 @@ function compute(params::evaporation_Snyder2000, forcing, land, helpers)
 end
 
 function update(params::evaporation_Snyder2000, forcing, land, helpers)
-    @unpack_evaporation_bareFraction params
+    @unpack_evaporation_Snyder2000 params
 
     ## unpack variables
     @unpack_nt begin
@@ -95,34 +95,11 @@ function update(params::evaporation_Snyder2000, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{evaporation_Snyder2000}) = "calculates the bare soil evaporation using relative drying rate of soil"
+
 @doc """
-calculates the bare soil evaporation using relative drying rate of soil
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Soil evaporation using evaporation_Snyder2000
-
-*Inputs*
- - land.fluxes.PET
- - land.fluxes.PET:
- - land.states.fAPAR
- - α
- - β
-
-*Outputs*
- - land.fluxes.p_sPETOld & land.fluxes.sET of first time step
- - land.fluxes.evaporation
-
-# update
-
-update pools and states in evaporation_Snyder2000
-
- -
- - land.pools.soilW[1]: bare soil evaporation is only allowed from first soil layer
+$(getBaseDocString())
 
 ---
 

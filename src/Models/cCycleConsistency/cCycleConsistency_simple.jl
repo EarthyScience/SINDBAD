@@ -121,23 +121,11 @@ function compute(params::cCycleConsistency_simple, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cCycleConsistency_simple}) = "check consistency in cCycle vector: c_allocation; cFlow"
+
 @doc """
-check consistency in cCycle vector: c_allocation; cFlow
 
----
-
-# compute:
-Consistency checks on the c allocation and transfers between pools using cCycleConsistency_simple
-
-*Inputs*
- - flow_vector: carbon flow vector
- - land.diagnostics.c_allocation: carbon allocation vector
-
-*Outputs*
-
-# Instantiate:
-Instantiate time-invariant variables for cCycleConsistency_simple
-
+$(getBaseDocString())
 
 ---
 

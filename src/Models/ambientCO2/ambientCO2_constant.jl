@@ -20,7 +20,7 @@ end
 
 purpose(::Type{ambientCO2_constant}) = "sets the value of ambient_CO2 as a constant"
 @doc """
-$(getDocStringForApproach(ambientCO2_constant))
+    $(getBaseDocString(ambientCO2_constant))
 
 ---
 

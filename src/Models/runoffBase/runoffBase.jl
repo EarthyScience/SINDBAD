@@ -2,14 +2,11 @@ export runoffBase
 
 abstract type runoffBase <: LandEcosystem end
 
-include("runoffBase_none.jl")
-include("runoffBase_Zhang2008.jl")
+purpose(::Type{runoffBase}) = "Baseflow"
 
-@doc """
-Baseflow
+includeApproaches(runoffBase, @__DIR__)
 
-# Approaches:
- - none: sets the base runoff to zero
- - Zhang2008: computes baseflow from a linear ground water storage
+@doc """ 
+	$(getBaseDocString(runoffBase))
 """
 runoffBase

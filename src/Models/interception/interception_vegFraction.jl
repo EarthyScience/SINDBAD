@@ -29,23 +29,11 @@ function compute(params::interception_vegFraction, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{interception_vegFraction}) = "computes canopy interception evaporation as a fraction of vegetation cover"
+
 @doc """
-computes canopy interception evaporation as a fraction of vegetation cover
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Interception evaporation using interception_vegFraction
-
-*Inputs*
- - land.states.frac_vegetation
-
-*Outputs*
- -
- - land.states.WBP: updates the water balance pool [mm]
+$(getBaseDocString())
 
 ---
 

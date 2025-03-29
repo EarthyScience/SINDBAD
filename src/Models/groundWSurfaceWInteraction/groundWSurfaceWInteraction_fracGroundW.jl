@@ -54,31 +54,11 @@ function update(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, h
     return land
 end
 
+purpose(::Type{groundWSurfaceWInteraction_fracGroundW}) = "calculates the depletion of groundwater to the surface water as a fraction of groundwater storage"
+
 @doc """
-calculates the depletion of groundwater to the surface water as a fraction of groundwater storage
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Water exchange between surface and groundwater using groundWSurfaceWInteraction_fracGroundW
-
-*Inputs*
- - land.pools.groundW: groundwater storage
- - land.pools.surfaceW: surface water storage
- - land.surface_runoff.dc: drainage parameter from surfaceW
-
-*Outputs*
- - land.fluxes.groundW2surfaceW: groundW to surfaceW [always positive]
-
-# update
-
-update pools and states in groundWSurfaceWInteraction_fracGroundW
-
- - land.pools.groundW
- - land.pools.surfaceW
+$(getBaseDocString())
 
 ---
 

@@ -45,22 +45,12 @@ function compute(params::gppSoilW_CASA, forcing, land, helpers)
     return land
 end
 
+
+purpose(::Type{gppSoilW_CASA}) = "soil moisture stress on gpp_potential based on base stress and relative ratio of PET and PAW (CASA)"
+
 @doc """
-soil moisture stress on gpp_potential based on base stress and relative ratio of PET and PAW (CASA)
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - land.states.PAW: values of soil moisture current time step
- - land.fluxes.PET: potential ET
-
-*Outputs*
- - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
+$(getBaseDocString())
 
 ---
 

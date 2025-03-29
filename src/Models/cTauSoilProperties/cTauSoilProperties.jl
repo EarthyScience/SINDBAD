@@ -2,14 +2,11 @@ export cTauSoilProperties
 
 abstract type cTauSoilProperties <: LandEcosystem end
 
-include("cTauSoilProperties_CASA.jl")
-include("cTauSoilProperties_none.jl")
+purpose(::Type{cTauSoilProperties}) = "Effect of soil texture on soil decomposition rates"
 
-@doc """
-Effect of soil texture on soil decomposition rates
+includeApproaches(cTauSoilProperties, @__DIR__)
 
-# Approaches:
- - CASA: Compute soil texture effects on turnover rates [k] of cMicSoil
- - none: Set soil texture effects to ones (ineficient, should be pix zix_mic)
+@doc """ 
+	$(getBaseDocString(cTauSoilProperties))
 """
 cTauSoilProperties
