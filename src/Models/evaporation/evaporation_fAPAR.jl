@@ -37,30 +37,6 @@ function compute(params::evaporation_fAPAR, forcing, land, helpers)
     return land
 end
 
-function update(params::evaporation_fAPAR, forcing, land, helpers)
-    @unpack_evaporation_bareFraction params
-
-    ## unpack variables
-    @unpack_nt begin
-        soilW ⇐ land.pools
-        ΔsoilW ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture of the first layer
-    soilW[1] = soilW[1] + ΔsoilW[1]
-
-    # reset soil moisture changes to zero
-    ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
-
-    ## pack land variables
-    @pack_nt begin
-        soilW ⇒ land.pools
-        # ΔsoilW ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{evaporation_fAPAR}) = "calculates the bare soil evaporation from 1-fAPAR & PET soil"
 
 @doc """

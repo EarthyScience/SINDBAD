@@ -56,29 +56,6 @@ function compute(params::groundWSoilWInteraction_VanDijk2010, forcing, land, hel
     return land
 end
 
-function update(params::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        (soilW, groundW) ⇐ land.pools
-        (ΔsoilW, ΔgroundW) ⇐ land.states
-    end
-
-    ## update storage pools
-    soilW[end] = soilW[end] + ΔsoilW[end]
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔsoilW[end] and ΔgroundW to zero
-    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (soilW, ΔsoilW, groundW, ΔgroundW) ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{groundWSoilWInteraction_VanDijk2010}) = "calculates the upward flow of water from groundwater to lowermost soil layer using VanDijk method"
 
 @doc """

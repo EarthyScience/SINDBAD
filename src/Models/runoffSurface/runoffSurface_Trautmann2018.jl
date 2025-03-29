@@ -56,29 +56,6 @@ function compute(params::runoffSurface_Trautmann2018, forcing, land, helpers)
     return land
 end
 
-function update(params::runoffSurface_Trautmann2018, forcing, land, helpers)
-    @unpack_runoffSurface_Trautmann2018 params
-
-    ## unpack variables
-    @unpack_nt begin
-        surfaceW ⇐ land.pools
-        ΔsurfaceW ⇐ land.pools
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-
-    # reset ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-    ## pack land variables
-    @pack_nt begin
-        surfaceW ⇒ land.pools
-        ΔsurfaceW ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{runoffSurface_Trautmann2018}) = "calculates the delay coefficient of first 60 days as a precomputation based on Orth et al. 2013 & as it is used in Trautmannet al. 2018. calculates the base runoff based on Orth et al. 2013 & as it is used in Trautmannet al. 2018"
 
 @doc """

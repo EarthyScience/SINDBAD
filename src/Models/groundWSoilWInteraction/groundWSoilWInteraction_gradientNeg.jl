@@ -60,31 +60,6 @@ function compute(params::groundWSoilWInteraction_gradientNeg, forcing, land, hel
     return land
 end
 
-function update(params::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        (soilW, groundW) ⇐ land.pools
-        (ΔsoilW, ΔgroundW) ⇐ land.states
-    end
-
-    ## update storage pools
-    soilW[end] = soilW[end] + ΔsoilW[end]
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔsoilW[end] and ΔgroundW to zero
-    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (groundW, soilW) ⇒ land.pools
-        (ΔsoilW, ΔgroundW) ⇒ land.pools
-    end
-    return land
-end
-
-
 purpose(::Type{groundWSoilWInteraction_gradientNeg}) = "calculates a buffer storage that doesn't give water to the soil when the soil dries up; while the soil gives water to the groundW when the soil is wet but the groundW low; the groundW is only recharged by soil moisture"
 
 @doc """

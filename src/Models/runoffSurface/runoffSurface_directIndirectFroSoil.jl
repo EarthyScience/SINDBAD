@@ -44,29 +44,6 @@ function compute(params::runoffSurface_directIndirectFroSoil, forcing, land, hel
     return land
 end
 
-function update(params::runoffSurface_directIndirectFroSoil, forcing, land, helpers)
-    @unpack_runoffSurface_directIndirectFroSoil params
-
-    ## unpack variables
-    @unpack_nt begin
-        surfaceW ⇐ land.pools
-        ΔsurfaceW ⇐ land.pools
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-
-    # reset ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-    ## pack land variables
-    @pack_nt begin
-        surfaceW ⇒ land.pools
-        ΔsurfaceW ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{runoffSurface_directIndirectFroSoil}) = "assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid"
 
 @doc """

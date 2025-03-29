@@ -54,27 +54,6 @@ function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
     return land
 end
 
-function update(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        (soilW, ΔsoilW) ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture of the first layer
-    soilW = soilW + ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW = ΔsoilW - ΔsoilW
-
-    ## pack land variables
-    @pack_nt begin
-        (soilW, ΔsoilW) ⇒ land.pools
-    end
-    return land
-end
-
 purpose(::Type{capillaryFlow_VanDijk2010}) = "computes the upward water flow in the soil layers"
 
 @doc """

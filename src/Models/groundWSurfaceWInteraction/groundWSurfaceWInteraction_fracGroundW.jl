@@ -32,27 +32,6 @@ function compute(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, 
     return land
 end
 
-function update(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
-    ## unpack variables
-    @unpack_nt begin
-        (groundW, surfaceW) ⇐ land.pools
-        (ΔgroundW, ΔsurfaceW) ⇐ land.pools
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔgroundW and ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (groundW, ΔgroundW, surfaceW, ΔsurfaceW) ⇒ land.pools
-    end
-    return land
-end
 
 purpose(::Type{groundWSurfaceWInteraction_fracGroundW}) = "calculates the depletion of groundwater to the surface water as a fraction of groundwater storage"
 
