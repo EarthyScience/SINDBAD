@@ -16,7 +16,6 @@ export @describe, @bounds, @units, @timescale
 export @with_kw
 export getBaseDocStringForApproach
 export purpose
-export purposes
 export sindbad_models
 export sindbad_compute_methods
 export sindbad_define_methods

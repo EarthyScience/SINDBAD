@@ -17,5 +17,6 @@ include("utilsCore.jl")
 include("sindbadVariableCatalog.jl")
 include("modelTools.jl")
 include("Models/models.jl")
+include("generateCode.jl")
 @reexport using .Models
 end
