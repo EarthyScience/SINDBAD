@@ -1,7 +1,8 @@
 {
   "method": "CMAES",
   "options": {
-    "maxfevals": 2500,
+    "maxfevals": 500,
+    "popsize": 48,
     "multi_threading": true,
     "parallel_evaluation": true},
   "package": "CMAEvolutionStrategy"
