@@ -25,7 +25,7 @@ $(getBaseDocString(deriveVariables_simple))
 *Versions*
  - 1.0 on 19.07.2023 [skoirala]:
 
-*Created by:*
+*Created by*
  - skoirala
 """
 deriveVariables_simple

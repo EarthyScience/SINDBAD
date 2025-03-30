@@ -37,7 +37,7 @@ $(getBaseDocString(transpirationSupply_wAWC))
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 transpirationSupply_wAWC

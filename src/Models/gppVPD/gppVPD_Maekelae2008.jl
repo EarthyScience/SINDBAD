@@ -35,7 +35,7 @@ $(getBaseDocString(gppVPD_Maekelae2008))
 
 *Versions*
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes*

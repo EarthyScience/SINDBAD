@@ -74,7 +74,7 @@ $(getBaseDocString(runoffSurface_Trautmann2018))
  - 1.0 on 18.11.2019 [ttraut]  
  - 1.1 on 21.01.2020 [ttraut] : calculate surfaceW[1] based on water balance  (1:1 as in TWS Paper)
 
-*Created by:*
+*Created by*
  - ttraut
 
 *Notes*

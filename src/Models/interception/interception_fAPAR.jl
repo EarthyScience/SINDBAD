@@ -45,7 +45,7 @@ $(getBaseDocString(interception_fAPAR))
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
  - 1.1 on 29.11.2019 [skoirala]: land.states.fAPAR  
 
-*Created by:*
+*Created by*
  - mjung
 """
 interception_fAPAR

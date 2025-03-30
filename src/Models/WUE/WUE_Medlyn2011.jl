@@ -64,7 +64,7 @@ $(getBaseDocString(WUE_Medlyn2011))
 *Versions*
  - 1.0 on 11.11.2020 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 
 *Notes*

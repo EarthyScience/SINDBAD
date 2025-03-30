@@ -59,7 +59,7 @@ $(getBaseDocString(runoffSurface_directIndirectFroSoil))
 *Versions*
  - 1.0 on 03.12.2020 [ttraut]  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 runoffSurface_directIndirectFroSoil

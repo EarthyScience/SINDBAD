@@ -63,7 +63,7 @@ $(getBaseDocString(rootWaterUptake_proportion))
 *Versions*
  - 1.0 on 13.03.2020 [ttraut]
 
-*Created by:*
+*Created by*
  - ttraut
 
 *Notes*

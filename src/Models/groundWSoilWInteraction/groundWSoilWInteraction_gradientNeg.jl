@@ -76,7 +76,7 @@ $(getBaseDocString(groundWSoilWInteraction_gradientNeg))
  - 1.0 on 04.02.2020 [ttraut]
  - 1.0 on 23.09.2020 [ttraut]
 
-*Created by:*
+*Created by*
  - ttraut
 """
 groundWSoilWInteraction_gradientNeg

@@ -122,7 +122,7 @@ $(getBaseDocString(cCycle_simple))
 *Versions*
  - 1.0 on 28.02.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cCycle_simple

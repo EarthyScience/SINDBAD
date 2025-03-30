@@ -28,7 +28,7 @@ $(getBaseDocString(fAPAR_forcing))
 *Versions*
  - 1.0 on 23.11.2019 [skoirala]: new approach  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 fAPAR_forcing

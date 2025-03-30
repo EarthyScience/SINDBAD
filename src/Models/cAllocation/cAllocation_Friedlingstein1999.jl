@@ -92,7 +92,7 @@ $(getBaseDocString(cAllocation_Friedlingstein1999))
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cAllocation_Friedlingstein1999

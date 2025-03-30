@@ -53,7 +53,7 @@ $(getBaseDocString(evaporation_demandSupply))
  - 1.0 on 11.11.2019 [skoirala]: clean up the code
  - 1.0 on 11.11.2019 [skoirala]: clean up the code  
 
-*Created by:*
+*Created by*
  - mjung
  - skoirala
  - ttraut

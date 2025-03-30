@@ -136,7 +136,7 @@ $(getBaseDocString(cCycleConsistency_simple))
 *Versions*
  - 1.0 on 12.05.2022: skoirala: julia implementation  
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 cCycleConsistency_simple

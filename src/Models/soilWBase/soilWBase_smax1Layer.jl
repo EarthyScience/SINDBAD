@@ -69,7 +69,7 @@ $(getBaseDocString(soilWBase_smax1Layer))
 *Versions*
  - 1.0 on 09.01.2020 [ttraut]: clean up & consistency  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 soilWBase_smax1Layer

@@ -36,7 +36,7 @@ $(getBaseDocString(LAI_cVegLeaf))
 *Versions*
  - 1.0 on 05.05.2020 [sbesnard]
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 LAI_cVegLeaf

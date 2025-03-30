@@ -63,7 +63,7 @@ $(getBaseDocString(runoffSaturationExcess_Bergstroem1992VegFractionFroSoil))
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 runoffSaturationExcess_Bergstroem1992VegFractionFroSoil

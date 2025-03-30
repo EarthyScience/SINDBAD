@@ -88,7 +88,7 @@ $(getBaseDocString(cTauSoilW_CASA))
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 Notesthe BGME is used as a scalar dependent on soil moisture; as the  sum of soil moisture for all layers. This can be partitioned into  different soil layers in the soil & affect independently the  decomposition processes of pools that are at the surface & deeper in  the soils.

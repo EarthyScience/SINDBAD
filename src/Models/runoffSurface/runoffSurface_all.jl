@@ -31,7 +31,7 @@ $(getBaseDocString(runoffSurface_all))
 *Versions*
  - 1.0 on 20.11.2019 [skoirala]: combine surface_runoff_direct, Indir, suw_recharge  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffSurface_all

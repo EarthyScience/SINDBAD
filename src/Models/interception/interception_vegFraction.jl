@@ -45,7 +45,7 @@ $(getBaseDocString(interception_vegFraction))
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
  - 1.1 on 27.11.2019 [skoiralal]: moved contents from prec, handling of frac_vegetation from s.cd  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 interception_vegFraction

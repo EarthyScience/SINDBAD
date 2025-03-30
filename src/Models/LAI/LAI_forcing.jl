@@ -27,7 +27,7 @@ $(getBaseDocString(LAI_forcing))
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: moved LAI from land.LAI.LAI to land.states.LAI  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 LAI_forcing

@@ -1484,7 +1484,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
 function checkDisplayVariableDict(var_full; warn_msg=true)
     sind_var_names = keys(sindbad_variables)
     if var_full in sind_var_names
-        print("\nExisting catalog entry for $var_full from src/tools/sindbadVariableCatalog.jl")
+        print("\nExisting catalog entry for $var_full from src/sindbadVariableCatalog.jl")
         displayVariableDict(var_full, sindbad_variables[var_full])
     else
         new_d = defaultVariableInfo()
@@ -1492,7 +1492,9 @@ function checkDisplayVariableDict(var_full; warn_msg=true)
         new_d[:standard_name] = split(string(var_full), "__")[2]
         print("\n")
         if warn_msg
-            @warn "$(var_full) does not exist in current sindbad catalog of variables. If it is a new or known variable, create an entry and add to src/tools/sindbadVariableCatalog.jl with correct details using"
+            line_index = findfirst(x -> String(var_full) < x, String.(sind_var_names))
+            line_index = 21 + 7 * (line_index + 1)
+            @info "$(var_full) does not exist in current sindbad catalog of variables. If it is a new or known variable, create an entry around src/sindbadVariableCatalog.jl:$(line_index) (alphabetically sorted location) with correct details filled to:"
         end
         displayVariableDict(var_full, new_d, false)
     end
@@ -1855,8 +1857,8 @@ function whatIs(var_name::String)
     if startswith(var_name, "land")
         var_name = var_name[6:end]
     end
-    var_field = split(var_name, ".")[1]
-    var_sfield = split(var_name, ".")[2]
+    var_field = string(split(var_name, ".")[1])
+    var_sfield = string(split(var_name, ".")[2])
     var_full = getFullVariableKey(var_field, var_sfield)
     println("\nchecking $var_name as :$var_full in sindbad_variables catalog...")
     checkDisplayVariableDict(var_full)

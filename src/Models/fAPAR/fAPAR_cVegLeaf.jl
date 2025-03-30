@@ -39,7 +39,7 @@ $(getBaseDocString(fAPAR_cVegLeaf))
 *Versions*
  - 1.0 on 24.04.2021 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 fAPAR_cVegLeaf

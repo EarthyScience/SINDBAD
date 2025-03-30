@@ -80,7 +80,7 @@ $(getBaseDocString(cCycle_CASA))
 *Versions*
  - 1.0 on 28.02.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cCycle_CASA
@@ -113,7 +113,7 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
   - 1.0 on 01.05.2018
   - 1.1 on 29.10.2019: fixed the wrong removal of a dimension by squeeze on  Bt & At when nPix == 1 [single point simulation]
 
-# Created by:
+# Created by
 
   - ncarvalhais
   - skoirala

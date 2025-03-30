@@ -27,7 +27,7 @@ $(getBaseDocString(PET_forcing))
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 PET_forcing

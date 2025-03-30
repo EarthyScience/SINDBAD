@@ -33,7 +33,7 @@ $(getBaseDocString(vegFraction_constant))
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 vegFraction_constant

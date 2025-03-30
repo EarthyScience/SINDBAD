@@ -35,7 +35,7 @@ $(getBaseDocString(snowFraction_binary))
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - mjung
 """
 snowFraction_binary

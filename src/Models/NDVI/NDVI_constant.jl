@@ -33,7 +33,7 @@ $(getBaseDocString(NDVI_constant))
 *Versions*
  - 1.0 on 29.04.2020 [sbesnard]: new module  
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 NDVI_constant

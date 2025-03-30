@@ -74,7 +74,7 @@ $(getBaseDocString(waterBalance_simple))
  - 1.0 on 11.11.2019
  - 1.1 on 20.11.2019 [skoirala]:
 
-*Created by:*
+*Created by*
  - skoirala
 """
 waterBalance_simple

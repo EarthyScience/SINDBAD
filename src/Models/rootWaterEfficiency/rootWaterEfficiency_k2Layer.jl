@@ -62,7 +62,7 @@ $(getBaseDocString(rootWaterEfficiency_k2Layer))
 *Versions*
  - 1.0 on 09.01.2020  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 rootWaterEfficiency_k2Layer

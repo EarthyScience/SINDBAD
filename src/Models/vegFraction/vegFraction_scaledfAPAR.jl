@@ -38,7 +38,7 @@ $(getBaseDocString(vegFraction_scaledfAPAR))
 *Versions*
  - 1.1 on 24.10.2020 [ttraut]: new module  
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 vegFraction_scaledfAPAR

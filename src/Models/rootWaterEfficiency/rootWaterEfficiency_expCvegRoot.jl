@@ -89,7 +89,7 @@ $(getBaseDocString(rootWaterEfficiency_expCvegRoot))
 *Versions*
  - 1.0 on 28.04.2020  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 rootWaterEfficiency_expCvegRoot

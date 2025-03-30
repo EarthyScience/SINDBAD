@@ -60,7 +60,7 @@ $(getBaseDocString(cAllocationRadiation_GSI))
 *Versions*
  - 1.0 on 12.01.2020 [skoirala]  
 
-*Created by:*
+*Created by*
  - ncarvalhais, sbesnard, skoirala
 """
 cAllocationRadiation_GSI

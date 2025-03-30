@@ -46,7 +46,7 @@ $(getBaseDocString(runoffInfiltrationExcess_Jung))
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
  - 1.1 on 22.11.2019 [skoirala]: moved from prec to dyna to handle land.states.fAPAR which is nPix, 1  
 
-*Created by:*
+*Created by*
  - mjung
 """
 runoffInfiltrationExcess_Jung

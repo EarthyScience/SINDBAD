@@ -107,7 +107,7 @@ $(getBaseDocString(soilWBase_uniform))
  - 1.0 on 18.11.2019 [skoirala]: clean up & consistency
  - 1.1 on 03.12.2019 [skoirala]: handling potentail vertical distribution of soil texture  
 
-*Created by:*
+*Created by*
  - ncarvalhais
  - skoirala
 """

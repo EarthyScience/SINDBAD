@@ -42,7 +42,7 @@ $(getBaseDocString(runoffInterflow_residual))
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - mjung
 """
 runoffInterflow_residual

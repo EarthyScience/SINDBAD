@@ -119,7 +119,7 @@ $(getBaseDocString(cTauLAI_CASA))
  - 1.0 on 12.01.2020 [sbesnard]  
  - 1.1 on 05.11.2020 [skoirala]: speedup  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cTauLAI_CASA

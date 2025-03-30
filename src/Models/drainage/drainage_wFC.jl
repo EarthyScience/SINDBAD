@@ -55,7 +55,7 @@ $(getBaseDocString(drainage_wFC))
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]: clean up & consistency  
 
-*Created by:*
+*Created by*
  - mjung
  - skoirala
 """

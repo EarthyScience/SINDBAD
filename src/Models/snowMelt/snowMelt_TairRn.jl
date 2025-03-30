@@ -62,7 +62,7 @@ $(getBaseDocString(snowMelt_TairRn))
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 snowMelt_TairRn

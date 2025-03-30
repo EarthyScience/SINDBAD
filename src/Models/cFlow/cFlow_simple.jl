@@ -47,7 +47,7 @@ $(getBaseDocString(cFlow_simple))
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cFlow_simple

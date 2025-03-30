@@ -62,7 +62,7 @@ $(getBaseDocString(rootWaterEfficiency_k2fRD))
 *Versions*
  - 1.0 on 10.02.2020  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 rootWaterEfficiency_k2fRD

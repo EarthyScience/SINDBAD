@@ -63,7 +63,7 @@ $(getBaseDocString(wCycle_combined))
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 wCycle_combined

@@ -181,7 +181,7 @@ $(getBaseDocString(cCycleBase_GSI))
 *Versions*
  - 1.0 on 28.02.2020 [skoirala]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cCycleBase_GSI

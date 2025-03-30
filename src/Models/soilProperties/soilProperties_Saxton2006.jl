@@ -132,7 +132,7 @@ $(getBaseDocString(soilProperties_Saxton2006))
  - 1.0 on 21.11.2019
  - 1.1 on 03.12.2019 [skoirala]: handling potentail vertical distribution of soil texture  
 
-*Created by:*
+*Created by*
  - Nuno Carvalhais [ncarvalhais]
  - skoirala
 """
@@ -159,7 +159,7 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
  - 1.0 on 22.11.2019 [skoirala]:
  - 1.1 on 03.12.2019 [skoirala]: included the option to handle lookup table when set to true  from model_run.json  
 
-# Created by:
+# Created by
  - skoirala
 
 # Notes:
@@ -209,7 +209,7 @@ calculates the soil hydraulic properties based on Saxton 2006
 # Versions:
  - 1.0 on 22.11.2019 [skoirala]:
 
-# Created by:
+# Created by
  - skoirala
 
 # Notes:

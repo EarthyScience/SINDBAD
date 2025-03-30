@@ -88,7 +88,7 @@ $(getBaseDocString(evaporation_Snyder2000))
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: transfer from to accommodate land.states.fAPAR  
 
-*Created by:*
+*Created by*
  - mjung
  - skoirala
 """

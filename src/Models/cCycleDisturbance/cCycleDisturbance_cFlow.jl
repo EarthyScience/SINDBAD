@@ -78,7 +78,7 @@ $(getBaseDocString(cCycleDisturbance_cFlow))
  - 1.0 on 23.04.2021 [skoirala]  
  - 1.1 on 29.11.2021 [skoirala]: moved the scaling parameters to  ccyclebase_gsi [land.diagnostics.ηA & land.diagnostics.ηH]  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 cCycleDisturbance_cFlow
