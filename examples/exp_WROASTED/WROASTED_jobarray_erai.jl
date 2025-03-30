@@ -4,8 +4,8 @@ using Dates
 using Plots
 toggleStackTraceNT()
 
-# site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
-site_index = 186
+site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+# site_index = 186
 # site_index = Base.parse(Int, ARGS[1])
 forcing_set = "erai"
 site_info = CSV.File(
