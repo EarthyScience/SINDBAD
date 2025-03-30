@@ -2,14 +2,11 @@ export NDWI
 
 abstract type NDWI <: LandEcosystem end
 
-include("NDWI_constant.jl")
-include("NDWI_forcing.jl")
+purpose(::Type{NDWI}) = "Normalized difference water index"
 
-@doc """
-Normalized difference water index
+includeApproaches(NDWI, @__DIR__)
 
-# Approaches:
- - constant: sets the value of NDWI as a constant
- - forcing: sets the value of land.states.NDWI from the forcing in every time step
+@doc """ 
+	$(getBaseDocString(NDWI))
 """
 NDWI

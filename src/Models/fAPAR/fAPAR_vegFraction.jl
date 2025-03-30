@@ -20,22 +20,11 @@ function compute(params::fAPAR_vegFraction, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{fAPAR_vegFraction}) = "sets the value of fAPAR as a linear function of vegetation fraction"
+
 @doc """
-sets the value of fAPAR as a linear function of vegetation fraction
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fraction of absorbed photosynthetically active radiation from frac_vegetation
-
-*Inputs*
- - land.states.frac_vegetation: vegetated fraction, which needs frac_vegetation module to be activated
-
-*Outputs*
- - land.states.fAPAR: fAPAR as a fraction of vegetation fraction
+$(getBaseDocString(fAPAR_vegFraction))
 
 ---
 
@@ -46,7 +35,7 @@ Fraction of absorbed photosynthetically active radiation from frac_vegetation
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 fAPAR_vegFraction

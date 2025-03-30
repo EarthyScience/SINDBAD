@@ -56,54 +56,11 @@ function compute(params::runoffSurface_Trautmann2018, forcing, land, helpers)
     return land
 end
 
-function update(params::runoffSurface_Trautmann2018, forcing, land, helpers)
-    @unpack_runoffSurface_Trautmann2018 params
-
-    ## unpack variables
-    @unpack_nt begin
-        surfaceW ⇐ land.pools
-        ΔsurfaceW ⇐ land.pools
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-
-    # reset ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-    ## pack land variables
-    @pack_nt begin
-        surfaceW ⇒ land.pools
-        ΔsurfaceW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{runoffSurface_Trautmann2018}) = "calculates the delay coefficient of first 60 days as a precomputation based on Orth et al. 2013 & as it is used in Trautmannet al. 2018. calculates the base runoff based on Orth et al. 2013 & as it is used in Trautmannet al. 2018"
 
 @doc """
-calculates the delay coefficient of first 60 days as a precomputation based on Orth et al. 2013 & as it is used in Trautmannet al. 2018. calculates the base runoff based on Orth et al. 2013 & as it is used in Trautmannet al. 2018
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_Trautmann2018
-
-*Inputs*
-
-*Outputs*
- - land.fluxes.surface_runoff : runoff from land [mm/time]
- - land.surface_runoff.Rdelay
-
-# update
-
-update pools and states in runoffSurface_Trautmann2018
-
-
-# Instantiate:
-Instantiate time-invariant variables for runoffSurface_Trautmann2018
-
+$(getBaseDocString(runoffSurface_Trautmann2018))
 
 ---
 
@@ -117,7 +74,7 @@ Instantiate time-invariant variables for runoffSurface_Trautmann2018
  - 1.0 on 18.11.2019 [ttraut]  
  - 1.1 on 21.01.2020 [ttraut] : calculate surfaceW[1] based on water balance  (1:1 as in TWS Paper)
 
-*Created by:*
+*Created by*
  - ttraut
 
 *Notes*

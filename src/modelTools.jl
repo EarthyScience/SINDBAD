@@ -6,6 +6,7 @@ export getUnitConversionForParameter
 export modelParameter
 export modelParameters
 
+
 """
     getInOutModel(model::LandEcosystem)
     getInOutModel(model::LandEcosystem, model_func::Symbol)
@@ -54,11 +55,20 @@ Parses and retrieves the inputs, outputs, and parameters (I/O/P) of SINDBAD mode
 """
 function getInOutModel end
 
-function getInOutModel(model::LandEcosystem)
+
+function getInOutModel(T::Type{<:LandEcosystem}; verbose=false)
+    return getInOutModel(T(), verbose=verbose)
+end
+
+function getInOutModel(model::LandEcosystem; verbose=true)
+    if verbose
+        println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
+    end
     mo_in_out=Sindbad.DataStructures.OrderedDict()
-    println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
     for func in (:parameters, :compute, :define, :precompute, :update)
-        println("   ...$(func)...")
+        if verbose
+            println("   ...$(func)...")
+        end
         io_func = getInOutModel(model, func)
         mo_in_out[func] = io_func
     end
@@ -97,7 +107,7 @@ function getInOutModel(model, model_func::Symbol)
         # mod_vars = modelParameter(model, false)
         return modelParameter(model, false)
     elseif model_func == :precompute
-        mod_code = @code_string Sindbad.Models.compute(model, nothing, nothing, nothing)
+        mod_code = @code_string Sindbad.Models.precompute(model, nothing, nothing, nothing)
     elseif model_func == :update
         mod_code = @code_string Sindbad.Models.update(model, nothing, nothing, nothing)
     else
@@ -461,7 +471,7 @@ function modelParameter(models, model::Symbol)
         foreach(pnames) do fn
             p_dict[fn] = getproperty(mod, fn)
             p_unit = Sindbad.Models.units(mod, fn)
-            p_unit_info = p_unit == "" ? "" : "($p_unit)"
+            p_unit_info = p_unit == "" ? "unitless/fraction" : "($p_unit)"
             println("   $fn => $(getproperty(mod, fn)) $p_unit_info")
         end
     end
@@ -483,7 +493,15 @@ function modelParameter(model::LandEcosystem, show=true)
             if show
                 println("   $fn => $(getproperty(mod, fn))")
             end
-            Pair(fn, getproperty(model, fn))
+            p_val = getproperty(model, fn)
+            p_describe = Sindbad.Models.describe(model, fn)
+            p_unit = Sindbad.Models.units(model, fn)
+            p_u = isempty(p_unit) ? " undefined" : "$(p_unit)"
+            p_timescale = Sindbad.Models.timescale(model, fn)
+            p_t = isempty(p_timescale) ? " and timescale independent" : " at $(p_timescale) timescale"
+            p_bounds = Sindbad.Models.bounds(model, fn)
+            p_w = "$(p_val) [$(p_bounds[1]), $(p_bounds[2])] {$(p_describe) ($(p_unit) $(p_t))}"
+            Pair(fn, p_w)
         end
     end
     return p_vec

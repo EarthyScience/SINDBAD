@@ -36,26 +36,11 @@ function compute(params::runoffSaturationExcess_Bergstroem1992, forcing, land, h
     return land
 end
 
+purpose(::Type{runoffSaturationExcess_Bergstroem1992}) = "saturation excess runoff using original Bergström method"
+
 @doc """
-saturation excess runoff using original Bergström method
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Saturation runoff using runoffSaturationExcess_Bergstroem1992
-
-*Inputs*
- - land.states. : vegetation fraction
- - smax1 : maximum water capacity of first soil layer [mm]
- - smax2 : maximum water capacity of second soil layer [mm]
-
-*Outputs*
- - land.fluxes.sat_excess_runoff : runoff from land [mm/time]
- - land.runoffSaturationExcess.p_berg : scaled berg parameter
- - land.states.WBP : water balance pool [mm]
+$(getBaseDocString(runoffSaturationExcess_Bergstroem1992))
 
 ---
 
@@ -69,7 +54,7 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992
  - 1.1 on 27.11.2019 [skoirala]: changed to handle any number of soil layers
  - 1.2 on 10.02.2020 [ttraut]: modyfying variable name to match the new SINDBAD version
 
-*Created by:*
+*Created by*
  - ttraut
 """
 runoffSaturationExcess_Bergstroem1992

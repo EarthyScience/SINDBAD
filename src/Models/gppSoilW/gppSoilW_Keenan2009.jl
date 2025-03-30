@@ -31,24 +31,11 @@ function compute(params::gppSoilW_Keenan2009, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppSoilW_Keenan2009}) = "soil moisture stress on gpp_potential based on Keenan2009"
+
 @doc """
-soil moisture stress on gpp_potential based on Keenan2009
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Gpp as a function of soilW
-
-*Inputs*
- - land.pools.soilW: values of soil moisture current time step
- - land.properties.w_sat: saturation point
- - land.properties._wp: wilting point
-
-*Outputs*
- - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
+$(getBaseDocString(gppSoilW_Keenan2009))
 
 ---
 
@@ -60,7 +47,7 @@ Gpp as a function of soilW
 *Versions*
  - 1.0 on 10.03.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais & sbesnard
 
 *Notes*

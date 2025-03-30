@@ -20,22 +20,11 @@ function compute(params::gppAirT_Wang2014, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppAirT_Wang2014}) = "temperature stress on gpp_potential based on Wang2014"
+
 @doc """
-temperature stress on gpp_potential based on Wang2014
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of temperature using gppAirT_Wang2014
-
-*Inputs*
- - forcing.f_airT_day: daytime temperature [°C]
-
-*Outputs*
- - land.diagnostics.gpp_f_airT: effect of temperature on potential GPP
+$(getBaseDocString(gppAirT_Wang2014))
 
 ---
 
@@ -47,7 +36,7 @@ Effect of temperature using gppAirT_Wang2014
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 gppAirT_Wang2014

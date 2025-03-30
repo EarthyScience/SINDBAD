@@ -2,15 +2,11 @@ export wCycle
 
 abstract type wCycle <: LandEcosystem end
 
-include("wCycle_components.jl")
-include("wCycle_combined.jl")
+purpose(::Type{wCycle}) = "Apply the delta storage changes to storage variables"
 
-@doc """
-Apply the delta storage changes to storage variables
+includeApproaches(wCycle, @__DIR__)
 
-# Approaches:
- - components: computes the algebraic sum of storage and delta storage using each component separately
- - combined: computes the algebraic sum of storage and delta storage of combined pool
-
+@doc """ 
+	$(getBaseDocString(wCycle))
 """
 wCycle

@@ -35,52 +35,11 @@ function compute(params::runoffSurface_indirect, forcing, land, helpers)
     return land
 end
 
-function update(params::runoffSurface_indirect, forcing, land, helpers)
-    @unpack_runoffSurface_indirect params
-
-    ## unpack variables
-    @unpack_nt begin
-        surfaceW ⇐ land.pools
-        ΔsurfaceW ⇐ land.pools
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-
-    # reset ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-    ## pack land variables
-    @pack_nt begin
-        surfaceW ⇒ land.pools
-        ΔsurfaceW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{runoffSurface_indirect}) = "assumes all overland runoff is recharged to surface water first, which then generates surface runoff"
 
 @doc """
-assumes all overland runoff is recharged to surface water first, which then generates surface runoff
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_indirect
-
-*Inputs*
- - land.fluxes.overland_runoff
- - land.states.surfaceW[1]
-
-*Outputs*
- - land.fluxes.surface_runoff & its indirect/slow component
-
-# update
-
-update pools and states in runoffSurface_indirect
-
- - land.pools.surfaceW[1]
+$(getBaseDocString(runoffSurface_indirect))
 
 ---
 
@@ -91,7 +50,7 @@ update pools and states in runoffSurface_indirect
 *Versions*
  - 1.0 on 20.11.2019 [skoirala]: combine surface_runoff_direct, Indir, suw_recharge  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffSurface_indirect

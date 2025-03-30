@@ -2,12 +2,11 @@ export rootMaximumDepth
 
 abstract type rootMaximumDepth <: LandEcosystem end
 
-include("rootMaximumDepth_fracSoilD.jl")
+purpose(::Type{rootMaximumDepth}) = "Maximum rooting depth"
 
-@doc """
-Maximum rooting depth
+includeApproaches(rootMaximumDepth, @__DIR__)
 
-# Approaches:
- - fracSoilD: sets the maximum rooting depth as a fraction of total soil depth. rootMaximumDepth_fracSoilD
+@doc """ 
+	$(getBaseDocString(rootMaximumDepth))
 """
 rootMaximumDepth

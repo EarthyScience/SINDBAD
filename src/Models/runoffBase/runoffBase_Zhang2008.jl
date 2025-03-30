@@ -34,50 +34,11 @@ function compute(params::runoffBase_Zhang2008, forcing, land, helpers)
     return land
 end
 
-function update(params::runoffBase_Zhang2008, forcing, land, helpers)
-    @unpack_runoffBase_Zhang2008 params
-
-    ## unpack variables
-    @unpack_nt begin
-        groundW ⇐ land.pools
-        ΔgroundW ⇐ land.pools
-    end
-
-    ## update variables
-    groundW .= groundW .+ ΔgroundW
-
-    # reset groundwater changes to zero
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    # ## pack land variables
-    # @pack_nt begin
-    # 	groundW ⇒ land.pools
-    # 	# ΔgroundW ⇒ land.pools
-    # end
-    return land
-end
+purpose(::Type{runoffBase_Zhang2008}) = "computes baseflow from a linear ground water storage"
 
 @doc """
-computes baseflow from a linear ground water storage
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Baseflow using runoffBase_Zhang2008
-
-*Inputs*
-
-*Outputs*
- - land.fluxes.base_runoff: base flow [mm/time]
-
-# update
-
-update pools and states in runoffBase_Zhang2008
-
- - land.pools.groundW: groundwater storage [mm]
+$(getBaseDocString(runoffBase_Zhang2008))
 
 ---
 
@@ -89,7 +50,7 @@ update pools and states in runoffBase_Zhang2008
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - mjung
 """
 runoffBase_Zhang2008

@@ -13,12 +13,11 @@ function define(params::cTauSoilT_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTauSoilT_none}) = "set the outputs to ones"
+
 @doc """
-set the outputs to ones
 
-# Instantiate:
-Instantiate time-invariant variables for cTauSoilT_none
-
+$(getBaseDocString(cTauSoilT_none))
 
 ---
 

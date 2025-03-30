@@ -19,22 +19,12 @@ function compute(params::gpp_coupled, forcing, land, helpers)
     return land
 end
 
+
+purpose(::Type{gpp_coupled}) = "calculate GPP based on transpiration supply & water use efficiency [coupled]"
+
 @doc """
-calculate GPP based on transpiration supply & water use efficiency [coupled]
 
----
-
-# compute:
-Combine effects as multiplicative or minimum; if coupled, uses transup using gpp_coupled
-
-*Inputs*
- - land.diagnostics.WUE: water use efficiency in gC/mmH2O
- - land.diagnostics.gpp_demand: Demand-driven GPP with stressors except soilW applied
- - land.diagnostics.gpp_f_soilW: soil moisture stress on photosynthetic capacity
- - land.states.transpiration_supply: supply limited transpiration
-
-*Outputs*
- - land.fluxes.gpp: actual GPP [gC/m2/time]
+$(getBaseDocString(gpp_coupled))
 
 ---
 
@@ -45,7 +35,7 @@ Combine effects as multiplicative or minimum; if coupled, uses transup using gpp
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - mjung
  - skoirala
 

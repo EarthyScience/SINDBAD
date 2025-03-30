@@ -157,36 +157,11 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cFlow_GSI}) = "Precomputations for the transfers between carbon pools based on GSI method. combine all the effects that change the transfers between carbon pools based on GSI method"
+
 @doc """
-Precomputations for the transfers between carbon pools based on GSI method. combine all the effects that change the transfers between carbon pools based on GSI method
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Actual transfers of c between pools (of diagonal components) using cFlow_GSI
-
-*Inputs*
- - land.diagnostics.c_allocation_f_cloud: radiation stressors for carbo allocation
- - land.diagnostics.f_cloud_prev: previous radiation stressors for carbo allocation
- - land.diagnostics.c_allocation_f_soilT: temperature stressors for carbon allocation
- - land.diagnostics.f_soilT_prev: previous temperature stressors for carbon allocation
- - land.diagnostics.c_allocation_f_soilW: water stressors for carbon allocation
- - land.diagnostics.f_soilW_prev: previous water stressors for carbon allocation
- - land.diagnostics.c_flow_A_array: transfer matrix for carbon at ecosystem level
-
-*Outputs*
- - land.cFlow.c_flow_A_vec: updated transfer flow rate for carbon at ecosystem level
- - land.cFlow.p_flowTable: a table with flow pools & parameters
- - land.cFlow.p_flowVar: the variable that represents the flow between the source & target pool
- - land.cFlow.p_ndxSrc: source pools
- - land.cFlow.p_ndxTrg: taget pools
- - land.cFlow.c_flow_A_vec
-
-# Instantiate:
-Instantiate time-invariant variables for cFlow_GSI
+$(getBaseDocString(cFlow_GSI))
 
 
 ---
@@ -200,7 +175,7 @@ Instantiate time-invariant variables for cFlow_GSI
  - 1.1 on 05.02.2021 [skoirala]: changes with stressors & smoothing as well as handling the activation of leaf/root to reserve | reserve to leaf/root switches. Adjustment of total flow rates [cTau] of relevant pools  
  - 1.1 on 05.02.2021 [skoirala]: move code from dyna. Add table etc.  
 
-*Created by:*
+*Created by*
  - ncarvalhais, sbesnard, skoirala
 
 *Notes*
