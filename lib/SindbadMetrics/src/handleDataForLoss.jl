@@ -101,8 +101,14 @@ end
 
 function filterCommonNaN(y, yσ, ŷ)
     @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
-    idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because LandWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
-    return y[idxs], yσ[idxs], ŷ[idxs]
+    # idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because LandWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
+    idxs = (isnan.(y .* yσ .* ŷ)) # TODO this has to be run because LandWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
+    y[idxs] .= eltype(y)(NaN)
+    ŷ[idxs] .= eltype(ŷ)(NaN)
+    yσ[idxs] .= eltype(yσ)(NaN)
+    @show "am here", size(y)
+    return y, yσ, ŷ
+    # return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
 
