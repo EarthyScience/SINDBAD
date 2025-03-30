@@ -18,22 +18,11 @@ function precompute(params::vegFraction_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{vegFraction_constant}) = "sets the value of frac_vegetation as a constant"
+
 @doc """
-sets the value of frac_vegetation as a constant
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fractional coverage of vegetation using vegFraction_constant
-
-*Inputs*
- - constant_frac_vegetationtion
-
-*Outputs*
- - land.states.frac_vegetation: an extra forcing with a constant frac_vegetation
+$(getBaseDocString(vegFraction_constant))
 
 ---
 
@@ -44,7 +33,7 @@ Fractional coverage of vegetation using vegFraction_constant
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 vegFraction_constant

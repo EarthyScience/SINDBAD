@@ -12,20 +12,11 @@ function compute(params::NDWI_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{NDWI_forcing}) = "sets the value of land.states.NDWI from the forcing in every time step"
+
 @doc """
-sets the value of land.states.NDWI from the forcing in every time step
 
----
-
-# compute:
-Normalized difference water index using NDWI_forcing
-
-*Inputs*
- - forcing.NDWI read from the forcing data set
-
-*Outputs*
- - land.states.NDWI: the value of NDWI for current time step
- - land.states.NDWI
+$(getBaseDocString(NDWI_forcing))
 
 ---
 
@@ -36,7 +27,7 @@ Normalized difference water index using NDWI_forcing
 *Versions*
  - 1.0 on 29.04.2020 [sbesnard]
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 NDWI_forcing

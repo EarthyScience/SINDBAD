@@ -21,24 +21,11 @@ function compute(params::transpirationSupply_wAWC, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{transpirationSupply_wAWC}) = "calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture"
+
 @doc """
-calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Supply-limited transpiration using transpirationSupply_wAWC
-
-*Inputs*
- - land.pools.soilW : total soil moisture
- - land.properties.w_awc: total maximum plant available water [_fc-_wp]
- - land.states.PAW: actual extractable water
-
-*Outputs*
- - land.states.transpiration_supply: supply limited transpiration
+$(getBaseDocString(transpirationSupply_wAWC))
 
 ---
 
@@ -50,7 +37,7 @@ Supply-limited transpiration using transpirationSupply_wAWC
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 transpirationSupply_wAWC

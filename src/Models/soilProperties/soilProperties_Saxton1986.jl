@@ -99,24 +99,12 @@ function precompute(params::soilProperties_Saxton1986, forcing, land, helpers)
     return land
 end
 
+
+purpose(::Type{soilProperties_Saxton1986}) = "assigns the soil hydraulic properties based on Saxton; 1986 to land.soilProperties.sp_"
+
 @doc """
-assigns the soil hydraulic properties based on Saxton; 1986 to land.soilProperties.sp_
 
-# Parameters
-$(SindbadParameters)
-
-# Instantiate:
-Instantiate time-invariant variables for soilProperties_Saxton1986
-
-
----
-
-# Extended help
-"""
-soilProperties_Saxton1986
-
-"""
-calculates the soil hydraulic conductivity for a given moisture based on Saxton; 1986
+$(getBaseDocString(soilProperties_Saxton1986))
 
 # Extended help
 """

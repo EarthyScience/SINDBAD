@@ -107,34 +107,11 @@ function compute(params::cCycle_GSI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cCycle_GSI}) = "Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools"
+
 @doc """
-Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools
 
----
-
-# compute:
-Allocate carbon to vegetation components using cCycle_GSI
-
-*Inputs*
- - land.diagnostics.c_eco_τ: carbon allocation matrix
- - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
- - land.cFlow.p_giver: c_giver pool array
- - land.cFlow.p_taker: c_taker pool array
- - land.fluxes.gpp: values for gross primary productivity
- - land.diagnostics.c_allocation: carbon allocation matrix
-
-*Outputs*
- - land.diagnostics.c_eco_k: decay rates for the carbon pool at each time step
- - land.fluxes.c_eco_npp: values for net primary productivity
- - land.fluxes.auto_respiration: values for autotrophic respiration
- - land.fluxes.eco_respiration: values for ecosystem respiration
- - land.fluxes.hetero_respiration: values for heterotrophic respiration
- - land.pools.cEco: values for the different carbon pools
- - land.states.c_eco_efflux:
-
-# Instantiate:
-Instantiate time-invariant variables for cCycle_GSI
-
+$(getBaseDocString(cCycle_GSI))
 
 ---
 
@@ -146,7 +123,7 @@ Instantiate time-invariant variables for cCycle_GSI
 *Versions*
  - 1.0 on 28.02.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cCycle_GSI

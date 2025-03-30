@@ -46,28 +46,11 @@ function compute(params::cFlow_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cFlow_CASA}) = "combine all the effects that change the transfers between carbon pools"
+
 @doc """
-combine all the effects that change the transfers between carbon pools
 
----
-
-# compute:
-Actual transfers of c between pools (of diagonal components) using cFlow_CASA
-
-*Inputs*
- - land.diagnostics.c_flow_E_array: transfer matrix for carbon at ecosystem level
- - land.diagnostics.p_E_vec: effect of soil on transfer efficiency between pools
- - land.diagnostics.p_F_vec: effect of vegetation on transfer fraction between pools
- - land.cFlowVegProperties.p_E_vec: effect of soil on transfer efficiency between pools
- - land.cFlowVegProperties.p_F_vec effect of vegetation on transfer fraction between pools
-
-*Outputs*
- - land.cFlow.c_flow_A_vec: effect of soil & vegetation on actual transfer rates between pools
- - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
- - land.cFlow.p_F_vec: effect of soil & vegetation on transfer fraction between pools
- - land.cFlow.c_flow_A_vec
- - land.cFlow.p_E_vec
- - land.cFlow.p_F_vec
+$(getBaseDocString(cFlow_CASA))
 
 ---
 
@@ -81,7 +64,7 @@ Actual transfers of c between pools (of diagonal components) using cFlow_CASA
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cFlow_CASA

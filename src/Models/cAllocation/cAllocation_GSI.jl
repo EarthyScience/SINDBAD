@@ -69,26 +69,11 @@ function compute(params::cAllocation_GSI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocation_GSI}) = "Compute the fraction of fixated C that is allocated to the different plant organs. The allocation is dynamic in time according to temperature, water & radiation stressors estimated following the GSI approach. Inspired by the work of Friedlingstein et al., 1999, based on Sharpe and Rykiel 1991, but here following the growing season index (GSI) as stress diagnostics, following Forkel et al 2014 and 2015, based on Jolly et al., 2005."
+
 @doc """
-Compute the fraction of fixated C that is allocated to the different plant organs. The allocation is dynamic in time according to temperature, water & radiation stressors estimated following the GSI approach. Inspired by the work of Friedlingstein et al., 1999, based on Sharpe and Rykiel 1991, but here following the growing season index (GSI) as stress diagnostics, following Forkel et al 2014 and 2015, based on Jolly et al., 2005.
 
----
-
-# compute:
-Combines the different stressors of carbon allocation (moisture, radiation and temperature) using the GSI approach (Forkel et al., 2014).
-
-*Inputs*
- - land.diagnostics.c_allocation_f_cloud: radiation stressors for carbo allocation
- - land.diagnostics.c_allocation_f_soilT: temperature stressors for carbon allocation
- - land.diagnostics.c_allocation_f_soilW: water stressors for carbon allocation
-
-*Outputs*
- - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
- - land.diagnostics.c_allocation
-
-# Instantiate:
-Instantiate time-invariant variables for cAllocation_GSI
-
+$(getBaseDocString(cAllocation_GSI))
 
 ---
 
@@ -104,7 +89,7 @@ Instantiate time-invariant variables for cAllocation_GSI
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais & sbesnard
 
 NotesCheck if we can partition C to leaf & wood constrained by interception of light.

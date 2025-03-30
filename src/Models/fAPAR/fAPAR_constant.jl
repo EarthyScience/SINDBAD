@@ -18,22 +18,11 @@ function precompute(params::fAPAR_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{fAPAR_constant}) = "sets the value of fAPAR as a constant"
+
 @doc """
-sets the value of fAPAR as a constant
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fraction of absorbed photosynthetically active radiation using fAPAR_constant
-
-*Inputs*
- - info helper for array
-
-*Outputs*
- - land.states.fAPAR: an extra forcing that creates a time series of constant fAPAR
+$(getBaseDocString(fAPAR_constant))
 
 ---
 
@@ -44,7 +33,7 @@ Fraction of absorbed photosynthetically active radiation using fAPAR_constant
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 fAPAR_constant

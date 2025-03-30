@@ -33,51 +33,11 @@ function compute(params::rainSnow_forcing, forcing, land, helpers)
     return land
 end
 
-function update(params::rainSnow_forcing, forcing, land, helpers)
-    ## unpack variables
-    @unpack_nt begin
-        snowW ⇐ land.pools
-        ΔsnowW ⇐ land.pools
-    end
-    # update snow pack
-    snowW[1] = snowW[1] + ΔsnowW[1]
-
-    # reset delta storage	
-    ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
-
-    ## pack land variables
-    @pack_nt begin
-        snowW ⇒ land.pools
-        ΔsnowW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{rainSnow_forcing}) = "stores the time series of rainfall and snowfall from forcing & scale snowfall if snowfall_scalar parameter is optimized"
 
 @doc """
-stores the time series of rainfall and snowfall from forcing & scale snowfall if snowfall_scalar parameter is optimized
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Set rain and snow to fe.rainsnow. using rainSnow_forcing
-
-*Inputs*
- - forcing.f_rain
- - forcing.Snow
- - info
-
-*Outputs*
- - land.fluxes.rain: liquid rainfall from forcing input
- - land.fluxes.snow: snowfall estimated as the rain when airT <  threshold
-
-# update
-
-update pools and states in rainSnow_forcing
-
- - forcing.Snow using the snowfall scaling parameter which can be optimized
+$(getBaseDocString(rainSnow_forcing))
 
 ---
 
@@ -88,7 +48,7 @@ update pools and states in rainSnow_forcing
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: creation of approach  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 rainSnow_forcing

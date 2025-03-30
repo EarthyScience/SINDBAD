@@ -45,26 +45,12 @@ function compute(params::WUE_Medlyn2011, forcing, land, helpers)
     return land
 end
 
+
+purpose(::Type{WUE_Medlyn2011}) = "calculates the WUE/AOE ci/ca as a function of daytime mean VPD. calculates the WUE/AOE ci/ca as a function of daytime mean VPD & ambient co2"
+
 @doc """
-calculates the WUE/AOE ci/ca as a function of daytime mean VPD. calculates the WUE/AOE ci/ca as a function of daytime mean VPD & ambient co2
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Estimate wue using WUE_Medlyn2011
-
-*Inputs*
- - forcing.f_psurf_day: daytime mean atmospheric pressure [kPa]
- - forcing.f_VPD_day: daytime mean VPD [kPa]
-
-*Outputs*
- - land.diagnostics.WUE: water use efficiency A/E [gC/mmH2O] with ambient co2
- - land.states.ci: internal co2 with ambient co2
- - land.diagnostics.WUENoCO2: instantiated A/E [gC/mmH2O] without ambient co2
- - land.states.ciNoCO2: instantiated internal co2 scalar without ambient co2
+$(getBaseDocString(WUE_Medlyn2011))
 
 ---
 
@@ -78,7 +64,7 @@ Estimate wue using WUE_Medlyn2011
 *Versions*
  - 1.0 on 11.11.2020 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 
 *Notes*
