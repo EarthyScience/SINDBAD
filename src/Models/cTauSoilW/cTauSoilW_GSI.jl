@@ -73,26 +73,11 @@ function fSoilW_cTau(the_one, A, B, wExp, wOpt, wSoil)
     return soilW_sc
 end
 
+purpose(::Type{cTauSoilW_GSI}) = "calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter"
+
 @doc """
-calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of soil moisture on decomposition rates using cTauSoilW_GSI
-
-*Inputs*
- - soilW: soil temperature
-
-*Outputs*
- - land.diagnostics.c_eco_k_f_soilW: effect of moisture on cTau for different pools
-
-# Instantiate:
-Instantiate time-invariant variables for cTauSoilW_GSI
-
+$(getBaseDocString(cTauSoilW_GSI))
 
 ---
 
@@ -106,7 +91,7 @@ Instantiate time-invariant variables for cTauSoilW_GSI
 *Versions*
  - 1.0 on 12.02.2021 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 
 *Notes*

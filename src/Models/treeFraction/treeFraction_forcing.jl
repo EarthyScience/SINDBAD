@@ -11,19 +11,11 @@ function compute(params::treeFraction_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{treeFraction_forcing}) = "sets the value of land.states.frac_tree from the forcing in every time step"
+
 @doc """
-sets the value of land.states.frac_tree from the forcing in every time step
 
----
-
-# compute:
-Fractional coverage of trees using treeFraction_forcing
-
-*Inputs*
- - forcing.frac_tree read from the forcing data set
-
-*Outputs*
- - land.states.frac_tree: the value of frac_tree for current time step
+$(getBaseDocString(treeFraction_forcing))
 
 ---
 
@@ -34,7 +26,7 @@ Fractional coverage of trees using treeFraction_forcing
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 treeFraction_forcing

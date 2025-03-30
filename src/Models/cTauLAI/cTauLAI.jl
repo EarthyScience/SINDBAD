@@ -2,14 +2,11 @@ export cTauLAI
 
 abstract type cTauLAI <: LandEcosystem end
 
-include("cTauLAI_CASA.jl")
-include("cTauLAI_none.jl")
+purpose(::Type{cTauLAI}) = "Calculate litterfall scalars (that affect the changes in the vegetation k)"
 
-@doc """
-Calculate litterfall scalars (that affect the changes in the vegetation k)
+includeApproaches(cTauLAI, @__DIR__)
 
-# Approaches:
- - CASA: calc LAI stressor on τ. Compute the seasonal cycle of litter fall & root litter "fall" based on LAI variations. Necessarily in precomputation mode
- - none: set values to ones
+@doc """ 
+	$(getBaseDocString(cTauLAI))
 """
 cTauLAI

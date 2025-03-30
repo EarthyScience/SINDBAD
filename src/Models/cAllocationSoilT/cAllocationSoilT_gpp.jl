@@ -16,18 +16,11 @@ function compute(params::cAllocationSoilT_gpp, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocationSoilT_gpp}) = "temperature effect on allocation = the same as gpp"
+
 @doc """
-temperature effect on allocation = the same as gpp
 
----
-
-# compute:
-
-*Inputs*
- - land.diagnostics.gpp_f_airT: temperature stressors on GPP
-
-*Outputs*
- - land.diagnostics.c_allocation_f_soilT: temperature effect on decomposition/mineralization
+$(getBaseDocString(cAllocationSoilT_gpp))
 
 ---
 
@@ -38,7 +31,7 @@ temperature effect on allocation = the same as gpp
 *Versions*
  - 1.0 on 26.01.2021 [skoirala]  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 cAllocationSoilT_gpp

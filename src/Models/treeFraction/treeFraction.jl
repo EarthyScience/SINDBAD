@@ -2,14 +2,11 @@ export treeFraction
 
 abstract type treeFraction <: LandEcosystem end
 
-include("treeFraction_constant.jl")
-include("treeFraction_forcing.jl")
+purpose(::Type{treeFraction}) = "Fractional coverage of trees"
 
-@doc """
-Fractional coverage of trees
+includeApproaches(treeFraction, @__DIR__)
 
-# Approaches:
- - constant: sets the value of treeFraction as a constant
- - forcing: sets the value of land.states.treeFraction from the forcing in every time step
+@doc """ 
+	$(getBaseDocString(treeFraction))
 """
 treeFraction

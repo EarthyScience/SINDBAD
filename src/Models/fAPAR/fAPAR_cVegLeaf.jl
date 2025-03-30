@@ -24,23 +24,11 @@ function compute(params::fAPAR_cVegLeaf, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{fAPAR_cVegLeaf}) = "Compute FAPAR based on carbon pool of the leave; SLA; kLAI"
+
 @doc """
-Compute FAPAR based on carbon pool of the leave; SLA; kLAI
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fraction of absorbed photosynthetically active radiation using fAPAR_cVegLeaf
-
-*Inputs*
- - land.pools.cEco.cVegLeaf
-
-*Outputs*
- - land.states.fAPAR: the value of fAPAR for current time step
- - land.states.fAPAR
+$(getBaseDocString(fAPAR_cVegLeaf))
 
 ---
 
@@ -51,7 +39,7 @@ Fraction of absorbed photosynthetically active radiation using fAPAR_cVegLeaf
 *Versions*
  - 1.0 on 24.04.2021 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 fAPAR_cVegLeaf

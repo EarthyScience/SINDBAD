@@ -44,51 +44,11 @@ function compute(params::drainage_kUnsat, forcing, land, helpers)
     return land
 end
 
-function update(params::drainage_kUnsat, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        soilW ⇐ land.pools
-        ΔsoilW ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture
-    soilW .= soilW .+ ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-
-    ## pack land variables
-    @pack_nt begin
-        soilW ⇒ land.pools
-        # ΔsoilW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{drainage_kUnsat}) = "downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity"
 
 @doc """
-downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity
 
----
-
-# compute:
-Recharge the soil using drainage_kUnsat
-
-*Inputs*
- - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conductivity.
-
-*Outputs*
-- land.fluxes.drainage
-- drainage from the last layer is calculated in groundWrecharge
-
-
-# update
-
-update pools and states in drainage_kUnsat
-
- - land.pools.soilW
+$(getBaseDocString(drainage_kUnsat))
 
 ---
 
@@ -99,7 +59,7 @@ update pools and states in drainage_kUnsat
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 drainage_kUnsat

@@ -21,22 +21,13 @@ function compute(params::transpirationDemand_CASA, forcing, land, helpers)
     return land
 end
 
+
+purpose(::Type{transpirationDemand_CASA}) = "calculate the supply limited transpiration as function of volumetric soil content & soil properties; as in the CASA model"
+
+
 @doc """
-calculate the supply limited transpiration as function of volumetric soil content & soil properties; as in the CASA model
 
----
-
-# compute:
-Demand-driven transpiration using transpirationDemand_CASA
-
-*Inputs*
- - land.pools.PAW : plant avaiable water
- - land.properties.p_[α/β]: moisture retention characteristics
- - land.properties.w_awc: total maximum plant available water [_fc-_wp]
- - land.states.PAW: actual extractable water
-
-*Outputs*
- - land.transpiration_demand.transpirationDemand: supply limited transpiration
+$(getBaseDocString(transpirationDemand_CASA))
 
 ---
 
@@ -47,7 +38,7 @@ Demand-driven transpiration using transpirationDemand_CASA
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: split the original transpiration_supply of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
 
-*Created by:*
+*Created by*
  - ncarvalhais
  - skoirala
 

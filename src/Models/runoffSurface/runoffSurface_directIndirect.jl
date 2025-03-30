@@ -42,49 +42,11 @@ function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
     return land
 end
 
-function update(params::runoffSurface_directIndirect, forcing, land, helpers)
-    @unpack_runoffSurface_directIndirect params
-
-    ## unpack variables
-    @unpack_nt begin
-        surfaceW ⇐ land.pools
-        ΔsurfaceW ⇐ land.pools
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-
-    # reset ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-    ## pack land variables
-    @pack_nt begin
-        surfaceW ⇒ land.pools
-        ΔsurfaceW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{runoffSurface_directIndirect}) = "assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage"
 
 @doc """
-assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_directIndirect
-
-*Inputs*
- - land.fluxes.overland_runoff
-
-*Outputs*
-
-# update
-
-update pools and states in runoffSurface_directIndirect
-
+$(getBaseDocString(runoffSurface_directIndirect))
 
 ---
 
@@ -94,7 +56,7 @@ update pools and states in runoffSurface_directIndirect
 
 *Versions*
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffSurface_directIndirect

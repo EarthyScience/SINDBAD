@@ -13,12 +13,11 @@ function define(params::cTauSoilProperties_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTauSoilProperties_none}) = "Set soil texture effects to ones (ineficient, should be pix zix_mic)"
+
 @doc """
-Set soil texture effects to ones (ineficient, should be pix zix_mic)
 
-# Instantiate:
-Instantiate time-invariant variables for cTauSoilProperties_none
-
+$(getBaseDocString(cTauSoilProperties_none))
 
 ---
 

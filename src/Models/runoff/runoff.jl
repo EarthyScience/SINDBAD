@@ -2,12 +2,11 @@ export runoff
 
 abstract type runoff <: LandEcosystem end
 
-include("runoff_sum.jl")
+purpose(::Type{runoff}) = "Calculate the total runoff as a sum of components"
 
-@doc """
-Calculate the total runoff as a sum of components
+includeApproaches(runoff, @__DIR__)
 
-# Approaches:
- - sum: calculates runoff as a sum of all potential components
+@doc """ 
+	$(getBaseDocString(runoff))
 """
 runoff

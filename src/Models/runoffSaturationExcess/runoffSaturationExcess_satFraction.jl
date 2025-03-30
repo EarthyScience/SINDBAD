@@ -21,21 +21,11 @@ function compute(params::runoffSaturationExcess_satFraction, forcing, land, help
     return land
 end
 
+purpose(::Type{runoffSaturationExcess_satFraction}) = "saturation excess runoff as a fraction of saturated fraction of land"
+
 @doc """
-saturation excess runoff as a fraction of saturated fraction of land
 
----
-
-# compute:
-Saturation runoff using runoffSaturationExcess_satFraction
-
-*Inputs*
- - land.states.WBP: amount of incoming water
- - land.states.satFrac: fraction of the grid cell that is saturated from saturatedFraction model
-
-*Outputs*
- - land.fluxes.sat_excess_runoff: saturation excess runoff in mm/day
- - land.states.WBP
+$(getBaseDocString(runoffSaturationExcess_satFraction))
 
 ---
 
@@ -46,7 +36,7 @@ Saturation runoff using runoffSaturationExcess_satFraction
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - skoirala
 
 *Notes*
