@@ -1,6 +1,0 @@
-{
-        "MaxFunEvals"           : 3,
-        "TolFun"                : 1e-3,
-        "DiagonalOnly"          : 0,
-        "CMA_active"            : 2
-}
