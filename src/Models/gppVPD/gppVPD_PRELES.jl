@@ -34,25 +34,11 @@ function compute(params::gppVPD_PRELES, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppVPD_PRELES}) = "VPD stress on gpp_potential based on Maekelae2008 and with co2 effect based on PRELES model"
+
 @doc """
-VPD stress on gpp_potential based on Maekelae2008 and with co2 effect based on PRELES model
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Vpd effect using gppVPD_PRELES
-
-*Inputs*
- - Cam: parameter modulation mean co2 effect on GPP
- - cKappa: parameter modulating co2 effect on VPD response to GPP
- - forcing.f_VPD_day: daytime vapor pressure deficit [kPa]
- - κ: parameter of the exponential decay function of GPP with  VPD [kPa-1] dimensionless [0.06 0.7]; median !0.4, same as k from  Maekaelae 2008
-
-*Outputs*
- - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
+$(getBaseDocString(gppVPD_PRELES))
 
 ---
 
@@ -65,7 +51,7 @@ Vpd effect using gppVPD_PRELES
 *Versions*
  - 1.1 on 22.11.2020 [skoirala]: changing units to kpa for vpd & sign of  κ to match with Maekaelae2008  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes*

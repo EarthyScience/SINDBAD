@@ -2,12 +2,11 @@ export getPools
 
 abstract type getPools <: LandEcosystem end
 
-include("getPools_simple.jl")
+purpose(::Type{getPools}) = "Get the amount of water at the beginning of timestep"
 
-@doc """
-Get the amount of water at the beginning of timestep
+includeApproaches(getPools, @__DIR__)
 
-# Approaches:
- - simple: gets the amount of water available for the current time step
+@doc """ 
+	$(getBaseDocString(getPools))
 """
 getPools

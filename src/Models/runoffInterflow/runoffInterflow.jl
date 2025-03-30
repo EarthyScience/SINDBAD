@@ -2,14 +2,11 @@ export runoffInterflow
 
 abstract type runoffInterflow <: LandEcosystem end
 
-include("runoffInterflow_none.jl")
-include("runoffInterflow_residual.jl")
+purpose(::Type{runoffInterflow}) = "Interflow"
 
-@doc """
-Interflow
+includeApproaches(runoffInterflow, @__DIR__)
 
-# Approaches:
- - none: sets interflow runoff to zero
- - residual: interflow as a fraction of the available water balance pool
+@doc """ 
+	$(getBaseDocString(runoffInterflow))
 """
 runoffInterflow

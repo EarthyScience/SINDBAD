@@ -2,12 +2,11 @@ export PFT
 
 abstract type PFT <: LandEcosystem end
 
-include("PFT_constant.jl")
+purpose(::Type{PFT}) = "Vegetation PFT"
 
-@doc """
-Vegetation PFT
+includeApproaches(PFT, @__DIR__)
 
-# Approaches:
- - constant: sets a uniform PFT class
+@doc """ 
+	$(getBaseDocString(PFT))
 """
 PFT

@@ -2,16 +2,35 @@ export drainage
 
 abstract type drainage <: LandEcosystem end
 
-include("drainage_dos.jl")
-include("drainage_kUnsat.jl")
-include("drainage_wFC.jl")
+purpose(::Type{drainage}) = "Recharge the soil"
 
-@doc """
-Recharge the soil
+includeApproaches(drainage, @__DIR__)
 
-# Approaches:
- - dos: downward flow of moisture [drainage] in soil layers based on exponential function of soil moisture degree of saturation
- - kUnsat: downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity
- - wFC: downward flow of moisture [drainage] in soil layers based on overflow over field capacity
+@doc """ 
+	$(getBaseDocString(drainage))
 """
 drainage
+
+# define a common interface for updating for all drainage models
+function update(params::drainage, forcing, land, helpers)
+
+    ## unpack variables
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+    end
+
+    ## update variables
+    soilW = addVec(soilW, ΔsoilW)
+
+    for l in eachindex(ΔsoilW)
+        @rep_elem zero(eltype(ΔsoilW)) ⇒ (ΔsoilW, l, :soilW)
+    end
+
+    # pack land variables
+    @pack_nt begin
+    	soilW ⇒ land.pools
+    	ΔsoilW ⇒ land.pools
+    end
+    return land
+end

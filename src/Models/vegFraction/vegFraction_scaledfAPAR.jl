@@ -23,22 +23,11 @@ function compute(params::vegFraction_scaledfAPAR, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{vegFraction_scaledfAPAR}) = "sets the value of frac_vegetation by scaling the fAPAR value"
+
 @doc """
-sets the value of frac_vegetation by scaling the fAPAR value
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fractional coverage of vegetation using vegFraction_scaledfAPAR
-
-*Inputs*
- - land.states.fAPAR : fAPAR value
-
-*Outputs*
- - land.states.frac_vegetation: current vegetation fraction
+$(getBaseDocString(vegFraction_scaledfAPAR))
 
 ---
 
@@ -49,7 +38,7 @@ Fractional coverage of vegetation using vegFraction_scaledfAPAR
 *Versions*
  - 1.1 on 24.10.2020 [ttraut]: new module  
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 vegFraction_scaledfAPAR

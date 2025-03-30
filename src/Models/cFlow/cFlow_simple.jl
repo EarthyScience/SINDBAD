@@ -32,19 +32,11 @@ function compute(params::cFlow_simple, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cFlow_simple}) = "combine all the effects that change the transfers between carbon pools"
+
 @doc """
-combine all the effects that change the transfers between carbon pools
 
----
-
-# compute:
-Actual transfers of c between pools (of diagonal components) using cFlow_simple
-
-*Inputs*
- - land.diagnostics.c_flow_A_array: transfer matrix for carbon at ecosystem level
-
-*Outputs*
- - land.diagnostics.c_flow_A_vec: effect of vegetation & vegetation on actual transfer rates between pools
+$(getBaseDocString(cFlow_simple))
 
 ---
 
@@ -55,7 +47,7 @@ Actual transfers of c between pools (of diagonal components) using cFlow_simple
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cFlow_simple

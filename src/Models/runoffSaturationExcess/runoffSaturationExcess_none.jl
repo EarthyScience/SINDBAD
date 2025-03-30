@@ -13,12 +13,11 @@ function define(params::runoffSaturationExcess_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffSaturationExcess_none}) = "set the saturation excess runoff to zero"
+
 @doc """
-set the saturation excess runoff to zero
 
-# Instantiate:
-Instantiate time-invariant variables for runoffSaturationExcess_none
-
+$(getBaseDocString(runoffSaturationExcess_none))
 
 ---
 

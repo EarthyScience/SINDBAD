@@ -48,53 +48,12 @@ function compute(params::groundWRecharge_dos, forcing, land, helpers)
     return land
 end
 
-function update(params::groundWRecharge_dos, forcing, land, helpers)
 
-    ## unpack variables
-    @unpack_nt begin
-        (soilW, groundW) ⇐ land.pools
-        (ΔsoilW, ΔgroundW) ⇐ land.states
-    end
-
-    ## update storage pools
-    soilW[end] = soilW[end] + ΔsoilW[end]
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔsoilW[end] and ΔgroundW to zero
-    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (groundW, soilW) ⇒ land.pools
-        (ΔsoilW, ΔgroundW) ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{groundWRecharge_dos}) = "GW recharge as a exponential functions of the degree of saturation of the lowermost soil layer"
 
 @doc """
-GW recharge as a exponential functions of the degree of saturation of the lowermost soil layer
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Recharge the groundwater using groundWRecharge_dos
-
-*Inputs*
- - land.pools.soilW
- - rf
-
-*Outputs*
- - land.fluxes.gw_recharge
-
-# update
-
-update pools and states in groundWRecharge_dos
-
- - land.pools.groundW[1]
+$(getBaseDocString(groundWRecharge_dos))
 
 ---
 
@@ -105,7 +64,7 @@ update pools and states in groundWRecharge_dos
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: clean up  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 groundWRecharge_dos

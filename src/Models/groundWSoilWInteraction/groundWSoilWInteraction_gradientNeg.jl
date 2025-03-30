@@ -60,53 +60,11 @@ function compute(params::groundWSoilWInteraction_gradientNeg, forcing, land, hel
     return land
 end
 
-function update(params::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        (soilW, groundW) ⇐ land.pools
-        (ΔsoilW, ΔgroundW) ⇐ land.states
-    end
-
-    ## update storage pools
-    soilW[end] = soilW[end] + ΔsoilW[end]
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔsoilW[end] and ΔgroundW to zero
-    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (groundW, soilW) ⇒ land.pools
-        (ΔsoilW, ΔgroundW) ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{groundWSoilWInteraction_gradientNeg}) = "calculates a buffer storage that doesn't give water to the soil when the soil dries up; while the soil gives water to the groundW when the soil is wet but the groundW low; the groundW is only recharged by soil moisture"
 
 @doc """
-calculates a buffer storage that doesn't give water to the soil when the soil dries up; while the soil gives water to the groundW when the soil is wet but the groundW low; the groundW is only recharged by soil moisture
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Groundwater soil moisture interactions (capilary flux) using groundWSoilWInteraction_gradientNeg
-
-*Inputs*
- - info : length(land.pools.soilW) = number of soil layers
- - land.groundWSoilWInteraction.p_gwmax : maximum storage capacity of the groundwater
- - land.properties.w_sat : maximum storage capacity of soil [mm]
-
-*Outputs*
- - land.fluxes.gw_capillary_flux : flux between groundW & soilW
-
-# update
-update pools and states in groundWSoilWInteraction_gradientNeg=
- - land.pools.groundW
- - land.pools.soilW
+$(getBaseDocString(groundWSoilWInteraction_gradientNeg))
 
 ---
 
@@ -118,7 +76,7 @@ update pools and states in groundWSoilWInteraction_gradientNeg=
  - 1.0 on 04.02.2020 [ttraut]
  - 1.0 on 23.09.2020 [ttraut]
 
-*Created by:*
+*Created by*
  - ttraut
 """
 groundWSoilWInteraction_gradientNeg

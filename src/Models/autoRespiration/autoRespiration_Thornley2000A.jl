@@ -84,29 +84,11 @@ function compute(params::autoRespiration_Thornley2000A, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{autoRespiration_Thornley2000A}) = "Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper]."
+
 @doc """
-Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper].
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Determine growth and maintenance respiration using autoRespiration_Thornley2000A
-
-*Inputs*
- - info.timeScale.stepsPerDay: number of time steps per day
- - land.diagnostics.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
- - land.diagnostics.C_to_N_cVeg: carbon to nitrogen ratio [gC.gN-1]
- - land.diagnostics.c_allocation: carbon allocation []
- - land.pools.cEco: ecosystem carbon pools [gC.m-2]
- - land.fluxes.gpp: gross primary productivity [gC.m-2.δT-1]
-
-*Outputs*
- - land.states.c_eco_efflux: autotrophic respiration from each plant pools [gC.m-2.δT-1]
- - land.states.auto_respiration_growth: growth respiration from each plant pools [gC.m-2.δT-1]
- - land.states.auto_respiration_maintain: maintenance respiration from each plant pools [gC.m-2.δT-1]
+$(getBaseDocString(autoRespiration_Thornley2000A))
 
 ---
 
@@ -119,7 +101,7 @@ Determine growth and maintenance respiration using autoRespiration_Thornley2000A
 *Versions*
  - 1.0 on 06.05.2022 [ncarvalhais/skoirala]: cleaned up the code
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes*

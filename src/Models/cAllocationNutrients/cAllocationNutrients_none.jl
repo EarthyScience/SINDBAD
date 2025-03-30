@@ -13,15 +13,12 @@ function define(params::cAllocationNutrients_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocationNutrients_none}) = "sets the pseudo-nutrient limitation to one (no effect)"
+
 @doc """
-sets the pseudo-nutrient limitation to one (no effect)
 
-# Instantiate:
+$(getBaseDocString(cAllocationNutrients_none))
 
-*Inputs*
-
-*Outputs*
-- land.diagnostics.c_allocation_f_W_N: Nutrient effect on cAllocation (0-1)
 ---
 
 # Extended help
