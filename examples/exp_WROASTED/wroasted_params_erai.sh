@@ -8,6 +8,5 @@
 #SBATCH --mem-per-cpu=3000
 #SBATCH --array=1-205%205
 #SBATCH --time=06-00:00:00
-# mkdir -p run_logs_erai
 export JULIA_NUM_THREADS=${SLURM_CPUS_PER_TASK}
 /Net/Groups/Services/HPC_22/apps/julia/julia-1.10.0/bin/julia --project=../exp_graf --heap-size-hint=5G WROASTED_params_erai.jl

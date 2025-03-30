@@ -5,7 +5,7 @@ using Plots
 toggleStackTraceNT()
 
 # site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
-site_index = 10
+site_index = 186
 # site_index = Base.parse(Int, ARGS[1])
 forcing_set = "erai"
 site_info = CSV.File(
@@ -96,7 +96,7 @@ exp_main = "wroasted_v202503"
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)
 # opti_set = (:set3,)
-o_set = :set3
+o_set = :set1
 optimize_it = true;
 # for o_set in opti_set
     path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
@@ -105,9 +105,11 @@ optimize_it = true;
 
     replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
         "experiment.basics.config_files.forcing" => forcing_config,
+        "experiment.basics.config_files.optimization" => "optimization_zarr.json",
         "experiment.basics.domain" => domain,
         "experiment.basics.name" => exp_name,
         "experiment.basics.time.date_end" => end_year * "-12-31",
+        "experiment.exe_rules.input_data_backend" => "zarr",
         "experiment.flags.run_optimization" => optimize_it,
         "experiment.flags.calc_cost" => true,
         "experiment.flags.catch_model_errors" => true,
@@ -115,6 +117,7 @@ optimize_it = true;
         "experiment.flags.debug_model" => false,
         "experiment.model_spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
+        "forcing.subset.site" => [site_index,site_index],
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
         "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES_mt.json",
@@ -158,42 +161,33 @@ optimize_it = true;
         loss_name = nameof(typeof(lossMetric))
         if loss_name in (:NNSEInv, :NSEInv)
             lossMetric = NSE()
-        # else
-        #     lossMetric = Pcor()
         end
+        valids = var_row.valids;
         (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
         (_, _, opt_var) = getData(opt_dat, obs_array, var_row)
-        # (_, _, ml_var) = getData(ml_dat, obs_array, var_row)
-
+        ml_dat[.!valids] .= NaN
+        ml_var = ml_dat
         obs_var_TMP = obs_var[:, 1, 1, 1]
         non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
-        tspan = 1:length(def_dat[1])
-        @show tspan
-        # if length(non_nan_index) < 2
-        #     tspan = 1:length(obs_var_TMP)
-        # else
-        #     tspan = first(non_nan_index):last(non_nan_index)
-        # end
-        # obs_σ = obs_σ[tspan]
-        # obs_var = obs_var[tspan]
-        # ml_dat = ml_dat[tspan]
-        # def_var = def_var[tspan, 1, 1, 1]
-        # opt_var = opt_var[tspan, 1, 1, 1]
+        if length(non_nan_index) < 2
+            tspan = 1:length(obs_var_TMP)
+        else
+            tspan = first(non_nan_index):last(non_nan_index)
+        end
+
+        obs_σ = obs_σ[tspan]
+        obs_var = obs_var[tspan]
+        ml_var = ml_var[tspan]
+        def_var = def_var[tspan, 1, 1, 1]
+        opt_var = opt_var[tspan, 1, 1, 1]
+        valids = valids[tspan]
 
         xdata = [info.helpers.dates.range[tspan]...]
 
-        ml_var = ml_var[:]
-        def_var = def_var[:, 1, 1, 1]
-        opt_var = opt_var[:, 1, 1, 1]
+        metr_ml = metric(obs_var[valids], obs_σ[valids], ml_var[valids], lossMetric)
+        metr_def = metric(obs_var[valids], obs_σ[valids], def_var[valids], lossMetric)
+        metr_opt = metric(obs_var[valids], obs_σ[valids], opt_var[valids], lossMetric)
 
-        @show size(ml_var), size(def_var), size(opt_var), size(obs_var), size(obs_σ)
-        xdata = [info.helpers.dates.range[:]...]
-        obs_var_n, obs_σ_n, ml_var_n = filterCommonNaN(obs_var, obs_σ, ml_var)
-        obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
-        obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
-        metr_ml = metric(obs_var_n, obs_σ_n, ml_var_n, lossMetric)
-        metr_def = metric(obs_var_n, obs_σ_n, def_var_n, lossMetric)
-        metr_opt = metric(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
         plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
         plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric))), $(forcing_set), $(o_set)")
         plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
