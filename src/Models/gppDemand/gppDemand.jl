@@ -2,16 +2,11 @@ export gppDemand
 
 abstract type gppDemand <: LandEcosystem end
 
-include("gppDemand_min.jl")
-include("gppDemand_mult.jl")
-include("gppDemand_none.jl")
+purpose(::Type{gppDemand}) = "Combine effects as multiplicative or minimum"
 
-@doc """
-Combine effects as multiplicative or minimum
+includeApproaches(gppDemand, @__DIR__)
 
-# Approaches:
- - min: compute the demand GPP as minimum of all stress scalars [most limited]
- - mult: compute the demand GPP as multipicative stress scalars
- - none: sets the scalar for demand GPP to ones & demand GPP to zero
+@doc """ 
+	$(getBaseDocString(gppDemand))
 """
 gppDemand

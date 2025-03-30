@@ -53,23 +53,11 @@ function compute(params::wCycle_components, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{wCycle_components}) = "update the water cycle pools per component"
+
 @doc """
-update the water cycle pools per component
 
-
----
-
-# compute:
-- apply the delta storage changes
-- check if there is overflow or over extraction
-
-*Inputs*
-- land.pools.storages: water storages
-- land.states.Δstorages: water storage changes
-- land.properties.w_sat: water holding capacity
-
-*Outputs*
- - land.states.Δstorages: soil percolation
+$(getBaseDocString(wCycle_components))
 
 ---
 
@@ -80,7 +68,7 @@ update the water cycle pools per component
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 wCycle_components

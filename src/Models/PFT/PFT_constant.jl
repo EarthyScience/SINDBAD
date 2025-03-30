@@ -15,21 +15,11 @@ function precompute(params::PFT_constant, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{PFT_constant}) = "sets a uniform PFT class"
+
 @doc """
-sets a uniform PFT class
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Vegetation PFT using PFT_constant
-
-*Inputs*
- - info structure
-
-*Outputs*
+$(getBaseDocString(PFT_constant))
 
 ---
 
@@ -40,7 +30,7 @@ Vegetation PFT using PFT_constant
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - unknown [xxx]
 """
 PFT_constant

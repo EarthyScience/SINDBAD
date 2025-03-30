@@ -88,32 +88,13 @@ function compute(params::autoRespiration_Thornley2000C, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{autoRespiration_Thornley2000C}) = "estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL C - growth, degradation & resynthesis view of respiration (check Fig.1 of the paper). Computes the km [maintenance [respiration] coefficient]."
+
 @doc """
-Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL C - growth, degradation & resynthesis view of respiration (check Fig.1 of the paper). Computes the km [maintenance [respiration] coefficient].
 
-# Parameters
-$(SindbadParameters)
+    $(getBaseDocString(autoRespiration_Thornley2000C))
 
----
-
-# compute:
-Determine growth and maintenance respiration using autoRespiration_Thornley2000C
-
-*Inputs*
- - info.timeScale.stepsPerDay: number of time steps per day
- - land.diagnostics.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
- - land.diagnostics.C_to_N_cVeg: carbon to nitrogen ratio [gC.gN-1]
- - land.diagnostics.c_allocation: carbon allocation []
- - cEco: ecosystem carbon pools [gC.m-2]
- - land.fluxes.gpp: gross primary productivity [gC.m-2.δT-1]
-
-*Outputs*
- - land.states.c_eco_efflux: autotrophic respiration from each plant pools [gC.m-2.δT-1]
- - land.states.auto_respiration_growth: growth respiration from each plant pools [gC.m-2.δT-1]
- - land.states.auto_respiration_maintain: maintenance respiration from each plant pools [gC.m-2.δT-1]
-
----
-
+----
 # Extended help
 
 *References*
@@ -123,7 +104,7 @@ Determine growth and maintenance respiration using autoRespiration_Thornley2000C
 *Versions*
  - 1.0 on 06.05.2022 [ncarvalhais/skoirala]: cleaned up the code
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes*

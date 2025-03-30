@@ -49,54 +49,11 @@ function compute(params::runoffSurface_Orth2013, forcing, land, helpers)
     return land
 end
 
-function update(params::runoffSurface_Orth2013, forcing, land, helpers)
-    @unpack_runoffSurface_Orth2013 params
-
-    ## unpack variables
-    @unpack_nt begin
-        surfaceW ⇐ land.pools
-        ΔsurfaceW ⇐ land.pools
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-
-    # reset ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-    ## pack land variables
-    @pack_nt begin
-        surfaceW ⇒ land.pools
-        ΔsurfaceW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{runoffSurface_Orth2013}) = "calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff"
 
 @doc """
-calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_Orth2013
-
-*Inputs*
-
-*Outputs*
- - land.fluxes.surface_runoff : runoff from land [mm/time]
- - land.surface_runoff.Rdelay
-
-# update
-
-update pools and states in runoffSurface_Orth2013
-
-
-# Instantiate:
-Instantiate time-invariant variables for runoffSurface_Orth2013
-
+$(getBaseDocString(runoffSurface_Orth2013))
 
 ---
 
@@ -109,7 +66,7 @@ Instantiate time-invariant variables for runoffSurface_Orth2013
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]  
 
-*Created by:*
+*Created by*
  - ttraut
 
 *Notes*

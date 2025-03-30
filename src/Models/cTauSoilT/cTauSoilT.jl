@@ -2,14 +2,11 @@ export cTauSoilT
 
 abstract type cTauSoilT <: LandEcosystem end
 
-include("cTauSoilT_none.jl")
-include("cTauSoilT_Q10.jl")
+purpose(::Type{cTauSoilT}) = "Effect of soil temperature on decomposition rates"
 
-@doc """
-Effect of soil temperature on decomposition rates
+includeApproaches(cTauSoilT, @__DIR__)
 
-# Approaches:
- - none: set the outputs to ones
- - Q10: Compute effect of temperature on psoil carbon fluxes
+@doc """ 
+	$(getBaseDocString(cTauSoilT))
 """
 cTauSoilT

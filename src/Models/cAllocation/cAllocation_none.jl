@@ -13,15 +13,11 @@ function define(params::cAllocation_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocation_none}) = "sets the carbon allocation to zero (nothing to allocated)"
+
 @doc """
-sets the carbon allocation to zero (nothing to allocated)
 
-# Instantiate:
-
-*Inputs*
-
-*Outputs*
-- land.cAllocation.c_allocation: carbon allocation
+$(getBaseDocString(cAllocation_none))
 
 ---
 

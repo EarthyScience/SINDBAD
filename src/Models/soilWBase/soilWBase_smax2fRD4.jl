@@ -84,36 +84,11 @@ function compute(params::soilWBase_smax2fRD4, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{soilWBase_smax2fRD4}) = "defines the maximum soil water content of 2 soil layers the first layer is a fraction [i.e. 1] of the soil depth the second layer is a linear combination of scaled rooting depth data from forcing"
+
 @doc """
-defines the maximum soil water content of 2 soil layers the first layer is a fraction [i.e. 1] of the soil depth the second layer is a linear combination of scaled rooting depth data from forcing
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Distribution of soil hydraulic properties over depth using soilWBase_smax2fRD4
-
-*Inputs*
- - forcing.AWC: (plant) available water capacity from Tian et al. 2019
- - forcing.RDeff: effective rooting depth from Yang et al. 2016
- - forcing.RDmax: maximum rooting depth from Fan et al. 2017
- - forcing.SWCmax: maximum soil water capacity from Wang-Erlandsson et al. 2016
- - helpers.pools.: soil layers & depths
-
-*Outputs*
- - land.soilWBase.rootwater_capacities: the 4 scaled RD datas
- - land.properties.p_nsoilLayers
- - land.properties.soil_layer_thickness
- - land.properties.w_awc: = land.properties.w_sat
- - land.properties.w_fc : = land.properties.w_sat
- - land.properties.w_sat: w_sat = smax for 2 soil layers
- - land.properties._wp: wilting point set to zero for all layers
-
-# Instantiate:
-Instantiate time-invariant variables for soilWBase_smax2fRD4
-
+$(getBaseDocString(soilWBase_smax2fRD4))
 
 ---
 
@@ -124,7 +99,7 @@ Instantiate time-invariant variables for soilWBase_smax2fRD4
 *Versions*
  - 1.0 on 10.02.2020 [ttraut]
 
-*Created by:*
+*Created by*
  - ttraut
 """
 soilWBase_smax2fRD4

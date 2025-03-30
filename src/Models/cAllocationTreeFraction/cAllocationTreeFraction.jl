@@ -2,12 +2,11 @@ export cAllocationTreeFraction
 
 abstract type cAllocationTreeFraction <: LandEcosystem end
 
-include("cAllocationTreeFraction_Friedlingstein1999.jl")
+purpose(::Type{cAllocationTreeFraction}) = "Adjustment of carbon allocation according to tree cover"
 
-@doc """
-Adjustment of carbon allocation according to tree cover
+includeApproaches(cAllocationTreeFraction, @__DIR__)
 
-# Approaches:
- - Friedlingstein1999: adjust the allocation coefficients according to the fraction of trees to herbaceous & fine to coarse root partitioning
+@doc """ 
+	$(getBaseDocString(cAllocationTreeFraction))
 """
 cAllocationTreeFraction

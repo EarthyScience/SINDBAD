@@ -24,12 +24,11 @@ function define(params::cTauVegProperties_none, forcing, land, helpers)
 
 end
 
+purpose(::Type{cTauVegProperties_none}) = "set the outputs to ones"
+
 @doc """
-set the outputs to ones
 
-# Instantiate:
-Instantiate time-invariant variables for cTauVegProperties_none
-
+$(getBaseDocString(cTauVegProperties_none))
 
 ---
 

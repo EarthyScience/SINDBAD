@@ -3,6 +3,7 @@ export clampZeroOne
 export cumSum!
 export flagUpper, flagLower
 export getFrac
+export getMethodTypes
 export getSindbadModelOrder
 export getSindbadModels
 export getZix
@@ -274,6 +275,34 @@ function getFrac(num, den)
         rat = num
     end
     return rat
+end
+
+
+"""
+    getMethodTypes(fn)
+
+Retrieve the types of the arguments for all methods of a given function.
+
+# Arguments
+- `fn`: The function for which the method argument types are to be retrieved.
+
+# Returns
+- A vector containing the types of the arguments for each method of the function.
+
+# Example
+```julia
+function example_function(x::Int, y::String) end
+function example_function(x::Float64, y::Bool) end
+
+types = getMethodTypes(example_function)
+println(types) # Output: [Int64, Float64]
+"""
+function getMethodTypes(fn)
+    # Get the method table for the function
+    mt = methods(fn)
+    # Extract the types of the first method
+    method_types = map(m -> m.sig.parameters[2], mt)
+    return method_types
 end
 
 """

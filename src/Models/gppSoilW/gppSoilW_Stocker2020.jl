@@ -40,24 +40,11 @@ function compute(params::gppSoilW_Stocker2020, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppSoilW_Stocker2020}) = "soil moisture stress on gpp_potential based on Stocker2020"
+
 @doc """
-soil moisture stress on gpp_potential based on Stocker2020
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Gpp as a function of soilW; should be set to none if coupled with transpiration using gppSoilW_Stocker2020
-
-*Inputs*
- - land.pools.soilW: values of soil moisture current time step
- - land.properties.∑w_wp: sum of wilting point
- - land.properties.∑w_fc: sum of field capacity
-
-*Outputs*
- - land.diagnostics.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
+$(getBaseDocString(gppSoilW_Stocker2020))
 
 ---
 
@@ -68,7 +55,7 @@ Gpp as a function of soilW; should be set to none if coupled with transpiration 
 
 *Versions*
 
-*Created by:*
+*Created by*
  - ncarvalhais & Shanning Bao [sbao]
 
 *Notes*

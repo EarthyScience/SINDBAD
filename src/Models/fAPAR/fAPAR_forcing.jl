@@ -13,20 +13,11 @@ function compute(params::fAPAR_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{fAPAR_forcing}) = "sets the value of land.states.fAPAR from the forcing in every time step"
+
 @doc """
-sets the value of land.states.fAPAR from the forcing in every time step
 
----
-
-# compute:
-Fraction of absorbed photosynthetically active radiation using fAPAR_forcing
-
-*Inputs*
- - forcing.fAPAR read from the forcing data set
-
-*Outputs*
- - land.states.fAPAR: the value of fAPAR for current time step
- - land.states.fAPAR
+$(getBaseDocString(fAPAR_forcing))
 
 ---
 
@@ -37,7 +28,7 @@ Fraction of absorbed photosynthetically active radiation using fAPAR_forcing
 *Versions*
  - 1.0 on 23.11.2019 [skoirala]: new approach  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 fAPAR_forcing

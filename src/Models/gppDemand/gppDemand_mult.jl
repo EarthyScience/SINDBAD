@@ -48,25 +48,11 @@ function compute(params::gppDemand_mult, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppDemand_mult}) = "compute the demand GPP as multipicative stress scalars"
+
 @doc """
-compute the demand GPP as multipicative stress scalars
 
----
-
-# compute:
-Combine effects as multiplicative or minimum using gppDemand_mult
-
-*Inputs*
- - land.diagnostics.gpp_f_airT: temperature effect on GPP [-], between 0-1
- - land.diagnostics.gpp_f_cloud: cloudiness scalar [-], between 0-1
- - land.diagnostics.gpp_f_light: light saturation scalar [-], between 0-1
- - land.diagnostics.gpp_potential: maximum potential GPP based on radiation use efficiency
- - land.diagnostics.gpp_f_vpd: VPD effect on GPP [-], between 0-1
- - land.states.fAPAR: fraction of absorbed photosynthetically active radiation (equivalent to "canopy cover" in Gash & Miralles)
-
-*Outputs*
- - land.diagnostics.gpp_f_climate [effective scalar, 0-1]
- - land.diagnostics.gpp_demand: demand GPP [gC/m2/time]
+$(getBaseDocString(gppDemand_mult))
 
 ---
 
@@ -77,7 +63,7 @@ Combine effects as multiplicative or minimum using gppDemand_mult
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes*

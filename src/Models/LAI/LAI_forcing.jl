@@ -12,20 +12,11 @@ function compute(params::LAI_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{LAI_forcing}) = "sets the value of land.states.LAI from the forcing in every time step"
+
 @doc """
-sets the value of land.states.LAI from the forcing in every time step
 
----
-
-# compute:
-Leaf area index using LAI_forcing
-
-*Inputs*
- - forcing.LAI read from the forcing data set
-
-*Outputs*
- - land.states.LAI: the value of LAI for current time step
- - land.states.LAI
+$(getBaseDocString(LAI_forcing))
 
 ---
 
@@ -36,7 +27,7 @@ Leaf area index using LAI_forcing
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: moved LAI from land.LAI.LAI to land.states.LAI  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 LAI_forcing

@@ -1,3 +1,4 @@
+export checkMissingVarInfo
 export defaultVariableInfo
 export getUniqueVarNames
 export getVarFull
@@ -53,6 +54,13 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :units => "fraction",
         :land_field => "cAllocation",
         :description => "carbon allocation to each vvegetation pool"
+    ),
+    :cCycle__zixVeg => orD(
+       :standard_name => "zixVeg",
+       :long_name => "index_veg_pools",
+       :units => "integer",
+       :land_field => "cCycle",
+       :description => "a vector of indices for vegetation pools within the array of carbon pools in cEco",
     ),
     :cCycleConsistency__giver_lower_indices => orD(
         :standard_name => "giver_lower_indices",
@@ -176,7 +184,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :constants__o_one => orD(
         :standard_name => "o_one",
         :long_name => "type_stable_one",
-        :units => "numver",
+        :units => "number",
         :land_field => "constants",
         :description => "a helper type stable 1 to be used across all models"
     ),
@@ -319,6 +327,13 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :units => "fraction",
         :land_field => "diagnostics",
         :description => "fraction of the carbon loss fron a (giver) pool that flows to a (taker) pool"
+    ),
+    :diagnostics__c_flow_E_array => orD(
+        :standard_name => "c_flow_E_array",
+        :long_name => "carbon_flow_efficiency_array",
+        :units => "fraction",
+        :land_field => "diagnostics",
+        :description => "an array containing the efficiency of each flow in the c_flow_A_array"
     ),
     :diagnostics__C_to_N_cVeg => orD(
         :standard_name => "C_to_N_cVeg",
@@ -1055,6 +1070,13 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "pools",
         :description => "terrestrial water storage including all water pools"
     ),
+    :pools__zeroΔTWS => orD(
+       :standard_name => "zeroΔTWS",
+       :long_name => "zero_with_size_",
+       :units => "mm",
+       :land_field => "pools",
+       :description => "helper variable to reset ΔTWS to zero in every time step",
+    ),
     :properties__cumulative_soil_depths => orD(
         :standard_name => "cumulative_soil_depths",
         :long_name => "cumulative_soil_depth",
@@ -1405,6 +1427,13 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "states",
         :description => "fractional coverage of grid with trees"
     ),
+    :states__frac_vegetation => orD(
+        :standard_name => "frac_vegetation",
+        :long_name => "fractional_vegetation_cover",
+        :units => "fraction",
+        :land_field => "states",
+        :description => "fractional coverage of grid with vegetation",
+     ),
     :states__LAI => orD(
         :standard_name => "LAI",
         :long_name => "leaf_area_index",
@@ -1454,22 +1483,102 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
 
 
 """
-function checkDisplayVariableDict(var_full)
+function checkDisplayVariableDict(var_full; warn_msg=true)
     sind_var_names = keys(sindbad_variables)
     if var_full in sind_var_names
-        print("\nExisting catalog entry for $var_full from src/tools/sindbadVariableCatalog.jl")
+        print("\nExisting catalog entry for $var_full from src/sindbadVariableCatalog.jl")
         displayVariableDict(var_full, sindbad_variables[var_full])
     else
         new_d = defaultVariableInfo()
         new_d[:land_field] = split(string(var_full), "__")[1]
         new_d[:standard_name] = split(string(var_full), "__")[2]
         print("\n")
-        @warn "$(var_full) does not exist in current sindbad catalog of variables. If it is a new or known variable, create an entry and add to src/tools/sindbadVariableCatalog.jl with correct details using"
+        if warn_msg
+            line_index = findfirst(x -> String(var_full) < x, String.(sind_var_names))
+            line_index = 21 + 7 * (line_index + 1)
+            @info "$(var_full) does not exist in current sindbad catalog of variables. If it is a new or known variable, create an entry around src/sindbadVariableCatalog.jl:$(line_index) (alphabetically sorted location) with correct details filled to:"
+        end
         displayVariableDict(var_full, new_d, false)
     end
     return nothing
 end
+"""
+    checkMissingVarInfo(appr)
 
+Check for missing variable information in the SINDBAD variable catalog for a given approach or model.
+
+# Description
+The `checkMissingVarInfo` function identifies variables used in a SINDBAD model or approach that are missing detailed information in the SINDBAD variable catalog. It inspects the inputs and outputs of the model's methods (`define`, `precompute`, `compute`, `update`) and checks if their metadata (e.g., `long_name`, `description`, `units`) is properly defined. If any information is missing, it provides a warning and displays the missing details.
+
+# Arguments
+- `appr`: The SINDBAD model or approach to check for missing variable information. This can be a specific approach or a model containing multiple approaches.
+- if no argument is provided, it checks all approaches in the model.
+
+# Returns
+- `nothing`: The function does not return a value but prints warnings and missing variable details to the console.
+
+# Behavior
+- For a specific approach, it checks the inputs and outputs of the methods (`define`, `precompute`, `compute`, `update`) for missing variable information.
+- For a model, it recursively checks all sub-approaches for missing variable information.
+- If a variable is missing metadata, it displays the missing details and provides guidance for adding the variable to the SINDBAD variable catalog.
+
+# Example
+```julia
+# Check for missing variable information in a specific approach
+checkMissingVarInfo(ambientCO2_constant)
+
+# Check for missing variable information in all approaches of a model
+checkMissingVarInfo(cCycle)
+"""
+checkMissingVarInfo
+
+function checkMissingVarInfo(appr)
+    if supertype(appr) == LandEcosystem
+        foreach(subtypes(appr)) do sub_appr
+            checkMissingVarInfo(sub_appr)
+        end
+    else
+        in_out_model = getInOutModel(appr, verbose=false)
+        d_methods = (:define, :precompute, :compute, :update)
+        for d_method in d_methods
+            inputs = in_out_model[d_method][:input]
+            outputs = in_out_model[d_method][:output]
+            io_list = unique([inputs..., outputs...])
+            was_displayed = false
+            miss_doc = false
+            foreach(io_list) do io_item
+                var_key = Symbol(String(first(io_item))*"__"*String(last(io_item)))
+                var_info = getVariableInfo(var_key, "time")
+                miss_doc = isempty(var_info["long_name"])
+                if miss_doc
+                    checkDisplayVariableDict(var_key, warn_msg=!was_displayed)
+                    if !was_displayed
+                        was_displayed = true
+                        println("Approach: $(appr).jl\nMethod: $(d_method)\nKey: :$(var_key)\nPair: $(io_item)")
+                    end
+                    checkDisplayVariableDict(var_key, warn_msg=!was_displayed)
+
+                end
+            end
+            if miss_doc
+                println("--------------------------------")
+            end
+        end    
+    end
+    return nothing
+end
+
+function checkMissingVarInfo()
+    for sm in subtypes(LandEcosystem)
+        for appr in subtypes(sm)
+            if appr != LandEcosystem
+                checkMissingVarInfo(appr)
+            end
+        end  
+    end      
+   return nothing
+end 
+    
 
 """
     defaultVariableInfo(string_key = false)
@@ -1522,7 +1631,7 @@ function displayVariableDict(dk, dv, exist=true)
         end
     end
     if !exist
-        print(" )\n")
+        print("    ),\n")
     end
     return nothing
 end
@@ -1540,7 +1649,6 @@ returns a symbol with `field__subfield` of land to be used as a key for an entry
 function getFullVariableKey(var_field::String, var_sfield::String)
     return Symbol(var_field * "__" * var_sfield)
 end
-
 
 """
     getUniqueVarNames(var_pairs)
@@ -1747,14 +1855,24 @@ A helper function to return the information of a SINDBAD variable
 function whatIs end
 
 function whatIs(var_name::String)
+    @show var_name
     if startswith(var_name, "land")
         var_name = var_name[6:end]
     end
-    var_field = split(var_name, ".")[1]
-    var_sfield = split(var_name, ".")[2]
+    var_field = string(split(var_name, ".")[1])
+    var_sfield = string(split(var_name, ".")[2])
     var_full = getFullVariableKey(var_field, var_sfield)
     println("\nchecking $var_name as :$var_full in sindbad_variables catalog...")
     checkDisplayVariableDict(var_full)
+    return nothing
+end
+
+
+function whatIs(var_name::Symbol)
+    var_name = string(var_name)
+    v_field = split(var_name, "__")[1]
+    v_sfield = split(var_name, "__")[2]
+    whatIs(string(v_field), string(v_sfield))
     return nothing
 end
 
