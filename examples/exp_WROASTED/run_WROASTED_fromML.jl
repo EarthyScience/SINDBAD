@@ -221,8 +221,8 @@ for site_index in sites
             obs_var = obs_var[tspan]
             jl_dat = jl_dat[tspan, 1, 1, 1]
             ml_dat = ml_dat[tspan]
-            obs_var_n, obs_σ_n, ml_dat_n = filterCommonNaN(obs_var, obs_σ, ml_dat)
-            obs_var_n, obs_σ_n, jl_dat_n = filterCommonNaN(obs_var, obs_σ, jl_dat)
+            obs_var_n, obs_σ_n, ml_dat_n = getDataWithoutNaN(obs_var, obs_σ, ml_dat)
+            obs_var_n, obs_σ_n, jl_dat_n = getDataWithoutNaN(obs_var, obs_σ, jl_dat)
             metr_def = metric(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
             metr_opt = metric(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
             v = (var_row.mod_field, var_row.mod_subfield)
