@@ -1,0 +1,37 @@
+{
+    "params": {
+        "PFT": {
+            "Name": "Plant functional type",
+            "Unit": "class",
+            "Default": 1,
+            "LowerBound": 1,
+            "UpperBound": 13,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "Constant PFT only one type"
+        },
+        "TreeFrac": {
+            "Name": "Fractional Tree Cover",
+            "Unit": "fraction",
+            "Default": 1,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "Constant tree cover fraction"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

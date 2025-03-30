@@ -1,0 +1,38 @@
+{
+    "params": {
+        "q": {
+            "Name": "sensitivity of GPP to soil moisture ",
+            "Unit": "[]",
+            "Default": 1,
+            "LowerBound": 0.01,
+            "UpperBound": 4,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "sign in flipped for bounds"
+        },
+        "thetaStar": {
+            "Name": "",
+            "Unit": "[]",
+            "Default": 0.6,
+            "LowerBound": 0.1,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        }
+
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

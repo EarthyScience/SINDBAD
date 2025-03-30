@@ -1,0 +1,24 @@
+{
+    "params": {
+        "tau": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.5,
+            "LowerBound": 0.001,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "turn-over times"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

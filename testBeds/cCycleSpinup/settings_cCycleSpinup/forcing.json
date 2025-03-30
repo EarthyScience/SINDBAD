@@ -1,0 +1,118 @@
+{
+	"1.c": 							"This json info file explains the forcing variables and all related information", 
+	"2.c":							"add more comments",
+	"3.c":							"and some more",
+
+	"funName": {
+		"import": "readForcing",
+		"check": "checkInputData"
+	},
+	"comments": "to get forcing from ExpStruct of TWS model",
+	"size": [Inf, Inf],
+	"oneDataPath": "/Net/Groups/BGI/work_3/sindbad/data/testBeds/NH/NH_25.mat",
+    "variables": {
+	"Rn":
+    {
+		"variableUnit": "MJ m-2",
+		"bounds": [-50, 500],
+		"sourceVariableName": "Rn",
+		"sourceVariableUnit": "MJ m-2",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "Rn",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "CERES",
+		"dataPath": ""
+	},
+		"PAR":
+		{
+			"variableUnit": "MJ m-2",
+			"bounds": [-50, 500],
+			"sourceVariableName": "Rn",
+			"sourceVariableUnit": "MJ m-2",
+			"source2sindbadUnit": "*1",
+			"isCategorical": false,
+			"nameShort": "PAR=Rn",
+			"spaceTimeType": "normal",
+			"sourceDataProductName": "CERES",
+			"dataPath": ""
+		},
+	"Rain":
+    {
+		"variableUnit": "mm d-1",
+		"bounds": [0, 100],
+		"sourceVariableName": "Rain",
+		"sourceVariableUnit": "mm d-1",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "Rain",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "GPCP",
+		"dataPath": ""
+	},
+	"Snow": 
+	{
+		"variableUnit": "mm d-1",
+		"bounds": [0, 100],
+		"sourceVariableName": "Snow",
+		"sourceVariableUnit": "mm d-1",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "Snow",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "GPCP",
+		"dataPath": ""
+	},
+	"Tair":
+    {
+		"variableUnit": "°C",
+		"bounds": [-80, 60],
+		"sourceVariableName": "Tair",
+		"sourceVariableUnit": "°C",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "Tair",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "CRUNCEP",
+		"dataPath": ""
+	},
+		"TairDay": {
+		"variableUnit": "°C",
+		"bounds": [-80, 60],
+		"sourceVariableName": "TairDay",
+		"sourceVariableUnit": "°C",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "TairDay",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "CRUNCEP",
+		"dataPath": ""
+	},
+		"PsurfDay":
+    {
+		"variableUnit": "hPa",
+		"bounds": [80, 120],
+		"sourceVariableName": "PsurfDay",
+		"sourceVariableUnit": "",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "PsurfDay",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "constant value",
+		"dataPath": ""
+	},
+		"PET":
+    {
+		"variableUnit": "mm d-1",
+		"bounds": [0, 100],
+		"sourceVariableName": "PET",
+		"sourceVariableUnit": "mm d-1",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "PET",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "Priestley-Taylor, CRUNCEP Tair and CERES Rn",
+		"dataPath": ""
+	}
+	}
+}

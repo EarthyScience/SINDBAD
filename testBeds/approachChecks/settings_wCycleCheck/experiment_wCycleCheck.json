@@ -1,0 +1,15 @@
+{
+	"name": "NH_TWS_Forward",
+	"domain": "NH",
+	"configFiles": 
+	{
+		"forcing"		: "testBeds/approachChecks/settings_wCycleCheck/forcing.json",
+		"modelStructure": "testBeds/approachChecks/settings_wCycleCheck/modelStructure.json",
+		"constants"		: "testBeds/approachChecks/settings_wCycleCheck/constants.json",
+		"modelRun"		: "testBeds/approachChecks/settings_wCycleCheck/modelRun.json",
+		"output"		: "testBeds/approachChecks/settings_wCycleCheck/output.json",
+		"spinup"		: "testBeds/approachChecks/settings_wCycleCheck/spinup.json",
+		"params"		: "testBeds/approachChecks/settings_wCycleCheck/params.json",
+		"opti"			: "testBeds/approachChecks/settings_wCycleCheck/opti.json"
+	},
+		"outputDirPath"	: "data/output/"}

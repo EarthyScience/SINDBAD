@@ -1,0 +1,24 @@
+{
+    "params": {
+        "constantambCO2": {
+            "Name": "atmospheric CO2 concentration",
+            "Unit": "ppm",
+            "Default": 400,
+            "LowerBound": 200,
+            "UpperBound": 5000,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "a constant CO2 concentration"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "params": {
+        "Tmax": {
+            "Name": "?? Check with martin",
+            "Unit": "degC",
+            "Default": 10,
+            "LowerBound": 5,
+            "UpperBound": 35,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        }
+    }
+}

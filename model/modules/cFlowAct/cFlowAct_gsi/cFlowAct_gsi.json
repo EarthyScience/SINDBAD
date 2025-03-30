@@ -1,0 +1,63 @@
+{
+    "params": {
+        "LR2ReSlp": {
+            "Name": "Leaf-Root to Reserve",
+            "Unit": "fraction",
+            "Default": 0.1,
+            "LowerBound": 0.01,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "Re2LRSlp": {
+            "Name": "Reserve to Leaf-Root",
+            "Unit": "fraction",
+            "Default": 0.1,
+            "LowerBound": 0.01,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "kShed": {
+            "Name": "rate of shedding",
+            "Unit": "fraction",
+            "Default": 0.1,
+            "LowerBound": 0.01,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "f_tau": {
+            "Name": "contribution factor for current stressor",
+            "Unit": "fraction",
+            "Default": 0.1,
+            "LowerBound": 0.01,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

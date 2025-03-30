@@ -1,0 +1,31 @@
+{
+	"params": {
+		"g1": {
+			"Name": "stomatal conductance parameter",
+			"Unit": "kPa^0.5",
+			"Default": 3,
+			"LowerBound": 0.5,
+			"UpperBound": 12,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "from Table in Medlyn, 2012 corrigendum"
+		},
+		"zeta": {
+			"Name": "sensitivity of WUE to ambient co2",
+			"Unit": "-",
+			"Default": 1,
+			"LowerBound": 0.85,
+			"UpperBound": 3.5,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "linear scalar"
+		}
+
+	}
+}

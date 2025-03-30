@@ -1,0 +1,24 @@
+{
+    "params": {
+        "Aws": {
+            "Name": "curve (expansion/contraction) controlling parameter",
+            "Unit": "[]",
+            "Default": 1,
+            "LowerBound": 0.001,
+            "UpperBound": 1000,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

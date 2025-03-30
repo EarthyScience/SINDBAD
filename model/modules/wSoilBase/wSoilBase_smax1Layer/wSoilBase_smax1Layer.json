@@ -1,0 +1,24 @@
+{
+    "params": {
+        "smax": {
+            "Name": "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth",
+            "Unit": "-",
+            "Default": 1,
+            "LowerBound": 0.001,
+            "UpperBound": 10,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "in Paper: s_max"
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": false,
+        "consolidated": false,
+        "published": true,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

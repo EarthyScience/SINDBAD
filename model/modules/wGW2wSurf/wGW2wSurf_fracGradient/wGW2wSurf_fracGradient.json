@@ -1,0 +1,24 @@
+{
+    "params": {
+        "kGW2Surf": {
+            "Name": "maximum transfer rate between GW and surface water",
+            "Unit": "/d",
+            "Default": 0.15,
+            "LowerBound": 0.05,
+            "UpperBound": 0.95,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": " "
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

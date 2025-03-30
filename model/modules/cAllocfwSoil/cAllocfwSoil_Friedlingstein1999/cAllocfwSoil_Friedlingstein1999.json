@@ -1,0 +1,37 @@
+{
+    "params": {
+        "mifW": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.5,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "minimum limitation for the moisture function (for pseudo Nutrient Limitation estimations)"
+        },
+        "maxL_fW": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.5,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "maximum limitation for the moisture function (for pseudo Nutrient Limitation estimations)"
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

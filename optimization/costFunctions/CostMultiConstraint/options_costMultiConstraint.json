@@ -1,0 +1,17 @@
+{
+        "funName": "CostMultiConstraint",
+        "components": 
+        {
+        "gpp": 
+            {
+            "CostMetric": "SquaredDifferencesVector",
+            "CostWeight": [1],
+            "Trimming": false,
+            "minQualityFlag": [0.85],
+            "maxQualityFlag": [1],
+            "TemporalScale": "daily",
+            "SpatialScale": NaN,
+            "MultiConstraintMethod": "cat"
+            }
+        }
+}

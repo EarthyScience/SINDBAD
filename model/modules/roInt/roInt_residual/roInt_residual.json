@@ -1,0 +1,24 @@
+{
+    "params": {
+        "rc": {
+            "Name": "simply assume that a fraction of the still available water runs off",
+            "Unit": "",
+            "Default": 0.3,
+            "LowerBound": 0,
+            "UpperBound": 0.9,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "very rough bounds, should depend on topography"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

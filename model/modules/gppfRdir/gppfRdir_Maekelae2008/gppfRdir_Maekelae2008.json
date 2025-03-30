@@ -1,0 +1,24 @@
+{
+    "params": {
+        "gamma": {
+            "Name": "empirical light response parameter",
+            "Unit": "",
+            "Default": 0.04,
+            "LowerBound": 0.001,
+            "UpperBound": 0.1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "between [0.007 0.05], median ~0.04 [m2/mol]"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

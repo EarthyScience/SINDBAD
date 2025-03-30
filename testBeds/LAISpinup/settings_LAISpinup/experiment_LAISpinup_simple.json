@@ -1,0 +1,20 @@
+{
+	"1.c": 					"This json defines general settings and paths of the different config files that will be used for a SINDBAD model simulation", 
+	"2.c":					"The specific details for different aspects of an experiment should be changed in corresponding json config files",
+
+	"name": 				"simple",
+	"domain": 				"US-Ha1",
+	"configFiles": 
+	{
+		"forcing": 			"testBeds/LAISpinup/settings_LAISpinup/forcing.json",
+		"modelStructure": 	"testBeds/LAISpinup/settings_LAISpinup/modelStructure_LAISpinup_simple.json",
+		"constants": 		"testBeds/LAISpinup/settings_LAISpinup/constants.json",
+		"modelRun": 		"testBeds/LAISpinup/settings_LAISpinup/modelRun.json",
+		"output": 			"testBeds/LAISpinup/settings_LAISpinup/output.json",
+		"spinup": 			"testBeds/LAISpinup/settings_LAISpinup/spinup.json",
+		"opti": 			"testBeds/LAISpinup/settings_LAISpinup/opti.json",
+		"params": 			""
+	},
+	"outputInfoFile": 		"testBeds/LAISpinup/settings_LAISpinup/LAISpinup_simple.json",
+	"outputDirPath": 		"testBeds/LAISpinup/output/"
+}

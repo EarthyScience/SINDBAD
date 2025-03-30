@@ -1,0 +1,155 @@
+{
+    "params": {
+        "berg_scale_PFT0": {
+            "Name": "linear scaling parameter of PFT class 0 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT1": {
+            "Name": "linear scaling parameter of PFT class 1 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT2": {
+            "Name": "linear scaling parameter of PFT class 2 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT3": {
+            "Name": "linear scaling parameter of PFT class 3 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT4": {
+            "Name": "linear scaling parameter of PFT class 4 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT5": {
+            "Name": "linear scaling parameter of PFT class 5 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT6": {
+            "Name": "linear scaling parameter of PFT class 6 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT7": {
+            "Name": "linear scaling parameter of PFT class 7 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT8": {
+            "Name": "linear scaling parameter of PFT class 8 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT9": {
+            "Name": "linear scaling parameter of PFT class 9 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT10": {
+            "Name": "linear scaling parameter of PFT class 10 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "berg_scale_PFT11": {
+            "Name": "linear scaling parameter of PFT class 11 to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

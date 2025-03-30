@@ -1,0 +1,52 @@
+{
+    "type": "value",
+    "parameter": {
+        "evapSoil": {
+            "alpha": 1.2,
+            "supLim": 0.02
+        },
+        "evapSub": {
+            "alpha": 0.44
+        },
+        "roBase": {
+            "qt": 13
+        },
+        "roInt": {
+            "berg": 1.46,
+            "smax": 515
+        },
+        "snowMelt": {
+            "melt_Rn": 0.9
+        },
+        "wSnowFrac": {
+            "CoverParam": 80
+        },
+        "rainSnow": {
+            "SF_scale": 0.67
+        }
+    },
+    "bounds": {
+        "wSnowFrac": {
+            "SF_scale": {
+                "LowerBound": 0.3,
+                "UpperBound": 1.5
+            }
+        },
+        "snowMelt": {
+            "melt_T": {
+                "UpperBound": 5
+            }
+        },
+        "evapInt": {
+            "pInt": {
+                "UpperBound": 10
+            }
+        },
+        "tranSup": {
+            "alphaVeg": {
+                "LowerBound": 0.5,
+                "UpperBound": 1.5
+            }
+        }
+    }
+}
