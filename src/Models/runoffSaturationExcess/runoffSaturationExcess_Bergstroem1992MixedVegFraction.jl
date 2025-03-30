@@ -41,23 +41,11 @@ function compute(params::runoffSaturationExcess_Bergstroem1992MixedVegFraction, 
     return land
 end
 
+purpose(::Type{runoffSaturationExcess_Bergstroem1992MixedVegFraction}) = "saturation excess runoff using Bergström method with separate berg parameters for vegetated and non-vegetated fractions"
+
 @doc """
-saturation excess runoff using Bergström method with separate berg parameters for vegetated and non-vegetated fractions
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Saturation runoff using runoffSaturationExcess_Bergstroem1992MixedVegFraction
-
-*Inputs*
- - berg : shape parameter of runoff-infiltration curve []
-
-*Outputs*
- - land.fluxes.sat_excess_runoff : runoff from land [mm/time]
- - land.states.WBP : water balance pool [mm]
+$(getBaseDocString(runoffSaturationExcess_Bergstroem1992MixedVegFraction))
 
 ---
 
@@ -69,7 +57,7 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992MixedVegFraction
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - 1.1 on 27.11.2019: skoirala: changed to handle any number of soil layers
  - ttraut
 """

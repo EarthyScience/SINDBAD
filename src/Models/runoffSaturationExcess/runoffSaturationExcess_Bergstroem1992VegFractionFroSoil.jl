@@ -47,28 +47,11 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
     return land
 end
 
+purpose(::Type{runoffSaturationExcess_Bergstroem1992VegFractionFroSoil}) = "saturation excess runoff using Bergström method with parameter scaled by vegetation fraction and frozen soil fraction"
+
 @doc """
-saturation excess runoff using Bergström method with parameter scaled by vegetation fraction and frozen soil fraction
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - forcing.frac_frozen : daily frozen soil fraction [0-1]
- - land.frac_frozen.scale : scaling parameter for frozen soil fraction
- - land.runoffSaturationExcess.frac_frozen : scaled frozen soil fraction
- - land.states.frac_vegetation : vegetation fraction
- - smax1 : maximum water capacity of first soil layer [mm]
- - smax2 : maximum water capacity of second soil layer [mm]
-
-*Outputs*
- - land.fluxes.sat_excess_runoff : runoff from land [mm/time]
- - land.runoffSaturationExcess.β_veg : scaled berg parameter
- - land.states.WBP : water balance pool [mm]
+$(getBaseDocString(runoffSaturationExcess_Bergstroem1992VegFractionFroSoil))
 
 ---
 
@@ -80,7 +63,7 @@ $(SindbadParameters)
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 runoffSaturationExcess_Bergstroem1992VegFractionFroSoil

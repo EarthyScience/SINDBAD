@@ -15,24 +15,11 @@ function define(params::gppDemand_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppDemand_none}) = "sets the scalar for demand GPP to ones & demand GPP to zero"
+
 @doc """
-sets the scalar for demand GPP to ones & demand GPP to zero
 
----
-
-# compute:
-Combine effects as multiplicative or minimum using gppDemand_none
-
-*Inputs*
- - helpers
-
-*Outputs*
- - land.diagnostics.gpp_f_climate: effective scalar of demands
- - land.diagnostics.gpp_demand: demand-driven GPP with no stress
-
-# Instantiate:
-Instantiate time-invariant variables for gppDemand_none
-
+$(getBaseDocString(gppDemand_none))
 
 ---
 
@@ -43,7 +30,7 @@ Instantiate time-invariant variables for gppDemand_none
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 gppDemand_none

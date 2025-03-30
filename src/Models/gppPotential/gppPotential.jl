@@ -2,12 +2,11 @@ export gppPotential
 
 abstract type gppPotential <: LandEcosystem end
 
-include("gppPotential_Monteith.jl")
+purpose(::Type{gppPotential}) = "Maximum instantaneous radiation use efficiency"
 
-@doc """
-Maximum instantaneous radiation use efficiency
+includeApproaches(gppPotential, @__DIR__)
 
-# Approaches:
- - Monteith: set the potential GPP based on radiation use efficiency
+@doc """ 
+	$(getBaseDocString(gppPotential))
 """
 gppPotential

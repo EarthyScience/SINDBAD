@@ -13,12 +13,11 @@ function define(params::runoffOverland_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffOverland_none}) = "sets overland runoff to zero"
+
 @doc """
-sets overland runoff to zero
 
-# Instantiate:
-Instantiate time-invariant variables for runoffOverland_none
-
+$(getBaseDocString(runoffOverland_none))
 
 ---
 

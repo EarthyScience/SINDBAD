@@ -15,21 +15,11 @@ function compute(params::runoffOverland_InfIntSat, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffOverland_InfIntSat}) = "assumes overland flow to be sum of infiltration excess, interflow, and saturation excess runoffs"
+
 @doc """
-assumes overland flow to be sum of infiltration excess, interflow, and saturation excess runoffs
 
----
-
-# compute:
-Land over flow (sum of saturation and infiltration excess runoff) using runoffOverland_InfIntSat
-
-*Inputs*
- - land.fluxes.inf_excess_runoff: infiltration excess runoff
- - land.fluxes.interflow_runoff: intermittent flow
- - land.fluxes.sat_excess_runoff: saturation excess runoff
-
-*Outputs*
- - land.fluxes.overland_runoff : runoff from land [mm/time]
+$(getBaseDocString(runoffOverland_InfIntSat))
 
 ---
 
@@ -40,7 +30,7 @@ Land over flow (sum of saturation and infiltration excess runoff) using runoffOv
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffOverland_InfIntSat

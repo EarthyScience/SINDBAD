@@ -17,20 +17,11 @@ function compute(params::transpiration_demandSupply, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{transpiration_demandSupply}) = "calculate the actual transpiration as the minimum of the supply & demand"
+
 @doc """
-calculate the actual transpiration as the minimum of the supply & demand
 
----
-
-# compute:
-If coupled, computed from gpp and aoe from wue using transpiration_demandSupply
-
-*Inputs*
- - land.diagnostics.transpiration_demand: climate demand driven transpiration
- - land.states.transpiration_supply: supply limited transpiration
-
-*Outputs*
- - land.fluxes.transpiration: actual transpiration
+$(getBaseDocString(transpiration_demandSupply))
 
 ---
 
@@ -41,7 +32,7 @@ If coupled, computed from gpp and aoe from wue using transpiration_demandSupply
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 
 *Notes*

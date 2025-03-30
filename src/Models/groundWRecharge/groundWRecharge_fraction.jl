@@ -31,53 +31,11 @@ function compute(params::groundWRecharge_fraction, forcing, land, helpers)
     return land
 end
 
-function update(params::groundWRecharge_fraction, forcing, land, helpers)
-    @unpack_groundWRecharge_fraction params
-
-    ## unpack variables
-    @unpack_nt begin
-        (soilW, groundW) ⇐ land.pools
-        (ΔsoilW, ΔgroundW) ⇐ land.states
-    end
-
-    ## update storage pools
-    soilW[end] = soilW[end] + ΔsoilW[end]
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔsoilW[end] and ΔgroundW to zero
-    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (groundW, soilW) ⇒ land.pools
-        (ΔsoilW, ΔgroundW) ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{groundWRecharge_fraction}) = "GW recharge as a fraction of moisture of the lowermost soil layer"
 
 @doc """
-GW recharge as a fraction of moisture of the lowermost soil layer
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Recharge the groundwater using groundWRecharge_fraction
-
-*Inputs*
- - land.pools.soilW
-
-*Outputs*
- - land.fluxes.gw_recharge
-
-# update
-
-update pools and states in groundWRecharge_fraction
-
- - land.pools.groundW[1]
+$(getBaseDocString(groundWRecharge_fraction))
 
 ---
 
@@ -88,7 +46,7 @@ update pools and states in groundWRecharge_fraction
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: clean up  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 groundWRecharge_fraction

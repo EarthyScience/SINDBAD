@@ -16,21 +16,11 @@ function compute(params::runoffSurface_all, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffSurface_all}) = "assumes all overland runoff is lost as surface runoff"
+
 @doc """
-assumes all overland runoff is lost as surface runoff
 
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_all
-
-*Inputs*
- - land.fluxes.overland_runoff
- - land.states.surfaceW[1]
-
-*Outputs*
- - land.fluxes.surface_runoff
- - land.pools.surfaceW[1]
+$(getBaseDocString(runoffSurface_all))
 
 ---
 
@@ -41,7 +31,7 @@ Runoff from surface water storages using runoffSurface_all
 *Versions*
  - 1.0 on 20.11.2019 [skoirala]: combine surface_runoff_direct, Indir, suw_recharge  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffSurface_all

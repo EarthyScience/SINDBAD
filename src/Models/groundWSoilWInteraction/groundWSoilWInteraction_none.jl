@@ -13,12 +13,11 @@ function define(params::groundWSoilWInteraction_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{groundWSoilWInteraction_none}) = "sets the groundwater capillary flux to zero"
+
 @doc """
-sets the groundwater capillary flux to zero
 
-# Instantiate:
-Instantiate time-invariant variables for groundWSoilWInteraction_none
-
+$(getBaseDocString(groundWSoilWInteraction_none))
 
 ---
 

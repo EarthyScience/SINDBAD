@@ -2,12 +2,11 @@ export waterBalance
 
 abstract type waterBalance <: LandEcosystem end
 
-include("waterBalance_simple.jl")
+purpose(::Type{waterBalance}) = "Calculate the water balance"
 
-@doc """
-Calculate the water balance
+includeApproaches(waterBalance, @__DIR__)
 
-# Approaches:
- - simple: check the water balance in every time step
+@doc """ 
+	$(getBaseDocString(waterBalance))
 """
 waterBalance

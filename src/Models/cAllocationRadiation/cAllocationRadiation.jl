@@ -2,16 +2,11 @@ export cAllocationRadiation
 
 abstract type cAllocationRadiation <: LandEcosystem end
 
-include("cAllocationRadiation_gpp.jl")
-include("cAllocationRadiation_GSI.jl")
-include("cAllocationRadiation_none.jl")
+purpose(::Type{cAllocationRadiation}) = "Effect of radiation on carbon allocation"
 
-@doc """
-Effect of radiation on carbon allocation
+includeApproaches(cAllocationRadiation, @__DIR__)
 
-# Approaches:
- - gpp: radiation effect on decomposition/mineralization = the same for GPP
- - GSI: radiation effect on decomposition/mineralization using GSI method
- - none: sets the radiation effect on allocation to one (no effect)
+@doc """ 
+	$(getBaseDocString(cAllocationRadiation))
 """
 cAllocationRadiation

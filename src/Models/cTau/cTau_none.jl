@@ -13,12 +13,11 @@ function define(params::cTau_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTau_none}) = "set the actual τ to ones"
+
 @doc """
-set the actual τ to ones
 
-# Instantiate:
-Instantiate time-invariant variables for cTau_none
-
+$(getBaseDocString(cTau_none))
 
 ---
 

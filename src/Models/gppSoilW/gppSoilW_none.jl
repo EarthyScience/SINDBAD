@@ -14,22 +14,11 @@ function define(params::gppSoilW_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppSoilW_none}) = "sets the soil moisture stress on gpp_potential to one (no stress)"
+
 @doc """
-sets the soil moisture stress on gpp_potential to one (no stress)
 
----
-
-# compute:
-
-*Inputs*
- - helpers
-
-*Outputs*
- - land.diagnostics.gpp_f_soilW: soil moisture effect on GPP [] dimensionless, between 0-1
-
-# Instantiate:
-Instantiate time-invariant variables for gppSoilW_none
-
+$(getBaseDocString(gppSoilW_none))
 
 ---
 
@@ -40,7 +29,7 @@ Instantiate time-invariant variables for gppSoilW_none
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 gppSoilW_none
