@@ -1,0 +1,89 @@
+{
+    "params": {
+        "effA": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.85,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
+        "effB": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.68,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
+        "effCLAY_cMicSoil_A": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.003,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
+        "effCLAY_cMicSoil_B": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.032,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
+        "effCLAY_cSoilSlow_A": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.003,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
+        "effCLAY_cSoilSlow_B": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.009,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

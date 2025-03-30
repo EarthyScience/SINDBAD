@@ -1,0 +1,24 @@
+{
+    "params": {
+        "rueRatio": {
+            "Name": "ratio of clear sky LUE to max LUE",
+            "Unit": "",
+            "Default": 0.5,
+            "LowerBound": 0.0001,
+            "UpperBound": 1.0,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "ratio of clear sky LUE to max LUE, in turner et al., appendix A, e_{g_cs} / e_{g_max}, should be between 0 and 1"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

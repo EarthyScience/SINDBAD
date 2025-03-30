@@ -1,0 +1,37 @@
+{
+    "params": {
+        "alpha": {
+            "Name": "alpha coefficient of Priestley-Taylor formula for soil",
+            "Unit": "-",
+            "Default": 1,
+            "LowerBound": 0.1,
+            "UpperBound": 3,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "same as alpha in evapSoil_demSup"
+        },
+        "supLim": {
+            "Name": "fraction of soil water that can be used for soil evaporation",
+            "Unit": "1/time",
+            "Default": 0.2,
+            "LowerBound": 0.05,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "in TWS paper: et_sup"
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

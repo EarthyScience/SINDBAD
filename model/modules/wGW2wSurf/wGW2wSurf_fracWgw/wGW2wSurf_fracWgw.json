@@ -1,0 +1,24 @@
+{
+    "params": {
+        "drainGW": {
+			"Name": "scale parameter for drainage from wGW to wSurf",
+			"Unit": "fraction",
+			"Default": 0.5,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+            "Comment": " "
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

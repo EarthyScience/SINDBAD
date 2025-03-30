@@ -1,0 +1,298 @@
+{
+    "params": {
+        "kUnsatFunc": 
+        {
+        "Name": "function to calculate unsaturated hydraulic conductivity",
+        "Unit": "",
+        "Default": "calcKSaxton1986",
+        "LowerBound": "",
+        "UpperBound": "",
+        "Distribution": {
+            "name": "",
+            "funHandle" : "",
+            "params" : []
+        }
+    },
+    "psiFC": {
+        "Name": "matric potential at field capacity",
+        "Unit": "kPa",
+        "Default": 33,
+        "LowerBound": 30,
+        "UpperBound": 35,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "psiWP": {
+        "Name": "matric potential at wilting point",
+        "Unit": "kPa",
+        "Default": 1500,
+        "LowerBound": 1000,
+        "UpperBound": 1800,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "psiSat": {
+        "Name": "matric potential at saturation",
+        "Unit": "kPa",
+        "Default": 0.0,
+        "LowerBound": 0,
+        "UpperBound": 5,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "a": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -4.396,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "b": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -0.0715,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "c": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -0.000488,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "d1": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -4.285E-5,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "e": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -3.14,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "f1": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -0.00222,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "g": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -3.484E-5,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "h": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": 0.332,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "j": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -0.0007251,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "k": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": 0.1276,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "m": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -0.108,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "n": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": 0.341,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "p": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": 12.012,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "q": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -0.0755,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "r": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -3.895,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "t": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": 0.03671,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "u": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": -0.1103,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    },
+    "v": {
+        "Name": "Saxton Parameters",
+        "Unit": "-",
+        "Default": 0.00087546,
+        "LowerBound": NaN,
+        "UpperBound": NaN,
+        "Distribution": {
+            "name": "uniform",
+            "funHandle" : "",
+            "params" : []
+        },
+        "Comment": ""
+    }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+
+}

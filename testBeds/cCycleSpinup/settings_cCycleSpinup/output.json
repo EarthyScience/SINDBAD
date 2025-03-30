@@ -1,0 +1,15 @@
+{
+	"variables": 
+    {
+		"to": 
+        {
+			"write":     ["s.w.wGW","s.w.wSnow","s.w.wSoil","s.c.cEco"],
+			"store":     [
+                "s.cd.p_raAct_km4su","s.cd.p_cTauAct_k",
+                "s.cd.p_cFlowAct_A","s.cd.p_cCycleBase_k",
+                "s.cd.p_cTaufLAI_kfLAI","s.cd.p_cTaufpSoil_kfSoil","s.cd.p_cTaufpVeg_kfVeg",
+                "fe.cTaufTsoil.fT","d.cTaufwSoil.fwSoil"]		
+		}
+  },
+  "dataFormat": ".nc"
+}

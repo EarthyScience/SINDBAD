@@ -1,0 +1,355 @@
+{
+	"1.c": 					"This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and modules 2) user selected", 
+	"2.c":					"approaches 3) structure of water and carbon states",
+	"3.c":					"If approaches are not set here, a default of dummy (blank/empty) will be used",
+	"4.c":					"If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
+
+	"paths": 
+	{
+		"coreTEM":  		"model/core/coreTEM.m",
+		"modulesDir": 		"model/modules/"
+	},
+
+	"modules": 
+	{
+		"cAlloc":
+		{
+			"apprName": 	"cAlloc_Friedlingstein1999",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"cAllocfLAI":
+		{
+			"apprName": 	"cAllocfLAI_Friedlingstein1999",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"cAllocfNut":
+		{
+			"apprName": 	"cAllocfNut_Friedlingstein1999",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"cAllocfTreeFrac":
+		{
+			"apprName": 	"cAllocfTreeFrac_Friedlingstein1999",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"cAllocfTsoil":
+		{
+			"apprName": 	"cAllocfTsoil_Friedlingstein1999",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"cAllocfwSoil":
+		{
+			"apprName": 	"cAllocfwSoil_Friedlingstein1999",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"cCycle":
+		{
+			"apprName": 	"cCycle_CASA",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"cCycleBase":
+		{
+			"apprName": 	"cCycleBase_CASA",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"cFlowAct":
+		{
+			"apprName": 	"cFlowAct_CASA",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"cFlowfpSoil":
+		{
+			"apprName": 	"cFlowfpSoil_CASA",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"pawAct": {
+            "apprName": "pawAct_fRootFrac",
+            "runFull": false,
+            "use4spinup": true
+		},
+        "PET": {
+            "apprName": "PET_forcing",
+            "runFull": false,
+            "use4spinup": false
+        },	
+		"cFlowfpVeg":
+		{
+			"apprName": 	"cFlowfpVeg_CASA",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"cTauAct":
+		{
+			"apprName": 	"cTauAct_simple",
+			"runFull": 		true,
+            "use4spinup":   true
+		},
+		"cTaufLAI":
+		{
+			"apprName": 	"cTaufLAI_CASA",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"cTaufpSoil":
+		{
+			"apprName": 	"cTaufpSoil_CASA",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"cTaufpVeg":
+		{
+			"apprName": 	"cTaufpVeg_CASA",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"cTaufTsoil":
+		{
+			"apprName": 	"cTaufTsoil_Q10",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"cTaufwSoil":
+		{
+			"apprName": 	"cTaufwSoil_CASA",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"LAI":
+		{
+			"apprName": 	"LAI_constant",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"evapSoil": 
+		{
+			"apprName": 	"evapSoil_demSup",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"evapSub": 
+		{
+			"apprName": 	"evapSub_GLEAM",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"gppAct":
+		{
+			"apprName": 	"gppAct_mult",
+			"runFull": 		true,
+            "use4spinup":   true
+		},
+		"gppDem":
+		{
+			"apprName": 	"gppDem_none",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"gppfTair":
+		{
+			"apprName":		"gppfTair_CASA",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"gppfwSoil":
+		{
+			"apprName": 	"gppfwSoil_none",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"gppPot":
+		{
+			"apprName": 	"gppPot_Monteith",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"soilTexture": 
+		{
+			"apprName": 	"soilTexture_fixed",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"pSoil": 
+		{
+			"apprName": 	"pSoil_Saxton1986",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"fAPAR": 
+		{
+			"apprName": 	"fAPAR_constant",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"pVeg": 
+		{
+			"apprName": 	"pVeg_PFT",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"roBase": 
+		{
+			"apprName": 	"roBase_Zhang2008",
+			"runFull": 		true,
+            "use4spinup":   true
+		},
+		"roSat": 
+		{
+			"apprName": 	"roSat_Bergstroem",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"snowMelt": 
+		{
+			"apprName": 	"snowMelt_TRn",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"raAct":
+		{
+			"apprName": 	"raAct_Thornley2000A",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"rafTair":
+		{
+			"apprName": 	"rafTair_Q10",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"vegFrac": 
+		{
+			"apprName": 	"vegFrac_constant",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"wSnowFrac": 
+		{
+			"apprName": 	"wSnowFrac_HTESSEL",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"sumVariables":
+		{
+			"apprName": 	"sumVariables_simple",
+			"runFull": 		true,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   true
+		},
+		"wBalance":
+		{
+			"apprName": 	"wBalance_simple",
+			"runFull": 		true,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   false
+		},
+		"wSoilBase":
+		{
+			"apprName": 	"wSoilBase_uniform",
+			"runFull": 		false,
+			"comment": 		"",
+            "use4spinup":   true
+		},
+        "wSoilPerc": {
+            "apprName": "wSoilPerc_WBP",
+            "runFull": true,
+            "use4spinup": true
+        },
+        "wSoilRec": {
+            "apprName": "wSoilRec_kUnsat",
+            "runFull": true,
+            "use4spinup": true
+        },
+        "wSoilUpflow": {
+            "apprName": "wSoilUpflow_VanDijk2010",
+            "runFull": true,
+            "use4spinup": true
+        },
+		"rainSnow":
+		{
+			"apprName": 	"rainSnow_forcing",
+			"runFull": 		false,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   true
+		},
+		"rootFrac": 
+		{
+			"apprName": 	"rootFrac_constant",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"rootMaxD": 
+		{
+			"apprName": 	"rootMaxD_fracSoilD",
+			"runFull": 		false,
+            "use4spinup":   true
+		}
+
+	},	
+	"states": 
+	{
+		"w": 
+		{
+			"pools" : 
+			[
+				["w.Surf", 		1, 	0],
+				["w.Soil", 		2, 	0],
+				["w.Buf", 		1, 	0],
+				["w.GW", 		1, 	0],
+				["w.Snow", 		1, 	0]
+			],
+			"combine":		[false,"wPools",0],
+			"wSoilLayersThickness":    [50, 1000]
+		},
+		"wd": 
+		{
+			"pools" : 
+			[
+				["WTD", 		1, 	0],
+				["w.SnowFrac", 	1, 	0]
+			],
+			"combine":		[false,"wStates",0]
+		},
+		"c": 
+		{
+		"pools" : 
+		[
+			["c.Veg.Root.F",	1,	0],
+			["c.Veg.Root.C",	1,	0],
+			["c.Veg.Wood",		1,	0],
+			["c.Veg.Leaf",		1,	0],
+			["c.Lit.Leaf.M",	1,	0],
+			["c.Lit.Leaf.S",	1,	0],
+			["c.Lit.Root.F.M",	1,	0],
+			["c.Lit.Root.F.S",	1,	0],
+			["c.Lit.Wood",		1,	0],
+			["c.Lit.Root.C",	1,	0],
+			["c.Mic.Surf",		1,	0],
+			["c.Mic.Soil",		1,	0],
+			["c.Soil.Slow",		1,	0],
+			["c.Soil.Old",		1,	0]
+		],
+		"oldNames":		["ROOT","ROOTC","WOOD","LEAF","M_LEAF","S_LEAF","M_ROOT","S_ROOT","LiWOOD","LiROOT","LEAF_MIC","SOIL_MIC", "SLOW", "OLD"],
+		"combine":		[true,"cEco",0]
+		},
+		"cd": 
+		{
+			"pools" : 
+			[
+				["cAlloc", 		14, 	0],
+				["cNPP", 		4, 	0]
+			],
+			"combine":		[false,"wStates",0]
+		}
+	}
+}
+

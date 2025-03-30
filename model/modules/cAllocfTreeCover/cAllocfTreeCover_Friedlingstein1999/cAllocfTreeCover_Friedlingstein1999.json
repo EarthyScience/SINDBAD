@@ -1,0 +1,24 @@
+{
+    "params": {
+        "Rf2Rc": {
+            "Name": "fine root to coarse root fraction",
+            "Unit": "fractional",
+            "Default": 1,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "if Rf2Rc == 1 -> no coarse roots; if Fr2Rc < 1  -> yes coarse roots"
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

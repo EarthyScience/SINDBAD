@@ -1,0 +1,50 @@
+{
+    "params": {
+        "cVegRoot": {
+            "Name": "fraction of NPP to cRoot",
+            "Unit": "fraction",
+            "Default": 0.3,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.3; if isTree==0 then 0.5 - this is allocation to below ground (roots) which is then partitioned according to Rf2Rc"
+        },
+        "cVegWood": {
+            "Name": "fraction of NPP to cWood",
+            "Unit": "fraction",
+            "Default": 0.3,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.3; if isTree==0 then 0"
+        },
+        "cVegLeaf": {
+            "Name": "fraction of NPP to cLeaf",
+            "Unit": "fraction",
+            "Default": 0.4,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.4; if isTree==0 then 0.5"
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

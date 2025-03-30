@@ -1,0 +1,166 @@
+{
+    "params": 
+    {
+        "annk_Root": 
+        {
+			"Name": "turnover rate of root carbon pool",
+			"Unit": "yr-1",
+            "Default": 1,
+			"LowerBound": 0.05,
+			"UpperBound": 3.3,
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			},
+			"Comment": 		"cEcoNames: [cVegRoot, cVegWood, cVegLeaf, cVegReserve, cLitSlow, cLitFast, cSoilSlow, cSoilOld]"
+        },
+        "annk_Wood": 
+        {
+			"Name": "turnover rate of wood carbon pool",
+			"Unit": "yr-1",
+            "Default": 0.03,
+			"LowerBound": 0.01,
+			"UpperBound": 0.5,
+            "Distribution":
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			}
+        },
+        "annk_Leaf":
+        {
+			"Name": "turnover rate of leaf carbon pool",
+			"Unit": "yr-1",
+            "Default": 0.5,
+			"LowerBound": 0.05,
+			"UpperBound": 10,
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			}
+        },        
+        "annk_Reserve": 
+        {
+			"Name": "Reserve does not respire, but has a small value for numerical error",
+			"Unit": "yr-1",
+            "Default": 0.00000000001,
+			"LowerBound": 0.000000000001,
+			"UpperBound": 1,
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			}
+        },
+        "annk_LitSlow": 
+        {
+			"Name": "turnover rate of slow litter carbon (wood litter) pool",
+			"Unit": "yr-1",
+            "Default": 3.9,
+			"LowerBound": 0.39,
+			"UpperBound": 39.0,
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			}
+
+		},
+        "annk_LitFast":
+        {
+			"Name": "turnover rate of fast litter (leaf litter) carbon pool",
+			"Unit": "yr-1",
+            "Default": 14.8,
+			"LowerBound": 1.48,
+			"UpperBound": 148.0,
+            "Distribution":
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			}
+
+		},
+        "annk_SoilSlow":
+        {
+			"Name": "turnover rate of slow soil carbon pool",
+			"Unit": "yr-1",
+            "Default": 0.2,
+			"LowerBound": 0.02,
+			"UpperBound": 2.0,
+            "Distribution":
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			}
+
+		},
+        "annk_SoilOld":
+        {
+			"Name": "turnover rate of old soil carbon pool",
+			"Unit": "yr-1",
+            "Default": 0.0045,
+			"LowerBound": 0.00045,
+			"UpperBound": 0.045,
+            "Distribution":
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			}
+
+		},
+		"cFlowA": {
+			"Name": "Transfer matrix for carbon at ecosystem level",
+			"Unit": "",
+			"Default": [
+				[  -1,    0,    0,    0,    0,    0,    0,    0],
+                [   0,   -1,    0,    0,    0,    0,    0,    0],
+                [	0,    0,   -1,    0,    0,    0,    0,    0],
+                [   0,    0,    0,   -1,    0,    0,    0,    0],
+                [   1,    0,    1,    0,   -1,    0,    0,    0],
+                [   0,    1,    0,    0,    0,    -1,   0,    0],
+                [   0,    0,    0,    0,    1,    1,   -1,    0],
+                [   0,    0,    0,    0,    0,    0,    1,   -1]
+			],
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle" : "",
+				"dparams" : []
+			},
+			"Comment": 		"cEcoNames: [1. cVegRoot, 2. cVegWood, 3. cVegLeaf, 4. cVegReserve, 5. cLitFast, 6. cLitSlow, 7. cSoilSlow, 8. cSoilOld]"
+			},
+        "C2Nveg":{
+            "Name": "carbon to nitrogen ratio in vegetation pools",
+            "Unit": "gC/gN",
+            "Default": [25,260,25,10],
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": 
+            {
+                "name": "uniform",
+                "funHandle" : "",
+                "dparams" : []
+            },
+            "Comment": ""
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

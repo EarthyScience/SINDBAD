@@ -1,0 +1,23 @@
+{
+    "params": {
+        "constantVegFrac": {
+            "Name": "Vegetation fraction",
+            "Unit": "-",
+            "Default": 0.5,
+            "LowerBound": 0.3,
+            "UpperBound": 0.9,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": " a constant vegetation fraction"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false, "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

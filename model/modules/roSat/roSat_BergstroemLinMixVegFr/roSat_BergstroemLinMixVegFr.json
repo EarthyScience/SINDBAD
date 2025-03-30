@@ -1,0 +1,36 @@
+{
+    "params": {
+        "berg_scaleV": {
+            "Name": "linear scaling parameter for berg for vegetated fraction",
+            "Unit": "",
+            "Default": 5,
+            "LowerBound": 0.1,
+            "UpperBound": 20,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "berg_scaleS": {
+            "Name": "linear scaling parameter for berg for non vegetated fraction",
+            "Unit": "",
+            "Default": 2,
+            "LowerBound": 0.1,
+            "UpperBound": 20,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

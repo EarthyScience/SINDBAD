@@ -1,0 +1,50 @@
+{
+    "params": {
+        "Topt": {
+            "Name": "check in CASA code",
+            "Unit": "degC",
+            "Default": 25,
+            "LowerBound": 5,
+            "UpperBound": 35,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "loose bounds"
+        },
+        "ToptA": {
+            "Name": "check in CASA code",
+            "Unit": "degC",
+            "Default": 0.2,
+            "LowerBound": 0.1,
+            "UpperBound": 0.3,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Sven"
+        },
+        "ToptB": {
+            "Name": "check in CASA code",
+            "Unit": "degC",
+            "Default": 0.3,
+            "LowerBound": 0.15,
+            "UpperBound": 0.5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Sven"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

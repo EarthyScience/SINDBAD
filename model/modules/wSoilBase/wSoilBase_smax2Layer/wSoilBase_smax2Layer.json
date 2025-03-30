@@ -1,0 +1,35 @@
+{
+    "params": {
+        "smax1": {
+            "Name": "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth",
+            "Unit": "-",
+            "Default": 1,
+            "LowerBound": 0.001,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+            },
+        "smax2": {
+            "Name": "maximum plant available water in 2nd soil layer, as % of defined soil depth",
+            "Unit": "-",
+            "Default": 0.3,
+            "LowerBound": 0.01,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

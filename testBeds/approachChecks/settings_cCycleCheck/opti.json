@@ -1,0 +1,72 @@
+
+{
+	"costFun": {
+		"funName": "CostMultiConstraint",
+		"nonDefOptFile": ""
+	},
+	"algorithm": {
+		"funName": "cmaes",
+		"nonDefOptFile": "testBeds/cCycleOpti/settings_cCycleOpti/extraOptionsOpti/extraOptions_cmaes.json",
+		"isMultiObj": false
+	},
+	"optimizer":{
+		"funName": "",
+		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
+	},
+	"params2opti": [
+		"gppPot.maxrue", "gppfTair.Topt", "gppfTair.ToptA", "gppfTair.ToptB"
+	],
+	"checks": "Nuno, please help...",
+	"constraints": {
+		"funName": {
+			"import": "readObservation",
+			"check": ""
+		},
+		"comments": "to get data for fluxnet site",
+		"variableNamesFile": [
+			"GPP_NT",
+			"AGB"
+		],
+		"oneDataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc",
+		"variables": {
+		"gpp": {
+			"data": {
+				"variableUnit": "gC m-2 day-1",
+				"bounds": [-Inf, Inf ],
+				"sourceVariableName": "GPP_NT",
+				"sourceVariableUnit": "gC m-2 day-1",
+				"source2sindbadUnit": "*1",
+				"isCategorical": false,
+				"nameShort": "Gross Primary Productivity",
+				"spaceTimeType": "normal",
+				"sourceDataProductName": "FLUXNET",
+				"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc"
+			},
+			"unc": {
+				"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc",
+				"bounds": [-Inf, Inf ],
+				"sourceVariableName": "NEE_RANDUNC"
+			},
+			"qflag": {
+				"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc",
+				"bounds": [-Inf, Inf ],
+				"sourceVariableName": "NEE_QC"
+			}
+		},
+		"AGB": {
+			"data": {
+				"variableUnit": "MgC ha-1",
+				"bounds": [-Inf, Inf ],
+				"sourceVariableName": "AGB",
+				"sourceVariableUnit": "MgC ha-1",
+				"source2sindbadUnit": "*100",
+				"isCategorical": false,
+				"nameShort": "Above-ground biomass",
+				"spaceTimeType": "normal",
+				"sourceDataProductName": "FLUXNET",
+				"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc"
+			}
+		}
+	}
+}
+}

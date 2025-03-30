@@ -1,0 +1,35 @@
+{
+    "params": {
+        "berg_scale": {
+            "Name": "linear scaling parameter to get the berg parameter from vegFrac",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 10,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+			}
+            },
+        "scaleFro": {
+            "Name": "linear scaling parameter for rozen Soil fraction",
+            "Unit": "",
+            "Default": 1,
+            "LowerBound": 0.1,
+            "UpperBound": 3,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

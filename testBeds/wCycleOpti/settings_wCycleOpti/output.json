@@ -1,0 +1,12 @@
+{	"variables":
+    {
+		"to":
+        {
+			"write":     ["fx.evapTotal","fx.evapSoil","fx.tranAct","fx.evapInt","fx.evapSub",
+							"fx.roTotal","fx.roSurf","fx.roOverland",
+							"s.w.wSnow","s.w.wSurf","s.w.wSoil","s.wd.wTotal"],
+			"store":     ["s.wd.WBP"]
+	}
+	},
+	"dataFormat": 			".nc"
+}

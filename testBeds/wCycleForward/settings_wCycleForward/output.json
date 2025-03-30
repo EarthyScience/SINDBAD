@@ -1,0 +1,15 @@
+{
+	"1.c":			"sum.Q: Runoff components. All should be fields of fx",
+	"2.c":			"sum.ET: ET components. All should be fields of fx",
+	"variables":
+    {
+	"to":
+        {
+			"write":     ["fx.evapTotal","fx.evapSoil","fx.evapInt",
+							"fx.roTotal","fx.roBase","fx.gwRec",
+							"s.w.wSoil","s.wd.wTotal","s.wd.WBP","s.w.wGW"],
+			"store":     []
+	}
+},
+	"dataFormat": 			".nc"
+}

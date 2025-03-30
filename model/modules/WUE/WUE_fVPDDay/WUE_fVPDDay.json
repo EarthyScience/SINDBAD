@@ -1,0 +1,17 @@
+{
+	"params": {
+		"WUEatOnehPa": {
+			"Name": "WUE at 1 hpa VPD",
+			"Unit": "gC/mmH2O",
+			"Default": 9.2,
+			"LowerBound": 4,
+			"UpperBound": 17,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "from J. Nelson, relationship based on FluxNet data"
+		}
+	}
+}

@@ -1,0 +1,35 @@
+{
+    "params": {
+        "alpha": {
+            "Name": "scaling factor for PET to account for maximum bare soil evaporation",
+            "Unit": "",
+            "Default": 1,
+            "LowerBound": 0.5,
+            "UpperBound": 1.5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        },
+        "beta": {
+            "Name": "soil moisture resistance factor for soil evapotranspiration",
+            "Unit": "mm^0.5",
+            "Default": 3,
+            "LowerBound": 1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

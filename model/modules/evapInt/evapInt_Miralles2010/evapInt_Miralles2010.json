@@ -1,0 +1,76 @@
+{
+    "params": {
+        "CanopyStorage": {
+            "Name": "Canopy storage",
+            "Unit": "mm",
+            "Default": 1.2,
+            "LowerBound": 0.4,
+            "UpperBound": 2,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Miralles 2010"
+        },
+        "fte": {
+            "Name": "fraction of trunk evaporation",
+            "Unit": "-",
+            "Default": 0.02,
+            "LowerBound": 0.02,
+            "UpperBound": 0.02,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Miralles 2010"
+        },
+        "evapRate": {
+            "Name": "mean evaporation rate",
+            "Unit": "mm/hr",
+            "Default": 0.3,
+            "LowerBound": 0.1,
+            "UpperBound": 0.5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Miralles 2010"
+        },
+        "St": {
+            "Name": "trunk capacity",
+            "Unit": "mm",
+            "Default": 0.02,
+            "LowerBound": 0.02,
+            "UpperBound": 0.02,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Miralles 2010"
+        },
+        "pd": {
+            "Name": "fraction rain to trunks",
+            "Unit": "[]",
+            "Default": 0.02,
+            "LowerBound": 0.02,
+            "UpperBound": 0.02,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Miralles 2010"
+        }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}
