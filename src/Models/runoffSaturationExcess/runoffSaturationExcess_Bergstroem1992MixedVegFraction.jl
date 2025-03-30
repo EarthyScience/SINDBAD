@@ -57,7 +57,7 @@ $(getBaseDocString(runoffSaturationExcess_Bergstroem1992MixedVegFraction))
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - 1.1 on 27.11.2019: skoirala: changed to handle any number of soil layers
  - ttraut
 """

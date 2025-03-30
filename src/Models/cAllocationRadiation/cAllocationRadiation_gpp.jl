@@ -31,7 +31,7 @@ $(getBaseDocString(cAllocationRadiation_gpp))
 *Versions*
  - 1.0 on 26.01.2021 [skoirala]  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 cAllocationRadiation_gpp

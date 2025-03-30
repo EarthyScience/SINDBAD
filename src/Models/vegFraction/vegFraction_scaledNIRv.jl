@@ -38,7 +38,7 @@ $(getBaseDocString(vegFraction_scaledNIRv))
 *Versions*
  - 1.1 on 29.04.2020 [sbesnard]: new module  
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 vegFraction_scaledNIRv

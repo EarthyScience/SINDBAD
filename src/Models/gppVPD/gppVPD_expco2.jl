@@ -45,7 +45,7 @@ $(getBaseDocString(gppVPD_expco2))
 *Versions*
  - 1.1 on 22.11.2020 [skoirala]: changing units to kpa for vpd & sign of  κ to match with Maekaelae2008  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes*

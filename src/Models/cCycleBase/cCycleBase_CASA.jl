@@ -84,7 +84,7 @@ $(getBaseDocString(cCycleBase_CASA))
 *Versions*
  - 1.0 on 28.05.2022 [skoirala]: migrate to julia  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cCycleBase_CASA

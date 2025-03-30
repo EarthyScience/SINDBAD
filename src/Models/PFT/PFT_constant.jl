@@ -30,7 +30,7 @@ $(getBaseDocString(PFT_constant))
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - unknown [xxx]
 """
 PFT_constant

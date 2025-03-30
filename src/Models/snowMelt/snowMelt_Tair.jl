@@ -58,7 +58,7 @@ $(getBaseDocString(snowMelt_Tair))
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - mjung
 
 *Notes*

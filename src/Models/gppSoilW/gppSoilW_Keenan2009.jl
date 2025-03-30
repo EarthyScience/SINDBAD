@@ -47,7 +47,7 @@ $(getBaseDocString(gppSoilW_Keenan2009))
 *Versions*
  - 1.0 on 10.03.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais & sbesnard
 
 *Notes*

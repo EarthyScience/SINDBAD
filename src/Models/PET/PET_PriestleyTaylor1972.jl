@@ -49,7 +49,7 @@ $(getBaseDocString(PET_PriestleyTaylor1972))
 *Versions*
  - 1.0 on 20.03.2020 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 PET_PriestleyTaylor1972

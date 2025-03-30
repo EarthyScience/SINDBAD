@@ -56,7 +56,7 @@ $(getBaseDocString(cAllocationSoilW_gppGSI))
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais & sbesnard
 """
 cAllocationSoilW_gppGSI

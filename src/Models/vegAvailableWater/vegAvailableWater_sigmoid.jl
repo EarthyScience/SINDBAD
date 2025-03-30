@@ -69,7 +69,7 @@ $(getBaseDocString(vegAvailableWater_sigmoid))
 *Versions*
  - 1.0 on 21.11.2019  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 vegAvailableWater_sigmoid

@@ -55,7 +55,7 @@ $(getBaseDocString(gppSoilW_Stocker2020))
 
 *Versions*
 
-*Created by:*
+*Created by*
  - ncarvalhais & Shanning Bao [sbao]
 
 *Notes*

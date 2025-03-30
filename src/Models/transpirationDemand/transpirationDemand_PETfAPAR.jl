@@ -37,7 +37,7 @@ $(getBaseDocString(transpirationDemand_PETfAPAR))
 *Versions*
  - 1.0 on 30.04.2020 [skoirala]
 
-*Created by:*
+*Created by*
  - sbesnard; skoirala; ncarvalhais
 
 *Notes*

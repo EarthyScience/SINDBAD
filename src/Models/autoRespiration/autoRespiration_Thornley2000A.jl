@@ -101,7 +101,7 @@ $(getBaseDocString(autoRespiration_Thornley2000A))
 *Versions*
  - 1.0 on 06.05.2022 [ncarvalhais/skoirala]: cleaned up the code
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes*

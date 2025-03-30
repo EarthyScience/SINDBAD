@@ -40,7 +40,7 @@ $(getBaseDocString(runoffInfiltrationExcess_kUnsat))
 *Versions*
  - 1.0 on 23.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffInfiltrationExcess_kUnsat

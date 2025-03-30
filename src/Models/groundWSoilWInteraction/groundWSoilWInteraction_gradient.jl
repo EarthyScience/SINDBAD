@@ -73,7 +73,7 @@ $(getBaseDocString(groundWSoilWInteraction_gradient))
 *Versions*
  - 1.0 on 04.02.2020 [ttraut]
 
-*Created by:*
+*Created by*
  - ttraut
 """
 groundWSoilWInteraction_gradient

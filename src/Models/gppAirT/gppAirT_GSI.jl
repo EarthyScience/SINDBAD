@@ -73,7 +73,7 @@ $(getBaseDocString(gppAirT_GSI))
 *Versions*
  - 1.1 on 22.01.2021 (skoirala
 
-*Created by:*
+*Created by*
  - skoirala
 
 *Notes*

@@ -31,7 +31,7 @@ $(getBaseDocString(transpirationSupply_CASA))
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: split the original transpiration_supply of CASA into demand  supply: actual [minimum] is now just demSup approach of transpiration  
 
-*Created by:*
+*Created by*
  - ncarvalhais
  - skoirala
 

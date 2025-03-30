@@ -50,7 +50,7 @@ $(getBaseDocString(runoffBase_Zhang2008))
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - mjung
 """
 runoffBase_Zhang2008

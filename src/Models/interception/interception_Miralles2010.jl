@@ -91,7 +91,7 @@ $(getBaseDocString(interception_Miralles2010))
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
  - 1.1 on 22.11.2019 [skoirala]: handle land.states.fAPAR, rainfall intensity & rainfall  
 
-*Created by:*
+*Created by*
  - mjung
 
 *Notes*

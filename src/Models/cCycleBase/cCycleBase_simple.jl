@@ -78,7 +78,7 @@ $(getBaseDocString(cCycleBase_simple))
 *Versions*
  - 1.0.0 on 28.02.2020.0 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cCycleBase_simple

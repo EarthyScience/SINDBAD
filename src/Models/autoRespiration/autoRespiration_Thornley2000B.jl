@@ -96,7 +96,7 @@ purpose(::Type{autoRespiration_Thornley2000B}) = "estimate autotrophic respirati
 *Versions*
  - 1.0 on 06.05.2022 [ncarvalhais/skoirala]: cleaned up the code
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes*

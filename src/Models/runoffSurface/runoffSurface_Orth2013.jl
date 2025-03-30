@@ -66,7 +66,7 @@ $(getBaseDocString(runoffSurface_Orth2013))
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]  
 
-*Created by:*
+*Created by*
  - ttraut
 
 *Notes*

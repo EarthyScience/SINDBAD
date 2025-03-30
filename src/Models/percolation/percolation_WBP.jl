@@ -52,7 +52,7 @@ $(getBaseDocString(percolation_WBP))
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 percolation_WBP

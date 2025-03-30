@@ -46,7 +46,7 @@ $(getBaseDocString(runoff_sum))
 *Versions*
  - 1.0 on 01.04.2022  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoff_sum

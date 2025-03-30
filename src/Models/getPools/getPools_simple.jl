@@ -43,7 +43,7 @@ $(getBaseDocString(getPools_simple))
 *Versions*
  - 1.0 on 19.11.2019 [skoirala]: added the documentation & cleaned the code, added json with development stage
 
-*Created by:*
+*Created by*
  - mjung
  - ncarvalhais
  - skoirala

@@ -39,7 +39,7 @@ $(getBaseDocString(vegFraction_scaledEVI))
  - 1.0 on 06.02.2020 [ttraut]  
  - 1.1 on 05.03.2020 [ttraut]: apply the min function
 
-*Created by:*
+*Created by*
  - ttraut
 """
 vegFraction_scaledEVI

@@ -99,7 +99,7 @@ $(getBaseDocString(soilWBase_smax2fRD4))
 *Versions*
  - 1.0 on 10.02.2020 [ttraut]
 
-*Created by:*
+*Created by*
  - ttraut
 """
 soilWBase_smax2fRD4

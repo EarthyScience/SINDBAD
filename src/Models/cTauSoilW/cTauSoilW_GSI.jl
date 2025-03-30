@@ -91,7 +91,7 @@ $(getBaseDocString(cTauSoilW_GSI))
 *Versions*
  - 1.0 on 12.02.2021 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 
 *Notes*

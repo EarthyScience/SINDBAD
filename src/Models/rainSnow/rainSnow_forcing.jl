@@ -48,7 +48,7 @@ $(getBaseDocString(rainSnow_forcing))
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: creation of approach  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 rainSnow_forcing

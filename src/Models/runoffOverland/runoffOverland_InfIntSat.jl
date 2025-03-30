@@ -30,7 +30,7 @@ $(getBaseDocString(runoffOverland_InfIntSat))
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffOverland_InfIntSat

@@ -81,7 +81,7 @@ $(getBaseDocString(gppDiffRadiation_Wang2015))
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up
  - 1.1 on 22.01.2021 [skoirala]: minimum & maximum function had []  missing & were not working  
 
-*Created by:*
+*Created by*
  - mjung
  - ncarvalhais
 """

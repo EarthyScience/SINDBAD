@@ -143,7 +143,7 @@ $(getBaseDocString(wCycleBase_simple))
 *Versions*
  - 1.0 on 18.07.2023 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 wCycleBase_simple

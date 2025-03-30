@@ -54,7 +54,7 @@ $(getBaseDocString(evaporation_vegFraction))
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.frac_vegetation  
 
-*Created by:*
+*Created by*
  - mjung
  - skoirala
 """

@@ -56,7 +56,7 @@ $(getBaseDocString(runoffSurface_directIndirect))
 
 *Versions*
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffSurface_directIndirect

@@ -29,7 +29,7 @@ $(getBaseDocString(gppAirT_none))
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 gppAirT_none

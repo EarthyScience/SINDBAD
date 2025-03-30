@@ -33,7 +33,7 @@ $(getBaseDocString(WUE_constant))
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - Jake Nelson [jnelson]: for the typical values & ranges of WUE across fluxNet  sites
  - skoirala
 """
