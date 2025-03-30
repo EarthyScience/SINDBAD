@@ -444,16 +444,16 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     forcing_helpers_with_param_set = updateForcingHelpers(deepcopy(forcing.helpers), info.optimization.n_threads_cost);
 
-    output = prepTEMOut(info, forcing_helpers_with_param_set)
-    output_array = output.data
+    output_mt = prepTEMOut(info, forcing_helpers_with_param_set)
+    output_array_mt = output_mt.data
 
     space_ind_mt, _ = getSpatialInfo(forcing_helpers_with_param_set)
 
     space_output_mt = map([space_ind_mt...]) do lsi
-        getLocData(output_array, lsi)
+        getLocData(output_array_mt, lsi)
     end
 
-    run_helpers = (; run_helpers..., space_output_mt=space_output_mt)
+    run_helpers = (; run_helpers..., space_output_mt=space_output_mt, space_ind_mt=space_ind_mt, output_array_mt=output_array_mt, output_dims_mt=output_mt.dims, forcing_helpers_with_param_set=forcing_helpers_with_param_set)
     return run_helpers
 end
 
@@ -611,8 +611,10 @@ end
 
 function updateForcingHelpers(new_forcing_helpers, param_set_size)
     data_dimensions = new_forcing_helpers.dimensions
-    insert!(data_dimensions.permute, 2, "param_set")
     insert!(data_dimensions.space, 1, "param_set")
+    if !isnothing(data_dimensions.permute)
+        insert!(data_dimensions.permute, 2, "param_set")
+    end
     insert!(new_forcing_helpers.axes, 2, Pair(:param_set, 1:param_set_size))
     new_sizes = (; new_forcing_helpers.sizes..., param_set=param_set_size)
     new_forcing_helpers = setTupleField(new_forcing_helpers, (:sizes, new_sizes))
