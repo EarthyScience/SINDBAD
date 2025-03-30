@@ -26,7 +26,7 @@ export sindbad_update_methods
 struct DoCatchModelErrors end
 struct DoNotCatchModelErrors end
 
-missing_approach_purpose(x) = "$(x) is missing the definition of purpose. Add `purpose(::Type{$(nameof(x))})` = \"the_purpose\"` in `$(nameof(x)).jl` file to define the specific purpose"
+missingApproachPurpose(x) = "$(x) is missing the definition of purpose. Add `purpose(::Type{$(nameof(x))})` = \"the_purpose\"` in `$(nameof(x)).jl` file to define the specific purpose"
 
 """
     getBaseDocString()
@@ -67,7 +67,7 @@ function getBaseDocString()
         c_type = getproperty(Sindbad.Models, Symbol(c_name))
         return getBaseDocString(c_type)
     else
-        return ("No caller information available.")
+        return ("Information of the caller file is not available.")
     end
 end
 
@@ -118,7 +118,8 @@ function getBaseDocStringForApproach(appr)
         doc_string *= "\n*Outputs*\n"
         doc_string = getBaseDocStringForIO(doc_string, outputs)
     end
-    doc_string *= "\n---\n"
+    doc_string *= "\n*End of ```automatic doc```` for ```$(appr)````. Check the Extended help for user-defined information.*\n"
+    # doc_string *= "\n---\n"
     return doc_string
 end
 
@@ -130,12 +131,12 @@ function getBaseDocStringForIO(doc_string, io_list)
     end
     foreach(io_list) do io_item
         var_info = getVariableInfo(Symbol(String(first(io_item))*"__"*String(last(io_item))), "time")
-        v_d = var_info["description"]
+        miss_doc = isempty(var_info["long_name"])
+        v_d = miss_doc ? "No description available in Sindbad Variable catalog" : var_info["description"]
         v_units = var_info["units"]
-        v_units = isempty(v_units) ? "unitless" : "$(v_units)"
-        if v_d == ""
-            v_d = "No description available in Sindbad Variable catalog"
-        end
+        v_units = miss_doc ? "" : isempty(v_units) ? "unitless/fraction" : "$(v_units)"
+        v_d = replace(v_d, "_" => "\\_")
+
         doc_string *= " - `$(first(io_item)).$(last(io_item))`: $(v_d) {$(v_units)}\n"
     end
     return doc_string
@@ -154,7 +155,7 @@ function getBaseDocStringForModel(modl)
         # mod_name = replace(mod_name, "_" => "\\_")
         p_s = purpose(subtype)
         p_s_w = p_s
-        p_s_w = isnothing(p_s) ? missing_approach_purpose(subtype) : p_s
+        p_s_w = isnothing(p_s) ? missingApproachPurpose(subtype) : p_s
         doc_string *= " - ```$(mod_name)```: " * "$(p_s_w)\n"
     end
     return doc_string
@@ -187,7 +188,7 @@ function includeApproaches(modl, dir)
 end
 
 """
-    compute(params, forcing, land, helpers)
+    compute(params<:LandEcosystem, forcing, land, helpers)
 
 Update the model state and variables in time using defined and precomputed objects.
 
@@ -227,7 +228,7 @@ end
 Define and initialize arrays and variables for a SINDBAD model or approach.
 
 # Description
-The `define` function is responsible for defining and initializing arrays, variables, or states that are required for a SINDBAD model or approach. It is typically called once to set up time-invariant or static variables that are essential for the model's computations.
+The `define` function is responsible for defining and initializing arrays for variables of pools or states that are required for a SINDBAD model or approach. It is typically called once to set up ```memory-allocating``` variables whose values can be overwritten during model computations.
 
 # Arguments
 - `params`: The parameter structure for the specific SINDBAD model or approach.
@@ -242,13 +243,14 @@ The `define` function is responsible for defining and initializing arrays, varia
 - For each SINDBAD model or approach, the `define` function initializes arrays and variables based on the specific requirements of the model or approach.
 - It may include operations like unpacking parameters, defining arrays, or setting default values for variables.
 - This function is typically used to prepare the land model state for subsequent computations.
+- It is called once at the beginning of the simulation to set up the necessary variables. So, any variable whole values are changing based on model parameters so actually be overwritten in the precompute or compute function.
 """
 function define(params::LandEcosystem, forcing, land, helpers)
     return land
 end
 
 """
-    precompute(params, forcing, land, helpers)
+    precompute(params<:LandEcosystem, forcing, land, helpers)
 
 Update defined variables and arrays with new realizations of a SINDBAD model or approach.
 
@@ -283,12 +285,12 @@ function precompute(params::LandEcosystem, forcing, land, helpers)
 end
 
 """
-    update(params, forcing, land, helpers)
+    update(params<:LandEcosystem, forcing, land, helpers)
 
-Update the model pools and variables within a single time step.
+Update the model pools and variables within a single time step when activated via ```inline_update``` in experiment_json.
 
 # Description
-The `update` function is responsible for modifying the state of a SINDBAD model or approach within a single time step. It uses the latest forcing data, precomputed variables, and defined parameters to update the pools and other state variables in the land model. This function ensures that the model reflects the changes occurring during the current time step.
+The `update` function is responsible for modifying the pools of a SINDBAD model or approach within a single time step. It uses the latest forcing data, precomputed variables, and defined parameters to update the pools. This means that the model pools, typically of the water cycle, are updated before the next processes are called.
 
 # Arguments
 - `params`: The parameter structure for the specific SINDBAD model or approach.
@@ -297,10 +299,10 @@ The `update` function is responsible for modifying the state of a SINDBAD model 
 - `helpers`: Additional helper functions or data required for computations.
 
 # Returns
-- The updated `land` model state with changes applied for the current time step.
+- The updated `land` model pool with changes applied for the current time step.
 
 # Behavior
-- For each SINDBAD model or approach, the `update` function modifies the pools and state variables based on the specific requirements of the model or approach.
+- For each SINDBAD model or approach, the `update` function modifies the pools and state variables based on the specific requirements of the model or approach. 
 - It may include operations like adjusting carbon or water pools, recalculating fluxes, or updating diagnostics based on the current time step's inputs and conditions.
 - This function is typically called iteratively during the simulation to reflect time-dependent changes.
 
@@ -338,9 +340,11 @@ This function returns the purpose of a SINDBAD model or approach. The purpose is
 ```julia
 # Define the purpose for a specific model
 purpose(::Type{ambientCO2_constant}) = "sets the value of ambient_CO2 as a constant"
-
+```
 # Retrieve the purpose
+````
 println(purpose(ambientCO2_constant))  # Output: "sets the value of ambient_CO2 as a constant"
+````
 """
 purpose
 
