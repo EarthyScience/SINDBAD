@@ -390,7 +390,7 @@ function modelParameter(models, model::Symbol)
         foreach(pnames) do fn
             p_dict[fn] = getproperty(mod, fn)
             p_unit = Sindbad.Models.units(mod, fn)
-            p_unit_info = p_unit == "" ? "" : "($p_unit)"
+            p_unit_info = p_unit == "" ? "unitless/fraction" : "($p_unit)"
             println("   $fn => $(getproperty(mod, fn)) $p_unit_info")
         end
     end
@@ -415,7 +415,7 @@ function modelParameter(model::LandEcosystem, show=true)
             p_val = getproperty(model, fn)
             p_describe = Sindbad.Models.describe(model, fn)
             p_unit = Sindbad.Models.units(model, fn)
-            p_u = isempty(p_unit) ? " unitless" : "$(p_unit)"
+            p_u = isempty(p_unit) ? " undefined" : "$(p_unit)"
             p_timescale = Sindbad.Models.timescale(model, fn)
             p_t = isempty(p_timescale) ? " and timescale independent" : " at $(p_timescale) timescale"
             p_bounds = Sindbad.Models.bounds(model, fn)
