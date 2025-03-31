@@ -62,10 +62,10 @@ $(getBaseDocString(WUE_Medlyn2011))
  - Medlyn; B.E.; Duursma; R.A.; Eamus; D.; Ellsworth; D.S.; Colin Prentice  I.; Barton; C.V.M.; Crous; K.Y.; de Angelis; P.; Freeman; M. &  Wingate, L. (2012), Reconciling the optimal & empirical approaches to  modelling stomatal conductance. Glob Change Biol; 18: 3476-3476.  doi:10.1111/j.1365-2486.2012.02790.
 
 *Versions*
- - 1.0 on 11.11.2020 [skoirala]
+ - 1.0 on 11.11.2020 [skoirala | @dr-ko]
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 
 *Notes*
  - unit conversion: C_flux[gC m-2 d-1] < - CO2_flux[(umol CO2 m-2 s-1)] *  1e-06 [umol2mol] * 0.012011 [Cmol] * 1000 [kg2g] * 86400 [days2seconds]  from Knauer; 2019

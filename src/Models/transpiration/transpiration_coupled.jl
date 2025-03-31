@@ -30,11 +30,11 @@ $(getBaseDocString(transpiration_coupled))
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]
 
 *Created by*
  - mjung
- - skoirala
+ - skoirala | @dr-ko
 
 *Notes*
 """

@@ -29,9 +29,9 @@ $(getBaseDocString(cAllocationSoilT_gpp))
 *References*
 
 *Versions*
- - 1.0 on 26.01.2021 [skoirala]  
+ - 1.0 on 26.01.2021 [skoirala | @dr-ko]  
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 cAllocationSoilT_gpp

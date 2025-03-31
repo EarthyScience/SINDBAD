@@ -48,6 +48,6 @@ $(getBaseDocString(evapotranspiration_sum))
  - 1.0 on 01.04.2022  
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 evapotranspiration_sum
