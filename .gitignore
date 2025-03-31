@@ -60,3 +60,4 @@ package-lock.json
 !.vitepress
 !logo_mpi_grey.png
 !.github
+.qodo
