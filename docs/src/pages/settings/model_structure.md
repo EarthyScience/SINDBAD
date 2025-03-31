@@ -8,7 +8,7 @@ First a ```default_model``` is defined which list the default properties for all
 
 In the ```models``` section, the selected models are listed with the ```approach``` for each model. Note that, in SINDBAD a ```model``` represents an ecosystem process while an ```approach``` means a method. 
 
-The complete list of models and its order of call can be accessed with the variable ```sindbad_models``` which is exported by ```Sindbad``` package.
+The complete list of models and its order of call can be accessed with the variable ```standard_sindbad_models``` which is exported by ```Sindbad``` package.
 
 :::tabs
 
@@ -16,7 +16,7 @@ The complete list of models and its order of call can be accessed with the varia
 ````json
 {
 "default_model": {
-    "order": the order or an index of the model to change the internal order of sindbad_models,
+    "implicit_t_repeat": the number of times a model is run within a single time step,
     "use_in_spinup": a flag indicating if the model is used during spinup. By default, if the value is set as true, all models will be called during spinup
   },
 "models": {
@@ -32,7 +32,7 @@ The complete list of models and its order of call can be accessed with the varia
 == Example
 ````json
 "default_model": {
-    "order": 0,
+    "implicit_t_repeat": 1,
     "use_in_spinup": true
   }
 "models": {

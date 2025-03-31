@@ -33,22 +33,11 @@ function precompute(params::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{rootMaximumDepth_fracSoilD}) = "sets the maximum rooting depth as a fraction of total soil depth. rootMaximumDepth_fracSoilD"
+
 @doc """
-sets the maximum rooting depth as a fraction of total soil depth. rootMaximumDepth_fracSoilD
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Maximum rooting depth using rootMaximumDepth_fracSoilD
-
-*Inputs*
- - soil_layer_thickness
-
-*Outputs*
- - land.states.max_root_depth: The maximum rooting depth in mm
+$(getBaseDocString(rootMaximumDepth_fracSoilD))
 
 ---
 
@@ -59,7 +48,7 @@ Maximum rooting depth using rootMaximumDepth_fracSoilD
 *Versions*
  - 1.0 on 21.11.2019  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 rootMaximumDepth_fracSoilD

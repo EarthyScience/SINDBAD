@@ -2,14 +2,36 @@ export rootWaterUptake
 
 abstract type rootWaterUptake <: LandEcosystem end
 
-include("rootWaterUptake_proportion.jl")
-include("rootWaterUptake_topBottom.jl")
+purpose(::Type{rootWaterUptake}) = "Root water uptake (extract water from soil)"
 
-@doc """
-Root water uptake (extract water from soil)
+includeApproaches(rootWaterUptake, @__DIR__)
 
-# Approaches:
- - proportion: rootUptake from each soil layer proportional to the relative plant water availability in the layer
- - topBottom: rootUptake from each of the soil layer from top to bottom using all water in each layer
+@doc """ 
+	$(getBaseDocString(rootWaterUptake))
 """
 rootWaterUptake
+
+# define a common update interface for all rootWaterUptake models
+function update(params::rootWaterUptake, forcing, land, helpers)
+
+    ## unpack variables
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+    end
+
+    ## update variables
+    soilW = addVec(soilW, ΔsoilW)
+
+    # reset soil moisture changes to zero
+    for l in eachindex(ΔsoilW)
+        @rep_elem zero(eltype(ΔsoilW)) ⇒ (ΔsoilW, l, :soilW)
+    end
+
+    ## pack land variables
+    @pack_nt begin
+        soilW ⇒ land.pools
+        ΔsoilW ⇒ land.pools
+    end
+    return land
+end

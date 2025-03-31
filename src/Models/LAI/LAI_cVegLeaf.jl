@@ -21,23 +21,11 @@ function compute(params::LAI_cVegLeaf, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{LAI_cVegLeaf}) = "sets the value of land.states.LAI from the carbon in the leaves of the previous time step"
+
 @doc """
-sets the value of land.states.LAI from the carbon in the leaves of the previous time step
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Leaf area index using LAI_cVegLeaf
-
-*Inputs*
- - land.pools.cEco[cVegLeafZix]: carbon in the leave
-
-*Outputs*
- - land.states.LAI: the value of LAI for current time step
- - land.states.LAI
+$(getBaseDocString(LAI_cVegLeaf))
 
 ---
 
@@ -48,7 +36,7 @@ Leaf area index using LAI_cVegLeaf
 *Versions*
  - 1.0 on 05.05.2020 [sbesnard]
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 LAI_cVegLeaf

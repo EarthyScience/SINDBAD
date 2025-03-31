@@ -32,26 +32,11 @@ function compute(params::evapotranspiration_sum, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{evapotranspiration_sum}) = "calculates evapotranspiration as a sum of all potential components"
+
 @doc """
-calculates evapotranspiration as a sum of all potential components
 
----
-
-# compute:
-Calculate the evapotranspiration as a sum of components using evapotranspiration_sum
-
-*Inputs*
- - land.fluxes.evaporation
- - land.fluxes.interception
- - land.fluxes.sublimation
- - land.fluxes.transpiration
-
-*Outputs*
- - land.fluxes.evapotranspiration
-
-# Instantiate:
-Instantiate time-invariant variables for evapotranspiration_sum
-
+$(getBaseDocString(evapotranspiration_sum))
 
 ---
 
@@ -62,7 +47,7 @@ Instantiate time-invariant variables for evapotranspiration_sum
 *Versions*
  - 1.0 on 01.04.2022  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 evapotranspiration_sum

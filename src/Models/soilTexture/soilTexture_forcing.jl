@@ -24,7 +24,7 @@ function precompute(params::soilTexture_forcing, forcing, land, helpers)
     @unpack_nt (st_clay, st_orgm, st_sand, st_silt) ⇐ land.properties
 
     if length(f_clay) != length(st_clay)
-        @debug "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers." | ""
+        @debug "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers."
         for sl ∈ eachindex(st_clay)
             @rep_elem mean(f_clay) ⇒ (st_clay, sl, :soilW)
             @rep_elem mean(f_sand) ⇒ (st_sand, sl, :soilW)
@@ -44,23 +44,11 @@ function precompute(params::soilTexture_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{soilTexture_forcing}) = "sets the soil texture properties from input"
+
 @doc """
-sets the soil texture properties from input
 
----
-
-# compute:
-Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_forcing
-
-*Inputs*
- - forcing.sand/silt/clay/orgm
-
-*Outputs*
- - land.properties.st_sand/silt/clay/orgm
-
-# Instantiate:
-Instantiate time-invariant variables for soilTexture_forcing
-
+$(getBaseDocString(soilTexture_forcing))
 
 ---
 
@@ -71,7 +59,7 @@ Instantiate time-invariant variables for soilTexture_forcing
 *Versions*
  - 1.0 on 21.11.2019  
 
-*Created by:*
+*Created by*
  - skoirala
 
 *Notes*

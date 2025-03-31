@@ -10,7 +10,7 @@ export PET_Lu2005
     svp_5::T6 = 0.000116 | (-Inf, Inf) | "saturation vapor pressure temperature curve parameter 5" | "" | ""
     sh_cp::T7 = 0.001013 | (-Inf, Inf) | "specific heat of moist air at constant pressure (1.013 kJ/kg/°C)" | "MJ/kg/°C" | "" 
     elev::T8 = 0.0 | (0.0, 8848.0) | "elevation" | "m" | ""
-    pres_sl::T9 = 101.3 | (0.0, 101.3) | "atmospheric pressure at sea level" | "kpa" | ""
+    pres_sl::T9 = 101.29 | (0.0, 101.3) | "atmospheric pressure at sea level" | "kpa" | ""
     pres_elev::T10 = 0.01055 | (-Inf, Inf) | "rate of change of atmospheric pressure with elevation" | "kpa/m" | ""
     λ_base::T11 = 2.501 | (-Inf, Inf) | "latent heat of vaporization" | "MJ/kg" | ""
     λ_airT::T12 = 0.002361 | (-Inf, Inf) | "rate of change of latent heat of vaporization with temperature" | "MJ/kg/°C"  | ""
@@ -81,23 +81,11 @@ function compute(params::PET_Lu2005, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{PET_Lu2005}) = "Calculates the value of land.fluxes.PET from the forcing variables"
+
 @doc """
-Calculates the value of land.fluxes.PET from the forcing variables
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Set potential evapotranspiration using PET_Lu2005
-
-*Inputs*
- - forcing.f_rn: Net radiation
- - forcing.f_airT: Air temperature
-
-*Outputs*
- - land.fluxes.PET: the value of PET for current time step
+$(getBaseDocString(PET_Lu2005))
 
 ---
 
@@ -109,7 +97,7 @@ Set potential evapotranspiration using PET_Lu2005
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 PET_Lu2005

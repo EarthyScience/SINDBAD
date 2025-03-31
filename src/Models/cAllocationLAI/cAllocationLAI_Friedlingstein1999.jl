@@ -24,22 +24,11 @@ function compute(params::cAllocationLAI_Friedlingstein1999, forcing, land, helpe
     return land
 end
 
+purpose(::Type{cAllocationLAI_Friedlingstein1999}) = "Estimate the effect of light limitation on carbon allocation via leaf area index (LAI) based on Friedlingstein et al., 1999."
+
 @doc """
-Estimate the effect of light limitation on carbon allocation via leaf area index (LAI) based on Friedlingstein et al., 1999.
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of lai on carbon allocation using cAllocationLAI_Friedlingstein1999
-
-*Inputs*
- - land.states.LAI: values for leaf area index
-
-*Outputs*
- - land.diagnostics.c_allocation_f_LAI: values for light limitation
+$(getBaseDocString(cAllocationLAI_Friedlingstein1999))
 
 ---
 
@@ -51,7 +40,7 @@ Effect of lai on carbon allocation using cAllocationLAI_Friedlingstein1999
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cAllocationLAI_Friedlingstein1999

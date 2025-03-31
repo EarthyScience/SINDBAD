@@ -13,12 +13,11 @@ function define(params::autoRespirationAirT_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{autoRespirationAirT_none}) = "Sets the effect of temperature on the maintenance component of autotrophic respiration (RA) to one (i.e. no effect)."
+
 @doc """
-Sets the effect of temperature on the maintenance component of autotrophic respiration (RA) to one (i.e. no effect).
 
-# Instantiate:
-Instantiate time-invariant variables for autoRespirationAirT_none
-
+$(getBaseDocString(autoRespirationAirT_none))
 
 ---
 

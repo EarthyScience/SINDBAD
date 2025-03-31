@@ -23,22 +23,11 @@ function compute(params::vegFraction_scaledNIRv, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{vegFraction_scaledNIRv}) = "sets the value of frac_vegetation by scaling the NIRv value"
+
 @doc """
-sets the value of frac_vegetation by scaling the NIRv value
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fractional coverage of vegetation using vegFraction_scaledNIRv
-
-*Inputs*
- - land.states.NIRv : current NIRv value
-
-*Outputs*
- - land.states.frac_vegetation: current vegetation fraction
+$(getBaseDocString(vegFraction_scaledNIRv))
 
 ---
 
@@ -49,7 +38,7 @@ Fractional coverage of vegetation using vegFraction_scaledNIRv
 *Versions*
  - 1.1 on 29.04.2020 [sbesnard]: new module  
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 vegFraction_scaledNIRv
