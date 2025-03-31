@@ -75,30 +75,45 @@ Go to main example directory
 cd examples
 ```
 
-Create a new experiment directory, e.g., my_env and go to that directory
+Create a new experiment directory, e.g., my_env by copying the ```base_env``` in the ```examples``` directory.
+
 
 ```
-julia > run(`mkdir -p my_env`)
-julia > run(`cd my_env`)
+julia > run(`cp -rv base_env exp_mine`)
+julia > run(`cd exp_mine`)
 ```
 
-Create the julia environment, activate it, and instantiate all dev dependencies and packages by pasting the following in the package mode of Julia REPL.
+The ```Project.toml``` includes all SINDBAD packages as,
 
-Sindbad Experiments:
 ```
-dev ../.. ../../lib/SindbadUtils ../../lib/SindbadData ../../lib/SindbadMetrics ../../lib/SindbadSetup ../../lib/SindbadTEM ../../lib/SindbadOptimization ../../lib/SindbadExperiment
+[sources]
+Sindbad = {path = "../.."}
+SindbadData = {path = "../../lib/SindbadData"}
+SindbadExperiment = {path = "../../lib/SindbadExperiment"}
+SindbadML = {path = "../../lib/SindbadML"}
+SindbadMetrics = {path = "../../lib/SindbadMetrics"}
+SindbadOptimization = {path = "../../lib/SindbadOptimization"}
+SindbadSetup = {path = "../../lib/SindbadSetup"}
+SindbadTEM = {path = "../../lib/SindbadTEM"}
+SindbadUtils = {path = "../../lib/SindbadUtils"}
 ```
 
-SindbadML:
-```
-dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadML
-```
+You could delete the ones you are not going to use by deleting the entries in the toml.
 
-Once the dev dependencies are built, run
+To instantiate and environment, open a Julia REPL, go to the package mode by typing ```]``` and enter:
 ```
-resolve
 instantiate
 ```
+
+You may need an additional ```resolve``` and ```update```.
+
+Alternatively you could add the local package in dev mode by doing:
+
+```
+dev ../.. ../../lib/SindbadUtils ../../lib/SindbadData ../../lib/SindbadMetrics ../../lib/SindbadSetup ../../lib/SindbadTEM ../../lib/SindbadOptimization ../../lib/SindbadExperiment ../../lib/SindbadML
+```
+
+Note that the paths are relative to the environment directory. Even in this method, the local sources as shown in the first method can be added to the ```Project.toml``` so that the updates and changes are automatically sourced.
 
 
 ### Download the example data

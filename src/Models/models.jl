@@ -322,9 +322,6 @@ function update(params::LandEcosystem, forcing, land, helpers)
     return land
 end
 
-# Import all models
-all_folders = readdir(joinpath(@__DIR__, "."))
-all_dir_models = filter(entry -> isdir(joinpath(@__DIR__, entry)), all_folders)
 """
     purpose(x::Type{<:LandEcosystem})
 
@@ -369,6 +366,16 @@ function purpose(T::Type{<:LandEcosystem})
 end
 
 purpose(x::LandEcosystem) = purpose(typeof(x))
+
+# Import all models
+all_folders = readdir(joinpath(@__DIR__, "."))
+all_dir_models = filter(entry -> isdir(joinpath(@__DIR__, entry)), all_folders)
+
+
+for model_name ∈ all_dir_models
+    model_path = joinpath(model_name, model_name * ".jl")
+    include(model_path)
+end
 
 # now having this ordered list is independent from the step including the models into this `module`.
 include(joinpath(@__DIR__, "standardSindbadModels.jl"))
