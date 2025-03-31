@@ -16,6 +16,9 @@ Spatially subset data according to the specified parameters
 The function assumes input data and spatial parameters are in compatible formats
 """
 function getSpatialSubset(ss, v)
+    if isa(ss, Dict)
+        ss = dictToNamedTuple(ss)
+    end
     if !isnothing(ss)
         ssname = propertynames(ss)
         for ssn ∈ ssname

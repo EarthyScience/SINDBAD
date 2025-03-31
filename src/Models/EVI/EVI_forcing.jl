@@ -12,20 +12,11 @@ function compute(params::EVI_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{EVI_forcing}) = "sets the value of land.states.EVI from the forcing in every time step"
+
 @doc """
-sets the value of land.states.EVI from the forcing in every time step
 
----
-
-# compute:
-Enhanced vegetation index using EVI_forcing
-
-*Inputs*
- - forcing.EVI read from the forcing data set
-
-*Outputs*
- - land.states.EVI: the value of EVI for current time step
- - land.states.EVI
+$(getBaseDocString(EVI_forcing))
 
 ---
 
@@ -36,7 +27,7 @@ Enhanced vegetation index using EVI_forcing
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 EVI_forcing

@@ -20,12 +20,11 @@ function define(params::cFlow_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cFlow_none}) = "set transfer between pools to 0 [i.e. nothing is transfered] set c*giver & c*taker matrices to [] get the transfer matrix transfers"
+
 @doc """
-set transfer between pools to 0 [i.e. nothing is transfered] set c_giver & c_taker matrices to [] get the transfer matrix transfers
 
-# Instantiate:
-Instantiate time-invariant variables for cFlow_none
-
+$(getBaseDocString(cFlow_none))
 
 ---
 

@@ -44,50 +44,11 @@ function compute(params::runoffSurface_directIndirectFroSoil, forcing, land, hel
     return land
 end
 
-function update(params::runoffSurface_directIndirectFroSoil, forcing, land, helpers)
-    @unpack_runoffSurface_directIndirectFroSoil params
-
-    ## unpack variables
-    @unpack_nt begin
-        surfaceW ⇐ land.pools
-        ΔsurfaceW ⇐ land.pools
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-
-    # reset ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-    ## pack land variables
-    @pack_nt begin
-        surfaceW ⇒ land.pools
-        ΔsurfaceW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{runoffSurface_directIndirectFroSoil}) = "assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid"
 
 @doc """
-assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_directIndirectFroSoil
-
-*Inputs*
- - land.fluxes.overland_runoff
- - land.runoffSaturationExcess.frac_frozen
-
-*Outputs*
-
-# update
-
-update pools and states in runoffSurface_directIndirectFroSoil
-
+$(getBaseDocString(runoffSurface_directIndirectFroSoil))
 
 ---
 
@@ -98,7 +59,7 @@ update pools and states in runoffSurface_directIndirectFroSoil
 *Versions*
  - 1.0 on 03.12.2020 [ttraut]  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 runoffSurface_directIndirectFroSoil

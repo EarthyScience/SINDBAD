@@ -57,7 +57,7 @@ for site_index in sites
     path_observation = path_input
     forcing_config = "forcing_$(forcing_set).json"
 
-    path_output = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_test"
+    path_output = "/Net/Groups/BGI/tscratch/skoirala/sjindbad_from_ml_params"
 
 
 
@@ -207,7 +207,11 @@ for site_index in sites
             elseif v == :ndvi
                 ml_dat = ml_dat .- mean(ml_dat)
             end
+            valids = var_row.valids;
+            ml_dat[.!valids] .= NaN
+            ml_var = ml_dat
             (obs_var, obs_σ, jl_dat) = getData(opt_dat, obs_array, var_row)
+
             obs_var_TMP = obs_var[:, 1, 1, 1]
             non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
             tspan = 1:length(obs_var_TMP)
@@ -216,15 +220,14 @@ for site_index in sites
             else
                 tspan = first(non_nan_index):last(non_nan_index)
             end
-            xdata = [info.helpers.dates.range[tspan]...]
             obs_σ = obs_σ[tspan]
             obs_var = obs_var[tspan]
-            jl_dat = jl_dat[tspan, 1, 1, 1]
-            ml_dat = ml_dat[tspan]
-            obs_var_n, obs_σ_n, ml_dat_n = filterCommonNaN(obs_var, obs_σ, ml_dat)
-            obs_var_n, obs_σ_n, jl_dat_n = filterCommonNaN(obs_var, obs_σ, jl_dat)
-            metr_def = metric(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
-            metr_opt = metric(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
+            ml_var = ml_var[tspan]
+            def_var = def_var[tspan, 1, 1, 1]
+            opt_var = opt_var[tspan, 1, 1, 1]
+            valids = valids[tspan]
+            metr_def = metric(obs_var[valids], obs_σ[valids], ml_dat[valids], lossMetric)
+            metr_opt = metric(obs_var[valids], obs_σ[valids], jl_dat[valids], lossMetric)
             v = (var_row.mod_field, var_row.mod_subfield)
             vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
             v = vinfo["standard_name"]
@@ -232,6 +235,7 @@ for site_index in sites
             plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
             plot!(xdata, jl_dat; label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
             savefig("examples/exp_WROASTED/tmp_figs_comparison/wroasted_$(domain)_$(v)_$(forcing_set).png")
+            # savefig(fig_prefix * "_$(v)_$(forcing_set).png")
         end
 
         if do_debug_figs

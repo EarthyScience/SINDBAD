@@ -1,6 +1,7 @@
-export filterCommonNaN
+export getDataWithoutNaN
 export getData
 export getModelOutputView
+export getData
 
 """
     aggregateData(dat, cost_option, ::TimeSpace)
@@ -80,46 +81,13 @@ function applySpatialWeight(y, yσ, ŷ, _, ::DoNotSpatialWeight)
     return y, yσ, ŷ
 end
 
-
-"""
-    filterCommonNaN(y, yσ, ŷ, idxs)
-    filterCommonNaN(y, yσ, ŷ)
-
-return model and obs data filtering for the common `NaN`.
-
-# Arguments:
-- `y`: observation data
-- `yσ`: observational uncertainty data
-- `ŷ`: model simulation data/estimate
-- `idxs`: indices of valid data points    
-"""
-filterCommonNaN
-
-function filterCommonNaN(y, yσ, ŷ, idxs)
-    return y[idxs], yσ[idxs], ŷ[idxs]
-end
-
-function filterCommonNaN(y, yσ, ŷ)
-    @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
-    idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because LandWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
-    return y[idxs], yσ[idxs], ŷ[idxs]
-end
-
-
-function filterInvalids(ŷ, idxs)
-    ŷ[.!idxs] .= eltype(ŷ)(NaN)
-    return ŷ
-end
-
 function getHarmonizedData(y, yσ, ŷ, cost_option)
     
-    # ŷ = filterInvalids(ŷ, cost_option.valids)
     ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
     y = aggregateObsData(y, cost_option, cost_option.aggr_obs)
     yσ = aggregateObsData(yσ, cost_option, cost_option.aggr_obs)
 
     (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
-    (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
     return (y, yσ, ŷ)
 end
 
@@ -172,7 +140,6 @@ function getData(model_output::NamedTuple, observations, cost_option)
     # ymask = observations[obs_ind + 2]
 
     y, yσ, ŷ = getHarmonizedData(y, yσ, ŷ, cost_option)
-
     return (y, yσ, ŷ)
 end
 

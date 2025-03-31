@@ -40,51 +40,11 @@ function compute(params::drainage_wFC, forcing, land, helpers)
     return land
 end
 
-function update(params::drainage_wFC, forcing, land, helpers)
-    ## unpack variables
-    @unpack_nt begin
-        soilW ⇐ land.pools
-        ΔsoilW ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture
-    soilW .= soilW .+ ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-
-    ## pack land variables
-    @pack_nt begin
-        # soilW ⇒ land.pools
-        # ΔsoilW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{drainage_wFC}) = "downward flow of moisture [drainage] in soil layers based on overflow over field capacity"
 
 @doc """
-downward flow of moisture [drainage] in soil layers based on overflow over field capacity
 
----
-
-# compute:
-Recharge the soil using drainage_wFC
-
-*Inputs*
- - land.pools.soilW: soil moisture in different layers
- - land.properties.w_fc: field capacity of soil in mm
- - land.states.WBP amount of water that can potentially drain
-
-*Outputs*
- - drainage from the last layer is saved as groundwater recharge [gw_recharge]
- - land.states.soilWFlow: drainage flux between soil layers (same as nZix, from percolation  into layer 1 & the drainage to the last layer)
-
-# update
-
-update pools and states in drainage_wFC
-
- - land.pools.soilW
- - land.states.WBP
+$(getBaseDocString(drainage_wFC))
 
 ---
 
@@ -95,7 +55,7 @@ update pools and states in drainage_wFC
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]: clean up & consistency  
 
-*Created by:*
+*Created by*
  - mjung
  - skoirala
 """

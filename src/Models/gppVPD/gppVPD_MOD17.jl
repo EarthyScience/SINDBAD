@@ -22,21 +22,11 @@ function compute(params::gppVPD_MOD17, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gppVPD_MOD17}) = "VPD stress on gpp_potential based on MOD17 model"
+
 @doc """
-VPD stress on gpp_potential based on MOD17 model
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - forcing.f_VPD_day: daytime vapor pressure deficit [kPa]
-
-*Outputs*
- - land.diagnostics.gpp_f_vpd: VPD effect on GPP between 0-1
+$(getBaseDocString(gppVPD_MOD17))
 
 ---
 
@@ -50,7 +40,7 @@ $(SindbadParameters)
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes*

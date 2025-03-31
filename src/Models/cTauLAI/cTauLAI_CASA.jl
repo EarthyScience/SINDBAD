@@ -98,28 +98,11 @@ function compute(params::cTauLAI_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTauLAI_CASA}) = "calc LAI stressor on τ. Compute the seasonal cycle of litter fall & root litterfall based on LAI variations. Necessarily in precomputation mode"
+
 @doc """
-calc LAI stressor on τ. Compute the seasonal cycle of litter fall & root litter "fall" based on LAI variations. Necessarily in precomputation mode
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Calculate litterfall scalars (that affect the changes in the vegetation k) using cTauLAI_CASA
-
-*Inputs*
- - forcing.LAI: leaf area index [m2/m2]
- - info.timeScale.stepsPerYear: number of years of simulations
-
-*Outputs*
- - land.diagnostics.c_eco_k_f_LAI:
- - land.diagnostics.c_eco_k_f_LAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
-
-# Instantiate:
-Instantiate time-invariant variables for cTauLAI_CASA
-
+$(getBaseDocString(cTauLAI_CASA))
 
 ---
 
@@ -136,7 +119,7 @@ Instantiate time-invariant variables for cTauLAI_CASA
  - 1.0 on 12.01.2020 [sbesnard]  
  - 1.1 on 05.11.2020 [skoirala]: speedup  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cTauLAI_CASA

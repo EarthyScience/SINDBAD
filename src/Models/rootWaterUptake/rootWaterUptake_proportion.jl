@@ -47,50 +47,12 @@ function compute(params::rootWaterUptake_proportion, forcing, land, helpers)
     return land
 end
 
-function update(params::rootWaterUptake_proportion, forcing, land, helpers)
 
-    ## unpack variables
-    @unpack_nt begin
-        soilW ⇐ land.pools
-        ΔsoilW ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture
-    soilW .= soilW .+ ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-
-    ## pack land variables
-    @pack_nt begin
-        soilW ⇒ land.pools
-        # ΔsoilW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{rootWaterUptake_proportion}) = "rootUptake from each soil layer proportional to the relative plant water availability in the layer"
 
 @doc """
-rootUptake from each soil layer proportional to the relative plant water availability in the layer
 
----
-
-# compute:
-Root water uptake (extract water from soil) using rootWaterUptake_proportion
-
-*Inputs*
- - land.fluxes.transpiration: actual transpiration
- - land.pools.soilW: soil moisture
- - land.states.PAW: plant available water
-
-*Outputs*
- - land.states.root_water_uptake: moisture uptake from each soil layer [nZix of soilW]
-
-# update
-
-update pools and states in rootWaterUptake_proportion
-
- - land.pools.soilW
+$(getBaseDocString(rootWaterUptake_proportion))
 
 ---
 
@@ -101,7 +63,7 @@ update pools and states in rootWaterUptake_proportion
 *Versions*
  - 1.0 on 13.03.2020 [ttraut]
 
-*Created by:*
+*Created by*
  - ttraut
 
 *Notes*
