@@ -58,7 +58,6 @@ space_ind = run_helpers.space_ind;
 land_init = run_helpers.loc_land;
 tem = (;
     tem_info = run_helpers.tem_info,
-    tem_run_spinup = run_helpers.tem_info.run.spinup_TEM,
 );
 loc_forcing_t = run_helpers.loc_forcing_t;
 
@@ -80,16 +79,16 @@ constraint_method = info.optimization.multi_constraint_method;
 #! yes?
 loc_cost_options = cost_options[site_location]
 
-lossVec = getLossVector(loc_output, loc_obs, loc_cost_options)
-t_loss = combineLoss(lossVec, constraint_method)
+lossVec = metricVector(loc_output, loc_obs, loc_cost_options)
+t_loss = combineMetric(lossVec, constraint_method)
 
 function lossSite2(new_params, models, loc_forcing, loc_spinup_forcing,
     loc_forcing_t, loc_output, land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem)
 
     new_models = updateModelParameters(param_to_index, models, new_params)
     coreTEM!(new_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem...)
-    lossVec = getLossVector(loc_output, loc_obs, loc_cost_options)
-    t_loss = combineLoss(lossVec, constraint_method)
+    lossVec = metricVector(loc_output, loc_obs, loc_cost_options)
+    t_loss = combineMetric(lossVec, constraint_method)
     return t_loss
 end
 
@@ -101,8 +100,8 @@ function lossSiteFD(new_params, models, loc_forcing, loc_spinup_forcing,
     out_data = SindbadML.getOutputFromCache(loc_output, new_params, ForwardDiffGrad())
 
     coreTEM!(new_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, out_data, land_init, tem...)
-    lossVec = getLossVector(out_data, loc_obs, loc_cost_options)
-    t_loss = combineLoss(lossVec, constraint_method)
+    lossVec = metricVector(out_data, loc_obs, loc_cost_options)
+    t_loss = combineMetric(lossVec, constraint_method)
     return t_loss
 end
 
@@ -133,21 +132,21 @@ lower_bounds = tbl_params.lower
 upper_bounds = tbl_params.upper
 
 optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds,
-    info.optimization.algorithm.options, info.optimization.algorithm.method)
+    info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
 
 
 # ? https://github.com/jbrea/CMAEvolutionStrategy.jl
 # and compare output and performance
 # use: (go for parallel/threaded approaches)
 
-using CMAEvolutionStrategy
+using SindbadOptimization.CMAEvolutionStrategy
 
 results = minimize(cost_function,
     default_values,
     1;
     lower=lower_bounds,
     upper=upper_bounds,
-    maxiter =5,
+    maxiter =20,
     multi_threading = true,
     )
 
@@ -155,7 +154,7 @@ optim_para = xbest(results)
 
 # ? https://github.com/AStupidBear/GCMAES.jl
 
-using GCMAES
+using SindbadOptimization.GCMAES
 x0 = default_values
 σ0 = 0.2
 lo = lower_bounds
@@ -168,4 +167,4 @@ xmin, fmin, status = GCMAES.minimize(cost_function, x0, σ0, lo, hi, maxiter=max
 using ForwardDiff
 ∇loss(x) = ForwardDiff.gradient(cost_functionFD, x)
 
-xmin, fmin, status = GCMAES.minimize((cost_functionFD, ∇loss), x0, σ0, lo, hi, maxiter = 5);
+xmin, fmin, status = GCMAES.minimize((cost_functionFD, ∇loss), x0, σ0, lo, hi, maxiter = 100);

@@ -6,6 +6,7 @@ using SindbadTEM
 using SindbadML
 using SindbadML.JLD2
 using ProgressMeter
+using SindbadOptimization
 include("load_covariates.jl")
 
 # load folds # $nfold $nlayer $neuron $batchsize
@@ -31,7 +32,10 @@ if Sys.islinux()
 end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
-selected_models = info.models.forward
+selected_models = info.models.forward;
+parameter_scaling_type = info.optimization.optimization_parameter_scaling
+
+
 
 tbl_params = getParameters(
     selected_models,
@@ -56,8 +60,7 @@ space_ind = run_helpers.space_ind;
 # ? land_init and helpers
 land_init = run_helpers.loc_land;
 tem = (;
-    tem_info = run_helpers.tem_info,
-    tem_run_spinup = run_helpers.tem_info.run.spinup_TEM,
+    tem_info = run_helpers.tem_info
 );
 loc_forcing_t = run_helpers.loc_forcing_t;
 
@@ -91,20 +94,12 @@ mlBaseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=batc
 # 
 parameters_sites = mlBaseline(xfeatures);
 
-## test for gradients in batch
-sites_common = xfeatures.site.data
-sites_training = shuffleList(sites_common; seed=batch_seed)
-indices_sites_training = siteNameToID.(sites_training, Ref(sites_forcing));
+tem_info = run_helpers.tem_info;
 
-grads_batch = zeros(Float32, n_params, length(sites_training));
-sites_batch = sites_training;#[1:n_sites_train];
-indices_sites_batch = indices_sites_training;
-params_batch = parameters_sites(; site=sites_batch);
-scaled_params_batch = getParamsAct(params_batch, tbl_params);
+## test for gradients in batch
+sites_common = xfeatures.site.data;
 
 # TODO: debug and benchmark again, one site!
-tem_info = run_helpers.tem_info;
-tem_run_spinup = run_helpers.tem_info.run.spinup_TEM;
 
 # ! full training
 # ? training
@@ -130,6 +125,7 @@ grads_batch = zeros(Float32, n_params, length(sites_training));
 sites_batch = sites_training;#[1:n_sites_train];
 indices_sites_batch = indices_sites_training;
 params_batch = parameters_sites(; site=sites_batch);
+# scaled_params_batch = params_batch;
 scaled_params_batch = getParamsAct(params_batch, tbl_params);
 
 input_args = (
@@ -141,8 +137,8 @@ input_args = (
     space_output,
     land_init,
     tem_info,
-    tem_run_spinup,
     param_to_index,
+    parameter_scaling_type,
     space_observations,
     cost_options,
     constraint_method,
@@ -173,9 +169,9 @@ in_gargs=(;
         space_output,
         land_init,
         tem_info,
-        tem_run_spinup,
         param_to_index,
-        loc_observations,
+        parameter_scaling_type,
+        space_observations,
         cost_options,
         constraint_method
         ),
@@ -188,6 +184,11 @@ remote_raven = "/ptmp/lalonso/HybridOutput/HyALL_ALL_fold_$(_nfold)_nlayers_$(nl
 mkpath(remote_raven)
 checkpoint_path = remote_raven
 
-mixedGradientTraining(grads_lib, ml_baseline, in_gargs.train_refs, in_gargs.test_val_refs,
+checkpoint_path = "$(info.output.dirs.data)/HyALL_ALL_fold_$(_nfold)_nlayers_$(nlayers)_n_neurons_$(n_neurons)_batch_size_$(batch_size)/"
+
+mkpath(checkpoint_path)
+
+
+mixedGradientTraining(grads_lib, mlBaseline, in_gargs.train_refs, in_gargs.test_val_refs,
     in_gargs.total_constraints, in_gargs.loss_fargs, in_gargs.forward_args;
-    n_epochs=500, path_experiment=checkpoint_path)
+    n_epochs=5, path_experiment=checkpoint_path)

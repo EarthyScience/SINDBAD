@@ -31,9 +31,8 @@ run_helpers = prepTEM(selected_models, forcing, observations, info);
 loc_forcing_t = run_helpers.loc_forcing_t;
 land_init = run_helpers.loc_land;
 tem = (;
-    tem_info = run_helpers.tem_info,
-    tem_run_spinup = run_helpers.tem_info.run.spinup_TEM,
-);
+    tem_info = run_helpers.tem_info
+    );
 
 # site specific variables
 space_forcing = run_helpers.space_forcing;
