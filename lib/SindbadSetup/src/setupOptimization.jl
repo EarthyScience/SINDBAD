@@ -4,17 +4,19 @@ export setOptimization
 
 
 """
-    checkOptimizedParametersInModels(info::NamedTuple)
+    checkOptimizedParametersInModels(info::NamedTuple, tbl_params)
 
-checks if the parameters listed in model_parameters_to_optimize of optimization.json exists in the selected model structure of model_structure.json
+Checks if the parameters listed in `model_parameters_to_optimize` from `optimization.json` exist in the selected model structure from `model_structure.json`.
+
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+- `tbl_params`: A table of parameters extracted from the model structure.
+
+# Notes:
+- Issues a warning and throws an error if any parameter in `model_parameters_to_optimize` does not exist in the model structure.
 """
-function checkOptimizedParametersInModels(info::NamedTuple)
+function checkOptimizedParametersInModels(info::NamedTuple, tbl_params)
     # @show info.settings.optimization.observations, info.settings.optimization.model_parameters_to_optimize
-    tbl_params = getParameters(info.temp.models.forward,
-        info.settings.optimization.model_parameter_default,
-        info.settings.optimization.model_parameters_to_optimize,
-        info.temp.helpers.numbers.num_type,
-        info.temp.helpers.dates.temporal_resolution)
     model_parameters = tbl_params.name_full
     # @show model_parameters
     optim_parameters = info.settings.optimization.model_parameters_to_optimize
@@ -39,7 +41,16 @@ end
 """
     getAggrFunc(func_name::String)
 
-return a function for a given name to aggregate
+Returns an aggregation function corresponding to the given function name.
+
+# Arguments:
+- `func_name`: A string specifying the name of the aggregation function (e.g., "mean", "sum").
+
+# Returns:
+- The corresponding aggregation function (e.g., `mean`, `sum`).
+
+# Notes:
+- Supports common aggregation functions such as `mean`, `sum`, `nanmean`, and `nansum`.
 """
 function getAggrFunc(func_name::String)
     if func_name == "nanmean"
@@ -53,17 +64,23 @@ function getAggrFunc(func_name::String)
     end
 end
 
-
 """
-    getCostOptions(optim_info::NamedTuple, vars_info, number_helpers, dates_helpers)
+    getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number_helpers, dates_helpers)
 
-
+Sets up cost optimization options based on the provided parameters.
 
 # Arguments:
-- `optim_info`: DESCRIPTION
-- `vars_info`: DESCRIPTION
-- `number_helpers`: DESCRIPTION
-- `dates_helpers`: DESCRIPTION
+- `optim_info`: A NamedTuple containing optimization parameters and settings.
+- `vars_info`: Information about variables used in optimization.
+- `tem_variables`: Template variables for optimization setup.
+- `number_helpers`: Helper functions or values for numerical operations.
+- `dates_helpers`: Helper functions or values for date-related operations.
+
+# Returns:
+- A NamedTuple containing cost optimization configuration options.
+
+# Notes:
+- Configures temporal and spatial aggregation, cost metrics, and other optimization-related settings.
 """
 function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number_helpers, dates_helpers)
     varlist = Symbol.(optim_info.observational_constraints)
@@ -93,7 +110,7 @@ function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number
             if prop == :temporal_data_aggr
                 t_a = sel_value
                 to_push_type = TimeNoDiff()
-                if endswith(t_a, "_anomaly") || endswith(t_a, "_iav")
+                if endswith(lowercase(t_a), "_anomaly") || endswith(lowercase(t_a), "_iav")
                     to_push_type = TimeDiff()
                 end
                 push!(agg_type, to_push_type)
@@ -145,10 +162,17 @@ end
 """
     getConstraintNames(optim::NamedTuple)
 
-- obs_vars: a list of observation variables that will be used to calculate cost
-- optim_vars: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
-- storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
+Extracts observation and model variable names for optimization constraints.
 
+# Arguments:
+- `optim`: A NamedTuple containing optimization settings and observation constraints.
+
+# Returns:
+- A tuple containing:
+  - `obs_vars`: A list of observation variables used to calculate cost.
+  - `optim_vars`: A lookup mapping observation variables to model variables.
+  - `store_vars`: A lookup of model variables for which time series will be stored.
+  - `model_vars`: A list of model variable names.
 """
 function getConstraintNames(optim::NamedTuple)
     obs_vars = Symbol.(optim.observational_constraints)
@@ -164,6 +188,20 @@ function getConstraintNames(optim::NamedTuple)
     return obs_vars, optim_vars, store_vars, model_vars
 end
 
+"""
+    getParamModelIDVal(tbl_params)
+
+Generates a `Val` object containing tuples of parameter names and their corresponding model IDs.
+
+# Arguments:
+- `tbl_params`: A table of parameters with their names and model IDs.
+
+# Returns:
+- A `Val` object containing tuples of parameter names and model IDs.
+
+# Notes:
+- Parameter names are transformed to a unique format by replacing dots with underscores.
+"""
 function getParamModelIDVal(tbl_params)
     param_names = Symbol.(replace.(tbl_params.name_full, "." => "____"))
     model_id = tbl_params.model_id;
@@ -173,12 +211,52 @@ function getParamModelIDVal(tbl_params)
     return Val(param_id_tuple)
 end
 
-
+function setAlgorithmOptions(info, which_algorithm)
+    optim_algorithm = getproperty(info.settings.optimization, which_algorithm)
+    tmp_algorithm = (;)
+    algo_options = (;)
+    algo_method = nothing
+    if !isnothing(optim_algorithm)
+        if endswith(optim_algorithm, ".json")
+            options_path = optim_algorithm
+            if !isabspath(options_path)
+                options_path = joinpath(info.temp.experiment.dirs.settings, options_path)
+            end
+            options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
+            options = dictToNamedTuple(options)
+            algo_method = options.package * "_" * options.method
+            algo_method = getTypeInstanceForNamedOptions(algo_method)
+            algo_options = options.options
+        else
+            algo_method = getTypeInstanceForNamedOptions(optim_algorithm)
+        end
+    else
+        if which_algorithm == :algorithm_sensitivity_analysis
+            algo_method = GlobalSensitivityMorris()
+        end
+    end
+    default_opt = sindbad_default_options(getproperty(SindbadSetup, nameof(typeof(algo_method)))())
+    merged_options = mergeNamedTuple(default_opt, algo_options)
+    tmp_algorithm = setTupleField(tmp_algorithm, (:method, algo_method))
+    tmp_algorithm = setTupleField(tmp_algorithm, (:options, merged_options))
+    info = setTupleSubfield(info, :optimization, (which_algorithm, tmp_algorithm))
+    return info
+end
 
 """
     setOptimization(info::NamedTuple)
 
+Sets up optimization-related fields in the experiment configuration.
 
+# Arguments:
+- `info`: A NamedTuple containing the experiment configuration.
+
+# Returns:
+- The updated `info` NamedTuple with optimization-related fields added.
+
+# Notes:
+- Configures cost metrics, optimization parameters, algorithms, and variables to store during optimization.
+- Validates the parameters to be optimized against the model structure.
 """
 function setOptimization(info::NamedTuple)
     info = setTupleField(info, (:optimization, (;)))
@@ -190,36 +268,34 @@ function setOptimization(info::NamedTuple)
         :optimization,
         (:multi_constraint_method, getTypeInstanceForNamedOptions(info.settings.optimization.multi_constraint_method)))
 
+    scaling_method = isnothing(info.settings.optimization.optimization_parameter_scaling) ? "scale_none" : info.settings.optimization.optimization_parameter_scaling
+
+    if info.settings.optimization.optimization_cost_threaded > 0 && info.settings.experiment.flags.run_optimization
+        n_threads_cost = info.settings.optimization.optimization_cost_threaded > 1 ? info.settings.optimization.optimization_cost_threaded : Threads.nthreads()
+        # overwrite land array type when threaded optimization is set
+        info = @set info.temp.helpers.run.land_output_type = LandOutArrayMT()
+        info = setTupleSubfield(info,
+        :optimization,
+        (:n_threads_cost, n_threads_cost))
+    end
+
+    info = setTupleSubfield(info,
+        :optimization,
+        (:optimization_parameter_scaling, getTypeInstanceForNamedOptions(scaling_method)))
+    info = setTupleSubfield(info,
+        :optimization,
+        (:optimization_cost_method, getTypeInstanceForNamedOptions(info.settings.optimization.optimization_cost_method)))
+        
     # check and set the list of parameters to be optimized
-    checkOptimizedParametersInModels(info)
     info = setTupleSubfield(info, :optimization, (:model_parameters_to_optimize, info.settings.optimization.model_parameters_to_optimize))
 
     # set algorithm related options
-    tmp_algorithm = (;)
-    tmp_algorithm = setTupleField(tmp_algorithm, (:multi_objective_algorithm, getTypeInstanceForFlags(:multi_objective_algorithm, info.settings.optimization.multi_objective_algorithm, "Is")))
-    optim_algorithm = info.settings.optimization.algorithm
-    if endswith(optim_algorithm, ".json")
-        options_path = optim_algorithm
-        if !isabspath(options_path)
-            options_path = joinpath(info.temp.experiment.dirs.settings, options_path)
-        end
-        options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
-        options = dictToNamedTuple(options)
-        algo_method = options.package * "_" * options.method
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(algo_method)))
-        tmp_algorithm = setTupleField(tmp_algorithm, (:options, options.options))
-    else
-        options = (;)
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(info.settings.optimization.algorithm)))
-        tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
-    end
-    info = setTupleSubfield(info, :optimization, (:algorithm, tmp_algorithm))
+    info = setAlgorithmOptions(info, :algorithm_optimization)
+    info = setAlgorithmOptions(info, :algorithm_sensitivity_analysis)
 
     tbl_params = getParameters(info.temp.models.forward,
-    info.settings.optimization.model_parameter_default,
-    info.settings.optimization.model_parameters_to_optimize,
-    info.temp.helpers.numbers.num_type,
-    info.temp.helpers.dates.temporal_resolution);
+    info.settings.optimization.model_parameter_default, info.settings.optimization.model_parameters_to_optimize, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution);
+    checkOptimizedParametersInModels(info, tbl_params)
 
     param_model_id_val = getParamModelIDVal(tbl_params)
     info = setTupleSubfield(info, :optimization, (:param_model_id_val, param_model_id_val))

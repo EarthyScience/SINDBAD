@@ -38,22 +38,11 @@ function compute(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocationSoilW_gppGSI}) = "moisture effect on allocation from same for GPP based on GSI approach"
+
 @doc """
-moisture effect on allocation from same for GPP based on GSI approach
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - land.diagnostics.f_soilW_prev: moisture stressor from previous time step
- - land.diagnostics.gpp_f_soilW: moisture stressors on GPP
-
-*Outputs*
- - land.diagnostics.c_allocation_f_soilW: moisture effect on allocation
+$(getBaseDocString(cAllocationSoilW_gppGSI))
 
 ---
 
@@ -67,7 +56,7 @@ $(SindbadParameters)
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais & sbesnard
 """
 cAllocationSoilW_gppGSI

@@ -6,26 +6,69 @@ export getUnitConversionForParameter
 export modelParameter
 export modelParameters
 
+
 """
     getInOutModel(model::LandEcosystem)
-    getInOutModel(model, model_func::Symbol)
+    getInOutModel(model::LandEcosystem, model_func::Symbol)
     getInOutModel(model::LandEcosystem, model_funcs::Tuple)
 
-Helper/wrapper functions to parse input, output, and parameters of SINDBAD models.
+Parses and retrieves the inputs, outputs, and parameters (I/O/P) of SINDBAD models for specified functions or all functions.
 
-# Arguments
-- `model`: a SINDBAD model instance. Without additional arguments, parses all inputs/outputs/parameters for all functions of the model
-- `model_func`: (optional) a single symbol for a model function to parse (e.g., `:precompute` or `:parameters`)
-- `model_funcs`: (optional) a tuple of symbols for model functions to parse (e.g., `(:precompute, :parameters)`)
+# Arguments:
+- `model::LandEcosystem`: A SINDBAD model instance. If no additional arguments are provided, parses all inputs, outputs, and parameters for all functions of the model.
+- `model_func::Symbol`: (Optional) A single symbol representing a specific model function to parse (e.g., `:precompute`, `:parameters`, `:compute`).
+- `model_funcs::Tuple`: (Optional) A tuple of symbols representing multiple model functions to parse (e.g., `(:precompute, :parameters)`).
+
+# Returns:
+- An `OrderedDict` containing the parsed inputs, outputs, and parameters for the specified functions or all functions of the model:
+    - `:input`: A tuple of input variables for the model function(s).
+    - `:output`: A tuple of output variables for the model function(s).
+    - `:approach`: The name of the model or function being parsed.
+
+# Notes:
+- If `model_func` or `model_funcs` is not provided, the function parses all default SINDBAD model functions (`:parameters`, `:compute`, `:define`, `:precompute`, `:update`).
+- For each function:
+    - Inputs are extracted from lines containing `⇐`, `land.`, or `forcing.`.
+    - Outputs are extracted from lines containing `⇒`.
+    - Warnings are issued for unextracted variables from `land` or `forcing` that do not follow the convention of unpacking variables locally using `@unpack_nt`.
+- If `:parameters` is included in `model_funcs`, the function directly retrieves model parameters using `modelParameter`.
+
+# Examples:
+1. **Parsing all functions of a model**:
+    ```julia
+    model_io = getInOutModel(my_model)
+    ```
+
+2. **Parsing a specific function of a model**:
+    ```julia
+    compute_io = getInOutModel(my_model, :compute)
+    ```
+
+3. **Parsing multiple functions of a model**:
+    ```julia
+    io_data = getInOutModel(my_model, (:precompute, :parameters))
+    ```
+
+4. **Handling warnings for unextracted variables**:
+    - If a variable from `land` or `forcing` is not unpacked using `@unpack_nt`, a warning is issued to encourage better coding practices.
 
 """
 function getInOutModel end
 
-function getInOutModel(model::LandEcosystem)
+
+function getInOutModel(T::Type{<:LandEcosystem}; verbose=false)
+    return getInOutModel(T(), verbose=verbose)
+end
+
+function getInOutModel(model::LandEcosystem; verbose=true)
+    if verbose
+        println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
+    end
     mo_in_out=Sindbad.DataStructures.OrderedDict()
-    println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
     for func in (:parameters, :compute, :define, :precompute, :update)
-        println("   ...$(func)...")
+        if verbose
+            println("   ...$(func)...")
+        end
         io_func = getInOutModel(model, func)
         mo_in_out[func] = io_func
     end
@@ -64,7 +107,7 @@ function getInOutModel(model, model_func::Symbol)
         # mod_vars = modelParameter(model, false)
         return modelParameter(model, false)
     elseif model_func == :precompute
-        mod_code = @code_string Sindbad.Models.compute(model, nothing, nothing, nothing)
+        mod_code = @code_string Sindbad.Models.precompute(model, nothing, nothing, nothing)
     elseif model_func == :update
         mod_code = @code_string Sindbad.Models.update(model, nothing, nothing, nothing)
     else
@@ -145,22 +188,70 @@ function getInOutModel(model, model_func::Symbol)
 end
 
 """
-    getInOutModels(ind_range=1:10000::UnitRange{Int64})
+    getInOutModels(ind_range::UnitRange{Int64}=1:10000)
     getInOutModels(models::Tuple)
     getInOutModels(models, model_funcs::Tuple)
     getInOutModels(models, model_func::Symbol)
 
-Parse inputs and outputs of SINDBAD models with various levels of specificity.
+Parses and retrieves the inputs, outputs, and parameters (I/O/P) of multiple SINDBAD models with varying levels of specificity.
 
-# Arguments
-- `ind_range`: A range to select models from all possible SINDBAD models (default: 1:10000). 
-    Can be set to a smaller range (e.g., 1:10) to parse a subset of models for testing purposes.
-- `models`: A list/collection of instantiated SINDBAD models. Used when working with specific 
-    model instances rather than selecting from all possible models.
-- `model_funcs`: A tuple of symbols representing model functions to parse (e.g., `(:precompute, :compute)`). 
-    Allows parsing multiple specific functions of the provided models.
-- `model_func`: A single symbol specifying one model function to parse (e.g., `:precompute`). 
-    Used when only one function's inputs and outputs need to be analyzed.
+# Arguments:
+1. **For the first variant**:
+    - `ind_range::UnitRange{Int64}`: A range to select models from all possible SINDBAD models (default: `1:10000`). 
+      This can be set to a smaller range (e.g., `1:10`) to parse a subset of models for testing purposes.
+
+2. **For the second variant**:
+    - `models::Tuple`: A tuple of instantiated SINDBAD models. Used when working with specific model instances rather than selecting from all possible models.
+
+3. **For the third variant**:
+    - `models`: A tuple of instantiated SINDBAD models.
+    - `model_funcs::Tuple`: A tuple of symbols representing model functions to parse (e.g., `(:precompute, :compute)`).
+      Allows parsing multiple specific functions of the provided models.
+
+4. **For the fourth variant**:
+    - `models`: A tuple of instantiated SINDBAD models.
+    - `model_func::Symbol`: A single symbol specifying one model function to parse (e.g., `:precompute`).
+      Used when only one function's inputs and outputs need to be analyzed.
+
+# Returns:
+- An `OrderedDict` containing the parsed inputs, outputs, and parameters for the specified models and functions:
+    - Keys represent the model names.
+    - Values are `OrderedDict`s containing the parsed I/O/P for the specified functions.
+
+# Notes:
+- **Default Behavior**:
+    - If `ind_range` is provided, the function selects models from the global SINDBAD model dictionary using the specified range.
+    - If `model_funcs` or `model_func` is not provided, the function parses all default SINDBAD model functions (`:parameters`, `:compute`, `:define`, `:precompute`, `:update`).
+- **Input and Output Parsing**:
+    - Inputs are extracted from lines containing `⇐`, `land.`, or `forcing.`.
+    - Outputs are extracted from lines containing `⇒`.
+    - Warnings are issued for unextracted variables from `land` or `forcing` that do not follow the convention of unpacking variables locally using `@unpack_nt`.
+- **Integration with `getInOutModel`**:
+    - This function internally calls `getInOutModel` for each model and function to retrieve the I/O/P details.
+
+# Examples:
+1. **Parsing all models in a range**:
+    ```julia
+    model_io = getInOutModels(1:10)
+    ```
+
+2. **Parsing specific models**:
+    ```julia
+    model_io = getInOutModels((model1, model2))
+    ```
+
+3. **Parsing specific functions of models**:
+    ```julia
+    model_io = getInOutModels((model1, model2), (:precompute, :compute))
+    ```
+
+4. **Parsing a single function of models**:
+    ```julia
+    model_io = getInOutModels((model1, model2), :compute)
+    ```
+
+5. **Handling warnings for unextracted variables**:
+    - If a variable from `land` or `forcing` is not unpacked using `@unpack_nt`, a warning is issued to encourage better coding practices.
 """
 function getInOutModels end
 
@@ -380,7 +471,7 @@ function modelParameter(models, model::Symbol)
         foreach(pnames) do fn
             p_dict[fn] = getproperty(mod, fn)
             p_unit = Sindbad.Models.units(mod, fn)
-            p_unit_info = p_unit == "" ? "" : "($p_unit)"
+            p_unit_info = p_unit == "" ? "unitless/fraction" : "($p_unit)"
             println("   $fn => $(getproperty(mod, fn)) $p_unit_info")
         end
     end
@@ -402,7 +493,15 @@ function modelParameter(model::LandEcosystem, show=true)
             if show
                 println("   $fn => $(getproperty(mod, fn))")
             end
-            Pair(fn, getproperty(model, fn))
+            p_val = getproperty(model, fn)
+            p_describe = Sindbad.Models.describe(model, fn)
+            p_unit = Sindbad.Models.units(model, fn)
+            p_u = isempty(p_unit) ? " undefined" : "$(p_unit)"
+            p_timescale = Sindbad.Models.timescale(model, fn)
+            p_t = isempty(p_timescale) ? " and timescale independent" : " at $(p_timescale) timescale"
+            p_bounds = Sindbad.Models.bounds(model, fn)
+            p_w = "$(p_val) [$(p_bounds[1]), $(p_bounds[2])] {$(p_describe) ($(p_unit) $(p_t))}"
+            Pair(fn, p_w)
         end
     end
     return p_vec

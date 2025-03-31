@@ -1,8 +1,10 @@
 # -------------------------------- time aggregator --------------------------------
-export getTimeAggregatorTypeInstance
 export SindbadTimeAggregator
 export TimeAllYears
 export TimeArray
+export TimeHour
+export TimeHourAnomaly
+export TimeHourDayMean
 export TimeDay
 export TimeDayAnomaly
 export TimeDayIAV
@@ -28,6 +30,9 @@ abstract type SindbadTimeAggregator end
 
 struct TimeAllYears <: SindbadTimeAggregator end
 struct TimeArray <: SindbadTimeAggregator end
+struct TimeHour <: SindbadTimeAggregator end
+struct TimeHourAnomaly <: SindbadTimeAggregator end
+struct TimeHourDayMean <: SindbadTimeAggregator end
 struct TimeDay <: SindbadTimeAggregator end
 struct TimeDayAnomaly <: SindbadTimeAggregator end
 struct TimeDayIAV <: SindbadTimeAggregator end
@@ -50,16 +55,6 @@ struct TimeYear <: SindbadTimeAggregator end
 struct TimeYearAnomaly <: SindbadTimeAggregator end
 
 
-
-function getTimeAggregatorTypeInstance(aggr::Symbol)
-    return getTimeAggregatorTypeInstance(string(aggr))
-end
-
-function getTimeAggregatorTypeInstance(aggr::String)
-    uc_first = toUpperCaseFirst(aggr, "Time")
-    return getfield(SindbadUtils, uc_first)()
-end
-
 # -------------------------------- spatial subset --------------------------------
 export Spaceid
 export SpaceId
@@ -69,20 +64,22 @@ export Spacelatitude
 export Spacelongitude
 export Spacelon
 export Spacesite
+export SindbadSpatialSubsetType
 
-struct Spaceid end
-struct SpaceId end
-struct SpaceID end
-struct Spacelat end
-struct Spacelatitude end
-struct Spacelongitude end
-struct Spacelon end
-struct Spacesite end
+abstract type SindbadSpatialSubsetType end
+struct Spaceid <: SindbadSpatialSubsetType end
+struct SpaceId <: SindbadSpatialSubsetType end
+struct SpaceID <: SindbadSpatialSubsetType end
+struct Spacelat <: SindbadSpatialSubsetType end
+struct Spacelatitude <: SindbadSpatialSubsetType end
+struct Spacelongitude <: SindbadSpatialSubsetType end
+struct Spacelon <: SindbadSpatialSubsetType end
+struct Spacesite <: SindbadSpatialSubsetType end
 
 
 # -------------------------------- forcing variable type --------------------------------
 export ForcingWithTime
 export ForcingWithoutTime
-abstract type ForcingTimeSeries end
-struct ForcingWithTime <: ForcingTimeSeries end
-struct ForcingWithoutTime <: ForcingTimeSeries end
+abstract type SindbadForcingType end
+struct ForcingWithTime <: SindbadForcingType end
+struct ForcingWithoutTime <: SindbadForcingType end

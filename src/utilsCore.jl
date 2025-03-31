@@ -3,12 +3,9 @@ export clampZeroOne
 export cumSum!
 export flagUpper, flagLower
 export getFrac
+export getMethodTypes
 export getSindbadModelOrder
 export getSindbadModels
-export getVarField
-export getVarFull
-export getVariableInfo
-export getVarName
 export getZix
 export maxZero, maxOne, minZero, minOne
 export offDiag, offDiagUpper, offDiagLower
@@ -159,13 +156,20 @@ end
 
 """
     DocStringExtensions.format(abbrv::BoundFields, buf, doc)
+$(SIGNATURES)
 
+Format documentation for bound fields extension.
 
+This method extends the `DocStringExtensions.format` functionality to handle `BoundFields` type.
+It processes and formats the documentation for fields that are bound to a specific type or structure.
 
-# Arguments:
-- `abbrv`: DESCRIPTION
-- `buf`: DESCRIPTION
-- `doc`: DESCRIPTION
+# Arguments
+- `abbrv::BoundFields`: The bound fields abbreviation instance to be formatted
+- `buf`: Buffer where the formatted documentation will be written
+- `doc`: Documentation object containing the information to be formatted
+
+# Note
+This is an extension method for DocStringExtensions.jl package.
 """
 function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
     local docs = get(doc.data, :fields, Dict())
@@ -273,14 +277,42 @@ function getFrac(num, den)
     return rat
 end
 
+
+"""
+    getMethodTypes(fn)
+
+Retrieve the types of the arguments for all methods of a given function.
+
+# Arguments
+- `fn`: The function for which the method argument types are to be retrieved.
+
+# Returns
+- A vector containing the types of the arguments for each method of the function.
+
+# Example
+```julia
+function example_function(x::Int, y::String) end
+function example_function(x::Float64, y::Bool) end
+
+types = getMethodTypes(example_function)
+println(types) # Output: [Int64, Float64]
+"""
+function getMethodTypes(fn)
+    # Get the method table for the function
+    mt = methods(fn)
+    # Extract the types of the first method
+    method_types = map(m -> m.sig.parameters[2], mt)
+    return method_types
+end
+
 """
     getSindbadModelOrder(model_name)
 
 helper function to return the default order of a sindbad model
 """
-function getSindbadModelOrder(model_name)
-    mo = findall(x -> x == model_name, sindbad_models)[1]
-    println("The order [default] of $(model_name) in models.jl of core Sindbad.jl is $(mo)")
+function getSindbadModelOrder(model_name; all_models=standard_sindbad_models)
+    mo = findall(x -> x == model_name, all_models)[1]
+    println("The order [default] of $(model_name) in models.jl of core SINDBAD is $(mo)")
 end
 
 """
@@ -288,9 +320,9 @@ end
 
 helper function to return a dictionary of sindbad model and approaches
 """
-function getSindbadModels()
+function getSindbadModels(; all_models=standard_sindbad_models)
     approaches = []
-    for _md ∈ sindbad_models
+    for _md ∈ all_models
         push!(approaches, Pair(_md, [nameof(_x) for _x in subtypes(getfield(Sindbad.Models, _md))]))
     end
     return DataStructures.OrderedDict(approaches)

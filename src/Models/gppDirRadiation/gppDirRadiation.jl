@@ -2,14 +2,11 @@ export gppDirRadiation
 
 abstract type gppDirRadiation <: LandEcosystem end
 
-include("gppDirRadiation_Maekelae2008.jl")
-include("gppDirRadiation_none.jl")
+purpose(::Type{gppDirRadiation}) = "Effect of direct radiation"
 
-@doc """
-Effect of direct radiation
+includeApproaches(gppDirRadiation, @__DIR__)
 
-# Approaches:
- - Maekelae2008: light saturation scalar [light effect] on gpp_potential based on Maekelae2008
- - none: sets the light saturation scalar [light effect] on gpp_potential to one
+@doc """ 
+	$(getBaseDocString(gppDirRadiation))
 """
 gppDirRadiation

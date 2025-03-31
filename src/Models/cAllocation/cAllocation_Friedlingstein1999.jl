@@ -76,28 +76,11 @@ function compute(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocation_Friedlingstein1999}) = "Compute the fraction of fixed C that is allocated to the different plant organs following the scheme of Friedlingstein et al., 1999 (section ```Allocation response to multiple stresses````)."
+
 @doc """
-Compute the fraction of fixed C that is allocated to the different plant organs following the scheme of Friedlingstein et al., 1999 (section "Allocation response to multiple stresses").
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Puts together the different effects, "multiple stresses", that control the allocation of fixated carbon to the different vegetation C pools according to Friedlingstein et al., 1999.
-
-*Inputs*
- - land.diagnostics.c_allocation_f_LAI: values for light limitation
- - land.diagnostics.c_allocation_f_W_N: values for the pseudo-nutrient limitation
-
-*Outputs*
- - land.diagnostics.c_allocation: the fraction of npp that is allocated to the different plant organs
- - land.diagnostics.c_allocation
-
-# Instantiate:
-Instantiate time-invariant variables for cAllocation_Friedlingstein1999
-
+$(getBaseDocString(cAllocation_Friedlingstein1999))
 
 ---
 
@@ -109,7 +92,7 @@ Instantiate time-invariant variables for cAllocation_Friedlingstein1999
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cAllocation_Friedlingstein1999

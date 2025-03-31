@@ -462,7 +462,7 @@ The header of a function should contain at least the following:
 % Conventions:
 %   + d.storedStates.[VarName]: nPix,nZix,nTix
 %
-% Created by:
+% Created by
 %   + Sujan Koirala (skoirala@bgc-jena.mpg.de)
 %
 % References:

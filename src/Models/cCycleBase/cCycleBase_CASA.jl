@@ -66,24 +66,11 @@ function compute(params::cCycleBase_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cCycleBase_CASA}) = "Compute carbon to nitrogen ratio & base turnover rates"
+
 @doc """
-Compute carbon to nitrogen ratio & base turnover rates
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Pool structure of the carbon cycle using cCycleBase_CASA
-
-*Inputs*
-
-*Outputs*
-
-# Instantiate:
-Instantiate time-invariant variables for cCycleBase_CASA
-
+$(getBaseDocString(cCycleBase_CASA))
 
 ---
 
@@ -97,7 +84,7 @@ Instantiate time-invariant variables for cCycleBase_CASA
 *Versions*
  - 1.0 on 28.05.2022 [skoirala]: migrate to julia  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cCycleBase_CASA

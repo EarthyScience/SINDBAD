@@ -2,16 +2,11 @@ export cCycleBase
 
 abstract type cCycleBase <: LandEcosystem end
 
-include("cCycleBase_CASA.jl")
-include("cCycleBase_GSI.jl")
-include("cCycleBase_simple.jl")
+purpose(::Type{cCycleBase}) = "Pool structure of the carbon cycle"
 
-@doc """
-Pool structure of the carbon cycle
+includeApproaches(cCycleBase, @__DIR__)
 
-# Approaches:
- - CASA: Compute carbon to nitrogen ratio & annual turnover rates
- - GSI: Compute carbon to nitrogen ratio & annual turnover rates
- - simple: Compute carbon to nitrogen ratio & annual turnover rates
+@doc """ 
+	$(getBaseDocString(cCycleBase))
 """
 cCycleBase

@@ -37,25 +37,11 @@ function compute(params::runoffSaturationExcess_Zhang2008, forcing, land, helper
     return land
 end
 
+purpose(::Type{runoffSaturationExcess_Zhang2008}) = "saturation excess runoff as a function of incoming water and PET"
+
 @doc """
-saturation excess runoff as a function of incoming water and PET
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Saturation runoff using runoffSaturationExcess_Zhang2008
-
-*Inputs*
- - land.fluxes.PET: potential ET
- - land.properties.w_awc: maximum available water in soil per layer
- - land.states.WBP: amount of incoming water
-
-*Outputs*
- - land.fluxes.sat_excess_runoff: saturation excess runoff in mm/day
- - land.states.WBP
+$(getBaseDocString(runoffSaturationExcess_Zhang2008))
 
 ---
 
@@ -68,7 +54,7 @@ Saturation runoff using runoffSaturationExcess_Zhang2008
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - mjung
  - skoirala
 

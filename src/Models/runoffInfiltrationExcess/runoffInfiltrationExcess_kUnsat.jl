@@ -25,22 +25,11 @@ function compute(params::runoffInfiltrationExcess_kUnsat, forcing, land, helpers
     return land
 end
 
+purpose(::Type{runoffInfiltrationExcess_kUnsat}) = "infiltration excess runoff based on unsaτurated hydraulic conductivity"
+
 @doc """
-infiltration excess runoff based on unsτrated hydraulic conductivity
 
----
-
-# compute:
-Infiltration excess runoff using runoffInfiltrationExcess_kUnsat
-
-*Inputs*
- - land.p.soilProperties.unsatK: function to calculate unsaturated K: out of pSoil [Saxtion1986 | Saxton2006] end
- - land.pools.soilW of first layer
-
-*Outputs*
- - land.fluxes.PETSoil
- - land.fluxes.evaporation
- - land.pools.soilW[1]: bare soil evaporation is only allowed from first soil layer
+$(getBaseDocString(runoffInfiltrationExcess_kUnsat))
 
 ---
 
@@ -51,7 +40,7 @@ Infiltration excess runoff using runoffInfiltrationExcess_kUnsat
 *Versions*
  - 1.0 on 23.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffInfiltrationExcess_kUnsat

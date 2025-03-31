@@ -22,24 +22,11 @@ function compute(params::transpirationDemand_PETvegFraction, forcing, land, help
     return land
 end
 
+purpose(::Type{transpirationDemand_PETvegFraction}) = "calculate the climate driven demand for transpiration as a function of PET & α for vegetation; & vegetation fraction"
+
 @doc """
-calculate the climate driven demand for transpiration as a function of PET & α for vegetation; & vegetation fraction
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Demand-driven transpiration using transpirationDemand_PETvegFraction
-
-*Inputs*
- - land.fluxes.PET : potential evapotranspiration out of PET module
- - land.states.frac_vegetation: vegetation fraction
- - α: α parameter for potential transpiration
-
-*Outputs*
- - land.diagnostics.transpiration_demand: demand driven transpiration
+$(getBaseDocString(transpirationDemand_PETvegFraction))
 
 ---
 
@@ -50,7 +37,7 @@ Demand-driven transpiration using transpirationDemand_PETvegFraction
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 
 *Notes*

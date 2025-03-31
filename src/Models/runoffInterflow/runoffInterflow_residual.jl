@@ -27,22 +27,11 @@ function compute(params::runoffInterflow_residual, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffInterflow_residual}) = "interflow as a fraction of the available water balance pool"
+
 @doc """
-interflow as a fraction of the available water balance pool
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Interflow using runoffInterflow_residual
-
-*Inputs*
-
-*Outputs*
- - land.fluxes.interflow_runoff: interflow [mm/time]
- - land.states.WBP: water balance pool [mm]
+$(getBaseDocString(runoffInterflow_residual))
 
 ---
 
@@ -53,7 +42,7 @@ Interflow using runoffInterflow_residual
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
-*Created by:*
+*Created by*
  - mjung
 """
 runoffInterflow_residual

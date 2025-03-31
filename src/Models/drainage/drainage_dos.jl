@@ -58,53 +58,11 @@ function compute(params::drainage_dos, forcing, land, helpers)
     return land
 end
 
-function update(params::drainage_dos, forcing, land, helpers)
-
-    ## unpack variables
-    @unpack_nt begin
-        soilW ⇐ land.pools
-        ΔsoilW ⇐ land.pools
-    end
-
-    ## update variables
-    # update soil moisture
-    soilW .= soilW .+ ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-
-    ## pack land variables
-    # @pack_nt begin
-    # 	soilW ⇒ land.pools
-    # 	ΔsoilW ⇒ land.pools
-    # end
-    return land
-end
+purpose(::Type{drainage_dos}) = "downward flow of moisture [drainage] in soil layers based on exponential function of soil moisture degree of saturation"
 
 @doc """
-downward flow of moisture [drainage] in soil layers based on exponential function of soil moisture degree of saturation
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Recharge the soil using drainage_dos
-
-*Inputs*
- - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
-
-*Outputs*
- - drainage from the last layer is saved as groundwater recharge [gw_recharge]
- - land.states.soilWFlow: drainage flux between soil layers (same as nZix, from percolation  into layer 1 & the drainage to the last layer)
-
-# update
-
-update pools and states in drainage_dos
-
- - land.pools.soilW
+$(getBaseDocString(drainage_dos))
 
 ---
 
@@ -115,7 +73,7 @@ update pools and states in drainage_dos
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 drainage_dos

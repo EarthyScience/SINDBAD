@@ -2,14 +2,11 @@ export cTau
 
 abstract type cTau <: LandEcosystem end
 
-include("cTau_none.jl")
-include("cTau_mult.jl")
+purpose(::Type{cTau}) = "Combine effects of different factors on decomposition rates"
 
-@doc """
-Combine effects of different factors on decomposition rates
+includeApproaches(cTau, @__DIR__)
 
-# Approaches:
- - none: set the actual τ to ones
- - mult: multiply all effects that change the turnover rates [k]
+@doc """ 
+	$(getBaseDocString(cTau))
 """
 cTau

@@ -2,13 +2,11 @@ export wCycleBase
 
 abstract type wCycleBase <: LandEcosystem end
 
-include("wCycleBase_simple.jl")
+purpose(::Type{wCycleBase}) = "set the basics of the water cycle pools"
 
-@doc """
-set the basics of the water cycle pools
+includeApproaches(wCycleBase, @__DIR__)
 
-# Approaches:
- - simple: a simple method that just counts the number of layers in each pool
-
+@doc """ 
+	$(getBaseDocString(wCycleBase))
 """
 wCycleBase

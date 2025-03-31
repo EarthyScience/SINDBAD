@@ -2,16 +2,11 @@ export snowFraction
 
 abstract type snowFraction <: LandEcosystem end
 
-include("snowFraction_binary.jl")
-include("snowFraction_HTESSEL.jl")
-include("snowFraction_none.jl")
+purpose(::Type{snowFraction}) = "Calculate snow cover fraction"
 
-@doc """
-Calculate snow cover fraction
+includeApproaches(snowFraction, @__DIR__)
 
-# Approaches:
- - binary: compute the snow pack & fraction of snow cover.
- - HTESSEL: computes the snow pack & fraction of snow cover following the HTESSEL approach
- - none: sets the snow fraction to zero
+@doc """ 
+	$(getBaseDocString(snowFraction))
 """
 snowFraction

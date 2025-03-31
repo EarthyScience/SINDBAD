@@ -4,14 +4,15 @@ using Dates
 using Plots
 toggleStackTraceNT()
 
-# site_index = 1
-site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+# site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+site_index = 89
 # site_index = Base.parse(Int, ARGS[1])
-forcing_set = "cruj"
+forcing_set = "erai"
 site_info = CSV.File(
-    "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
-    header=false);
-domain = string(site_info[site_index][2])
+"/Net/Groups/BGI/scratch/skoirala/prod_sindbad.jl/examples/exp_WROASTED/settings_WROASTED/site_names_disturbance.csv";
+    header=true);
+domain = string(site_info[site_index][1])
+y_dist = string(site_info[site_index][2])
 
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 path_input = nothing
@@ -22,7 +23,7 @@ if forcing_set == "erai"
     dataset = "ERAinterim.v2"
     begin_year = "1979"
     end_year = "2017"
-    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/sopt_sets_wroasted/"
+    ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/v202312_ml_wroasted/"
 else
     dataset = "CRUJRA.v2_2"
     begin_year = "1901"
@@ -30,18 +31,15 @@ else
     ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
 end
 ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(begin_year).$(end_year).daily.nc")
-path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/v202312_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
+path_input = 
+ "/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr";#joinpath("/Net/Groups/BGI/scratch/skoirala/v202312_wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
+ 
 path_observation = path_input;
 
 nrepeat = 200
 
-
-## get the spinup sequence
-nc = SindbadData.NetCDF.open(path_input);
-y_dist = nc.gatts["last_disturbance_on"]
-
 nrepeat_d = nothing
-if y_dist !== "undisturbed"
+if y_dist != "undisturbed"
     y_disturb = year(Date(y_dist))
     y_start = Meta.parse(begin_year)
     nrepeat_d = y_start - y_disturb
@@ -88,24 +86,29 @@ opti_sets = Dict(
     :set9 => ["agb", "ndvi"],
     :set10 => ["agb", "ndvi", "nirv"],
 )
-
+forcing_set = "zarr";
 forcing_config = "forcing_$(forcing_set).json";
 parallelization_lib = "threads"
-exp_main = "wroasted_v202311"
+exp_main = "wroasted_v202503_zarr"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)
+# opti_set = (:set3,)
 optimize_it = true;
-for o_set in opti_set
-    path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
+o_set = :set1
+
+# for o_set in opti_set
+    path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
 
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
     replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
         "experiment.basics.config_files.forcing" => forcing_config,
+        "experiment.basics.config_files.optimization" => "optimization_zarr.json",
         "experiment.basics.domain" => domain,
         "experiment.basics.name" => exp_name,
         "experiment.basics.time.date_end" => end_year * "-12-31",
+        "experiment.exe_rules.input_data_backend" => "zarr",
         "experiment.flags.run_optimization" => optimize_it,
         "experiment.flags.calc_cost" => true,
         "experiment.flags.catch_model_errors" => true,
@@ -113,13 +116,21 @@ for o_set in opti_set
         "experiment.flags.debug_model" => false,
         "experiment.model_spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
+        "forcing.subset.site" => [1,205],
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
-        "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
+        "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
         "optimization.observations.default_observation.data_path" => path_observation,
         "optimization.observational_constraints" => opti_sets[o_set],)
+        info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
+        
+        forcing = getForcing(info);
 
-    @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info)
+        observations = getObservation(info, forcing.helpers);
+        run_helpers = prepTEM(forcing, info);
+        @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
+                
+        @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
 
     forcing = out_opti.forcing;
     obs_array = out_opti.observation;
@@ -155,8 +166,11 @@ for o_set in opti_set
         if loss_name in (:NNSEInv, :NSEInv)
             lossMetric = NSE()
         end
+        valids = var_row.valids;
         (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
         (_, _, opt_var) = getData(opt_dat, obs_array, var_row)
+        ml_dat[.!valids] .= NaN
+        ml_var = ml_dat
         obs_var_TMP = obs_var[:, 1, 1, 1]
         non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
         if length(non_nan_index) < 2
@@ -164,23 +178,24 @@ for o_set in opti_set
         else
             tspan = first(non_nan_index):last(non_nan_index)
         end
+
         obs_σ = obs_σ[tspan]
         obs_var = obs_var[tspan]
-        ml_dat = ml_dat[tspan]
+        ml_var = ml_var[tspan]
         def_var = def_var[tspan, 1, 1, 1]
         opt_var = opt_var[tspan, 1, 1, 1]
+        valids = valids[tspan]
 
         xdata = [info.helpers.dates.range[tspan]...]
-        obs_var_n, obs_σ_n, ml_dat_n = filterCommonNaN(obs_var, obs_σ, ml_dat)
-        obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
-        obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
-        metr_ml = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
-        metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
-        metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
+
+        metr_ml = metric(obs_var[valids], obs_σ[valids], ml_var[valids], lossMetric)
+        metr_def = metric(obs_var[valids], obs_σ[valids], def_var[valids], lossMetric)
+        metr_opt = metric(obs_var[valids], obs_σ[valids], opt_var[valids], lossMetric)
+
         plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
         plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric))), $(forcing_set), $(o_set)")
         plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
-        plot!(xdata, ml_dat; label="matlab ($(round(metr_ml, digits=2)))", lw=1.5, ls=:dash)
+        plot!(xdata, ml_var; label="matlab ($(round(metr_ml, digits=2)))", lw=1.5, ls=:dash)
         savefig(fig_prefix * "_$(v)_$(forcing_set).png")
     end
 
@@ -221,4 +236,4 @@ for o_set in opti_set
             end
         end
     end
-end
+# end

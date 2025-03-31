@@ -47,28 +47,11 @@ function compute(params::rootWaterEfficiency_k2fRD, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{rootWaterEfficiency_k2fRD}) = "sets the maximum fraction of water that root can uptake from soil layers as function of vegetation fraction; & for the second soil layer additional as function of RD"
+
 @doc """
-sets the maximum fraction of water that root can uptake from soil layers as function of vegetation fraction; & for the second soil layer additional as function of RD
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Distribution of water uptake fraction/efficiency by root per soil layer using rootWaterEfficiency_k2fRD
-
-*Inputs*
- - helpers.pools.: soil layers & depths
- - k2_RDscale : RD scalar for k2
- - land.states.frac_vegetation : vegetation fraction
-
-*Outputs*
- - land.states.root_water_efficiency as nZix for soilW
-
-# Instantiate:
-Instantiate time-invariant variables for rootWaterEfficiency_k2fRD
-
+$(getBaseDocString(rootWaterEfficiency_k2fRD))
 
 ---
 
@@ -79,7 +62,7 @@ Instantiate time-invariant variables for rootWaterEfficiency_k2fRD
 *Versions*
  - 1.0 on 10.02.2020  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 rootWaterEfficiency_k2fRD
