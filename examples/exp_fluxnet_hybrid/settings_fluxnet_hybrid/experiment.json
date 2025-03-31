@@ -10,16 +10,14 @@
     "time": {
       "date_begin": "1979-01-01",
       "date_end": "2017-12-31",
-      "temporal_resolution": "day",
-      "timesteps_in_day": 1,
-      "timesteps_in_year": 365
+      "temporal_resolution": "day"
     }
   },
   "exe_rules": {
     "input_array_type": "keyed_array",
     "input_data_backend": "zarr",
     "land_output_type": "arrayFD",
-    "longtuple_size": 10,
+    "longtuple_size": null,
     "model_array_type": "static_array",
     "model_number_type": "Float32",
     "parallelization": "threads",
@@ -49,6 +47,7 @@
     "format": "zarr",
     "output_array_type": "array",
     "path": null,
+    "plot_model_output": false,
     "save_single_file": true,
     "variables": {
       "diagnostics.auto_respiration_f_airT": null,

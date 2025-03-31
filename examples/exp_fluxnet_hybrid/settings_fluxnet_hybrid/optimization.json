@@ -1,5 +1,6 @@
 {
-  "algorithm": "CMAEvolutionStrategy_CMAES",
+  "algorithm_optimization": "CMAEvolutionStrategy_CMAES",
+  "algorithm_sensitivity_analysis": null,
   "model_parameter_default": {
     "distribution": ["normal", [0.0, 1.0]],
     "is_ml": true
@@ -40,8 +41,11 @@
     "WUE,WUE_one_hpa": null,
     "WUE,κ": null
   },
-  "multi_constraint_method": "cost_sum",
-  "multi_objective_algorithm": false,
+  "multi_constraint_method": "metric_sum",
+  "subset_model_output": true,
+  "optimization_parameter_scaling": null,
+  "optimization_cost_method": "cost_model_obs",
+  "optimization_cost_threaded": false,
   "observational_constraints": [
     "gpp",
     "nee",
@@ -60,7 +64,7 @@
       "cost_weight": 1.0,
       "min_data_points": 1,
       "spatial_data_aggr": "concat_data",
-      "spatial_cost_aggr": "spatially_variable",
+      "spatial_cost_aggr": "metric_spatial",
       "spatial_weight": false,
       "temporal_data_aggr": "day"
     },

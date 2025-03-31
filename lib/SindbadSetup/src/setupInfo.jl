@@ -414,7 +414,6 @@ function setupInfo(info::NamedTuple)
     @info "  setupInfo: setting Dates Helpers..."
     info = setDatesInfo(info)
     @info "  setupInfo: setting Model Structure..."
-    @show propertynames(info)
     info = setOrderedSelectedModels(info)
     info = setSpinupAndForwardModels(info)
 
@@ -434,7 +433,7 @@ function setupInfo(info::NamedTuple)
     land_init = createInitLand(info.pools, info.temp)
     info = setTupleField(info, (:land_init, land_init)) 
 
-    if (info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost) && hasproperty(info.settings.optimization, :algorithm_optimization)
+    if ((info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost) && hasproperty(info.settings.optimization, :algorithm_optimization)) || (hasproperty(info.settings.optimization, :algorithm_sensitivity_analysis) && !isnothing(info.settings.optimization.algorithm_sensitivity_analysis))
         @info "  setupInfo: setting Optimization and Observation info..."
         info = setOptimization(info)
     else
