@@ -1,4 +1,6 @@
-export generateSindbadApproach
+export generateApproachCode
+export generateModelCode
+export createSindbadApproach
 
 """
     generateApproachCode(model_name, appr_name, appr_purpose, n_parameters; methods=(:define, :precompute, :compute, :update))
@@ -14,6 +16,7 @@ The `generateApproachCode` function creates a code template for a SINDBAD approa
 - `appr_purpose`: A string describing the purpose of the approach.
 - `n_parameters`: The number of parameters required by the approach.
 - `methods`: A tuple of method names to include in the approach (default: `(:define, :precompute, :compute, :update)`).
+- `show_code`: A flag to print the code on screen or not.
 
 # Returns
 - A string containing the generated code template for the approach.
@@ -31,7 +34,7 @@ approach_code = generateApproachCode(:ambientCO2, :ambientCO2_constant, "sets th
 println(approach_code)
 ```
 """
-function generateApproachCode(model_name, appr_name, appr_purpose, n_parameters; methods=(:define, :precompute, :compute, :update))
+function generateApproachCode(model_name, appr_name, appr_purpose, n_parameters; methods=(:define, :precompute, :compute, :update), show_code=true)
     m_string = "export $(appr_name)\n\n"
     if n_parameters == 0
         m_string *= "\nstruct $(appr_name) <: $(model_name) end\n"
@@ -85,6 +88,9 @@ function generateApproachCode(model_name, appr_name, appr_purpose, n_parameters;
     m_string *= " - $(Sys.username())\n\n"
     m_string *= "\"\"\"\n"
     m_string *= "$(appr_name)\n\n"
+    if show_code
+        println(m_string)
+    end
     return m_string
 end
 
@@ -99,6 +105,7 @@ The `generateModelCode` function creates a code template for a SINDBAD model. It
 # Arguments
 - `model_name`: The name of the SINDBAD model to be generated.
 - `model_purpose`: A string describing the purpose of the model.
+- `show_code`: A flag to print the code on screen or not.
 
 # Returns
 - A string containing the generated code template for the model.
@@ -117,25 +124,28 @@ model_code = generateModelCode(:ambientCO2, "Represents the ambient CO2 concentr
 println(model_code)
 ```
 """
-function generateModelCode(model_name, model_purpose)
+function generateModelCode(model_name, model_purpose; show_code=true)
     m_string = "export $(model_name)\n"
     m_string *= "\nabstract type $(model_name) <: LandEcosystem end\n"
     m_string *= "\npurpose(::Type{$(model_name)}) = \"$(model_purpose)\"\n"
     m_string *= "\nincludeApproaches($(model_name), @__DIR__)\n\n"
     m_string *= "@doc \"\"\" \n\t\$(getBaseDocString($(model_name)))\n\"\"\"\n"
     m_string *= "$(model_name)\n\n"
+    if show_code
+        println(m_string)
+    end
     return m_string
 end
 
 """
-    generateSindbadApproach(model_name::Symbol, model_purpose::String, appr_name::Symbol, appr_purpose::String, n_parameters::Int; methods=(:define, :precompute, :compute, :update), force_over_write=:none)
+    createSindbadApproach(model_name::Symbol, model_purpose::String, appr_name::Symbol, appr_purpose::String, n_parameters::Int; methods=(:define, :precompute, :compute, :update), force_over_write=:none)
 
-Generate a SINDBAD model and/or approach with code templates.
+Create a SINDBAD model and/or approach file with code templates.
 
 **Due to risk of overwriting code, the function only succeeds if y|Y||Yes|Ya, etc., are given in the confirmation prompt. This function only works if the call is copy-pasted into the REPL and not evaluated from a file/line. See the example below for the syntax.**
 
 # Description
-The `generateSindbadApproach` function creates a SINDBAD model and/or approach by generating code templates for their structure, parameters, methods, and documentation. It ensures consistency with the SINDBAD framework and adheres to naming conventions. If the model or approach already exists, it avoids overwriting existing files unless explicitly permitted. The generated code includes placeholders for methods (`define`, `precompute`, `compute`, `update`) and automatically generates docstrings for the model and approach.
+The `createSindbadApproach` function creates a SINDBAD model and/or approach by generating code templates for their structure, parameters, methods, and documentation. It ensures consistency with the SINDBAD framework and adheres to naming conventions. If the model or approach already exists, it avoids overwriting existing files unless explicitly permitted. The generated code includes placeholders for methods (`define`, `precompute`, `compute`, `update`) and automatically generates docstrings for the model and approach.
 
 # Arguments
 - `model_name`: The name of the SINDBAD model to which the approach belongs.
@@ -163,19 +173,29 @@ The `generateSindbadApproach` function creates a SINDBAD model and/or approach b
 # Example
 ```julia
 # Generate a new SINDBAD approach for an existing model
-generateSindbadApproach(:ambientCO2, "Represents ambient CO2 concentration", :constant, "Sets the value of ambient CO2 as a constant", 1)
+
+createSindbadApproach(:ambientCO2, "Represents ambient CO2 concentration", :constant, "Sets the value of ambient CO2 as a constant", 1)
 
 # Generate a new SINDBAD model and approach
-generateSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2)
+
+createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2)
+
+# Generate a SINDBAD model and approach with force_over_write
+
+createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2; force_over_write=:both) # overwrite both model and approach
+
+createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2; force_over_write=:both) # overwrite just approach approach
 ```
+
 # Notes
 - The function ensures that the generated code adheres to SINDBAD conventions and includes all necessary metadata and documentation.
 - If the model or approach already exists, the function does not overwrite the files unless explicitly confirmed by the user.
 - The function provides warnings and prompts to ensure safe file generation and minimize the risk of accidental overwrites.
 """
-function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr_name::Symbol, appr_purpose::String, n_parameters::Int; methods=(:define, :precompute, :compute, :update), force_over_write=:none)
+function createSindbadApproach(model_name::Symbol, model_purpose::String, appr_name::Symbol, appr_purpose::String, n_parameters::Int; methods=(:define, :precompute, :compute, :update), force_over_write=:none)
     over_write_model = false
     over_write_appr = false
+    @info "checking if force_over_write is allowed..."
     if force_over_write == :none
         @info "Overwriting of type and file is off. Only new objects will be created"
     elseif force_over_write == :model
@@ -192,10 +212,12 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
         error("force_over_write can only be one of (:none, :both, :model, :approach)")
     end    
 
+    @info "checking naming convention..."
     if !startswith(string(appr_name), string(model_name)*"_")
-        @warn "the name $(appr_name) does not start with $(model_name), which is against the SINDBAD model component convention. Using $(model_name)_$(appr_name) as the name of the approach."
+        @warn "the name $(appr_name) does not start with $(model_name), which is against the SINDBAD model component convention. Using $(model_name)_$(appr_name)[.jl] as the name of the approach."
         appr_name = Symbol(string(model_name) *"_"* string(appr_name))
     end
+
     model_type_exists = model_name in nameof.(subtypes(LandEcosystem)) 
     model_path = joinpath(split(pathof(Sindbad),"/Sindbad.jl")[1], "Models", "$(model_name)", "$(model_name).jl")
     model_path_exists = isfile(model_path)
@@ -211,26 +233,28 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
     elseif model_type_exists && !model_path_exists
         @warn "model_type exists but (model_path does not exist || force_over_write is enabled with :$(force_over_write)). If force_over_write is not enabled, fix the inconsistency by moving the definition of th type to the file itself."
     elseif !model_type_exists && model_path_exists
-        @warn "model_path exists but model_type does not exist. Fix this inconsistency by defining the type in the file."
+        @warn "(model_path exists || force_over_write is disabled) but model_type does not exist. Fix this inconsistency by defining the type in the file."
         model_exists = true
     else
         @info "both model_type and (model_path do not exist || force_over_write is enabled with :$(force_over_write)). Model will be created."
     end
 
     if model_exists
-        @info "Not generating model "
+        @error "Not generating model because model_path_exists is: $(model_path_exists) || and force_over_write is:$(force_over_write)."
     else
         @info "Generating a new model: $(model_name) at:\n$(appr_path)"
         confirm_ = Base.prompt("Continue: y | n")
         if startswith(confirm_, "y")
             @info "Generating model code:"
-            m_string=generateModelCode(model_name, model_purpose)
+            m_string=generateModelCode(model_name, model_purpose, show_code=false)
             mkpath(dirname(model_path))
             @info "Writing model code:"
             open(model_path, "w") do model_file
                 write(model_file, m_string)
             end
             @info "success: $(model_path)"
+        else
+            @warn "Not generating model file as the user did not continue."
         end
     end
 
@@ -250,27 +274,28 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
     elseif appr_type_exists && !appr_path_exists
         @warn "appr_type exists but (appr_path does not exist || force_over_write is enabled with :$(force_over_write))). If force_over_write is not enabled, fix this inconsistency by defining the type in the file itself."
     elseif !appr_type_exists && appr_path_exists
-        @warn "appr_path exists but appr_type does not exist. Fix this inconsistency by defining the type in the file."
+        @warn "(appr_path exists || force_over_write is disabled) but appr_type does not exist. Fix this inconsistency by defining the type in the file."
+        appr_exists = true
     else
         @info "both appr_type and (appr_path do not exist || force_over_write is enabled with :$(force_over_write)). Approach will be created."
     end
     
     if appr_exists
-        @info "Not generating approach."
+        @error "Not generating approach because appr_path_exists is: $(appr_path_exists) || and force_over_write is:$(force_over_write)."
     else
         appr_path = joinpath(split(pathof(Sindbad),"/Sindbad.jl")[1], "Models", "$(model_name)", "$(appr_name).jl")
         @info "Generating a new approach: $(appr_name) for existing model: $(model_name) at:\n$(appr_path)"
         confirm_ = Base.prompt("Continue: y | n")
         if startswith(confirm_, "y")
             @info "Generating code:"
-            appr_string = generateApproachCode(model_name, appr_name, appr_purpose, n_parameters; methods=methods)
+            appr_string = generateApproachCode(model_name, appr_name, appr_purpose, n_parameters; methods=methods, show_code=false)
             @info "Writing code:"
             open(appr_path, "w") do appr_file
                 write(appr_file, appr_string)
             end
             @info "success: $(appr_path)"
         else
-            @info "Not generating approach file due to user input."
+            @warn "Not generating approach file as the user did not continue."
         end
     end
     return nothing
