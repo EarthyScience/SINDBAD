@@ -2,14 +2,40 @@ export groundWSurfaceWInteraction
 
 abstract type groundWSurfaceWInteraction <: LandEcosystem end
 
-include("groundWSurfaceWInteraction_fracGradient.jl")
-include("groundWSurfaceWInteraction_fracGroundW.jl")
+purpose(::Type{groundWSurfaceWInteraction}) = "Water exchange between surface and groundwater"
 
-@doc """
-Water exchange between surface and groundwater
+includeApproaches(groundWSurfaceWInteraction, @__DIR__)
 
-# Approaches:
- - fracGradient: calculates the moisture exchange between groundwater & surface water as a fraction of difference between the storages
- - fracGroundW: calculates the depletion of groundwater to the surface water as a fraction of groundwater storage
+@doc """ 
+	$(getBaseDocString(groundWSurfaceWInteraction))
 """
 groundWSurfaceWInteraction
+
+
+# define a common update interface for all groundWSurfaceWInteraction models
+function update(params::groundWSurfaceWInteraction, forcing, land, helpers)
+
+    ## unpack variables
+    @unpack_nt begin
+        (surfaceW, groundW) ⇐ land.pools
+        (ΔsurfaceW, ΔgroundW) ⇐ land.states
+    end
+
+    ## update storage pools
+    groundW = addVec(groundW, ΔgroundW)
+    surfaceW = addVec(surfaceW, ΔsurfaceW)
+
+    for l in eachindex(ΔgroundW)
+        @rep_elem zero(eltype(ΔgroundW)) ⇒ (ΔgroundW, l, :groundW)
+    end
+    for l in eachindex(ΔsurfaceW)
+        @rep_elem zero(eltype(ΔsurfaceW)) ⇒ (ΔsurfaceW, l, :surfaceW)
+    end
+
+    ## pack land variables
+    @pack_nt begin
+        (groundW, surfaceW) ⇒ land.pools
+        (ΔsurfaceW, ΔgroundW) ⇒ land.pools
+    end
+    return land
+end

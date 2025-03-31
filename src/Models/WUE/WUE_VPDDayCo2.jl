@@ -33,23 +33,11 @@ function compute(params::WUE_VPDDayCo2, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{WUE_VPDDayCo2}) = "calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD"
+
 @doc """
-calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Estimate wue using WUE_VPDDayCo2
-
-*Inputs*
- - WUEat1hPa: the VPD at 1 hpa
- - forcing.f_VPD_day: daytime mean VPD [kPa]
-
-*Outputs*
- - land.diagnostics.WUENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
+$(getBaseDocString(WUE_VPDDayCo2))
 
 ---
 
@@ -60,7 +48,7 @@ Estimate wue using WUE_VPDDayCo2
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - Jake Nelson [jnelson]: for the typical values & ranges of WUEat1hPa  across fluxNet sites
  - skoirala
 """

@@ -1,4 +1,5 @@
 export combineMetric
+export getDataWithoutNaN
 export metricVector
 
 """
@@ -39,6 +40,34 @@ end
 
 
 """
+    getDataWithoutNaN(y, yσ, ŷ, idxs)
+    getDataWithoutNaN(y, yσ, ŷ)
+
+return model and obs data exluding for the common `NaN` or for the valid pixels `idxs`.
+
+# Arguments:
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
+- `idxs`: indices of valid data points    
+"""
+getDataWithoutNaN
+
+function getDataWithoutNaN(y, yσ, ŷ, idxs)
+    y_view = @view y[idxs] 
+    yσ_view = @view yσ[idxs] 
+    ŷ_view = @view ŷ[idxs] 
+    return (y_view, yσ_view, ŷ_view)
+end
+
+function getDataWithoutNaN(y, yσ, ŷ)
+    @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
+    idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because LandWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
+    return y[idxs], yσ[idxs], ŷ[idxs]
+end
+
+
+"""
     metricVector(model_output::LandWrapper, observations, cost_options)
     metricVector(model_output, observations, cost_options)
    
@@ -56,8 +85,9 @@ function metricVector(model_output, observations, cost_options)
         @debug "***cost for $(cost_option.variable)***"
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
+        (y, yσ, ŷ) = getDataWithoutNaN(y, yσ, ŷ, cost_option.valids)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        # (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
+        # (y, yσ, ŷ) = getDataWithoutNaN(y, yσ, ŷ, cost_option.valids)
         metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
             metr = oftype(metr, 1e19)
@@ -75,7 +105,7 @@ function metricVector(model_output::LandWrapper, observations, cost_options)
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ), size(idxs)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ) ## cannot use the valids because LandWrapper produces vector
+        (y, yσ, ŷ) = getDataWithoutNaN(y, yσ, ŷ) ## cannot use the valids because LandWrapper produces vector
         metr = metric(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
             metr = oftype(metr, 1e19)

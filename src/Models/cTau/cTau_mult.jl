@@ -36,29 +36,11 @@ function compute(params::cTau_mult, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTau_mult}) = "multiply all effects that change the turnover rates [k]"
+
 @doc """
-multiply all effects that change the turnover rates [k]
 
----
-
-# compute:
-Combine effects of different factors on decomposition rates using cTau_mult
-
-*Inputs*
- - land.diagnostics.c_eco_k:
- - land.diagnostics.c_eco_k_f_LAI: LAI stressor values on the the turnover rates
- - land.diagnostics.c_eco_k_f_soil_props: Soil texture stressor values on the the turnover rates
- - land.diagnostics.c_eco_k_f_soilT: Air temperature stressor values on the the turnover rates
- - land.diagnostics.fsoilW: Soil moisture stressor values on the the turnover rates
- - land.diagnostics.c_eco_k_f_veg_props: Vegetation type stressor values on the the turnover rates
-
-*Outputs*
- - land.cTau.c_eco_k: values for actual turnover rates
- - land.cTau.c_eco_k
-
-# Instantiate:
-Instantiate time-invariant variables for cTau_mult
-
+$(getBaseDocString(cTau_mult))
 
 ---
 
@@ -69,7 +51,7 @@ Instantiate time-invariant variables for cTau_mult
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
 *Notes:*

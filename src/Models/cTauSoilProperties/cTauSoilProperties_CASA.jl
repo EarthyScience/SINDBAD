@@ -42,27 +42,11 @@ function compute(params::cTauSoilProperties_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTauSoilProperties_CASA}) = "Compute soil texture effects on turnover rates [k] of cMicSoil"
+
 @doc """
-Compute soil texture effects on turnover rates [k] of cMicSoil
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Effect of soil texture on soil decomposition rates using cTauSoilProperties_CASA
-
-*Inputs*
- - land.properties.st_clay: values for clay soil texture
- - land.properties.st_silt: values for silt soil texture
-
-*Outputs*
- - land.diagnostics.c_eco_k_f_soil_props: Soil texture stressor values on the the turnover rates
-
-# Instantiate:
-Instantiate time-invariant variables for cTauSoilProperties_CASA
-
+$(getBaseDocString(cTauSoilProperties_CASA))
 
 ---
 
@@ -76,7 +60,7 @@ Instantiate time-invariant variables for cTauSoilProperties_CASA
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cTauSoilProperties_CASA

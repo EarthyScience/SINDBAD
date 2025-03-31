@@ -29,23 +29,11 @@ function compute(params::interception_fAPAR, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{interception_fAPAR}) = "computes canopy interception evaporation as a fraction of fAPAR"
+
 @doc """
-computes canopy interception evaporation as a fraction of fAPAR
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Interception evaporation using interception_fAPAR
-
-*Inputs*
- - land.states.fAPAR: fAPAR
-
-*Outputs*
- - land.fluxes.interception: interception loss
- - land.states.WBP: water balance pool [mm]
+$(getBaseDocString(interception_fAPAR))
 
 ---
 
@@ -57,7 +45,7 @@ Interception evaporation using interception_fAPAR
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
  - 1.1 on 29.11.2019 [skoirala]: land.states.fAPAR  
 
-*Created by:*
+*Created by*
  - mjung
 """
 interception_fAPAR

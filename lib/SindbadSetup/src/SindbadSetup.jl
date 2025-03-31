@@ -23,7 +23,7 @@ This package is designed to produce the SINDBAD `info` object, which contains al
 1. **`runtimeDispatchTypes.jl`**:
    - Defines runtime dispatch types used for configuring functions and their dispatches.
 
-2. **`defaultOptions.jl`**:
+2. **`default_options.jl`**:
    - Defines default configuration options for various optimization and global sensitivity analysis methods in SINDBAD.
 
 3. **`getConfiguration.jl`**:
@@ -97,7 +97,7 @@ module SindbadSetup
     @reexport using SindbadMetrics
 
     include("runtimeDispatchTypes.jl")
-    include("defaultOptions.jl")
+    include("default_options.jl")
     include("getConfiguration.jl")
     include("setupExperimentInfo.jl")
     include("setupTypes.jl")

@@ -17,19 +17,11 @@ function compute(params::gpp_transpirationWUE, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gpp_transpirationWUE}) = "calculate GPP based on transpiration & water use efficiency"
+
 @doc """
-calculate GPP based on transpiration & water use efficiency
 
----
-
-# compute:
-
-*Inputs*
- - land.diagnostics.WUE: water use efficiency in gC/mmH2O
- - land.fluxes.transpiration: actual transpiration
-
-*Outputs*
- - land.fluxes.gpp: actual GPP [gC/m2/time]
+$(getBaseDocString(gpp_transpirationWUE))
 
 ---
 
@@ -40,7 +32,7 @@ calculate GPP based on transpiration & water use efficiency
 *Versions*
  - 1.0 on 22.11.2023 [skoirala]
 
-*Created by:*
+*Created by*
  - mjung
  - skoirala
 

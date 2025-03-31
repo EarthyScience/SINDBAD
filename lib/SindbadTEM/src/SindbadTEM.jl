@@ -8,6 +8,7 @@ This package integrates various components and utilities required to execute the
 
 # Dependencies:
 - `ComponentArrays`: Used for managing complex, hierarchical data structures like land variables and model states.
+- `ConstructionBase`: Provides utilities for constructing and initializing custom data structures.
 - `InteractiveUtils`: Enables interactive exploration and debugging during development.
 - `NLsolve`: Used for solving nonlinear equations, particularly in spinup processes (e.g., fixed-point solvers).
 - `ProgressMeter`: Displays progress bars for long-running simulations, improving user feedback.
@@ -52,6 +53,7 @@ This package integrates various components and utilities required to execute the
 """
 module SindbadTEM
     using ComponentArrays
+    using ConstructionBase
     using InteractiveUtils
     using NLsolve
     using ProgressMeter

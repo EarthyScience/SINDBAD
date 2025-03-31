@@ -75,10 +75,7 @@ end
 
 
 function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::CMAEvolutionStrategyCMAES)
-    default_config = sindbadDefaultOptions(CMAEvolutionStrategyCMAES())
-    config = mergeNamedTuple(default_config, algo_options)
-
-    results = minimize(cost_function, default_values, 1; lower=lower_bounds, upper=upper_bounds, config...)
+    results = minimize(cost_function, default_values, 1; lower=lower_bounds, upper=upper_bounds, algo_options...)
     optim_para = xbest(results)
     return optim_para
 end

@@ -13,23 +13,11 @@ function define(params::gpp_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{gpp_none}) = "sets the actual GPP to zero"
+
 @doc """
-sets the actual GPP to zero
 
----
-
-# compute:
-Combine effects as multiplicative or minimum; if coupled, uses transup using gpp_none
-
-*Inputs*
- - helpers
-
-*Outputs*
- - land.fluxes.gpp: actual GPP [gC/m2/time]
-
-# Instantiate:
-Instantiate time-invariant variables for gpp_none
-
+$(getBaseDocString(gpp_none))
 
 ---
 
@@ -40,7 +28,7 @@ Instantiate time-invariant variables for gpp_none
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 gpp_none

@@ -2,7 +2,8 @@
   "method": "CMAES",
   "options": {
     "maxfevals": 5000,
-    "multi_threading": false
+    "multi_threading": false,
+    "parallel_evaluation": false
   },
   "package": "CMAEvolutionStrategy"
 }

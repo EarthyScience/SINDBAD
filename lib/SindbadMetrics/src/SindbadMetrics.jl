@@ -12,7 +12,6 @@ It has heavy usage in `SindbadOptimization` but the package is separated to redu
 # Dependencies:
 - `SindbadUtils`: Provides utility functions for handling data and NamedTuples, which are essential for metric calculations.
 - `StatsBase`: Supplies statistical functions such as `mean`, `percentile`, `cor`, and `corspearman` for computing metrics like correlation and distribution-based statistics.
-- `ConstructionBase`: Provides utilities for constructing and initializing custom data structures.
 
 # Included Files:
 1. **`metricTypes.jl`**:
@@ -59,7 +58,6 @@ It has heavy usage in `SindbadOptimization` but the package is separated to redu
 """
 module SindbadMetrics
 
-    using ConstructionBase
     using SindbadUtils
     using StatsBase: mean, percentile, cor, corspearman
 

@@ -13,12 +13,11 @@ function define(params::evaporation_none, forcing, land, helpers)
     return land
 end
 
-@doc """
-sets the soil evaporation to zero
+purpose(::Type{evaporation_none}) = "sets the soil evaporation to zero"
 
-# Instantiate:
-Instantiate time-invariant variables for evaporation_none
-    
+@doc """
+
+$(getBaseDocString(evaporation_none))
 
 ---
 

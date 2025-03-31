@@ -21,21 +21,11 @@ function compute(params::cAllocationSoilT_Friedlingstein1999, forcing, land, hel
     return land
 end
 
+purpose(::Type{cAllocationSoilT_Friedlingstein1999}) = "partial temperature effect on decomposition/mineralization based on Friedlingstein1999"
+
 @doc """
-partial temperature effect on decomposition/mineralization based on Friedlingstein1999
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - land.diagnostics.c_allocation_f_soilT: temperature effect on soil decomposition
-
-*Outputs*
- - land.diagnostics.c_allocation_f_soilT: temperature stressor on carbon allocation
+$(getBaseDocString(cAllocationSoilT_Friedlingstein1999))
 
 ---
 
@@ -47,7 +37,7 @@ $(SindbadParameters)
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cAllocationSoilT_Friedlingstein1999

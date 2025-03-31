@@ -35,53 +35,11 @@ function compute(params::rainSnow_Tair, forcing, land, helpers)
     return land
 end
 
-function update(params::rainSnow_Tair, forcing, land, helpers)
-    @unpack_rainSnow_Tair params
-
-    ## unpack variables
-    @unpack_nt begin
-        snowW ⇐ land.pools
-        ΔsnowW ⇐ land.pools
-    end
-
-    ## update variables
-    # update snow pack
-    snowW[1] = snowW[1] + ΔsnowW[1]
-
-    # reset delta storage	
-    ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
-
-    ## pack land variables
-    @pack_nt begin
-        snowW ⇒ land.pools
-        # ΔsnowW ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{rainSnow_Tair}) = "separates the rain & snow based on temperature threshold"
 
 @doc """
-separates the rain & snow based on temperature threshold
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Set rain and snow to fe.rainsnow. using rainSnow_Tair
-
-*Inputs*
- - forcing.f_rain
- - forcing.f_airT
-
-*Outputs*
- - land.fluxes.rain: liquid rainfall from forcing input
- - land.fluxes.snow: snowfall estimated as the rain when airT <  threshold
-
-# update
-
-update pools and states in rainSnow_Tair
-
+$(getBaseDocString(rainSnow_Tair))
 
 ---
 
@@ -92,7 +50,7 @@ update pools and states in rainSnow_Tair
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: creation of approach  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 rainSnow_Tair

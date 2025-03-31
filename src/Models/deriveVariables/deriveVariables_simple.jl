@@ -10,17 +10,13 @@ function compute(params::deriveVariables_simple, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{deriveVariables_simple}) = "derives variables from other sindbad models and saves them into land.deriveVariables"
+
 @doc """
-derives variables from other sindbad models and saves them into land.deriveVariables
 
----
+$(getBaseDocString(deriveVariables_simple))
 
-# compute:
-
-*Inputs*
-
-*Outputs*
-
+----
 
 # Extended help
 
@@ -29,7 +25,7 @@ derives variables from other sindbad models and saves them into land.deriveVaria
 *Versions*
  - 1.0 on 19.07.2023 [skoirala]:
 
-*Created by:*
+*Created by*
  - skoirala
 """
 deriveVariables_simple

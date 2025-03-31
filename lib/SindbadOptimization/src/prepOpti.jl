@@ -43,7 +43,7 @@ function getCostVectorSize(algo_options, param_vector, ::CMAEvolutionStrategyCMA
 end
 
 function getCostVectorSize(algo_options, param_vector, ::GlobalSensitivityMorris)
-    default_opt = sindbadDefaultOptions(GlobalSensitivityMorris())
+    default_opt = sindbad_default_options(GlobalSensitivityMorris())
     num_trajectory = default_opt.num_trajectory
     len_design_mat = default_opt.len_design_mat
     if hasproperty(algo_options, :num_trajectory)
@@ -58,7 +58,7 @@ end
 
 
 function getCostVectorSize(algo_options, param_vector, ::GlobalSensitivitySobol)
-    default_opt = sindbadDefaultOptions(GlobalSensitivitySobol())
+    default_opt = sindbad_default_options(GlobalSensitivitySobol())
     samples = default_opt.samples
     nparam = length(param_vector)
     norder = length(algo_options.method_options.order) - 1
