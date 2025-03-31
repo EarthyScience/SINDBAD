@@ -49,6 +49,6 @@ $(getBaseDocString(rootMaximumDepth_fracSoilD))
  - 1.0 on 21.11.2019  
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 rootMaximumDepth_fracSoilD

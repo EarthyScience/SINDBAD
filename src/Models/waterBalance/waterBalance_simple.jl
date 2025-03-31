@@ -72,9 +72,9 @@ $(getBaseDocString(waterBalance_simple))
 
 *Versions*
  - 1.0 on 11.11.2019
- - 1.1 on 20.11.2019 [skoirala]:
+ - 1.1 on 20.11.2019 [skoirala | @dr-ko]:
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 waterBalance_simple

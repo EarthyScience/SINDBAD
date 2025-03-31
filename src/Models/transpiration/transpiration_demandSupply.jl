@@ -30,10 +30,10 @@ $(getBaseDocString(transpiration_demandSupply))
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 
 *Notes*
  - ignores biological limitation of transpiration demand

@@ -60,7 +60,7 @@ $(getBaseDocString(soilTexture_forcing))
  - 1.0 on 21.11.2019  
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 
 *Notes*
  - if not; then sets the average of all as the fixed property of all layers

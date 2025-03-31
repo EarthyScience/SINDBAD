@@ -1,4 +1,12 @@
 export cBiomass
+
 abstract type cBiomass <: LandEcosystem end
 
-include("cBiomass_treeGrass.jl")
+purpose(::Type{cBiomass}) = "Compute aboveground_biomass"
+
+includeApproaches(cBiomass, @__DIR__)
+
+@doc """ 
+        $(getBaseDocString(cBiomass))
+"""
+cBiomass

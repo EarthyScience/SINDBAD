@@ -31,9 +31,9 @@ $(getBaseDocString(LAI_constant))
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: cleaned up the code  
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 LAI_constant

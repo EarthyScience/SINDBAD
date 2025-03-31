@@ -52,11 +52,11 @@ $(getBaseDocString(runoffSaturationExcess_Zhang2008))
  - a combination of eq 14 & eq 15 in zhang et al 2008
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: cleaned up the code  
 
 *Created by*
  - mjung
- - skoirala
+ - skoirala | @dr-ko
 
 *Notes*
  - is supposed to work over multiple time scales. it represents the  "fast" | "direct" runoff & thus it"s conceptually not really  consistent with "saturation runoff". it basically lumps saturation runoff  & interflow; i.e. if using this approach for saturation runoff it would  be consistent to set interflow to none
