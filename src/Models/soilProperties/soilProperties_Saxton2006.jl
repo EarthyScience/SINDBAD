@@ -130,11 +130,11 @@ $(getBaseDocString(soilProperties_Saxton2006))
 
 *Versions*
  - 1.0 on 21.11.2019
- - 1.1 on 03.12.2019 [skoirala]: handling potentail vertical distribution of soil texture  
+ - 1.1 on 03.12.2019 [skoirala | @dr-ko]: handling potentail vertical distribution of soil texture  
 
 *Created by*
  - Nuno Carvalhais [ncarvalhais]
- - skoirala
+ - skoirala | @dr-ko
 """
 soilProperties_Saxton2006
 
@@ -156,11 +156,11 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
  - Saxton, K. E., & Rawls, W. J. (2006). Soil water characteristic estimates by  texture & organic matter for hydrologic solutions.  Soil science society of America Journal, 70[5], 1569-1578.
 
 # Versions:
- - 1.0 on 22.11.2019 [skoirala]:
- - 1.1 on 03.12.2019 [skoirala]: included the option to handle lookup table when set to true  from model_run.json  
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]:
+ - 1.1 on 03.12.2019 [skoirala | @dr-ko]: included the option to handle lookup table when set to true  from model_run.json  
 
 # Created by
- - skoirala
+ - skoirala | @dr-ko
 
 # Notes:
  - This function is a part of pSoil; but making the looking up table & setting the soil  properties is handled by soilWBase [by calling this function]
@@ -207,10 +207,10 @@ calculates the soil hydraulic properties based on Saxton 2006
  - Saxton, K. E., & Rawls, W. J. (2006). Soil water characteristic estimates by  texture & organic matter for hydrologic solutions.  Soil science society of America Journal, 70[5], 1569-1578.
 
 # Versions:
- - 1.0 on 22.11.2019 [skoirala]:
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]:
 
 # Created by
- - skoirala
+ - skoirala | @dr-ko
 
 # Notes:
  - _fc: Field Capacity moisture [33 kPa], #v  

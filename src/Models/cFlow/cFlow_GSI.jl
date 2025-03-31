@@ -172,8 +172,8 @@ $(getBaseDocString(cFlow_GSI))
 
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]
- - 1.1 on 05.02.2021 [skoirala]: changes with stressors & smoothing as well as handling the activation of leaf/root to reserve | reserve to leaf/root switches. Adjustment of total flow rates [cTau] of relevant pools  
- - 1.1 on 05.02.2021 [skoirala]: move code from dyna. Add table etc.  
+ - 1.1 on 05.02.2021 [skoirala | @dr-ko]: changes with stressors & smoothing as well as handling the activation of leaf/root to reserve | reserve to leaf/root switches. Adjustment of total flow rates [cTau] of relevant pools  
+ - 1.1 on 05.02.2021 [skoirala | @dr-ko]: move code from dyna. Add table etc.  
 
 *Created by*
  - ncarvalhais, sbesnard, skoirala

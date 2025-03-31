@@ -44,9 +44,9 @@ $(getBaseDocString(WUE_expVPDDayCo2))
 *References*
 
 *Versions*
- - 1.0 on 31.03.2021 [skoirala]
+ - 1.0 on 31.03.2021 [skoirala | @dr-ko]
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 WUE_expVPDDayCo2

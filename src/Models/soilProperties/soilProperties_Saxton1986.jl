@@ -99,15 +99,6 @@ function precompute(params::soilProperties_Saxton1986, forcing, land, helpers)
     return land
 end
 
-
-purpose(::Type{soilProperties_Saxton1986}) = "assigns the soil hydraulic properties based on Saxton; 1986 to land.soilProperties.sp_"
-
-@doc """
-
-$(getBaseDocString(soilProperties_Saxton1986))
-
-# Extended help
-"""
 function unsatK(land, helpers, sl, ::kSaxton1986)
     @unpack_nt begin
         (st_clay, st_sand) ⇐ land.properties
@@ -179,3 +170,26 @@ function calcPropsSaxton1986(params::soilProperties_Saxton1986, land, helpers, s
     ## pack land variables
     return α, β, K, θ, ψ
 end
+
+
+purpose(::Type{soilProperties_Saxton1986}) = "assigns the soil hydraulic properties based on Saxton; 1986"
+
+@doc """
+
+$(getBaseDocString(soilProperties_Saxton1986))
+
+---
+
+# Extended help
+
+*References*
+- Saxton, K. E., Rawls, W., Romberger, J. S., & Papendick, R. I. (1986). Estimating generalized soil‐water characteristics from texture. Soil science society of America Journal, 50(4), 1031-1036.
+
+*Versions*
+ - 1.0 on 21.11.2019
+ - 1.1 on 03.12.2019 [skoirala | @dr-ko]: handling potentail vertical distribution of soil texture  
+
+*Created by*
+ - skoirala | @dr-ko
+"""
+soilProperties_Saxton1986

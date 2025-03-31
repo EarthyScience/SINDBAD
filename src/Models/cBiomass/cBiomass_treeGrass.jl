@@ -19,23 +19,21 @@ function compute(params::cBiomass_treeGrass, forcing, land, helpers)
     return land
 end
 
+
+purpose(::Type{cBiomass_treeGrass}) = "This serves the in situ optimization of eddy covariance sites when using AGB as a constraint. In locations where tree cover is not zero, AGB = leaf + wood. In locations where is only grass, there are no observational constraints for AGB. AGB from EO mostly refers to forested locations. To ensure that the parameter set that emerges from optimization does not generate wood, while not assuming any prior on mass of leafs, the aboveground biomass of grasses is set to the wood value, that will be constrained against a pseudo-observational value close to 0. One expects that after optimization, cVegWood_sum will be close to 0 in locations where frac_tree = 0."
+
 @doc """
-Compute aboveground_biomass
 
-    This serves the in situ optimization of eddy covariance sites when using AGB as a constraint. In locations where tree cover is not zero, AGB = leaf + wood. In locations where is only grass, there are no observational constraints for AGB. AGB from EO mostly refers to forested locations. To ensure that the parameter set that emerges from optimization does not generate wood, while not assuming any prior on mass of leafs, the aboveground biomass of grasses is set to the wood value, that will be constrained against a pseudo-observational value close to 0. One expects that after optimization, cVegWood_sum will be close to 0 in locations where frac_tree = 0.
-
-# Parameters
-$(SindbadParameters)
+$(getBaseDocString(cBiomass_treeGrass))
 
 ---
 
-Inputs:
-- frac_tree
-- cVegWood
-- cVegLeaf
+# Extended help
 
-Outputs:
-- aboveground_biomass
+*References*
 
+*Versions*
+
+*Created by*
 """
 cBiomass_treeGrass
