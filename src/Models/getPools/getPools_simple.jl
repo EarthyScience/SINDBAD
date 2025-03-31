@@ -28,19 +28,11 @@ function compute(params::getPools_simple, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{getPools_simple}) = "gets the amount of water available for the current time step"
+
 @doc """
-gets the amount of water available for the current time step
 
----
-
-# compute:
-Get the amount of water at the beginning of timestep using getPools_simple
-
-*Inputs*
- - amount of rainfall
-
-*Outputs*
- - land.states.WBP: the amount of liquid water input to the system
+$(getBaseDocString(getPools_simple))
 
 ---
 
@@ -51,7 +43,7 @@ Get the amount of water at the beginning of timestep using getPools_simple
 *Versions*
  - 1.0 on 19.11.2019 [skoirala]: added the documentation & cleaned the code, added json with development stage
 
-*Created by:*
+*Created by*
  - mjung
  - ncarvalhais
  - skoirala

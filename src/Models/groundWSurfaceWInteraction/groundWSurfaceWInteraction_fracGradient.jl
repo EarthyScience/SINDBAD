@@ -32,54 +32,11 @@ function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land,
     return land
 end
 
-function update(params::groundWSurfaceWInteraction_fracGradient, forcing, land, helpers)
-    ## unpack variables
-    @unpack_nt begin
-        (groundW, surfaceW) ⇐ land.pools
-        (ΔgroundW, ΔsurfaceW) ⇐ land.states
-    end
-
-    ## update storage pools
-    surfaceW .= surfaceW .+ ΔsurfaceW
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔgroundW and ΔsurfaceW to zero
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (groundW, ΔgroundW, surfaceW, ΔsurfaceW) ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{groundWSurfaceWInteraction_fracGradient}) = "calculates the moisture exchange between groundwater & surface water as a fraction of difference between the storages"
 
 @doc """
-calculates the moisture exchange between groundwater & surface water as a fraction of difference between the storages
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Water exchange between surface and groundwater using groundWSurfaceWInteraction_fracGradient
-
-*Inputs*
- - land.pools.groundW: groundwater storage
- - land.pools.surfaceW: surface water storage
-
-*Outputs*
- - land.fluxes.groundW2surfaceW:
- - negative: surfaceW to groundW
- - positive: groundW to surfaceW
-
-# update
-
-update pools and states in groundWSurfaceWInteraction_fracGradient
-
- - land.pools.groundW
- - land.pools.surfaceW
+$(getBaseDocString(groundWSurfaceWInteraction_fracGradient))
 
 ---
 
@@ -90,7 +47,7 @@ update pools and states in groundWSurfaceWInteraction_fracGradient
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]
 
-*Created by:*
+*Created by*
  - skoirala
 """
 groundWSurfaceWInteraction_fracGradient

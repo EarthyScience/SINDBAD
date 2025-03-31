@@ -24,12 +24,11 @@ function define(params::cFlowVegProperties_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cFlowVegProperties_none}) = "set transfer between pools to 0 [i.e. nothing is transfered]"
+
 @doc """
-set transfer between pools to 0 [i.e. nothing is transfered]
 
-# Instantiate:
-Instantiate time-invariant variables for cFlowVegProperties_none
-
+$(getBaseDocString(cFlowVegProperties_none))
 
 ---
 

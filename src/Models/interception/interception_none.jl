@@ -13,12 +13,11 @@ function define(params::interception_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{interception_none}) = "sets the interception evaporation to zero"
+
 @doc """
-sets the interception evaporation to zero
 
-# Instantiate:
-Instantiate time-invariant variables for interception_none
-
+$(getBaseDocString(interception_none))
 
 ---
 

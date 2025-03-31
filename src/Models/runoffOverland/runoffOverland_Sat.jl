@@ -15,19 +15,11 @@ function compute(params::runoffOverland_Sat, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{runoffOverland_Sat}) = "assumes overland flow to be saturation excess runoff"
+
 @doc """
-assumes overland flow to be saturation excess runoff
 
----
-
-# compute:
-Land over flow (sum of saturation and infiltration excess runoff) using runoffOverland_Sat
-
-*Inputs*
- - land.fluxes.sat_excess_runoff: saturation excess runoff
-
-*Outputs*
- - land.fluxes.overland_runoff : runoff over land [mm/time]
+$(getBaseDocString(runoffOverland_Sat))
 
 ---
 
@@ -38,7 +30,7 @@ Land over flow (sum of saturation and infiltration excess runoff) using runoffOv
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 runoffOverland_Sat

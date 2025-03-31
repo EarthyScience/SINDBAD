@@ -40,22 +40,11 @@ function compute(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocationSoilT_gppGSI}) = "temperature effect on allocation from same for GPP based on GSI approach"
+
 @doc """
-temperature effect on allocation from same for GPP based on GSI approach
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - land.diagnostics.c_allocation_f_soilT_prev: temperature stressor from previous time step
- - land.diagnostics.gpp_f_airT: temperature stressors on GPP
-
-*Outputs*
- - land.diagnostics.c_allocation_f_soilT: temperature effect on decomposition/mineralization (0-1)
+$(getBaseDocString(cAllocationSoilT_gppGSI))
 
 ---
 
@@ -69,7 +58,7 @@ $(SindbadParameters)
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais & sbesnard
 """
 cAllocationSoilT_gppGSI

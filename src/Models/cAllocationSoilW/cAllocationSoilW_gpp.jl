@@ -16,18 +16,11 @@ function compute(params::cAllocationSoilW_gpp, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cAllocationSoilW_gpp}) = "moisture effect on allocation = the same as gpp"
+
 @doc """
-moisture effect on allocation = the same as gpp
 
----
-
-# compute:
-
-*Inputs*
- - land.diagnostics.gpp_f_soilW: moisture stressor on GPP
-
-*Outputs*
- - land.diagnostics.c_allocation_f_soilW: moisture effect on allocation
+$(getBaseDocString(cAllocationSoilW_gpp))
 
 ---
 
@@ -38,7 +31,7 @@ moisture effect on allocation = the same as gpp
 *Versions*
  - 1.0 on 26.01.2021 [skoirala]  
 
-*Created by:*
+*Created by*
  - skoirala
 """
 cAllocationSoilW_gpp

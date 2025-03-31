@@ -58,54 +58,11 @@ function compute(params::groundWSoilWInteraction_gradient, forcing, land, helper
     return land
 end
 
-function update(params::groundWSoilWInteraction_gradient, forcing, land, helpers)
-    ## unpack variables
-    @unpack_nt begin
-        (soilW, groundW) ⇐ land.pools
-        (ΔsoilW, ΔgroundW) ⇐ land.states
-    end
-
-    ## update storage pools
-    soilW[end] = soilW[end] + ΔsoilW[end]
-    groundW .= groundW .+ ΔgroundW
-
-    # reset ΔsoilW[end] and ΔgroundW to zero
-    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-
-    ## pack land variables
-    @pack_nt begin
-        (groundW, soilW) ⇒ land.pools
-        (ΔsoilW, ΔgroundW) ⇒ land.pools
-    end
-    return land
-end
+purpose(::Type{groundWSoilWInteraction_gradient}) = "calculates a buffer storage that gives water to the soil when the soil dries up; while the soil gives water to the buffer when the soil is wet but the buffer low"
 
 @doc """
-calculates a buffer storage that gives water to the soil when the soil dries up; while the soil gives water to the buffer when the soil is wet but the buffer low
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Groundwater soil moisture interactions (capilary flux) using groundWSoilWInteraction_gradient
-
-*Inputs*
- - info : length(land.pools.soilW) = number of soil layers
- - land.groundWSoilWInteraction.p_gwmax : maximum storage capacity of the groundwater
- - land.properties.w_sat : maximum storage capacity of soil [mm]
-
-*Outputs*
- - land.fluxes.GW2Soil : flux between groundW & soilW (positive from groundwater to soil, and negative from soil to groundwater)
-
-# update
-
-update pools and states in groundWSoilWInteraction_gradient
-
- - land.pools.groundW
- - land.pools.soilW
+$(getBaseDocString(groundWSoilWInteraction_gradient))
 
 ---
 
@@ -116,7 +73,7 @@ update pools and states in groundWSoilWInteraction_gradient
 *Versions*
  - 1.0 on 04.02.2020 [ttraut]
 
-*Created by:*
+*Created by*
  - ttraut
 """
 groundWSoilWInteraction_gradient

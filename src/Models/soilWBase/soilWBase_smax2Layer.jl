@@ -55,31 +55,11 @@ function compute(params::soilWBase_smax2Layer, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{soilWBase_smax2Layer}) = "defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the model_structure.json based on the older version of the Pre-Tokyo Model"
+
 @doc """
-defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the model_structure.json based on the older version of the Pre-Tokyo Model
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Distribution of soil hydraulic properties over depth using soilWBase_smax2Layer
-
-*Inputs*
- - helpers.pools.: soil layers & depths
-
-*Outputs*
- - land.properties.p_nsoilLayers
- - land.properties.soil_layer_thickness
- - land.properties.w_awc: = land.properties.w_sat
- - land.properties.w_fc : = land.properties.w_sat
- - land.properties.w_sat: w_sat = smax for 2 soil layers
- - land.properties._wp: wilting point set to zero for all layers
-
-# Instantiate:
-Instantiate time-invariant variables for soilWBase_smax2Layer
-
+$(getBaseDocString(soilWBase_smax2Layer))
 
 ---
 
@@ -90,7 +70,7 @@ Instantiate time-invariant variables for soilWBase_smax2Layer
 *Versions*
  - 1.0 on 09.01.2020 [ttraut]: clean up & consistency  
 
-*Created by:*
+*Created by*
  - ttraut
 """
 soilWBase_smax2Layer

@@ -36,25 +36,11 @@ function compute(params::cAllocationNutrients_Friedlingstein1999, forcing, land,
     return land
 end
 
+purpose(::Type{cAllocationNutrients_Friedlingstein1999}) = "pseudo-nutrient limitation calculation based on Friedlingstein1999"
+
 @doc """
-pseudo-nutrient limitation calculation based on Friedlingstein1999
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-
-*Inputs*
- - land.fluxes.PET: values for potential evapotranspiration
- - land.diagnostics.c_allocation_f_soilT: values for partial computation for the temperature effect on  decomposition/mineralization
- - land.diagnostics.c_allocation_f_soilW: values for partial computation for the moisture effect on  decomposition/mineralization
- - land.properties.∑w_awc: sum of water available capacity
- - land.states.PAW: values for maximum fraction of water that root can uptake from soil layers as constant
-
-*Outputs*
- - land.diagnostics.c_allocation_f_W_N: nutrient limitation on cAllocation
+$(getBaseDocString(cAllocationNutrients_Friedlingstein1999))
 
 ---
 
@@ -69,7 +55,7 @@ $(SindbadParameters)
  *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cAllocationNutrients_Friedlingstein1999

@@ -2,12 +2,11 @@ export cCycleConsistency
 
 abstract type cCycleConsistency <: LandEcosystem end
 
-include("cCycleConsistency_simple.jl")
+purpose(::Type{cCycleConsistency}) = "Consistency checks on the c allocation and transfers between pools"
 
-@doc """
-Consistency checks on the c allocation and transfers between pools
+includeApproaches(cCycleConsistency, @__DIR__)
 
-# Approaches:
- - simple: check consistency in cCycle matrix: c_allocation; cFlow
+@doc """ 
+	$(getBaseDocString(cCycleConsistency))
 """
 cCycleConsistency

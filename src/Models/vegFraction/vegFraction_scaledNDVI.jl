@@ -23,22 +23,11 @@ function compute(params::vegFraction_scaledNDVI, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{vegFraction_scaledNDVI}) = "sets the value of frac_vegetation by scaling the NDVI value"
+
 @doc """
-sets the value of frac_vegetation by scaling the NDVI value
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Fractional coverage of vegetation using vegFraction_scaledNDVI
-
-*Inputs*
- - land.states.NDVI : current NDVI value
-
-*Outputs*
- - land.states.frac_vegetation: current vegetation fraction
+$(getBaseDocString(vegFraction_scaledNDVI))
 
 ---
 
@@ -49,7 +38,7 @@ Fractional coverage of vegetation using vegFraction_scaledNDVI
 *Versions*
  - 1.1 on 29.04.2020 [sbesnard]: new module  
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 vegFraction_scaledNDVI

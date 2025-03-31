@@ -122,8 +122,8 @@ foreach(costOpt) do var_row
     opt_var = opt_var[tspan, 1, 1, 1]
 
     xdata = [info.helpers.dates.range[tspan]...]
-    obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
-    obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
+    obs_var_n, obs_σ_n, def_var_n = getDataWithoutNaN(obs_var, obs_σ, def_var)
+    obs_var_n, obs_σ_n, opt_var_n = getDataWithoutNaN(obs_var, obs_σ, opt_var)
     metr_def = metric(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = metric(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
     plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)

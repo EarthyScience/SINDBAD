@@ -2,16 +2,11 @@ export LAI
 
 abstract type LAI <: LandEcosystem end
 
-include("LAI_constant.jl")
-include("LAI_cVegLeaf.jl")
-include("LAI_forcing.jl")
+purpose(::Type{LAI}) = "Leaf area index"
 
-@doc """
-Leaf area index
+includeApproaches(LAI, @__DIR__)
 
-# Approaches:
- - constant: sets the value of LAI as a constant
- - cVegLeaf: sets the value of land.states.LAI from the carbon in the leaves of the previous time step
- - forcing: sets the value of land.states.LAI from the forcing in every time step
+@doc """ 
+	$(getBaseDocString(LAI))
 """
 LAI

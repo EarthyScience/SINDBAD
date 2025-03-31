@@ -13,12 +13,11 @@ function define(params::cTauSoilW_none, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cTauSoilW_none}) = "set the moisture stress for all carbon pools to ones"
+
 @doc """
-set the moisture stress for all carbon pools to ones
 
-# Instantiate:
-Instantiate time-invariant variables for cTauSoilW_none
-
+$(getBaseDocString(cTauSoilW_none))
 
 ---
 

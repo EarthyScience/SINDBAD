@@ -62,34 +62,11 @@ function compute(params::cCycle_CASA, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cCycle_CASA}) = "Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools"
+
 @doc """
-Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools
 
----
-
-# compute:
-Allocate carbon to vegetation components using cCycle_CASA
-
-*Inputs*
- - land.diagnostics.c_eco_τ: carbon allocation matrix
- - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
- - land.cFlow.p_giver: c_giver pool array
- - land.cFlow.p_taker: c_taker pool array
- - land.fluxes.gpp: values for gross primary productivity
- - land.diagnostics.c_allocation: carbon allocation matrix
-
-*Outputs*
- - land.diagnostics.c_eco_k: decay rates for the carbon pool at each time step
- - land.fluxes.c_eco_npp: values for net primary productivity
- - land.fluxes.auto_respiration: values for autotrophic respiration
- - land.fluxes.eco_respiration: values for ecosystem respiration
- - land.fluxes.hetero_respiration: values for heterotrophic respiration
- - land.pools.cEco: values for the different carbon pools
- - land.states.c_eco_efflux:
-
-# Instantiate:
-Instantiate time-invariant variables for cCycle_CASA
-
+$(getBaseDocString(cCycle_CASA))
 
 ---
 
@@ -103,7 +80,7 @@ Instantiate time-invariant variables for cCycle_CASA
 *Versions*
  - 1.0 on 28.02.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cCycle_CASA
@@ -136,7 +113,7 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
   - 1.0 on 01.05.2018
   - 1.1 on 29.10.2019: fixed the wrong removal of a dimension by squeeze on  Bt & At when nPix == 1 [single point simulation]
 
-# Created by:
+# Created by
 
   - ncarvalhais
   - skoirala
