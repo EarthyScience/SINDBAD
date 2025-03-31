@@ -5,7 +5,7 @@ using Plots
 toggleStackTraceNT()
 
 site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
-# site_index = 186
+# site_index = 120
 # site_index = Base.parse(Int, ARGS[1])
 forcing_set = "erai"
 site_info = CSV.File(
@@ -94,22 +94,20 @@ parallelization_lib = "threads"
 exp_main = "wroasted_v202503"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
-opti_set = (:set1,)
+opti_set = (:set1, :set3, :set9)
 # opti_set = (:set3,)
-o_set = :set1
+# o_set = :set1
 optimize_it = true;
-# for o_set in opti_set
+for o_set in opti_set
     path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
 
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
     replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
         "experiment.basics.config_files.forcing" => forcing_config,
-        "experiment.basics.config_files.optimization" => "optimization_zarr.json",
         "experiment.basics.domain" => domain,
         "experiment.basics.name" => exp_name,
         "experiment.basics.time.date_end" => end_year * "-12-31",
-        "experiment.exe_rules.input_data_backend" => "zarr",
         "experiment.flags.run_optimization" => optimize_it,
         "experiment.flags.calc_cost" => true,
         "experiment.flags.catch_model_errors" => true,
@@ -117,7 +115,6 @@ optimize_it = true;
         "experiment.flags.debug_model" => false,
         "experiment.model_spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
-        "forcing.subset.site" => [site_index,site_index],
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => parallelization_lib,
         "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES_mt.json",
@@ -169,6 +166,7 @@ optimize_it = true;
         ml_var = ml_dat
         obs_var_TMP = obs_var[:, 1, 1, 1]
         non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
+        tspan = 1:length(obs_var_TMP)
         if length(non_nan_index) < 2
             tspan = 1:length(obs_var_TMP)
         else
@@ -232,4 +230,4 @@ optimize_it = true;
             end
         end
     end
-# end
+end
