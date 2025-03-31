@@ -7,7 +7,7 @@ toggleStackTraceNT()
 # site_index = 69
 site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
 # site_index = Base.parse(Int, ARGS[1])
-# site_index = 186
+# site_index = 36
 
 forcing_set = "erai"
 site_info = CSV.File(
@@ -98,10 +98,10 @@ exp_main = "fw_wroasted_v202503"
 
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
-opti_set = (:set1,)
+opti_set = (:set1, :set2, :set3)
 optimize_it = false;
 o_set = :set1
-# for o_set in opti_set
+for o_set in opti_set
     path_params = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main_params)_sjindbad/$(forcing_set)/$(o_set)"
     path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
     exp_name_params = "$(exp_main_params)_$(forcing_set)_$(o_set)"
@@ -193,10 +193,11 @@ o_set = :set1
         metr_opt = metric(obs_var[valids], obs_σ[valids], opt_var[valids], lossMetric)
 
         plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-        plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, size=(2000, 1000), title="$(domain):: $(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric))), $(forcing_set), $(o_set)" )
+        plot!(xdata, opt_var; label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, size=(2000, 1000), title="$(domain):: $(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric))), $(forcing_set), $(o_set)" )
         plot!(xdata, ml_var; label="matlab ($(round(metr_ml, digits=2)))", lw=1.5, ls=:dash)
         savefig(fig_prefix * "_$(v)_$(forcing_set).png")
     end
+    
 
     # save the outcubes
     output_array_opt = values(opt_dat)
@@ -232,4 +233,4 @@ o_set = :set1
             end
         end
     end
-# end
+end
