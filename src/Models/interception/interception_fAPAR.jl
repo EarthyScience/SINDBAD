@@ -43,7 +43,7 @@ $(getBaseDocString(interception_fAPAR))
 
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
- - 1.1 on 29.11.2019 [skoirala]: land.states.fAPAR  
+ - 1.1 on 29.11.2019 [skoirala | @dr-ko]: land.states.fAPAR  
 
 *Created by*
  - mjung

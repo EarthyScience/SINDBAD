@@ -408,6 +408,26 @@ cAllocationTreeFraction_Friedlingstein1999
 
 :::
 
+### cBiomass
+
+```@docs
+cBiomass
+```
+:::details cBiomass approaches
+
+:::tabs
+
+== cBiomass_simple
+```@docs
+cBiomass_simple
+```
+== cBiomass_treeGrass
+```@docs
+cBiomass_treeGrass
+```
+
+:::
+
 ### cCycle
 
 ```@docs
@@ -684,6 +704,22 @@ cTauVegProperties_none
 
 :::
 
+### cVegetationDieOff
+
+```@docs
+cVegetationDieOff
+```
+:::details cVegetationDieOff approaches
+
+:::tabs
+
+== cVegetationDieOff_forcing
+```@docs
+cVegetationDieOff_forcing
+```
+
+:::
+
 ### capillaryFlow
 
 ```@docs
@@ -812,6 +848,10 @@ fAPAR_LAI
 == fAPAR_cVegLeaf
 ```@docs
 fAPAR_cVegLeaf
+```
+== fAPAR_cVegLeafBareFrac
+```@docs
+fAPAR_cVegLeafBareFrac
 ```
 == fAPAR_constant
 ```@docs
@@ -1863,4 +1903,3 @@ end
 ```@autodocs
 Modules = [Sindbad.Models]
 Public = false
-```

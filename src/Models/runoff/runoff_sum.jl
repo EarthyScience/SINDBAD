@@ -47,6 +47,6 @@ $(getBaseDocString(runoff_sum))
  - 1.0 on 01.04.2022  
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 runoff_sum

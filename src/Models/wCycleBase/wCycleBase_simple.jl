@@ -141,9 +141,9 @@ $(getBaseDocString(wCycleBase_simple))
 *References*
 
 *Versions*
- - 1.0 on 18.07.2023 [skoirala]
+ - 1.0 on 18.07.2023 [skoirala | @dr-ko]
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 wCycleBase_simple

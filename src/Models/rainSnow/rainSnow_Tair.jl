@@ -48,9 +48,9 @@ $(getBaseDocString(rainSnow_Tair))
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: creation of approach  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: creation of approach  
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 rainSnow_Tair

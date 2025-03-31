@@ -57,10 +57,10 @@ $(getBaseDocString(rootWaterUptake_topBottom))
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala]
+ - 1.0 on 18.11.2019 [skoirala | @dr-ko]
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 
 *Notes*
  - assumes that the uptake is prioritized from top to bottom; irrespective of root fraction of the layers

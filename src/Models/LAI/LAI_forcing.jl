@@ -25,9 +25,9 @@ $(getBaseDocString(LAI_forcing))
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: moved LAI from land.LAI.LAI to land.states.LAI  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: moved LAI from land.LAI.LAI to land.states.LAI  
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 LAI_forcing
