@@ -25,3 +25,6 @@ Reexport = "1.2.2"
 YAXArrayBase = "0.7.5"
 YAXArrays = "0.6.0"
 Zarr = "0.9.4"
+
+[sources]
+SindbadUtils = { path = "../../lib/SindbadUtils"}
