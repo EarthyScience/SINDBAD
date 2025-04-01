@@ -37,25 +37,22 @@ This package is designed to streamline the ingestion and preprocessing of input 
 
 # Examples:
 1. **Reading forcing data**:
-    ```julia
-    using SindbadData
-
-    forcing_data = getForcing("forcing_file.nc")
-    ```
+```julia
+using SindbadData
+forcing_data = getForcing("forcing_file.nc")
+```
 
 2. **Processing observational data**:
-    ```julia
-    using SindbadData
-
-    observations = getObservation("observation_file.nc")
-    ```
+```julia
+using SindbadData
+observations = getObservation("observation_file.nc")
+```
 
 3. **Cleaning and masking data**:
-    ```julia
-    using SindbadData
-
-    cleaned_data = cleanData(raw_data, mask)
-    ```
+```julia
+using SindbadData
+cleaned_data = cleanData(raw_data, mask)
+```
 """
 module SindbadData
     using Reexport: @reexport

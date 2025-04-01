@@ -185,6 +185,7 @@ This function dynamically includes all approach files associated with a specific
 ```julia
 # Include approaches for the `ambientCO2` model
 includeApproaches(ambientCO2, "/path/to/approaches")
+```
 """
 function includeApproaches(modl, dir)
     include.(filter(contains("$(nameof(modl))_"), readdir(dir; join=true)))

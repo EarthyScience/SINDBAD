@@ -1900,6 +1900,8 @@ DocTestSetup= quote
 using Sindbad.Models
 end
 ```
+
 ```@autodocs
 Modules = [Sindbad.Models]
 Public = false
+```

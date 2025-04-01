@@ -20,5 +20,5 @@ open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
     end
     write(o_file, "## Internal\n\n")
     write(o_file, "```@meta\nCollapsedDocStrings = true\nDocTestSetup= quote\nusing Sindbad.Models\nend\n```\n")
-    write(o_file, "```@autodocs\nModules = [Sindbad.Models]\nPublic = false\n")
+    write(o_file, "\n```@autodocs\nModules = [Sindbad.Models]\nPublic = false\n```")
 end
