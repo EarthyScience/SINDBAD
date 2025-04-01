@@ -89,10 +89,10 @@ $(getBaseDocString(cTauSoilW_GSI))
  - Potter; C. S.; Randerson; J. T.; Field; C. B.; Matson; P. A.; Vitousek; P. M.; Mooney; H. A.  & Klooster, S. A. (1993). Terrestrial ecosystem production: a process model based on global  satellite & surface data. Global Biogeochemical Cycles, 7[4], 811-841.
 
 *Versions*
- - 1.0 on 12.02.2021 [skoirala | @dr-ko]
+ - 1.0 on 12.02.2021 [`skoirala | @dr-ko`]
 
 *Created by*
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 
 *Notes*
 """

@@ -34,7 +34,7 @@ $(getBaseDocString(gppAirT_Wang2014))
  - Wang, H., Prentice, I. C., & Davis, T. W. (2014). Biophsyical constraints on gross  primary production by the terrestrial biosphere. Biogeosciences, 11[20], 5987.
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up  
+ - 1.0 on 22.11.2019 [`skoirala | @dr-ko`]: documentation & clean up  
 
 *Created by*
  - ncarvalhais

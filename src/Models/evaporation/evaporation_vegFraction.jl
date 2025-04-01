@@ -52,10 +52,10 @@ $(getBaseDocString(evaporation_vegFraction))
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala | @dr-ko]: clean up the code & moved from prec to dyna to handle land.states.frac_vegetation  
+ - 1.0 on 11.11.2019 [`skoirala | @dr-ko`]: clean up the code & moved from prec to dyna to handle land.states.frac_vegetation  
 
 *Created by*
  - mjung
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 """
 evaporation_vegFraction

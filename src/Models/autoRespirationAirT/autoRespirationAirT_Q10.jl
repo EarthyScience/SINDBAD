@@ -39,7 +39,7 @@ $(getBaseDocString(autoRespirationAirT_Q10))
  - Thornley, J. H. M., & M. G. R. Cannell [2000], Modelling the components  of plant respiration: Representation & realism, Ann Bot-London, 85[1]  55-67.
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala | @dr-ko]: clean up  
+ - 1.0 on 22.11.2019 [`skoirala | @dr-ko`]: clean up  
 
 *Created by*
  - ncarvalhais

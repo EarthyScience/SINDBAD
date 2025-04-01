@@ -85,41 +85,40 @@ end
 function getBaseDocStringForApproach(appr)
     doc_string = "\n"
 
-    doc_string *= "\t$(purpose(appr))\n\n"
+    doc_string *= "$(purpose(appr))\n\n"
     in_out_model = getInOutModel(appr, verbose=false)
     doc_string *= "# Parameters\n"
     params = in_out_model[:parameters]
     if length(params) == 0
         doc_string *= " - None\n"
     else
-        for (i, param) in enumerate(params)
+        for (_, param) in enumerate(params)
             ds="- `$(first(param))`: $(last(param))\n"
             doc_string *= ds
         end
     end
     # Parameters
-
-    doc_string *= "---"
+    # doc_string *= "---"
 
     # Methods
     d_methods = (:define, :precompute, :compute, :update)
-    doc_string *= "\n\n# Methods:\n"
+    doc_string *= "\n# Methods:\n"
     for d_method in d_methods
         inputs = in_out_model[d_method][:input]
         outputs = in_out_model[d_method][:output]
         if length(inputs) == 0 && length(outputs) == 0
-            doc_string *= "\n\n###### $(d_method): not defined\n"
+            doc_string *= "\n`$(d_method)`: not defined\n"
             continue
         else
-            doc_string *= "\n\n## $(d_method):\n\n"
+            doc_string *= "\n`$(d_method)`:\n"
         end
-        doc_string *= "*Inputs*\n"
+        doc_string *= "- **Inputs**\n"
         doc_string = getBaseDocStringForIO(doc_string, inputs)
-        doc_string *= "\n*Outputs*\n"
+        doc_string *= "- **Outputs**\n"
         doc_string = getBaseDocStringForIO(doc_string, outputs)
     end
     appr_name = string(nameof(appr))
-    doc_string *= "\n*End of ```automatic doc``` for ```$(appr_name).jl```. Check the Extended help for user-defined information.*\n"
+    doc_string *= "\n**End of `automatic doc` for `$(appr_name).jl`. Check the Extended help for user-defined information.**"
     # doc_string *= "\n---\n"
     return doc_string
 end
@@ -127,7 +126,7 @@ end
 
 function getBaseDocStringForIO(doc_string, io_list)
     if length(io_list) == 0
-        doc_string *= " - None\n"
+        doc_string *= "     - None\n"
         return doc_string
     end
     foreach(io_list) do io_item
@@ -141,7 +140,7 @@ function getBaseDocStringForIO(doc_string, io_list)
             v_d = replace(v_d, "_" => "\\_")
         end
 
-        doc_string *= " - `$(first(io_item)).$(last(io_item))`: $(v_d)\n"
+        doc_string *= "     - `$(first(io_item)).$(last(io_item))`: $(v_d)\n"
     end
     return doc_string
 end

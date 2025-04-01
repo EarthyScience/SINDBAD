@@ -116,7 +116,7 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
 # Created by
 
   - ncarvalhais
-  - skoirala | @dr-ko
+  - `skoirala | @dr-ko`
 
 # Notes:
 

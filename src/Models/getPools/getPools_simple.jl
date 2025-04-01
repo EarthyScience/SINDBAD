@@ -41,11 +41,11 @@ $(getBaseDocString(getPools_simple))
 *References*
 
 *Versions*
- - 1.0 on 19.11.2019 [skoirala | @dr-ko]: added the documentation & cleaned the code, added json with development stage
+ - 1.0 on 19.11.2019 [`skoirala | @dr-ko`]: added the documentation & cleaned the code, added json with development stage
 
 *Created by*
  - mjung
  - ncarvalhais
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 """
 getPools_simple

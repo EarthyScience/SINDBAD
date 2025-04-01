@@ -38,26 +38,24 @@ This package defines the `LandEcosystem` supertype, which serves as the base for
 
 # Examples:
 1. **Defining a new SINDBAD model**:
-    ```julia
-    struct MyModel <: LandEcosystem
-        # Define model-specific fields
-    end
-    ```
+```julia
+struct MyModel <: LandEcosystem
+    # Define model-specific fields
+end
+```
 
 2. **Using utilities from the package**:
-    ```julia
-    using Sindbad
-
-    # Access utilities or models
-    flattened_data = flatten(nested_data)
-    ```
+```julia
+using Sindbad
+# Access utilities or models
+flattened_data = flatten(nested_data)
+```
 
 3. **Querying the variable catalog**:
-    ```julia
-    using Sindbad
-
-    catalog = getVariableCatalog()
-    ```
+```julia
+using Sindbad
+catalog = getVariableCatalog()
+```
 """
 module Sindbad
     using Reexport: @reexport

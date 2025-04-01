@@ -61,9 +61,9 @@ $(getBaseDocString(wCycle_combined))
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala | @dr-ko]
+ - 1.0 on 18.11.2019 [`skoirala | @dr-ko`]
 
 *Created by*
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 """
 wCycle_combined

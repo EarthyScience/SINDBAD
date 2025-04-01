@@ -57,6 +57,6 @@ $(getBaseDocString(runoffSurface_directIndirect))
 *Versions*
 
 *Created by*
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 """
 runoffSurface_directIndirect

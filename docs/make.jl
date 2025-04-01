@@ -5,6 +5,7 @@ using SindbadSetup
 using SindbadMetrics
 using SindbadML
 using SindbadOptimization
+using SindbadExperiment
 using InteractiveUtils
 using DocumenterVitepress
 using Documenter

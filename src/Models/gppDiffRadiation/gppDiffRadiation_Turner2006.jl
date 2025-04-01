@@ -61,7 +61,7 @@ $(getBaseDocString(gppDiffRadiation_Turner2006))
  - Turner, D. P., Ritts, W. D., Styles, J. M., Yang, Z., Cohen, W. B., Law, B. E., & Thornton, P. E. (2006).  A diagnostic carbon flux model to monitor the effects of disturbance & interannual variation in  climate on regional NEP. Tellus B: Chemical & Physical Meteorology, 58[5], 476-490.  DOI: 10.1111/j.1600-0889.2006.00221.x
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up 
+ - 1.0 on 22.11.2019 [`skoirala | @dr-ko`]: documentation & clean up 
 
 *Created by*
  - mjung

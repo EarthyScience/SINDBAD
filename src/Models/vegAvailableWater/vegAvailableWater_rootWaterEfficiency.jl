@@ -51,6 +51,6 @@ $(getBaseDocString(vegAvailableWater_rootWaterEfficiency))
  - 1.0 on 21.11.2019  
 
 *Created by*
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 """
 vegAvailableWater_rootWaterEfficiency

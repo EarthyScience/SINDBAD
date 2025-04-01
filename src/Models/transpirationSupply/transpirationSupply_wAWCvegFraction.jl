@@ -34,10 +34,10 @@ $(getBaseDocString(transpirationSupply_wAWCvegFraction))
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala | @dr-ko]
+ - 1.0 on 22.11.2019 [`skoirala | @dr-ko`]
 
 *Created by*
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 
 *Notes*
  - Assumes that the transpiration supply scales with vegetated fraction

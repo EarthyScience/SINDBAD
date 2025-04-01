@@ -44,9 +44,9 @@ $(getBaseDocString(groundWRecharge_fraction))
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala | @dr-ko]: clean up  
+ - 1.0 on 11.11.2019 [`skoirala | @dr-ko`]: clean up  
 
 *Created by*
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 """
 groundWRecharge_fraction

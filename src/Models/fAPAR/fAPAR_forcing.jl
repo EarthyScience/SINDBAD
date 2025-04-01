@@ -26,9 +26,9 @@ $(getBaseDocString(fAPAR_forcing))
 *References*
 
 *Versions*
- - 1.0 on 23.11.2019 [skoirala | @dr-ko]: new approach  
+ - 1.0 on 23.11.2019 [`skoirala | @dr-ko`]: new approach  
 
 *Created by*
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 """
 fAPAR_forcing

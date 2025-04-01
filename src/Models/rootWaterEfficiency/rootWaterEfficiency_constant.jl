@@ -69,6 +69,6 @@ $(getBaseDocString(rootWaterEfficiency_constant))
  - 1.0 on 21.11.2019  
 
 *Created by*
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 """
 rootWaterEfficiency_constant

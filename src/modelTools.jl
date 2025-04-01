@@ -35,19 +35,19 @@ Parses and retrieves the inputs, outputs, and parameters (I/O/P) of SINDBAD mode
 
 # Examples:
 1. **Parsing all functions of a model**:
-    ```julia
-    model_io = getInOutModel(my_model)
-    ```
+```julia
+model_io = getInOutModel(my_model)
+```
 
 2. **Parsing a specific function of a model**:
-    ```julia
-    compute_io = getInOutModel(my_model, :compute)
-    ```
+```julia
+compute_io = getInOutModel(my_model, :compute)
+```
 
 3. **Parsing multiple functions of a model**:
-    ```julia
-    io_data = getInOutModel(my_model, (:precompute, :parameters))
-    ```
+```julia
+io_data = getInOutModel(my_model, (:precompute, :parameters))
+```
 
 4. **Handling warnings for unextracted variables**:
     - If a variable from `land` or `forcing` is not unpacked using `@unpack_nt`, a warning is issued to encourage better coding practices.
@@ -231,24 +231,24 @@ Parses and retrieves the inputs, outputs, and parameters (I/O/P) of multiple SIN
 
 # Examples:
 1. **Parsing all models in a range**:
-    ```julia
-    model_io = getInOutModels(1:10)
-    ```
+```julia
+model_io = getInOutModels(1:10)
+```
 
 2. **Parsing specific models**:
-    ```julia
-    model_io = getInOutModels((model1, model2))
-    ```
+```julia
+model_io = getInOutModels((model1, model2))
+```
 
 3. **Parsing specific functions of models**:
-    ```julia
-    model_io = getInOutModels((model1, model2), (:precompute, :compute))
-    ```
+```julia
+model_io = getInOutModels((model1, model2), (:precompute, :compute))
+```
 
 4. **Parsing a single function of models**:
-    ```julia
-    model_io = getInOutModels((model1, model2), :compute)
-    ```
+```julia
+model_io = getInOutModels((model1, model2), :compute)
+```
 
 5. **Handling warnings for unextracted variables**:
     - If a variable from `land` or `forcing` is not unpacked using `@unpack_nt`, a warning is issued to encourage better coding practices.
@@ -498,9 +498,9 @@ function modelParameter(model::LandEcosystem, show=true)
             p_unit = Sindbad.Models.units(model, fn)
             p_u = isempty(p_unit) ? " undefined" : "$(p_unit)"
             p_timescale = Sindbad.Models.timescale(model, fn)
-            p_t = isempty(p_timescale) ? " and timescale independent" : " at $(p_timescale) timescale"
+            p_t = isempty(p_timescale) ? "and timescale independent" : " at $(p_timescale) timescale"
             p_bounds = Sindbad.Models.bounds(model, fn)
-            p_w = "$(p_val) [$(p_bounds[1]), $(p_bounds[2])] {$(p_describe) ($(p_unit) $(p_t))}"
+            p_w = "$(p_val) [$(p_bounds[1]), $(p_bounds[2])] $(p_describe) ($(p_unit) $(p_t))"
             Pair(fn, p_w)
         end
     end

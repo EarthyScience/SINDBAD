@@ -58,19 +58,19 @@ Extracts a spatial subset of the input data `v` based on the specified range and
 
 # Examples:
 1. **Subsetting by latitude**:
-    ```julia
-    subset = spatialSubset(data, 10:20, Spacelat())
-    ```
+```julia
+subset = spatialSubset(data, 10:20, Spacelat())
+```
 
 2. **Subsetting by longitude**:
-    ```julia
-    subset = spatialSubset(data, 30:40, Spacelongitude())
-    ```
+```julia
+subset = spatialSubset(data, 30:40, Spacelongitude())
+```
 
 3. **Subsetting by site ID**:
-    ```julia
-    subset = spatialSubset(data, 1:5, Spaceid())
-    ```
+```julia
+subset = spatialSubset(data, 1:5, Spaceid())
+```
 """
 spatialSubset
 

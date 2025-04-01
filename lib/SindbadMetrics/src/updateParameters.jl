@@ -63,22 +63,22 @@ Checks whether a given value or array is within specified bounds.
 
 # Examples:
 1. **Checking a scalar value**:
-    ```julia
-    is_in_range = checkInRange("parameter1", 5.0, 0.0, 10.0, true)
-    # Output: true
-    ```
+```julia
+is_in_range = checkInRange("parameter1", 5.0, 0.0, 10.0, true)
+# Output: true
+```
 
 2. **Checking an array (skipping bounds check)**:
-    ```julia
-    is_in_range = checkInRange("parameter2", [1.0, 2.0, 3.0], 0.0, 10.0, true)
-    # Output: true (logs a message indicating the check is skipped)
-    ```
+```julia
+is_in_range = checkInRange("parameter2", [1.0, 2.0, 3.0], 0.0, 10.0, true)
+# Output: true (logs a message indicating the check is skipped)
+```
 
 3. **Checking a scalar value outside bounds**:
-    ```julia
-    is_in_range = checkInRange("parameter3", -1.0, 0.0, 10.0, true)
-    # Output: false (logs a message indicating the violation)
-    ```
+```julia
+is_in_range = checkInRange("parameter3", -1.0, 0.0, 10.0, true)
+# Output: false (logs a message indicating the violation)
+```
 """
 checkInRange
 

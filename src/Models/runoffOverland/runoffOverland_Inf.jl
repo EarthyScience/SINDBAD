@@ -28,9 +28,9 @@ $(getBaseDocString(runoffOverland_Inf))
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala | @dr-ko]  
+ - 1.0 on 18.11.2019 [`skoirala | @dr-ko`]  
 
 *Created by*
- - skoirala | @dr-ko
+ - `skoirala | @dr-ko`
 """
 runoffOverland_Inf
