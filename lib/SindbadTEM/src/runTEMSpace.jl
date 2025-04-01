@@ -68,14 +68,14 @@ Parallelizes the SINDBAD Terrestrial Ecosystem Model (TEM) across multiple locat
 
 # Examples:
 1. **Parallelizing TEM using threads**:
-    ```julia
-    parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, UseThreadsParallelization())
-    ```
+```julia
+parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, UseThreadsParallelization())
+```
 
 2. **Parallelizing TEM using qbmap**:
-    ```julia
-    parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, UseQbmapParallelization())
-    ```
+```julia
+parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, UseQbmapParallelization())
+```
 """
 parallelizeTEM!
 
@@ -136,19 +136,19 @@ Runs the SINDBAD Terrestrial Ecosystem Model (TEM) for all locations and time st
 
 # Examples:
 1. **Running TEM with preallocated arrays**:
-    ```julia
-    output_array = runTEM!(selected_models, forcing, info)
-    ```
+```julia
+output_array = runTEM!(selected_models, forcing, info)
+```
 
 2. **Running TEM with parallelization**:
-    ```julia
-    output_array = runTEM!(forcing, info)
-    ```
+```julia
+output_array = runTEM!(forcing, info)
+```
 
 3. **Running TEM with precomputed helpers**:
-    ```julia
-    runTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info)
-    ```
+```julia
+runTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info)
+```
 """
 runTEM!
 
@@ -203,14 +203,14 @@ Executes the time loop for the SINDBAD Terrestrial Ecosystem Model (TEM), runnin
 
 # Examples:
 1. **Running the time loop without debugging**:
-    ```julia
-    timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land, forcing_types, model_helpers, output_vars, n_timesteps, DoNotDebugModel())
-    ```
+```julia
+timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land, forcing_types, model_helpers, output_vars, n_timesteps, DoNotDebugModel())
+```
 
 2. **Running the time loop with debugging**:
-    ```julia
-    timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land, forcing_types, model_helpers, output_vars, n_timesteps, DoDebugModel())
-    ```
+```julia
+timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land, forcing_types, model_helpers, output_vars, n_timesteps, DoDebugModel())
+```
 """
 timeLoopTEM!
 

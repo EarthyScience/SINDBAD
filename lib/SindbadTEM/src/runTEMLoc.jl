@@ -70,14 +70,14 @@ Runs the SINDBAD Terrestrial Ecosystem Model (TEM) for a single location, with o
 
 # Examples:
 1. **Running TEM with spinup**:
-    ```julia
-    land_time_series = runTEM(selected_models, forcing, loc_spinup_forcing, loc_forcing_t, loc_land, tem_info)
-    ```
+```julia
+land_time_series = runTEM(selected_models, forcing, loc_spinup_forcing, loc_forcing_t, loc_land, tem_info)
+```
 
 2. **Running TEM without spinup**:
-    ```julia
-    land_time_series = runTEM(selected_models, forcing, nothing, loc_forcing_t, loc_land, tem_info)
-    ```
+```julia
+land_time_series = runTEM(selected_models, forcing, nothing, loc_forcing_t, loc_land, tem_info)
+```
 """
 runTEM
 
@@ -131,14 +131,14 @@ Executes the time loop for the SINDBAD Terrestrial Ecosystem Model (TEM), runnin
 
 # Examples:
 1. **Running the time loop without debugging**:
-    ```julia
-    timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land_time_series, land, tem_info, DoNotDebugModel())
-    ```
+```julia
+timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land_time_series, land, tem_info, DoNotDebugModel())
+```
 
 2. **Running the time loop with debugging**:
-    ```julia
-    timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land_time_series, land, tem_info, DoDebugModel())
-    ```
+```julia
+timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land_time_series, land, tem_info, DoDebugModel())
+```
 """
 timeLoopTEM
 

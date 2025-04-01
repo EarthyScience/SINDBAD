@@ -230,24 +230,24 @@ Runs the spinup process for the SINDBAD Terrestrial Ecosystem Model (TEM) to ini
 
 # Examples:
 1. **Running spinup with selected models**:
-    ```julia
-    land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, SelSpinupModels())
-    ```
+```julia
+land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, SelSpinupModels())
+```
 
 2. **Running spinup with ODE solver (Tsit5)**:
-    ```julia
-    land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ODETsit5())
-    ```
+```julia
+land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ODETsit5())
+```
 
 3. **Running spinup with fixed-point solver for cEco and TWS**:
-    ```julia
-    land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, NlsolveFixedpointTrustregionCEcoTWS())
-    ```
+```julia
+land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, NlsolveFixedpointTrustregionCEcoTWS())
+```
 
 4. **Running spinup with steady-state solver (SSRootfind)**:
-    ```julia
-    land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, SSPSSRootfind())
-    ```
+```julia
+land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, SSPSSRootfind())
+```
 """
 spinup
 
@@ -477,18 +477,18 @@ Stores or skips the spinup log during the spinup process, depending on the speci
 
 # Examples:
 1. **Storing the spinup log**:
-    ```julia
-    land = (pools = ..., states = (spinuplog = Vector{Any}(undef, 10)))
-    log_index = 1
-    land = setSpinupLog(land, log_index, DoStoreSpinup())
-    ```
+```julia
+land = (pools = ..., states = (spinuplog = Vector{Any}(undef, 10)))
+log_index = 1
+land = setSpinupLog(land, log_index, DoStoreSpinup())
+```
 
 2. **Skipping the spinup log**:
-    ```julia
-    land = (pools = ..., states = (spinuplog = Vector{Any}(undef, 10)))
-    log_index = 1
-    land = setSpinupLog(land, log_index, DoNotStoreSpinup())
-    ```
+```julia
+land = (pools = ..., states = (spinuplog = Vector{Any}(undef, 10)))
+log_index = 1
+land = setSpinupLog(land, log_index, DoNotStoreSpinup())
+```
 """
 setSpinupLog
 

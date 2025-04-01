@@ -25,16 +25,16 @@ Adds an error catcher to monitor and debug the SINDBAD land variables during mod
 
 # Examples:
 1. **Enabling debugging**:
-    ```julia
-    loc_land = (temperature = 15.0, precipitation = 100.0)
-    addErrorCatcher(loc_land, DoDebugModel())
-    ```
+```julia
+loc_land = (temperature = 15.0, precipitation = 100.0)
+addErrorCatcher(loc_land, DoDebugModel())
+```
 
 2. **Disabling debugging**:
-    ```julia
-    loc_land = (temperature = 15.0, precipitation = 100.0)
-    addErrorCatcher(loc_land, DoNotDebugModel())
-    ```
+```julia
+loc_land = (temperature = 15.0, precipitation = 100.0)
+addErrorCatcher(loc_land, DoNotDebugModel())
+```
 """
 addErrorCatcher
 
@@ -74,18 +74,18 @@ Adds or skips the preallocated holder for storing the spinup log during model sp
 
 # Examples:
 1. **Storing the spinup log**:
-    ```julia
-    loc_land = (pools = rand(10), states = rand(10))
-    sequence = [(n_repeat = 3, n_timesteps = 10), (n_repeat = 2, n_timesteps = 5)]
-    loc_land = addSpinupLog(loc_land, sequence, DoStoreSpinup())
-    ```
+```julia
+loc_land = (pools = rand(10), states = rand(10))
+sequence = [(n_repeat = 3, n_timesteps = 10), (n_repeat = 2, n_timesteps = 5)]
+loc_land = addSpinupLog(loc_land, sequence, DoStoreSpinup())
+```
 
 2. **Skipping the spinup log**:
-    ```julia
-    loc_land = (pools = rand(10), states = rand(10))
-    sequence = [(n_repeat = 3, n_timesteps = 10), (n_repeat = 2, n_timesteps = 5)]
-    loc_land = addSpinupLog(loc_land, sequence, DoNotStoreSpinup())
-    ```
+```julia
+loc_land = (pools = rand(10), states = rand(10))
+sequence = [(n_repeat = 3, n_timesteps = 10), (n_repeat = 2, n_timesteps = 5)]
+loc_land = addSpinupLog(loc_land, sequence, DoNotStoreSpinup())
+```
 """
 addSpinupLog
 
@@ -127,18 +127,18 @@ Filters out spatial pixels where all timesteps contain NaN values, based on the 
 
 # Examples:
 1. **Filtering NaN-only pixels**:
-    ```julia
-    forcing = (data = ..., variables = ...)
-    loc_space_maps = [(1, 2), (3, 4), (5, 6)]
-    filtered_maps = filterNanPixels(forcing, loc_space_maps, DoFilterNanPixels())
-    ```
+```julia
+forcing = (data = ..., variables = ...)
+loc_space_maps = [(1, 2), (3, 4), (5, 6)]
+filtered_maps = filterNanPixels(forcing, loc_space_maps, DoFilterNanPixels())
+```
 
 2. **Skipping NaN filtering**:
-    ```julia
-    forcing = (data = ..., variables = ...)
-    loc_space_maps = [(1, 2), (3, 4), (5, 6)]
-    filtered_maps = filterNanPixels(forcing, loc_space_maps, DoNotFilterNanPixels())
-    ```
+```julia
+forcing = (data = ..., variables = ...)
+loc_space_maps = [(1, 2), (3, 4), (5, 6)]
+filtered_maps = filterNanPixels(forcing, loc_space_maps, DoNotFilterNanPixels())
+```
 """
 filterNanPixels
 
@@ -289,19 +289,19 @@ Prepares the necessary information and objects needed to run the SINDBAD Terrest
 
 # Examples:
 1. **Preparing TEM with `LandOutArray`**:
-    ```julia
-    run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutArray())
-    ```
+```julia
+run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutArray())
+```
 
 2. **Preparing TEM with `LandOutTimeseries`**:
-    ```julia
-    run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutTimeseries())
-    ```
+```julia
+run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutTimeseries())
+```
 
 3. **Preparing TEM with `LandOutArrayFD` for FD experiments**:
-    ```julia
-    run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, LandOutArrayFD())
-    ```
+```julia
+run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, LandOutArrayFD())
+```
 """
 helpPrepTEM
 
@@ -538,21 +538,21 @@ Prepares the SINDBAD Terrestrial Ecosystem Model (TEM) for execution by setting 
 
 # Examples:
 1. **Preparing TEM with observations**:
-    ```julia
-    selected_models = (model1, model2)
-    forcing = (data = ..., variables = ...)
-    observations = (data = ..., variables = ...)
-    info = (helpers = ..., models = ..., spinup = ...)
-    run_helpers = prepTEM(selected_models, forcing, observations, info)
-    ```
+```julia
+selected_models = (model1, model2)
+forcing = (data = ..., variables = ...)
+observations = (data = ..., variables = ...)
+info = (helpers = ..., models = ..., spinup = ...)
+run_helpers = prepTEM(selected_models, forcing, observations, info)
+```
 
 2. **Preparing TEM without observations**:
-    ```julia
-    selected_models = (model1, model2)
-    forcing = (data = ..., variables = ...)
-    info = (helpers = ..., models = ..., spinup = ...)
-    run_helpers = prepTEM(selected_models, forcing, info)
-    ```
+```julia
+selected_models = (model1, model2)
+forcing = (data = ..., variables = ...)
+info = (helpers = ..., models = ..., spinup = ...)
+run_helpers = prepTEM(selected_models, forcing, info)
+```
 """
 prepTEM
 

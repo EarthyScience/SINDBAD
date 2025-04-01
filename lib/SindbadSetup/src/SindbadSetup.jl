@@ -1,6 +1,6 @@
 
 """
-    SindbadSetup
+   SindbadSetup
 
 The `SindbadSetup` package provides tools for setting up and configuring SINDBAD experiments and runs. It handles the creation of experiment configurations, model structures, parameters, and output setups, ensuring a streamlined workflow for SINDBAD simulations.
 
@@ -48,39 +48,37 @@ This package is designed to produce the SINDBAD `info` object, which contains al
    - Prepares the output structure for SINDBAD experiments.
 
 10. **`setupOptimization.jl`**:
-    - Configures optimization settings for parameter estimation and model calibration.
+   - Configures optimization settings for parameter estimation and model calibration.
 
 11. **`setupInfo.jl`**:
-    - Calls various functions to collect the `info` object by integrating all configurations, models, parameters, and outputs.
+   - Calls various functions to collect the `info` object by integrating all configurations, models, parameters, and outputs.
 
 # Notes:
 - The package re-exports several key packages (`Sindbad`, `Accessors`, `ForwardDiff`, `CSV`, `Dates`, `JLD2`, `SindbadUtils`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadSetup`.
 - Designed to be modular and extensible, enabling users to customize and expand the setup process for specific use cases.
 
+
 # Examples:
 1. **Setting up an experiment**:
-    ```julia
-    using SindbadSetup
-
-    # Read configuration and build the experiment info
-    experiment_info = getConfiguration("config.json")
-    ```
+```julia
+using SindbadSetup
+# Read configuration and build the experiment info
+experiment_info = getConfiguration("config.json")
+```
 
 2. **Preparing model parameters**:
-    ```julia
-    using SindbadSetup
-
-    # Initialize model parameters
-    parameters = setupParameters(experiment_info)
-    ```
+```julia
+using SindbadSetup
+# Initialize model parameters
+parameters = setupParameters(experiment_info)
+```
 
 3. **Setting up outputs**:
-    ```julia
-    using SindbadSetup
-
-    # Prepare output structure
-    outputs = setupOutput(experiment_info)
-    ```
+```julia
+using SindbadSetup
+# Prepare output structure
+outputs = setupOutput(experiment_info)
+```
 """
 module SindbadSetup
 

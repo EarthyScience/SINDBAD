@@ -70,23 +70,23 @@ Creates an array or view of the specified type `array_type` based on the input v
 
 # Examples:
 1. **Creating a view from a preallocated array**:
-    ```julia
-    pool_array = rand(10, 10)
-    indx = (1:5,)
-    view_array = createArrayofType(nothing, pool_array, Float64, indx, false, ModelArrayView())
-    ```
+```julia
+pool_array = rand(10, 10)
+indx = (1:5,)
+view_array = createArrayofType(nothing, pool_array, Float64, indx, false, ModelArrayView())
+```
 
 2. **Creating a new array with a specific numerical type**:
-    ```julia
-    input_values = [1.0, 2.0, 3.0]
-    new_array = createArrayofType(input_values, nothing, Float64, nothing, true, ModelArrayArray())
-    ```
+```julia
+input_values = [1.0, 2.0, 3.0]
+new_array = createArrayofType(input_values, nothing, Float64, nothing, true, ModelArrayArray())
+```
 
 3. **Creating a static array (`SVector`)**:
-    ```julia
-    input_values = [1.0, 2.0, 3.0]
-    static_array = createArrayofType(input_values, nothing, Float64, nothing, true, ModelArrayStaticArray())
-    ```
+```julia
+input_values = [1.0, 2.0, 3.0]
+static_array = createArrayofType(input_values, nothing, Float64, nothing, true, ModelArrayStaticArray())
+```
 """
 createArrayofType
 
