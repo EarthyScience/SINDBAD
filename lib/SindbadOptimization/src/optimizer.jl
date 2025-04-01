@@ -42,19 +42,19 @@ Optimize model parameters using various optimization algorithms.
 
 # Examples:
 1. **Using CMAES from CMAEvolutionStrategy.jl**:
-    ```julia
-    optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, CMAEvolutionStrategyCMAES())
-    ```
+```julia
+optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, CMAEvolutionStrategyCMAES())
+```
 
 2. **Using BFGS from Optim.jl**:
-    ```julia
-    optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, OptimBFGS())
-    ```
+```julia
+optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, OptimBFGS())
+```
 
 3. **Using Black Box Optimization (xNES) from Optimization.jl**:
-    ```julia
-    optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, OptimizationBBOxnes())
-    ```
+```julia
+optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, OptimizationBBOxnes())
+```
 
 # Implementation Details:
 - The function internally calls the appropriate optimization library and algorithm based on the `algorithm` argument.

@@ -206,19 +206,19 @@ Updates the parameters of SINDBAD models based on the provided parameter vector 
 
 # Examples:
 1. **Using `tbl_params` and `selected_models`:**
-    ```julia
-    updated_models = updateModelParameters(tbl_params, selected_models, param_vector)
-    ```
+```julia
+updated_models = updateModelParameters(tbl_params, selected_models, param_vector)
+```
 
 2. **Using `param_to_index` for direct mapping:**
-    ```julia
-    updated_models = updateModelParameters(param_to_index, selected_models, param_vector)
-    ```
+```julia
+updated_models = updateModelParameters(param_to_index, selected_models, param_vector)
+```
 
 3. **Using a generated function for compile-time updates:**
-    ```julia
-    updated_models = updateModelParameters(selected_models, param_vector, Val(p_vals))
-    ```
+```julia
+updated_models = updateModelParameters(selected_models, param_vector, Val(p_vals))
+```
 
 # Implementation Details:
 - The function iterates over the models in `selected_models` and updates their parameters based on the provided `param_vector`.

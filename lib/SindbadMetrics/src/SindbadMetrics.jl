@@ -30,32 +30,29 @@ It has heavy usage in `SindbadOptimization` but the package is separated to redu
 5. **`updateParameters.jl`**:
    - Implements logic for updating model parameters based on metric evaluations, enabling iterative model calibration.
 
-# Notes:
-- The package is designed to be extensible, allowing users to define custom metrics for specific use cases.
-- Metrics are computed in a modular fashion, ensuring compatibility with SINDBAD's optimization and evaluation workflows.
-- Supports both standard statistical metrics and domain-specific metrics tailored to SINDBAD experiments.
+!!! note
+    - The package is designed to be extensible, allowing users to define custom metrics for specific use cases.
+    - Metrics are computed in a modular fashion, ensuring compatibility with SINDBAD's optimization and evaluation workflows.
+    - Supports both standard statistical metrics and domain-specific metrics tailored to SINDBAD experiments.
 
 # Examples:
 1. **Calculating RMSE**:
-    ```julia
-    using SindbadMetrics
-
-    rmse = calculateRMSE(model_output, observations)
-    ```
+```julia
+using SindbadMetrics
+rmse = calculateRMSE(model_output, observations)
+```
 
 2. **Computing correlation**:
-    ```julia
-    using SindbadMetrics
-
-    correlation = calculateCorrelation(model_output, observations)
-    ```
+```julia
+using SindbadMetrics
+correlation = calculateCorrelation(model_output, observations)
+```
 
 3. **Updating parameters based on metrics**:
-    ```julia
-    using SindbadMetrics
-
-    updated_params = updateParameters(current_params, metrics)
-    ```
+```julia
+using SindbadMetrics
+updated_params = updateParameters(current_params, metrics)
+```
 """
 module SindbadMetrics
 

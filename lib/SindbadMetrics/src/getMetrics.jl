@@ -11,7 +11,7 @@ export metricVector
 combines the metric from all constraints based on the type of combination.
 
 # Arguments:
-- `metric_vector`: a vector of metrices for variables
+- `metric_vector`: a vector of metrics for variables
 
 ## methods for combining the metric
 - `::MetricSum`: return the total sum as the metric.
@@ -43,7 +43,7 @@ end
     getDataWithoutNaN(y, yσ, ŷ, idxs)
     getDataWithoutNaN(y, yσ, ŷ)
 
-return model and obs data exluding for the common `NaN` or for the valid pixels `idxs`.
+return model and obs data excluding for the common `NaN` or for the valid pixels `idxs`.
 
 # Arguments:
 - `y`: observation data
