@@ -23,9 +23,9 @@ $(getBaseDocString(deriveVariables_simple))
 *References*
 
 *Versions*
- - 1.0 on 19.07.2023 [`skoirala | @dr-ko`]:
+ - 1.0 on 19.07.2023 [skoirala | @dr-ko]:
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 deriveVariables_simple

@@ -25,9 +25,9 @@ $(getBaseDocString(treeFraction_forcing))
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [`skoirala | @dr-ko`]
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 treeFraction_forcing

@@ -38,7 +38,7 @@ $(getBaseDocString(gppAirT_MOD17))
  - Zhao, M., Heinsch, F. A., Nemani, R. R., & Running, S. W. (2005). Improvements  of the MODIS terrestrial gross & net primary production global data set. Remote  sensing of Environment, 95[2], 164-176.
 
 *Versions*
- - 1.0 on 22.11.2019 [`skoirala | @dr-ko`]: documentation & clean up  
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up  
 
 *Created by*
  - ncarvalhais

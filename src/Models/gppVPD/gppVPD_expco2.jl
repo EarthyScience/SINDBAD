@@ -43,7 +43,7 @@ $(getBaseDocString(gppVPD_expco2))
  - http://www.metla.fi/julkaisut/workingpapers/2012/mwp247.pdf
 
 *Versions*
- - 1.1 on 22.11.2020 [`skoirala | @dr-ko`]: changing units to kpa for vpd & sign of  κ to match with Maekaelae2008  
+ - 1.1 on 22.11.2020 [skoirala | @dr-ko]: changing units to kpa for vpd & sign of  κ to match with Maekaelae2008  
 
 *Created by*
  - ncarvalhais

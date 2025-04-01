@@ -53,10 +53,10 @@ $(getBaseDocString(drainage_wFC))
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [`skoirala | @dr-ko`]: clean up & consistency  
+ - 1.0 on 18.11.2019 [skoirala | @dr-ko]: clean up & consistency  
 
 *Created by*
  - mjung
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 drainage_wFC

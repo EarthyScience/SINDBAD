@@ -47,9 +47,9 @@ $(getBaseDocString(PET_PriestleyTaylor1972))
  - Priestley, C. H. B., & TAYLOR, R. J. (1972). On the assessment of surface heat  flux & evaporation using large-scale parameters.  Monthly weather review, 100[2], 81-92.
 
 *Versions*
- - 1.0 on 20.03.2020 [`skoirala | @dr-ko`]
+ - 1.0 on 20.03.2020 [skoirala | @dr-ko]
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 PET_PriestleyTaylor1972

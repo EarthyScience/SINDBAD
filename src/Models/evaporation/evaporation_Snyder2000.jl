@@ -86,10 +86,10 @@ $(getBaseDocString(evaporation_Snyder2000))
  - Snyder, R. L., Bali, K., Ventura, F., & Gomez-MacPherson, H. (2000).  Estimating evaporation from bare - nearly bare soil. Journal of irrigation & drainage engineering, 126[6], 399-403.
 
 *Versions*
- - 1.0 on 11.11.2019 [`skoirala | @dr-ko`]: transfer from to accommodate land.states.fAPAR  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: transfer from to accommodate land.states.fAPAR  
 
 *Created by*
  - mjung
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 evaporation_Snyder2000

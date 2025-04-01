@@ -35,7 +35,7 @@ $(getBaseDocString(transpirationDemand_PETfAPAR))
 *References*
 
 *Versions*
- - 1.0 on 30.04.2020 [`skoirala | @dr-ko`]
+ - 1.0 on 30.04.2020 [skoirala | @dr-ko]
 
 *Created by*
  - sbesnard; skoirala; ncarvalhais

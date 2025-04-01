@@ -57,7 +57,7 @@ $(getBaseDocString(soilTexture_constant))
  - 1.0 on 21.11.2019  
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 
 *Notes*
  - texture does not change with space & depth

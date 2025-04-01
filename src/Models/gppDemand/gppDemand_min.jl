@@ -59,7 +59,7 @@ $(getBaseDocString(gppDemand_min))
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [`skoirala | @dr-ko`]: documentation & clean up  
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up  
 
 *Created by*
  - ncarvalhais

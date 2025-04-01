@@ -37,9 +37,9 @@ $(getBaseDocString(fAPAR_cVegLeaf))
 *References*
 
 *Versions*
- - 1.0 on 24.04.2021 [`skoirala | @dr-ko`]
+ - 1.0 on 24.04.2021 [skoirala | @dr-ko]
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 fAPAR_cVegLeaf

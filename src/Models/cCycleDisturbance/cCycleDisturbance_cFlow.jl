@@ -74,11 +74,11 @@ $(getBaseDocString(cCycleDisturbance_cFlow))
  - Carvalhais; N.; Reichstein; M.; Seixas; J.; Collatz; G. J.; Pereira; J. S.; Berbigier; P.  & Rambal, S. (2008). Implications of the carbon cycle steady state assumption for  biogeochemical modeling performance & inverse parameter retrieval. Global Biogeochemical Cycles, 22[2].
 
 *Versions*
- - 1.0 on 23.04.2021 [`skoirala | @dr-ko`]
- - 1.0 on 23.04.2021 [`skoirala | @dr-ko`]  
- - 1.1 on 29.11.2021 [`skoirala | @dr-ko`]: moved the scaling parameters to  ccyclebase_gsi [land.diagnostics.ηA & land.diagnostics.ηH]  
+ - 1.0 on 23.04.2021 [skoirala | @dr-ko]
+ - 1.0 on 23.04.2021 [skoirala | @dr-ko]  
+ - 1.1 on 29.11.2021 [skoirala | @dr-ko]: moved the scaling parameters to  ccyclebase_gsi [land.diagnostics.ηA & land.diagnostics.ηH]  
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 cCycleDisturbance_cFlow

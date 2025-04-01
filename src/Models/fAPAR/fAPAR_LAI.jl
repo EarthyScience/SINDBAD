@@ -35,9 +35,9 @@ $(getBaseDocString(fAPAR_LAI))
 *References*
 
 *Versions*
- - 1.0 on 24.02.2021 [`skoirala | @dr-ko`]  
+ - 1.0 on 24.02.2021 [skoirala | @dr-ko]  
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 fAPAR_LAI

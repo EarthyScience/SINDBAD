@@ -50,12 +50,12 @@ $(getBaseDocString(evaporation_demandSupply))
  - Teuling et al.
 
 *Versions*
- - 1.0 on 11.11.2019 [`skoirala | @dr-ko`]: clean up the code
- - 1.0 on 11.11.2019 [`skoirala | @dr-ko`]: clean up the code  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: clean up the code
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: clean up the code  
 
 *Created by*
  - mjung
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
  - ttraut
 
 *Notes*

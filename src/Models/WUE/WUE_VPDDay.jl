@@ -37,10 +37,10 @@ $(getBaseDocString(WUE_VPDDay))
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [`skoirala | @dr-ko`]
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]
 
 *Created by*
  - Jake Nelson [jnelson]: for the typical values & ranges of WUEat1hPa  across fluxNet sites
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 WUE_VPDDay

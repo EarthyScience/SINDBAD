@@ -36,11 +36,11 @@ $(getBaseDocString(transpirationDemand_CASA))
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [`skoirala | @dr-ko`]: split the original transpiration_supply of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]: split the original transpiration_supply of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
 
 *Created by*
  - ncarvalhais
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 
 *Notes*
  - The supply limit has non-linear relationship with moisture state over the root zone

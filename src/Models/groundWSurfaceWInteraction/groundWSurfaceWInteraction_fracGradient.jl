@@ -45,9 +45,9 @@ $(getBaseDocString(groundWSurfaceWInteraction_fracGradient))
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [`skoirala | @dr-ko`]
+ - 1.0 on 18.11.2019 [skoirala | @dr-ko]
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 groundWSurfaceWInteraction_fracGradient

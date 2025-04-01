@@ -31,9 +31,9 @@ $(getBaseDocString(vegFraction_constant))
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [`skoirala | @dr-ko`]: cleaned up the code  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: cleaned up the code  
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 vegFraction_constant

@@ -29,9 +29,9 @@ This function assigns the value of ambient CO2 concentration from the forcing da
  - None
 
 *Versions*
- - 1.0 on 11.11.2019 [`skoirala | @dr-ko`]
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]
 
 *Created by*
- - `skoirala | @dr-ko`
+ - skoirala | @dr-ko
 """
 ambientCO2_forcing

@@ -58,7 +58,7 @@ $(getBaseDocString(cAllocationRadiation_GSI))
  - Jolly, William M., Ramakrishna Nemani, & Steven W. Running. "A generalized, bioclimatic index to predict foliar phenology in response to climate." Global Change Biology 11.4 [2005]: 619-632.
 
 *Versions*
- - 1.0 on 12.01.2020 [`skoirala | @dr-ko`]  
+ - 1.0 on 12.01.2020 [skoirala | @dr-ko]  
 
 *Created by*
  - ncarvalhais, sbesnard, skoirala
