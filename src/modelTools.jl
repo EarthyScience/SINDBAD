@@ -496,11 +496,11 @@ function modelParameter(model::LandEcosystem, show=true)
             p_val = getproperty(model, fn)
             p_describe = Sindbad.Models.describe(model, fn)
             p_unit = Sindbad.Models.units(model, fn)
-            p_u = isempty(p_unit) ? " undefined" : "$(p_unit)"
+            p_u = isempty(p_unit) ? "undefined" : "$(p_unit)"
             p_timescale = Sindbad.Models.timescale(model, fn)
-            p_t = isempty(p_timescale) ? "and timescale independent" : " at $(p_timescale) timescale"
+            p_t = isempty(p_timescale) ? "timescale independent" : "$(p_timescale) timescale"
             p_bounds = Sindbad.Models.bounds(model, fn)
-            p_w = "$(p_val) [$(p_bounds[1]), $(p_bounds[2])] $(p_describe) ($(p_unit) $(p_t))"
+            p_w = "$(p_val) ∈ [$(p_bounds[1]), $(p_bounds[2])] => $(p_describe) in $(p_u) units; $(p_t)"
             Pair(fn, p_w)
         end
     end
