@@ -15,11 +15,11 @@ These information on selected approaches and options are provided through config
 
 Fundamentally, SINDBAD consists of the following components:
 
-- Read the [configuration files](../settings/overview)
-- Process the [information needed for experiment](./info)
-  - [model structure and pools](./TEM)
-  - [simulation setup](./experiment)
-  - create [land data structure](./land)
+- Read the [configuration files](../settings/overview.md)
+- Process the [information needed for experiment](./info.md)
+  - [model structure and pools](./TEM.md)
+  - [simulation setup](./experiment.md)
+  - create [land data structure](./land.md)
 - read the forcing and/or observation data
 - prepare for the model run
 - run the experiment

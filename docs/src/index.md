@@ -59,6 +59,6 @@ features:
 
 ::: warning ⏳ Content in active development
 
-`SINDBAD` is an ongoing scientific initiative with several projects running in parallel. Aligns with your interests? Thinking about using it? Please [get in touch](sindbad@bgc-jena.mpg.de) and get in the [news loop](https://mail.bgc-jena.mpg.de/mailman/listinfo/sindbad-news).
+`SINDBAD` is an ongoing scientific initiative with several projects running in parallel. Aligns with your interests? Thinking about using it? Please [get in touch](mailto:sindbad@bgc-jena.mpg.de) and get in the [news loop](https://mail.bgc-jena.mpg.de/mailman/listinfo/sindbad-news).
 
 :::

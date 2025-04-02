@@ -49,6 +49,7 @@ README.md
 GettingStarted.md
 examples/data/
 docs/build/
+build/
 
 .vscode
 .gitlab-ci.yml

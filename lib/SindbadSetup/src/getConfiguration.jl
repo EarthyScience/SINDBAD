@@ -42,7 +42,7 @@ Creates a nested dictionary from a flat dictionary where keys are strings separa
 ```julia
 dict = Dict("a.b.c" => 2)
 nested_dict = createNestedDict(dict)
-````
+```
 """
 function createNestedDict(dict::AbstractDict)
     nested_dict = Dict()

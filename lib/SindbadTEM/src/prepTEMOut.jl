@@ -24,10 +24,10 @@ Defines and instantiates numeric arrays for SINDBAD output variables.
 
 # Examples:
 1. **Creating numeric arrays for output variables**:
-    ```julia
-    forcing_sizes = (time=10, lat=5, lon=5)
-    numeric_arrays = getNumericArrays(info, forcing_sizes)
-    ```
+```julia
+forcing_sizes = (time=10, lat=5, lon=5)
+numeric_arrays = getNumericArrays(info, forcing_sizes)
+```
 """
 function getNumericArrays(info, forcing_sizes)
     tem_output = info.output
@@ -64,18 +64,18 @@ Determines the type of elements to be used in the output array based on whether 
 
 # Examples:
 1. **Forward differentiation enabled**:
-    ```julia
-    num_type = Float64
-    array_type = getOutArrayType(num_type, DoUseForwardDiff())
-    # array_type = Real
-    ```
+```julia
+num_type = Float64
+array_type = getOutArrayType(num_type, DoUseForwardDiff())
+# array_type = Real
+```
 
 2. **Forward differentiation not enabled**:
-    ```julia
-    num_type = Float64
-    array_type = getOutArrayType(num_type, DoNotUseForwardDiff())
-    # array_type = Float64
-    ```
+```julia
+num_type = Float64
+array_type = getOutArrayType(num_type, DoNotUseForwardDiff())
+# array_type = Float64
+```
 """
 getOutArrayType
 
@@ -109,19 +109,19 @@ Retrieves the dimensions for SINDBAD output based on the specified array backend
 
 # Examples:
 1. **Using a base Array**:
-    ```julia
-    outdims = getOutDims(info, forcing_helpers, OutputArray())
-    ```
+```julia
+outdims = getOutDims(info, forcing_helpers, OutputArray())
+```
 
 2. **Using YAXArray**:
-    ```julia
-    outdims = getOutDims(info, forcing_helpers, OutputYAXArray())
-    ```
+```julia
+outdims = getOutDims(info, forcing_helpers, OutputYAXArray())
+```
 
 3. **Default behavior**:
-    ```julia
-    outdims = getOutDims(info, forcing_helpers)
-    ```
+```julia
+outdims = getOutDims(info, forcing_helpers)
+```
 """
 getOutDims
 
@@ -198,29 +198,29 @@ Retrieves the dimensions and corresponding data for SINDBAD output based on the 
 
 # Examples:
 1. **Using a base Array**:
-    ```julia
-    outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputArray())
-    ```
+```julia
+outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputArray())
+```
 
 2. **Using MArray**:
-    ```julia
-    outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputMArray())
-    ```
+```julia
+outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputMArray())
+```
 
 3. **Using SizedArray**:
-    ```julia
-    outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputSizedArray())
-    ```
+```julia
+outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputSizedArray())
+```
 
 4. **Using YAXArray**:
-    ```julia
-    outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputYAXArray())
-    ```
+```julia
+outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputYAXArray())
+```
 
 5. **Default behavior**:
-    ```julia
-    outdims, outarray = getOutDimsArrays(info, forcing_helpers)
-    ```
+```julia
+outdims, outarray = getOutDimsArrays(info, forcing_helpers)
+```
 """
 getOutDimsArrays
 
@@ -275,22 +275,22 @@ Creates dimension pairs for each output variable based on forcing dimensions and
 
 # Examples:
 1. **Basic usage**:
-    ```julia
-    tem_output = (variables=[:var1, :var2], depth_info=[(3, "depth"), (1, "depth")])
-    forcing_helpers = (axes=[(:time, 10), (:lat, 5), (:lon, 5)], dimensions=(permute=nothing))
-    outdims_pairs = getOutDimsPairs(tem_output, forcing_helpers)
-    ```
+```julia
+tem_output = (variables=[:var1, :var2], depth_info=[(3, "depth"), (1, "depth")])
+forcing_helpers = (axes=[(:time, 10), (:lat, 5), (:lon, 5)], dimensions=(permute=nothing))
+outdims_pairs = getOutDimsPairs(tem_output, forcing_helpers)
+```
 
 2. **With dimension permutation**:
-    ```julia
-    forcing_helpers = (axes=[(:time, 10), (:lat, 5), (:lon, 5)], dimensions=(permute=["lon", "lat", "time"]))
-    outdims_pairs = getOutDimsPairs(tem_output, forcing_helpers)
-    ```
+```julia
+forcing_helpers = (axes=[(:time, 10), (:lat, 5), (:lon, 5)], dimensions=(permute=["lon", "lat", "time"]))
+outdims_pairs = getOutDimsPairs(tem_output, forcing_helpers)
+```
 
 3. **With depth threshold**:
-    ```julia
-    outdims_pairs = getOutDimsPairs(tem_output, forcing_helpers; dthres=2)
-    ```
+```julia
+outdims_pairs = getOutDimsPairs(tem_output, forcing_helpers; dthres=2)
+```
 """
 function getOutDimsPairs(tem_output, forcing_helpers; dthres=1)
     forcing_axes = forcing_helpers.axes
@@ -343,12 +343,12 @@ Prepares the output NamedTuple required for running the Terrestrial Ecosystem Mo
 - `forcing_helpers`: A NamedTuple with information on forcing sizes and dimensions.
 
 # Returns:
-- A NamedTuple `output_tuple` containing:
-  - `land_init`: The initial land state from `info.land_init`.
-  - `dims`: A vector of output dimensions, where each dimension is represented as a tuple of `Dim` objects.
-  - `data`: A vector of numeric arrays initialized for output variables.
-  - `variables`: A list of output variable names.
-  - Additional fields for optimization output if optimization is enabled.
+A NamedTuple `output_tuple` containing:
+- `land_init`: The initial land state from `info.land_init`.
+- `dims`: A vector of output dimensions, where each dimension is represented as a tuple of `Dim` objects.
+- `data`: A vector of numeric arrays initialized for output variables.
+- `variables`: A list of output variable names.
+- Additional fields for optimization output if optimization is enabled.
 
 # Notes:
 - The function initializes the output dimensions and data arrays based on the specified array backend (`info.helpers.run.output_array_type`).
@@ -357,16 +357,16 @@ Prepares the output NamedTuple required for running the Terrestrial Ecosystem Mo
 
 # Examples:
 1. **Basic usage**:
-    ```julia
-    output_tuple = prepTEMOut(info, forcing_helpers)
-    ```
+```julia
+output_tuple = prepTEMOut(info, forcing_helpers)
+```
 
 2. **Accessing output fields**:
-    ```julia
-    dims = output_tuple.dims
-    data = output_tuple.data
-    variables = output_tuple.variables
-    ```
+```julia
+dims = output_tuple.dims
+data = output_tuple.data
+variables = output_tuple.variables
+```
 """
 function prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
     @info "  prepTEMOut: preparing output and helpers..."
@@ -407,14 +407,14 @@ Creates the output fields needed for the optimization experiment.
 
 # Examples:
 1. **With optimization enabled**:
-    ```julia
-    output = setupOptiOutput(info, output, DoRunOptimization())
-    ```
+```julia
+output = setupOptiOutput(info, output, DoRunOptimization())
+```
 
 2. **Without optimization**:
-    ```julia
-    output = setupOptiOutput(info, output, DoNotRunOptimization())
-    ```
+```julia
+output = setupOptiOutput(info, output, DoNotRunOptimization())
+```
 """
 setupOptiOutput
 
@@ -459,18 +459,18 @@ Collects metadata for a specific output variable in the SINDBAD experiment.
 
 # Examples:
 1. **Collecting metadata for a variable**:
-    ```julia
-    metadata = collectMetadata(info, (:diagnostics, :water_balance))
-    ```
+```julia
+metadata = collectMetadata(info, (:diagnostics, :water_balance))
+```
 
 2. **Accessing specific metadata fields**:
-    ```julia
-    platform_info = metadata["platform_info"]
-    variable_units = metadata["units"]
-    ```
+```julia
+platform_info = metadata["platform_info"]
+variable_units = metadata["units"]
+```
 
 # Warnings:
-- If the variable is not found in the catalog, a warning is logged:
+- If the variable is not found in the catalog, a warning is logged.
 """
 function collectMetadata(info, vname)
     metadata_platform = info.output.file_info.global_metadata

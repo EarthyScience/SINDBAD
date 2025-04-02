@@ -232,7 +232,7 @@ end
 Splits and renames a parameter based on a specified splitter.
 
 # Arguments
-- `p_string: The input parameter to be split and renamed
+- `p_string`: The input parameter to be split and renamed
     - `::String`: The parameter string to be split
     - `::Symbol`: The parameter symbol to be split
 - `_splitter`: The delimiter used to split the parameter string

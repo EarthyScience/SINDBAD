@@ -337,20 +337,20 @@ Helper function to set the value of a field in the options object.
 
 # Examples:
 1. **Updating a `NamedTuple`**:
-    ```julia
-    options = (max_iters = 100, tol = 1e-6)
-    updated_options = mergeNamedTupleSetValue(options, :tol, 1e-8)
-    ```
+```julia
+options = (max_iters = 100, tol = 1e-6)
+updated_options = mergeNamedTupleSetValue(options, :tol, 1e-8)
+```
 
 2. **Updating a mutable struct**:
-    ```julia
-    mutable struct BayesOptConfig
-        max_iters::Int
-        tol::Float64
-    end
-    config = BayesOptConfig(100, 1e-6)
-    updated_config = mergeNamedTupleSetValue(config, :tol, 1e-8)
-    `
+```julia
+mutable struct BayesOptConfig
+    max_iters::Int
+    tol::Float64
+end
+config = BayesOptConfig(100, 1e-6)
+updated_config = mergeNamedTupleSetValue(config, :tol, 1e-8)
+```
 """
 mergeNamedTupleSetValue
 

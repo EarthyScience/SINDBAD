@@ -63,22 +63,22 @@ Checks whether a given value or array is within specified bounds.
 
 # Examples:
 1. **Checking a scalar value**:
-    ```julia
-    is_in_range = checkInRange("parameter1", 5.0, 0.0, 10.0, true)
-    # Output: true
-    ```
+```julia
+is_in_range = checkInRange("parameter1", 5.0, 0.0, 10.0, true)
+# Output: true
+```
 
 2. **Checking an array (skipping bounds check)**:
-    ```julia
-    is_in_range = checkInRange("parameter2", [1.0, 2.0, 3.0], 0.0, 10.0, true)
-    # Output: true (logs a message indicating the check is skipped)
-    ```
+```julia
+is_in_range = checkInRange("parameter2", [1.0, 2.0, 3.0], 0.0, 10.0, true)
+# Output: true (logs a message indicating the check is skipped)
+```
 
 3. **Checking a scalar value outside bounds**:
-    ```julia
-    is_in_range = checkInRange("parameter3", -1.0, 0.0, 10.0, true)
-    # Output: false (logs a message indicating the violation)
-    ```
+```julia
+is_in_range = checkInRange("parameter3", -1.0, 0.0, 10.0, true)
+# Output: false (logs a message indicating the violation)
+```
 """
 checkInRange
 
@@ -206,19 +206,19 @@ Updates the parameters of SINDBAD models based on the provided parameter vector 
 
 # Examples:
 1. **Using `tbl_params` and `selected_models`:**
-    ```julia
-    updated_models = updateModelParameters(tbl_params, selected_models, param_vector)
-    ```
+```julia
+updated_models = updateModelParameters(tbl_params, selected_models, param_vector)
+```
 
 2. **Using `param_to_index` for direct mapping:**
-    ```julia
-    updated_models = updateModelParameters(param_to_index, selected_models, param_vector)
-    ```
+```julia
+updated_models = updateModelParameters(param_to_index, selected_models, param_vector)
+```
 
 3. **Using a generated function for compile-time updates:**
-    ```julia
-    updated_models = updateModelParameters(selected_models, param_vector, Val(p_vals))
-    ```
+```julia
+updated_models = updateModelParameters(selected_models, param_vector, Val(p_vals))
+```
 
 # Implementation Details:
 - The function iterates over the models in `selected_models` and updates their parameters based on the provided `param_vector`.

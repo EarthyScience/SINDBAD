@@ -1529,6 +1529,7 @@ checkMissingVarInfo(ambientCO2_constant)
 
 # Check for missing variable information in all approaches of a model
 checkMissingVarInfo(cCycle)
+```
 """
 checkMissingVarInfo
 
@@ -1823,7 +1824,7 @@ end
 """
     getVarFull(var_pair)
 
-return the variable full name used as the key in the catalog of sindbad_variables from a pair consisting of the field and subfield of SINDBAD land. Convention is field__subfield of land
+return the variable full name used as the key in the catalog of sindbad_variables from a pair consisting of the field and subfield of SINDBAD land. Convention is `field__subfield` of land
 """
 function getVarFull(var_pair)
     return Symbol(String(first(var_pair)) * "__" * String(last(var_pair)))

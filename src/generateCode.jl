@@ -166,7 +166,14 @@ The `generateSindbadApproach` function creates a SINDBAD model and/or approach b
 generateSindbadApproach(:ambientCO2, "Represents ambient CO2 concentration", :constant, "Sets the value of ambient CO2 as a constant", 1)
 
 # Generate a new SINDBAD model and approach
-generateSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2)
+
+createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2)
+
+# Generate a SINDBAD model and approach with force_over_write
+
+createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2; force_over_write=:both) # overwrite both model and approach
+
+createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2; force_over_write=:approach) # overwrite just approach approach
 ```
 # Notes
 - The function ensures that the generated code adheres to SINDBAD conventions and includes all necessary metadata and documentation.

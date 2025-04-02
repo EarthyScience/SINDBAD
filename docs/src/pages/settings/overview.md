@@ -10,11 +10,11 @@ The main configuration files of SINDBAD are listed in the table below
 
 | SN | Prefix | Required? | Purpose | 
 | :----: | :----| :----: | :------|
-| 1 | [experiment](experiment) | yes | the basics for experiment along with the information of additional settings of running simulation | 
-| 2 | [forcing](forcing) | yes | sets the information related to the forcing dataset | 
-| 3 | [model_structure](model_structure) | yes | sets the information of model processes and pools | 
-| 4 | [optimization](optimization) | no | sets the information needed to do parameter optimization or calculate model performance compared with observations | 
-| 5 | [parameters](parameters) | no | provides interface to run an experiment with non-default parameter values | 
+| 1 | [experiment](experiment.md) | yes | the basics for experiment along with the information of additional settings of running simulation | 
+| 2 | [forcing](forcing.md) | yes | sets the information related to the forcing dataset | 
+| 3 | [model_structure](model_structure.md) | yes | sets the information of model processes and pools | 
+| 4 | [optimization](optimization.md) | no | sets the information needed to do parameter optimization or calculate model performance compared with observations | 
+| 5 | [parameters](parameters.md) | no | provides interface to run an experiment with non-default parameter values | 
 
 
 

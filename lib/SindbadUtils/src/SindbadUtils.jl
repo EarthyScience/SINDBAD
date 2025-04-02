@@ -43,25 +43,22 @@ This package is designed to provide reusable utilities for data manipulation, st
 
 # Examples:
 1. **Performing spatial subsetting**:
-    ```julia
-    using SindbadUtils
-
-    spatial_subset = getSpatialSubset(spatial_data, region_of_interest)
-    ```
+```julia
+using SindbadUtils
+spatial_subset = getSpatialSubset(spatial_data, region_of_interest)
+```
 
 2. **Handling NamedTuples**:
-    ```julia
-    using SindbadUtils
-
-    transformed_nt = transformNamedTuple(input_nt, transformation_function)
-    ```
+```julia
+using SindbadUtils
+transformed_nt = transformNamedTuple(input_nt, transformation_function)
+```
 
 3. **Calculating statistics with missing values**:
-    ```julia
-    using SindbadUtils
-
-    mean_value = mean(data_with_nans, skipmissing=true)
-    ```
+```julia
+using SindbadUtils
+mean_value = mean(data_with_nans, skipmissing=true)
+```
 """
 module SindbadUtils
     using Accessors: @set

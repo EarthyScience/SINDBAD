@@ -29,23 +29,21 @@ This package acts as a high-level interface for conducting experiments using the
 
 # Examples:
 1. **Running an experiment**:
-    ```julia
-    using SindbadExperiment
+```julia
+using SindbadExperiment
+# Set up experiment parameters
+experiment_config = ...
 
-    # Set up experiment parameters
-    experiment_config = ...
-
-    # Run the experiment
-    runExperiment(experiment_config)
-    ```
+# Run the experiment
+runExperiment(experiment_config)
+```
 
 2. **Saving experiment outputs**:
-    ```julia
-    using SindbadExperiment
-
-    # Save outputs to a file
-    saveOutput(output_data, "results.nc")
-    ```
+```julia
+using SindbadExperiment
+# Save outputs to a file
+saveOutput(output_data, "results.nc")
+```
 """
 module SindbadExperiment
     using Sindbad

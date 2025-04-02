@@ -6,10 +6,11 @@ import path from 'path'
 
 const conceptItems = [
   { text: 'SINDBAD', link: '/pages/concept/overview' },
+  { text: 'Experiment', link: '/pages/concept/experiment' },
+  { text: 'TEM', link: '/pages/concept/TEM' },
   { text: 'info', link: '/pages/concept/info' },
   { text: 'land', link: '/pages/concept/land' },
-  { text: 'TEM', link: '/pages/concept/TEM' },
-  { text: 'Experiment', link: '/pages/concept/experiment' }]
+]
 
 const settingsItems = [
   { text: 'Overview', link: '/pages/settings/overview' },
@@ -35,17 +36,19 @@ const codeItems = [
 ]
 const aboutItems = [
   { text: 'Contact', link: '/pages/about/contact' },
-  { text: 'License', link: '.' },
+  { text: 'License', link: '/pages/about/license' },
   { text: 'Publications', link: '/pages/about/publications' },
   { text: 'Support', link: '/pages/about/support' },
   { text: 'Team', link: '/pages/about/team' },
 ]
 
 const manualItems = [
+  { text: 'Array Handling', link: '/pages/manual/array_handling' },
+  { text: 'Experiments', link: '/pages/manual/experiments' },
+  { text: 'Modeling Convention', link: '/pages/manual/conventions' },
+  { text: 'Spinup', link: '/pages/manual/spinup' },
+  { text: 'Toy Model', link: '/pages/manual/toy_model' },
   { text: 'Install', link: '/pages/manual/install' },
-  { text: 'Coding Guide', link: '/pages/manual/conventions' },
-  { text: 'Examples', link: '.' },
-  { text: 'Workflows', link: '/pages/manual/modelling_design' },
 ]
 
 const navTemp = {

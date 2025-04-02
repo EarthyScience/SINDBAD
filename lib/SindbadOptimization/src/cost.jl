@@ -23,10 +23,10 @@ Calculate the cost for a parameter vector.
 - `cost_options`: Options for cost function calculation
 - `multi_constraint_method`: Method for handling multiple constraints
 - `parameter_scaling_type`: Type of parameter scaling
--  <:SindbadCostMethod: a type parameter indicating cost calculation method
+-  `<:SindbadCostMethod`: a type parameter indicating cost calculation method
     - `::CostModelObs`: Type parameter indicating cost calculation between model and observations
     - `::CostModelObsMT`: Type parameter indicating multi-threaded cost calculation from CostModelObs
-    - `::CostModelObsPriors`: Type parameter indicating cost calculation between model, observations, and priors. NOTE THAT THIS METHOD IS JUST A PLACEHOLDER AND DOES NOT CALCULATE PRIOR COST PROPERLY YET.
+    - `::CostModelObsPriors`: Type parameter indicating cost calculation between model, observations, and priors. `NOTE THAT THIS METHOD IS JUST A PLACEHOLDER AND DOES NOT CALCULATE PRIOR COST PROPERLY YET`.
 
 
 # Returns
@@ -93,7 +93,7 @@ end
 
 Calculates the cost of SINDBAD model simulations for a single location by comparing model outputs as collections of SINDBAD `land` with observations using specified metrics and constraints.
 
-In the first variant, the land_time_series is preallocated for computational efficiency. In the second variant, the runTEM stacks the land using map function and the preallocations is not necessary.
+In the first variant, the `land_time_series` is preallocated for computational efficiency. In the second variant, the runTEM stacks the land using map function and the preallocations is not necessary.
 
 # Arguments:
 - `param_vector::AbstractArray`: A vector of model parameter values to be optimized.
@@ -113,23 +113,23 @@ In the first variant, the land_time_series is preallocated for computational eff
 # Returns:
 - `cost_metric`: A scalar or vector representing the cost, calculated by comparing model outputs with observations using the specified metrics and constraints.
 
-# Notes:
-- The function updates the selected models using the `param_vector` and `param_updater`.
-- It runs the SINDBAD TEM simulation for the specified location using `runTEM`.
-- The model outputs are compared with observations using `metricVector`, which calculates the performance metrics.
-- The resulting cost vector is combined into a single cost value or vector using `combineMetric` and the specified `multi_constraint_method`.
+!!! note
+    - The function updates the selected models using the `param_vector` and `param_updater`.
+    - It runs the SINDBAD TEM simulation for the specified location using `runTEM`.
+    - The model outputs are compared with observations using `metricVector`, which calculates the performance metrics.
+    - The resulting cost vector is combined into a single cost value or vector using `combineMetric` and the specified `multi_constraint_method`.
 
 # Examples:
 1. **Calculating cost for a single location**:
-    ```julia
-    cost = costLand(param_vector, selected_models, forcing, spinup_forcing, loc_forcing_t, land_timeseries, land_init, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type)
-    ```
+```julia
+cost = costLand(param_vector, selected_models, forcing, spinup_forcing, loc_forcing_t, land_timeseries, land_init, tem_info, observations, param_updater, cost_options, multi_constraint_method, parameter_scaling_type)
+```
 
 2. **Using a custom multi-constraint method**:
-    ```julia
-    custom_method = CustomConstraintMethod()
-    cost = costLand(param_vector, selected_models, forcing, spinup_forcing, loc_forcing_t, land_timeseries, land_init, tem_info, observations, param_updater, cost_options, custom_method, parameter_scaling_type)
-    ```
+```julia
+custom_method = CustomConstraintMethod()
+cost = costLand(param_vector, selected_models, forcing, spinup_forcing, loc_forcing_t, land_timeseries, land_init, tem_info, observations, param_updater, cost_options, custom_method, parameter_scaling_type)
+```
 
 3. **Handling observational uncertainties**:
     - Observations can include uncertainties and masks to refine the cost calculation, ensuring robust model evaluation.

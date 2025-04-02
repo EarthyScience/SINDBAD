@@ -296,6 +296,7 @@ function example_function(x::Float64, y::Bool) end
 
 types = getMethodTypes(example_function)
 println(types) # Output: [Int64, Float64]
+```
 """
 function getMethodTypes(fn)
     # Get the method table for the function

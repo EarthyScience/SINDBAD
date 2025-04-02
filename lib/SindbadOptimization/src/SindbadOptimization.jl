@@ -36,25 +36,23 @@ This package is designed to support optimization tasks in SINDBAD, such as calib
    - Provides functions for optimizing SINDBAD TEM parameters for single locations or small spatial grids.
    - Functionality to handle optimization using large-scale 3D data YAXArrays cubes, enabling parameter calibration across spatial dimensions.
 
-# Notes:
-- The package integrates multiple optimization libraries, allowing users to choose the most suitable algorithm for their problem.
-- Designed to be modular and extensible, enabling users to customize optimization workflows for specific use cases.
-- Supports both gradient-based and derivative-free optimization methods, ensuring flexibility for different types of cost functions.
+!!! note
+    - The package integrates multiple optimization libraries, allowing users to choose the most suitable algorithm for their problem.
+    - Designed to be modular and extensible, enabling users to customize optimization workflows for specific use cases.
+    - Supports both gradient-based and derivative-free optimization methods, ensuring flexibility for different types of cost functions.
 
 # Examples:
 1. **Running a CMA-ES optimization**:
-    ```julia
-    using SindbadOptimization
-
-    optimized_params = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, CMAEvolutionStrategyCMAES())
-    ```
+```julia
+using SindbadOptimization
+optimized_params = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, CMAEvolutionStrategyCMAES())
+```
 
 2. **Optimizing SINDBAD TEM parameters**:
-    ```julia
-    using SindbadOptimization
-
-    results = optimizeTEM(model, forcing, observations, info)
-    ```
+```julia
+using SindbadOptimization
+results = optimizeTEM(model, forcing, observations, info)
+```
 """
 module SindbadOptimization
 

@@ -80,20 +80,20 @@ Retrieves forcing values for a specific time step or returns constant forcing va
 # Extended Help
 # Examples:
 1. **Time-dependent forcing**:
-    ```julia
-    forcing = [1.0, 2.0, 3.0]  # Forcing values for time steps
-    ts = 2                     # Time step
-    value = getForcingV(forcing, ts, ForcingWithTime())
-    # value = 2.0
-    ```
+```julia
+forcing = [1.0, 2.0, 3.0]  # Forcing values for time steps
+ts = 2                     # Time step
+value = getForcingV(forcing, ts, ForcingWithTime())
+# value = 2.0
+```
 
 2. **Constant forcing**:
-    ```julia
-    forcing = 5.0              # Constant forcing value
-    ts = 3                     # Time step (ignored)
-    value = getForcingV(forcing, ts, ForcingWithoutTime())
-    # value = 5.0
-    ```
+```julia
+forcing = 5.0              # Constant forcing value
+ts = 3                     # Time step (ignored)
+value = getForcingV(forcing, ts, ForcingWithoutTime())
+# value = 5.0
+```
 """
 getForcingV
 
@@ -177,20 +177,20 @@ Creates a view of the input array `ar` for a specific time step `ts`, based on t
 
 # Examples:
 1. **Creating a view with a vector `val`**:
-    ```julia
-    ar = rand(10, 5)  # A 10x5 array
-    val = rand(5)     # A vector of size 5
-    ts = 3            # Time step
-    view_ar = getLocArrayView(ar, val, ts)
-    ```
+```julia
+ar = rand(10, 5)  # A 10x5 array
+val = rand(5)     # A vector of size 5
+ts = 3            # Time step
+view_ar = getLocArrayView(ar, val, ts)
+```
 
 2. **Creating a view with a scalar `val`**:
-    ```julia
-    ar = rand(10)     # A 1D array
-    val = 42.0        # A scalar value
-    ts = 2            # Time step
-    view_ar = getLocArrayView(ar, val, ts)
-    ```
+```julia
+ar = rand(10)     # A 1D array
+val = 42.0        # A scalar value
+ts = 2            # Time step
+view_ar = getLocArrayView(ar, val, ts)
+```
 """
 getLocArrayView
 
