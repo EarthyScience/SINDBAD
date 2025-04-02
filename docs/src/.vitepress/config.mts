@@ -35,7 +35,7 @@ const codeItems = [
 ]
 const aboutItems = [
   { text: 'Contact', link: '/pages/about/contact' },
-  { text: 'License', link: '.' },
+  { text: 'License', link: '/pages/about/license' },
   { text: 'Publications', link: '/pages/about/publications' },
   { text: 'Support', link: '/pages/about/support' },
   { text: 'Team', link: '/pages/about/team' },
@@ -44,8 +44,9 @@ const aboutItems = [
 const manualItems = [
   { text: 'Install', link: '/pages/manual/install' },
   { text: 'Coding Guide', link: '/pages/manual/conventions' },
-  { text: 'Examples', link: '.' },
-  { text: 'Workflows', link: '/pages/manual/modelling_design' },
+  { text: 'Experiments', link: '/pages/manual/experiments' },
+  { text: 'Modeling', link: '/pages/manual/modelling_design' },
+  { text: 'Spinup', link: '/pages/manual/spinup' },
 ]
 
 const navTemp = {

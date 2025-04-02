@@ -1,25 +1,31 @@
 ```@raw html
-# Sindbad's structure 
+# SINDBAD's Approaches 
 ```
+This page guides you through process of designing a SINDBAD approach and its different components. The core components that define any approach are explained on the following sections.
 
-The core components that define any model are explained on the following sections.
 
 :::info
 
-We should think about adding a template model structure. And use it as baseline to explain the components to new users that just want to know what is available.
-- Document selected_models better! specially the order in which they are executed!
+It is not recommended to build a model and approach from scratch by typing things. SINDBAD has a builtin function ```createSindbadApproach``` to create the model and approach files that has all the components described. This ensures following the modeling conventions around which the performance and modularity are built.
 
+Check the documentation of the function for further details as:
+```julia
+using Sindbad
+?createSindbadApproach
+```
 :::
 
-## Modelling Design
 
-The computation of any model requires the following input arguments:
 
-### model, forcing, land and helpers
+## Design
+
+The computation of any approach requires the following input arguments:
+
+### approach, forcing, land and helpers
 
 ::::tabs
 
-=== model
+=== approach
 
 All models are defined as follows:
 
@@ -46,39 +52,7 @@ forcing = (;
 
 === land
 
-`land` is a NamedTuple (NT) that carries and passes information across SINDBAD's models. The `land` variables are organized in subfields, and the depth of the NT should be exactly 2: a field diving the variable groups, and a subfield storing the data.
-
-If a variable is only used in only one model, but it is necessary to be precomputed, the model name itself, (e.g., cCycleBase) is used as the field. So, `land` can technically have many fields. But anything shared across models is grouped to contain variables with common characteristics, such as,
-
-:::tabs
-
-== constants
-
-Helpers and variables that are dependent on the model structure but do not change in time or model iterations/parameters.
-
-== diagnostics
-
-Variables that are derived from either forcing/pools/states to indicates stressors, controllers, rates and so on.
-
-== fluxes
-
-Variables in mass/area/time units.
-
-== models
-
-Instances that help model computation by dispatching on types. used in calculation of soil properties or updating pools.
-
-== pools
-
-Model storages and pools and their changes, usually only those variables automatically generated from model_structure.json.
-
-== properties
-
-Variables pertaining to characteristics of the land surface, e.g., soil and vegetation properties, and those directly derived from them.
-
-== states
-
-Ecosystem states and variables derived from these states and pools.
+`land` is a NamedTuple (NT) that carries and passes information across SINDBAD's models. Check [documentation of land](../concept/land.md) for details.
 
 :::
 
@@ -101,11 +75,11 @@ A NamedTuple with all the shared variables across models.
 ::::
 
 ## Displaying land
-For every model structure/implementation, the ```land``` should be examined for potential violations of the variable grouping using:
+For every approach structure/implementation, the ```land``` should be examined for potential violations of the variable grouping using:
 
 
 ````@ansi land_fields
-using SindbadUtils: tcPrint
+using SINDBADUtils: tcPrint
 tcPrint(land)
 ````
 
@@ -162,14 +136,14 @@ end
 
 ````
 
-## Creating model components
+## Creating approach components
 
-### Model definition
+### approach definition
 
 ````@example mdesign
-using Sindbad
-using Sindbad: @describe, @bounds, @units, @with_kw, @timescale
-# Define a model abstract type
+using SINDBAD
+using SINDBAD: @describe, @bounds, @units, @with_kw, @timescale
+# Define a approach abstract type
 abstract type modelExample <: LandEcosystem end
 # define a concrete struct type
 @bounds @describe @units @timescale @with_kw struct mExample{T1,T2} <: modelExample
@@ -207,7 +181,7 @@ nothing # hide
 
 ### Define / precompute new variable
 
-Now, `define` a function for this model
+Now, `define` a function for this approach
 
 ````@example mdesign
 function define(params::mExample, forcing, land, helpers)
@@ -227,7 +201,7 @@ function define(params::mExample, forcing, land, helpers)
 end
 ````
 
-### Instantiate model struct
+### Instantiate approach struct
 
 ````@example mdesign
 model_example = mExample()
@@ -244,13 +218,13 @@ nothing # hide
 display `land` using tcPrint
 
 ````@ansi mdesign
-using SindbadUtils: tcPrint
+using SINDBADUtils: tcPrint
 tcPrint(land)
 ````
 
-### Apply compute to new model
+### Apply compute to new approach
 
-Now, create a  `compute` function for this model
+Now, create a  `compute` function for this approach
 
 ````@example mdesign
 function compute(params::mExample, forcing, land, helpers)
@@ -269,7 +243,7 @@ function compute(params::mExample, forcing, land, helpers)
     end
     return land
 end
-# and apply `compute` to new model to update `var1` value
+# and apply `compute` to new approach to update `var1` value
 land = compute(model_example, forcing, land, helpers)
 nothing # hide
 ````
@@ -299,14 +273,14 @@ or `@btime` for a shorter description
 
 What's next? Well, `composing`! Namely, apply `compute` on different methods and updating `land` on each one of them.
 
-The main functions for this are defined on `SindbadTEM`. See the `TEM` section to know more.
+The main functions for this are defined on `SINDBADTEM`. See the `TEM` section to know more.
 
 Also, note that in practice, you would want to do this for multiple time steps. For the output of this operation, we use a `LandWrapper` that collects all fields in a user-friendly manner.
 
 ## LandWrapper
 
 ```@example land_wrapper
-using SindbadTEM.SindbadUtils: LandWrapper
+using SINDBADTEM.SINDBADUtils: LandWrapper
 using Random
 Random.seed!(123)
 ```
@@ -366,7 +340,7 @@ lines(g_flux; figure = (; size = (600, 300)))
 or the pools by first using `stackArrays`:
 
 ```@example land_wrapper
-using SindbadTEM.SindbadUtils: stackArrays
+using SINDBADTEM.SINDBADUtils: stackArrays
 
 d_pool = land_wrapped.pools.d_pool
 series(stackArrays(d_pool); color = [:black, :red, :dodgerblue, :orange],
@@ -378,7 +352,7 @@ series(stackArrays(d_pool); color = [:black, :red, :dodgerblue, :orange],
 Now, let's say that we know the `x` and `y` dimensions of your arrays, then you could for example do
 
 ```@example land_wrapper
-using SindbadData.DimensionalData
+using SINDBADData.DimensionalData
 using Dates
 
 g_flux = land_wrapped.fluxes.g_flux
@@ -396,7 +370,7 @@ lines(dd_flux; figure = (; size = (600, 300)))
 and similarly for the `d_pool`:
 
 ```@example land_wrapper
-using SindbadData: toDimStackArray
+using SINDBADData: toDimStackArray
 using Dates
 
 pool_names = ["root", "veg", "leaf", "wood"]
