@@ -1,4 +1,5 @@
 export standard_sindbad_models
+export all_available_sindbad_models
 
 
 # List all models of SINDBAD in the order they would be normally be called. 
@@ -97,3 +98,8 @@ standard_sindbad_models = (:wCycleBase,
     :cFireMortality,
     :cBiomass,
     :deriveVariables)
+
+"""
+a tuple of all available SINDBAD models
+"""
+all_available_sindbad_models = Tuple(subtypes(LandEcosystem))

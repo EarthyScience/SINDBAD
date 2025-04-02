@@ -184,7 +184,7 @@ createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach,
 
 createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2; force_over_write=:both) # overwrite both model and approach
 
-createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2; force_over_write=:both) # overwrite just approach approach
+createSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproach, "Implements a new approach for the model", 2; force_over_write=:approach) # overwrite just approach approach
 ```
 
 # Notes

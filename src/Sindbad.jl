@@ -71,11 +71,11 @@ module Sindbad
     ## Define SINDBAD supertype
     export LandEcosystem
     abstract type LandEcosystem end
-
-include("utilsCore.jl")
-include("sindbadVariableCatalog.jl")
-include("modelTools.jl")
-include("Models/models.jl")
-include("generateCode.jl")
-@reexport using .Models
+   
+   include("utilsCore.jl")
+   include("sindbadVariableCatalog.jl")
+   include("modelTools.jl")
+   include("Models/models.jl")
+   include("generateCode.jl")
+   @reexport using .Models
 end
