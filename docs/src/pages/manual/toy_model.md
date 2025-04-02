@@ -79,7 +79,7 @@ For every approach structure/implementation, the ```land``` should be examined f
 
 
 ````@ansi land_fields
-using SINDBADUtils: tcPrint
+using SindbadUtils: tcPrint
 tcPrint(land)
 ````
 
@@ -141,8 +141,8 @@ end
 ### approach definition
 
 ````@example mdesign
-using SINDBAD
-using SINDBAD: @describe, @bounds, @units, @with_kw, @timescale
+using Sindbad
+using Sindbad: @describe, @bounds, @units, @with_kw, @timescale
 # Define a approach abstract type
 abstract type modelExample <: LandEcosystem end
 # define a concrete struct type
@@ -218,7 +218,7 @@ nothing # hide
 display `land` using tcPrint
 
 ````@ansi mdesign
-using SINDBADUtils: tcPrint
+using SindbadUtils: tcPrint
 tcPrint(land)
 ````
 
@@ -273,14 +273,14 @@ or `@btime` for a shorter description
 
 What's next? Well, `composing`! Namely, apply `compute` on different methods and updating `land` on each one of them.
 
-The main functions for this are defined on `SINDBADTEM`. See the `TEM` section to know more.
+The main functions for this are defined on `SindbadTEM`. See the `TEM` section to know more.
 
 Also, note that in practice, you would want to do this for multiple time steps. For the output of this operation, we use a `LandWrapper` that collects all fields in a user-friendly manner.
 
 ## LandWrapper
 
 ```@example land_wrapper
-using SINDBADTEM.SINDBADUtils: LandWrapper
+using SindbadTEM.SindbadUtils: LandWrapper
 using Random
 Random.seed!(123)
 ```
@@ -340,7 +340,7 @@ lines(g_flux; figure = (; size = (600, 300)))
 or the pools by first using `stackArrays`:
 
 ```@example land_wrapper
-using SINDBADTEM.SINDBADUtils: stackArrays
+using SindbadTEM.SindbadUtils: stackArrays
 
 d_pool = land_wrapped.pools.d_pool
 series(stackArrays(d_pool); color = [:black, :red, :dodgerblue, :orange],
@@ -352,7 +352,7 @@ series(stackArrays(d_pool); color = [:black, :red, :dodgerblue, :orange],
 Now, let's say that we know the `x` and `y` dimensions of your arrays, then you could for example do
 
 ```@example land_wrapper
-using SINDBADData.DimensionalData
+using SindbadData.DimensionalData
 using Dates
 
 g_flux = land_wrapped.fluxes.g_flux
@@ -370,7 +370,7 @@ lines(dd_flux; figure = (; size = (600, 300)))
 and similarly for the `d_pool`:
 
 ```@example land_wrapper
-using SINDBADData: toDimStackArray
+using SindbadData: toDimStackArray
 using Dates
 
 pool_names = ["root", "veg", "leaf", "wood"]

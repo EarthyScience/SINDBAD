@@ -1,83 +1,93 @@
 ```@raw html
 # SINDBAD TEM 
 ```
-In SINDBAD, TEM is broadly defined as the component of MDI framework that includes the ecosystem processes, ways to modeling these processes, building them together to form a Terrestrial Ecosystem Model (TEM), and running their components such as spinup, time loop etc.
+In SINDBAD, the Terrestrial Ecosystem Model (TEM) is a core component of the MDI framework. It encompasses ecosystem processes, approaches to model these processes, and the orchestration of their execution, including spinup, time loops, and other components.
 
-## Model Processes
+## Ecosystem Processes
 
 ### SINDBAD Model
 
-A **Model** is defined as an ecosystem process that can be modelled using different methods and ways. In principle, a model would represent a certain ecosystem process which could ideally not be broken into smaller processes. For example, ```photosynthesis``` is too broad to be a model when thinking about the processes involved during it such as radiation use, transpiration, etc. So, it could be divided into individual ```component models``` which could be put together to represent the process of ```photosynthesis```.
+A Model represents an ecosystem process that can be modeled using various methods. Each model focuses on a specific process that cannot be further divided. For example, instead of modeling the broad process of `photosynthesis`, it can be broken into smaller components like `radiation use` or `transpiration`, which are modeled individually and combined to represent the larger process.
 
 ### SINDBAD Approach
+An Approach is a method to calculate or emulate a process defined by a SINDBAD Model. For instance, the process of `baseflow` generation can be modeled using a `linear` approach, where baseflow is calculated as a linear function of groundwater storage.
 
-A method to calculate/emulate a process defined by a ```SINDBAD Model``` is called an **approach**. Lets assume an example of the process of baseflow generation. ```Baseflow``` would be the model process (SINDBAD Model), and ```linear``` can be a method where baseflow is calculated as a linear function of groundwater storage.
-
-### Approach methods:
-
-The `update, compute, precompute, and define` functions are core methods that can defined for every SINDBAD approach.
+### Approach Methods
+The following core methods are defined for every SINDBAD approach:
 
 - `define`: Initializes memory-allocating variables and arrays required for the approach.
 - `precompute`: Updates defined variables and arrays with new realizations based on model parameters or forcing data, preparing the model for time-dependent computations.
-- `compute`: Advances the model state in time by applying dynamic updates using precomputed variables and the forcing data of the time step.
-- `update`: optionally, modifies pools and variables within a single time step.
+- `compute`: Advances the model state in time by applying dynamic updates using precomputed variables and forcing data for the current time step.
+- `update`: Optionally modifies pools and variables within a single time step.
 
 ## Parameters and Inversion
+In SINDBAD, `Model parameters` are critical components that control the response of a modeled process. These parameters are often uncertain and can be estimated using `model/parameter inversion methods`. Inversion broadly includes techniques such as:
 
-In SINDBAD, ```Parameters``` of an approach are defined as the critical component that control the response that the process is representing. In classical term, this is the aspect of an approach that are uncertain, meaning their true values are often unknown. In MDI perspective, these are open to be estimated using ```model/parameter inversion``` methods. By inversion, we broadly include *all methods including but not limited to parameter calibration (à la modeling principle), optimization (à la mathematical method), and parameter learning (à la ML)*. 
+- Parameter calibration (modeling principles),
+- Optimization (mathematical methods),
+- Parameter learning (machine learning).
 
 ## Ecosystem Model
 
-We envision an ecosystem as the core component of the modeling that includes
-1. combination of ecosystem process
-2. ways to run it, e.g., with a without spinup, once per model run, or in each timestep etc.
+An Ecosystem Model is the core of SINDBAD's modeling framework. It includes:
+
+- A combination of ecosystem processes.
+- Methods to execute these processes, such as spinup, time-stepping, or one-time initialization.
 
 ### Model Structure
 
-A model structure represents a collection of ecosystem processes that are suited for a scientific goal and challenge. It includes a collection of SINDBAD models, for each of which an approach is defined for the given experiment.
+A Model Structure is a collection of ecosystem processes designed for a specific scientific goal. It includes a set of SINDBAD models, each with a defined approach for the experiment. SINDBAD allows full flexibility to *lego-build* model structures through settings.
 
-SINBAD allows for full flexibility to ```lego-build``` the model structure through the settings. Note that the models has sub-dependency that means not all the models can be combined and used independently. For example, in a model structure where ```fAPAR``` is calculated as a function of ```LAI``` should include the ```LAI``` in the model structure. 
+::: warning
 
-### Model orders and list, selected models
+Models may have dependencies. For example, if ```fAPAR``` depends on ```LAI```, the *model structure must include LAI*.
 
-By default, a standard collection of models and their orders of calls are stored in ```standard_sindbad_models``` variable which is available when SINDBAD is imported.
+:::
 
-::: info
+The default model structure is stored in the standard_sindbad_models variable, which can be overridden during experimental setup.
 
-This can be over-riden by passing the sindbad_models field during experimental setup through ```replace_info```
+Example:
+
+To override the default model structure, pass it through the `replace_info` in experimental setup. For example, a *hypothetical ecosystem model* that can simulate vegetation growth while considering water limitations can be used to replace the standard models as,
+
 
 ```julia
-"model_structure.sindbad_models" => (:model1, :model2, :model3)
+    hypothetical_models = (
+        :radiation,      # Handles radiation use
+        :transpiration,  # Manages water use
+        :soilwater,     # Controls soil moisture
+        :allocation,    # Distributes resources
+        :turnover       # Handles biomass changes
+    )
+    hypothetical_replace_info = (;"model_structure.sindbad_models" => hypothetical_models)
+    info = getExperimentInfo(experiment_json; replace_info=hypothetical_replace_info);
 ```
 
-Note that this list can be a subset of all models defined in SINDBAD. To check that
+::: tip
+
+To view standard and all available SINDBAD models:
 
 ```julia
 using Sindbad
+standard_sindbad_models
 all_available_sindbad_models
 ```
 
 :::
 
-From the list of standard models or user-defined variant of it, which can be a subset of all available sindbad models, an experiment can select a set of models suited for the goal. This is so called ```selected_models``` of an experiment which are [set through model structure settings](../settings/model_structure.md). 
+### Model Selection
 
+From the list of standard models or user-defined variant of it, which can be a subset of all available sindbad models, an experiment can select a set of models suited for the goal. This is so called ```selected_models``` of an experiment which are [set through model structure settings](../settings/model_structure.md). 
 
 ## runTEM
 
-```runTEM``` by name  encompasses the steps and ways to orchestrate the execution of the SINDBAD Terrestrial Ecosystem Model (TEM). 
-It includes initialization, spinup, and time-stepping processes for the model structure
+The runTEM component/function orchestrates the execution of the SINDBAD TEM. It includes initialization, spinup, and time-stepping processes for the selected model structure.
 
-- `coreTEM`: Core execution of the SINDBAD TEM. It handles the precomputation, spinup, and time-stepping processes.
+- `coreTEM`: Handles the core execution of the SINDBAD TEM, including precomputation, spinup, and time-stepping.
+- `timeLoopTEM`: Executes the time loop for the SINDBAD TEM, updating the land state for each time step.
+- `computeTEM`: Executes the compute function for all selected models, updating the land state for a given time step.
+- `defineTEM`: Executes the define function for all selected models, initializing variables and arrays.
+`precomputeTEM`: Executes the precompute function for all selected models, updating variables and arrays based on new realizations.
 
-- `timeLoopTEM`: Time loop for the SINDBAD TEM. It updates the land state for each time step.
-
-    - `computeTEM`: Executes the `compute` function for all selected models, updating the land state for a given time step.
-
-- `defineTEM`: Executes the `define` function for all selected models
-
-- `precomputeTEM`: Executes the precompute function for all selected models
-
-
-## Spinup
-
-In SINDBAD, the **Spinup** is envisioned as a (collection of) step(s)/sequences within a bigger model simulation after which the ecosystem states and pools reach equilibrium for a given set of climate, model parameters, and land characteristics.
+# Spinup
+In SINDBAD, Spinup is a sequence of steps within a larger model simulation. Its purpose is to bring ecosystem states and pools to equilibrium for a given set of climate conditions, model parameters, and land characteristics. Spinup ensures that the model starts from a stable state before proceeding with time-dependent calculations.
