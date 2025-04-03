@@ -1,27 +1,64 @@
-# Ignore everything in repository root 
-/*
-
-# Files to not ignore
-!/.gitignore
-!/.gitattributes
-!/README.md
-
-# Folders to not ignore (ignore every folder other than these)
-!/documentation/
-!/model/
-!/optimization/
-!/tools/
-!/testBeds/
-
-# Folder to ignore
-# ./data
-# ./input
-# ./settings
-# ./sandbox
-# ./output
-*~
-*.swpi
-*.swo
-*.bak
+*.jl.*.cov
+*.jl.cov
+*.jl.mem
+*_raw.jl
+*.nc
+*_tmp.jl
+*.bson
+*.zarr
+*.tar
+*.tar.gz
+*.zip
+*.rar
+*.out
+*.log
+*logs
+*.dat
+*.tmp
 *.txt
-*.asv
+*.csv
+*.CSV
+*.e
+*.jld2
+*.jld
+*.o
+*.mem
+*.png
+*.jpg
+*.svg
+*.pdf
+*.PDF
+.*
+~*
+*_tmp
+tmp_*
+tmp*
+output_*
+*Manifest.toml
+*/Manifest.toml
+*/*/Manifest.toml
+/*/*/*/Manifest.toml
+
+/Manifest.toml
+examples/Manifest.toml
+examples/*/Manifest.toml
+docs/Manifest.toml
+lib/*/Manifest.toml
+lib/Manifest.toml
+README.md
+GettingStarted.md
+examples/data/
+docs/build/
+build/
+
+.vscode
+.gitlab-ci.yml
+.DS_Store
+node_modules
+package-lock.json
+!docs/src/assets/logo.png
+!docs/src/assets/logo-RnD.png
+!.vitepress
+!logo_mpi_grey.png
+!.github
+.qodo
