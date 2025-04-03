@@ -1,87 +1,52 @@
 export runoffSurface_directIndirect
 
-@bounds @describe @units @with_kw struct runoffSurface_directIndirect{T1, T2} <: runoffSurface
-	dc::T1 = 0.01 | (0.0001, 1.0) | "delayed surface runoff coefficient" | ""
-	rf::T2 = 0.5 | (0.0001, 1.0) | "fraction of overland runoff that recharges the surface water storage" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct runoffSurface_directIndirect{T1,T2} <: runoffSurface
+    dc::T1 = 0.01 | (0.0001, 1.0) | "delayed surface runoff coefficient" | "" | ""
+    rf::T2 = 0.5 | (0.0001, 1.0) | "fraction of overland runoff that recharges the surface water storage" | "" | ""
+end
+#! format: on
+
+function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_runoffSurface_directIndirect params
+
+    ## unpack land variables
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        ΔsurfaceW ⇐ land.pools
+        overland_runoff ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
+        n_surfaceW ⇐ land.constants
+    end
+    # fraction of overland runoff that recharges the surface water & the
+    # fraction that flows out directly
+    surface_runoff_direct = (o_one - rf) * overland_runoff
+
+    # fraction of surface storage that flows out irrespective of input
+    suw_recharge = rf * overland_runoff
+    surface_runoff_indirect = dc * sum(surfaceW + ΔsurfaceW)
+
+    # get the total surface runoff
+    surface_runoff = surface_runoff_direct + surface_runoff_indirect
+
+    # update the delta storage
+    @add_to_elem suw_recharge ⇒ (ΔsurfaceW, 1, :surfaceW) # assumes all the recharge supplies the first surface water layer
+    ΔsurfaceW = addToEachElem(ΔsurfaceW, - surface_runoff_indirect / n_surfaceW)
+
+    ## pack land variables
+    @pack_nt begin
+        (surface_runoff, surface_runoff_direct, surface_runoff_indirect, suw_recharge) ⇒ land.fluxes
+        ΔsurfaceW ⇒ land.pools
+    end
+    return land
 end
 
-function compute(o::runoffSurface_directIndirect, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_runoffSurface_directIndirect o
-
-	## unpack land variables
-	@unpack_land begin
-		surfaceW ∈ land.pools
-		ΔsurfaceW ∈ land.states
-		runoffOverland ∈ land.fluxes
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	# fraction of overland runoff that recharges the surface water & the
-	#fraction that flows out directly
-	runoffSurfaceDirect = (𝟙 - rf) * runoffOverland
-
-	# fraction of surface storage that flows out irrespective of input
-	surfaceWRec = rf * runoffOverland
-	runoffSurfaceIndirect = dc * sum(surfaceW + ΔsurfaceW)
-
-	# get the total surface runoff
-	runoffSurface = runoffSurfaceDirect + runoffSurfaceIndirect
-
-	# update the delta storage
-	ΔsurfaceW[1] = ΔsurfaceW[1] + surfaceWRec # assumes all the recharge supplies the first surface water layer
-	ΔsurfaceW .= ΔsurfaceW .- runoffSurfaceIndirect / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
-
-	## pack land variables
-	@pack_land begin
-		(runoffSurface, runoffSurfaceDirect, runoffSurfaceIndirect, surfaceWRec) => land.fluxes
-		ΔsurfaceW => land.states
-	end
-	return land
-end
-
-function update(o::runoffSurface_directIndirect, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_runoffSurface_directIndirect o
-
-	## unpack variables
-	@unpack_land begin
-		surfaceW ∈ land.pools
-		ΔsurfaceW ∈ land.states
-	end
-
-	## update storage pools
-	surfaceW .= surfaceW .+ ΔsurfaceW
-
-	# reset ΔsurfaceW to zero
-	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-	## pack land variables
-	@pack_land begin
-		# surfaceW => land.pools
-		ΔsurfaceW => land.states
-	end
-	return land
-end
+purpose(::Type{runoffSurface_directIndirect}) = "assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage"
 
 @doc """
-assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_directIndirect
-
-*Inputs*
- - land.fluxes.runoffOverland
-
-*Outputs*
-
-# update
-
-update pools and states in runoffSurface_directIndirect
-
+$(getBaseDocString(runoffSurface_directIndirect))
 
 ---
 
@@ -91,7 +56,7 @@ update pools and states in runoffSurface_directIndirect
 
 *Versions*
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 runoffSurface_directIndirect

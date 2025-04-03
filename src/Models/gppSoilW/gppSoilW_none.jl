@@ -1,35 +1,24 @@
 export gppSoilW_none
 
-struct gppSoilW_none <: gppSoilW
+struct gppSoilW_none <: gppSoilW end
+
+function define(params::gppSoilW_none, forcing, land, helpers)
+    @unpack_nt o_one ⇐ land.constants
+
+    ## calculate variables
+    # set scalar to a constant one [no effect on potential GPP]
+    gpp_f_soilW = o_one
+
+    ## pack land variables
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::gppSoilW_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	# set scalar to a constant one [no effect on potential GPP]
-	SMScGPP = helpers.numbers.𝟙
-
-	## pack land variables
-	@pack_land SMScGPP => land.gppSoilW
-	return land
-end
+purpose(::Type{gppSoilW_none}) = "sets the soil moisture stress on gpp_potential to one (no stress)"
 
 @doc """
-sets the soil moisture stress on gppPot to one (no stress)
 
----
-
-# compute:
-
-*Inputs*
- - helpers
-
-*Outputs*
- - land.gppSoilW.SMScGPP: soil moisture effect on GPP [] dimensionless, between 0-1
-
-# precompute:
-precompute/instantiate time-invariant variables for gppSoilW_none
-
+$(getBaseDocString(gppSoilW_none))
 
 ---
 
@@ -38,9 +27,9 @@ precompute/instantiate time-invariant variables for gppSoilW_none
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up  
 
-*Created by:*
- - ncarval
+*Created by*
+ - ncarvalhais
 """
 gppSoilW_none

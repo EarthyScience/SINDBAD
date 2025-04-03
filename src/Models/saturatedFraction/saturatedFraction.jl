@@ -2,12 +2,11 @@ export saturatedFraction
 
 abstract type saturatedFraction <: LandEcosystem end
 
-include("saturatedFraction_none.jl")
+purpose(::Type{saturatedFraction}) = "Saturated fraction of a grid cell"
 
-@doc """
-Saturated fraction of a grid cell
+includeApproaches(saturatedFraction, @__DIR__)
 
-# Approaches:
- - none: sets the land.states.soilWSatFrac [saturated soil fraction] to 𝟘  (pix, 1)
+@doc """ 
+	$(getBaseDocString(saturatedFraction))
 """
 saturatedFraction

@@ -1,93 +1,79 @@
 export cFlowSoilProperties_CASA
 
-@bounds @describe @units @with_kw struct cFlowSoilProperties_CASA{T1, T2, T3, T4, T5, T6} <: cFlowSoilProperties
-	effA::T1 = 0.85 | nothing | "" | ""
-	effB::T2 = 0.68 | nothing | "" | ""
-	effCLAY_cMicSoil_A::T3 = 0.003 | nothing | "" | ""
-	effCLAY_cMicSoil_B::T4 = 0.032 | nothing | "" | ""
-	effCLAY_cSoilSlow_A::T5 = 0.003 | nothing | "" | ""
-	effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cFlowSoilProperties_CASA{T1,T2,T3,T4,T5,T6} <: cFlowSoilProperties
+    effA::T1 = 0.85 | (-Inf, Inf) | "" | "" | ""
+    effB::T2 = 0.68 | (-Inf, Inf) | "" | "" | ""
+    effclay_cMicSoil_A::T3 = 0.003 | (-Inf, Inf) | "" | "" | ""
+    effclay_cMicSoil_B::T4 = 0.032 | (-Inf, Inf) | "" | "" | ""
+    effclay_cSoilSlow_A::T5 = 0.003 | (-Inf, Inf) | "" | "" | ""
+    effclay_cSoilSlow_B::T6 = 0.009 | (-Inf, Inf) | "" | "" | ""
+end
+#! format: on
+
+function define(params::cFlowSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cFlowSoilProperties_CASA params
+    @unpack_nt cEco ⇐ land.pools
+
+    ## Instantiate variables
+    p_E_vec = repeat(zero(cEco),
+        1,
+        1,
+        length(cEco))
+
+    ## pack land variables
+    @pack_nt p_E_vec ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_cFlowSoilProperties_CASA o
+function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_cFlowSoilProperties_CASA params
 
-	## instantiate variables
-	p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))
+    ## unpack land variables
+    @unpack_nt p_E_vec ⇐ land.diagnostics
 
-	## pack land variables
-	@pack_land p_E => land.cFlowSoilProperties
-	return land
+    ## unpack land variables
+    @unpack_nt (st_clay, st_silt) ⇐ land.properties
+
+    ## calculate variables
+    # p_fSoil = zeros(length(info.model.nPix), length(info.model.nZix))
+    # p_fSoil = zero(cEco)
+    # #sujan
+    p_F_vec = p_E_vec
+    clay = mean(st_clay)
+    silt = mean(st_silt)
+    # CONTROLS FOR C FLOW TRANSFERS EFFICIENCY [E] AND FRACTION [F] BASED ON PARTICULAR TEXTURE PARAMETERS.
+    # SOURCE, TARGET, VALUE [increment in E & F caused by soil properties]
+    aME = [:cMicSoil :cSoilSlow effA-(effB*(silt+clay))
+        :cMicSoil :cSoilOld effA-(effB*(silt+clay))]
+    aMF = [:cSoilSlow :cMicSoil 1-(effclay_cSoilSlow_A+(effclay_cSoilSlow_B*clay))
+        :cSoilSlow :cSoilOld effclay_cSoilSlow_A+(effclay_cSoilSlow_B*clay)
+        :cMicSoil :cSoilSlow 1-(effclay_cMicSoil_A+(effclay_cMicSoil_B*clay))
+        :cMicSoil :cSoilOld effclay_cMicSoil_A+(effclay_cMicSoil_B*clay)]
+    for vn ∈ ("E", "F")
+        eval(["aM = aM" vn " "])
+        for ii ∈ 1:size(aM, 1)
+            ndxSrc = helpers.pools.zix.(aM(ii, 1))
+            ndxTrg = helpers.pools.zix.(aM(ii, 2))
+            for iSrc ∈ eachindex(ndxSrc)
+                for iTrg ∈ eachindex(ndxTrg)
+                    # (["p_cFlowSoilProperties_" vn(1]])(:, ndxTrg[iTrg], ndxSrc[iSrc]) = aM[ii, 3); #line commented for julia conversion. make sure this works.
+                end
+            end
+        end
+    end
+
+    ## pack land variables
+    @pack_nt (p_E_vec, p_F_vec) ⇒ land.diagnostics
+    return land
 end
 
-function compute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_cFlowSoilProperties_CASA o
-
-	## unpack land variables
-	@unpack_land p_E ∈ land.cFlowSoilProperties
-
-	## unpack land variables
-	@unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
-
-
-	## calculate variables
-	# p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
-	# p_fSoil = zeros(helpers.numbers.numType, length(land.pools.cEco))
-	# #sujan
-	p_F = p_E
-	CLAY = mean(p_CLAY)
-	SILT = mean(p_SILT)
-	# CONTROLS FOR C FLOW TRANSFERS EFFICIENCY [E] AND FRACTION [F] BASED ON PARTICULAR TEXTURE PARAMETERS.
-	# SOURCE, TARGET, VALUE [increment in E & F caused by soil properties]
-	aME = [
-	:cMicSoil :cSoilSlow effA - (effB * (SILT + CLAY)); :cMicSoil :cSoilOld effA - (effB * (SILT + CLAY))
-	]
-	aMF = [
-	:cSoilSlow :cMicSoil 1 - (effCLAY_cSoilSlow_A + (effCLAY_cSoilSlow_B * CLAY)); :cSoilSlow :cSoilOld effCLAY_cSoilSlow_A + (effCLAY_cSoilSlow_B * CLAY); :cMicSoil :cSoilSlow 1 - (effCLAY_cMicSoil_A + (effCLAY_cMicSoil_B * CLAY));:cMicSoil :cSoilOld effCLAY_cMicSoil_A + (effCLAY_cMicSoil_B * CLAY)
-	]
-	for vn in ("E", "F")
-		eval(["aM = aM" vn " "])
-		for ii in 1:size(aM, 1)
-			ndxSrc = helpers.pools.carbon.zix.(aM(ii, 1))
-			ndxTrg = helpers.pools.carbon.zix.(aM(ii, 2))
-			for iSrc in 1:length(ndxSrc)
-				for iTrg in 1:length(ndxTrg)
-					# (["p_cFlowSoilProperties_" vn(1]])(:, ndxTrg[iTrg], ndxSrc[iSrc]) = aM[ii, 3); #line commented for julia conversion. make sure this works.
-				end
-			end
-		end
-	end
-
-	## pack land variables
-	@pack_land (p_E, p_F) => land.cFlowSoilProperties
-	return land
-end
+purpose(::Type{cFlowSoilProperties_CASA}) = "effects of soil that change the transfers between carbon pools"
 
 @doc """
-effects of soil that change the transfers between carbon pools
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Effect of soil properties on the c transfers between pools using cFlowSoilProperties_CASA
-
-*Inputs*
- - land.soilWBase.p_CLAY: soil hydraulic properties for clay layer
- - land.soilWBase.p_SILT: soil hydraulic properties for silt layer
-
-*Outputs*
- - land.cFlowSoilProperties.p_E: effect of soil on transfer efficiency between pools
- - land.cFlowSoilProperties.p_F: effect of soil on transfer fraction between pools
- - land.cFlowSoilProperties.p_E
- - land.cFlowSoilProperties.p_F
-
-# precompute:
-precompute/instantiate time-invariant variables for cFlowSoilProperties_CASA
-
+$(getBaseDocString(cFlowSoilProperties_CASA))
 
 ---
 
@@ -101,7 +87,7 @@ precompute/instantiate time-invariant variables for cFlowSoilProperties_CASA
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cFlowSoilProperties_CASA

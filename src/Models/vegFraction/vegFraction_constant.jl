@@ -1,37 +1,28 @@
 export vegFraction_constant
 
-@bounds @describe @units @with_kw struct vegFraction_constant{T1} <: vegFraction
-	constantVegFrac::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct vegFraction_constant{T1} <: vegFraction
+    constant_frac_vegetation::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | "" | ""
+end
+#! format: on
+
+function precompute(params::vegFraction_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_vegFraction_constant params
+
+    ## calculate variables
+    frac_vegetation = constant_frac_vegetation
+
+    ## pack land variables
+    @pack_nt frac_vegetation ⇒ land.states
+    return land
 end
 
-function compute(o::vegFraction_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_vegFraction_constant o
-
-	## calculate variables
-	vegFraction = constantVegFrac
-
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
-end
+purpose(::Type{vegFraction_constant}) = "sets the value of frac_vegetation as a constant"
 
 @doc """
-sets the value of vegFraction as a constant
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Fractional coverage of vegetation using vegFraction_constant
-
-*Inputs*
- - constantvegFraction
-
-*Outputs*
- - land.states.vegFraction: an extra forcing with a constant vegFraction
+$(getBaseDocString(vegFraction_constant))
 
 ---
 
@@ -40,9 +31,9 @@ Fractional coverage of vegetation using vegFraction_constant
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: cleaned up the code  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 vegFraction_constant

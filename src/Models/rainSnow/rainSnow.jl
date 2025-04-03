@@ -2,14 +2,33 @@ export rainSnow
 
 abstract type rainSnow <: LandEcosystem end
 
-include("rainSnow_forcing.jl")
-include("rainSnow_Tair.jl")
+purpose(::Type{rainSnow}) = "Set rain and snow to fe.rainsnow."
 
-@doc """
-Set rain and snow to fe.rainsnow.
+includeApproaches(rainSnow, @__DIR__)
 
-# Approaches:
- - forcing: stores the time series of rainfall and snowfall from forcing & scale snowfall if SF_scale parameter is optimized
- - Tair: separates the rain & snow based on temperature threshold
+@doc """ 
+	$(getBaseDocString(rainSnow))
 """
 rainSnow
+
+# define a common update interface for all rainSnow models
+function update(params::rainSnow, forcing, land, helpers)
+    @unpack_rainSnow_Tair params
+
+    ## unpack variables
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
+    end
+
+    @add_to_elem ΔsnowW[1] ⇒ (snowW, 1, :snowW)
+
+    # reset delta storage	
+    @rep_elem zero(eltype(ΔsnowW)) ⇒ (ΔsnowW, 1, :snowW)
+    ## pack land variables
+    @pack_nt begin
+        snowW ⇒ land.pools
+        ΔsnowW ⇒ land.pools
+    end
+    return land
+end

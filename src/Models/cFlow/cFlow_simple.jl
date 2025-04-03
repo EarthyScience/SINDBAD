@@ -1,53 +1,42 @@
 export cFlow_simple
 
-struct cFlow_simple <: cFlow
+struct cFlow_simple <: cFlow end
+
+function compute(params::cFlow_simple, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt c_flow_A_array ⇐ land.diagnostics
+
+    ## calculate variables
+    #@nc : this needs to go in the full..
+    # Do A matrix..
+    c_flow_A_vec = repeat(reshape(c_flow_A_array, [1 size(c_flow_A_array)]), 1, 1)
+    # transfers
+    (c_taker, c_giver) = find(squeeze(sum(c_flow_A_vec > 0.0)) >= 1)
+    p_taker = c_taker
+    p_giver = c_giver
+    # if there is flux order check that is consistent
+    if !isfield(land.constants, :c_flow_order)
+        c_flow_order = 1:length(c_taker)
+    else
+        if length(c_flow_order) != length(c_taker)
+            error(["ERR : cFlowAct_simple : " "length(c_flow_order) != length(c_taker)"])
+        end
+    end
+
+    ## pack land variables
+    @pack_nt begin
+        c_flow_order ⇒ land.constants
+        (c_flow_A_vec, p_giver, p_taker) ⇒ land.cFlow
+    end
+    return land
 end
 
-function compute(o::cFlow_simple, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land cFlowA ∈ land.cCycleBase
-
-
-	## calculate variables
-	#@nc : this needs to go in the full..
-	# Do A matrix..
-	p_A = repeat(reshape(cFlowA, [1 size(cFlowA)]), 1, 1)
-	# transfers
-	(taker, giver) = find(squeeze(sum(p_A > 0.0)) >= 1)
-	p_taker = taker
-	p_giver = giver
-	# if there is flux order check that is consistent
-	if !isfield(land.cCycleBase, :fluxOrder)
-		fluxOrder = 1:length(taker)
-	else
-		if length(fluxOrder) != length(taker)
-			error(["ERR : cFlowAct_simple : " "length(fluxOrder) != length(taker)"])
-		end
-	end
-
-	## pack land variables
-	@pack_land begin
-		fluxOrder => land.cCycleBase
-		(p_A, p_giver, p_taker) => land.cFlow
-	end
-	return land
-end
+purpose(::Type{cFlow_simple}) = "combine all the effects that change the transfers between carbon pools"
 
 @doc """
-combine all the effects that change the transfers between carbon pools
 
----
-
-# compute:
-Actual transfers of c between pools (of diagonal components) using cFlow_simple
-
-*Inputs*
- - land.cCycleBase.cFlowA: transfer matrix for carbon at ecosystem level
-
-*Outputs*
- - land.cFlow.p_A: effect of vegetation & vegetation on actual transfer rates between pools
- - land.cFlow.p_A
+$(getBaseDocString(cFlow_simple))
 
 ---
 
@@ -58,7 +47,7 @@ Actual transfers of c between pools (of diagonal components) using cFlow_simple
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cFlow_simple

@@ -2,48 +2,45 @@ export cTau_mult
 
 struct cTau_mult <: cTau end
 
-function compute(o::cTau_mult, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cTau_mult, forcing, land, helpers)
     ## unpack land variables
-    @unpack_land begin
-        p_kfVeg ∈ land.cTauVegProperties
-        p_fsoilW ∈ land.cTauSoilW
-        fT ∈ land.cTauSoilT
-        p_kfSoil ∈ land.cTauSoilProperties
-        p_kfLAI ∈ land.cTauLAI
-        p_k_base ∈ land.cCycleBase
-        (𝟘, 𝟙) ∈ helpers.numbers
+    @unpack_nt begin
+        cEco ⇐ land.pools
     end
-    p_k = p_k_base .* p_kfLAI .* p_kfSoil .* p_kfVeg .* fT .* p_fsoilW
-    p_k = clamp.(p_k, 𝟘, 𝟙)
+    c_eco_k = zero(cEco)
 
     ## pack land variables
-    @pack_land p_k => land.states
+    @pack_nt c_eco_k ⇒ land.diagnostics
     return land
 end
 
+function compute(params::cTau_mult, forcing, land, helpers)
+    ## unpack land variables
+    @unpack_nt begin
+        c_eco_k_f_veg_props ⇐ land.diagnostics
+        c_eco_k_f_soilW ⇐ land.diagnostics
+        c_eco_k_f_soilT ⇐ land.diagnostics
+        c_eco_k_f_soil_props ⇐ land.diagnostics
+        c_eco_k_f_LAI ⇐ land.diagnostics
+        c_eco_k_base ⇐ land.diagnostics
+        c_eco_k ⇐ land.diagnostics
+    end
+    for i ∈ eachindex(c_eco_k)
+        tmp = c_eco_k_base[i] * c_eco_k_f_LAI[i] * c_eco_k_f_soil_props[i] * c_eco_k_f_veg_props[i] * c_eco_k_f_soilT * c_eco_k_f_soilW[i]
+        tmp = clampZeroOne(tmp)
+        @rep_elem tmp ⇒ (c_eco_k, i, :cEco)
+    end
+
+    ## pack land variables
+    @pack_nt c_eco_k ⇒ land.diagnostics
+    return land
+end
+
+purpose(::Type{cTau_mult}) = "multiply all effects that change the turnover rates [k]"
+
 @doc """
-multiply all effects that change the turnover rates [k]
 
----
-
-# compute:
-Combine effects of different factors on decomposition rates using cTau_mult
-
-*Inputs*
- - land.cCycleBase.p_k:
- - land.cTauLAI.p_kfLAI: LAI stressor values on the the turnover rates
- - land.cTauSoilProperties.p_kfSoil: Soil texture stressor values on the the turnover rates
- - land.cTauSoilT.fT: Air temperature stressor values on the the turnover rates
- - land.cTauSoilW.fsoilW: Soil moisture stressor values on the the turnover rates
- - land.cTauVegProperties.p_kfVeg: Vegetation type stressor values on the the turnover rates
-
-*Outputs*
- - land.cTau.p_k: values for actual turnover rates
- - land.cTau.p_k
-
-# precompute:
-precompute/instantiate time-invariant variables for cTau_mult
-
+$(getBaseDocString(cTau_mult))
 
 ---
 
@@ -54,9 +51,9 @@ precompute/instantiate time-invariant variables for cTau_mult
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 
-Noteswe are multiplying [nPix, nZix]x[nPix, 1] should be OK!
+*Notes:*
 """
 cTau_mult

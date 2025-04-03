@@ -1,37 +1,28 @@
 export NIRv_constant
 
-@bounds @describe @units @with_kw struct NIRv_constant{T1} <: NIRv
-	constantNIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct NIRv_constant{T1} <: NIRv
+    constant_NIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | "" | ""
+end
+#! format: on
+
+function precompute(params::NIRv_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_NIRv_constant params
+
+    ## calculate variables
+    NIRv = constant_NIRv
+
+    ## pack land variables
+    @pack_nt NIRv ⇒ land.states
+    return land
 end
 
-function compute(o::NIRv_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_NIRv_constant o
-
-	## calculate variables
-	NIRv = constantNIRv
-
-	## pack land variables
-	@pack_land NIRv => land.states
-	return land
-end
+purpose(::Type{NIRv_constant}) = "sets the value of NIRv as a constant"
 
 @doc """
-sets the value of NIRv as a constant
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Near-infrared reflectance of terrestrial vegetation using NIRv_constant
-
-*Inputs*
-
-*Outputs*
- - land.states.NIRv: an extra forcing that creates a time series of constant NIRv
- - land.states.NIRv
+$(getBaseDocString(NIRv_constant))
 
 ---
 
@@ -42,7 +33,7 @@ Near-infrared reflectance of terrestrial vegetation using NIRv_constant
 *Versions*
  - 1.0 on 29.04.2020 [sbesnard]: new module  
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 NIRv_constant

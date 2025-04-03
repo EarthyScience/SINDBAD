@@ -1,37 +1,28 @@
 export fAPAR_constant
 
-@bounds @describe @units @with_kw struct fAPAR_constant{T1} <: fAPAR
-	constantfAPAR::T1 = 0.2 | (0.0, 1.0) | "a constant fAPAR" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct fAPAR_constant{T1} <: fAPAR
+    constant_fAPAR::T1 = 0.2 | (0.0, 1.0) | "a constant fAPAR" | "" | ""
+end
+#! format: on
+
+function precompute(params::fAPAR_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_fAPAR_constant params
+
+    ## calculate variables
+    fAPAR = constant_fAPAR
+
+    ## pack land variables
+    @pack_nt fAPAR ⇒ land.states
+    return land
 end
 
-function compute(o::fAPAR_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_fAPAR_constant o
-
-	## calculate variables
-	fAPAR = constantfAPAR
-
-	## pack land variables
-	@pack_land fAPAR => land.states
-	return land
-end
+purpose(::Type{fAPAR_constant}) = "sets the value of fAPAR as a constant"
 
 @doc """
-sets the value of fAPAR as a constant
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Fraction of absorbed photosynthetically active radiation using fAPAR_constant
-
-*Inputs*
- - info helper for array
-
-*Outputs*
- - land.states.fAPAR: an extra forcing that creates a time series of constant fAPAR
+$(getBaseDocString(fAPAR_constant))
 
 ---
 
@@ -40,9 +31,9 @@ Fraction of absorbed photosynthetically active radiation using fAPAR_constant
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: cleaned up the code  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 fAPAR_constant

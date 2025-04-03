@@ -1,31 +1,22 @@
 export NDWI_forcing
 
-struct NDWI_forcing <: NDWI
+struct NDWI_forcing <: NDWI end
+
+function compute(params::NDWI_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_NDWI ⇐ forcing
+
+    NDWI = f_NDWI
+    ## pack land variables
+    @pack_nt NDWI ⇒ land.states
+    return land
 end
 
-function compute(o::NDWI_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing NDWI ∈ forcing
-
-	## pack land variables
-	@pack_land NDWI => land.states
-	return land
-end
+purpose(::Type{NDWI_forcing}) = "sets the value of land.states.NDWI from the forcing in every time step"
 
 @doc """
-sets the value of land.states.NDWI from the forcing in every time step
 
----
-
-# compute:
-Normalized difference water index using NDWI_forcing
-
-*Inputs*
- - forcing.NDWI read from the forcing data set
-
-*Outputs*
- - land.states.NDWI: the value of NDWI for current time step
- - land.states.NDWI
+$(getBaseDocString(NDWI_forcing))
 
 ---
 
@@ -36,7 +27,7 @@ Normalized difference water index using NDWI_forcing
 *Versions*
  - 1.0 on 29.04.2020 [sbesnard]
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 NDWI_forcing

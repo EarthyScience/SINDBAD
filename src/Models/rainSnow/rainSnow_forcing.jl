@@ -1,81 +1,43 @@
 export rainSnow_forcing
 
-@bounds @describe @units @with_kw struct rainSnow_forcing{T1} <: rainSnow
-	SF_scale::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct rainSnow_forcing{T1} <: rainSnow
+    snowfall_scalar::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | "" | ""
 end
+#! format: on
 
-function compute(o::rainSnow_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::rainSnow_forcing, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_rainSnow_forcing o
-    @unpack_forcing (Rain, Snow) ∈ forcing
+    @unpack_rainSnow_forcing params
+    @unpack_nt (f_rain, f_snow) ⇐ forcing
 
     ## unpack land variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
+    @unpack_nt begin
+        snowW ⇐ land.pools
+        ΔsnowW ⇐ land.pools
     end
 
     ## calculate variables
-    rain = Rain
-    snow = Snow * (SF_scale)
+    rain = f_rain
+    snow = f_snow * snowfall_scalar
     precip = rain + snow
 
     # add snowfall to snowpack of the first layer
     ΔsnowW[1] = ΔsnowW[1] + snow
 
-	## pack land variables
-    @pack_land begin
-        (precip, rain, snow) => land.rainSnow
-        ΔsnowW => land.states
-    end
-    return land
-end
-
-function update(o::rainSnow_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-    ## unpack variables
-    @unpack_land begin
-        snowW ∈ land.pools
-        ΔsnowW ∈ land.states
-    end
-    # update snow pack
-    snowW[1] = snowW[1] + ΔsnowW[1]
-
-    # reset delta storage	
-    ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
-
     ## pack land variables
-    @pack_land begin
-        # snowW => land.pools
-        ΔsnowW => land.states
+    @pack_nt begin
+        (precip, rain, snow) ⇒ land.fluxes
+        ΔsnowW ⇒ land.pools
     end
     return land
 end
+
+purpose(::Type{rainSnow_forcing}) = "stores the time series of rainfall and snowfall from forcing & scale snowfall if snowfall_scalar parameter is optimized"
 
 @doc """
-stores the time series of rainfall and snowfall from forcing & scale snowfall if SF_scale parameter is optimized
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Set rain and snow to fe.rainsnow. using rainSnow_forcing
-
-*Inputs*
- - forcing.Rain
- - forcing.Snow
- - info
-
-*Outputs*
- - land.rainSnow.rain: liquid rainfall from forcing input
- - land.rainSnow.snow: snowfall estimated as the rain when tair <  threshold
-
-# update
-
-update pools and states in rainSnow_forcing
-
- - forcing.Snow using the snowfall scaling parameter which can be optimized
+$(getBaseDocString(rainSnow_forcing))
 
 ---
 
@@ -84,9 +46,9 @@ update pools and states in rainSnow_forcing
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: creation of approach  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: creation of approach  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 rainSnow_forcing

@@ -1,93 +1,50 @@
 export drainage_wFC
 
-struct drainage_wFC <: drainage
+struct drainage_wFC <: drainage end
+
+function define(params::drainage_wFC, forcing, land, helpers)
+    ## Instantiate drainage
+    @unpack_nt soilW ⇐ land.pools
+    drainage = zero(soilW)
+    ## pack land variables
+    @pack_nt drainage ⇒ land.fluxes
+    return land
 end
 
+function compute(params::drainage_wFC, forcing, land, helpers)
 
-function precompute(o::drainage_wFC, forcing, land::NamedTuple, helpers::NamedTuple)
-	## instantiate drainage
-	drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
-	## pack land variables
-	@pack_land drainage => land.drainage
-	return land
+    ## unpack land variables
+    @unpack_nt begin
+        drainage ⇐ land.fluxes
+        (p_nsoilLayers, w_fc) ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        z_zero ⇐ land.constants
+    end
+
+    ## calculate drainage
+    for sl ∈ 1:(length(soilW)-1)
+        holdCap = w_sat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        lossCap = soilW[sl] + ΔsoilW[sl]
+        drainage[sl] = maxZero(soilW[sl] + ΔsoilW[sl] - w_fc[sl])
+        drainage[sl] = min(drainage[sl], holdCap, lossCap)
+        ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
+        ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
+    end
+
+    ## pack land variables
+    # @pack_nt begin
+    # 	drainage ⇒ land.fluxes
+    # 	# ΔsoilW ⇒ land.pools
+    # end
+    return land
 end
 
-function compute(o::drainage_wFC, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land begin
-		drainage ∈ land.drainage
-		(p_nsoilLayers, p_wFC) ∈ land.soilWBase
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		𝟘 ∈ helpers.numbers
-	end
-
-	## calculate drainage
-	for sl in 1:length(land.pools.soilW)-1
-		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
-		lossCap = soilW[sl] + ΔsoilW[sl]
-		drainage[sl] = max(soilW[sl] + ΔsoilW[sl] - p_wFC[sl], 𝟘)
-		drainage[sl] = min(drainage[sl], holdCap, lossCap)
-		ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
-		ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
-	end
-
-
-	## pack land variables
-	@pack_land begin
-		drainage => land.drainage
-		# ΔsoilW => land.states
-	end
-	return land
-end
-
-function update(o::drainage_wFC, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
-
-	## update variables
-	# update soil moisture
-	soilW = soilW + ΔsoilW
-
-	# reset soil moisture changes to zero
-	ΔsoilW = ΔsoilW - ΔsoilW
-
-
-	## pack land variables
-	@pack_land begin
-		# soilW => land.pools
-		# ΔsoilW => land.states
-	end
-	return land
-end
+purpose(::Type{drainage_wFC}) = "downward flow of moisture [drainage] in soil layers based on overflow over field capacity"
 
 @doc """
-downward flow of moisture [drainage] in soil layers based on overflow over field capacity
 
----
-
-# compute:
-Recharge the soil using drainage_wFC
-
-*Inputs*
- - land.pools.soilW: soil moisture in different layers
- - land.soilWBase.p_wFC: field capacity of soil in mm
- - land.states.WBP amount of water that can potentially drain
-
-*Outputs*
- - drainage from the last layer is saved as groundwater recharge [groundWRec]
- - land.states.soilWFlow: drainage flux between soil layers (same as nZix, from percolation  into layer 1 & the drainage to the last layer)
-
-# update
-
-update pools and states in drainage_wFC
-
- - land.pools.soilW
- - land.states.WBP
+$(getBaseDocString(drainage_wFC))
 
 ---
 
@@ -96,10 +53,10 @@ update pools and states in drainage_wFC
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala]: clean up & consistency  
+ - 1.0 on 18.11.2019 [skoirala | @dr-ko]: clean up & consistency  
 
-*Created by:*
+*Created by*
  - mjung
- - skoirala
+ - skoirala | @dr-ko
 """
 drainage_wFC

@@ -1,58 +1,42 @@
 export evapotranspiration_sum
 
-struct evapotranspiration_sum <: evapotranspiration
-end
+struct evapotranspiration_sum <: evapotranspiration end
 
-function precompute(o::evapotranspiration_sum, forcing, land::NamedTuple, helpers::NamedTuple)
-    @unpack_land 𝟘  ∈ helpers.numbers
-	
+function define(params::evapotranspiration_sum, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
+
     ## set variables to zero
-    evaporation = 𝟘 
-    interception = 𝟘 
-    sublimation = 𝟘 
-    transpiration = 𝟘 
+    evaporation = z_zero
+    evapotranspiration = z_zero
+    interception = z_zero
+    sublimation = z_zero
+    transpiration = z_zero
 
     ## pack land variables
-    @pack_land begin
-        (evaporation, interception, sublimation, transpiration) => land.fluxes
+    @pack_nt begin
+        (evaporation, evapotranspiration, interception, sublimation, transpiration) ⇒ land.fluxes
     end
     return land
 end
 
-function compute(o::evapotranspiration_sum, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::evapotranspiration_sum, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land (evaporation, interception, sublimation, transpiration) ∈ land.fluxes
+    ## unpack land variables
+    @unpack_nt (evaporation, interception, sublimation, transpiration) ⇐ land.fluxes
 
+    ## calculate variables
+    evapotranspiration = interception + transpiration + evaporation + sublimation
 
-	## calculate variables
-	evapotranspiration = interception + transpiration + evaporation + sublimation
-
-	## pack land variables
-	@pack_land evapotranspiration => land.fluxes
-	return land
+    ## pack land variables
+    @pack_nt evapotranspiration ⇒ land.fluxes
+    return land
 end
 
+purpose(::Type{evapotranspiration_sum}) = "calculates evapotranspiration as a sum of all potential components"
+
 @doc """
-calculates evapotranspiration as a sum of all potential components
 
----
-
-# compute:
-Calculate the evapotranspiration as a sum of components using evapotranspiration_sum
-
-*Inputs*
- - land.fluxes.evaporation
- - land.fluxes.interception
- - land.fluxes.sublimation
- - land.fluxes.transpiration
-
-*Outputs*
- - land.fluxes.evapotranspiration
-
-# precompute:
-precompute/instantiate time-invariant variables for evapotranspiration_sum
-
+$(getBaseDocString(evapotranspiration_sum))
 
 ---
 
@@ -63,7 +47,7 @@ precompute/instantiate time-invariant variables for evapotranspiration_sum
 *Versions*
  - 1.0 on 01.04.2022  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 evapotranspiration_sum

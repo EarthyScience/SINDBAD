@@ -1,59 +1,46 @@
 export runoffSaturationExcess_Bergstroem1992
 
-@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992{T1} <: runoffSaturationExcess
-	β::T1 = 1.1 | (0.1, 5) | "berg exponential parameter" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct runoffSaturationExcess_Bergstroem1992{T1} <: runoffSaturationExcess
+    β::T1 = 1.1 | (0.1, 5.0) | "berg exponential parameter" | "" | ""
+end
+#! format: on
+
+function compute(params::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_runoffSaturationExcess_Bergstroem1992 params
+
+    ## unpack land variables
+    @unpack_nt begin
+        WBP ⇐ land.states
+        w_sat ⇐ land.properties
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+    end
+    # @show WBP
+    tmp_smax_veg = sum(w_sat)
+    tmp_soilW_total = sum(soilW)
+    # calculate land runoff from incoming water & current soil moisture
+    tmp_sat_exc_frac = clampZeroOne((tmp_soilW_total / tmp_smax_veg)^β)
+
+    sat_excess_runoff = WBP * tmp_sat_exc_frac
+
+    # update water balance pool
+    WBP = WBP - sat_excess_runoff
+
+    ## pack land variables
+    @pack_nt begin
+        sat_excess_runoff ⇒ land.fluxes
+        WBP ⇒ land.states
+    end
+    return land
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_runoffSaturationExcess_Bergstroem1992 o
-
-	## unpack land variables
-	@unpack_land begin
-		WBP ∈ land.states
-		p_wSat ∈ land.soilWBase
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
-	# @show WBP
-	tmp_smaxVeg = sum(p_wSat)
-	tmp_SoilTotal = sum(soilW + ΔsoilW)
-	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg) ^ β, helpers.numbers.𝟙)
-
-	runoffSatExc = WBP * tmp_SatExFrac
-
-	# update water balance pool
-	WBP = WBP - runoffSatExc
-
-	## pack land variables
-	@pack_land begin
-		runoffSatExc => land.fluxes
-		WBP => land.states
-	end
-	return land
-end
+purpose(::Type{runoffSaturationExcess_Bergstroem1992}) = "saturation excess runoff using original Bergström method"
 
 @doc """
-saturation excess runoff using original Bergström method
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Saturation runoff using runoffSaturationExcess_Bergstroem1992
-
-*Inputs*
- - land.states. : vegetation fraction
- - smax1 : maximum water capacity of first soil layer [mm]
- - smax2 : maximum water capacity of second soil layer [mm]
-
-*Outputs*
- - land.fluxes.runoffSatExc : runoff from land [mm/time]
- - land.runoffSaturationExcess.p_berg : scaled berg parameter
- - land.states.WBP : water balance pool [mm]
+$(getBaseDocString(runoffSaturationExcess_Bergstroem1992))
 
 ---
 
@@ -64,10 +51,10 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992
 
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
- - 1.1 on 27.11.2019 [skoirala]: changed to handle any number of soil layers
- - 1.2 on 10.02.2020 [ttraut]: modyfying variable names to match the new SINDBAD version
+ - 1.1 on 27.11.2019 [skoirala | @dr-ko]: changed to handle any number of soil layers
+ - 1.2 on 10.02.2020 [ttraut]: modyfying variable name to match the new SINDBAD version
 
-*Created by:*
+*Created by*
  - ttraut
 """
 runoffSaturationExcess_Bergstroem1992

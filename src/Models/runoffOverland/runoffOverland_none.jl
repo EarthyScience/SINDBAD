@@ -1,24 +1,23 @@
 export runoffOverland_none
 
-struct runoffOverland_none <: runoffOverland
+struct runoffOverland_none <: runoffOverland end
+
+function define(params::runoffOverland_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
+
+    ## calculate variables
+    overland_runoff = z_zero
+
+    ## pack land variables
+    @pack_nt overland_runoff ⇒ land.fluxes
+    return land
 end
 
-function precompute(o::runoffOverland_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	runoffOverland = helpers.numbers.𝟘
-
-	## pack land variables
-	@pack_land runoffOverland => land.fluxes
-	return land
-end
+purpose(::Type{runoffOverland_none}) = "sets overland runoff to zero"
 
 @doc """
-sets overland runoff to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffOverland_none
-
+$(getBaseDocString(runoffOverland_none))
 
 ---
 

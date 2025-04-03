@@ -1,37 +1,28 @@
 export NDVI_constant
 
-@bounds @describe @units @with_kw struct NDVI_constant{T1} <: NDVI
-	constantNDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct NDVI_constant{T1} <: NDVI
+    constant_NDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | "" | ""
+end
+#! format: on
+
+function precompute(params::NDVI_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_NDVI_constant params
+
+    ## calculate variables
+    NDVI = constant_NDVI
+
+    ## pack land variables
+    @pack_nt NDVI ⇒ land.states
+    return land
 end
 
-function compute(o::NDVI_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_NDVI_constant o
-
-	## calculate variables
-	NDVI = constantNDVI
-
-	## pack land variables
-	@pack_land NDVI => land.states
-	return land
-end
+purpose(::Type{NDVI_constant}) = "sets the value of NDVI as a constant"
 
 @doc """
-sets the value of NDVI as a constant
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Normalized difference vegetation index using NDVI_constant
-
-*Inputs*
-
-*Outputs*
- - land.states.NDVI: an extra forcing that creates a time series of constant NDVI
- - land.states.NDVI
+$(getBaseDocString(NDVI_constant))
 
 ---
 
@@ -42,7 +33,7 @@ Normalized difference vegetation index using NDVI_constant
 *Versions*
  - 1.0 on 29.04.2020 [sbesnard]: new module  
 
-*Created by:*
+*Created by*
  - sbesnard
 """
 NDVI_constant

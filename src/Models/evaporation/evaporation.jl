@@ -2,22 +2,33 @@ export evaporation
 
 abstract type evaporation <: LandEcosystem end
 
-include("evaporation_bareFraction.jl")
-include("evaporation_demandSupply.jl")
-include("evaporation_fAPAR.jl")
-include("evaporation_none.jl")
-include("evaporation_Snyder2000.jl")
-include("evaporation_vegFraction.jl")
+purpose(::Type{evaporation}) = "Soil evaporation"
 
-@doc """
-Soil evaporation
+includeApproaches(evaporation, @__DIR__)
 
-# Approaches:
- - bareFraction: calculates the bare soil evaporation from 1-vegFraction of the grid & PETsoil
- - demandSupply: calculates the bare soil evaporation from demand-supply limited approach. calculates the bare soil evaporation from the grid using PET & supply limit
- - fAPAR: calculates the bare soil evaporation from 1-fAPAR & PET soil
- - none: sets the soil evaporation to zero
- - Snyder2000: calculates the bare soil evaporation using relative drying rate of soil
- - vegFraction: calculates the bare soil evaporation from 1-vegFraction & PET soil
+@doc """ 
+	$(getBaseDocString(evaporation))
 """
 evaporation
+
+# define a common update interface for all evaporation models
+function update(params::evaporation, forcing, land, helpers)
+    @unpack_evaporation_bareFraction params
+
+    ## unpack variables
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+    end
+
+    @add_to_elem ΔsoilW[1] ⇒ (soilW, 1, :soilW)
+
+    @rep_elem zero(ΔsoilW) ⇒ (ΔsoilW, 1, :soilW)
+
+    ## pack land variables
+    @pack_nt begin
+    	soilW ⇒ land.pools
+    	ΔsoilW ⇒ land.pools
+    end
+    return land
+end

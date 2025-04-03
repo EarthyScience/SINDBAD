@@ -1,41 +1,31 @@
 export transpirationDemand_PET
 
-@bounds @describe @units @with_kw struct transpirationDemand_PET{T1} <: transpirationDemand
-	α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct transpirationDemand_PET{T1} <: transpirationDemand
+    α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | "" | ""
+end
+#! format: on
+
+function compute(params::transpirationDemand_PET, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_transpirationDemand_PET params
+
+    ## unpack land variables
+    @unpack_nt PET ⇐ land.fluxes
+
+    ## calculate variables
+    transpiration_demand = PET * α
+
+    ## pack land variables
+    @pack_nt transpiration_demand ⇒ land.diagnostics
+    return land
 end
 
-function compute(o::transpirationDemand_PET, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_transpirationDemand_PET o
-
-	## unpack land variables
-	@unpack_land PET ∈ land.PET
-
-	## calculate variables
-	tranDem = PET * α
-
-	## pack land variables
-	@pack_land tranDem => land.transpirationDemand
-	return land
-end
+purpose(::Type{transpirationDemand_PET}) = "calculate the climate driven demand for transpiration as a function of PET & α for vegetation"
 
 @doc """
-calculate the climate driven demand for transpiration as a function of PET & α for vegetation
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Demand-driven transpiration using transpirationDemand_PET
-
-*Inputs*
- - land.PET.PET : potential evapotranspiration out of PET module
- - α: α parameter for potential transpiration
-
-*Outputs*
- - land.transpirationDemand.tranDem: demand driven transpiration
+$(getBaseDocString(transpirationDemand_PET))
 
 ---
 
@@ -44,9 +34,9 @@ Demand-driven transpiration using transpirationDemand_PET
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 transpirationDemand_PET

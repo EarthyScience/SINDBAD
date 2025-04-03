@@ -1,25 +1,34 @@
 export cFlowVegProperties_none
 
-struct cFlowVegProperties_none <: cFlowVegProperties
-end
+struct cFlowVegProperties_none <: cFlowVegProperties end
 
-function precompute(o::cFlowVegProperties_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cFlowVegProperties_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
+
+    @unpack_nt c_taker ⇐ land.constants
 
     ## calculate variables
-    p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, length(land.pools.cEco))
-    p_F = copy(p_E)
+    p_E_vec = eltype(cEco).(zero([c_taker...]))
+
+    if cEco isa SVector
+        p_E_vec = SVector{length(p_E_vec)}(p_E_vec)
+    end
+
+    p_F_vec = eltype(cEco).(zero([c_taker...]))
+    if cEco isa SVector
+        p_F_vec = SVector{length(p_F_vec)}(p_F_vec)
+    end
 
     ## pack land variables
-    @pack_land (p_E, p_F) => land.cFlowSoilProperties
+    @pack_nt (p_E_vec, p_F_vec) ⇒ land.cFlowVegProperties
     return land
 end
 
+purpose(::Type{cFlowVegProperties_none}) = "set transfer between pools to 0 [i.e. nothing is transfered]"
+
 @doc """
-set transfer between pools to 0 [i.e. nothing is transfered]
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlowVegProperties_none
-
+$(getBaseDocString(cFlowVegProperties_none))
 
 ---
 

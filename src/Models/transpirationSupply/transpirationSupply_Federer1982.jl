@@ -1,43 +1,32 @@
 export transpirationSupply_Federer1982
 
-@bounds @describe @units @with_kw struct transpirationSupply_Federer1982{T1} <: transpirationSupply
-	maxRate::T1 = 5.0 | (0.1, 20.0) | "Maximum rate of transpiration in mm/day" | "mm/day"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct transpirationSupply_Federer1982{T1} <: transpirationSupply
+    max_t_loss::T1 = 5.0 | (0.1, 20.0) | "Maximum rate of transpiration in mm/day" | "mm/day" | ""
+end
+#! format: on
+
+function compute(params::transpirationSupply_Federer1982, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_transpirationSupply_Federer1982 params
+
+    ## unpack land variables
+    @unpack_nt begin
+        PAW ⇐ land.states
+        ∑w_sat ⇐ land.properties
+    end
+    transpiration_supply = max_t_loss * sum(PAW) / ∑w_sat
+
+    ## pack land variables
+    @pack_nt transpiration_supply ⇒ land.diagnostics
+    return land
 end
 
-function compute(o::transpirationSupply_Federer1982, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_transpirationSupply_Federer1982 o
-
-	## unpack land variables
-	@unpack_land begin
-		PAW ∈ land.states
-		p_wSat ∈ land.soilWBase
-	end
-	tranSup = maxRate * sum(PAW) / sum(p_wSat)
-
-	## pack land variables
-	@pack_land tranSup => land.transpirationSupply
-	return land
-end
+purpose(::Type{transpirationSupply_Federer1982}) = "calculate the supply limited transpiration as a function of max rate parameter & avaialable water"
 
 @doc """
-calculate the supply limited transpiration as a function of max rate parameter & avaialable water
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Supply-limited transpiration using transpirationSupply_Federer1982
-
-*Inputs*
- - land.pools.soilW : total soil moisture
- - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
- - land.states.PAW: actual extractable water
-
-*Outputs*
- - land.transpirationSupply.tranSup: demand driven transpiration
+$(getBaseDocString(transpirationSupply_Federer1982))
 
 ---
 
@@ -46,9 +35,9 @@ Supply-limited transpiration using transpirationSupply_Federer1982
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 transpirationSupply_Federer1982

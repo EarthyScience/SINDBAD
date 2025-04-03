@@ -1,24 +1,23 @@
 export cTauSoilW_none
 
-struct cTauSoilW_none <: cTauSoilW
+struct cTauSoilW_none <: cTauSoilW end
+
+function define(params::cTauSoilW_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
+
+    ## calculate variables
+    c_eco_k_f_soilW = one.(cEco)
+
+    ## pack land variables
+    @pack_nt c_eco_k_f_soilW ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::cTauSoilW_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	p_fsoilW = ones(helpers.numbers.numType, length(land.pools.cEco))
-
-	## pack land variables
-	@pack_land p_fsoilW => land.cTauSoilW
-	return land
-end
+purpose(::Type{cTauSoilW_none}) = "set the moisture stress for all carbon pools to ones"
 
 @doc """
-set the moisture stress for all carbon pools to ones
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauSoilW_none
-
+$(getBaseDocString(cTauSoilW_none))
 
 ---
 

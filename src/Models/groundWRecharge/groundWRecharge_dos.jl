@@ -1,85 +1,59 @@
 export groundWRecharge_dos
 
-@bounds @describe @units @with_kw struct groundWRecharge_dos{T1} <: groundWRecharge
-	dos_exp::T1 = 1.0 | (1.0, 3.0) | "exponent of non-linearity for dos influence on drainage to groundwater" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct groundWRecharge_dos{T1} <: groundWRecharge
+    dos_exp::T1 = 1.5 | (1.0, 3.0) | "exponent of non-linearity for dos influence on drainage to groundwater" | "" | ""
+end
+#! format: on
+
+function define(params::groundWRecharge_dos, forcing, land, helpers)
+    ## unpack land variables
+    @unpack_nt begin
+        z_zero ⇐ land.constants
+    end
+
+    gw_recharge = z_zero
+
+    ## pack land variables
+    @pack_nt begin
+        gw_recharge ⇒ land.fluxes
+    end
+    return land
 end
 
-function compute(o::groundWRecharge_dos, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_groundWRecharge_dos o
+function compute(params::groundWRecharge_dos, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_groundWRecharge_dos params
 
-	## unpack land variables
-	@unpack_land begin
-		(p_wSat, p_β) ∈ land.soilWBase
-		(groundW, soilW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	# calculate recharge
-	dosSoilEnd = (soilW[end] + ΔsoilW[end]) / p_wSat[end]
-	recharge_fraction = max((dosSoilEnd) ^ (dos_exp * p_β[end]), 𝟙)
-	groundWRec = max(recharge_fraction * (soilW[end] + ΔsoilW[end]), 𝟘)
-	nGroundW = length(groundW) * 𝟙
+    ## unpack land variables
+    @unpack_nt begin
+        (w_sat, soil_β) ⇐ land.properties
+        (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
+        (z_zero, o_one) ⇐ land.constants
+        n_groundW ⇐ land.constants
+    end
+    # calculate recharge
+    dos_soil_end = clampZeroOne((soilW[end] + ΔsoilW[end]) / w_sat[end])
+    recharge_fraction = clampZeroOne((dos_soil_end)^(dos_exp * soil_β[end]))
+    gw_recharge = recharge_fraction * (soilW[end] + ΔsoilW[end])
 
-	ΔgroundW .= ΔgroundW .+ groundWRec / nGroundW
-	ΔsoilW[end] = ΔsoilW[end] - groundWRec
+    ΔgroundW = addToEachElem(ΔgroundW, gw_recharge / n_groundW)
+    @add_to_elem -gw_recharge ⇒ (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
-	## pack land variables
-	@pack_land begin
-		groundWRec => land.fluxes
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_nt begin
+        gw_recharge ⇒ land.fluxes
+        (ΔsoilW, ΔgroundW) ⇒ land.pools
+    end
+    return land
 end
 
-function update(o::groundWRecharge_dos, forcing, land::NamedTuple, helpers::NamedTuple)
 
-	## unpack variables
-	@unpack_land begin
-		(soilW, groundW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-	end
-
-	## update storage pools
-	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW .= groundW .+ ΔgroundW
-
-	# reset ΔsoilW[end] and ΔgroundW to zero
-	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW .= ΔgroundW .- ΔgroundW
-
-
-	## pack land variables
-	@pack_land begin
-		(groundW, soilW) => land.pools
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
-end
+purpose(::Type{groundWRecharge_dos}) = "GW recharge as a exponential functions of the degree of saturation of the lowermost soil layer"
 
 @doc """
-GW recharge as a exponential functions of the degree of saturation of the lowermost soil layer
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Recharge the groundwater using groundWRecharge_dos
-
-*Inputs*
- - land.pools.soilW
- - rf
-
-*Outputs*
- - land.fluxes.groundWRec
-
-# update
-
-update pools and states in groundWRecharge_dos
-
- - land.pools.groundW[1]
+$(getBaseDocString(groundWRecharge_dos))
 
 ---
 
@@ -88,9 +62,9 @@ update pools and states in groundWRecharge_dos
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: clean up  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: clean up  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 groundWRecharge_dos

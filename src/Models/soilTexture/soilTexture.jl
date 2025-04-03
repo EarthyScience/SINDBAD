@@ -2,14 +2,11 @@ export soilTexture
 
 abstract type soilTexture <: LandEcosystem end
 
-include("soilTexture_fixed.jl")
-include("soilTexture_forcing.jl")
+purpose(::Type{soilTexture}) = "Soil texture (sand,silt,clay, and organic matter fraction)"
 
-@doc """
-Soil texture (sand,silt,clay, and organic matter fraction)
+includeApproaches(soilTexture, @__DIR__)
 
-# Approaches:
- - fixed: sets the soil texture properties as constant
- - forcing: sets the soil texture properties from input
+@doc """ 
+	$(getBaseDocString(soilTexture))
 """
 soilTexture

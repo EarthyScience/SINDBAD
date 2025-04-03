@@ -1,49 +1,39 @@
 export interception_fAPAR
 
-@bounds @describe @units @with_kw struct interception_fAPAR{T1} <: interception
-	isp::T1 = 1.0 | (0.1, 5.0) | "fapar dependent storage" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct interception_fAPAR{T1} <: interception
+    isp::T1 = 1.0 | (0.1, 5.0) | "fapar dependent storage" | "" | ""
+end
+#! format: on
+
+function compute(params::interception_fAPAR, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_interception_fAPAR params
+
+    ## unpack land variables
+    @unpack_nt begin
+        (WBP, fAPAR) ⇐ land.states
+        rain ⇐ land.fluxes
+    end
+    # calculate interception loss
+    interception_capacity = isp * fAPAR
+    interception = min(interception_capacity, rain)
+    # update the available water
+    WBP = WBP - interception
+
+    ## pack land variables
+    @pack_nt begin
+        interception ⇒ land.fluxes
+        WBP ⇒ land.states
+    end
+    return land
 end
 
-function compute(o::interception_fAPAR, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_interception_fAPAR o
-
-	## unpack land variables
-	@unpack_land begin
-		(WBP, fAPAR) ∈ land.states
-		rain ∈ land.rainSnow
-	end
-	# calculate interception loss
-	intCap = isp * fAPAR
-	interception = min(intCap, rain)
-	# update the available water
-	WBP = WBP - interception
-
-	## pack land variables
-	@pack_land begin
-		interception => land.fluxes
-		WBP => land.states
-	end
-	return land
-end
+purpose(::Type{interception_fAPAR}) = "computes canopy interception evaporation as a fraction of fAPAR"
 
 @doc """
-computes canopy interception evaporation as a fraction of fAPAR
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Interception evaporation using interception_fAPAR
-
-*Inputs*
- - land.states.fAPAR: fAPAR
-
-*Outputs*
- - land.fluxes.interception: interception loss
- - land.states.WBP: water balance pool [mm]
+$(getBaseDocString(interception_fAPAR))
 
 ---
 
@@ -53,9 +43,9 @@ Interception evaporation using interception_fAPAR
 
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
- - 1.1 on 29.11.2019 [skoirala]: land.states.fAPAR  
+ - 1.1 on 29.11.2019 [skoirala | @dr-ko]: land.states.fAPAR  
 
-*Created by:*
+*Created by*
  - mjung
 """
 interception_fAPAR

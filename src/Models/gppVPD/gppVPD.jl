@@ -2,20 +2,11 @@ export gppVPD
 
 abstract type gppVPD <: LandEcosystem end
 
-include("gppVPD_expco2.jl")
-include("gppVPD_Maekelae2008.jl")
-include("gppVPD_MOD17.jl")
-include("gppVPD_none.jl")
-include("gppVPD_PRELES.jl")
+purpose(::Type{gppVPD}) = "Vpd effect"
 
-@doc """
-Vpd effect
+includeApproaches(gppVPD, @__DIR__)
 
-# Approaches:
- - expco2: VPD stress on gppPot based on Maekelae2008 and with co2 effect
- - Maekelae2008: VPD stress on gppPot based on Maekelae2008 [eqn 5]
- - MOD17: VPD stress on gppPot based on MOD17 model
- - none: sets the VPD stress on gppPot to one (no stress)
- - PRELES: VPD stress on gppPot based on Maekelae2008 and with co2 effect based on PRELES model
+@doc """ 
+	$(getBaseDocString(gppVPD))
 """
 gppVPD

@@ -1,37 +1,27 @@
 export transpiration_coupled
 
-struct transpiration_coupled <: transpiration
+struct transpiration_coupled <: transpiration end
+
+function compute(params::transpiration_coupled, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt begin
+        gpp ⇐ land.fluxes
+        WUE ⇐ land.diagnostics
+    end
+    # calculate actual transpiration coupled with GPP
+    transpiration = gpp / WUE
+
+    ## pack land variables
+    @pack_nt transpiration ⇒ land.fluxes
+    return land
 end
 
-function compute(o::transpiration_coupled, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land begin
-		gpp ∈ land.fluxes
-		AoE ∈ land.WUE
-	end
-	# calculate actual transpiration coupled with GPP
-	transpiration = gpp / AoE
-
-	## pack land variables
-	@pack_land transpiration => land.fluxes
-	return land
-end
+purpose(::Type{transpiration_coupled}) = "calculate the actual transpiration as function of gpp & WUE"
 
 @doc """
-calculate the actual transpiration as function of gppAct & WUE
 
----
-
-# compute:
-If coupled, computed from gpp and aoe from wue using transpiration_coupled
-
-*Inputs*
- - land.WUE.AoE: water use efficiency in gC/mmH2O
- - land.fluxes.gppAct: GPP based on a minimum of demand & stressors (except water  limitation) out of gppAct_coupled in which tranSup is used to get  supply limited GPP
-
-*Outputs*
- - land.fluxes.transpiration: actual transpiration
+$(getBaseDocString(transpiration_coupled))
 
 ---
 
@@ -40,11 +30,11 @@ If coupled, computed from gpp and aoe from wue using transpiration_coupled
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]
 
-*Created by:*
+*Created by*
  - mjung
- - skoirala
+ - skoirala | @dr-ko
 
 *Notes*
 """

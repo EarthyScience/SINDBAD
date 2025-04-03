@@ -1,72 +1,63 @@
 export cFlowVegProperties_CASA
 
-@bounds @describe @units @with_kw struct cFlowVegProperties_CASA{T1} <: cFlowVegProperties
-	WOODLIGFRAC::T1 = 0.4 | nothing | "fraction of wood that is lignin" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cFlowVegProperties_CASA{T1} <: cFlowVegProperties
+    frac_lignin_wood::T1 = 0.4 | (-Inf, Inf) | "fraction of wood that is lignin" | "" | ""
+end
+#! format: on
+
+function define(params::cFlowVegProperties_CASA, forcing, land, helpers)
+    @unpack_cFlowVegProperties_CASA params
+    @unpack_nt begin 
+        c_taker ⇐ land.constants
+        cEco ⇐ land.pools
+    end
+    ## Instantiate variables
+    p_F_vec = eltype(cEco).(zero([c_taker...]))
+    if cEco isa SVector
+        p_F_vec = SVector{length(p_F_vec)}(p_F_vec)
+    end
+
+    ## pack land variables
+    @pack_nt p_F_vec ⇒ land.cFlowVegProperties
+    return land
 end
 
-function precompute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_cFlowVegProperties_CASA o
+function compute(params::cFlowVegProperties_CASA, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_cFlowVegProperties_CASA params
 
-	## instantiate variables
-	p_F = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))
+    ## unpack land variables
+    @unpack_nt begin 
+        p_F_vec ⇐ land.cFlowVegProperties
+        cEco ⇐ land.pools
+    end
+    ## calculate variables
+    # p_fVeg = zeros(nPix, length(info.model.c.nZix)); #sujan
+    #p_fVeg = zero(cEco)
+    p_E_vec = p_F_vec
+    # ADJUST cFlow BASED ON PARTICULAR PARAMETERS # SOURCE, TARGET, INCREMENT aM = (:cVegLeaf, :cLitLeafM, MTF;, :cVegLeaf, :cLitLeafS, 1, -, MTF;, :cVegWood, :cLitWood, 1;, :cVegRootF, :cLitRootFM, MTF;, :cVegRootF, :cLitRootFS, 1, -, MTF;, :cVegRootC, :cLitRootC, 1;, :cLitLeafS, :cSoilSlow, SCLIGNIN;, :cLitLeafS, :cMicSurf, 1, -, SCLIGNIN;, :cLitRootFS, :cSoilSlow, SCLIGNIN;, :cLitRootFS, :cMicSoil, 1, -, SCLIGNIN;, :cLitWood, :cSoilSlow, frac_lignin_wood;, :cLitWood, :cMicSurf, 1, -, frac_lignin_wood;, :cLitRootC, :cSoilSlow, frac_lignin_wood;, :cLitRootC, :cMicSoil, 1, -, frac_lignin_wood;, :cSoilOld, :cMicSoil, 1;, :cLitLeafM, :cMicSurf, 1;, :cLitRootFM, :cMicSoil, 1;, :cMicSurf, :cSoilSlow, 1;)
+    for ii ∈ 1:size(aM, 1)
+        ndxSrc = helpers.pools.zix.(aM[ii, 1])
+        ndxTrg = helpers.pools.zix.(aM[ii, 2]) #sujan is this 2 | 1?
+        for iSrc ∈ eachindex(ndxSrc)
+            for iTrg ∈ eachindex(ndxTrg)
+                # p_fVeg[ndxTrg[iTrg], ndxSrc[iSrc]] = aM(ii, 3)
+                p_F_vec[ndxTrg[iTrg], ndxSrc[iSrc]] = aM[ii, 3] #sujan
+            end
+        end
+    end
 
-	## pack land variables
-	@pack_land p_F => land.cFlowVegProperties
-	return land
+    ## pack land variables
+    @pack_nt (p_E_vec, p_F_vec) ⇒ land.cFlowVegProperties
+    return land
 end
 
-function compute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_cFlowVegProperties_CASA o
-
-	## unpack land variables
-	@unpack_land p_F ∈ land.cFlowVegProperties
-
-	## calculate variables
-	# p_fVeg = zeros(nPix, length(info.tem.model.c.nZix)); #sujan
-	#p_fVeg = zeros(helpers.numbers.numType, length(land.pools.cEco))
-	p_E = p_F
-	# ADJUST cFlow BASED ON PARTICULAR PARAMETERS # SOURCE, TARGET, INCREMENT aM = (:cVegLeaf, :cLitLeafM, p_MTF;, :cVegLeaf, :cLitLeafS, 1, -, p_MTF;, :cVegWood, :cLitWood, 1;, :cVegRootF, :cLitRootFM, p_MTF;, :cVegRootF, :cLitRootFS, 1, -, p_MTF;, :cVegRootC, :cLitRootC, 1;, :cLitLeafS, :cSoilSlow, p_SCLIGNIN;, :cLitLeafS, :cMicSurf, 1, -, p_SCLIGNIN;, :cLitRootFS, :cSoilSlow, p_SCLIGNIN;, :cLitRootFS, :cMicSoil, 1, -, p_SCLIGNIN;, :cLitWood, :cSoilSlow, WOODLIGFRAC;, :cLitWood, :cMicSurf, 1, -, WOODLIGFRAC;, :cLitRootC, :cSoilSlow, WOODLIGFRAC;, :cLitRootC, :cMicSoil, 1, -, WOODLIGFRAC;, :cSoilOld, :cMicSoil, 1;, :cLitLeafM, :cMicSurf, 1;, :cLitRootFM, :cMicSoil, 1;, :cMicSurf, :cSoilSlow, 1;)
-	for ii in 1:size(aM, 1)
-		ndxSrc = helpers.pools.carbon.zix.(aM(ii, 1))
-		ndxTrg = helpers.pools.carbon.zix.(aM(ii, 2)); #sujan is this 2 | 1?
-		for iSrc in 1:length(ndxSrc)
-			for iTrg in 1:length(ndxTrg)
-				# p_fVeg[ndxTrg[iTrg], ndxSrc[iSrc]] = aM(ii, 3)
-				p_F[ndxTrg[iTrg], ndxSrc[iSrc]] = aM(ii, 3); #sujan
-			end
-		end
-	end
-
-	## pack land variables
-	@pack_land (p_E, p_F) => land.cFlowVegProperties
-	return land
-end
+purpose(::Type{cFlowVegProperties_CASA}) = "effects of vegetation that change the transfers between carbon pools"
 
 @doc """
-effects of vegetation that change the transfers between carbon pools
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Effect of vegetation properties on the c transfers between pools using cFlowVegProperties_CASA
-
-*Inputs*
- - land.cTauVegProperties.p_MTF: fraction of C in structural litter pools  that will be metabolic from lignin:N ratio
- - land.cTauVegProperties.p_SCLIGNIN: fraction of C in structural litter pools from lignin
-
-*Outputs*
- - land.cFlowVegProperties.p_E: effect of vegetation on transfer efficiency between pools
- - land.cFlowVegProperties.p_F: effect of vegetation on transfer fraction between pools
- - land.cFlowVegProperties.p_E
- - land.cFlowVegProperties.p_F
-
-# precompute:
-precompute/instantiate time-invariant variables for cFlowVegProperties_CASA
-
+$(getBaseDocString(cFlowVegProperties_CASA))
 
 ---
 
@@ -80,7 +71,7 @@ precompute/instantiate time-invariant variables for cFlowVegProperties_CASA
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cFlowVegProperties_CASA

@@ -2,14 +2,11 @@ export vegAvailableWater
 
 abstract type vegAvailableWater <: LandEcosystem end
 
-include("vegAvailableWater_rootFraction.jl")
-include("vegAvailableWater_sigmoid.jl")
+purpose(::Type{vegAvailableWater}) = "Plant available water"
 
-@doc """
-Plant available water
+includeApproaches(vegAvailableWater, @__DIR__)
 
-# Approaches:
- - rootFraction: sets the maximum fraction of water that root can uptake from soil layers as constant. calculate the actual amount of water that is available for plants
- - sigmoid: calculate the actual amount of water that is available for plants
+@doc """ 
+	$(getBaseDocString(vegAvailableWater))
 """
 vegAvailableWater

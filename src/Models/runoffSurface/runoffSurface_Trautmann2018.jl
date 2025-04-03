@@ -1,107 +1,66 @@
 export runoffSurface_Trautmann2018
 
-@bounds @describe @units @with_kw struct runoffSurface_Trautmann2018{T1} <: runoffSurface
-	qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct runoffSurface_Trautmann2018{T1} <: runoffSurface
+    qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time" | ""
+end
+#! format: on
+
+function define(params::runoffSurface_Trautmann2018, forcing, land, helpers)
+    @unpack_runoffSurface_Trautmann2018 params
+
+    ## Instantiate variables
+    z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60) + 1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
+    Rdelay = z / (sum(z) * ones(1, 61))
+
+    ## pack land variables
+    @pack_nt (z, Rdelay) ⇒ land.surface_runoff
+    return land
 end
 
-function precompute(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_runoffSurface_Trautmann2018 o
+function compute(params::runoffSurface_Trautmann2018, forcing, land, helpers)
+    #@needscheck and redo
+    ## unpack parameters
+    @unpack_runoffSurface_Trautmann2018 params
 
-	## instantiate variables
-	z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60)+1) / (qt * ones(1, 61))))
-	Rdelay = z / (sum(z) * ones(1, 61))
+    ## unpack land variables
+    @unpack_nt (z, Rdelay) ⇐ land.surface_runoff
 
-	## pack land variables
-	@pack_land (z, Rdelay) => land.runoffSurface
-	return land
+    ## unpack land variables
+    @unpack_nt begin
+        (rain, snow) ⇐ land.fluxes
+        (snowW, snowW_prev, soilW, soilW_prev, surfaceW) ⇐ land.pools
+        (evaporation, overland_runoff, sublimation) ⇐ land.fluxes
+    end
+    # calculate delay function of previous days
+    # calculate Q from delay of previous days
+    if tix > 60
+        tmin = maximum(tix - 60, 1)
+        surface_runoff = sum(overland_runoff[tmin:tix] * Rdelay)
+        # calculate surfaceW[1] by water balance
+        delSnow = sum(snowW) - sum(snowW_prev)
+        input = rain + snow
+        loss = evaporation + sublimation + surface_runoff
+        delSoil = sum(soilW) - sum(soilW_prev)
+        dSurf = input - loss - delSnow - delSoil
+    else
+        surface_runoff = 0.0
+        dSurf = overland_runoff
+    end
+
+    ## pack land variables
+    @pack_nt begin
+        surface_runoff ⇒ land.fluxes
+        (Rdelay, dSurf) ⇒ land.surface_runoff
+    end
+    return land
 end
 
-function compute(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, helpers::NamedTuple)
-	#@needscheck and redo
-	## unpack parameters
-	@unpack_runoffSurface_Trautmann2018 o
-
-	## unpack land variables
-	@unpack_land (z, Rdelay) ∈ land.runoffSurface
-
-	## unpack land variables
-	@unpack_land begin
-		(rain, snow) ∈ land.rainSnow
-		(snowW, snowW_prev, soilW, soilW_prev, surfaceW) ∈ land.pools
-		(evaporation, runoffOverland, sublimation) ∈ land.fluxes
-	end
-	# calculate delay function of previous days
-	# calculate Q from delay of previous days
-	if tix > 60
-		tmin = maximum(tix-60, 1)
-		runoffSurface = sum(runoffOverland[tmin:tix] * Rdelay)
-		# calculate surfaceW[1] by water balance
-		delSnow = sum(snowW) - sum(snowW_prev)
-		input = rain+snow
-		loss = evaporation + sublimation + runoffSurface
-		delSoil = sum(soilW) - sum(soilW_prev)
-		dSurf = input- loss - delSnow - delSoil
-	else
-		runoffSurface = 0.0
-		dSurf = runoffOverland
-	end
-
-	## pack land variables
-	@pack_land begin
-		runoffSurface => land.fluxes
-		(Rdelay, dSurf) => land.runoffSurface
-	end
-	return land
-end
-
-function update(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_runoffSurface_Trautmann2018 o
-
-	## unpack variables
-	@unpack_land begin
-		surfaceW ∈ land.pools
-		ΔsurfaceW ∈ land.states
-	end
-
-	## update storage pools
-	surfaceW .= surfaceW .+ ΔsurfaceW
-
-	# reset ΔsurfaceW to zero
-	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-	## pack land variables
-	@pack_land begin
-		# surfaceW => land.pools
-		ΔsurfaceW => land.states
-	end
-	return land
-end
+purpose(::Type{runoffSurface_Trautmann2018}) = "calculates the delay coefficient of first 60 days as a precomputation based on Orth et al. 2013 & as it is used in Trautmannet al. 2018. calculates the base runoff based on Orth et al. 2013 & as it is used in Trautmannet al. 2018"
 
 @doc """
-calculates the delay coefficient of first 60 days as a precomputation based on Orth et al. 2013 & as it is used in Trautmannet al. 2018. calculates the base runoff based on Orth et al. 2013 & as it is used in Trautmannet al. 2018
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_Trautmann2018
-
-*Inputs*
-
-*Outputs*
- - land.fluxes.runoffSurface : runoff from land [mm/time]
- - land.runoffSurface.Rdelay
-
-# update
-
-update pools and states in runoffSurface_Trautmann2018
-
-
-# precompute:
-precompute/instantiate time-invariant variables for runoffSurface_Trautmann2018
-
+$(getBaseDocString(runoffSurface_Trautmann2018))
 
 ---
 
@@ -115,7 +74,7 @@ precompute/instantiate time-invariant variables for runoffSurface_Trautmann2018
  - 1.0 on 18.11.2019 [ttraut]  
  - 1.1 on 21.01.2020 [ttraut] : calculate surfaceW[1] based on water balance  (1:1 as in TWS Paper)
 
-*Created by:*
+*Created by*
  - ttraut
 
 *Notes*

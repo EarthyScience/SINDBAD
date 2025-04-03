@@ -1,72 +1,89 @@
 export cAllocationTreeFraction_Friedlingstein1999
 
-@bounds @describe @units @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1} <: cAllocationTreeFraction
-	Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1} <: cAllocationTreeFraction
+    frac_fine_to_coarse::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction" | ""
 end
+#! format: on
 
-function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationTreeFraction_Friedlingstein1999 o
-
-    ## unpack land variables
-    @unpack_land begin
-        (cAlloc, treeFraction) ∈ land.states
-        𝟙 ∈ helpers.numbers
-    end
-
     ## calculate variables
     # check if there are fine & coarse root pools
+    cVeg_names_for_c_allocation_frac_tree = (:cVegRoot, :cVegWood, :cVegLeaf)::Tuple
     if hasproperty(land.pools, :cVegWoodC) && hasproperty(land.pools, :cVegWoodF)
-        cpNames = (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
-    else
-        cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
+        cVeg_names_for_c_allocation_frac_tree = (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)::Tuple
     end
-
-    # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
-    r0 = sum(cAlloc[getzix(land.pools.cVegRoot)]) # this is to below ground root fine+coarse
-    s0 = sum(cAlloc[getzix(land.pools.cVegWood)])
-    l0 = sum(cAlloc[getzix(land.pools.cVegLeaf)])
-
-	# adjust for spatial consideration of TreeFrac & plant level
-    # partitioning between fine & coarse roots
-    cVegWood = treeFraction
-    cVegRoot = 𝟙 + (s0 / (r0 + l0)) * (𝟙 - treeFraction)
-    cVegRootF = cVegRoot * (Rf2Rc * treeFraction + (𝟙 - treeFraction))
-    cVegRootC = cVegRoot * (𝟙 - Rf2Rc) * treeFraction
-    # cVegRoot = cVegRootF + cVegRootC
-    cVegLeaf = 𝟙 + (s0 / (r0 + l0)) * (𝟙 - treeFraction)
-    cF = (; cVegWood=cVegWood, cVegRootF=cVegRootF, cVegRootC=cVegRootC, cVegRoot=cVegRoot, cVegLeaf=cVegLeaf)
-
-	# adjust the allocation parameters
-    for cpName in cpNames
-        zix = getzix(land.pools, cpName)
-        cAlloc[zix] .= getfield(cF, cpName) .* cAlloc[zix]
-    end
-
-    ## pack land variables
-    @pack_land begin
-        cAlloc => land.states
-    end
-    # @show cAlloc, sum(cAlloc)
+    @pack_nt cVeg_names_for_c_allocation_frac_tree ⇒ land.cAllocationTreeFraction
     return land
 end
 
+function setCAlloc(c_allocation, cAllocValue, landPool, zixPools, helpers)
+    zix = getZix(landPool, zixPools)
+    for ix ∈ eachindex(zix)
+        @rep_elem cAllocValue * c_allocation[zix[ix]] ⇒ (c_allocation, zix[ix], :cEco)
+    end
+    return c_allocation
+end
+
+function compute(params::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_cAllocationTreeFraction_Friedlingstein1999 params
+
+    ## unpack land variables
+    @unpack_nt begin
+        frac_tree ⇐ land.states
+        c_allocation ⇐ land.diagnostics
+        cVeg_names_for_c_allocation_frac_tree ⇐ land.cAllocationTreeFraction
+        (z_zero, o_one) ⇐ land.constants
+    end
+    # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
+    r0 = z_zero
+    for ix ∈ getZix(land.pools.cVegRoot, helpers.pools.zix.cVegRoot)
+        r0 = r0 + c_allocation[ix]
+    end
+    s0 = z_zero
+    for ix ∈ getZix(land.pools.cVegWood, helpers.pools.zix.cVegWood)
+        s0 = s0 + c_allocation[ix]
+    end
+    l0 = z_zero
+    for ix ∈ getZix(land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf)
+        l0 = l0 + c_allocation[ix]
+    end     # this is to below ground root fine+coarse
+
+    # adjust for spatial consideration of TreeFrac & plant level
+    # partitioning between fine & coarse roots
+    o_one = one(eltype(c_allocation))
+    a_cVegWood = frac_tree
+    a_cVegRoot = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
+    a_cVegRootF = a_cVegRoot * (frac_fine_to_coarse * frac_tree + (o_one - frac_tree))
+    a_cVegRootC = a_cVegRoot * (o_one - frac_fine_to_coarse) * frac_tree
+    # cVegRoot = cVegRootF + cVegRootC
+    a_cVegLeaf = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
+
+    c_allocation = setCAlloc(c_allocation, a_cVegWood, land.pools.cVegWood, helpers.pools.zix.cVegWood, helpers)
+    if hasproperty(cVeg_names_for_c_allocation_frac_tree, :cVegRootC)
+        c_allocation = setCAlloc(c_allocation, a_cVegRootC, land.pools.cVegRootC, helpers.pools.zix.cVegRootC,
+            helpers)
+        c_allocation = setCAlloc(c_allocation, a_cVegRootF, land.pools.cVegRootF, helpers.pools.zix.cVegRootF,
+            helpers)
+    else
+        c_allocation = setCAlloc(c_allocation, a_cVegRoot, land.pools.cVegRoot, helpers.pools.zix.cVegRoot,
+            helpers)
+    end
+
+    c_allocation = setCAlloc(c_allocation, a_cVegLeaf, land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf, helpers)
+
+    @pack_nt c_allocation ⇒ land.diagnostics
+
+    return land
+end
+
+purpose(::Type{cAllocationTreeFraction_Friedlingstein1999}) = "adjust the allocation coefficients according to the fraction of trees to herbaceous & fine to coarse root partitioning"
+
 @doc """
-adjust the allocation coefficients according to the fraction of trees to herbaceous & fine to coarse root partitioning
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-
-*Inputs*
- - land.states.cAlloc: the fraction of NPP that is allocated to the different plant organs
- - land.states.treeFraction: tree cover
-
-*Outputs*
- - land.states.cAlloc: adjusted fraction of NPP that is allocated to the different plant organs
+$(getBaseDocString(cAllocationTreeFraction_Friedlingstein1999))
 
 ---
 
@@ -78,7 +95,7 @@ $(PARAMFIELDS)
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cAllocationTreeFraction_Friedlingstein1999

@@ -1,80 +1,63 @@
 export wCycle_components
 
-struct wCycle_components <: wCycle
-end
+struct wCycle_components <: wCycle end
 
-function compute(o::wCycle_components, forcing, land::NamedTuple, helpers::NamedTuple)
+
+function compute(params::wCycle_components, forcing, land, helpers)
     ## unpack variables
-    @unpack_land begin
-        (groundW, snowW, soilW, surfaceW) ∈ land.pools
-        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.states
-        p_wSat ∈ land.soilWBase
-        𝟘  ∈ helpers.numbers
+    @unpack_nt begin
+        (groundW, snowW, soilW, surfaceW, TWS) ⇐ land.pools
+        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ⇐ land.pools
+        zix ⇐ helpers.pools
+        (z_zero, o_one) ⇐ land.constants
+        w_model ⇐ land.models
     end
+    total_water_prev = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
     ## update variables
-    groundW .= groundW .+ ΔgroundW
-    snowW .= snowW .+ ΔsnowW
-    soilW .= soilW .+ ΔsoilW
-    surfaceW .= surfaceW .+ ΔsurfaceW
+    groundW = addVec(groundW, ΔgroundW)
+    snowW = addVec(snowW, ΔsnowW)
+    soilW = addVec(soilW, ΔsoilW)
+    surfaceW = addVec(surfaceW, ΔsurfaceW)
 
-    # @show ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS
-    # reset soil moisture changes to zero
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-    ΔsnowW .= ΔsnowW .- ΔsnowW
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
+    # setMainFromComponentPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 
-    if minimum(p_wSat - soilW) < 𝟘
-        @show soilW, p_wSat, soilW - p_wSat
-        error("soilW is larger than soil water holding capacity (p_wSat)")
+    # always pack land tws before calling the adjust method
+    @pack_nt begin
+        (groundW, snowW, soilW, surfaceW, TWS) ⇒ land.pools
     end
 
-    if minimum(groundW) < 𝟘
-        @show groundW
-        error("groundW is negative. Cannot continue")
+    land = adjustPackMainPool(land, helpers, w_model)
+
+    # reset moisture changes to zero
+    for l in eachindex(ΔsnowW)
+        @rep_elem zero(eltype(ΔsnowW)) ⇒ (ΔsnowW, l, :snowW)
+    end
+    for l in eachindex(ΔsoilW)
+        @rep_elem zero(eltype(ΔsoilW)) ⇒ (ΔsoilW, l, :soilW)
+    end
+    for l in eachindex(ΔgroundW)
+        @rep_elem zero(eltype(ΔgroundW)) ⇒ (ΔgroundW, l, :groundW)
+    end
+    for l in eachindex(ΔsurfaceW)
+        @rep_elem zero(eltype(ΔsurfaceW)) ⇒ (ΔsurfaceW, l, :surfaceW)
     end
 
-    if minimum(snowW) < 𝟘
-        @show snowW
-        error("snowW is negative. Cannot continue")
-    end
-
-    if minimum(soilW) < 𝟘
-        @show soilW
-        error("soilW is negative. Cannot continue")
-    end
-
-    if minimum(surfaceW) < 𝟘
-        @show soilW
-        error("surfaceW is negative. Cannot continue")
-    end
+    total_water = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
     ## pack land variables
-    # @pack_land begin
-    # 	(groundW, snowW, soilW, surfaceW) => land.pools
-    # 	(ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW)  => land.states
-    # end
+    @pack_nt begin
+        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW) ⇒ land.pools
+        (total_water, total_water_prev) ⇒ land.states
+    end
     return land
 end
 
+purpose(::Type{wCycle_components}) = "update the water cycle pools per component"
+
 @doc """
-computes the algebraic sum of storage and delta storage using each component separately
 
-
----
-
-# compute:
-- apply the delta storage changes
-- check if there is overflow or over extraction
-
-*Inputs*
-- land.pools.storages: water storages
-- land.states.Δstorages: water storage changes
-- land.soilWBase.p_wSat: water holding capacity
-
-*Outputs*
- - land.states.Δstorages: soil percolation
+$(getBaseDocString(wCycle_components))
 
 ---
 
@@ -83,9 +66,9 @@ computes the algebraic sum of storage and delta storage using each component sep
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala]
+ - 1.0 on 18.11.2019 [skoirala | @dr-ko]
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 wCycle_components

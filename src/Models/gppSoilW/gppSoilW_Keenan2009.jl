@@ -1,53 +1,41 @@
 export gppSoilW_Keenan2009
 
-@bounds @describe @units @with_kw struct gppSoilW_Keenan2009{T1,T2,T3} <: gppSoilW
-    q::T1 = 0.6 | (0.0, 15.0) | "sensitivity of GPP to soil moisture " | ""
-    sSmax::T2 = 0.7 | (0.2, 1.0) | "" | ""
-    sSmin::T3 = 0.5 | (0.01, 0.95) | "" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct gppSoilW_Keenan2009{T1,T2,T3} <: gppSoilW
+    q::T1 = 0.6 | (0.0, 15.0) | "sensitivity of GPP to soil moisture " | "" | ""
+    f_s_max::T2 = 0.7 | (0.2, 1.0) | "" | "" | ""
+    f_s_min::T3 = 0.5 | (0.01, 0.95) | "" | "" | ""
 end
+#! format: on
 
-function compute(o::gppSoilW_Keenan2009, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::gppSoilW_Keenan2009, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_Keenan2009 o
+    @unpack_gppSoilW_Keenan2009 params
 
     ## unpack land variables
-    @unpack_land begin
-        (s_wSat, s_wWP) ∈ land.soilWBase
-        soilW ∈ land.pools
-        (𝟘, 𝟙) ∈ helpers.numbers
+    @unpack_nt begin
+        (∑w_sat, ∑w_wp) ⇐ land.properties
+        soilW ⇐ land.pools
     end
 
-    maxAWC = max(s_wSat - s_wWP, 𝟘)
-    Smax = sSmax * maxAWC
-    Smin = sSmin * Smax
+    max_AWC = maxZero(∑w_sat - ∑w_wp)
+    s_max = f_s_max * max_AWC
+    s_min = f_s_min * s_max
 
-    SM = max(sum(soilW), Smin)
-    smsc = ((SM - Smin) / (Smax - Smin))^q
-    SMScGPP = clamp(smsc, 𝟘, 𝟙)
+    SM = max(sum(soilW), s_min)
+    smsc = ((SM - s_min) / (s_max - s_min))^q
+    gpp_f_soilW = clampZeroOne(smsc)
 
     ## pack land variables
-    @pack_land SMScGPP => land.gppSoilW
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
     return land
 end
 
+purpose(::Type{gppSoilW_Keenan2009}) = "soil moisture stress on gpp_potential based on Keenan2009"
+
 @doc """
-soil moisture stress on gppPot based on Keenan2009
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Gpp as a function of soilW
-
-*Inputs*
- - land.pools.soilW: values of soil moisture current time step
- - land.soilWBase.p_wSat: saturation point
- - land.soilWBase.p_wWP: wilting point
-
-*Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
+$(getBaseDocString(gppSoilW_Keenan2009))
 
 ---
 
@@ -59,8 +47,8 @@ Gpp as a function of soilW
 *Versions*
  - 1.0 on 10.03.2020 [sbesnard]  
 
-*Created by:*
- - ncarval & sbesnard
+*Created by*
+ - ncarvalhais & sbesnard
 
 *Notes*
 """

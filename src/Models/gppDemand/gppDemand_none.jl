@@ -1,44 +1,25 @@
 export gppDemand_none
 
-struct gppDemand_none <: gppDemand
+struct gppDemand_none <: gppDemand end
+
+function define(params::gppDemand_none, forcing, land, helpers)
+    @unpack_nt (o_one, z_zero) ⇐ land.constants
+
+    gpp_f_climate = o_one
+
+    # compute demand GPP with no stress. gpp_f_climate is set to ones in the prec; & hence the demand have no stress in GPP.
+    gpp_demand = z_zero
+
+    ## pack land variables
+    @pack_nt (gpp_f_climate, gpp_demand) ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::gppDemand_none, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_land begin
-		fAPAR ∈ land.states
-		gppPot ∈ land.gppPotential
-	end
-
-	## calculate variables
-	# set scalar to a constant one [no effect on potential GPP]
-	AllDemScGPP = helpers.numbers.𝟙
-
-	# compute demand GPP with no stress. AllDemScGPP is set to ones in the prec; & hence the demand have no stress in GPP.
-	gppE = fAPAR * gppPot * AllDemScGPP
-
-	## pack land variables
-	@pack_land (AllDemScGPP, gppE) => land.gppDemand
-	return land
-end
+purpose(::Type{gppDemand_none}) = "sets the scalar for demand GPP to ones & demand GPP to zero"
 
 @doc """
-sets the scalar for demand GPP to ones & demand GPP to zero
 
----
-
-# compute:
-Combine effects as multiplicative or minimum using gppDemand_none
-
-*Inputs*
- - helpers
-
-*Outputs*
- - land.gppDemand.AllDemScGPP: effective scalar of demands
- - land.gppDemand.gppE: demand-driven GPP with no stress
-
-# precompute:
-precompute/instantiate time-invariant variables for gppDemand_none
-
+$(getBaseDocString(gppDemand_none))
 
 ---
 
@@ -47,9 +28,9 @@ precompute/instantiate time-invariant variables for gppDemand_none
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up 
 
-*Created by:*
- - ncarval
+*Created by*
+ - ncarvalhais
 """
 gppDemand_none

@@ -1,123 +1,108 @@
 export cTauLAI_CASA
 
-@bounds @describe @units @with_kw struct cTauLAI_CASA{T1, T2} <: cTauLAI
-	maxMinLAI::T1 = 12.0 | (11.0, 13.0) | "maximum value for the minimum LAI for litter scalars" | "m2/m2"
-	kRTLAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter imputs" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cTauLAI_CASA{T1,T2} <: cTauLAI
+    max_min_LAI::T1 = 12.0 | (11.0, 13.0) | "maximum value for the minimum LAI for litter scalars" | "m2/m2" | ""
+    k_root_LAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter inputs" | "" | ""
+end
+#! format: on
+
+function define(params::cTauLAI_CASA, forcing, land, helpers)
+    @unpack_cTauLAI_CASA params
+    @unpack_nt cEco ⇐ land.pools
+
+    ## Instantiate variables
+    c_eco_k_f_LAI = one.(cEco)
+
+    ## pack land variables
+    @pack_nt c_eco_k_f_LAI ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::cTauLAI_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_cTauLAI_CASA o
+function compute(params::cTauLAI_CASA, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_cTauLAI_CASA params
 
-	## instantiate variables
-	p_kfLAI = ones(helpers.numbers.numType, length(land.pools.cEco)); #(inefficient, should be pix zix_veg)
+    ## unpack land variables
+    @unpack_nt c_eco_k_f_LAI ⇐ land.diagnostics
 
-	## pack land variables
-	@pack_land p_kfLAI => land.cTauLAI
-	return land
+    ## unpack land variables
+    @unpack_nt begin
+        LAI ⇐ land.states
+        (c_eco_τ, c_eco_k) ⇐ land.diagnostics
+    end
+    # set LAI stressor on τ to ones
+    TSPY = 365 #sujan
+    p_cVegLeafZix = helpers.pools.zix.cVegLeaf
+    if isfield(helpers.pools.zix.cVegRootF)
+        p_cVegRootZix = helpers.pools.zix.cVegRootF
+    else
+        p_cVegRootZix = helpers.pools.zix.cVegRoot
+    end
+    # make sure TSPY is integer
+    TSPY = floor(Int, TSPY)
+    if !hasproperty(land.cTaufLAI, :p_LAI13)
+        p_LAI13 = repeat([0.0], 1, TSPY + 1)
+    end
+    # PARAMETERS
+    # Get the number of time steps per year
+    TSPY = helpers.dates.timesteps_in_year
+    # make sure TSPY is integer
+    TSPY = floor(Int, TSPY)
+    # BUILD AN ANNUAL LAI MATRIX
+    # get the LAI of previous time step in LAI13
+    LAI13 = p_LAI13
+    LAI13 = circshift(LAI13, 1)
+    # LAI13[2:TSPY + 1] = LAI13[1:TSPY]; # very slow [sujan]
+    LAI13[1] = LAI
+    LAI13_next = LAI13[2:(TSPY+1)]
+    # LAI13_prev = LAI13[1:TSPY]
+    # update s
+    p_LAI13 = LAI13
+    # Calculate sum of δLAI over the year
+    dLAI = diff(LAI13)
+    dLAI = maxZero(dLAI)
+    dLAIsum = sum(dLAI)
+    # Calculate average & minimum LAI
+    LAIsum = sum(LAI13_next)
+    LAIave = LAIsum / size(LAI13_next, 2)
+    LAImin = minimum(LAI13_next)
+    LAImin[LAImin>max_min_LAI] = max_min_LAI[LAImin>max_min_LAI]
+    # Calculate constant fraction of LAI [LTCON]
+    LTCON = 0.0
+    ndx = (LAIave > 0.0)
+    LTCON[ndx] = LAImin[ndx] / LAIave[ndx]
+    # Calculate δLAI
+    dLAI = dLAI[1]
+    # Calculate variable fraction of LAI [LTCON]
+    LTVAR = 0.0
+    LTVAR[dLAI<=0.0|dLAIsum<=0.0] = 0.0
+    ndx = (dLAI > 0.0 | dLAIsum > 0.0)
+    LTVAR[ndx] = (dLAI[ndx] / dLAIsum[ndx])
+    # Calculate the scalar for litterfall
+    LTLAI = LTCON / TSPY + (1.0 - LTCON) * LTVAR
+    # Calculate the scalar for root litterfall
+    # RTLAI = zeros(size(LTLAI))
+    RTLAI = 0.0
+    ndx = (LAIsum > 0.0)
+    LAI131st = LAI13[1]
+    RTLAI[ndx] = (1.0 - k_root_LAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + k_root_LAI / TSPY
+    # Feed the output fluxes to cCycle components
+    zix_veg = p_cVegLeafZix
+    c_eco_k_f_LAI[zix_veg] = c_eco_τ[zix_veg] * LTLAI / c_eco_k[zix_veg] # leaf litter scalar
+    zix_root = p_cVegRootZix
+    c_eco_k_f_LAI[zix_root] = c_eco_τ[zix_root] * RTLAI / c_eco_k[zix_root] # root litter scalar
+
+    ## pack land variables
+    @pack_nt (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_f_LAI) ⇒ land.diagnostics
+    return land
 end
 
-function compute(o::cTauLAI_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_cTauLAI_CASA o
-
-	## unpack land variables
-	@unpack_land p_kfLAI ∈ land.cTauLAI
-
-	## unpack land variables
-	@unpack_land begin
-		LAI ∈ land.states
-		(p_annk, p_k) ∈ land.cCycleBase
-	end
-	# set LAI stressor on τ to ones
-	TSPY = helpers.dates.nStepsYear; #sujan
-	p_cVegLeafZix = helpers.pools.carbon.zix.cVegLeaf
-	if isfield(helpers.pools.carbon.zix, :cVegRootF)
-		p_cVegRootZix = helpers.pools.carbon.zix.cVegRootF
-	else
-		p_cVegRootZix = helpers.pools.carbon.zix.cVegRoot
-	end
-	# make sure TSPY is integer
-	TSPY = floor(Int, TSPY)
-	if !hasproperty(land.cTaufLAI, :p_LAI13)
-		p_LAI13 = repeat([0.0], 1, TSPY + 1)
-	end
-	# PARAMETERS
-	# Get the number of time steps per year
-	TSPY = helpers.dates.nStepsYear
-	# make sure TSPY is integer
-	TSPY = floor(Int, TSPY)
-	# BUILD AN ANNUAL LAI MATRIX
-	# get the LAI of previous time step in LAI13
-	LAI13 = p_LAI13
-	LAI13 = circshift(LAI13, 1)
-	# LAI13[2:TSPY + 1] = LAI13[1:TSPY]; # very slow [sujan]
-	LAI13[1] = LAI
-	LAI13_next = LAI13[2:TSPY + 1]
-	# LAI13_prev = LAI13[1:TSPY]
-	# update s
-	p_LAI13 = LAI13
-	# Calculate sum of δLAI over the year
-	dLAI = diff(LAI13)
-	dLAI = max(dLAI, 0)
-	dLAIsum = sum(dLAI)
-	# Calculate average & minimum LAI
-	LAIsum = sum(LAI13_next)
-	LAIave = LAIsum / size(LAI13_next, 2)
-	LAImin = minimum(LAI13_next)
-	LAImin[LAImin > maxMinLAI] = maxMinLAI[LAImin > maxMinLAI]
-	# Calculate constant fraction of LAI [LTCON]
-	LTCON = 0.0
-	ndx = (LAIave > 0.0)
-	LTCON[ndx] = LAImin[ndx] / LAIave[ndx]
-	# Calculate δLAI
-	dLAI = dLAI[1]
-	# Calculate variable fraction of LAI [LTCON]
-	LTVAR = 0.0
-	LTVAR[dLAI <= 0.0 | dLAIsum <= 0.0] = 0.0
-	ndx = (dLAI > 0.0 | dLAIsum > 0.0)
-	LTVAR[ndx] = (dLAI[ndx] / dLAIsum[ndx])
-	# Calculate the scalar for litterfall
-	LTLAI = LTCON / TSPY + (1.0 - LTCON) * LTVAR
-	# Calculate the scalar for root litterfall
-	# RTLAI = zeros(size(LTLAI))
-	RTLAI = 0.0
-	ndx = (LAIsum > 0.0)
-	LAI131st = LAI13[1]
-	RTLAI[ndx] = (1.0 - kRTLAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + kRTLAI / TSPY
-	# Feed the output fluxes to cCycle components
-	zix_veg = p_cVegLeafZix
-	p_kfLAI[zix_veg] = p_annk[zix_veg] * LTLAI / p_k[zix_veg]; # leaf litter scalar
-	zix_root = p_cVegRootZix
-	p_kfLAI[zix_root] = p_annk[zix_root] * RTLAI / p_k[zix_root]; # root litter scalar
-
-	## pack land variables
-	@pack_land (p_LAI13, p_cVegLeafZix, p_cVegRootZix, p_kfLAI) => land.cTauLAI
-	return land
-end
+purpose(::Type{cTauLAI_CASA}) = "calc LAI stressor on τ. Compute the seasonal cycle of litter fall & root litterfall based on LAI variations. Necessarily in precomputation mode"
 
 @doc """
-calc LAI stressor on τ. Compute the seasonal cycle of litter fall & root litter "fall" based on LAI variations. Necessarily in precomputation mode
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Calculate litterfall scalars (that affect the changes in the vegetation k) using cTauLAI_CASA
-
-*Inputs*
- - forcing.LAI: leaf area index [m2/m2]
- - info.timeScale.stepsPerYear: number of years of simulations
- - helpers.dates.nStepsYear: number of years of simulations
-
-*Outputs*
- - land.cTauLAI.p_kfLAI:
- - land.cTauLAI.p_kfLAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
-
-# precompute:
-precompute/instantiate time-invariant variables for cTauLAI_CASA
-
+$(getBaseDocString(cTauLAI_CASA))
 
 ---
 
@@ -132,9 +117,9 @@ precompute/instantiate time-invariant variables for cTauLAI_CASA
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]
  - 1.0 on 12.01.2020 [sbesnard]  
- - 1.1 on 05.11.2020 [skoirala]: speedup  
+ - 1.1 on 05.11.2020 [skoirala | @dr-ko]: speedup  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cTauLAI_CASA

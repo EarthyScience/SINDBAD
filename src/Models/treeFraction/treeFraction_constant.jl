@@ -1,37 +1,29 @@
 export treeFraction_constant
 
-@bounds @describe @units @with_kw struct treeFraction_constant{T1} <: treeFraction
-	constantTreeFrac::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct treeFraction_constant{T1} <: treeFraction
+    constant_frac_tree::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | "" | ""
+end
+#! format: on
+
+
+function precompute(params::treeFraction_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_treeFraction_constant params
+
+    ## calculate variables
+    frac_tree = constant_frac_tree
+
+    ## pack land variables
+    @pack_nt frac_tree ⇒ land.states
+    return land
 end
 
-function compute(o::treeFraction_constant, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_treeFraction_constant o
-
-	## calculate variables
-	treeFraction = constantTreeFrac
-
-	## pack land variables
-	@pack_land treeFraction => land.states
-	return land
-end
+purpose(::Type{treeFraction_constant}) = "sets the value of frac_tree as a constant"
 
 @doc """
-sets the value of treeFraction as a constant
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Fractional coverage of trees using treeFraction_constant
-
-*Inputs*
- - info helper for array
-
-*Outputs*
- - land.states.treeFraction: an extra forcing that creates a time series of constant treeFraction
+$(getBaseDocString(treeFraction_constant))
 
 ---
 
@@ -40,9 +32,9 @@ Fractional coverage of trees using treeFraction_constant
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: cleaned up the code  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 treeFraction_constant

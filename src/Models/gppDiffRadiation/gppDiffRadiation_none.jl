@@ -1,36 +1,24 @@
 export gppDiffRadiation_none
 
-struct gppDiffRadiation_none <: gppDiffRadiation
+struct gppDiffRadiation_none <: gppDiffRadiation end
+
+function define(params::gppDiffRadiation_none, forcing, land, helpers)
+    @unpack_nt o_one ⇐ land.constants
+
+    ## calculate variables
+    # set scalar to a constant one [no effect on potential GPP]
+    gpp_f_cloud = o_one
+
+    ## pack land variables
+    @pack_nt gpp_f_cloud ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::gppDiffRadiation_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	# set scalar to a constant one [no effect on potential GPP]
-	CloudScGPP = helpers.numbers.𝟙
-
-	## pack land variables
-	@pack_land CloudScGPP => land.gppDiffRadiation
-	return land
-end
+purpose(::Type{gppDiffRadiation_none}) = "sets the cloudiness scalar [radiation diffusion] for gpp_potential to one"
 
 @doc """
-sets the cloudiness scalar [radiation diffusion] for gppPot to one
 
----
-
-# compute:
-Effect of diffuse radiation using gppDiffRadiation_none
-
-*Inputs*
- - helpers
-
-*Outputs*
- - land.gppDiffRadiation.CloudScGPP: effect of cloudiness on potential GPP
-
-# precompute:
-precompute/instantiate time-invariant variables for gppDiffRadiation_none
-
+$(getBaseDocString(gppDiffRadiation_none))
 
 ---
 
@@ -39,10 +27,10 @@ precompute/instantiate time-invariant variables for gppDiffRadiation_none
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up 
 
-*Created by:*
+*Created by*
  - mjung
- - ncarval
+ - ncarvalhais
 """
 gppDiffRadiation_none

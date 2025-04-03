@@ -1,64 +1,54 @@
 export gppAirT_Maekelae2008
 
-@bounds @describe @units @with_kw struct gppAirT_Maekelae2008{T1,T2,T3} <: gppAirT
-    TimConst::T1 = 5.0 | (1.0, 20.0) | "time constant for temp delay" | "days"
-    X0::T2 = -5.0 | (-15.0, 1.0) | "threshold of delay temperature" | "°C"
-    Smax::T3 = 20.0 | (10.0, 30.0) | "temperature at saturation" | "°C"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct gppAirT_Maekelae2008{T1,T2,T3} <: gppAirT
+    TimConst::T1 = 5.0 | (1.0, 20.0) | "time constant for temp delay" | "days" | ""
+    X0::T2 = -5.0 | (-15.0, 1.0) | "threshold of delay temperature" | "°C" | ""
+    s_max::T3 = 20.0 | (10.0, 30.0) | "temperature at saturation" | "°C" | ""
 end
+#! format: on
 
-
-function precompute(o::gppAirT_Maekelae2008, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_forcing TairDay ∈ forcing
+    @unpack_nt f_airT_day ⇐ forcing
 
-    X_prev = TairDay
+    X_prev = f_airT_day
 
     ## pack land variables
-    @pack_land X_prev => land.gppAirT
+    @pack_nt X_prev ⇒ land.diagnostics
     return land
 end
 
-function compute(o::gppAirT_Maekelae2008, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_Maekelae2008 o
-    @unpack_forcing TairDay ∈ forcing
-    @unpack_land begin
-        (𝟘, 𝟙) ∈ helpers.numbers
-        X_prev ∈ land.gppAirT
+    @unpack_gppAirT_Maekelae2008 params
+    @unpack_nt f_airT_day ⇐ forcing
+    @unpack_nt begin
+        o_one ⇐ land.constants
+        X_prev ⇐ land.diagnostics
     end
 
     ## calculate variables
     # calculate temperature acclimation
-    X = X_prev + (𝟙 / TimConst) * (TairDay - X_prev)
+    X = X_prev + (o_one / TimConst) * (f_airT_day - X_prev)
 
     # calculate the stress & saturation
-    S = max(X - X0, 𝟘)
-    TempScGPP = clamp(S / Smax, 𝟘, 𝟙)
+    S = maxZero(X - X0)
+    gpp_f_airT = clampZeroOne(S / s_max)
 
     # replace the previous X
     X_prev = X
 
     ## pack land variables
-    @pack_land (TempScGPP, X_prev) => land.gppAirT
+    @pack_nt (gpp_f_airT, X_prev) ⇒ land.diagnostics
     return land
 end
 
+purpose(::Type{gppAirT_Maekelae2008}) = "temperature stress on gpp_potential based on Maekelae2008 [eqn 3 & 4]"
+
 @doc """
-temperature stress on gppPot based on Maekelae2008 [eqn 3 & 4]
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Effect of temperature using gppAirT_Maekelae2008
-
-*Inputs*
- - forcing.TairDay: daytime temperature [°C]
-
-*Outputs*
- - land.gppAirT.TempScGPP: effect of temperature on potential GPP
+$(getBaseDocString(gppAirT_Maekelae2008))
 
 ---
 
@@ -68,10 +58,10 @@ Effect of temperature using gppAirT_Maekelae2008
  - Mäkelä, A., Pulkkinen, M., Kolari, P., et al. (2008).  Developing an empirical model of stand GPP with the LUE approachanalysis of eddy covariance data at five contrasting conifer sites in Europe.  Global change biology, 14[1], 92-108.
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up  
 
-*Created by:*
- - ncarval
+*Created by*
+ - ncarvalhais
 
 *Notes*
  - Tmin < Tmax ALWAYS!!!

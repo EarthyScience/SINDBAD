@@ -1,60 +1,48 @@
 export cAllocationSoilW_gppGSI
 
-@bounds @describe @units @with_kw struct cAllocationSoilW_gppGSI{T1} <: cAllocationSoilW
-    τ_soilW::T1 = 0.8 | (0.001, 1.0) | "temporal change rate for the water-limiting function" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cAllocationSoilW_gppGSI{T1} <: cAllocationSoilW
+    τ_soilW::T1 = 0.8 | (0.001, 1.0) | "temporal change rate for the water-limiting function" | "" | ""
 end
+#! format: on
 
-
-function precompute(o::cAllocationSoilW_gppGSI, forcing, land::NamedTuple, helpers::NamedTuple)
-    ## unpack helper
-    @unpack_land 𝟙 ∈ helpers.numbers
-
-    ## calculate variables
-    # assume the initial fR as one
-    fW_prev = 𝟙
+function define(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
+    @unpack_nt begin
+        soilW ⇐ land.pools
+        ∑w_sat ⇐ land.properties
+    end
+    c_allocation_f_soilW_prev = sum(soilW) / ∑w_sat
 
     ## pack land variables
-    @pack_land fW_prev => land.cAllocationSoilW
+    @pack_nt c_allocation_f_soilW_prev ⇒ land.diagnostics
     return land
 end
 
-
-function compute(o::cAllocationSoilW_gppGSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilW_gppGSI o
+    @unpack_cAllocationSoilW_gppGSI params
 
     ## unpack land variables
-    @unpack_land begin
-        SMScGPP ∈ land.gppSoilW
-        fW_prev ∈ land.cAllocationSoilW
+    @unpack_nt begin
+        gpp_f_soilW ⇐ land.diagnostics
+        c_allocation_f_soilW_prev ⇐ land.diagnostics
     end
     # computation for the moisture effect on decomposition/mineralization
-    fW = fW_prev + (SMScGPP - fW_prev) * τ_soilW
+    c_allocation_f_soilW = c_allocation_f_soilW_prev + (gpp_f_soilW - c_allocation_f_soilW_prev) * τ_soilW
 
     # set the prev
-    fW_prev = fW
+    c_allocation_f_soilW_prev = c_allocation_f_soilW
 
     ## pack land variables
-    @pack_land (fW, fW_prev) => land.cAllocationSoilW
+    @pack_nt (c_allocation_f_soilW, c_allocation_f_soilW_prev) ⇒ land.diagnostics
     return land
 end
 
+purpose(::Type{cAllocationSoilW_gppGSI}) = "moisture effect on allocation from same for GPP based on GSI approach"
+
 @doc """
-moisture effect on allocation from same for GPP based on GSI approach
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-
-*Inputs*
- - land.cAllocationSoilW.fW_prev: moisture stressor from previous time step
- - land.gppSoilW.SMScGPP: moisture stressors on GPP
-
-*Outputs*
- - land.cAllocationSoilW.fW: moisture effect on allocation
+$(getBaseDocString(cAllocationSoilW_gppGSI))
 
 ---
 
@@ -68,7 +56,7 @@ $(PARAMFIELDS)
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais & sbesnard
 """
 cAllocationSoilW_gppGSI

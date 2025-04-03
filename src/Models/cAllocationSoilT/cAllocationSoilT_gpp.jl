@@ -1,34 +1,26 @@
 export cAllocationSoilT_gpp
 
-struct cAllocationSoilT_gpp <: cAllocationSoilT
+struct cAllocationSoilT_gpp <: cAllocationSoilT end
+
+function compute(params::cAllocationSoilT_gpp, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt gpp_f_airT ⇐ land.diagnostics
+
+    ## calculate variables
+    # computation for the temperature effect on decomposition/mineralization
+    c_allocation_f_soilT = gpp_f_airT
+
+    ## pack land variables
+    @pack_nt c_allocation_f_soilT ⇒ land.diagnostics
+    return land
 end
 
-function compute(o::cAllocationSoilT_gpp, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land TempScGPP ∈ land.gppAirT
-
-	## calculate variables
-	# computation for the temperature effect on decomposition/mineralization
-	fT = TempScGPP
-
-	## pack land variables
-	@pack_land fT => land.cAllocationSoilT
-	return land
-end
+purpose(::Type{cAllocationSoilT_gpp}) = "temperature effect on allocation = the same as gpp"
 
 @doc """
-temperature effect on allocation = the same as gpp
 
----
-
-# compute:
-
-*Inputs*
- - land.gppAirT.TempScGPP: temperature stressors on GPP
-
-*Outputs*
- - land.cAllocationSoilT.fT: temperature effect on decomposition/mineralization
+$(getBaseDocString(cAllocationSoilT_gpp))
 
 ---
 
@@ -37,9 +29,9 @@ temperature effect on allocation = the same as gpp
 *References*
 
 *Versions*
- - 1.0 on 26.01.2021 [skoirala]  
+ - 1.0 on 26.01.2021 [skoirala | @dr-ko]  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 cAllocationSoilT_gpp

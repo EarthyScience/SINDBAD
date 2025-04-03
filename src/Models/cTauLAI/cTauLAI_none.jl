@@ -1,24 +1,23 @@
 export cTauLAI_none
 
-struct cTauLAI_none <: cTauLAI
+struct cTauLAI_none <: cTauLAI end
+
+function define(params::cTauLAI_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
+
+    ## calculate variables
+    c_eco_k_f_LAI = one.(cEco)
+
+    ## pack land variables
+    @pack_nt c_eco_k_f_LAI ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::cTauLAI_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	p_kfLAI = ones(helpers.numbers.numType, length(land.pools.cEco)); #(ineficient, should be pix zix_veg)
-
-	## pack land variables
-	@pack_land p_kfLAI => land.cTauLAI
-	return land
-end
+purpose(::Type{cTauLAI_none}) = "set values to ones"
 
 @doc """
-set values to ones
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauLAI_none
-
+$(getBaseDocString(cTauLAI_none))
 
 ---
 

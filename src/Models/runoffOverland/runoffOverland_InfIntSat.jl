@@ -1,37 +1,25 @@
 export runoffOverland_InfIntSat
 
-struct runoffOverland_InfIntSat <: runoffOverland
+struct runoffOverland_InfIntSat <: runoffOverland end
+
+function compute(params::runoffOverland_InfIntSat, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt (inf_excess_runoff, interflow_runoff, sat_excess_runoff) ⇐ land.fluxes
+
+    ## calculate variables
+    overland_runoff = inf_excess_runoff + interflow_runoff + sat_excess_runoff
+
+    ## pack land variables
+    @pack_nt overland_runoff ⇒ land.fluxes
+    return land
 end
 
-function compute(o::runoffOverland_InfIntSat, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land (runoffInfExc, runoffInterflow, runoffSatExc) ∈ land.fluxes
-
-
-	## calculate variables
-	runoffOverland = runoffInfExc + runoffInterflow + runoffSatExc
-
-	## pack land variables
-	@pack_land runoffOverland => land.fluxes
-	return land
-end
+purpose(::Type{runoffOverland_InfIntSat}) = "assumes overland flow to be sum of infiltration excess, interflow, and saturation excess runoffs"
 
 @doc """
-assumes overland flow to be sum of infiltration excess, interflow, and saturation excess runoffs
 
----
-
-# compute:
-Land over flow (sum of saturation and infiltration excess runoff) using runoffOverland_InfIntSat
-
-*Inputs*
- - land.fluxes.runoffInfExc: infiltration excess runoff
- - land.fluxes.runoffInterflow: intermittent flow
- - land.fluxes.runoffSatExc: saturation excess runoff
-
-*Outputs*
- - land.fluxes.runoffOverland : runoff from land [mm/time]
+$(getBaseDocString(runoffOverland_InfIntSat))
 
 ---
 
@@ -40,9 +28,9 @@ Land over flow (sum of saturation and infiltration excess runoff) using runoffOv
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala]  
+ - 1.0 on 18.11.2019 [skoirala | @dr-ko]  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 runoffOverland_InfIntSat

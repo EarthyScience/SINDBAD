@@ -1,24 +1,23 @@
 export runoffSurface_none
 
-struct runoffSurface_none <: runoffSurface
+struct runoffSurface_none <: runoffSurface end
+
+function define(params::runoffSurface_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
+
+    ## calculate variables
+    surface_runoff = z_zero
+
+    ## pack land variables
+    @pack_nt surface_runoff ⇒ land.fluxes
+    return land
 end
 
-function precompute(o::runoffSurface_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	runoffSurface = helpers.numbers.𝟘
-
-	## pack land variables
-	@pack_land runoffSurface => land.fluxes
-	return land
-end
+purpose(::Type{runoffSurface_none}) = "sets surface runoff [surface_runoff] from the storage to zero"
 
 @doc """
-sets surface runoff [runoffSurface] from the storage to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffSurface_none
-
+$(getBaseDocString(runoffSurface_none))
 
 ---
 

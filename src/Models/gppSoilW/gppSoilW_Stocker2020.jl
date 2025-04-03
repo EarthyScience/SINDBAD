@@ -1,54 +1,50 @@
 export gppSoilW_Stocker2020
 
-@bounds @describe @units @with_kw struct gppSoilW_Stocker2020{T1,T2} <: gppSoilW
-    q::T1 = 1.0 | (0.01, 4.0) | "sensitivity of GPP to soil moisture " | ""
-    θstar::T2 = 0.6 | (0.1, 1.0) | "" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct gppSoilW_Stocker2020{T1,T2} <: gppSoilW
+    q::T1 = 1.0 | (0.01, 4.0) | "sensitivity of GPP to soil moisture " | "" | ""
+    θstar::T2 = 0.6 | (0.1, 1.0) | "" | "" | ""
 end
+#! format: on
 
-
-function compute(o::gppSoilW_Stocker2020, forcing, land::NamedTuple, helpers::NamedTuple)
-    ## unpack parameters
-    @unpack_gppSoilW_Stocker2020 o
-
-    ## unpack land variables
-    @unpack_land begin
-        (s_wFC, s_wWP) ∈ land.soilWBase
-        soilW ∈ land.pools
-        (𝟙, 𝟘, squarer) ∈ helpers.numbers
-    end
-
-    ## calculate variables
-    SM = sum(soilW)
-    maxAWC = max(s_wFC - s_wWP, 𝟘)
-    actAWC = max(SM - s_wWP, 𝟘)
-    SM_nor = min(actAWC / maxAWC, 𝟙)
-    tfW = -q * squarer(SM_nor - θstar) + 𝟙
-    fW = SM_nor <= θstar ? tfW : 𝟙
-    SMScGPP = clamp(fW, 𝟘, 𝟙)
+function define(params::gppSoilW_Stocker2020, forcing, land, helpers)
+    @unpack_gppSoilW_Stocker2020 params
+    gpp_f_soilW = one(q)
 
     ## pack land variables
-    @pack_land SMScGPP => land.gppSoilW
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
     return land
 end
 
+function compute(params::gppSoilW_Stocker2020, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_gppSoilW_Stocker2020 params
+
+    ## unpack land variables
+    @unpack_nt begin
+        (∑w_fc, ∑w_wp) ⇐ land.properties
+        soilW ⇐ land.pools
+        (z_zero, o_one, t_two) ⇐ land.constants
+    end
+    ## calculate variables
+    SM = sum(soilW)
+    max_AWC = maxZero(∑w_fc - ∑w_wp)
+    actAWC = maxZero(SM - ∑w_wp)
+    SM_nor = minOne(actAWC / max_AWC)
+    tf_soilW = -q * (SM_nor - θstar)^t_two + o_one
+    tmp_f_soilW = SM_nor <= θstar ? tf_soilW : one(tf_soilW)
+    gpp_f_soilW = clampZeroOne(tmp_f_soilW)
+
+    ## pack land variables
+    @pack_nt gpp_f_soilW ⇒ land.diagnostics
+    return land
+end
+
+purpose(::Type{gppSoilW_Stocker2020}) = "soil moisture stress on gpp_potential based on Stocker2020"
+
 @doc """
-soil moisture stress on gppPot based on Stocker2020
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Gpp as a function of soilW; should be set to none if coupled with transpiration using gppSoilW_Stocker2020
-
-*Inputs*
- - land.pools.soilW: values of soil moisture current time step
- - land.soilWBase.s_wWP: sum of wilting point
- - land.soilWBase.s_wFC: sum of field capacity
-
-*Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
+$(getBaseDocString(gppSoilW_Stocker2020))
 
 ---
 
@@ -59,8 +55,8 @@ Gpp as a function of soilW; should be set to none if coupled with transpiration 
 
 *Versions*
 
-*Created by:*
- - ncarval & Shanning Bao [sbao]
+*Created by*
+ - ncarvalhais & Shanning Bao [sbao]
 
 *Notes*
 """

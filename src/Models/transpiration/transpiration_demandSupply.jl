@@ -1,37 +1,27 @@
 export transpiration_demandSupply
 
-struct transpiration_demandSupply <: transpiration
+struct transpiration_demandSupply <: transpiration end
+
+function compute(params::transpiration_demandSupply, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt begin
+        transpiration_supply ⇐ land.diagnostics
+        transpiration_demand ⇐ land.diagnostics
+    end
+
+    transpiration = min(transpiration_demand, transpiration_supply)
+
+    ## pack land variables
+    @pack_nt transpiration ⇒ land.fluxes
+    return land
 end
 
-function compute(o::transpiration_demandSupply, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land begin
-		tranSup ∈ land.transpirationSupply
-		tranDem ∈ land.transpirationDemand
-	end
-	
-	transpiration = min(tranDem, tranSup)
-
-	## pack land variables
-	@pack_land transpiration => land.fluxes
-	return land
-end
+purpose(::Type{transpiration_demandSupply}) = "calculate the actual transpiration as the minimum of the supply & demand"
 
 @doc """
-calculate the actual transpiration as the minimum of the supply & demand
 
----
-
-# compute:
-If coupled, computed from gpp and aoe from wue using transpiration_demandSupply
-
-*Inputs*
- - land.transpirationDemand.tranDem: climate demand driven transpiration
- - land.transpirationSupply.tranSup: supply limited transpiration
-
-*Outputs*
- - land.fluxes.transpiration: actual transpiration
+$(getBaseDocString(transpiration_demandSupply))
 
 ---
 
@@ -40,10 +30,10 @@ If coupled, computed from gpp and aoe from wue using transpiration_demandSupply
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 
 *Notes*
  - ignores biological limitation of transpiration demand

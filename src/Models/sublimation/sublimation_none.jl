@@ -1,24 +1,22 @@
 export sublimation_none
 
-struct sublimation_none <: sublimation
+struct sublimation_none <: sublimation end
+
+function define(params::sublimation_none, forcing, land, helpers)
+    @unpack_nt snowW ⇐ land.pools
+    ## calculate variables
+    sublimation = zero(eltype(snowW))
+
+    ## pack land variables
+    @pack_nt sublimation ⇒ land.fluxes
+    return land
 end
 
-function precompute(o::sublimation_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	sublimation = helpers.numbers.𝟘
-
-	## pack land variables
-	@pack_land sublimation => land.fluxes
-	return land
-end
+purpose(::Type{sublimation_none}) = "sets the snow sublimation to zero"
 
 @doc """
-sets the snow sublimation to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for sublimation_none
-
+$(getBaseDocString(sublimation_none))
 
 ---
 

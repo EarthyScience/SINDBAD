@@ -1,43 +1,31 @@
 export runoffSaturationExcess_satFraction
 
-struct runoffSaturationExcess_satFraction <: runoffSaturationExcess
+struct runoffSaturationExcess_satFraction <: runoffSaturationExcess end
+
+function compute(params::runoffSaturationExcess_satFraction, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt (WBP, satFrac) ⇐ land.states
+
+    ## calculate variables
+    sat_excess_runoff = WBP * satFrac
+
+    # update the WBP
+    WBP = WBP - sat_excess_runoff
+
+    ## pack land variables
+    @pack_nt begin
+        sat_excess_runoff ⇒ land.fluxes
+        WBP ⇒ land.states
+    end
+    return land
 end
 
-function compute(o::runoffSaturationExcess_satFraction, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land (WBP, satFrac) ∈ land.states
-
-
-	## calculate variables
-	runoffSatExc = WBP * satFrac
-
-	# update the WBP
-	WBP = WBP - runoffSatExc
-
-	## pack land variables
-	@pack_land begin
-		runoffSatExc => land.fluxes
-		WBP => land.states
-	end
-	return land
-end
+purpose(::Type{runoffSaturationExcess_satFraction}) = "saturation excess runoff as a fraction of saturated fraction of land"
 
 @doc """
-saturation excess runoff as a fraction of saturated fraction of land
 
----
-
-# compute:
-Saturation runoff using runoffSaturationExcess_satFraction
-
-*Inputs*
- - land.states.WBP: amount of incoming water
- - land.states.satFrac: fraction of the grid cell that is saturated from saturatedFraction model
-
-*Outputs*
- - land.fluxes.runoffSatExc: saturation excess runoff in mm/day
- - land.states.WBP
+$(getBaseDocString(runoffSaturationExcess_satFraction))
 
 ---
 
@@ -46,10 +34,10 @@ Saturation runoff using runoffSaturationExcess_satFraction
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: cleaned up the code  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 
 *Notes*
  - only works if soilWSatFrac module is activated

@@ -1,0 +1,499 @@
+export dictToNamedTuple
+export dropFields
+export foldlLongTuple
+export foldlUnrolled
+export LongTuple
+export getCombinedNamedTuple
+export getTupleFromLongTuple
+export makeLongTuple
+export makeNamedTuple
+export removeEmptyTupleFields
+export setTupleField
+export setTupleSubfield
+export tcPrint
+
+struct LongTuple{NSPLIT,T <: Tuple}
+    data::T
+    n::Val{NSPLIT}
+    function LongTuple{n}(arg::T) where {n,T<: Tuple}
+        return new{n,T}(arg,Val{n}())
+    end
+    function LongTuple{n}(args...) where n
+        s = length(args)
+        nt = s ÷ n
+        r = mod(s,n) # 5 for our current use case
+        nt = r == 0 ? nt : nt + 1
+        idx = 1
+        tup = ntuple(nt) do i
+            nn = r != 0 && i==nt ? r : n
+            t = ntuple(x -> args[x+idx-1], nn)
+            idx += nn
+            return t
+        end
+        return new{n,typeof(tup)}(tup)
+    end
+end
+
+Base.map(f, arg::LongTuple{N}) where N = LongTuple{N}(map(tup-> map(f, tup), arg.data))
+
+@inline Base.foreach(f, arg::LongTuple) = foreach(tup-> foreach(f, tup), arg.data)
+
+# Base.getindex(arg::LongTuple{N}, i::Int) where N = getindex(arg.data, (i-1) ÷ N + 1)[(i-1) % N + 1]
+Base.getindex(arg::LongTuple{N}, i::Int) where N = begin
+    total_elements = 0
+    for (_, tup) in enumerate(arg.data)
+        len = length(tup)
+        if total_elements < i <= total_elements + len
+            return tup[i - total_elements]
+        end
+        total_elements += len
+    end
+    throw(error("Index $i out of bounds for LongTuple. Total length is $total_elements."))
+end
+
+
+# TODO: inverse step range
+
+Base.getindex(arg::LongTuple{N}, r::UnitRange{Int}) where N = begin
+    selected_elements = []
+    # Loop over the range
+    for i in r
+        tuple_idx = (i-1) ÷ N + 1        # Determine which tuple contains the element
+        elem_idx = (i-1) % N + 1         # Determine the element's index within the tuple
+        push!(selected_elements, arg.data[tuple_idx][elem_idx])
+    end
+    new_long_tuple = LongTuple{N}(selected_elements...)
+    return new_long_tuple
+end
+
+Base.lastindex(arg::LongTuple{N}) where N = begin
+    # Calculate the total number of elements across all inner tuples
+    total_elements = sum(length(tup) for tup in arg.data)
+    return total_elements
+end
+
+Base.firstindex(arg::LongTuple{N}) where N = 1
+
+function Base.show(io::IO, arg::LongTuple{N}) where N
+    printstyled(io, "LongTuple"; color=:bold)
+    printstyled(io, ":"; color=:yellow)
+    println(io)
+    k_tuple = 1
+    for (i, tup) in enumerate(arg.data)
+        for (j, elem) in enumerate(tup)
+            if k_tuple<10
+                show_element(io, elem, "  $(k_tuple)  ↓ ")
+            else
+                show_element(io, elem, "  $(k_tuple) ↓ ")
+            end
+            k_tuple +=1
+        end
+    end
+end
+
+function show_element(io::IO, elem, indent)
+    struct_name = nameof(typeof(elem))
+    printstyled(io, indent; color=:light_black)
+    printstyled(io, struct_name)
+    printstyled(io, ":"; color=:blue)
+    parameter_names = fieldnames(typeof(elem))
+    l_params = length(parameter_names)
+    printstyled(io, " with $(length(parameter_names))"; color=:light_cyan)
+    if l_params==1
+        printstyled(io, " parameter\n"; color=:light_black)
+    else
+        printstyled(io, " parameters\n"; color=:light_black)
+    end
+end
+
+
+"""
+    collectColorForTypes(d; _color = true)
+
+utility function to collect colors for all types from nested namedtuples
+"""
+function collectColorForTypes(d; _color=true)
+    all_types = []
+    all_types = getTypes!(d, all_types)
+    c_types = Dict{DataType,Int}()
+    _default_colors = [v for (k,v) in StyledStrings.ANSI_4BIT_COLORS]
+    for (i,t) ∈ enumerate(all_types)
+        if _color == true
+            c = i<17 ? _default_colors[i] : rand(16:255)
+        else
+            c = 0
+        end
+        c_types[t] = c
+    end
+    return c_types
+end
+
+
+"""
+    dictToNamedTuple(d::AbstractDict)
+
+covert nested dictionary to NamedTuple
+"""
+function dictToNamedTuple(d::AbstractDict)
+    for k ∈ keys(d)
+        if d[k] isa Array{Any,1}
+            d[k] = [v for v ∈ d[k]]
+        elseif d[k] isa DataStructures.OrderedDict
+            d[k] = dictToNamedTuple(d[k])
+        end
+    end
+    dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
+    return dTuple
+end
+
+
+@generated function foldlLongTuple(f, x::LongTuple{NSPL,T}; init) where {T,NSPL}
+    exes = []
+    N = length(T.parameters)
+    lastlength = length(last(T.parameters).parameters)
+    for i in 1:N
+        N2 = i==N ? lastlength : NSPL
+        for j in 1:N2
+            push!(exes, :(init = f(x.data[$i][$j], init)))
+        end
+    end
+    return Expr(:block, exes...)
+end
+
+
+
+"""
+    foldlUnrolled(f, x::Tuple{Vararg{Any, N}}; init)
+
+generate the expression to run the function for each element of a given Tuple to avoid complexity of for loops for compiler
+
+# Arguments:
+- `f`: a function call
+- `x`: the iterative to loop through
+- `init`: initial variable to overwrite
+"""
+@generated function foldlUnrolled(f, x::Tuple{Vararg{Any,N}}; init) where {N}
+    exes = Any[:(init = f(init, x[$i])) for i ∈ 1:N]
+    return Expr(:block, exes...)
+end
+
+
+"""
+    dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}})
+
+removes/drops the list of fields from a given named tuple
+
+# Arguments:
+- `namedtuple`: a namedtuple to remove the fields from
+- `names`: a tuple of names to be removed
+"""
+function dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}}) 
+    keepnames = Base.diff_names(Base._nt_names(namedtuple), names)
+    return NamedTuple{keepnames}(namedtuple)
+end
+
+"""
+    getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
+
+combines the property values of the base NT with the properties set for the particular field from priority NT
+
+"""
+function getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
+    combined_nt = (;)
+    base_fields = propertynames(base_nt)
+    var_fields = propertynames(priority_nt)
+    all_fields = Tuple(unique([base_fields..., var_fields...]))
+    for var_field ∈ all_fields
+        field_value = nothing
+        if hasproperty(base_nt, var_field)
+            field_value = getfield(base_nt, var_field)
+        else
+            field_value = getfield(priority_nt, var_field)
+        end
+        if hasproperty(priority_nt, var_field)
+            var_prop = getfield(priority_nt, var_field)
+            if !isnothing(var_prop) && length(var_prop) > 0
+                field_value = getfield(priority_nt, var_field)
+            end
+        end
+        combined_nt = setTupleField(combined_nt,
+            (var_field, field_value))
+    end
+    return combined_nt
+end
+
+function getTupleFromLongTuple(long_tuple)
+    emp_vec = []
+    foreach(long_tuple) do lt
+        push!(emp_vec, lt)
+    end
+    return Tuple(emp_vec)
+end
+
+"""
+    getTypes!(d, all_types)
+
+utility function to collect all types from nested namedtuples
+"""
+function getTypes!(d, all_types)
+    for k ∈ keys(d)
+        if d[k] isa NamedTuple
+            push!(all_types, typeof(d[k]))
+            getTypes!(d[k], all_types)
+        else
+            push!(all_types, typeof(d[k]))
+        end
+    end
+    return unique(all_types)
+end
+
+
+
+"""
+    makeLongTuple(normal_tuple; longtuple_size=5)
+
+# Arguments:
+- `normal_tuple`: a normal tuple
+- `longtuple_size`: size to break down the tuple into
+"""
+function makeLongTuple(normal_tuple::Tuple, longtuple_size=5)
+    longtuple_size = min(length(normal_tuple), longtuple_size)
+    LongTuple{longtuple_size}(normal_tuple...)
+end
+
+
+"""
+    makeLongTuple(normal_tuple; longtuple_size=5)
+
+# Arguments:
+- `normal_tuple`: a normal tuple
+- `longtuple_size`: size to break down the tuple into
+"""
+function makeLongTuple(long_tuple::LongTuple, longtuple_size=5)
+    long_tuple
+end
+
+"""
+    makeNamedTuple(input_data, input_names)
+
+# Arguments:
+- `input_data`: a vector of data
+- `input_names`: a vector/tuple of names
+"""
+function makeNamedTuple(input_data, input_names)
+    return (; Pair.(input_names, input_data)...)
+end
+
+
+
+export mergeNamedTuple
+
+"""
+Merges algorithm options by combining default options with user-provided options.
+
+This function takes two option dictionaries and combines them, with user options
+taking precedence over default options.
+
+# Arguments
+- `def_o`: Default options object (NamedTuple/Struct/Dictionary) containing baseline algorithm parameters
+- `u_o`: User options object containing user-specified overrides
+
+# Returns
+- A merged object containing the combined algorithm options
+"""
+function mergeNamedTuple(def_o, u_o)
+    c_o = deepcopy(def_o)
+    for p in keys(u_o)
+
+        c_o = mergeNamedTupleSetValue(c_o, p, getproperty(u_o, p))
+    end
+    return c_o
+end
+
+"""
+    mergeNamedTupleSetValue(o, p, v)
+
+Helper function to set the value of a field in the options object.
+
+# Arguments:
+- `o`: The options object, which can be a `NamedTuple` or a mutable struct.
+- `p`: The field name to be updated.
+- `v`: The new value to assign to the field.
+
+# Variants:
+1. **For `NamedTuple` options**:
+   - Updates the field in an immutable `NamedTuple` by creating a new `NamedTuple` with the updated value.
+   - Uses the `@set` macro for immutability handling.
+
+2. **For mutable struct options (e.g., BayesOpt)**:
+   - Directly updates the field in the mutable struct using `Base.setproperty!`.
+
+# Returns:
+- The updated options object with the specified field modified.
+
+# Notes:
+- This function is used internally by `mergeNamedTuple` to handle field updates in both mutable and immutable options objects.
+- Ensures compatibility with different types of optimization algorithm configurations.
+
+# Examples:
+1. **Updating a `NamedTuple`**:
+```julia
+options = (max_iters = 100, tol = 1e-6)
+updated_options = mergeNamedTupleSetValue(options, :tol, 1e-8)
+```
+
+2. **Updating a mutable struct**:
+```julia
+mutable struct BayesOptConfig
+    max_iters::Int
+    tol::Float64
+end
+config = BayesOptConfig(100, 1e-6)
+updated_config = mergeNamedTupleSetValue(config, :tol, 1e-8)
+```
+"""
+mergeNamedTupleSetValue
+
+function mergeNamedTupleSetValue(o::NamedTuple, p, v)
+    o = @set o[p] = v
+    return o
+end
+
+
+function mergeNamedTupleSetValue(o, p, v)
+    Base.setproperty!(o, p, v);
+    return o
+end
+
+
+"""
+    removeEmptyTupleFields(tpl::NamedTuple)
+
+removes all empty files of a NamedTuple
+
+# Arguments:
+- `tpl`: input tuple    
+"""
+function removeEmptyTupleFields(tpl::NamedTuple)
+    indx = findall(x -> x != NamedTuple(), values(tpl))
+    nkeys, nvals = tuple(collect(keys(tpl))[indx]...), values(tpl)[indx]
+    return NamedTuple{nkeys}(nvals)
+end
+
+
+"""
+    setTupleSubfield(tpl, fieldname, vals)
+
+sets the subfield of a NamedTuple
+
+# Arguments:
+- `tpl`: input tuple
+- `fieldname`: fieldname to write
+- `vals`: tuple with subfieldname and value to write
+"""
+function setTupleSubfield(tpl::NamedTuple, fieldname::Symbol, vals::Tuple{Symbol, Any})
+    if !hasproperty(tpl, fieldname)
+        tpl = setTupleField(tpl, (fieldname, (;)))
+    end
+    return (; tpl..., fieldname => (; getfield(tpl, fieldname)..., first(vals) => last(vals)))
+end
+
+
+"""
+    setTupleField(tpl, fieldname, vals)
+
+sets the field of a NamedTuple
+
+# Arguments:
+- `tpl`: input tuple
+- `vals`: tuple with fieldname and value to write
+"""
+setTupleField(tpl::NamedTuple, vals::Tuple{Symbol, Any}) = (; tpl..., first(vals) => last(vals))
+
+
+"""
+    tcPrint(d; _color=true, _type=true, _value=true, t_op=true)
+
+- a helper function to navigate the input named tuple and annotate types.
+- a random set of colors is chosen per type of the data/field
+- a mixed colored output within a field usually warrants caution on type mismatches
+
+# Arguments:
+- `d`: an object to print on screen
+- `_color`: a flag to turn on/off the colors
+- `_type`: a flag to turn on/off the appending of types
+- `_value`: a flag to turn on/off the values
+- `_tspace`: a starting tab space
+"""
+function tcPrint(d; _color=true, _type=false, _value=true, _tspace="", space_pad="")
+    colors_types = collectColorForTypes(d; _color=_color)
+    # aio = StyledStrings.AnnotatedIOBuffer()
+    lc = nothing
+    ttf = _tspace * space_pad
+    for k ∈ sort(collect(keys(d)))
+        if d[k] isa NamedTuple
+            tp = " = (;"
+            if length(d[k])>0
+                printstyled(Crayon(; foreground=colors_types[typeof(d[k])]), "$(k)$(tp)\n")
+            else
+                printstyled(Crayon(; foreground=colors_types[typeof(d[k])]), "$(k)$(tp)")
+            end
+            tcPrint(d[k]; _color=_color, _type=_type, _value=_value, _tspace = ttf, space_pad="  ")
+        else
+            if _type == true
+                tp = "::$(typeof(d[k]))"
+                if tp == "::NT"
+                    tp = "::Tuple"
+                end
+            else
+                tp = ""
+            end
+            if typeof(d[k]) <: Float32
+                to_print = "$(ttf) $(k) = $(d[k])f0$(tp),\n"
+                if !_value
+                    to_print = "$(ttf) $(k)$(tp),\n"
+                end
+                print(Crayon(; foreground=colors_types[typeof(d[k])]),
+                    to_print)
+            elseif typeof(d[k]) <: SVector
+                to_print = "$(ttf) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n"
+                if !_value
+                    to_print = "$(ttf) $(k)$(tp),\n"
+                end
+                print(Crayon(; foreground=colors_types[typeof(d[k])]),
+                to_print)
+            elseif typeof(d[k]) <: Matrix
+                print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(ttf) $(k) = [\n")
+                tt_row = repeat(ttf[1], length(ttf) + 1)
+                for _d ∈ eachrow(d[k])
+                    d_str = nothing
+                    if eltype(_d) == Float32
+                        d_str = join(_d, "f0 ") * "f0"
+                    else
+                        d_str = join(_d, " ")
+                    end
+                    print(Crayon(; foreground=colors_types[typeof(d[k])]),
+                        "$(tt_row) $(d_str);\n")
+                end
+                print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt_row) ]$(tp),\n")
+            else
+                to_print = "$(ttf) $(k) = $(d[k])$(tp),"
+                if !_value
+                    to_print = "$(ttf) $(k)$(tp),"
+                end
+                print(Crayon(; foreground=colors_types[typeof(d[k])]),
+                    to_print)
+            end
+            lc = colors_types[typeof(d[k])]
+        end
+        # end
+        if _type == true
+            _tspace = _tspace * " "
+            print(Crayon(; foreground=lc), " $(ttf))::NamedTuple,\n")
+        else
+            if d[k] isa NamedTuple
+                print(Crayon(; foreground=lc), "$(ttf)),\n")
+            end
+        end
+    end
+end

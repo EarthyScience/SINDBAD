@@ -1,43 +1,34 @@
 export WUE_VPDDay
 
-@bounds @describe @units @with_kw struct WUE_VPDDay{T1} <: WUE
-	WUEatOnehPa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct WUE_VPDDay{T1,T2} <: WUE
+    WUE_one_hpa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O" | ""
+    kpa_to_hpa::T2 = 10.0 | (-Inf, Inf) | "unit conversion kPa to hPa" | "" | ""
+end
+#! format: on
+
+function compute(params::WUE_VPDDay, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_WUE_VPDDay params
+    @unpack_nt f_VPD_day ⇐ forcing
+    @unpack_nt begin
+        tolerance ⇐ helpers.numbers
+        (z_zero, o_one) ⇐ land.constants
+    end
+    ## calculate variables
+    # "WUEat1hPa" | ""
+    WUE = WUE_one_hpa * o_one / sqrt(kpa_to_hpa * (f_VPD_day + tolerance))
+
+    ## pack land variables
+    @pack_nt WUE ⇒ land.diagnostics
+    return land
 end
 
-function compute(o::WUE_VPDDay, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters and forcing
-	@unpack_WUE_VPDDay o
-	@unpack_forcing VPDDay ∈ forcing
-	@unpack_land (𝟘, 𝟙, tolerance, sNT) ∈ helpers.numbers
-
-
-	## calculate variables
-	# "WUEat1hPa"
-	kpa_to_hpa = 10 * 𝟙
-	AoE = WUEatOnehPa * 𝟙 / sqrt(kpa_to_hpa * (VPDDay + tolerance))
-
-	## pack land variables
-	@pack_land AoE => land.WUE
-	return land
-end
+purpose(::Type{WUE_VPDDay}) = "calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD"
 
 @doc """
-calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Estimate wue using WUE_VPDDay
-
-*Inputs*
- - WUEat1hPa: the VPD at 1 hpa
- - forcing.VPDDay: daytime mean VPD [kPa]
-
-*Outputs*
- - land.WUE.AoE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
+$(getBaseDocString(WUE_VPDDay))
 
 ---
 
@@ -46,10 +37,10 @@ Estimate wue using WUE_VPDDay
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]
 
-*Created by:*
+*Created by*
  - Jake Nelson [jnelson]: for the typical values & ranges of WUEat1hPa  across fluxNet sites
- - skoirala
+ - skoirala | @dr-ko
 """
 WUE_VPDDay

@@ -1,95 +1,54 @@
 export rootWaterUptake_topBottom
 
-struct rootWaterUptake_topBottom <: rootWaterUptake
-end
+struct rootWaterUptake_topBottom <: rootWaterUptake end
 
-function precompute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helpers::NamedTuple)
-
-    ## unpack land variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        numType ∈ helpers.numbers
-    end
-    wRootUptake = zeros(helpers.numbers.numType, size(soilW))
-
-    ## pack land variables
-    @pack_land begin
-        wRootUptake => land.states
-    end
-    return land
-end
-
-function compute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land begin
-        PAW ∈ land.vegAvailableWater
-        soilW ∈ land.pools
-        (ΔsoilW, wRootUptake) ∈ land.states
-        transpiration ∈ land.fluxes
-        𝟘 ∈ helpers.numbers
+    @unpack_nt begin
+        soilW ⇐ land.pools
     end
-    wRootUptake .= 𝟘
-    # get the transpiration
-    toUptake = transpiration
-    for sl in 1:length(land.pools.soilW)
-        wRootUptake[sl] = min(toUptake, PAW[sl])
-        toUptake = toUptake - wRootUptake[sl]
-        ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
-    end
+    root_water_uptake = zero(soilW)
 
     ## pack land variables
-    @pack_land begin
-        wRootUptake => land.states
-        # ΔsoilW => land.states
+    @pack_nt begin
+        root_water_uptake ⇒ land.fluxes
     end
     return land
 end
 
-function update(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::rootWaterUptake_topBottom, forcing, land, helpers)
 
-    ## unpack variables
-    @unpack_land begin
-        soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+    ## unpack land variables
+    @unpack_nt begin
+        PAW ⇐ land.states
+        soilW ⇐ land.pools
+        (ΔsoilW, root_water_uptake) ⇐ land.states
+        transpiration ⇐ land.fluxes
+        z_zero ⇐ land.constants
+    end
+    to_uptake = oftype(eltype(PAW), transpiration)
+
+    for sl ∈ eachindex(land.pools.soilW)
+        uptake_from_layer = min(to_uptake, PAW[sl])
+        @rep_elem uptake_from_layer ⇒ (root_water_uptake, sl, :soilW)
+        @add_to_elem -root_water_uptake[sl] ⇒ (ΔsoilW, sl, :soilW)
+        to_uptake = to_uptake - uptake_from_layer
     end
 
-    ## update variables
-    # update soil moisture
-    soilW = soilW + ΔsoilW
-
-    # reset soil moisture changes to zero
-    ΔsoilW = ΔsoilW - ΔsoilW
-
     ## pack land variables
-    @pack_land begin
-        # soilW => land.pools
-        # ΔsoilW => land.states
+    @pack_nt begin
+        root_water_uptake ⇒ land.fluxes
+        ΔsoilW ⇒ land.pools
     end
     return land
 end
+
+purpose(::Type{rootWaterUptake_topBottom}) = "rootUptake from each of the soil layer from top to bottom using all water in each layer"
 
 @doc """
-rootUptake from each of the soil layer from top to bottom using all water in each layer
 
----
-
-# compute:
-Root water uptake (extract water from soil) using rootWaterUptake_topBottom
-
-*Inputs*
- - land.fluxes.transpiration: actual transpirationiration
- - land.pools.soilW: soil moisture
- - land.states.PAW: plant available water [pix, zix]
-
-*Outputs*
- - land.states.wRootUptake: moisture uptake from each soil layer [nPix, nZix of soilW]
-
-# update
-
-update pools and states in rootWaterUptake_topBottom
-
- - land.pools.soilW
+$(getBaseDocString(rootWaterUptake_topBottom))
 
 ---
 
@@ -98,10 +57,10 @@ update pools and states in rootWaterUptake_topBottom
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala]
+ - 1.0 on 18.11.2019 [skoirala | @dr-ko]
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 
 *Notes*
  - assumes that the uptake is prioritized from top to bottom; irrespective of root fraction of the layers

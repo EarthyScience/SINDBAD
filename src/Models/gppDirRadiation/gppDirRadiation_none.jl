@@ -1,35 +1,22 @@
 export gppDirRadiation_none
 
-struct gppDirRadiation_none <: gppDirRadiation
+struct gppDirRadiation_none <: gppDirRadiation end
+
+function define(params::gppDirRadiation_none, forcing, land, helpers)
+    @unpack_nt o_one ⇐ land.constants
+    ## calculate variables
+    gpp_f_light = o_one
+
+    ## pack land variables
+    @pack_nt gpp_f_light ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::gppDirRadiation_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	LightScGPP = helpers.numbers.𝟙
-
-	## pack land variables
-	@pack_land LightScGPP => land.gppDirRadiation
-	return land
-end
+purpose(::Type{gppDirRadiation_none}) = "sets the light saturation scalar [light effect] on gpp_potential to one"
 
 @doc """
-sets the light saturation scalar [light effect] on gppPot to one
 
----
-
-# compute:
-Effect of direct radiation using gppDirRadiation_none
-
-*Inputs*
- - helpers
-
-*Outputs*
- - land.gppDirRadiation.LightScGPP: effect of light saturation on potential GPP
-
-# precompute:
-precompute/instantiate time-invariant variables for gppDirRadiation_none
-
+$(getBaseDocString(gppDirRadiation_none))
 
 ---
 
@@ -38,10 +25,10 @@ precompute/instantiate time-invariant variables for gppDirRadiation_none
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up 
 
-*Created by:*
+*Created by*
  - mjung
- - ncarval
+ - ncarvalhais
 """
 gppDirRadiation_none

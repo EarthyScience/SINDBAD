@@ -1,31 +1,22 @@
 export EVI_forcing
 
-struct EVI_forcing <: EVI
+struct EVI_forcing <: EVI end
+
+function compute(params::EVI_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_EVI ⇐ forcing
+
+    EVI = f_EVI
+    ## pack land variables
+    @pack_nt EVI ⇒ land.states
+    return land
 end
 
-function compute(o::EVI_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing EVI ∈ forcing
-
-	## pack land variables
-	@pack_land EVI => land.states
-	return land
-end
+purpose(::Type{EVI_forcing}) = "sets the value of land.states.EVI from the forcing in every time step"
 
 @doc """
-sets the value of land.states.EVI from the forcing in every time step
 
----
-
-# compute:
-Enhanced vegetation index using EVI_forcing
-
-*Inputs*
- - forcing.EVI read from the forcing data set
-
-*Outputs*
- - land.states.EVI: the value of EVI for current time step
- - land.states.EVI
+$(getBaseDocString(EVI_forcing))
 
 ---
 
@@ -34,9 +25,9 @@ Enhanced vegetation index using EVI_forcing
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]
+ - 1.0 on 11.11.2019 `[skoirala | @dr-ko]`
 
-*Created by:*
- - skoirala
+*Created by*
+ - `skoirala | @dr-ko`
 """
 EVI_forcing

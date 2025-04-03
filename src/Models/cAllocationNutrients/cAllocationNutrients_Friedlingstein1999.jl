@@ -1,59 +1,46 @@
 export cAllocationNutrients_Friedlingstein1999
 
-@bounds @describe @units @with_kw struct cAllocationNutrients_Friedlingstein1999{T1,T2} <: cAllocationNutrients
-    minL::T1 = 0.1 | (0.0, 1.0) | "" | ""
-    maxL::T2 = 1.0 | (0.0, 1.0) | "" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cAllocationNutrients_Friedlingstein1999{T1,T2} <: cAllocationNutrients
+    min_L::T1 = 0.1 | (0.0, 1.0) | "" | "" | ""
+    max_L::T2 = 1.0 | (0.0, 1.0) | "" | "" | ""
 end
+#! format: on
 
-
-function compute(o::cAllocationNutrients_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(params::cAllocationNutrients_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationNutrients_Friedlingstein1999 o
+    @unpack_cAllocationNutrients_Friedlingstein1999 params
 
     ## unpack land variables
-    @unpack_land begin
-        PAW ∈ land.vegAvailableWater
-        s_wAWC ∈ land.soilWBase
-        fW ∈ land.cAllocationSoilW
-        fT ∈ land.cAllocationSoilT
-        PET ∈ land.PET
-        𝟙 ∈ helpers.numbers
+    @unpack_nt begin
+        PAW ⇐ land.states
+        ∑w_awc ⇐ land.properties
+        c_allocation_f_soilW ⇐ land.diagnostics
+        c_allocation_f_soilT ⇐ land.diagnostics
+        PET ⇐ land.fluxes
+        (z_zero, o_one) ⇐ land.constants
     end
 
     # estimate NL
-    nl = clamp(fT * fW, minL, maxL)
-    NL = PET > 𝟘  ? nl : 𝟙 #@needscheck is the else value one or zero? In matlab version was set to ones.
+    nl = clamp(c_allocation_f_soilT * c_allocation_f_soilW, min_L, max_L)
+    NL = PET > z_zero ? nl : one(nl) #@needscheck is the else value one or zero? In matlab version was set to ones.
 
     # water limitation calculation
-    WL = clamp(sum(PAW) / s_wAWC, minL, maxL)
+    WL = clamp(sum(PAW) / ∑w_awc, min_L, max_L)
 
     # minimum of WL & NL
-    minWLNL = min(WL, NL)
+    c_allocation_f_W_N = min(WL, NL)
 
     ## pack land variables
-    @pack_land minWLNL => land.cAllocationNutrients
+    @pack_nt c_allocation_f_W_N ⇒ land.cAllocationNutrients
     return land
 end
 
+purpose(::Type{cAllocationNutrients_Friedlingstein1999}) = "pseudo-nutrient limitation calculation based on Friedlingstein1999"
+
 @doc """
-pseudo-nutrient limitation calculation based on Friedlingstein1999
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-
-*Inputs*
- - land.PET.PET: values for potential evapotranspiration
- - land.cAllocationSoilT.fT: values for partial computation for the temperature effect on  decomposition/mineralization
- - land.cAllocationSoilW.fW: values for partial computation for the moisture effect on  decomposition/mineralization
- - land.soilWBase.s_wAWC: sum of water available capacity
- - land.vegAvailableWater.PAW: values for maximum fraction of water that root can uptake from soil layers as constant
-
-*Outputs*
- - land.cAllocationNutrients.minWLNL: nutrient limitation on cAllocation
+$(getBaseDocString(cAllocationNutrients_Friedlingstein1999))
 
 ---
 
@@ -68,7 +55,7 @@ $(PARAMFIELDS)
  *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cAllocationNutrients_Friedlingstein1999

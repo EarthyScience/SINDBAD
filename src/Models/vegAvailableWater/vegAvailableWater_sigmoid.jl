@@ -1,49 +1,64 @@
 export vegAvailableWater_sigmoid
 
-@bounds @describe @units @with_kw struct vegAvailableWater_sigmoid{T1} <: vegAvailableWater
-	exp_factor::T1 = 1.0 | (0.02, 3.0) | "multiplier of B factor of exponential rate" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct vegAvailableWater_sigmoid{T1} <: vegAvailableWater
+    exp_factor::T1 = 1.0 | (0.02, 3.0) | "multiplier of B factor of exponential rate" | "" | ""
+end
+#! format: on
+
+function define(params::vegAvailableWater_sigmoid, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_vegAvailableWater_sigmoid params
+
+    ## unpack land variables
+    @unpack_nt begin
+        soilW ⇐ land.pools
+    end
+
+    θ_dos = zero(soilW)
+    θ_fc_dos = zero(soilW)
+    PAW = zero(soilW)
+    soilW_stress = zero(soilW)
+    max_water = zero(soilW)
+
+    ## pack land variables
+    @pack_nt (θ_dos, θ_fc_dos, PAW, soilW_stress, max_water) ⇒ land.states
+    return land
 end
 
-function compute(o::vegAvailableWater_sigmoid, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_vegAvailableWater_sigmoid o
+function compute(params::vegAvailableWater_sigmoid, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_vegAvailableWater_sigmoid params
 
-	## unpack land variables
-	@unpack_land begin
-		(p_wWP, p_wFC, p_wSat, p_β) ∈ land.soilWBase
-		p_fracRoot2SoilD ∈ land.rootFraction
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_nt begin
+        (w_wp, w_fc, w_sat, soil_β) ⇐ land.properties
+        root_water_efficiency ⇐ land.diagnostics
+        soilW ⇐ land.pools
+        ΔsoilW ⇐ land.pools
+        (θ_dos, θ_fc_dos, PAW, soilW_stress, max_water) ⇐ land.states
+        (z_zero, o_one) ⇐ land.constants
+    end
+    for sl ∈ eachindex(soilW)
+        θ_dos = (soilW[sl] + ΔsoilW[sl]) / w_sat[sl]
+        θ_fc_dos = w_fc[sl] / w_sat[sl]
+        tmp_soilW_stress = clampZeroOne(o_one / (o_one + exp(-exp_factor * soil_β[sl] * (θ_dos - θ_fc_dos))))
+        @rep_elem tmp_soilW_stress ⇒ (soilW_stress, sl, :soilW)
+        max_water = clampZeroOne(soilW[sl] + ΔsoilW[sl] - w_wp[sl])
+        PAW_sl = root_water_efficiency[sl] * max_water * tmp_soilW_stress
+        @rep_elem PAW_sl ⇒ (PAW, sl, :soilW)
+    end
 
-	θ_dos = (soilW + ΔsoilW) ./ p_wSat
-	θ_fc_dos = p_wFC ./ p_wSat
-	soilWStress = clamp.(𝟙 ./ (𝟙 .+ exp.(-exp_factor .* p_β .* (θ_dos - θ_fc_dos))), 𝟘, 𝟙)
-	maxWater =  max.(soilW + ΔsoilW - p_wWP, 𝟘)
-	PAW = p_fracRoot2SoilD .* maxWater .* soilWStress
-
-	## pack land variables
-	@pack_land (PAW, soilWStress) => land.vegAvailableWater
-	return land
+    ## pack land variables
+    @pack_nt (PAW, soilW_stress) ⇒ land.states
+    return land
 end
+
+purpose(::Type{vegAvailableWater_sigmoid}) = "calculate the actual amount of water that is available for plants"
 
 @doc """
-calculate the actual amount of water that is available for plants
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Plant available water using vegAvailableWater_sigmoid
-
-*Inputs*
- - land.pools.soilW
-
-*Outputs*
- - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
+$(getBaseDocString(vegAvailableWater_sigmoid))
 
 ---
 
@@ -54,7 +69,7 @@ Plant available water using vegAvailableWater_sigmoid
 *Versions*
  - 1.0 on 21.11.2019  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 vegAvailableWater_sigmoid

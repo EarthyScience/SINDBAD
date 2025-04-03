@@ -1,30 +1,34 @@
 export cTauVegProperties_none
 
-struct cTauVegProperties_none <: cTauVegProperties
-end
+struct cTauVegProperties_none <: cTauVegProperties end
 
-function precompute(o::cTauVegProperties_none, forcing, land::NamedTuple, helpers::NamedTuple)
-    @unpack_land (𝟘, numType) ∈ helpers.numbers
+function define(params::cTauVegProperties_none, forcing, land, helpers)
+
+    @unpack_nt begin
+        (z_zero, o_one) ⇐ land.constants
+        cEco ⇐ land.pools        
+    end 
 
     ## calculate variables
-    p_kfVeg = ones(numType, length(land.pools.cEco))
-    p_LITC2N = 𝟘 
-    p_LIGNIN = 𝟘 
-    p_MTF = one
-    p_SCLIGNIN = 𝟘 
-    p_LIGEFF = 𝟘 
+    c_eco_k_f_veg_props = one.(cEco)
+    LITC2N = z_zero
+    LIGNIN = z_zero
+    MTF = o_one
+    SCLIGNIN = z_zero
+    LIGEFF = z_zero
 
     ## pack land variables
-    @pack_land (p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_kfVeg) => land.cTauVegProperties
+    @pack_nt (LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN) ⇒ land.properties
+    @pack_nt c_eco_k_f_veg_props ⇒ land.diagnostics
     return land
+
 end
 
+purpose(::Type{cTauVegProperties_none}) = "set the outputs to ones"
+
 @doc """
-set the outputs to ones
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauVegProperties_none
-
+$(getBaseDocString(cTauVegProperties_none))
 
 ---
 

@@ -1,47 +1,34 @@
 export gpp_min
 
-struct gpp_min <: gpp
+struct gpp_min <: gpp end
+
+function compute(params::gpp_min, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt begin
+        gpp_f_climate ⇐ land.diagnostics
+        fAPAR ⇐ land.states
+        gpp_potential ⇐ land.diagnostics
+        gpp_f_soilW ⇐ land.diagnostics
+    end
+
+    AllScGPP = min(gpp_f_climate, gpp_f_soilW)
+    # & multiply
+    gpp = fAPAR * gpp_potential * AllScGPP
+
+    ## pack land variables
+    @pack_nt begin
+        gpp ⇒ land.fluxes
+        AllScGPP ⇒ land.gpp
+    end
+    return land
 end
 
-function compute(o::gpp_min, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land begin
-		AllDemScGPP ∈ land.gppDemand
-		fAPAR ∈ land.states
-		gppPot ∈ land.gppPotential
-		SMScGPP ∈ land.gppSoilW
-	end
-
-	AllScGPP = min(AllDemScGPP, SMScGPP)
-	# & multiply
-	gpp = fAPAR * gppPot * AllScGPP
-
-	## pack land variables
-	@pack_land begin
-		gpp => land.fluxes
-		AllScGPP => land.gpp
-	end
-	return land
-end
+purpose(::Type{gpp_min}) = "compute the actual GPP with potential scaled by minimum stress scalar of demand & supply for uncoupled model structure [no coupling with transpiration]"
 
 @doc """
-compute the actual GPP with potential scaled by minimum stress scalar of demand & supply for uncoupled model structure [no coupling with transpiration]
 
----
-
-# compute:
-Combine effects as multiplicative or minimum; if coupled, uses transup using gpp_min
-
-*Inputs*
- - land.gppDemand.AllDemScGPP: effective demand scalars; between 0-1
- - land.gppPotential.gppPot: maximum potential GPP based on radiation use efficiency
- - land.gppSoilW.SMScGPP: soil moisture stress scalar; between 0-1
- - land.states.fAPAR: fraction of absorbed photosynthetically active radiation  [-] (equivalent to "canopy cover" in Gash & Miralles)
-
-*Outputs*
- - land.fluxes.gpp: actual GPP [gC/m2/time]
- - land.gpp.AllScGPP
+$(getBaseDocString(gpp_min))
 
 ---
 
@@ -50,10 +37,10 @@ Combine effects as multiplicative or minimum; if coupled, uses transup using gpp
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]: documentation & clean up  
 
-*Created by:*
- - ncarval
+*Created by*
+ - ncarvalhais
 
 *Notes*
 """

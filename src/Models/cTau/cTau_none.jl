@@ -1,24 +1,23 @@
 export cTau_none
 
-struct cTau_none <: cTau
+struct cTau_none <: cTau end
+
+function define(params::cTau_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
+
+    ## calculate variables
+    c_eco_k = one.(cEco)
+
+    ## pack land variables
+    @pack_nt c_eco_k ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::cTau_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	p_k = ones(helpers.numbers.numType, length(land.pools.cEco))
-
-	## pack land variables
-	@pack_land p_k => land.cTau
-	return land
-end
+purpose(::Type{cTau_none}) = "set the actual τ to ones"
 
 @doc """
-set the actual τ to ones
 
-# precompute:
-precompute/instantiate time-invariant variables for cTau_none
-
+$(getBaseDocString(cTau_none))
 
 ---
 

@@ -2,26 +2,22 @@ export cAllocationLAI_none
 
 struct cAllocationLAI_none <: cAllocationLAI end
 
-function precompute(o::cAllocationLAI_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function define(params::cAllocationLAI_none, forcing, land, helpers)
+    @unpack_nt cEco ⇐ land.pools
 
     ## calculate variables
-    LL = helpers.numbers.𝟙
+    c_allocation_f_LAI = one(first(cEco))
 
     ## pack land variables
-    @pack_land LL => land.cAllocationLAI
+    @pack_nt c_allocation_f_LAI ⇒ land.diagnostics
     return land
 end
 
+purpose(::Type{cAllocationLAI_none}) = "sets the LAI effect on allocation to one (no effect)"
+
 @doc """
-sets the LAI effect on allocation to one (no effect)
 
-# precompute:
-
-*Inputs*
-- helpers.numbers.𝟙
-
-*Outputs*
-- land.cAllocationLAI.LL: LAI effect on cAllocation (0-1)
+$(getBaseDocString(cAllocationLAI_none))
 
 ---
 

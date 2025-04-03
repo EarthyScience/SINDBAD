@@ -1,100 +1,59 @@
 export runoffSurface_Orth2013
 
-@bounds @describe @units @with_kw struct runoffSurface_Orth2013{T1} <: runoffSurface
-	qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
+#! format: off
+@bounds @describe @units @timescale @with_kw struct runoffSurface_Orth2013{T1} <: runoffSurface
+    qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time" | ""
+end
+#! format: on
+
+function define(params::runoffSurface_Orth2013, forcing, land, helpers)
+    @unpack_runoffSurface_Orth2013 params
+
+    ## Instantiate variables
+    z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60) + 1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
+    Rdelay = z / (sum(z) * ones(1, 61))
+
+    ## pack land variables
+    @pack_nt (z, Rdelay) ⇒ land.surface_runoff
+    return land
 end
 
-function precompute(o::runoffSurface_Orth2013, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_runoffSurface_Orth2013 o
+function compute(params::runoffSurface_Orth2013, forcing, land, helpers)
+    #@needscheck and redo
+    ## unpack parameters
+    @unpack_runoffSurface_Orth2013 params
 
-	## instantiate variables
-	z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60)+1) / (qt * ones(1, 61))))
-	Rdelay = z / (sum(z) * ones(1, 61))
+    ## unpack land variables
+    @unpack_nt (z, Rdelay) ⇐ land.surface_runoff
 
-	## pack land variables
-	@pack_land (z, Rdelay) => land.runoffSurface
-	return land
+    ## unpack land variables
+    @unpack_nt begin
+        surfaceW ⇐ land.pools
+        overland_runoff ⇐ land.fluxes
+    end
+    # calculate delay function of previous days
+    # calculate Q from delay of previous days
+    if tix > 60
+        tmin = maximum(tix - 60, 1)
+        surface_runoff = sum(overland_runoff[tmin:tix] * Rdelay)
+    else # | accumulate land runoff in surface storage
+        surface_runoff = 0.0
+    end
+    # update the water pool
+
+    ## pack land variables
+    @pack_nt begin
+        surface_runoff ⇒ land.fluxes
+        Rdelay ⇒ land.surface_runoff
+    end
+    return land
 end
 
-function compute(o::runoffSurface_Orth2013, forcing, land::NamedTuple, helpers::NamedTuple)
-	#@needscheck and redo
-	## unpack parameters
-	@unpack_runoffSurface_Orth2013 o
-
-	## unpack land variables
-	@unpack_land (z, Rdelay) ∈ land.runoffSurface
-
-	## unpack land variables
-	@unpack_land begin
-		surfaceW ∈ land.pools
-		runoffOverland ∈ land.fluxes
-	end
-	# calculate delay function of previous days
-	# calculate Q from delay of previous days
-	if tix > 60
-		tmin = maximum(tix-60, 1)
-		runoffSurface = sum(runoffOverland[tmin:tix] * Rdelay)
-	else # | accumulate land runoff in surface storage
-		runoffSurface = 0.0
-	end
-	# update the water pool
-
-	## pack land variables
-	@pack_land begin
-		runoffSurface => land.fluxes
-		Rdelay => land.runoffSurface
-	end
-	return land
-end
-
-function update(o::runoffSurface_Orth2013, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_runoffSurface_Orth2013 o
-
-	## unpack variables
-	@unpack_land begin
-		surfaceW ∈ land.pools
-		ΔsurfaceW ∈ land.states
-	end
-
-	## update storage pools
-	surfaceW .= surfaceW .+ ΔsurfaceW
-
-	# reset ΔsurfaceW to zero
-	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-	## pack land variables
-	@pack_land begin
-		# surfaceW => land.pools
-		ΔsurfaceW => land.states
-	end
-	return land
-end
+purpose(::Type{runoffSurface_Orth2013}) = "calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff"
 
 @doc """
-calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Runoff from surface water storages using runoffSurface_Orth2013
-
-*Inputs*
-
-*Outputs*
- - land.fluxes.runoffSurface : runoff from land [mm/time]
- - land.runoffSurface.Rdelay
-
-# update
-
-update pools and states in runoffSurface_Orth2013
-
-
-# precompute:
-precompute/instantiate time-invariant variables for runoffSurface_Orth2013
-
+$(getBaseDocString(runoffSurface_Orth2013))
 
 ---
 
@@ -107,7 +66,7 @@ precompute/instantiate time-invariant variables for runoffSurface_Orth2013
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]  
 
-*Created by:*
+*Created by*
  - ttraut
 
 *Notes*

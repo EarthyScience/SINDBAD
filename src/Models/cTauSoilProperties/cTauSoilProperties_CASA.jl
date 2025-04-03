@@ -1,66 +1,52 @@
 export cTauSoilProperties_CASA
 
-@bounds @describe @units @with_kw struct cTauSoilProperties_CASA{T1} <: cTauSoilProperties
-	TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | ""
+#! format: off
+@bounds @describe @units @timescale @with_kw struct cTauSoilProperties_CASA{T1} <: cTauSoilProperties
+    TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | "" | ""
+end
+#! format: on
+
+function define(params::cTauSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cTauSoilProperties_CASA params
+    @unpack_nt cEco ⇐ land.pools
+
+    ## Instantiate variables
+    c_eco_k_f_soil_props = one.(cEco)
+
+    ## pack land variables
+    @pack_nt c_eco_k_f_soil_props ⇒ land.diagnostics
+    return land
 end
 
-function precompute(o::cTauSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_cTauSoilProperties_CASA o
+function compute(params::cTauSoilProperties_CASA, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_cTauSoilProperties_CASA params
 
-	## instantiate variables
-	p_kfSoil = ones(helpers.numbers.numType, length(land.pools.cEco))
+    ## unpack land variables
+    @unpack_nt c_eco_k_f_soil_props ⇐ land.diagnostics
 
-	## pack land variables
-	@pack_land p_kfSoil => land.cTauSoilProperties
-	return land
+    ## unpack land variables
+    @unpack_nt (st_clay, st_silt) ⇐ land.properties
+
+    ## calculate variables
+    #sujan: moving clay & silt from land.properties to p_soilWBase.
+    clay = mean(st_clay)
+    silt = mean(st_silt)
+    # TEXTURE EFFECT ON k OF cMicSoil
+    zix = helpers.pools.zix.cMicSoil
+    c_eco_k_f_soil_props[zix] = (1.0 - (TEXTEFFA * (silt + clay)))
+    # (ineficient, should be pix zix_mic)
+
+    ## pack land variables
+    @pack_nt c_eco_k_f_soil_props ⇒ land.diagnostics
+    return land
 end
 
-function compute(o::cTauSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack parameters
-	@unpack_cTauSoilProperties_CASA o
-
-	## unpack land variables
-	@unpack_land p_kfSoil ∈ land.cTauSoilProperties
-
-	## unpack land variables
-	@unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
-
-
-	## calculate variables
-	#sujan: moving clay & silt from land.soilTexture to p_soilWBase.
-	CLAY = mean(p_CLAY)
-	SILT = mean(p_SILT)
-	# TEXTURE EFFECT ON k OF cMicSoil
-	zix = helpers.pools.carbon.zix.cMicSoil
-	p_kfSoil[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
-	# (ineficient, should be pix zix_mic)
-
-	## pack land variables
-	@pack_land p_kfSoil => land.cTauSoilProperties
-	return land
-end
+purpose(::Type{cTauSoilProperties_CASA}) = "Compute soil texture effects on turnover rates [k] of cMicSoil"
 
 @doc """
-Compute soil texture effects on turnover rates [k] of cMicSoil
 
-# Parameters
-$(PARAMFIELDS)
-
----
-
-# compute:
-Effect of soil texture on soil decomposition rates using cTauSoilProperties_CASA
-
-*Inputs*
- - land.soilWBase.p_CLAY: values for clay soil texture
- - land.soilWBase.p_SILT: values for silt soil texture
-
-*Outputs*
- - land.cTauSoilProperties.p_kfSoil: Soil texture stressor values on the the turnover rates
-
-# precompute:
-precompute/instantiate time-invariant variables for cTauSoilProperties_CASA
-
+$(getBaseDocString(cTauSoilProperties_CASA))
 
 ---
 
@@ -74,7 +60,7 @@ precompute/instantiate time-invariant variables for cTauSoilProperties_CASA
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
-*Created by:*
+*Created by*
  - ncarvalhais
 """
 cTauSoilProperties_CASA

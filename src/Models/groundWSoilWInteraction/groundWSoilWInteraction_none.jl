@@ -1,24 +1,23 @@
 export groundWSoilWInteraction_none
 
-struct groundWSoilWInteraction_none <: groundWSoilWInteraction
+struct groundWSoilWInteraction_none <: groundWSoilWInteraction end
+
+function define(params::groundWSoilWInteraction_none, forcing, land, helpers)
+    @unpack_nt z_zero ⇐ land.constants
+
+    ## calculate variables
+    gw_capillary_flux = z_zero
+
+    ## pack land variables
+    @pack_nt gw_capillary_flux ⇒ land.fluxes
+    return land
 end
 
-function precompute(o::groundWSoilWInteraction_none, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## calculate variables
-	gwCapFlow = helpers.numbers.𝟘
-
-	## pack land variables
-	@pack_land gwCapFlow => land.fluxes
-	return land
-end
+purpose(::Type{groundWSoilWInteraction_none}) = "sets the groundwater capillary flux to zero"
 
 @doc """
-sets the groundwater capillary flux to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for groundWSoilWInteraction_none
-
+$(getBaseDocString(groundWSoilWInteraction_none))
 
 ---
 

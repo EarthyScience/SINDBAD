@@ -1,31 +1,22 @@
 export LAI_forcing
 
-struct LAI_forcing <: LAI
+struct LAI_forcing <: LAI end
+
+function compute(params::LAI_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_LAI ⇐ forcing
+
+    LAI = f_LAI
+    ## pack land variables
+    @pack_nt LAI ⇒ land.states
+    return land
 end
 
-function compute(o::LAI_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
-	## unpack forcing
-	@unpack_forcing LAI ∈ forcing
-
-	## pack land variables
-	@pack_land LAI => land.states
-	return land
-end
+purpose(::Type{LAI_forcing}) = "sets the value of land.states.LAI from the forcing in every time step"
 
 @doc """
-sets the value of land.states.LAI from the forcing in every time step
 
----
-
-# compute:
-Leaf area index using LAI_forcing
-
-*Inputs*
- - forcing.LAI read from the forcing data set
-
-*Outputs*
- - land.states.LAI: the value of LAI for current time step
- - land.states.LAI
+$(getBaseDocString(LAI_forcing))
 
 ---
 
@@ -34,9 +25,9 @@ Leaf area index using LAI_forcing
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: moved LAI from land.LAI.LAI to land.states.LAI  
+ - 1.0 on 11.11.2019 [skoirala | @dr-ko]: moved LAI from land.LAI.LAI to land.states.LAI  
 
-*Created by:*
- - skoirala
+*Created by*
+ - skoirala | @dr-ko
 """
 LAI_forcing
