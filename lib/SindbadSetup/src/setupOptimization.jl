@@ -296,7 +296,7 @@ function setOptimization(info::NamedTuple)
     info = setAlgorithmOptions(info, :algorithm_sensitivity_analysis)
 
     tbl_params = getParameters(info.temp.models.forward,
-    info.settings.optimization.model_parameter_default, info.settings.optimization.model_parameters_to_optimize, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution);
+    info.settings.optimization.model_parameter_default, info.settings.optimization.model_parameters_to_optimize, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution, show_info=true);
     checkOptimizedParametersInModels(info, tbl_params)
 
     param_model_id_val = getParamModelIDVal(tbl_params)

@@ -14,10 +14,8 @@ export DoCatchModelErrors
 export DoNotCatchModelErrors
 export @describe, @bounds, @units, @timescale
 export @with_kw
-export standard_sindbad_models
 export getBaseDocStringForApproach
 export purpose
-export sindbad_models
 export sindbad_compute_methods
 export sindbad_define_methods
 export sindbad_precompute_methods
@@ -354,7 +352,7 @@ println(purpose(ambientCO2_constant))  # Output: "sets the value of ambient_CO2 
 """
 purpose
 
-purpose(::Type{LandEcosystem}) = "A SINDBAD land ecosystem model/approach. Add `purpose(::Type{$(nameof(x))}) = \"the_purpose\"` in `$(nameof(x)).jl` file to define the specific purpose"
+purpose(::Type{LandEcosystem}) = "Purpose of a SINDBAD land ecosystem model/approach. Add `purpose(::Type{$(nameof(x))}) = \"the_purpose\"` in `$(nameof(x)).jl` file to define the specific purpose of the model/approach"
 
 function purpose(T::Type{<:LandEcosystem}) 
     foreach(subtypes(T)) do subtype
@@ -369,100 +367,17 @@ end
 
 purpose(x::LandEcosystem) = purpose(typeof(x))
 
-## List all models of SINDBAD in the order they are called. 
-## Note that a new model is only executed if it is added to this list. 
-## When adding a new model, create a new copy of this jl file to work with.
-standard_sindbad_models = (:wCycleBase,
-    :rainSnow,
-    :rainIntensity,
-    :PET,
-    :ambientCO2,
-    :getPools,
-    :soilTexture,
-    :soilProperties,
-    :soilWBase,
-    :rootMaximumDepth,
-    :rootWaterEfficiency,
-    :PFT,
-    :fAPAR,
-    :EVI,
-    :LAI,
-    :NDVI,
-    :NIRv,
-    :NDWI,
-    :treeFraction,
-    :vegFraction,
-    :snowFraction,
-    :sublimation,
-    :snowMelt,
-    :interception,
-    :runoffInfiltrationExcess,
-    :saturatedFraction,
-    :runoffSaturationExcess,
-    :runoffInterflow,
-    :runoffOverland,
-    :runoffSurface,
-    :runoffBase,
-    :percolation,
-    :evaporation,
-    :drainage,
-    :capillaryFlow,
-    :groundWRecharge,
-    :groundWSoilWInteraction,
-    :groundWSurfaceWInteraction,
-    :transpirationDemand,
-    :vegAvailableWater,
-    :transpirationSupply,
-    :gppPotential,
-    :gppDiffRadiation,
-    :gppDirRadiation,
-    :gppAirT,
-    :gppVPD,
-    :gppSoilW,
-    :gppDemand,
-    :WUE,
-    :gpp,
-    :transpiration,
-    :rootWaterUptake,
-    :cCycleBase,
-    :cCycleDisturbance,
-    :cTauSoilT,
-    :cTauSoilW,
-    :cTauLAI,
-    :cTauSoilProperties,
-    :cTauVegProperties,
-    :cTau,
-    :autoRespirationAirT,
-    :cAllocationLAI,
-    :cAllocationRadiation,
-    :cAllocationSoilW,
-    :cAllocationSoilT,
-    :cAllocationNutrients,
-    :cAllocation,
-    :cAllocationTreeFraction,
-    :autoRespiration,
-    :cFlowSoilProperties,
-    :cFlowVegProperties,
-    :cFlow,
-    :cCycleConsistency,
-    :cCycle,
-    :evapotranspiration,
-    :runoff,
-    :wCycle,
-    :waterBalance,
-    :deriveVariables)
+# Import all models: developed by @lalonso
+all_folders = readdir(joinpath(@__DIR__, "."))
+all_dir_models = filter(entry -> isdir(joinpath(@__DIR__, entry)), all_folders)
 
-## Import all models.
-for model_name_symbol ∈ standard_sindbad_models
-    model_name = string(model_name_symbol)
+for model_name ∈ all_dir_models
     model_path = joinpath(model_name, model_name * ".jl")
     include(model_path)
 end
 
-sindbad_define_methods = getMethodTypes(define)
-sindbad_compute_methods = getMethodTypes(compute)
-sindbad_precompute_methods = getMethodTypes(precompute)
-sindbad_update_methods = getMethodTypes(update)
+# now having this ordered list is independent from the step including the models into this `module`.
+include(joinpath(@__DIR__, "standardSindbadModels.jl"))
 
 
 end

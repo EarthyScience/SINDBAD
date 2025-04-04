@@ -27,13 +27,13 @@ Parameters configuration for the selected models based on the specified settings
 """
 getParameters
 
-function getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true)
+function getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true, show_info=false)
     selected_models = getTupleFromLongTuple(selected_models)
-    return getParameters(selected_models, num_type, model_timestep; return_table=return_table)
+    return getParameters(selected_models, num_type, model_timestep; return_table=return_table, show_info=show_info)
 end
 
 
-function getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
+function getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true, show_info=false)
     model_names_list = nameof.(typeof.(selected_models))
     constrains = []
     default = []
@@ -96,15 +96,15 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     timescale_run = map(timescale) do ts
         isempty(ts) ? ts : model_timestep
     end
-    checkParameterBounds(name, default, lower, upper, ScaleNone(),show_info=true, model_names=model_approach)
+    checkParameterBounds(name, default, lower, upper, ScaleNone(),show_info=show_info, model_names=model_approach)
     output = (; model_id, name, default, optim=default, lower, upper, timescale_run=timescale_run, units=unts, timescale_ori=timescale, units_ori=unts_ori, model, model_approach, approach_func, name_full)
     output = return_table ? Table(output) : output
     return output
 end
 
 
-function getParameters(selected_models, model_parameter_default::NamedTuple, num_type, model_timestep)
-    models_tuple = getParameters(selected_models, num_type, model_timestep; return_table=false)
+function getParameters(selected_models, model_parameter_default::NamedTuple, num_type, model_timestep; show_info=false)
+    models_tuple = getParameters(selected_models, num_type, model_timestep; return_table=false, show_info=show_info)
     default = models_tuple.default
     model_approach = models_tuple.model_approach
     dp_dist = typeof(default[1]).(model_parameter_default[:distribution][2])
@@ -114,15 +114,15 @@ function getParameters(selected_models, model_parameter_default::NamedTuple, num
     return Table(; models_tuple... ,dist, p_dist, is_ml)
 end
 
-function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type, model_timestep)
+function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type, model_timestep; show_info=false)
     opt_parameter = replaceCommaSeparatorParams(opt_parameter)
-    tbl_parameters = getParameters(selected_models, model_parameter_default, num_type, model_timestep)
+    tbl_parameters = getParameters(selected_models, model_parameter_default, num_type, model_timestep, show_info=show_info)
     return filter(row -> row.name_full in opt_parameter, tbl_parameters)
 end
 
-function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type, model_timestep)
+function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type, model_timestep; show_info=false)
     param_list = replaceCommaSeparatorParams(keys(opt_parameter))
-    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list, num_type, model_timestep)
+    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list, num_type, model_timestep, show_info=show_info)
     tbl_parameters_filtered = filter(row -> row.name_full in param_list, tbl_parameters)
     new_dist = tbl_parameters_filtered.dist
     new_p_dist = tbl_parameters_filtered.p_dist

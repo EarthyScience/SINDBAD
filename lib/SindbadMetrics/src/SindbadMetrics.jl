@@ -57,6 +57,7 @@ module SindbadMetrics
 
     using SindbadUtils
     using StatsBase: mean, percentile, cor, corspearman
+    using ConstructionBase
 
     include("metricTypes.jl")
     include("handleDataForLoss.jl")

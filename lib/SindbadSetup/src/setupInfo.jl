@@ -437,7 +437,7 @@ function setupInfo(info::NamedTuple)
         @info "  setupInfo: setting Optimization and Observation info..."
         info = setOptimization(info)
     else
-        getParameters(info.temp.models.forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution);
+        getParameters(info.temp.models.forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution, show_info=true);
      end
 
     if !isnothing(info.settings.experiment.exe_rules.longtuple_size)

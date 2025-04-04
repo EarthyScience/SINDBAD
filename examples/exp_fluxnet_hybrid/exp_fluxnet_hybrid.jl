@@ -42,7 +42,7 @@ tbl_params = getParameters(
     info.optimization.model_parameter_default,
     info.optimization.model_parameters_to_optimize,
     info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution);
+    info.helpers.dates.temporal_resolution)
 
 param_to_index = getParameterIndices(selected_models, tbl_params);
 
