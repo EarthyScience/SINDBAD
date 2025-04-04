@@ -47,11 +47,13 @@ Retrieves the list of all SINDBAD models, either from the provided `info` object
 function getAllSindbadModels(info; sindbad_models=standard_sindbad_models)
     if hasproperty(info.settings.model_structure, :sindbad_models)
         sindbad_models = info.settings.model_structure.sindbad_models
-        @info "Using non-standard model order and list from model_structure.sindbad_models: "
+        @info "      Using non-standard model order and list from model_structure.sindbad_models: "
     else
-        @info "Using standard model order and list from standard_sindbad_models: "
+        @info "      Using standard model order and list from standard_sindbad_models: "
     end
-        @info "         $(sindbad_models)"
+        foreach((Pair.(eachindex(sindbad_models), sindbad_models))) do sm
+            @info "         $(sm)"
+        end
     return sindbad_models
 end
 

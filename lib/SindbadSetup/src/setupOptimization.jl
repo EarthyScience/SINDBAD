@@ -237,7 +237,7 @@ function setAlgorithmOptions(info, which_algorithm)
             algo_method = GlobalSensitivityMorris()
         end
     end
-    default_opt = sindbad_default_options(getproperty(SindbadSetup, nameof(typeof(algo_method)))())
+    default_opt = sindbadDefaultOptions(getproperty(SindbadSetup, nameof(typeof(algo_method)))())
     merged_options = mergeNamedTuple(default_opt, algo_options)
     tmp_algorithm = setTupleField(tmp_algorithm, (:method, algo_method))
     tmp_algorithm = setTupleField(tmp_algorithm, (:options, merged_options))

@@ -95,7 +95,7 @@ module SindbadSetup
     @reexport using SindbadMetrics
 
     include("runtimeDispatchTypes.jl")
-    include("default_options.jl")
+    include("defaultOptions.jl")
     include("getConfiguration.jl")
     include("setupExperimentInfo.jl")
     include("setupTypes.jl")

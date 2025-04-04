@@ -11,8 +11,8 @@ domain = "CA-Obs"
 path_input = nothing
 forcing_config = nothing
 optimization_config = nothing
-# mod_step = "day"
-mod_step = "hour"
+mod_step = "day"
+# mod_step = "hour"
 # foreach(["day", "hour"]) do mod_step
 if mod_step == "day"
     path_input = "../data/fn/$(domain).1979.2017.daily.nc"

@@ -53,7 +53,6 @@ This package integrates various components and utilities required to execute the
 """
 module SindbadTEM
     using ComponentArrays
-    using ConstructionBase
     using InteractiveUtils
     using NLsolve
     using ProgressMeter
