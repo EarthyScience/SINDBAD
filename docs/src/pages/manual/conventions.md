@@ -182,11 +182,11 @@ ApproachName
 
 :::info
 
-It is not recommended to build a model and approach from scratch by typing things. SINDBAD has a builtin function ```createSindbadApproach``` to create the model and approach files that has all the components described. This ensures following the modeling conventions around which the performance and modularity are built.
+It is not recommended to build a model and approach from scratch by typing things. SINDBAD has a builtin function ```generateSindbadApproach``` to create the model and approach files that has all the components described. This ensures following the modeling conventions around which the performance and modularity are built.
 
 Check the documentation of the function for further details as:
 ```julia
 using Sindbad
-?createSindbadApproach
+?generateSindbadApproach
 ```
 :::
