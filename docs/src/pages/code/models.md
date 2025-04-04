@@ -459,9 +459,6 @@ cAllocationTreeFraction_Friedlingstein1999
 
 :::
 
-
-----
-
 ### cBiomass
 
 ```@docs
@@ -481,9 +478,6 @@ cBiomass_treeGrass
 ```
 
 :::
-
-
-----
 
 ### cCycle
 
@@ -797,9 +791,6 @@ cTauVegProperties_none
 
 :::
 
-
-----
-
 ### cVegetationDieOff
 
 ```@docs
@@ -815,9 +806,6 @@ cVegetationDieOff_forcing
 ```
 
 :::
-
-
-----
 
 ### capillaryFlow
 
@@ -2147,4 +2135,3 @@ end
 ```@autodocs
 Modules = [Sindbad.Models]
 Public = false
-```

@@ -14,3 +14,22 @@ function compute(params::cBiomass_simple, forcing, land, helpers)
     end
     return land
 end
+
+
+purpose(::Type{cBiomass_simple}) = "calculates aboveground biomass as a sum of wood and leaf carbon pools."
+
+@doc """
+
+$(getBaseDocString(cBiomass_simple))
+
+---
+
+# Extended help
+
+*References*
+
+*Versions*
+
+*Created by*
+"""
+cBiomass_simple

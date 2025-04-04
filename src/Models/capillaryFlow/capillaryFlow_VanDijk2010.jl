@@ -69,9 +69,9 @@ $(getBaseDocString(capillaryFlow_VanDijk2010))
  - http://www.clw.csiro.au/publications/waterforahealthycountry/2010/wfhc-aus-water-resources-assessment-system.pdf
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala]
+ - 1.0 on 18.11.2019 [skoirala | @dr-ko]
 
 *Created by*
- - skoirala
+ - skoirala | @dr-ko
 """
 capillaryFlow_VanDijk2010

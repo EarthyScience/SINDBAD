@@ -2,7 +2,8 @@ using Sindbad
 
 open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
     write(o_file, "## Models\n\n")
-    foreach(sort(collect(standard_sindbad_models))) do sm
+    sindbad_models_from_types = nameof.(subtypes(Sindbad.LandEcosystem))
+    foreach(sort(collect(sindbad_models_from_types))) do sm
         sms = string(sm)
         write(o_file, "### $(sm)\n\n")
         # write(o_file, "== $(sm)\n")

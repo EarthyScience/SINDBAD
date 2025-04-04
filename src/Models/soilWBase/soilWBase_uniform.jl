@@ -104,11 +104,11 @@ $(getBaseDocString(soilWBase_uniform))
 *References*
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala]: clean up & consistency
- - 1.1 on 03.12.2019 [skoirala]: handling potentail vertical distribution of soil texture  
+ - 1.0 on 18.11.2019 [skoirala | @dr-ko]: clean up & consistency
+ - 1.1 on 03.12.2019 [skoirala | @dr-ko]: handling potentail vertical distribution of soil texture  
 
 *Created by*
  - ncarvalhais
- - skoirala
+ - skoirala | @dr-ko
 """
 soilWBase_uniform
