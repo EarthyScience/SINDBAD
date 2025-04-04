@@ -19,8 +19,6 @@
 [julia-img]: https://img.shields.io/badge/julia-v1.10+-blue.svg
 [julia-url]: https://julialang.org/
 
-Welcome to the git repository of `SINDBAD`. 
-
 This guideline for research and development is intended for ongoing SINDBAD-RnD projects. This will operate as a private fork shared within the core [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team) to foster an environment of maximized internal collaboration. Researchers and developers working on [the public SINDBAD repo](https://github.com/EarthyScience/SINDBAD) are encouraged to join the RnD-Team on a need basis.
 
 This setup ensures that members can freely exchange ideas, work closely on ongoing research, and develop new capabilities while safeguarding unpublished code from unauthorized public release. By maintaining this private and protected framework, SINDBAD-RnD aims to uphold both the integrity of collaborative efforts and the security of its scientific advancements.
