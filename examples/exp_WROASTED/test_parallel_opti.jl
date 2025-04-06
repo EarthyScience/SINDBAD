@@ -51,7 +51,7 @@ run_helpers = prepTEM(forcing, info);
 
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 # @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
-@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
+@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info, log_level=:warn);
 
 observation = out_opti.observation
 
