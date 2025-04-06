@@ -9,7 +9,7 @@ domain = "Global";
 optimize_it = true;
 # optimize_it = false;
 
-include("Trautmann2022_models.jl");
+include("global_models.jl");
 
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.basics.config_files.forcing" => "forcing.json",
@@ -17,10 +17,10 @@ replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.flags.calc_cost" => true,
     "experiment.flags.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
-    "model_structure.sindbad_models" => Trautmann2022_models
+    "model_structure.sindbad_models" => global_models
     );
 
-experiment_json = "../exp_Trautmann2022/settings_Trautmann2022/experiment.json";
+experiment_json = "../exp_global/settings_global/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 forcing = getForcing(info);

@@ -3,9 +3,14 @@ using SindbadExperiment
 using Dates
 using Plots
 toggleStackTraceNT()
+site_index = nothing
 
-site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
-# site_index = 120
+if haskey(ENV, "SLURM_ARRAY_TASK_ID")
+    site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+else
+    site_index = 120
+end
+
 # site_index = Base.parse(Int, ARGS[1])
 forcing_set = "erai"
 site_info = CSV.File(

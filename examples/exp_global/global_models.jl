@@ -1,4 +1,4 @@
-Trautmann2022_models = (:wCycleBase,
+global_models = (:wCycleBase,
     :rainSnow,
     :rainIntensity,
     :PET,
@@ -52,7 +52,7 @@ Trautmann2022_models = (:wCycleBase,
     :wCycle,
     :waterBalance,
     :deriveVariables)
-export Trautmann2022_models
+export global_models
 ## List all models of SINDBAD in the order they are called. 
 ## Note that a new model is only executed if it is added to this list. 
 ## When adding a new model, create a new copy of this jl file to work with.
