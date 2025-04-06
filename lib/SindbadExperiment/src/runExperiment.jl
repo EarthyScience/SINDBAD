@@ -37,8 +37,8 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `::DoCalcCost`: a type dispatch for calculating cost
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
-    setLogLevel()
+function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost; log_level=:info)
+    setLogLevel(log_level)
     observations = getObservation(info, forcing.helpers)
     obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
     println("-------------------Cost Calculation Mode---------------------------\n")
@@ -53,6 +53,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     for _cp in Pair.(Pair.(cost_options.variable, nameof.(typeof.(cost_options.cost_metric))),  loss_vector)
         println(_cp)
     end
+    setLogLevel()
     return (; forcing, info, loss=loss_vector, observation=obs_array, output=forward_output)
 end
 
@@ -69,7 +70,8 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `::Union{DoRunForward, DoNotRunOptimization}`: a type dispatch for forward run when it is true, or when optimization is false
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForward, DoNotRunOptimization})
+function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForward, DoNotRunOptimization}; log_level=:info)
+    setLogLevel(log_level)
     print("-------------------Forward Run Mode---------------------------\n")
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
     if isempty(additionaldims)
@@ -81,6 +83,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForwa
         run_output = runTEM!(forcing, info)
         run_output = (; Pair.(getUniqueVarNames(info.output.variables), run_output)...)
     end
+    setLogLevel()
     return (; forcing, info, output=run_output)
 end
 
@@ -96,9 +99,9 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `::DoRunOptimization`: a type dispatch for running optimization
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimization)
+function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimization; log_level=:info)
+    setLogLevel(log_level)
     println("-------------------Optimization Mode---------------------------\n")
-    # setLogLevel(:warn)
     observations = getObservation(info, forcing.helpers)
     additionaldims = setdiff(keys(forcing.helpers.sizes), info.settings.forcing.data_dimension.time)
     run_output = nothing
@@ -123,12 +126,14 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentCost(sindbad_experiment::String; replace_info=Dict())
+function runExperimentCost(sindbad_experiment::String; replace_info=Dict(), log_level=:info)
+    setLogLevel(log_level)
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = true
     replace_info["experiment.flags.run_forward"] = true
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    cost_output = runExperiment(info, forcing, info.helpers.run.calc_cost)
+    cost_output = runExperiment(info, forcing, info.helpers.run.calc_cost, log_level=log_level)
+    setLogLevel()
     return cost_output
 end
 
@@ -138,15 +143,16 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentForward(sindbad_experiment::String; replace_info=Dict())
-    setLogLevel()
+function runExperimentForward(sindbad_experiment::String; replace_info=Dict(), log_level=:info)
+    setLogLevel(log_level)
     replace_info["experiment.flags.run_forward"] = true
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    run_output = runExperiment(info, forcing, info.helpers.run.run_forward)
+    run_output = runExperiment(info, forcing, info.helpers.run.run_forward, log_level=log_level)
     output_dims = getOutDims(info, forcing.helpers)
     saveOutCubes(info, values(run_output.output), output_dims, info.output.variables)
+    setLogLevel()
     return run_output
 end
 
@@ -157,9 +163,9 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=Dict())
+function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=Dict(), log_level=:info)
+    setLogLevel(log_level)
     @info "runExperimentForwardParams: forward run of the model with default/settings and input/optimized parameters..."
-    # setLogLevel(:error)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = true
@@ -188,8 +194,8 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentFullOutput(sindbad_experiment::String; replace_info=Dict())
-    setLogLevel()
+function runExperimentFullOutput(sindbad_experiment::String; replace_info=Dict(), log_level=:info)
+    setLogLevel(log_level)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_forward"] = true
     replace_info["experiment.flags.run_optimization"] = false
@@ -202,6 +208,7 @@ function runExperimentFullOutput(sindbad_experiment::String; replace_info=Dict()
     output_dims = run_helpers.output_dims
     run_output = run_helpers.output_array
     saveOutCubes(info, run_output, output_dims, run_helpers.output_vars)
+    setLogLevel()
     return (; forcing, info, output=(; Pair.(getUniqueVarNames(run_helpers.output_vars), run_output)...))
 end
 
@@ -211,20 +218,21 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function runExperimentOpti(sindbad_experiment::String; replace_info=Dict())
-    setLogLevel(:warn)
+function runExperimentOpti(sindbad_experiment::String; replace_info=Dict(), log_level=:info)
+    setLogLevel(log_level)
     replace_info["experiment.flags.run_optimization"] = true
     replace_info["experiment.flags.calc_cost"] = false
     replace_info["experiment.flags.run_forward"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization)
+    opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization, log_level=log_level)
     setLogLevel(:info)
-    fp_output = runExperimentForwardParams(opti_output.params, sindbad_experiment; replace_info=replace_info)
+    fp_output = runExperimentForwardParams(opti_output.params, sindbad_experiment; replace_info=replace_info, log_level=log_level)
     cost_options = prepCostOptions(opti_output.observation, info.optimization.cost_options)
     loss_vector = metricVector(fp_output.output.optimized, opti_output.observation, cost_options)
     loss_vector_def = metricVector(fp_output.output.default, opti_output.observation, cost_options)
     loss_table = Table((; variable=cost_options.variable, metric=cost_options.cost_metric, loss_opt=loss_vector, loss_def=loss_vector_def))
     display(loss_table)
+    setLogLevel()
     return (; forcing, info=fp_output.info, loss=loss_table, observation=opti_output.observation, output=fp_output.output, params=opti_output.params)
 end
 

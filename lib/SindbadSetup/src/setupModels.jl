@@ -21,7 +21,7 @@ function checkSelectedModels(sindbad_models, selected_models::AbstractArray)
         if sm ∉ sindbad_models
             @show sindbad_models
             error(sm,
-                " is not a valid model from sindbad_models [Sindbad.standard_sindbad_models]. check model_structure settings in json")
+                " is not a valid model defined in either standard_sindbad_models || user-defined sindbad_models. Check model_structure settings in json or model_structure.sindbad_models in replace_info")
             return false
         end
     end
