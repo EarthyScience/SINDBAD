@@ -337,7 +337,7 @@ if __name__ == "__main__":
             # Sort users alphabetically
             sorted_users = sorted(unique_user_data.keys())
             custom_labels = [f'{label}' for label in sorted_users]
-            sorted_colors = [user_colors[user] for user in sorted_users]
+            sorted_colors = [user_colors[user] if (user in user_colors.keys()) else "#cccccc" for user in sorted_users]
 
             # Print contribution summary
             for user, count in unique_user_data.items():
