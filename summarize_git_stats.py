@@ -8,6 +8,25 @@ from datetime import datetime, timedelta
 
 # Set the style using Seaborn
 plt.style.use("seaborn-v0_8")
+import hashlib
+import random
+
+def generate_unique_colors(all_users):
+    color_dict = {}
+    for a_user in all_users:
+        # Generate a hash for the all_user
+        hash_object = hashlib.md5(a_user.encode())
+        hex_digest = hash_object.hexdigest()
+        
+        # Use the hash to generate a random color
+        random.seed(int(hex_digest, 16))  # Seed with the hash value
+        color_dict[a_user] = (
+            1 - random.randint(0, 255) / 255.0,  # Red (normalized)
+            1 - random.randint(0, 255) / 255.0,  # Green (normalized)
+            1 - random.randint(0, 255) / 255.0   # Blue (normalized)
+                            )
+    return color_dict
+
 
 def get_git_user_commit_summary(start_year=2014):
     """
@@ -120,6 +139,10 @@ if __name__ == "__main__":
         "Tina Trautmann": ["Tina"]
     }
     users_repeat_values = [item for sublist in users_repeat.values() for item in sublist]
+
+    all_commit_users = contrib_summary["git_commits"].keys()
+    all_commit_colors = generate_unique_colors(all_commit_users)
+
     
     # Analyze and visualize contributions for each metric
     for ss in ("git_commits", "lines_added", "lines_deleted", "#core_code_lines_current"):
@@ -139,6 +162,7 @@ if __name__ == "__main__":
 
         # Sort users alphabetically
         uniq_users = sorted(ss_data_uniq.keys())
+        uniq_colors = [all_commit_colors[_u] for _u in uniq_users]
         
         # Print contribution summary
         for user, count in ss_data_uniq.items():
@@ -150,7 +174,7 @@ if __name__ == "__main__":
         
         # Create pie chart
         plt.figure(figsize=(10, 8))
-        plt.pie(contribs, explode=explode, labels=uniq_users, autopct='%1.1f%%', startangle=140)
+        plt.pie(contribs, explode=explode, colors=uniq_colors, labels=uniq_users, autopct='%1.1f%%', startangle=140)
         plt.title(f"{ss} (total: {sum(contribs)}) since {start_year}")
         os.makedirs('tmp_git_summary/', exist_ok=True)
         plt.savefig(f"tmp_git_summary/summary_{ss.lower()}_since-{start_year}.png", dpi=300)
