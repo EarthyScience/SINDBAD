@@ -72,7 +72,7 @@ def get_git_user_commit_summary(start_year=2014, end_year=None):
     if end_year == int(year_now):
         end_date = datetime.now().strftime('%Y-%m-%d')
 
-    if end_year == 2021:
+    if end_year == 2021 and start_year != 2021:
         end_date = f"{end_year}-11-24" # start of Sindbad.jl repo
 
     start_date = f"{start_year}-01-01"
@@ -288,14 +288,17 @@ if __name__ == "__main__":
     year_now = int(datetime.now().strftime('%Y'))
     date_today = datetime.now().strftime('%Y-%m-%d')
     end_year = year_now
-    year_sets = [[start_year, end_year]]
-
+    # year_sets = [[start_year, end_year]]
+    print(len(sys.argv), sys.argv)
     if len(sys.argv) == 1:
         year_sets =[[2014, 2021], [2014, 2025], [2017, 2021], [2021, 2022], [2022, 2023], [2023, 2024], [2024, 2025], [2021, 2025]]
+
+    else:
         if len(sys.argv) > 1:
             start_year = int(sys.argv[1])
             if len(sys.argv) > 2:
                 end_year = int(sys.argv[2])
+        year_sets = [[start_year, end_year]]
     # Get contribution summary
     for year_set in year_sets:
         (start_year, end_year) = year_set
