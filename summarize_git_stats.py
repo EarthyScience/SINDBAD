@@ -72,7 +72,7 @@ def get_git_user_commit_summary(start_year=2014, end_year=None):
     if end_year == int(year_now):
         end_date = datetime.now().strftime('%Y-%m-%d')
 
-    if end_year == 2021:
+    if end_year == 2021 and start_year != 2021:
         end_date = f"{end_year}-11-24" # start of Sindbad.jl repo
 
     start_date = f"{start_year}-01-01"
@@ -286,87 +286,97 @@ if __name__ == "__main__":
     """    # Parse command-line arguments for start and end years
     start_year = 2014
     year_now = int(datetime.now().strftime('%Y'))
+    date_today = datetime.now().strftime('%Y-%m-%d')
     end_year = year_now
+    # year_sets = [[start_year, end_year]]
+    print(len(sys.argv), sys.argv)
+    if len(sys.argv) == 1:
+        year_sets =[[2014, 2021], [2014, 2025], [2017, 2021], [2021, 2022], [2022, 2023], [2023, 2024], [2024, 2025], [2021, 2025]]
 
-    if len(sys.argv) > 1:
-        start_year = int(sys.argv[1])
-        if len(sys.argv) > 2:
-            end_year = int(sys.argv[2])
-
+    else:
+        if len(sys.argv) > 1:
+            start_year = int(sys.argv[1])
+            if len(sys.argv) > 2:
+                end_year = int(sys.argv[2])
+        year_sets = [[start_year, end_year]]
     # Get contribution summary
-    contribution_summary = get_git_user_commit_summary(start_year=start_year, end_year=end_year)
+    for year_set in year_sets:
+        (start_year, end_year) = year_set
+        print(f"Analyzing contributions from {start_year} to {end_year}...")
+        # Get contribution summary
+        contribution_summary = get_git_user_commit_summary(start_year=start_year, end_year=end_year)
 
-    # Define user aliases to merge contributions
-    user_aliases = {
-        "dr-ko": ["skoirala"],
-        "Nuno": ["Nuno Carvalhais", "NC", "ncarval"],
-        "Lazaro Alonso": ["Lazaro Alonso Silva", "lazarusA", "Lazaro", "lalonso"],
-        "Fabian Gans": ["meggart"],
-        "Tina Trautmann": ["Tina"]
-    }
-    alias_values = [alias for aliases in user_aliases.values() for alias in aliases]
+        # Define user aliases to merge contributions
+        user_aliases = {
+            "dr-ko": ["skoirala"],
+            "Nuno": ["Nuno Carvalhais", "NC", "ncarval"],
+            "Lazaro Alonso": ["Lazaro Alonso Silva", "lazarusA", "Lazaro", "lalonso"],
+            "Fabian Gans": ["meggart"],
+            "Tina Trautmann": ["Tina"]
+        }
+        alias_values = [alias for aliases in user_aliases.values() for alias in aliases]
 
-    all_users = contribution_summary["git_commits"].keys()
-    user_colors = generate_unique_colors(all_users, alpha=0.9)
+        all_users = contribution_summary["git_commits"].keys()
+        user_colors = generate_unique_colors(all_users, alpha=0.9)
 
-    # Analyze and visualize contributions for each metric
-    for metric in ("git_commits", "lines_added", "lines_deleted", "#core_code_lines_current"):
-        metric_data = contribution_summary[metric]
-        if metric == "#core_code_lines_current":
-            code_version = metric_data["version"]
-            metric_data = metric_data["code"]
-        unique_user_data = {}
+        # Analyze and visualize contributions for each metric
+        for metric in ("git_commits", "lines_added", "lines_deleted", "#core_code_lines_current"):
+            metric_data = contribution_summary[metric]
+            if metric == "#core_code_lines_current":
+                code_version = metric_data["version"]
+                metric_data = metric_data["code"]
+            unique_user_data = {}
 
-        # Merge contributions for users with aliases
-        for user in metric_data.keys():
-            if user not in alias_values:
-                total_contribution = metric_data[user]
-                if user in user_aliases:
-                    for alias in user_aliases[user]:
-                        if alias in metric_data:
-                            total_contribution += metric_data[alias]
-                unique_user_data[user] = total_contribution
+            # Merge contributions for users with aliases
+            for user in metric_data.keys():
+                if user not in alias_values:
+                    total_contribution = metric_data[user]
+                    if user in user_aliases:
+                        for alias in user_aliases[user]:
+                            if alias in metric_data:
+                                total_contribution += metric_data[alias]
+                    unique_user_data[user] = total_contribution
 
-        # Sort users alphabetically
-        sorted_users = sorted(unique_user_data.keys())
-        custom_labels = [f'{label}' for label in sorted_users]
-        sorted_colors = [user_colors[user] for user in sorted_users]
+            # Sort users alphabetically
+            sorted_users = sorted(unique_user_data.keys())
+            custom_labels = [f'{label}' for label in sorted_users]
+            sorted_colors = [user_colors[user] if (user in user_colors.keys()) else "#cccccc" for user in sorted_users]
 
-        # Print contribution summary
-        for user, count in unique_user_data.items():
-            print(f"{user}: {count} {metric.lower()}")
+            # Print contribution summary
+            for user, count in unique_user_data.items():
+                print(f"{user}: {count} {metric.lower()}")
 
-        # Prepare data for pie chart
-        contributions = [unique_user_data[user] for user in sorted_users]
-        explode_slices = [0.1 for _ in contributions]  # Explode all slices for better visibility
+            # Prepare data for pie chart
+            contributions = [unique_user_data[user] for user in sorted_users]
+            explode_slices = [0.1 for _ in contributions]  # Explode all slices for better visibility
 
-        # Create pie chart
-        plt.figure(figsize=(10, 8))
-        bbox_props = dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor="lightgray", alpha=0.1)
-        custom_labels = [f'{label}' for label in sorted_users]
-        bbox_props_text = dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=1.0)
-        # Create pie chart
-        fig, ax = plt.subplots()
-        wedges, texts, autotexts = ax.pie(contributions, explode=explode_slices, colors=sorted_colors, labels=custom_labels, autopct='%1.1f%%', startangle=140)
+            # Create pie chart
+            plt.figure(figsize=(10, 8))
+            bbox_props = dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor="lightgray", alpha=0.1)
+            custom_labels = [f'{label}' for label in sorted_users]
+            bbox_props_text = dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=1.0)
+            # Create pie chart
+            fig, ax = plt.subplots()
+            wedges, texts, autotexts = ax.pie(contributions, explode=explode_slices, colors=sorted_colors, labels=custom_labels, autopct='%1.1f%%', startangle=140)
 
-        # Make labels bold and add bbox background
-        for i, text in enumerate(texts):
-            text.set_fontweight('bold')
-            # text.set_color(sorted_colors[i])
-            bbox_props = dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor=sorted_colors[i], alpha=0.2)
-            text.set_bbox(bbox_props)
-        # Style the percentage texts
-        for autotext in autotexts:
-            autotext.set_fontweight('bold')
-            autotext.set_bbox(bbox_props_text)
-        ax.set_aspect('equal')  # Ensure the pie chart is circular
-        title_plot = (f"{metric} (total: {sum(contributions)})\n {start_year}-{end_year}")
-        if metric == "#core_code_lines_current":
-            title_plot = (f"{metric} (total: {sum(contributions)})\n version: {code_version}")
-            
+            # Make labels bold and add bbox background
+            for i, text in enumerate(texts):
+                text.set_fontweight('bold')
+                # text.set_color(sorted_colors[i])
+                bbox_props = dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor=sorted_colors[i], alpha=0.2)
+                text.set_bbox(bbox_props)
+            # Style the percentage texts
+            for autotext in autotexts:
+                autotext.set_fontweight('bold')
+                autotext.set_bbox(bbox_props_text)
+            ax.set_aspect('equal')  # Ensure the pie chart is circular
+            title_plot = (f"{metric} (total: {sum(contributions)})\n{start_year}-{end_year}\nas of {date_today}")
+            if metric == "#core_code_lines_current":
+                title_plot = (f"{metric} (total: {sum(contributions)})\nversion: {code_version}\nas of {date_today}")
+                
 
-        plt.title(title_plot)
-        os.makedirs('tmp_git_summary/', exist_ok=True)
-        plt.savefig(f"tmp_git_summary/summary_{metric.lower()}_{start_year}-{end_year}.png", dpi=300)
-        print("----------------------")
+            plt.title(title_plot)
+            os.makedirs('tmp_git_summary/', exist_ok=True)
+            plt.savefig(f"tmp_git_summary/summary_{metric.lower()}_{start_year}-{end_year}.png", dpi=300)
+            print("----------------------")
 
