@@ -6,7 +6,7 @@
       "optimization": "optimization.json"
     },
     "domain": "FLUXNET",
-    "name": "WROASTED",
+    "name": "HyK",
     "time": {
       "date_begin": "1979-01-01",
       "date_end": "2017-12-31",

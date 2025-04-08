@@ -60,7 +60,7 @@
       "aggr_func": "nanmean",
       "aggr_obs": false,
       "aggr_order": "time_space",
-      "cost_metric": "NNSE_inv",
+      "cost_metric": "NSE_inv",
       "cost_weight": 1.0,
       "min_data_points": 1,
       "spatial_data_aggr": "concat_data",
@@ -100,7 +100,7 @@
       },
       "evapotranspiration": {
         "cost_options": {
-          "cost_metric": "NNSE_inv"
+          "cost_metric": "NSE_inv"
         },
         "data": {
           "bounds": [0.0, 100.0],
@@ -126,7 +126,7 @@
       },
       "gpp": {
         "cost_options": {
-          "cost_metric": "NNSE_inv"
+          "cost_metric": "NSE_inv"
         },
         "data": {
           "bounds": [0.0, 100.0],
@@ -149,7 +149,7 @@
       },
       "ndvi": {
         "cost_options": {
-          "cost_metric": "NNSE_inv",
+          "cost_metric": "NSE_inv",
           "temporal_data_aggr": "day_anomaly",
           "aggr_obs": true
         },
@@ -169,7 +169,7 @@
       },
       "nee": {
         "cost_options": {
-          "cost_metric": "NNSE_inv"
+          "cost_metric": "NSE_inv"
         },
         "data": {
           "bounds": [-100.0, 100.0],
@@ -212,7 +212,7 @@
       },
       "reco": {
         "cost_options": {
-          "cost_metric": "NNSE_inv"
+          "cost_metric": "NSE_inv"
         },
         "data": {
           "bounds": [0.0, 100.0],
@@ -235,7 +235,7 @@
       },
       "transpiration": {
         "cost_options": {
-          "cost_metric": "NNSE_inv"
+          "cost_metric": "NSE_inv"
         },
         "data": {
           "bounds": [0.0, 100.0],
