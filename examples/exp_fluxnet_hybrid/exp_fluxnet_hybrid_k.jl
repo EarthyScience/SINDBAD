@@ -10,7 +10,7 @@ using SindbadOptimization
 
 # extra includes for covariate and activation functions
 include("load_covariates.jl")
-include("tmp_activation_functions.jl")
+include("test_activation_functions.jl")
 
 ## paths
 file_folds = load(joinpath(@__DIR__, "nfolds_sites_indices.jld2"))
