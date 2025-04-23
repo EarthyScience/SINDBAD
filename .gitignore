@@ -27,6 +27,7 @@
 *.jpg
 *.svg
 *.pdf
+*.pkl
 *.PDF
 .*
 ~*
@@ -50,6 +51,7 @@ GettingStarted.md
 examples/data/
 docs/build/
 build/
+__pycache__
 
 .vscode
 .gitlab-ci.yml

@@ -17,7 +17,7 @@ function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land,
     end
 
     ## calculate variables
-    tmp = k_gw_to_suw * (totalS(groundW, ΔgroundW) - totalS(surfaceW, ΔsurfaceW))
+    gw_to_suw_flux = k_gw_to_suw * (totalS(groundW, ΔgroundW) - totalS(surfaceW, ΔsurfaceW))
 
     # update the delta storages
     ΔgroundW = addToEachElem(ΔgroundW, -gw_to_suw_flux / n_groundW)

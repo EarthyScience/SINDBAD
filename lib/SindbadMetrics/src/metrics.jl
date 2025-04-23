@@ -66,7 +66,7 @@ function metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSE
 end
 
 function metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσ)
-    NSE_v = metric(y, yσ, ŷ, :NSEσ())
+    NSE_v = metric(y, yσ, ŷ, NSEσ())
     NNSE = one(eltype(ŷ)) / (one(eltype(ŷ)) + one(eltype(ŷ)) - NSE_v)
     return NNSE
 end

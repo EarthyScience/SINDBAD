@@ -89,7 +89,7 @@ module SindbadSetup
     @reexport using Dates
     @reexport using Infiltrator
     using JSON: parsefile, json
-    @reexport using JLD2: @save
+    @reexport using JLD2: @save, load
     @reexport using Sindbad
     @reexport using SindbadUtils
     @reexport using SindbadMetrics
