@@ -1,3 +1,5 @@
+*.doc
+*.docx
 *.jl.*.cov
 *.jl.cov
 *.jl.mem
@@ -29,6 +31,10 @@
 *.pdf
 *.pkl
 *.PDF
+*.ppt
+*.pptx
+*.xls
+*.xlsx
 .*
 ~*
 *_tmp
