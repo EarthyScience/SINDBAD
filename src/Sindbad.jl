@@ -71,6 +71,22 @@ module Sindbad
     ## Define SINDBAD supertype
     export LandEcosystem
     abstract type LandEcosystem end
+
+    # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of Sindbad.
+   file_path = file_path = joinpath(@__DIR__, "tmp_precompile_placeholder.jl")
+   println(isfile(file_path))
+   # Check if the file exists
+   if isfile(file_path)
+      # Include the file if it exists
+      include(file_path)
+   else
+      # Create a blank file if it does not exist
+      open(file_path, "w") do file
+         # Optionally, you can write some initial content
+         write(file, "# This is a blank file created by Sindbad module to keep track of newly added sindbad approaches/models which automatically updates this file and then forces precompilation to include the new models.\n")
+      end
+      println("Created a blank file: $file_path to track precompilation of new models and approaches")
+   end
    
    include("utilsCore.jl")
    include("sindbadVariableCatalog.jl")
