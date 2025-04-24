@@ -1,3 +1,4 @@
+using Sindbad
 using SindbadData
 using SindbadData.DimensionalData
 using SindbadData.AxisKeys
@@ -14,12 +15,15 @@ replace_info = Dict()
 if Sys.islinux()
     replace_info = Dict(
         "forcing.default_forcing.data_path" => "/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr",
-        "optimization.observations.default_observation.data_path" =>"/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr"
-        );
+        "optimization.observations.default_observation.data_path" => "/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr"
+    )
 end
 
+replace_info["experiment.basics.config_files.model_structure"] = "model_structure_PF.json"
+replace_info["experiment.basics.config_files.optimization"] = "optimization_PF.json"
+
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
-selected_models = info.models.forward
+selected_models = info.models.forward;
 
 tbl_params = getParameters(
     selected_models,
@@ -33,6 +37,7 @@ param_to_index = getParameterIndices(selected_models, tbl_params);
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 run_helpers = prepTEM(selected_models, forcing, observations, info);
+land = run_helpers.loc_land;
 sites_forcing = forcing.data[1].site; # sites names
 
 # ? all spaces
@@ -44,7 +49,7 @@ space_ind = run_helpers.space_ind;
 # ? land_init and helpers
 land_init = run_helpers.loc_land;
 tem = (;
-    tem_info = run_helpers.tem_info,
+    tem_info=run_helpers.tem_info,
 );
 loc_forcing_t = run_helpers.loc_forcing_t;
 
@@ -94,22 +99,13 @@ end
 
 default_values = Float32.(tbl_params.default)
 
-lossSiteFD(default_values, selected_models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs,
-    loc_cost_options, constraint_method, tem)
+lossSiteFD(default_values, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem)
 
-lossSite2(default_values, selected_models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, loc_output, land_init, param_to_index, loc_obs,
-    loc_cost_options, constraint_method, tem)
+lossSite2(default_values, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem)
 
-cost_function = x -> lossSite2(x, selected_models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, loc_output, land_init, param_to_index, loc_obs,
-    loc_cost_options, constraint_method, tem)
+cost_function = x -> lossSite2(x, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem) 
 
-cost_functionFD = x -> lossSiteFD(x, selected_models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()),
-    land_init, param_to_index, loc_obs,
-    loc_cost_options, constraint_method, tem)
+cost_functionFD = x -> lossSiteFD(x, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem) 
 
 @time cost_function(default_values)
 @time cost_functionFD(default_values)
@@ -118,30 +114,30 @@ cost_functionFD = x -> lossSiteFD(x, selected_models, loc_forcing, loc_spinup_fo
 lower_bounds = tbl_params.lower
 upper_bounds = tbl_params.upper
 
-optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds,
-    info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
+# optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds,
+#     info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
 
 
 # ? https://github.com/jbrea/CMAEvolutionStrategy.jl
 # and compare output and performance
 # use: (go for parallel/threaded approaches)
 
-using SindbadOptimization.CMAEvolutionStrategy
+# using SindbadOptimization.CMAEvolutionStrategy
 
-results = minimize(cost_function,
+results = SindbadOptimization.minimize(cost_function,
     default_values,
     1;
     lower=lower_bounds,
     upper=upper_bounds,
-    maxiter =20,
-    multi_threading = true,
-    )
+    maxiter=100,
+    multi_threading=true,
+)
 
-optim_para = xbest(results)
+optim_para = SindbadOptimization.xbest(results)
 
 # ? https://github.com/AStupidBear/GCMAES.jl
 
-using SindbadOptimization.GCMAES
+using GCMAES
 x0 = default_values
 σ0 = 0.2
 lo = lower_bounds
@@ -154,4 +150,4 @@ xmin, fmin, status = GCMAES.minimize(cost_function, x0, σ0, lo, hi, maxiter=max
 using ForwardDiff
 ∇loss(x) = ForwardDiff.gradient(cost_functionFD, x)
 
-xmin, fmin, status = GCMAES.minimize((cost_functionFD, ∇loss), x0, σ0, lo, hi, maxiter = 100);
+xmin, fmin, status = GCMAES.minimize((cost_functionFD, ∇loss), x0, σ0, lo, hi, maxiter=100);

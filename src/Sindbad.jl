@@ -74,7 +74,6 @@ module Sindbad
 
     # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of Sindbad.
    file_path = file_path = joinpath(@__DIR__, "tmp_precompile_placeholder.jl")
-   println(isfile(file_path))
    # Check if the file exists
    if isfile(file_path)
       # Include the file if it exists
@@ -87,7 +86,7 @@ module Sindbad
       end
       println("Created a blank file: $file_path to track precompilation of new models and approaches")
    end
-   
+
    include("utilsCore.jl")
    include("sindbadVariableCatalog.jl")
    include("modelTools.jl")

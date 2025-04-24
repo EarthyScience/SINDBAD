@@ -91,8 +91,24 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     end
 
     # default = num_type.(default)
-    lower = num_type.(lower)
-    upper = num_type.(upper)
+    lower = map(lower) do low
+        if isa(low, Number)
+            low = num_type(low)
+        else
+            low = num_type.(low)
+        end
+        low
+    end
+    upper = map(upper) do upp
+        if isa(upp, Number)
+            upp = num_type(upp)
+        else
+            upp = num_type.(upp)
+        end
+        upp
+    end
+    # lower = num_type.(lower)
+    # upper = num_type.(upper)
     timescale_run = map(timescale) do ts
         isempty(ts) ? ts : model_timestep
     end

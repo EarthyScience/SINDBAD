@@ -299,11 +299,12 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
         new_lines = []
         if was_model_created
             new_line = "# - $(date): created a model $model_path.\n"
+            push!(new_lines, new_line)
         end
-        push!(new_lines, new_line)
 
         if was_approach_created
             new_line = "# - $(date): created an approach $appr_path.\n"
+            push!(new_lines, new_line)
         end
 
         # Open the file in append mode
