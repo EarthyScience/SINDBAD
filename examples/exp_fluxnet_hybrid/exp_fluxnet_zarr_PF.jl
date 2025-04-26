@@ -94,7 +94,7 @@ optimize_it = true;
 opti_set = (:set1, :set3)
 o_set = :set1
 
-opti_cost = ("NNSE")
+opti_cost = ("NNSE",)
 # opti_cost = ("NSE", "NNSE")
 # o_cost = "NNSE"
 for o_set in opti_set

@@ -149,9 +149,7 @@
       },
       "ndvi": {
         "cost_options": {
-          "cost_metric": "NNSE_inv",
-          "temporal_data_aggr": "day_anomaly",
-          "aggr_obs": true
+          "cost_metric": "NNSE_inv"
         },
         "data": {
           "bounds": [-1.0, 1.0],
