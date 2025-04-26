@@ -107,7 +107,7 @@ mlBaseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=nlayers, see
 params_sites = mlBaseline(xfeatures);
 @info "params_sites: [$(minimum(params_sites)), $(maximum(params_sites))]"
 
-grads_batch = zeros(Float32, n_params, length(sites_training));
+grads_batch = zeros(Float32, n_params, length(sites_training))[:,1:batch_size];
 sites_batch = sites_training;#[1:n_sites_train];
 params_batch = params_sites(; site=sites_batch);
 @info "params_batch: [$(minimum(params_batch)), $(maximum(params_batch))]"
@@ -141,6 +141,7 @@ grads_lib = ForwardDiffGrad();
 grads_lib = FiniteDifferencesGrad();
 grads_lib = FiniteDiffGrad();
 grads_lib = PolyesterForwardDiffGrad();
+# grads_lib = ZygoteGrad();
 
 loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
 

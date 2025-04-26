@@ -143,7 +143,13 @@ end
 
 function gradientSite(grads_lib::FiniteDifferencesGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
     loss_tmp(x) = loss_f(x, grads_lib, args...)
-    return FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1), loss_tmp, x_vals)
+    gr_fds = FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1), loss_tmp, x_vals)
+    return gr_fds[1]
+end
+
+function gradientSite(grads_lib::ZygoteGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    return Zygote.gradient(loss_tmp, x_vals)
 end
 
 
