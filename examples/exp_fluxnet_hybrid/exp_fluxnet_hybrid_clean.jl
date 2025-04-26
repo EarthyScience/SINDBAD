@@ -92,76 +92,77 @@ nor_names_order = xfeatures.features;
 n_features = length(nor_names_order)
 
 ## Build ML method
-k_σs=Tuple(Float32[1.0, 0.25, 4.0, 0.5, 2, 0.125, 8])
 n_params = sum(tbl_params.is_ml);
 nlayers = 3 # Base.parse(Int, ARGS[2])
 n_neurons = 32 # Base.parse(Int, ARGS[3])
 batch_size = 32 # Base.parse(Int, ARGS[4])
 batch_seed = 123 * batch_size * 2
-n_epochs = 200
-for k_σ ∈ k_σs
-    # custom_activation = CustomSigmoid(k_σ)
-    # custom_activation = sigmoid_3
-    custom_activation = x -> sigmoid_k(x, k_σ)
-    mlBaseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=nlayers, seed=batch_seed, activation_out=custom_activation);
+n_epochs = 2
+k_σ = 1.f0
+# custom_activation = CustomSigmoid(k_σ)
+# custom_activation = sigmoid_3
+mlBaseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=nlayers, seed=batch_seed);
 
-    # Initialize params and grads
-    params_sites = mlBaseline(xfeatures);
-    @info "params_sites: [$(minimum(params_sites)), $(maximum(params_sites))]"
+# Initialize params and grads
+params_sites = mlBaseline(xfeatures);
+@info "params_sites: [$(minimum(params_sites)), $(maximum(params_sites))]"
 
-    grads_batch = zeros(Float32, n_params, length(sites_training));
-    sites_batch = sites_training;#[1:n_sites_train];
-    params_batch = params_sites(; site=sites_batch);
-    @info "params_batch: [$(minimum(params_batch)), $(maximum(params_batch))]"
-    scaled_params_batch = getParamsAct(params_batch, tbl_params);
-    @info "scaled_params_batch: [$(minimum(scaled_params_batch)), $(maximum(scaled_params_batch))]"
+grads_batch = zeros(Float32, n_params, length(sites_training));
+sites_batch = sites_training;#[1:n_sites_train];
+params_batch = params_sites(; site=sites_batch);
+@info "params_batch: [$(minimum(params_batch)), $(maximum(params_batch))]"
+scaled_params_batch = getParamsAct(params_batch, tbl_params);
+@info "scaled_params_batch: [$(minimum(scaled_params_batch)), $(maximum(scaled_params_batch))]"
 
-    forward_args = (
-        selected_models,
-        space_forcing,
-        space_spinup_forcing,
-        loc_forcing_t,
-        space_output,
-        land_init,
-        tem_info,
-        param_to_index,
-        parameter_scaling_type,
-        space_observations,
-        space_cost_options,
-        constraint_method
-        );
-
-
-    input_args = (
-            scaled_params_batch, 
-            forward_args..., 
-            indices_sites_batch,
-            sites_batch
+forward_args = (
+    selected_models,
+    space_forcing,
+    space_spinup_forcing,
+    loc_forcing_t,
+    space_output,
+    land_init,
+    tem_info,
+    param_to_index,
+    parameter_scaling_type,
+    space_observations,
+    space_cost_options,
+    constraint_method
     );
 
-    grads_lib = ForwardDiffGrad();
-    loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
 
-    # @time gg = gradientSite(grads_lib, loc_params, 2, lossSite, inner_args...)
+input_args = (
+        scaled_params_batch, 
+        forward_args..., 
+        indices_sites_batch,
+        sites_batch
+);
 
-    # gradientBatch!(grads_lib, grads_batch, 2, lossSite, getInnerArgs,input_args...; showprog=true)
+grads_lib = ForwardDiffGrad();
+grads_lib = FiniteDifferencesGrad();
+grads_lib = FiniteDiffGrad();
+grads_lib = PolyesterForwardDiffGrad();
+loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
 
-    # ? training arguments
-    chunk_size = 2
-    metadata_global = info.output.file_info.global_metadata
+@time gg = gradientSite(grads_lib, loc_params, 2, lossSite, inner_args...)
 
-    in_gargs=(;
-        train_refs = (; sites_training, indices_sites_training, xfeatures, tbl_params, batch_size, chunk_size, metadata_global),
-        test_val_refs = (; sites_validation, indices_sites_validation, sites_testing, indices_sites_testing),
-        total_constraints = length(info.optimization.observational_constraints),
-        forward_args,
-        loss_fargs = (lossSite, getInnerArgs)
-    );
+gradientBatch!(grads_lib, grads_batch, 2, lossSite, getInnerArgs,input_args...; showprog=true)
 
-    checkpoint_path = "$(info.output.dirs.data)/HyALL_ALL_kσ_$(k_σ)_fold_$(_nfold)_nlayers_$(nlayers)_n_neurons_$(n_neurons)_$(n_epochs)epochs_batch_size_$(batch_size)/"
 
-    mkpath(checkpoint_path)
+# ? training arguments
+chunk_size = 2
+metadata_global = info.output.file_info.global_metadata
 
-    @info checkpoint_path
-    mixedGradientTraining(grads_lib, mlBaseline, in_gargs.train_refs, in_gargs.test_val_refs, in_gargs.total_constraints, in_gargs.loss_fargs, in_gargs.forward_args; n_epochs=n_epochs, path_experiment=checkpoint_path)
-end
+in_gargs=(;
+    train_refs = (; sites_training, indices_sites_training, xfeatures, tbl_params, batch_size, chunk_size, metadata_global),
+    test_val_refs = (; sites_validation, indices_sites_validation, sites_testing, indices_sites_testing),
+    total_constraints = length(info.optimization.observational_constraints),
+    forward_args,
+    loss_fargs = (lossSite, getInnerArgs)
+);
+
+checkpoint_path = "$(info.output.dirs.data)/HyALL_ALL_kσ_$(k_σ)_fold_$(_nfold)_nlayers_$(nlayers)_n_neurons_$(n_neurons)_$(n_epochs)epochs_batch_size_$(batch_size)/"
+
+mkpath(checkpoint_path)
+
+@info checkpoint_path
+mixedGradientTraining(grads_lib, mlBaseline, in_gargs.train_refs, in_gargs.test_val_refs, in_gargs.total_constraints, in_gargs.loss_fargs, in_gargs.forward_args; n_epochs=n_epochs, path_experiment=checkpoint_path)

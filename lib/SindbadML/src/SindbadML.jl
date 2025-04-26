@@ -39,6 +39,7 @@ using Base.Iterators: repeated, partition
 using Random
 using JLD2
 
+include("SindbadMLTypes.jl")
 include("utilsML.jl")
 include("diffCaches.jl")
 include("neuralNetwork.jl")

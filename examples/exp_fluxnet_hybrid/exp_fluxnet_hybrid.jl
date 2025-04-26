@@ -149,10 +149,9 @@ input_args = (
 grads_lib = ForwardDiffGrad();
 loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
 
-@time gg = gradientPolyester(grads_lib, loc_params, 2, lossSite, inner_args...)
+@time gg = gradientSite(grads_lib, loc_params, 2, lossSite, inner_args...)
 
-gradientBatchPolyester!(grads_lib, grads_batch, 2, lossSite, getInnerArgs,
-    input_args...; showprog=true)
+gradientBatch!(grads_lib, grads_batch, 2, lossSite, getInnerArgs, input_args...; showprog=true)
 
 # ? training arguments
 chunk_size = 2
