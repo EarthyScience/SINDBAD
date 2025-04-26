@@ -171,7 +171,6 @@ function gradientBatch! end
 
 function gradientBatch!(grads_lib::PolyesterForwardDiffGrad, dx_batch, chunk_size::Int,
     loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
-    println("am here")
     mapfun = showprog ? progress_pmap : pmap
     result = mapfun(CachingPool(workers()), axes(dx_batch, 2)) do idx
         x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)
@@ -187,9 +186,9 @@ function gradientBatch!(grads_lib::SindbadMLGradType, dx_batch, chunk_size::Int,
         # of Threads.@threads macro.
         # See <https://github.com/JuliaLang/julia/issues/21017>
 
-        p = Progress(length(dx_batch); desc="Computing batch grads...", color=:yellow, enabled=showprog)
+        p = Progress(length(axes(dx_batch,2)); desc="Computing batch grads...", color=:cyan, enabled=showprog)
         @sync begin
-            for idx ∈ eachindex(dx_batch)
+            for idx ∈ axes(dx_batch, 2)
                 Threads.@spawn begin
                     x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)
                     gg = gradientSite(grads_lib, x_vals, chunk_size, loss_f, inner_args...)    
