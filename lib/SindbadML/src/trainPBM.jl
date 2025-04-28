@@ -152,6 +152,14 @@ function gradientSite(grads_lib::ZygoteGrad, x_vals::AbstractArray, _,loss_f::F,
     return Zygote.gradient(loss_tmp, x_vals)
 end
 
+function gradientSite(grads_lib::EnzymeGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    # does not work with `Enzyme.gradient!` but is kept here as placeholder for future development
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    # Ensure x_vals is a mutable array (Vector)
+    x_vals = collect(copy(x_vals))  # Convert to a mutable array if necessary
+    # x_vals = copy(x_vals)
+    return Enzyme.gradient(Forward, loss_tmp, x_vals)
+end
 
 """
     gradientBatch!(grads_lib, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)

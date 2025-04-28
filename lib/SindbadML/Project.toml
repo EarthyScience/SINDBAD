@@ -6,6 +6,7 @@ version = "0.1.0"
 [deps]
 DiskArrays = "3c3547ce-8d99-4f5e-a174-61eb10b00ae3"
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
 FiniteDiff = "6a86dc24-6348-571c-b903-95158fe2bd41"
 FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
@@ -27,14 +28,15 @@ SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
+[sources]
+Sindbad = {path = "../.."}
+SindbadData = {path = "../../lib/SindbadData"}
+SindbadMetrics = {path = "../../lib/SindbadMetrics"}
+SindbadSetup = {path = "../../lib/SindbadSetup"}
+SindbadTEM = {path = "../../lib/SindbadTEM"}
+SindbadUtils = {path = "../../lib/SindbadUtils"}
+
 [compat]
 DiskArrays = "0.4.11"
+Enzyme = "0.13.38"
 PolyesterForwardDiff = "0.1.2"
-
-[sources]
-Sindbad = { path = "../.." }
-SindbadUtils = { path = "../../lib/SindbadUtils"}
-SindbadData = { path = "../../lib/SindbadData"}
-SindbadMetrics = { path = "../../lib/SindbadMetrics"}
-SindbadSetup = { path = "../../lib/SindbadSetup"}
-SindbadTEM = { path = "../../lib/SindbadTEM"}

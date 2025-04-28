@@ -25,6 +25,7 @@ using SindbadData.YAXArrays
 using SindbadData.Zarr
 using SindbadData.AxisKeys
 using SindbadData: AllNaN
+using Enzyme
 using Flux
 using Optimisers
 using FiniteDiff

@@ -1,3 +1,4 @@
+export EnzymeGrad
 export FiniteDifferencesGrad
 export FiniteDiffGrad
 export ForwardDiffGrad
@@ -6,6 +7,7 @@ export SindbadMLGradType
 export ZygoteGrad
 
 abstract type SindbadMLGradType end
+struct EnzymeGrad <: SindbadMLGradType  end
 struct FiniteDifferencesGrad <: SindbadMLGradType end
 struct FiniteDiffGrad <: SindbadMLGradType end
 struct ForwardDiffGrad <: SindbadMLGradType end

@@ -7,6 +7,9 @@ using SindbadML
 using SindbadML.JLD2
 using ProgressMeter
 using SindbadOptimization
+using SindbadML.Zygote
+import AbstractDifferentiation as AD, Zygote
+
 
 # extra includes for covariate and activation functions
 include("load_covariates.jl")
@@ -142,8 +145,14 @@ grads_lib = FiniteDifferencesGrad();
 grads_lib = FiniteDiffGrad();
 grads_lib = PolyesterForwardDiffGrad();
 # grads_lib = ZygoteGrad();
+# grads_lib = EnzymeGrad();
+backend = AD.ZygoteBackend();
 
 loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
+
+loss_tmp(x) = lossSite(x, grads_lib, inner_args...)
+
+AD.gradient(backend, loss_tmp, collect(loc_params))
 
 @time gg = gradientSite(grads_lib, loc_params, 2, lossSite, inner_args...)
 
