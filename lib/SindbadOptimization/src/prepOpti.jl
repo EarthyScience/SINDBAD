@@ -4,13 +4,13 @@ export prepOpti
 export prepParameters
 
 """
-    getCostVectorSize(algo_options, vector_parameters, ::SindbadOptimizationMethod || SindbadGlobalSensitivityMethod)
+    getCostVectorSize(algo_options, parameter_vector, ::SindbadOptimizationMethod || SindbadGlobalSensitivityMethod)
 
 Calculates the size of the cost vector required for a specific optimization or sensitivity analysis method.
 
 # Arguments:
 - `algo_options`: A NamedTuple or dictionary containing algorithm-specific options (e.g., population size, number of trajectories).
-- `vector_parameters`: A vector of parameters used in the optimization or sensitivity analysis.
+- `parameter_vector`: A vector of parameters used in the optimization or sensitivity analysis.
 - `::OptimizationMethod`: The optimization or sensitivity analysis method. Supported methods include:
     - `CMAEvolutionStrategyCMAES`: Covariance Matrix Adaptation Evolution Strategy.
     - `GlobalSensitivityMorris`: Morris method for global sensitivity analysis.
@@ -28,14 +28,14 @@ Calculates the size of the cost vector required for a specific optimization or s
 """
 getCostVectorSize
 
-function getCostVectorSize(algo_options, vector_parameters, ::CMAEvolutionStrategyCMAES)
+function getCostVectorSize(algo_options, parameter_vector, ::CMAEvolutionStrategyCMAES)
     cost_vector_size = Threads.nthreads()
     if hasproperty(algo_options, :multi_threading)
         if algo_options.multi_threading
             if hasproperty(algo_options, :popsize)
                 cost_vector_size = algo_options.popsize
             else
-                cost_vector_size = 4 + floor(Int, 3 * log(length(vector_parameters)))
+                cost_vector_size = 4 + floor(Int, 3 * log(length(parameter_vector)))
             end
         end
     end
@@ -57,10 +57,10 @@ function getCostVectorSize(algo_options, __precompile__, ::GlobalSensitivityMorr
 end
 
 
-function getCostVectorSize(algo_options, vector_parameters, ::GlobalSensitivitySobol)
+function getCostVectorSize(algo_options, parameter_vector, ::GlobalSensitivitySobol)
     default_opt = sindbadDefaultOptions(GlobalSensitivitySobol())
     samples = default_opt.samples
-    nparam = length(vector_parameters)
+    nparam = length(parameter_vector)
     norder = length(algo_options.method_options.order) - 1
     if hasproperty(algo_options, :samples)
         samples = algo_options.samples
@@ -70,8 +70,8 @@ function getCostVectorSize(algo_options, vector_parameters, ::GlobalSensitivityS
 end
 
 
-function getCostVectorSize(algo_options, vector_parameters, ::GlobalSensitivitySobolDM)
-    return getCostVectorSize(algo_options, vector_parameters, GlobalSensitivitySobol())
+function getCostVectorSize(algo_options, parameter_vector, ::GlobalSensitivitySobolDM)
+    return getCostVectorSize(algo_options, parameter_vector, GlobalSensitivitySobol())
 end
 
 """
@@ -154,7 +154,7 @@ Prepares optimization parameters, settings, and helper functions based on the pr
 
 # Returns:
 - A NamedTuple `opti_helpers` containing:
-  - `table_parameters`: Processed model parameters for optimization.
+  - `parameter_table`: Processed model parameters for optimization.
   - `cost_function`: A function to compute the cost for optimization.
   - `cost_options`: Options and settings for the cost function.
   - `default_values`: Default parameter values for the models.
@@ -182,7 +182,7 @@ function  prepOpti(forcing, observations, info, ::CostModelObsMT; algorithm_info
     
     space_index = 1 # the parallelization of cost computation only runs in single pixel runs
 
-    cost_function = x -> cost(x, opti_helpers.default_values, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, deepcopy(run_helpers.space_land[space_index]), run_helpers.tem_info, observations, opti_helpers.table_parameters, opti_helpers.cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, cost_vector, info.optimization.optimization_cost_method)
+    cost_function = x -> cost(x, opti_helpers.default_values, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, deepcopy(run_helpers.space_land[space_index]), run_helpers.tem_info, observations, opti_helpers.parameter_table, opti_helpers.cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, cost_vector, info.optimization.optimization_cost_method)
 
     opti_helpers = (; opti_helpers..., cost_function=cost_function, cost_vector=cost_vector)
     return opti_helpers
@@ -192,7 +192,7 @@ function  prepOpti(forcing, observations, info, ::CostModelObsLandTS)
     opti_helpers = prepOpti(forcing, observations, info, CostModelObs())
     run_helpers = opti_helpers.run_helpers
 
-    cost_function = x -> costLand(x, info.models.forward, run_helpers.loc_forcing, run_helpers.loc_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.land_time_series, run_helpers.loc_land, run_helpers.tem_info, observations, opti_helpers.table_parameters, opti_helpers.cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)
+    cost_function = x -> costLand(x, info.models.forward, run_helpers.loc_forcing, run_helpers.loc_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.land_time_series, run_helpers.loc_land, run_helpers.tem_info, observations, opti_helpers.parameter_table, opti_helpers.cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)
 
     opti_helpers = (; opti_helpers..., cost_function=cost_function)
     
@@ -203,39 +203,39 @@ end
 function  prepOpti(forcing, observations, info, optimization_cost_method::CostModelObs)
     run_helpers = prepTEM(forcing, info)
 
-    param_helpers = prepParameters(info.optimization.table_parameters, info.optimization.optimization_parameter_scaling)
+    parameter_helpers = prepParameters(info.optimization.parameter_table, info.optimization.optimization_parameter_scaling)
     
-    table_parameters = param_helpers.table_parameters
-    default_values = param_helpers.default_values
-    lower_bounds = param_helpers.lower_bounds
-    upper_bounds = param_helpers.upper_bounds
+    parameter_table = parameter_helpers.parameter_table
+    default_values = parameter_helpers.default_values
+    lower_bounds = parameter_helpers.lower_bounds
+    upper_bounds = parameter_helpers.upper_bounds
 
     cost_options = prepCostOptions(observations, info.optimization.cost_options, optimization_cost_method)
 
-    cost_function = x -> cost(x, default_values, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, deepcopy(run_helpers.space_land), run_helpers.tem_info, observations, table_parameters, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, optimization_cost_method)
+    cost_function = x -> cost(x, default_values, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, deepcopy(run_helpers.space_land), run_helpers.tem_info, observations, parameter_table, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, optimization_cost_method)
 
-    opti_helpers = (; table_parameters=table_parameters, cost_function=cost_function, cost_options=cost_options, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds, run_helpers=run_helpers)
+    opti_helpers = (; parameter_table=parameter_table, cost_function=cost_function, cost_options=cost_options, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds, run_helpers=run_helpers)
     
     return opti_helpers
 end
 
 
 """
-    prepParameters(table_parameters, parameter_scaling)
+    prepParameters(parameter_table, parameter_scaling)
 
 Prepare model parameters for optimization by processing default and bounds of the parameters to be optimized.
 
 # Arguments
-- `table_parameters`: Table of the parameters to be optimized
+- `parameter_table`: Table of the parameters to be optimized
 - `parameter_scaling`: Scaling method/type for parameter optimization
 
 # Returns
 A tuple containing processed parameters ready for optimization
 """
-function prepParameters(table_parameters, parameter_scaling)
+function prepParameters(parameter_table, parameter_scaling)
     
-    default_values, lower_bounds, upper_bounds = scaleParameters(table_parameters, parameter_scaling)
+    default_values, lower_bounds, upper_bounds = scaleParameters(parameter_table, parameter_scaling)
 
-    param_helpers = (; table_parameters=table_parameters, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds)
-    return param_helpers
+    parameter_helpers = (; parameter_table=parameter_table, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds)
+    return parameter_helpers
 end

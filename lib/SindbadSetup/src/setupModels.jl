@@ -47,12 +47,12 @@ Retrieves the list of all SINDBAD models, either from the provided `info` object
 function getAllSindbadModels(info; sindbad_models=standard_sindbad_models)
     if hasproperty(info.settings.model_structure, :sindbad_models)
         sindbad_models = info.settings.model_structure.sindbad_models
-        @info "      Using non-standard model order and list from model_structure.sindbad_models: "
+        @info "  ....using non-standard model order and list from model_structure.sindbad_models: "
     else
-        @info "      Using standard model order and list from standard_sindbad_models: "
+        @info "  ....using standard model order and list from standard_sindbad_models: "
     end
         foreach((Pair.(eachindex(sindbad_models), sindbad_models))) do sm
-            @info "         $(sm)"
+            @info "        $(sm)"
         end
     return sindbad_models
 end
@@ -103,6 +103,7 @@ Retrieves and orders the list of selected models based on the configuration in `
 - Orders the models as specified in `standard_sindbad_models`.
 """
 function setOrderedSelectedModels(info::NamedTuple)
+    @info "  setOrderedSelectedModels: setting Ordered Selected Models..."
     selected_models = collect(propertynames(info.settings.model_structure.models))
     sindbad_models = getAllSindbadModels(info)
     checkSelectedModels(sindbad_models, selected_models)
@@ -137,6 +138,7 @@ Configures the spinup and forward models for the experiment.
 - Updates model parameters if additional parameter values are provided in the experiment configuration.
 """
 function setSpinupAndForwardModels(info::NamedTuple)
+    @info "  setSpinupAndForwardModels: setting Spinup and Forward Models..."
     selected_approach_forward = ()
     selected_approach_spinup = ()
     is_spinup = Int64[]
@@ -163,15 +165,16 @@ function setSpinupAndForwardModels(info::NamedTuple)
     is_spinup = findall(is_spinup .== 1)
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
-    params_table = getParameters(selected_approach_forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution)
+    parameter_table = getParameters(selected_approach_forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution)
 
     if hasproperty(info[:settings], :parameters) && !isempty(info.settings.parameters)
-        original_params_table = params_table
-        input_params_table = info.settings.parameters
-        updated_params_table = setInputParameters(original_params_table, input_params_table)
-        selected_approach_forward = updateModelParameters(updated_params_table, selected_approach_forward, updated_params_table.optim)
-        params_table = updated_params_table
+        @info "  ....setSpinupAndForwardModels: using input parameters from settings.parameters to override the default parameters."
+        original_parameter_table = parameter_table
+        input_parameter_table = info.settings.parameters
+        updated_parameter_table = setInputParameters(original_parameter_table, input_parameter_table)
+        selected_approach_forward = updateModelParameters(updated_parameter_table, selected_approach_forward, updated_parameter_table.optimized)
+        parameter_table = updated_parameter_table
     end
-    info = (; info..., temp=(; info.temp..., models=(; info.temp.models..., forward=selected_approach_forward, is_spinup=is_spinup, table_parameters=params_table))) 
+    info = (; info..., temp=(; info.temp..., models=(; info.temp.models..., forward=selected_approach_forward, is_spinup=is_spinup, parameter_table=parameter_table))) 
     return info
 end
