@@ -2,6 +2,14 @@
 
 SINDBAD allows for model runs using parameters that are different from default parameter values defined within each model. This functionality primarily enables forward model runs or optimization or any experiment using either optimized parameters from SINDBAD optimization experiments or using custom values from literature.
 
+
+:::info
+
+The loaded/generated parameter table are saved in SINDBAD `info` under
+- `info.models.parameter_table`: the table of all model parameters in the model structure
+- `info.optimization.parameter_table`: the table of all model parameters that are to be optimized, only available when optimization/cost calculation is on.
+:::
+
 ### Parameter Input Methods
 
 Parameters can be set through two main methods:
@@ -90,4 +98,4 @@ model_id,name,actual,default,optimized,lower,upper,timescale_run,units,timescale
 SINDBAD performs several validation checks on parameters:
 1. Parameter bounds are checked to ensure values fall within specified ranges
 2. Unit conversions are handled appropriately based on timescales
-3. *Parameter loaded from files should have consistent units as the experiment, as the unit conversion is not applied to input parameters from files.*
+3. *Parameter loaded from files are converted to the units consistent with the current model run time step. This is done by comparing timescale_run in the input parameters with the experiment model time step. Double check the parameter values and units in `info.models.parameter_table` or `info.optimization.parameter_table`*
