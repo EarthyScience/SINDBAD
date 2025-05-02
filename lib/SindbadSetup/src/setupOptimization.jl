@@ -4,27 +4,27 @@ export setOptimization
 
 
 """
-    checkOptimizedParametersInModels(info::NamedTuple, tbl_params)
+    checkOptimizedParametersInModels(info::NamedTuple, table_parameters)
 
 Checks if the parameters listed in `model_parameters_to_optimize` from `optimization.json` exist in the selected model structure from `model_structure.json`.
 
 # Arguments:
 - `info`: A NamedTuple containing the experiment configuration.
-- `tbl_params`: A table of parameters extracted from the model structure.
+- `table_parameters`: A table of parameters extracted from the model structure.
 
 # Notes:
 - Issues a warning and throws an error if any parameter in `model_parameters_to_optimize` does not exist in the model structure.
 """
-function checkOptimizedParametersInModels(info::NamedTuple, tbl_params)
+function checkOptimizedParametersInModels(info::NamedTuple, table_parameters)
     # @show info.settings.optimization.observations, info.settings.optimization.model_parameters_to_optimize
-    model_parameters = tbl_params.name_full
+    model_parameters = table_parameters.name_full
     # @show model_parameters
     optim_parameters = info.settings.optimization.model_parameters_to_optimize
     op_names = nothing
     if typeof(optim_parameters) <: Vector
-        op_names = replaceCommaSeparatorParams(optim_parameters)
+        op_names = replaceCommaSeparatedParams(optim_parameters)
     else
-        op_names = replaceCommaSeparatorParams(keys(optim_parameters))
+        op_names = replaceCommaSeparatedParams(keys(optim_parameters))
     end
 
     for omp ∈ eachindex(op_names)
@@ -191,12 +191,12 @@ function getConstraintNames(optim::NamedTuple)
 end
 
 """
-    getParamModelIDVal(tbl_params)
+    getParamModelIDVal(table_parameters)
 
 Generates a `Val` object containing tuples of parameter names and their corresponding model IDs.
 
 # Arguments:
-- `tbl_params`: A table of parameters with their names and model IDs.
+- `table_parameters`: A table of parameters with their names and model IDs.
 
 # Returns:
 - A `Val` object containing tuples of parameter names and model IDs.
@@ -204,9 +204,9 @@ Generates a `Val` object containing tuples of parameter names and their correspo
 # Notes:
 - Parameter names are transformed to a unique format by replacing dots with underscores.
 """
-function getParamModelIDVal(tbl_params)
-    param_names = Symbol.(replace.(tbl_params.name_full, "." => "____"))
-    model_id = tbl_params.model_id;
+function getParamModelIDVal(table_parameters)
+    param_names = Symbol.(replace.(table_parameters.name_full, "." => "____"))
+    model_id = table_parameters.model_id;
     param_id_tuple=Tuple(map(param_names, model_id) do p,m
         (p, m)
     end)
@@ -294,12 +294,10 @@ function setOptimization(info::NamedTuple)
     # set algorithm related options
     info = setAlgorithmOptions(info, :algorithm_optimization)
     info = setAlgorithmOptions(info, :algorithm_sensitivity_analysis)
+    table_parameters = getOptimizationParametersTable(info.temp.models.table_parameters, info.settings.optimization.model_parameter_default, info.settings.optimization.model_parameters_to_optimize)
+    checkOptimizedParametersInModels(info, table_parameters)
 
-    tbl_params = getParameters(info.temp.models.forward,
-    info.settings.optimization.model_parameter_default, info.settings.optimization.model_parameters_to_optimize, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution, show_info=true);
-    checkOptimizedParametersInModels(info, tbl_params)
-
-    param_model_id_val = getParamModelIDVal(tbl_params)
+    param_model_id_val = getParamModelIDVal(table_parameters)
     info = setTupleSubfield(info, :optimization, (:param_model_id_val, param_model_id_val))
 
     # get the variables to be used during optimization
@@ -313,6 +311,7 @@ function setOptimization(info::NamedTuple)
     info = updateVariablesToStore(info)
     cost_options = getCostOptions(info.settings.optimization, vars_info, info.temp.output.variables, info.temp.helpers.numbers, info.temp.helpers.dates)
     info = setTupleSubfield(info, :optimization, (:cost_options, cost_options))
+    info = setTupleSubfield(info, :optimization, (:table_parameters, table_parameters))
     return info
 end
 

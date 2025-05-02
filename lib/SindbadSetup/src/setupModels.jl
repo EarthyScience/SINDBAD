@@ -163,12 +163,15 @@ function setSpinupAndForwardModels(info::NamedTuple)
     is_spinup = findall(is_spinup .== 1)
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
+    params_table = getParameters(selected_approach_forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution)
+
     if hasproperty(info[:settings], :parameters) && !isempty(info.settings.parameters)
-        original_params_table = getParameters(selected_approach_forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution)
+        original_params_table = params_table
         input_params_table = info.settings.parameters
         updated_params_table = setInputParameters(original_params_table, input_params_table)
         selected_approach_forward = updateModelParameters(updated_params_table, selected_approach_forward, updated_params_table.optim)
+        params_table = updated_params_table
     end
-    info = (; info..., temp=(; info.temp..., models=(; info.temp.models..., forward=selected_approach_forward, is_spinup=is_spinup))) 
+    info = (; info..., temp=(; info.temp..., models=(; info.temp.models..., forward=selected_approach_forward, is_spinup=is_spinup, table_parameters=params_table))) 
     return info
 end

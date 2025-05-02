@@ -448,7 +448,7 @@ function setupInfo(info::NamedTuple)
     @info "  setupInfo: Cleaning Info Fields..."
     info = dropFields(info, (:model_structure, :experiment, :output, :pools))
     info = (; info..., info.temp...)
-    # info = dropFields(info, (:temp,))
+    info = dropFields(info, (:temp, ))
     return info
 end
 
