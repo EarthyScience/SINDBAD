@@ -15,6 +15,7 @@ Initializes the land state by creating a NamedTuple with pools, states, and sele
 - A NamedTuple containing initialized pools, states, fluxes, diagnostics, properties, models, and constants.
 """
 function createInitLand(pool_info, tem)
+    @info "  createInitLand: creating Initial Land..."
     init_pools = createInitPools(pool_info, tem.helpers)
     initial_states = createInitStates(pool_info, tem.helpers)
     out = (; fluxes=(;), pools=(; init_pools..., initial_states...), states=(;), diagnostics=(;), properties=(;), models=(;), constants=(;))
@@ -38,6 +39,7 @@ Parses and saves the code and structs of the selected model structure for the gi
 - Also writes the parameter structs for the models.
 """
 function parseSaveCode(info)
+    @info "  parseSaveCode: saving Selected Models Code..."
     models = info.temp.models.forward
     outfile_define = joinpath(info.output.dirs.code, info.temp.experiment.basics.name * "_" * info.temp.experiment.basics.domain * "_model_definitions.jl")
     outfile_code = joinpath(info.output.dirs.code, info.temp.experiment.basics.name * "_" * info.temp.experiment.basics.domain * "_model_functions.jl")
@@ -191,6 +193,7 @@ Fills `info.temp.helpers.dates` with date and time-related fields needed in the 
 - The updated `info` NamedTuple with date-related fields added.
 """
 function setDatesInfo(info::NamedTuple)
+    @info "  setDatesInfo: setting Dates Helpers..."
     tmp_dates = (;)
     time_info = getfield(info.settings.experiment.basics, :time)
     time_props = propertynames(time_info)
@@ -224,6 +227,7 @@ Sets up model run flags and output array types for the experiment.
 - The updated `info` NamedTuple with model run flags and output array types added.
 """
 function setModelRunInfo(info::NamedTuple)
+    @info "  setModelRunInfo: setting Model Run Flags..."
     if info.settings.experiment.flags.run_optimization
         info = @set info.settings.experiment.flags.catch_model_errors = false
     end
@@ -256,6 +260,7 @@ Prepares numeric helpers for maintaining consistent data types across models.
 - The updated `info` NamedTuple with numeric helpers added.
 """
 function setNumericHelpers(info::NamedTuple, ttype=info.settings.experiment.exe_rules.model_number_type)
+    @info "  setNumericHelpers: setting Numeric Helpers..."
     num_type = getNumberType(ttype)
 
     tolerance = num_type(info.settings.experiment.exe_rules.tolerance)
@@ -353,6 +358,7 @@ Processes the spinup configuration and prepares the spinup sequence.
 - The updated `info` NamedTuple with spinup-related fields added.
 """
 function setSpinupInfo(info)
+    @info "  setSpinupInfo: setting Spinup Info..."
     info = setRestartFilePath(info)
     infospin = info.settings.experiment.model_spinup
     # change spinup sequence dispatch variables to Val, get the temporal aggregators
@@ -376,6 +382,7 @@ Copies basic experiment information into the temporary experiment configuration.
 - The updated `info` NamedTuple with basic experiment information added.
 """
 function setExperimentBasics(info)
+    @info "  setExperimentBasics: setting Basic Experiment Info..."
     ex_basics = info.settings.experiment.basics
     ex_basics_sel = (;)
     for k in propertynames(ex_basics)
@@ -403,41 +410,43 @@ Processes the experiment configuration and sets up all necessary fields for mode
 - The updated `info` NamedTuple with all necessary fields for model simulation.
 """
 function setupInfo(info::NamedTuple)
-    @info "  setupInfo: setting Basic Experiment Info..."
+    @info "setupInfo: Setting and consolidating Experiment Info..."
     info = setExperimentBasics(info)
-    @info "  setupInfo: setting Output Basics..."
+    # @info "  setupInfo: setting Output Basics..."
     info = setExperimentOutput(info)
-    @info "  setupInfo: setting Numeric Helpers..."
+    # @info "  setupInfo: setting Numeric Helpers..."
     info = setNumericHelpers(info)
-    @info "  setupInfo: setting Pools Info..."
+    # @info "  setupInfo: setting Pools Info..."
     info = setPoolsInfo(info)
-    @info "  setupInfo: setting Dates Helpers..."
+    # @info "  setupInfo: setting Dates Helpers..."
     info = setDatesInfo(info)
-    @info "  setupInfo: setting Model Structure..."
+    # @info "  setupInfo: setting Model Structure..."
     info = setOrderedSelectedModels(info)
+    # @info "  setupInfo: setting Spinup and Forward Models..."
     info = setSpinupAndForwardModels(info)
 
-    @info "  setupInfo:         ...saving Selected Models Code..."
+    # @info "  setupInfo:         ...saving Selected Models Code..."
     _ = parseSaveCode(info)
 
     # add information related to model run
-    @info "  setupInfo: setting Model Run Flags..."
+    # @info "  setupInfo: setting Model Run Flags..."
     info = setModelRunInfo(info)
-    @info "  setupInfo: setting Spinup Info..."
+    # @info "  setupInfo: setting Spinup Info..."
     info = setSpinupInfo(info)
 
-    @info "  setupInfo: setting Model Output Info..."
+    # @info "  setupInfo: setting Model Output Info..."
     info = setModelOutput(info)
 
-    @info "  setupInfo: creating Initial Land..."
+    # @info "  setupInfo: creating Initial Land..."
     land_init = createInitLand(info.pools, info.temp)
-    info = setTupleField(info, (:land_init, land_init)) 
+    info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., land_init=land_init)))
 
     if (info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost) && hasproperty(info.settings.optimization, :algorithm_optimization)
-        @info "  setupInfo: setting Optimization and Observation info..."
+        # @info "  setupInfo: setting Optimization and Observation info..."
         info = setOptimization(info)
     else
-        getParameters(info.temp.models.forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution, show_info=true);
+        parameter_table = info.temp.models.parameter_table
+        checkParameterBounds(parameter_table.name, parameter_table.actual, parameter_table.lower, parameter_table.upper, ScaleNone(), show_info=true, model_names=parameter_table.model_approach)
      end
 
     if !isnothing(info.settings.experiment.exe_rules.longtuple_size)

@@ -330,37 +330,37 @@ end
 function getTypedModel(model::Symbol, model_timestep="day", num_type=Float64)
     model_obj = getfield(Sindbad.Models, model)
     model_instance = model_obj()
-    param_names = fieldnames(model_obj)
-    if length(param_names) > 0
-        param_vals = []
-        for pn ∈ param_names
+    parameter_names = fieldnames(model_obj)
+    if length(parameter_names) > 0
+        parameter_vals = []
+        for pn ∈ parameter_names
             param = getParameterValue(model_obj(), pn, model_timestep)
             # param = getfield(model_obj(), pn)
-            param_typed = if typeof(param) <: Array
+            parameter_typed = if typeof(param) <: Array
                 num_type.(param)
             else
                 num_type(param)
             end
-            push!(param_vals, param_typed)
+            push!(parameter_vals, parameter_typed)
         end
-        model_instance = model_obj(param_vals...)
+        model_instance = model_obj(parameter_vals...)
     end
     return model_instance
 end
 
 """
-    getParameterValue(model, param_name, model_timestep)
+    getParameterValue(model, parameter_name, model_timestep)
 
 get a value of a given model parameter with units corrected
 
 # Arguments:
 - `model`: selected model
-- `param_name`: name of the parameter
+- `parameter_name`: name of the parameter
 - `model_timestep`: time step of the model run
 """
-function getParameterValue(model, param_name, model_timestep)
-    param = getfield(model, param_name)
-    p_timescale = Sindbad.Models.timescale(model, param_name)
+function getParameterValue(model, parameter_name, model_timestep)
+    param = getfield(model, parameter_name)
+    p_timescale = Sindbad.Models.timescale(model, parameter_name)
     # return param
     return param * getUnitConversionForParameter(p_timescale, model_timestep)
 end

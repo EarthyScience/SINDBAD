@@ -212,7 +212,6 @@ function  prepOpti(forcing, observations, info, optimization_cost_method::CostMo
 
     cost_options = prepCostOptions(observations, info.optimization.cost_options, optimization_cost_method)
 
-    # param_model_id_val = info.optimization.param_model_id_val
     cost_function = x -> cost(x, default_values, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, deepcopy(run_helpers.space_land), run_helpers.tem_info, observations, table_parameters, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, optimization_cost_method)
 
     opti_helpers = (; table_parameters=table_parameters, cost_function=cost_function, cost_options=cost_options, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds, run_helpers=run_helpers)

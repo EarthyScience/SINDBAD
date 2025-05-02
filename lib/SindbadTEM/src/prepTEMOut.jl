@@ -370,7 +370,7 @@ variables = output_tuple.variables
 """
 function prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
     @info "  prepTEMOut: preparing output and helpers..."
-    land = info.land_init
+    land = info.helpers.land_init
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land))
     @debug "     prepTEMOut: getting out variables, dimension and arrays..."
