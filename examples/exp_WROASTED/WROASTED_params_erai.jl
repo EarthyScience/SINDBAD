@@ -106,7 +106,7 @@ for o_set in opti_set
     path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
     exp_name_params = "$(exp_main_params)_$(forcing_set)_$(o_set)"
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
-    params_file = joinpath(path_params, "$(domain)_$(exp_name_params)", "optimization", "$(exp_name_params)_$(domain)_model_parameters_to_optimize.csv")
+    params_file = joinpath(path_params, "$(domain)_$(exp_name_params)", "optimization", "$(exp_name_params)_$(domain)_model_parameters_optimized.csv")
 
     replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
         "experiment.basics.config_files.forcing" => forcing_config,

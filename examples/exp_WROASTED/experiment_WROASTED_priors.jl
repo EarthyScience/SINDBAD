@@ -109,13 +109,11 @@ develop_f =
         # using StatsPlots
         # plot(d)
 
-        tbl_params = getParameters(tem.models.forward, optim.model_parameter_default,
-            optim.model_parameters_to_optimize,
-            info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
+        table_parameters = info.optimization.table_parameters;
         # get the default and bounds
-        default_values = tem.helpers.numbers.num_type.(tbl_params.default)
-        lower_bounds = tem.helpers.numbers.num_type.(tbl_params.lower)
-        upper_bounds = tem.helpers.numbers.num_type.(tbl_params.upper)
+        default_values = tem.helpers.numbers.num_type.(table_parameters.default)
+        lower_bounds = tem.helpers.numbers.num_type.(table_parameters.lower)
+        upper_bounds = tem.helpers.numbers.num_type.(table_parameters.upper)
 
         run_helpers = prepTEM(forcing, info)
 
@@ -136,9 +134,9 @@ develop_f =
             end
             local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
             #
-            # tbl_params.optim .= popt  # TODO replace mutation
+            # table_parameters.optim .= popt  # TODO replace mutation
 
-            updated_models = updateModelParameters(tbl_params, tem.models.forward, popt)
+            updated_models = updateModelParameters(table_parameters, tem.models.forward, popt)
             # TODO run model with updated parameters
 
             @time runTEM!(updated_models,

@@ -66,7 +66,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 
 out_sensitivity = runExperimentSensitivity(experiment_json; replace_info=replace_info, log_level=:info);
 info = out_sensitivity.info;
-param_names=String.(out_sensitivity.tbl_params.name);
+param_names=String.(out_sensitivity.table_parameters.name);
 
 sa_method = nameof(typeof(info.optimization.algorithm_sensitivity_analysis.method))
 if sa_method in (:GlobalSensitivitySobol, :GlobalSensitivitySobolDM)

@@ -58,13 +58,13 @@ run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
+table_parameters = info.optimization.table_parameters;
 
-# new_params = tbl_params.default;
-new_params = getParamsAct(new_params, tbl_params)
+# new_params = table_parameters.default;
+new_params = getParamsAct(new_params, table_parameters)
 
 models = info.models.forward;
-param_to_index = getParameterIndices(models, tbl_params);
+param_to_index = getParameterIndices(models, table_parameters);
 
 new_models = updateModelParameters(param_to_index, models, new_params)
 

@@ -18,13 +18,13 @@ experiment_json = "../exp_hybridNN/settings_hybridNN/experiment.json"
 
 info = getExperimentInfo(experiment_json);
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
+table_parameters = info.optimization.table_parameters;
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 
 selected_models = info.models.forward;
-param_to_index = getParameterIndices(selected_models, tbl_params);
+param_to_index = getParameterIndices(selected_models, table_parameters);
 
 run_helpers = prepTEM(selected_models, forcing, observations, info);
 
@@ -110,7 +110,7 @@ indices_sites_training = siteNameToID.(sites_training, Ref(sites_forcing));
 # NN 
 n_epochs = 25;
 n_neurons = 32;
-n_params = sum(tbl_params.is_ml);
+n_params = sum(table_parameters.is_ml);
 shuffle_opt = true;
 ml_baseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=batch_seed * 2);
 parameters_sites = ml_baseline(xfeatures);
@@ -120,7 +120,7 @@ grads_batch = zeros(Float32, n_params, length(sites_training));
 sites_batch = sites_training;#[1:n_sites_train];
 indices_sites_batch = indices_sites_training;
 params_batch = parameters_sites(; site=sites_batch);
-scaled_params_batch = getParamsAct(params_batch, tbl_params);
+scaled_params_batch = getParamsAct(params_batch, table_parameters);
 
 gradient_lib = ForwardDiffGrad();
 gradient_lib = FiniteDiffGrad();
@@ -129,7 +129,7 @@ gradient_lib = FiniteDiffGrad();
 @time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_sites_batch, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
 
 # machine learning parameters baseline
-@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.dirs.data,name="seq_training_output")
+@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, table_parameters, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.dirs.data,name="seq_training_output")
 
 f_suffix = "_epoch-$(n_epochs)_batch-size-$(batch_size)-seed-$(batch_seed)_$(nameof(typeof(gradient_lib)))"
 using CairoMakie

@@ -22,7 +22,7 @@ run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
+table_parameters = info.optimization.table_parameters;
 
 function g_cost(x,
     mods,
@@ -34,7 +34,7 @@ function g_cost(x,
     space_land,
     tem_info,
     observations,
-    tbl_params,
+    table_parameters,
     cost_options,
     multi_constraint_method)
     l = cost(x,
@@ -49,14 +49,14 @@ function g_cost(x,
         space_ind,
         tem_info,
         observations,
-        tbl_params,
+        table_parameters,
         cost_options,
         multi_constraint_method)
     return l
 end
 
 mods = info.models.forward;
-g_cost(tbl_params.default,
+g_cost(table_parameters.default,
     mods,
     run_helpers.space_forcing,
     run_helpers.space_spinup_forcing,
@@ -66,7 +66,7 @@ g_cost(tbl_params.default,
     run_helpers.space_land,
     run_helpers.tem_info,
     obs_array,
-    tbl_params,
+    table_parameters,
     cost_options,
     info.optimization.multi_constraint_method)
 
@@ -81,14 +81,14 @@ function l1(p)
         run_helpers.space_land,
         run_helpers.tem_info,
         obs_array,
-        tbl_params,
+        table_parameters,
         cost_options,
         info.optimization.multi_constraint_method)
 end
-l1(tbl_params.default)
+l1(table_parameters.default)
 rand_m = rand()
-dualDefs = ForwardDiff.Dual{info.helpers.numbers.num_type}.(tbl_params.default);
-newmods = updateModelParameters(tbl_params, mods, dualDefs);
+dualDefs = ForwardDiff.Dual{info.helpers.numbers.num_type}.(table_parameters.default);
+newmods = updateModelParameters(table_parameters, mods, dualDefs);
 
 function l2(p)
     return g_cost(p,
@@ -101,7 +101,7 @@ function l2(p)
         run_helpers.space_land,
         run_helpers.tem_info,
         obs_array,
-        tbl_params,
+        table_parameters,
         cost_options,
         info.optimization.multi_constraint_method)
 
@@ -112,16 +112,16 @@ end
 # op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_info.model_helpers.numbers.num_type},tem_info.model_helpers.numbers.num_type,10}}(undef, size(od)) for od in run_helpers.output_array];
 # op = (; op..., data=op_dat);
 
-# @time grad = ForwardDiff.gradient(l1, tbl_params.default)
+# @time grad = ForwardDiff.gradient(l1, table_parameters.default)
 
-l1(tbl_params.default .* rand_m)
-l2(tbl_params.default .* rand_m)
-
-
+l1(table_parameters.default .* rand_m)
+l2(table_parameters.default .* rand_m)
 
 
 
-@profview grad = ForwardDiff.gradient(l1, tbl_params.default)
+
+
+@profview grad = ForwardDiff.gradient(l1, table_parameters.default)
 @time grad = ForwardDiff.gradient(l2, dualDefs)
 
 a = 2

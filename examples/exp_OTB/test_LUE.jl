@@ -46,7 +46,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
-# tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
+# table_parameters = info.optimization.table_parameters;
 
 
 
@@ -77,7 +77,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 # param = lb + (ub - lb) * scalar
 
 
-# tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
+# table_parameters = info.optimization.table_parameters;
 
 
 # @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);

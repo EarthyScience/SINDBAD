@@ -34,14 +34,9 @@ end
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 selected_models = info.models.forward
 
-tbl_params = getParameters(
-    selected_models,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution);
+table_parameters = info.optimization.table_parameters;
 
-param_to_index = getParameterIndices(selected_models, tbl_params);
+param_to_index = getParameterIndices(selected_models, table_parameters);
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
@@ -105,7 +100,7 @@ function lossSiteFD(new_params, models, loc_forcing, loc_spinup_forcing,
     return t_loss
 end
 
-default_values = Float32.(tbl_params.default)
+default_values = Float32.(table_parameters.default)
 
 lossSiteFD(default_values, selected_models, loc_forcing, loc_spinup_forcing,
     loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs,
@@ -128,8 +123,8 @@ cost_functionFD = x -> lossSiteFD(x, selected_models, loc_forcing, loc_spinup_fo
 @time cost_functionFD(default_values)
 
 #? run the optimizer
-lower_bounds = tbl_params.lower
-upper_bounds = tbl_params.upper
+lower_bounds = table_parameters.lower
+upper_bounds = table_parameters.upper
 
 optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds,
     info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)

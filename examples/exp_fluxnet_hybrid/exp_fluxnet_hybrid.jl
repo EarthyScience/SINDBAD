@@ -37,14 +37,9 @@ parameter_scaling_type = info.optimization.optimization_parameter_scaling
 
 
 
-tbl_params = getParameters(
-    selected_models,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution)
+table_parameters = info.optimization.table_parameters;
 
-param_to_index = getParameterIndices(selected_models, tbl_params);
+param_to_index = getParameterIndices(selected_models, table_parameters);
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
@@ -86,7 +81,7 @@ n_features = length(nor_names_order)
 
 # ? initial neural network
 n_neurons = 32;
-n_params = sum(tbl_params.is_ml);
+n_params = sum(table_parameters.is_ml);
 batch_seed = 123;
 
 # encode-decode architecture!
@@ -115,7 +110,7 @@ sites_testing = sites_forcing[xtest];
 indices_sites_testing = siteNameToID.(sites_testing, Ref(sites_forcing));
 
 # NN 
-n_params = sum(tbl_params.is_ml);
+n_params = sum(table_parameters.is_ml);
 shuffle_opt = true;
 mlBaseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=nlayers, seed=batch_seed * 2);
 parameters_sites = mlBaseline(xfeatures);
@@ -126,7 +121,7 @@ sites_batch = sites_training;#[1:n_sites_train];
 indices_sites_batch = indices_sites_training;
 params_batch = parameters_sites(; site=sites_batch);
 # scaled_params_batch = params_batch;
-scaled_params_batch = getParamsAct(params_batch, tbl_params);
+scaled_params_batch = getParamsAct(params_batch, table_parameters);
 
 input_args = (
     scaled_params_batch,
@@ -159,7 +154,7 @@ chunk_size = 2
 metadata_global = info.output.file_info.global_metadata
 
 in_gargs=(;
-    train_refs = (; sites_training, indices_sites_training, xfeatures, tbl_params, batch_size, chunk_size, metadata_global),
+    train_refs = (; sites_training, indices_sites_training, xfeatures, table_parameters, batch_size, chunk_size, metadata_global),
     test_val_refs = (; sites_validation, indices_sites_validation, sites_testing, indices_sites_testing),
     total_constraints = length(info.optimization.observational_constraints),
     forward_args = (selected_models,

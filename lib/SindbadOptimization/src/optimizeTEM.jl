@@ -20,11 +20,11 @@ function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple)
     # run the optimizer
     optim_para = optimizer(opti_helpers.cost_function, opti_helpers.default_values, opti_helpers.lower_bounds, opti_helpers.upper_bounds, info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
 
-    optim_para = backScaleParameters(optim_para, opti_helpers.tbl_params, info.optimization.optimization_parameter_scaling)
+    optim_para = backScaleParameters(optim_para, opti_helpers.table_parameters, info.optimization.optimization_parameter_scaling)
 
     # update the parameter table with the optimized values
-    opti_helpers.tbl_params.optim .= optim_para
-    return opti_helpers.tbl_params
+    opti_helpers.table_parameters.optim .= optim_para
+    return opti_helpers.table_parameters
 end
 
 

@@ -61,7 +61,7 @@ land_stacked_prealloc = Vector{typeof(run_helpers.loc_land)}(undef, info.helpers
 @time land_stacked_prealloc = runTEM(info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, run_helpers.loc_land, run_helpers.tem_info);
 runTEM(info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, run_helpers.loc_land, run_helpers.tem_info);
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
+table_parameters = info.optimization.table_parameters;
 
 
 cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
@@ -71,11 +71,11 @@ cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
 @time metricVector(land_stacked_prealloc, obs_array, cost_options) |> sum
 
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
-defaults = tbl_params.default;
+table_parameters = info.optimization.table_parameters;
+defaults = table_parameters.default;
 
-@time cost(defaults, defaults, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, obs_array, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, info.optimization.optimization_cost_method)
+@time cost(defaults, defaults, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, obs_array, table_parameters, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, info.optimization.optimization_cost_method)
 
-@time costLand(defaults, info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, nothing, run_helpers.loc_land, run_helpers.tem_info, obs_array, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)
+@time costLand(defaults, info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, nothing, run_helpers.loc_land, run_helpers.tem_info, obs_array, table_parameters, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)
 
-@time costLand(defaults, info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, run_helpers.loc_land, run_helpers.tem_info, obs_array, tbl_params, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)
+@time costLand(defaults, info.models.forward, run_helpers.space_forcing[1], run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, land_stacked_prealloc, run_helpers.loc_land, run_helpers.tem_info, obs_array, table_parameters, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)

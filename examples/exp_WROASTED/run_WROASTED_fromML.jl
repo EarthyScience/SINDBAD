@@ -133,13 +133,9 @@ for site_index in sites
     forcing = getForcing(info)
 
     ### update the model parameters with values from matlab optimization
-    tbl_params = getParameters(info.models.forward,
-        info.optimization.model_parameter_default,
-        info.optimization.model_parameters_to_optimize,
-        info.helpers.numbers.num_type,
-        info.helpers.dates.temporal_resolution)
-    opt_params = tbl_params.optim
-    param_names = tbl_params.name_full
+table_parameters = info.optimization.table_parameters;
+    opt_params = table_parameters.optim
+    param_names = table_parameters.name_full
     param_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
 
     if isfile(ml_param_file)
@@ -157,14 +153,10 @@ for site_index in sites
             @show opt_params[opi], "new"
             @info "\n------------------------------------------------\n"
         end
-        models_with_matlab_params = updateModelParameters(tbl_params, info.models.forward, opt_params)
+        models_with_matlab_params = updateModelParameters(table_parameters, info.models.forward, opt_params)
 
 
-        tbl_params_2 = getParameters(models_with_matlab_params,
-            info.optimization.model_parameter_default,
-            info.optimization.model_parameters_to_optimize,
-            info.helpers.numbers.num_type,
-            info.helpers.dates.temporal_resolution)
+        table_parameters_2 = info.optimization.table_parameters;
 
         ## run the model
 
