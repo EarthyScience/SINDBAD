@@ -5,19 +5,19 @@ export shuffleBatches
 export shuffleList
 
 """
-    getParamsAct(x, table_parameters)
+    getParamsAct(x, parameter_table)
 
 Scales `x` values in the [0,1] interval to some given lower `lo_b` and upper `up_b` bounds.
 
 # Arguments
 - `x`: vector array
-- `table_parameters`: a Table with input fields `default`, `lower` and `upper` that match the `x` vector.
+- `parameter_table`: a Table with input fields `default`, `lower` and `upper` that match the `x` vector.
 
 Returns a vector array with new values scaled into the new interval `[lower, upper]`.
 """
-function getParamsAct(x, table_parameters)
-    lo_b = oftype(table_parameters.default, table_parameters.lower)
-    up_b = oftype(table_parameters.default, table_parameters.upper)
+function getParamsAct(x, parameter_table)
+    lo_b = oftype(parameter_table.actual, parameter_table.lower)
+    up_b = oftype(parameter_table.actual, parameter_table.upper)
     return scaleToBounds.(x, lo_b, up_b)
 end
 

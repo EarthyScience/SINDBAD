@@ -22,7 +22,7 @@ Training function that computes model parameters using a neural network, which a
 function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, total_constraints, loss_fargs, forward_args;
     n_epochs=3, optimizer=Optimisers.Adam(), path_experiment="/")
     
-    sites_training, indices_sites_training, xfeatures, table_parameters, batch_size, chunk_size, metadata_global = train_refs
+    sites_training, indices_sites_training, xfeatures, parameter_table, batch_size, chunk_size, metadata_global = train_refs
     sites_validation, indices_sites_validation, sites_testing, indices_sites_testing = test_val_refs
 
     lossSite, getInnerArgs = loss_fargs
@@ -48,18 +48,18 @@ function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, t
             grads_batch = zeros(Float32, n_params, length(sites_batch))
             x_feat_batch = xfeatures(; site=sites_batch)
             new_params, pullback_func = getPullback(flat, re, x_feat_batch)
-            _params_batch = getParamsAct(new_params, table_parameters)
+            _params_batch = getParamsAct(new_params, parameter_table)
 
             input_args = (_params_batch, forward_args..., indices_sites_batch, sites_batch)
             gradientBatchPolyester!(grads_lib, grads_batch, chunk_size, lossSite, getInnerArgs, input_args...)
-            gradsNaNCheck!(grads_batch, _params_batch, sites_batch, table_parameters) #? checks for NaNs and if any replace them with 0.0f0
+            gradsNaNCheck!(grads_batch, _params_batch, sites_batch, parameter_table) #? checks for NaNs and if any replace them with 0.0f0
             # Jacobian-vector product
             ∇params = pullback_func(grads_batch)[1]
             opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
         end
         # calculate losses for all sites!
         _params_epoch = re(flat)(xfeatures)
-        params_epoch = getParamsAct(_params_epoch, table_parameters)
+        params_epoch = getParamsAct(_params_epoch, parameter_table)
         getLossForSites(grads_lib, lossSite, loss_training, loss_split_training, epoch, params_epoch, sites_training, indices_sites_training, forward_args...)
         # ? validation
         getLossForSites(grads_lib, lossSite, loss_validation, loss_split_validation, epoch, params_epoch, sites_validation, indices_sites_validation, forward_args...)
@@ -67,8 +67,8 @@ function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, t
         getLossForSites(grads_lib, lossSite, loss_testing, loss_split_testing, epoch, params_epoch, sites_testing, indices_sites_testing, forward_args...)
 
         jldsave(joinpath(f_path, "checkpoint_epoch_$(epoch).jld2");
-            lower_bound=table_parameters.lower, upper_bound=table_parameters.upper, ps_names=table_parameters.name,
-            table_parameters=table_parameters,
+            lower_bound=parameter_table.lower, upper_bound=parameter_table.upper, ps_names=parameter_table.name,
+            parameter_table=parameter_table,
             metadata_global=metadata_global,
             loss_training=loss_training[:, epoch],
             loss_validation=loss_validation[:, epoch],
@@ -154,7 +154,7 @@ function gradientBatchPolyester!(grads_lib::ForwardDiffGrad, dx_batch, chunk_siz
 end
 
 """
-    gradsNaNCheck!(grads_batch, _params_batch, sites_batch, table_parameters; show_params_for_nan=false)
+    gradsNaNCheck!(grads_batch, _params_batch, sites_batch, parameter_table; show_params_for_nan=false)
 
 Utility function to check if some calculated gradients were NaN (if found please double check your approach).
 This function will replace those NaNs with 0.0f0.
@@ -163,18 +163,18 @@ This function will replace those NaNs with 0.0f0.
 - `grads_batch`: gradients array.
 - `_params_batch`: parameters values.
 - `sites_batch`: sites names.
-- `table_parameters`: parameters table.
+- `parameter_table`: parameters table.
 - `show_params_for_nan=false`: if true, it will show the parameters that caused the NaNs.
 """
-function gradsNaNCheck!(grads_batch, _params_batch, sites_batch, table_parameters; show_params_for_nan=false)
+function gradsNaNCheck!(grads_batch, _params_batch, sites_batch, parameter_table; show_params_for_nan=false)
     if sum(isnan.(grads_batch))>0
         if show_params_for_nan
             foreach(findall(x->isnan(x), grads_batch)) do ci
                 p_index_tmp, si = Tuple(ci)
                 site_name_tmp = sites_batch[si]
                 p_vec_tmp = _params_batch(site=site_name_tmp)
-                param_values =  Pair(table_parameters.name[p_index_tmp], (p_vec_tmp[p_index_tmp], table_parameters.lower[p_index_tmp], table_parameters.upper[p_index_tmp]))
-                @info "site: $site_name_tmp, parameter: $param_values"
+                parameter_values =  Pair(parameter_table.name[p_index_tmp], (p_vec_tmp[p_index_tmp], parameter_table.lower[p_index_tmp], parameter_table.upper[p_index_tmp]))
+                @info "site: $site_name_tmp, parameter: $parameter_values"
             end
         end
         @warn "NaNs in grads, replacing all by 0.0f0"

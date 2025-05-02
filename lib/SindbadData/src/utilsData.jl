@@ -1,5 +1,6 @@
 export AllNaN
 export getNumberOfTimeSteps
+export getSindbadDataDepot
 export mapCleanData
 export subsetAndProcessYax
 export yaxCubeToKeyedArray
@@ -481,4 +482,21 @@ arrays with metadata, particularly for time series data with multiple pools or v
 """
 function toDimStackArray(stackArr, time_interval, p_names; name=:pools)
     return DimArray(stackArr,  (p_names=p_names, Ti=time_interval,); name=name,)
+end
+
+"""
+    getSindbadDataDepot(; env_data_depot_var="SINDBAD_DATA_DEPOT", local_data_depot="../data")
+
+Retrieve the Sindbad data depot path.
+
+# Arguments
+- `env_data_depot_var`: Environment variable name for the data depot (default: "SINDBAD_DATA_DEPOT")
+- `local_data_depot`: Local path to the data depot (default: "../data")
+
+# Returns
+The path to the Sindbad data depot.
+"""
+function getSindbadDataDepot(; env_data_depot_var="SINDBAD_DATA_DEPOT", local_data_depot="../data")
+    data_depot = haskey(ENV, env_data_depot_var) ? ENV[env_data_depot_var] : local_data_depot
+    return data_depot
 end

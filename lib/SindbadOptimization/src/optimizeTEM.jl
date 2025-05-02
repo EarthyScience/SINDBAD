@@ -20,11 +20,11 @@ function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple)
     # run the optimizer
     optim_para = optimizer(opti_helpers.cost_function, opti_helpers.default_values, opti_helpers.lower_bounds, opti_helpers.upper_bounds, info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
 
-    optim_para = backScaleParameters(optim_para, opti_helpers.table_parameters, info.optimization.optimization_parameter_scaling)
+    optim_para = backScaleParameters(optim_para, opti_helpers.parameter_table, info.optimization.optimization_parameter_scaling)
 
     # update the parameter table with the optimized values
-    opti_helpers.table_parameters.optim .= optim_para
-    return opti_helpers.table_parameters
+    opti_helpers.parameter_table.optimized .= optim_para
+    return opti_helpers.parameter_table
 end
 
 
@@ -78,8 +78,8 @@ function optimizeYax(map_cubes...; out::NamedTuple, tem::NamedTuple, optim::Name
     forcing = (; Pair.(forcing_vars, forcing)...)
     observation = (; Pair.(obs_vars, observation)...)
     land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "LandOut"))()
-    params = optimizeTEM(forcing, observation, info, land_output_type)
-    return output[:] = params.optim
+    params = optimizeTEM(forcing, observation, info)
+    return output[:] = params.optimized
 end
 
 

@@ -124,7 +124,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimizatio
         optim_params = optimizeTEM(forcing, obs_array, info)
         optim_file_prefix = joinpath(info.output.dirs.optimization, info.experiment.basics.name * "_" * info.experiment.basics.domain)
         CSV.write(optim_file_prefix * "_model_parameters_optimized.csv", optim_params)
-        run_output = optim_params.optim
+        run_output = optim_params.optimized
     end
     setLogLevel()
     return (; forcing, info, observation=obs_array, params=run_output)
@@ -210,8 +210,8 @@ function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::S
 
     default_output = runTEM!(default_models, forcing, info)
 
-    table_parameters = info.optimization.table_parameters;
-    optimized_models = updateModelParameters(table_parameters, default_models, params_vector)
+    parameter_table = info.optimization.parameter_table;
+    optimized_models = updateModelParameters(parameter_table, default_models, params_vector)
     optimized_output = runTEM!(optimized_models, forcing, info)
 
     output_dims = getOutDims(info, forcing.helpers)
@@ -312,7 +312,7 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
 
     opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method; algorithm_info_field=:algorithm_sensitivity_analysis);
 
-    # table_parameters = opti_helpers.table_parameters
+    # parameter_table = opti_helpers.parameter_table
     p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds))
     
     cost_function = opti_helpers.cost_function
