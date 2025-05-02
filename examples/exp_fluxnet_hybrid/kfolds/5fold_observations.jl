@@ -26,7 +26,7 @@ _nfold = 1
 xtrain, xval, xtest = file_folds["unfold_training"][_nfold], file_folds["unfold_validation"][_nfold], file_folds["unfold_tests"][_nfold]
 
 # get all PFTs from dataset
-ds = open_dataset(joinpath(@__DIR__, "../../data/FLUXNET_v2023_12_1D.zarr"))
+ds = open_dataset(joinpath(@__DIR__, "../$(getSindbadDataDepot())/FLUXNET_v2023_12_1D.zarr"))
 ds.properties["PFT"][[98, 99, 100, 137, 138]] .= ["WET", "WET", "GRA", "WET", "SNO"]
 updatePFTs = ds.properties["PFT"]
 # ? site names
@@ -73,9 +73,9 @@ replace_info = Dict()
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 selected_models = info.models.forward
 
-table_parameters = info.optimization.table_parameters;
+parameter_table = info.optimization.parameter_table;
 
-param_to_index = getParameterIndices(selected_models, table_parameters);
+parameter_to_index = getParameterIndices(selected_models, parameter_table);
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 lines(observations.data[1](;site="AR-SLu"))

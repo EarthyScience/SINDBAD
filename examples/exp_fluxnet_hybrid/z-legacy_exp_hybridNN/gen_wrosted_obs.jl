@@ -13,7 +13,7 @@ forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 obsv = getKeyedArray(observations);
-table_parameters = info.optimization.table_parameters;
+parameter_table = info.optimization.parameter_table;
 
 # covariates
 function yaxCubeToKeyedArray(c)
@@ -30,7 +30,7 @@ sites = [s for s ∈ sites]
 sites = setdiff!(sites, ["RU-Ha1", "IT-PT1", "US-Me5"])
 n_bs_feat = length(xfeatures.features)
 n_neurons = 32
-n_params = sum(table_parameters.is_ml)
+n_params = sum(parameter_table.is_ml)
 
 run_helpers = prepTEM(forcing, info);
 space_forcing = run_helpers.space_forcing;
@@ -53,7 +53,7 @@ end
 ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
 
 sites_parameters = ml_baseline(xfeatures)
-params_bounded = getParamsAct.(sites_parameters, table_parameters)
+params_bounded = getParamsAct.(sites_parameters, parameter_table)
 
 function getLocDataObsN(outcubes, forcing, obs_array, loc_space_map)
     loc_forcing = map(forcing) do a
@@ -74,7 +74,7 @@ function pixel_run!(output_array,
     forcing_nt_array,
     obs_array,
     site_location,
-    table_parameters,
+    parameter_table,
     forward,
     upVector,
     tem_helpers,
@@ -84,7 +84,7 @@ function pixel_run!(output_array,
     loc_forcing_t)
 
     loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
-    up_apps = Tuple(updateModelParameters(table_parameters, forward, upVector))
+    up_apps = Tuple(updateModelParameters(parameter_table, forward, upVector))
     return coreTEM!(loc_output,
         up_apps,
         loc_forcing,
@@ -110,12 +110,12 @@ loc_land_init = run_helpers.loc_land;
 loc_output = space_output[1];
 loc_forcing = run_helpers.space_forcing[1];
 
-def_params = table_parameters.default .* rand()
+def_params = parameter_table.actual .* rand()
 pixel_run!(output,
     forc,
     obs_array,
     site_location,
-    table_parameters,
+    parameter_table,
     forward,
     def_params,
     tem_helpers,
@@ -128,7 +128,7 @@ pixel_run!(output,
 loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
 
 function space_run!(up_params,
-    table_parameters,
+    parameter_table,
     sites_f,
     space_land,
     cov_sites,
@@ -150,7 +150,7 @@ function space_run!(up_params,
             forc,
             obs_array,
             site_location,
-            table_parameters,
+            parameter_table,
             forward,
             x_params,
             tem_helpers,
@@ -176,7 +176,7 @@ function name_to_id(site_name, sites_forcing)
 end
 
 space_run!(params_bounded,
-    table_parameters,
+    parameter_table,
     sites_f,
     space_land,
     cov_sites,

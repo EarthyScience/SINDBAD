@@ -34,9 +34,9 @@ end
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 selected_models = info.models.forward
 
-table_parameters = info.optimization.table_parameters;
+parameter_table = info.optimization.parameter_table;
 
-param_to_index = getParameterIndices(selected_models, table_parameters);
+parameter_to_index = getParameterIndices(selected_models, parameter_table);
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
@@ -78,9 +78,9 @@ lossVec = metricVector(loc_output, loc_obs, loc_cost_options)
 t_loss = combineMetric(lossVec, constraint_method)
 
 function lossSite2(new_params, models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, loc_output, land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem)
+    loc_forcing_t, loc_output, land_init, parameter_to_index, loc_obs, loc_cost_options, constraint_method, tem)
 
-    new_models = updateModelParameters(param_to_index, models, new_params)
+    new_models = updateModelParameters(parameter_to_index, models, new_params)
     coreTEM!(new_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem...)
     lossVec = metricVector(loc_output, loc_obs, loc_cost_options)
     t_loss = combineMetric(lossVec, constraint_method)
@@ -88,9 +88,9 @@ function lossSite2(new_params, models, loc_forcing, loc_spinup_forcing,
 end
 
 function lossSiteFD(new_params, models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, loc_output, land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem)
+    loc_forcing_t, loc_output, land_init, parameter_to_index, loc_obs, loc_cost_options, constraint_method, tem)
 
-    new_models = updateModelParameters(param_to_index, models, new_params)
+    new_models = updateModelParameters(parameter_to_index, models, new_params)
 
     out_data = SindbadML.getOutputFromCache(loc_output, new_params, ForwardDiffGrad())
 
@@ -100,31 +100,31 @@ function lossSiteFD(new_params, models, loc_forcing, loc_spinup_forcing,
     return t_loss
 end
 
-default_values = Float32.(table_parameters.default)
+default_values = Float32.(parameter_table.actual)
 
 lossSiteFD(default_values, selected_models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs,
+    loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, parameter_to_index, loc_obs,
     loc_cost_options, constraint_method, tem)
 
 lossSite2(default_values, selected_models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, loc_output, land_init, param_to_index, loc_obs,
+    loc_forcing_t, loc_output, land_init, parameter_to_index, loc_obs,
     loc_cost_options, constraint_method, tem)
 
 cost_function = x -> lossSite2(x, selected_models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, loc_output, land_init, param_to_index, loc_obs,
+    loc_forcing_t, loc_output, land_init, parameter_to_index, loc_obs,
     loc_cost_options, constraint_method, tem)
 
 cost_functionFD = x -> lossSiteFD(x, selected_models, loc_forcing, loc_spinup_forcing,
     loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()),
-    land_init, param_to_index, loc_obs,
+    land_init, parameter_to_index, loc_obs,
     loc_cost_options, constraint_method, tem)
 
 @time cost_function(default_values)
 @time cost_functionFD(default_values)
 
 #? run the optimizer
-lower_bounds = table_parameters.lower
-upper_bounds = table_parameters.upper
+lower_bounds = parameter_table.lower
+upper_bounds = parameter_table.upper
 
 optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds,
     info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)

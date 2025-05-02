@@ -8,8 +8,7 @@ end_year = "2017"
 
 domain = "DE-Hai"
 # domain = "MY-PSO"
-data_depot = haskey(ENV, "SINDBAD_DATA_DEPOT") ? ENV["SINDBAD_DATA_DEPOT"] : "../data"
-path_input = "$(data_depot)/fn/$(domain).1979.2017.daily.nc"
+path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
 
 path_observation = path_input
@@ -20,7 +19,7 @@ path_output = nothing
 parallelization_lib = "threads"
 model_array_type = "static_array"
 replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
-    "experiment.basics.name" => "readParam_bounds",
+    "experiment.basics.name" => "readparameter_bounds",
     "experiment.basics.config_files.forcing" => forcing_config,
     "experiment.basics.config_files.parameters" => "test_params.csv",
     "experiment.basics.domain" => domain,
@@ -40,8 +39,8 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "optimization.observations.default_observation.data_path" => path_observation);
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
     
-full_table = info.models.table_parameters;
-optim_table = info.optimization.table_parameters;
+full_table = info.models.parameter_table;
+optim_table = info.optimization.parameter_table
 
 forcing = getForcing(info);
 run_helpers = prepTEM(forcing, info);

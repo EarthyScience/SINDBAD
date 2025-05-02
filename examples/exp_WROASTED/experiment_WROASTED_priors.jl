@@ -59,7 +59,7 @@ extract a matrix with columns:
 """
 function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
     cost_options = optim.cost_options
-    optim_vars = optim.variables.optim
+    optim_vars = optim.variables.optimized
     res = map(cost_options) do var_row
         obsV = var_row.variable
         y = getproperty(obs_array, obsV)
@@ -85,7 +85,7 @@ function getPredAndObsVector(observations::NamedTuple,
     optim::NamedTuple;
     removeNaN=true)
     cost_options = optim.cost_options
-    optim_vars = optim.variables.optim
+    optim_vars = optim.variables.optimized
     res = map(cost_options) do var_row
         obsV = var_row.variable
         mod_variable = getfield(optim_vars, obsV)
@@ -109,11 +109,11 @@ develop_f =
         # using StatsPlots
         # plot(d)
 
-        table_parameters = info.optimization.table_parameters;
+        parameter_table = info.optimization.parameter_table;
         # get the default and bounds
-        default_values = tem.helpers.numbers.num_type.(table_parameters.default)
-        lower_bounds = tem.helpers.numbers.num_type.(table_parameters.lower)
-        upper_bounds = tem.helpers.numbers.num_type.(table_parameters.upper)
+        default_values = tem.helpers.numbers.num_type.(parameter_table.actual)
+        lower_bounds = tem.helpers.numbers.num_type.(parameter_table.lower)
+        upper_bounds = tem.helpers.numbers.num_type.(parameter_table.upper)
 
         run_helpers = prepTEM(forcing, info)
 
@@ -134,9 +134,9 @@ develop_f =
             end
             local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
             #
-            # table_parameters.optim .= popt  # TODO replace mutation
+            # parameter_table.optimized .= popt  # TODO replace mutation
 
-            updated_models = updateModelParameters(table_parameters, tem.models.forward, popt)
+            updated_models = updateModelParameters(parameter_table, tem.models.forward, popt)
             # TODO run model with updated parameters
 
             @time runTEM!(updated_models,

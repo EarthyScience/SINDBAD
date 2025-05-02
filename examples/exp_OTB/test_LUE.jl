@@ -10,7 +10,7 @@ end_year = "2017"
 
 domain = "US-SRM"
 # domain = "MY-PSO"
-path_input = "../data/fn/$(domain).1979.2017.daily.nc"
+path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
 
 path_observation = path_input
@@ -46,7 +46,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
-# table_parameters = info.optimization.table_parameters;
+# parameter_table = info.optimization.parameter_table;
 
 
 
@@ -77,7 +77,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 # param = lb + (ub - lb) * scalar
 
 
-# table_parameters = info.optimization.table_parameters;
+# parameter_table = info.optimization.parameter_table;
 
 
 # @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);

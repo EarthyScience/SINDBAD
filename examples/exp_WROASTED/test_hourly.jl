@@ -14,11 +14,11 @@ mod_step = "day"
 mod_step = "hour"
 # foreach(["day", "hour"]) do mod_step
 if mod_step == "day"
-    path_input = "../data/fn/$(domain).1979.2017.daily.nc"
+    path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
     forcing_config = "forcing_erai.json"
 else
     mod_step
-    path_input = "../data/CA-Obs.1999.2010.hourly_for_Sindbad.nc"
+    path_input = "$(getSindbadDataDepot())/CA-Obs.1999.2010.hourly_for_Sindbad.nc"
     forcing_config = "forcing_hourly.json"
 end
 
@@ -52,7 +52,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-table_parameters = info.optimization.table_parameters;
+parameter_table = info.optimization.parameter_table;
 
 forcing = getForcing(info);
 

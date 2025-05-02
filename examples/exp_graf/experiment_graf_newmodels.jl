@@ -25,7 +25,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
-table_parameters = info.optimization.table_parameters;
+parameter_table = info.optimization.parameter_table;
 
 GC.gc()
 info = dropFields(info, (:settings,));
