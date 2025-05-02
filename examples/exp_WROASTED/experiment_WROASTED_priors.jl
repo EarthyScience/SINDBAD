@@ -46,7 +46,7 @@ observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
-opt_params = out_opti.params;
+opt_params = out_opti.parameters;
 
 
 """
@@ -99,7 +99,7 @@ function getPredAndObsVector(observations::NamedTuple,
 end
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
-opt_params = out_opti.params;
+opt_params = out_opti.parameters;
 pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optimization)
 
 develop_f =

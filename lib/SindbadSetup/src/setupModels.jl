@@ -140,7 +140,6 @@ Configures the spinup and forward models for the experiment.
 function setSpinupAndForwardModels(info::NamedTuple)
     @info "  setSpinupAndForwardModels: setting Spinup and Forward Models..."
     selected_approach_forward = ()
-    selected_approach_spinup = ()
     is_spinup = Int64[]
     order_selected_models = info.temp.models.selected_models.model
     default_model = getfield(info.settings.model_structure, :default_model)
@@ -171,7 +170,7 @@ function setSpinupAndForwardModels(info::NamedTuple)
         @info "  ....setSpinupAndForwardModels: using input parameters from settings.parameters to override the default parameters."
         original_parameter_table = parameter_table
         input_parameter_table = info.settings.parameters
-        updated_parameter_table = setInputParameters(original_parameter_table, input_parameter_table)
+        updated_parameter_table = setInputParameters(original_parameter_table, input_parameter_table, info.temp.helpers.dates.temporal_resolution)
         selected_approach_forward = updateModelParameters(updated_parameter_table, selected_approach_forward, updated_parameter_table.optimized)
         parameter_table = updated_parameter_table
     end
