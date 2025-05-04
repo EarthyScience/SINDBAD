@@ -1,91 +1,96 @@
-## Parameters
+# Parameter Configuration
 
-SINDBAD allows for model runs using parameters that are different from default parameter values defined within each model. This functionality primarily enables forward model runs or optimization or any experiment using either optimized parameters from SINDBAD optimization experiments or using custom values from literature.
+SINDBAD enables flexible parameter management, allowing you to run models with custom parameter values instead of the default values defined in each model. This functionality supports:
+- Forward model runs
+- Parameter optimization experiments
+- Custom parameter values from literature or previous optimizations
 
+:::info Parameter Tables
 
-:::info
+SINDBAD stores parameter information in two key locations:
+- `info.models.parameter_table`: Contains all model parameters defined in the model structure
+- `info.optimization.parameter_table`: Contains parameters selected for optimization (available only when optimization/cost calculation is enabled)
 
-The loaded/generated parameter table are saved in SINDBAD `info` under
-- `info.models.parameter_table`: the table of all model parameters in the model structure
-- `info.optimization.parameter_table`: the table of all model parameters that are to be optimized, only available when optimization/cost calculation is on.
 :::
 
-### Parameter Input Methods
+## Parameter Input Methods
 
-Parameters can be set through two main methods:
+You can configure parameters using two complementary methods:
 
-1. **CSV File**: Complete parameter configuration through a CSV file
+1. **CSV File**: Primary method for complete parameter configuration
 2. **optimization.json**: Additional parameter-specific settings for optimization
 
-The CSV file path is specified in `experiment.json` under `basics/config_files`:
+Specify the CSV file path in `experiment.json` under `basics/config_files`:
 ```json
 "params": "parameterfile.csv"
 ```
 
-### CSV File Structure
+## CSV File Structure
 
-The parameter CSV file contains the following columns:
+The parameter CSV file includes the following columns:
 
-| Header | Description |
+| Column | Description |
 |--------|-------------|
-| `model_id` | Unique identifier/index for the model containing the parameter |
-| `name` | The parameter name within its approach |
-| `actual` | The initial actual value of the parameter used in the experiment. If the parameters are overwritten from input, then the values from `optimized` columns are used. If not, `default` values are used as `actual` |
-| `default` | The default value of the parameter as defined in the approach |
-| `optimized` | The optimized value of the parameter after optimization |
-| `lower` | The lower bound constraint for the parameter |
-| `upper` | The upper bound constraint for the parameter |
-| `model` | The base model |
-| `model_approach` | The specific approach name |
-| `approach_func` | The function used to instantiate/create approach |
-| `name_full` | The full parameter name in format "model.parameter" |
-| `dist` | The distribution type for the parameter (e.g., "normal") |
-| `p_dist` | The distribution parameters as a Vector |
-| `is_ml` | Boolean flag indicating if the parameter is to be learnt by using machine learning method |
+| `model_id` | Unique identifier for the model containing the parameter |
+| `name` | Parameter name within its approach |
+| `initial` | Initial parameter value used in the experiment (uses `optimized` values if provided, otherwise `default` values) |
+| `default` | Default parameter value defined in the approach |
+| `optimized` | Optimized parameter value from previous optimization |
+| `lower` | Lower bound constraint for parameter optimization |
+| `upper` | Upper bound constraint for parameter optimization |
+| `model` | Base model name |
+| `model_approach` | Specific approach name |
+| `approach_func` | Function used to instantiate the approach |
+| `name_full` | Full parameter name in "model.parameter" format |
+| `dist` | Parameter distribution type (e.g., "normal") |
+| `p_dist` | Distribution parameters as a Vector |
+| `is_ml` | Flag indicating if the parameter uses machine learning |
 
-### Parameter Overwriting Logic
+## Parameter Overwriting Logic
 
-By default, parameters from the `.jl` files of the approaches are used. These can be overwritten to run the model using different parameters.
+SINDBAD uses parameters defined in approach `.jl` files by default. You can override these values using the following methods:
 
-#### Overwriting through CSV
+### CSV File Overwriting
 
-When a CSV file is provided, the parameter table of default parameters is updated with the CSV input. This overwrites:
+When providing a CSV file, SINDBAD updates the default parameter table with the CSV input, modifying:
 - Default values
 - Lower and upper bounds
-- Other columns except `(:model_id, :approach_func)`
+- All columns except `(:model_id, :approach_func)`
 
-::: warning
-The CSV format is generated by SINDBAD as part of the optimization output. It is recommended to base any parameter modifications on this output format.
+::: warning CSV Format
+
+The CSV format is generated by SINDBAD during optimization output. Use this format as a template for any parameter modifications.
+
 :::
 
-#### Modification Guidelines
+### CSV Modification Guidelines
 
-When modifying the parameter file:
-1. Do not change the field names in the first row
-2. Do not add new columns to the CSV file
-3. Limit changes to:
+When editing the parameter file:
+1. Preserve the field names in the header row
+2. Do not add new columns
+3. Only modify the following fields:
    - `:optimized` values
    - `:lower` bounds
    - `:upper` bounds
-   - `:dist` and `:p_dist` (when changing parameter distributions)
+   - `:dist` and `:p_dist` (for parameter distributions)
 
-#### Overwriting through optimization.json
+### JSON Configuration
 
-The `optimization.json` file provides additional functionality to update parameter properties. The following fields take precedence over CSV input:
+The `optimization.json` file provides additional parameter configuration options, taking precedence over CSV input for:
 - `:dist`
 - `:p_dist`
 - `:is_ml`
 
-Within the JSON, parameter settings can be specified in two ways:
-1. Through `model_parameter_default` for all optimized parameters
-2. Through individual entries in `model_parameters_to_optimize` for specific parameters
+Configure parameters in the JSON file using either:
+1. `model_parameter_default` for all optimized parameters
+2. Individual entries in `model_parameters_to_optimize` for specific parameters
 
-If the input from `CSV` is to be used and `JSON` ignored, 
-- set `model_parameter_default` to `null`
-- set `model_parameters_to_optimize` as a vector of parameters
-- if `model_parameters_to_optimize` is a dictionary, set every parameter info to `null`
+To use CSV input exclusively:
+- Set `model_parameter_default` to `null`
+- Set `model_parameters_to_optimize` as a vector of parameters
+- For dictionary format, set each parameter info to `null`
 
-### Example Parameter File
+## Example Parameter File
 
 ```csv
 model_id,name,actual,default,optimized,lower,upper,timescale_run,units,timescale_ori,units_ori,model,model_approach,approach_func,name_full,is_ml,dist,p_dist
@@ -93,9 +98,18 @@ model_id,name,actual,default,optimized,lower,upper,timescale_run,units,timescale
 10,k_efficiency_cVegRoot,0.0010001105,0.02,0.001155915,0.001,0.3,,m2/kgC (inverse of carbon storage),,m2/kgC (inverse of carbon storage),rootWaterEfficiency,rootWaterEfficiency_expCvegRoot,rootWaterEfficiency_expCvegRoot,rootWaterEfficiency.k_efficiency_cVegRoot,false,normal,"Float32[0.0, 1.0]"
 ```
 
-### Parameter Validation
+## Parameter Validation
 
-SINDBAD performs several validation checks on parameters:
-1. Parameter bounds are checked to ensure values fall within specified ranges
-2. Unit conversions are handled appropriately based on timescales
-3. *Parameter loaded from files are converted to the units consistent with the current model run time step. This is done by comparing timescale_run in the input parameters with the experiment model time step. Double check the parameter values and units in `info.models.parameter_table` or `info.optimization.parameter_table`*
+SINDBAD performs comprehensive parameter validation:
+
+1. **Bounds Checking**: Ensures parameter values fall within specified ranges
+2. **Unit Conversion**: Handles unit conversions based on timescales
+3. **Time Step Consistency**: Converts parameters to units consistent with the current model run time step by comparing `timescale_run` with the experiment model time step
+
+::: tip Verification
+
+Always verify parameter values and units in:
+- `info.models.parameter_table`
+- `info.optimization.parameter_table` (when optimization is enabled)
+
+:::

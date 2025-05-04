@@ -43,12 +43,18 @@ const aboutItems = [
 ]
 
 const manualItems = [
-  { text: 'Array Handling', link: '/pages/manual/array_handling' },
-  { text: 'Experiments', link: '/pages/manual/experiments' },
-  { text: 'Modeling Convention', link: '/pages/manual/conventions' },
-  { text: 'Spinup', link: '/pages/manual/spinup' },
-  { text: 'Toy Model', link: '/pages/manual/toy_model' },
+  { text: 'Overview', link: '/pages/manual/overview' },
   { text: 'Install', link: '/pages/manual/install' },
+  { text: 'Modeling Convention', link: '/pages/manual/conventions' },
+  { text: 'Model Approach', link: '/pages/manual/model_approach' },
+  { text: 'Array Handling', link: '/pages/manual/array_handling' },
+  { text: 'Land Utils', link: '/pages/manual/land_utils' },
+  { text: 'Experiments', link: '/pages/manual/experiments' },
+  { text: 'Spinup', link: '/pages/manual/spinup' },
+  { text: 'Optimization Methods', link: '/pages/manual/optimization_method' },
+  { text: 'Cost Metrics', link: '/pages/manual/cost_metrics' },
+  { text: 'Cost Function', link: '/pages/manual/cost_function' },
+  { text: 'Documentation', link: '/pages/manual/how_to_doc' },
 ]
 
 const navTemp = {

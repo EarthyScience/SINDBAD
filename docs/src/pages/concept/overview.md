@@ -1,26 +1,40 @@
-The SINDBAD framework provides a seamless integration of model and multiple data streams using different optimization schemes and integration methods. To achieve that, the framework is built in a way that consider Input, Initial conditions, parameters, model processes, observations and integration methods as part of one system (as seen in figure below)
+# SINDBAD Conceptual Framework
 
+SINDBAD provides a comprehensive framework for seamlessly integrating ecosystem models with multiple data streams through various optimization schemes and integration methods. The framework treats input data, initial conditions, parameters, model processes, observations, and integration methods as interconnected components of a unified system, as illustrated in the figure below.
 
 ![SINDBAD Conceptual Framework](https://www.bgc-jena.mpg.de/~skoirala/ms_sindbad/latest/images/figures/others/conceptual_overview.png)
-Fig. SINDBAD Conceptual Framework
+*Fig. SINDBAD Conceptual Framework*
 
-To achieve that flexibility of switching between diverse options and challenges, SINDBAD provides modularity regarding 
-- model structure
-- input data
-- observation data
-- integration methods
+## Framework Flexibility
 
+SINDBAD achieves its flexibility through modular design in four key areas:
 
-These information on selected approaches and options are provided through configuration files, and they are stored in a consistent way in different SINDBAD objects and structures, so that the model technically always sees the same information. 
+1. **Model Structure**: Adaptable ecosystem process representations
+2. **Input Data**: Flexible data ingestion and processing
+3. **Observation Data**: Versatile observational constraint integration
+4. **Integration Methods**: Customizable optimization and assimilation approaches
 
-Fundamentally, SINDBAD consists of the following components:
+## Configuration and Implementation
 
-- Read the [configuration files](../settings/overview.md)
-- Process the [information needed for experiment](./info.md)
-  - [model structure and pools](./TEM.md)
-  - [simulation setup](./experiment.md)
-  - create [land data structure](./land.md)
-- read the forcing and/or observation data
-- prepare for the model run
-- run the experiment
-- save output
+All framework options and approaches are specified through configuration files, ensuring consistent information storage across SINDBAD objects and structures. This standardization enables models to process information uniformly regardless of the specific configuration.
+
+## Core Components
+
+The SINDBAD workflow consists of the following key steps:
+
+1. **Configuration**
+   - Read and process [configuration files](../settings/overview.md)
+   - Set up [experiment information](./info.md)
+     - Configure [model structure and pools](./TEM.md)
+     - Define [simulation parameters](./experiment.md)
+     - Initialize [land data structure](./land.md)
+
+2. **Data Processing**
+   - Load forcing and observation data
+   - Prepare model initialization
+   - Configure optimization settings
+
+3. **Execution**
+   - Run the experiment
+   - Process and validate results
+   - Save and analyze output
