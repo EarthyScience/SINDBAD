@@ -16,8 +16,8 @@ Scales `x` values in the [0,1] interval to some given lower `lo_b` and upper `up
 Returns a vector array with new values scaled into the new interval `[lower, upper]`.
 """
 function getParamsAct(x, parameter_table)
-    lo_b = oftype(parameter_table.actual, parameter_table.lower)
-    up_b = oftype(parameter_table.actual, parameter_table.upper)
+    lo_b = oftype(parameter_table.initial, parameter_table.lower)
+    up_b = oftype(parameter_table.initial, parameter_table.upper)
     return scaleToBounds.(x, lo_b, up_b)
 end
 

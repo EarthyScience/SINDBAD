@@ -111,7 +111,7 @@ develop_f =
 
         parameter_table = info.optimization.parameter_table;
         # get the default and bounds
-        default_values = tem.helpers.numbers.num_type.(parameter_table.actual)
+        default_values = tem.helpers.numbers.num_type.(parameter_table.initial)
         lower_bounds = tem.helpers.numbers.num_type.(parameter_table.lower)
         upper_bounds = tem.helpers.numbers.num_type.(parameter_table.upper)
 

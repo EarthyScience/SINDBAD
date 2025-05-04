@@ -71,7 +71,7 @@ observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because 
 
 parameter_table = info.optimization.parameter_table;
-defaults = parameter_table.actual;
+defaults = parameter_table.initial;
 
 parameter_samples = QuasiMonteCarlo.sample(parameter_set_size, parameter_table.lower, parameter_table.upper, LatinHypercubeSample());
 cost_samples_c = Array{Float32}(undef, parameter_set_size) # cost_func

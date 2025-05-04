@@ -100,7 +100,7 @@ function lossSiteFD(new_params, models, loc_forcing, loc_spinup_forcing,
     return t_loss
 end
 
-default_values = Float32.(parameter_table.actual)
+default_values = Float32.(parameter_table.initial)
 
 lossSiteFD(default_values, selected_models, loc_forcing, loc_spinup_forcing,
     loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, parameter_to_index, loc_obs,

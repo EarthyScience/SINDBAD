@@ -288,7 +288,7 @@ a merged table with updated parameters
 function setInputParameters(original_table::Table, input_table::Table, model_timestep)
     merged_table = copy(original_table)
     done_parameter_input = []
-    skip_property = (:model_id, :actual, :default, :optimized, :approach_func, :lower, :upper)
+    skip_property = (:model_id, :initial, :default, :optimized, :approach_func, :lower, :upper)
     for i ∈ eachindex(input_table)
         subtbl = filter(
             row ->
@@ -300,10 +300,10 @@ function setInputParameters(original_table::Table, input_table::Table, model_tim
             p_indx = pindx_p[1]
             if p_indx ∉ done_parameter_input
                 push!(done_parameter_input, p_indx)
-                t_actual = typeof(merged_table.actual[p_indx])
+                t_actual = typeof(merged_table.initial[p_indx])
                 input_timescale_run = ismissing(input_table.timescale_run[i]) ? "" : input_table.timescale_run[i]
                 unit_factor = getUnitConversionForParameter(input_timescale_run, model_timestep)
-                merged_table.actual[p_indx] = t_actual(input_table.optimized[i] * unit_factor)
+                merged_table.initial[p_indx] = t_actual(input_table.optimized[i] * unit_factor)
                 merged_table.optimized[p_indx] = t_actual(input_table.optimized[i] * unit_factor)
                 merged_table.lower[p_indx] = t_actual(input_table.lower[i] * unit_factor)
                 merged_table.upper[p_indx] = t_actual(input_table.upper[i] * unit_factor)

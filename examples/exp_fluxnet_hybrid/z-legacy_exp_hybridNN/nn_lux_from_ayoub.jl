@@ -56,7 +56,7 @@ function g_cost(x,
 end
 
 mods = info.models.forward;
-g_cost(parameter_table.actual,
+g_cost(parameter_table.initial,
     mods,
     run_helpers.space_forcing,
     run_helpers.space_spinup_forcing,
@@ -85,9 +85,9 @@ function l1(p)
         cost_options,
         info.optimization.multi_constraint_method)
 end
-l1(parameter_table.actual)
+l1(parameter_table.initial)
 rand_m = rand()
-dualDefs = ForwardDiff.Dual{info.helpers.numbers.num_type}.(parameter_table.actual);
+dualDefs = ForwardDiff.Dual{info.helpers.numbers.num_type}.(parameter_table.initial);
 newmods = updateModelParameters(parameter_table, mods, dualDefs);
 
 function l2(p)
@@ -112,16 +112,16 @@ end
 # op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_info.model_helpers.numbers.num_type},tem_info.model_helpers.numbers.num_type,10}}(undef, size(od)) for od in run_helpers.output_array];
 # op = (; op..., data=op_dat);
 
-# @time grad = ForwardDiff.gradient(l1, parameter_table.actual)
+# @time grad = ForwardDiff.gradient(l1, parameter_table.initial)
 
-l1(parameter_table.actual .* rand_m)
-l2(parameter_table.actual .* rand_m)
-
-
+l1(parameter_table.initial .* rand_m)
+l2(parameter_table.initial .* rand_m)
 
 
 
-@profview grad = ForwardDiff.gradient(l1, parameter_table.actual)
+
+
+@profview grad = ForwardDiff.gradient(l1, parameter_table.initial)
 @time grad = ForwardDiff.gradient(l2, dualDefs)
 
 a = 2

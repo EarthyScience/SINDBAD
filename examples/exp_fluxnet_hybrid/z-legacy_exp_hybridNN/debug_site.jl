@@ -60,7 +60,7 @@ run_helpers = prepTEM(forcing, info);
 
 parameter_table = info.optimization.parameter_table;
 
-# new_params = parameter_table.actual;
+# new_params = parameter_table.initial;
 new_params = getParamsAct(new_params, parameter_table)
 
 models = info.models.forward;

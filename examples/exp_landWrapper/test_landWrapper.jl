@@ -72,7 +72,7 @@ cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
 
 
 parameter_table = info.optimization.parameter_table;
-defaults = parameter_table.actual;
+defaults = parameter_table.initial;
 
 @time cost(defaults, defaults, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, obs_array, parameter_table, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, info.optimization.optimization_cost_method)
 

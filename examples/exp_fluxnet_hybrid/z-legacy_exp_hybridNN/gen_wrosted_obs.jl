@@ -110,7 +110,7 @@ loc_land_init = run_helpers.loc_land;
 loc_output = space_output[1];
 loc_forcing = run_helpers.space_forcing[1];
 
-def_params = parameter_table.actual .* rand()
+def_params = parameter_table.initial .* rand()
 pixel_run!(output,
     forc,
     obs_array,

@@ -54,11 +54,11 @@ parameter_table = info.optimization.parameter_table;
 selected_models = info.models.forward;
 
 rand_m = rand()
-# parameter_vector = parameter_table.actual .* info.helpers.numbers.num_type(rand_m);
-parameter_vector = parameter_table.actual .* rand_m;
+# parameter_vector = parameter_table.initial .* info.helpers.numbers.num_type(rand_m);
+parameter_vector = parameter_table.initial .* rand_m;
 @time selected_models = updateModelParameters(parameter_table, info.models.forward, parameter_vector);
 
-parameter_vector = ForwardDiff.Dual.(parameter_table.actual .* rand_m);
+parameter_vector = ForwardDiff.Dual.(parameter_table.initial .* rand_m);
 
 n_m = updateModelParameters(parameter_table, info.models.forward, parameter_vector);
 run_helpers_s = prepTEM(selected_models, forcing, info);

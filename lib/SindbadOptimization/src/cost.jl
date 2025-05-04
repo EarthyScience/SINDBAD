@@ -3,7 +3,7 @@ export costLand
 
 
 """
-    cost(parameter_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, parameter_updater, cost_options, multi_constraint_method, parameter_scaling_type, <:SindbadCostMethod)
+    cost(parameter_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, parameter_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_method<:SindbadCostMethod)
 
 Calculate the cost for a parameter vector.
 
@@ -23,18 +23,14 @@ Calculate the cost for a parameter vector.
 - `cost_options`: Options for cost function calculation
 - `multi_constraint_method`: Method for handling multiple constraints
 - `parameter_scaling_type`: Type of parameter scaling
--  `<:SindbadCostMethod`: a type parameter indicating cost calculation method
-    - `::CostModelObs`: Type parameter indicating cost calculation between model and observations
-    - `::CostModelObsMT`: Type parameter indicating multi-threaded cost calculation from CostModelObs
-    - `::CostModelObsPriors`: Type parameter indicating cost calculation between model, observations, and priors. `NOTE THAT THIS METHOD IS JUST A PLACEHOLDER AND DOES NOT CALCULATE PRIOR COST PROPERLY YET`.
-
+-  `sindbad_cost_method <:SindbadCostMethod`: a type parameter indicating cost calculation method
 
 # Returns
 Cost value representing the difference between model outputs and observations
 
-# Description
-Computes the cost function by comparing model simulation results with observational data,
-considering various spatial and temporal configurations, parameter scaling, and multiple constraint methods.
+# sindbad cost method:
+$(methodsOf(SindbadCostMethod))
+
 """
 cost
 

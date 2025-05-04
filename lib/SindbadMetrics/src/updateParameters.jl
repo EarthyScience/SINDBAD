@@ -14,7 +14,7 @@ Reverts scaling of parameters using a specified scaling strategy.
 - `parameter_vector_scaled`: Vector of scaled parameters to be converted back to original scale
 - `parameter_table`: Table containing parameter information and scaling factors
 - `SindbadParameterScaling`: Type indicating the scaling strategy to be used
-    - `::ScaleDefault`: Type indicating scaling by default values
+    - `::ScaleDefault`: Type indicating scaling by initial parameter values
     - `::ScaleBounds`: Type indicating scaling by parameter bounds
     - `::ScaleNone`: Type indicating no scaling should be applied (parameters remain unchanged)
 
@@ -28,7 +28,7 @@ function backScaleParameters(parameter_vector_scaled, parameter_table, ::ScaleNo
 end
     
 function backScaleParameters(parameter_vector_scaled, parameter_table, ::ScaleDefault)
-    parameter_vector_scaled = abs.(parameter_table.actual) .* parameter_vector_scaled
+    parameter_vector_scaled = abs.(parameter_table.initial) .* parameter_vector_scaled
     return parameter_vector_scaled
 end
 
@@ -95,13 +95,13 @@ end
 
 
 """
-    checkParameterBounds(p_names, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
+    checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
 
 Check and display the parameter bounds information for given parameters.
 
 # Arguments
 - `p_names`: Names or identifier of the parameters. Vector of strings.
-- `default_values`: Default values of the parameters. Vector of Numbers.
+- `parameter_values`: Default values of the parameters. Vector of Numbers.
 - `lower_bounds`: Lower bounds for the parameters. Vector of Numbers.
 - `upper_bounds`: Upper bounds for the parameters. Vector of Numbers.
 - `_sc::SindbadParameterScaling`: Scaling Type for the parameters
@@ -111,21 +111,21 @@ Check and display the parameter bounds information for given parameters.
 # Returns
 Displays a formatted output of parameter bounds information or returns an error when they are violated
 """
-function checkParameterBounds(p_names, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
+function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
     if show_info
-        @info "  Parameters Info: $(nameof(typeof(_sc)))"
+        @info "  Checking Parameter Bounds: $(nameof(typeof(_sc))) scaling"
     end
     for (i,n) in enumerate(p_names)
-        in_range = checkInRange(n, default_values[i], lower_bounds[i], upper_bounds[i], show_info)
+        in_range = checkInRange(n, parameter_values[i], lower_bounds[i], upper_bounds[i], show_info)
         if !in_range
-            error("$(String(n)) => value=$(default_values[i]) [lower_bound=$(lower_bounds[i]), upper_bound=$(upper_bounds[i])] violates the parameter bounds requirement (lower_bound <= value <= upper_bound). Fix the bounds in the given model ($(model_names[i])) or in the parameters input to continue.")
+            error("$(String(n)) => value=$(parameter_values[i]) [lower_bound=$(lower_bounds[i]), upper_bound=$(upper_bounds[i])] violates the parameter bounds requirement (lower_bound <= value <= upper_bound). Fix the bounds in the given model ($(model_names[i])) or in the parameters input to continue.")
         end
         if show_info
             ps = String(n)
             if !isnothing(model_names)
                 ps = String(model_names[i]) * " : " * String(n)
             end
-            @info "           $(ps) => $(default_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
+            @info "           $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
         end
     end
 end
@@ -151,31 +151,31 @@ Scaled parameters and their bounds according to default scaling factors
 scaleParameters
 
 function scaleParameters(parameter_table, _sc::ScaleNone)
-    default = copy(parameter_table.actual)
+    init = copy(parameter_table.initial)
     ub = copy(parameter_table.upper)  # upper bounds
     lb = copy(parameter_table.lower)   # lower bounds
-    checkParameterBounds(parameter_table.name, default, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
-    return (default, lb, ub)
+    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
+    return (init, lb, ub)
 end
     
 function scaleParameters(parameter_table, _sc::ScaleDefault)
-    default = abs.(copy(parameter_table.actual))
-    ub = copy(parameter_table.upper ./ default)   # upper bounds
-    lb = copy(parameter_table.lower ./ default)   # lower bounds
-    default = parameter_table.actual ./ default
-    checkParameterBounds(parameter_table.name, default, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
-    return (default, lb, ub)
+    init = abs.(copy(parameter_table.initial))
+    ub = copy(parameter_table.upper ./ init)   # upper bounds
+    lb = copy(parameter_table.lower ./ init)   # lower bounds
+    init = parameter_table.initial ./ init
+    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
+    return (init, lb, ub)
 end
 
 function scaleParameters(parameter_table, _sc::ScaleBounds)
-    default = copy(parameter_table.actual)
+    init = copy(parameter_table.initial)
     ub = copy(parameter_table.upper)  # upper bounds
     lb = copy(parameter_table.lower)   # lower bounds
-    default = (default - lb)  ./ (ub - lb)
+    init = (init - lb)  ./ (ub - lb)
     lb = zero(lb)
     ub = one.(ub)
-    checkParameterBounds(parameter_table.name, default, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
-    return (default, lb, ub)
+    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
+    return (init, lb, ub)
 end
 
 
