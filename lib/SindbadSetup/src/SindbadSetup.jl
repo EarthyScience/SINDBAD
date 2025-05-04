@@ -92,6 +92,7 @@ module SindbadSetup
     @reexport using JLD2: @save
     @reexport using Sindbad
     @reexport using SindbadUtils
+    @reexport import SindbadUtils: purpose
     @reexport using SindbadMetrics
 
     include("runtimeDispatchTypes.jl")

@@ -265,13 +265,7 @@ Prepares the necessary information and objects needed to run the SINDBAD Terrest
     - Spinup settings.
 - `forcing::NamedTuple`: A forcing NamedTuple containing the time series of environmental drivers for all locations.
 - `output::NamedTuple`: An output NamedTuple containing data arrays, variable information, and dimensions.
-- `::LandOutputType`: A type dispatch that determines the output preparation strategy. Supported types include:
-    - `LandOutArray`: Prepares TEM for using a preallocated array for model output.
-    - `LandOutArrayAll`: Prepares TEM for using a preallocated array to output all land variables.
-    - `LandOutArrayFD`: Prepares TEM for using a preallocated array for finite difference (FD) hybrid experiments.
-    - `LandOutStacked`: Prepares TEM for saving output as a stacked land vector.
-    - `LandOutTimeseries`: Prepares TEM for saving land output as a preallocated time series.
-    - `LandOutYAXArray`: Prepares TEM for using a YAX array for model output.
+- `::LandOutputType`: A type dispatch that determines the output preparation strategy.
 
 # Returns:
 - A NamedTuple (`run_helpers`) containing preallocated data and configurations required to run the TEM, including:
@@ -281,6 +275,15 @@ Prepares the necessary information and objects needed to run the SINDBAD Terrest
     - Land variables.
     - Temporal and spatial indices.
     - Model and helper configurations.
+
+    
+# sindbad land output type:
+   
+    $(methodsOf(SindbadLandOutType))
+
+---
+
+# Extended help
 
 # Notes:
 - The function dynamically prepares the required data structures based on the specified `LandOutputType`.

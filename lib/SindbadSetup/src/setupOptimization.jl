@@ -299,7 +299,7 @@ function setOptimization(info::NamedTuple)
     
     checkOptimizedParametersInModels(info, parameter_table)
 
-    checkParameterBounds(parameter_table.name, parameter_table.actual, parameter_table.lower, parameter_table.upper, info.optimization.optimization_parameter_scaling, show_info=true, model_names=parameter_table.model_approach)
+    checkParameterBounds(parameter_table.name, parameter_table.initial, parameter_table.lower, parameter_table.upper, info.optimization.optimization_parameter_scaling, show_info=true, model_names=parameter_table.model_approach)
 
     # get the variables to be used during optimization
     obs_vars, optim_vars, store_vars, model_vars = getConstraintNames(info.settings.optimization)

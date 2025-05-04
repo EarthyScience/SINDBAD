@@ -82,12 +82,16 @@ Prepares cost options for optimization by filtering variables with insufficient 
 # Arguments:
 - `observations`: A NamedTuple or a vector of arrays containing observation data, uncertainties, and masks used for calculating performance metrics or loss.
 - `cost_options`: A table listing each observation constraint and its configuration for calculating the loss or performance metric.
-- `::SindbadCostMethod`: A type indicating the cost function method. Supported methods include:
-    - `CostModelObs`: Cost based on observation data.
-    - `CostModelObsPriors`: Cost based on observation data and priors.
+- `::SindbadCostMethod`: A type indicating the cost function method. 
 
 # Returns:
 - A filtered table of `cost_options` containing only valid variables with sufficient data points.
+
+# cost methods:
+$(methodsOf(SindbadCostMethod))
+
+---
+# Extended help
 
 # Notes:
 - The function iterates through the observation variables and checks if the number of valid data points meets the minimum threshold specified in `cost_options.min_data_points`.
@@ -146,11 +150,7 @@ Prepares optimization parameters, settings, and helper functions based on the pr
 - `forcing`: Input forcing data used for the optimization process.
 - `observations`: Observed data used for comparison or calibration during optimization.
 - `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of the experiment.
-- `optimization_cost_method`: The method used to calculate the cost function. Supported methods include:
-    - `CostModelObs`: Cost based on observation data.
-    - `CostModelObsPriors`: Cost based on observation data and priors.
-    - `CostModelObsLandTS`: Cost based on land time series data.
-    - `CostModelObsMT`: Cost with multi-threaded computation.
+- `optimization_cost_method`: The method used to calculate the cost function. 
 
 # Returns:
 - A NamedTuple `opti_helpers` containing:
@@ -161,6 +161,14 @@ Prepares optimization parameters, settings, and helper functions based on the pr
   - `lower_bounds`: Lower bounds for the parameters.
   - `upper_bounds`: Upper bounds for the parameters.
   - `run_helpers`: Helper information for running the optimization.
+
+
+# optimization_cost_method:
+$(methodsOf(SindbadCostMethod))
+
+---
+
+# Extended help
 
 # Notes:
 - The function processes the input data and configuration to set up the optimization problem.

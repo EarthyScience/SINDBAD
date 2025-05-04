@@ -73,6 +73,7 @@ module SindbadUtils
     using StaticArraysCore
     @reexport using StatsBase: mean, rle, sample, sum
     @reexport using TypedTables: Table
+    @reexport import Sindbad: purpose, subtypes, methodsOf, showMethodsOf
 
     include("utilsTypes.jl")
     include("getArrayView.jl")

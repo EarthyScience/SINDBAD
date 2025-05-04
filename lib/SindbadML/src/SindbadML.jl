@@ -25,6 +25,8 @@ using SindbadData.YAXArrays
 using SindbadData.Zarr
 using SindbadData.AxisKeys
 using SindbadData: AllNaN
+@reexport import SindbadUtils: purpose
+
 using Flux
 using Optimisers
 using FiniteDiff

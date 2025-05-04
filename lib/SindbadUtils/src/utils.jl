@@ -18,8 +18,6 @@ figlet_fonts = ("3D Diagonal", "3D-ASCII", "3d", "4max", "5 Line Oblique", "5x7"
 """
     LandWrapper{S}
 
-Wraps the nested fields of a NamedTuple output of SINDBAD land into a nested structure of views that can be easily accessed with dot notation.
-
 # Fields:
 - `s::S`: The underlying NamedTuple or data structure being wrapped.
 """
@@ -27,10 +25,10 @@ struct LandWrapper{S}
     s::S
 end
 
+purpose(::Type{LandWrapper}) = "Wraps the nested fields of a NamedTuple output of SINDBAD land into a nested structure of views that can be easily accessed with dot notation."
+
 """
     GroupView{S}
-
-Represents a group of data within a `LandWrapper`, allowing access to specific groups of variables.
 
 # Fields:
 - `groupname::Symbol`: The name of the group being accessed.
@@ -41,10 +39,10 @@ struct GroupView{S}
     s::S
 end
 
+purpose(::Type{GroupView}) = "Represents a group of data within a `LandWrapper`, allowing access to specific groups of variables."
+
 """
     ArrayView{T,N,S<:AbstractArray{<:Any,N}}
-
-A view into a specific array within a group of data, enabling efficient access and manipulation.
 
 # Fields:
 - `s::S`: The underlying array being viewed.
@@ -56,6 +54,8 @@ struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
     groupname::Symbol
     arrayname::Symbol
 end
+
+purpose(::Type{ArrayView}) = "A view into a specific array within a group of data, enabling efficient access and manipulation."
 
 Base.getproperty(s::LandWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfield(s, :s))
 
