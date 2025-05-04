@@ -164,16 +164,24 @@ function setSpinupAndForwardModels(info::NamedTuple)
     is_spinup = findall(is_spinup .== 1)
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
-    parameter_table = getParameters(selected_approach_forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution)
+    default_parameter_table = getParameters(selected_approach_forward, info.temp.helpers.numbers.num_type, info.temp.helpers.dates.temporal_resolution)
 
-    if hasproperty(info[:settings], :parameters) && !isempty(info.settings.parameters)
-        @info "  ....setSpinupAndForwardModels: using input parameters from settings.parameters to override the default parameters."
-        original_parameter_table = parameter_table
+    input_parameter_table = nothing
+    if hasproperty(info.settings.model_structure, :parameter_table) && !isempty(info.settings.model_structure.parameter_table)
+        @info "     ---using input parameters from model_structure.parameter_table in replace_info"
+        input_parameter_table = info.settings.model_structure.parameter_table
+    elseif hasproperty(info[:settings], :parameters) && !isempty(info.settings.parameters)
+        @info "     ---using input parameters from settings.parameters passed from CSV input file"
         input_parameter_table = info.settings.parameters
-        updated_parameter_table = setInputParameters(original_parameter_table, input_parameter_table, info.temp.helpers.dates.temporal_resolution)
-        selected_approach_forward = updateModelParameters(updated_parameter_table, selected_approach_forward, updated_parameter_table.optimized)
-        parameter_table = updated_parameter_table
     end
-    info = (; info..., temp=(; info.temp..., models=(; info.temp.models..., forward=selected_approach_forward, is_spinup=is_spinup, parameter_table=parameter_table))) 
+    updated_parameter_table = copy(default_parameter_table)
+    if !isnothing(input_parameter_table)
+        if !isa(input_parameter_table, Table)
+            error("input_parameter_table must be a Table, but its type is $(typeof(input_parameter_table)). Fix the input error in the source (table or csv file) to continue...")
+        end
+        updated_parameter_table = setInputParameters(default_parameter_table, input_parameter_table, info.temp.helpers.dates.temporal_resolution)
+        selected_approach_forward = updateModelParameters(updated_parameter_table, selected_approach_forward, updated_parameter_table.optimized)
+    end
+    info = (; info..., temp=(; info.temp..., models=(; info.temp.models..., forward=selected_approach_forward, is_spinup=is_spinup, parameter_table=updated_parameter_table))) 
     return info
 end

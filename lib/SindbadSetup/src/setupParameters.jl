@@ -1,7 +1,7 @@
 export getOptimizationParametersTable
 export getParameters
 export getParameterIndices
-
+export perturbParameters
 
 """
     getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
@@ -225,6 +225,51 @@ function getParameterIndices(selected_models::Tuple, parameter_table::Table)
 end
 
 
+
+"""
+    perturbParameters(x::AbstractVector, lower::AbstractVector, upper::AbstractVector, percent_range::Tuple{Float64,Float64}=(0.0, 0.1))
+
+Modify each element of vector `x` by a random percentage within `percent_range`, while ensuring the result stays within the bounds defined by `lower` and `upper` vectors.
+
+# Arguments
+- `x`: Vector to modify
+- `lower`: Vector of lower bounds
+- `upper`: Vector of upper bounds
+- `percent_range`: Tuple of (min_percent, max_percent) for random modification (default: (0.0, 0.1))
+
+# Returns
+- Modified vector `x` (modified in-place)
+
+# Example
+```julia
+x = [1.0, 2.0, 3.0]
+lower = [0.5, 1.5, 2.5]
+upper = [1.5, 2.5, 3.5]
+modify_within_bounds!(x, lower, upper, (0.0, 0.1))  # Modify by 0-10%
+```
+"""
+function perturbParameters(x::AbstractVector, lower::AbstractVector, upper::AbstractVector; percent_range::Tuple{Float64,Float64}=(0.0, 0.1))
+    @assert length(x) == length(lower) == length(upper) "Vectors must have the same length"
+    @assert all(lower .<= upper) "Lower bounds must be less than or equal to upper bounds"
+    @assert all(lower .<= x .<= upper) "Initial values must be within bounds"
+    @assert percent_range[1] >= 0.0 "Minimum percent must be non-negative"
+    @assert percent_range[2] >= percent_range[1] "Maximum percent must be greater than or equal to minimum percent"
+
+    min_pct, max_pct = percent_range
+    for i in eachindex(x)
+        # Generate random percentage within range
+        pct = min_pct + rand() * (max_pct - min_pct)
+        
+        # Calculate new value
+        new_val = x[i] * (1 + pct)
+        
+        # Ensure value stays within bounds
+        x[i] = clamp(new_val, lower[i], upper[i])
+    end
+    return x
+end
+
+
 """
     replaceCommaSeparatedParams(p_names_list)
 
@@ -286,6 +331,7 @@ Updates input parameters by comparing an original table with an updated table fr
 a merged table with updated parameters
 """
 function setInputParameters(original_table::Table, input_table::Table, model_timestep)
+    @info "        ...setInputParameters: override the default parameters and merge tables."
     merged_table = copy(original_table)
     done_parameter_input = []
     skip_property = (:model_id, :initial, :default, :optimized, :approach_func, :lower, :upper)

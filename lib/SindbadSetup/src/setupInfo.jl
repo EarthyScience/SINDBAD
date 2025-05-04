@@ -411,6 +411,7 @@ Processes the experiment configuration and sets up all necessary fields for mode
 """
 function setupInfo(info::NamedTuple)
     @info "setupInfo: Setting and consolidating Experiment Info..."
+    # @show info.settings.model_structure.parameter_table.optimized
     info = setExperimentBasics(info)
     # @info "  setupInfo: setting Output Basics..."
     info = setExperimentOutput(info)
