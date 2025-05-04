@@ -89,7 +89,7 @@ function get_name_units(info_f_vars, _var)
     return _standard_name, _unit
 end
 
-_standard_name, _unit = get_name_units(info.settings.forcing.variables, :f_VPD)
+_standard_name, _unit = get_name_units(info.experiment.data_settings.forcing.variables, :f_VPD)
 
 with_theme() do
     _site_name = Observable(test_names[1])
@@ -114,7 +114,7 @@ with_theme() do
     end
 
     for (i, f_var) in enumerate(f_time)
-        _name, _units = get_name_units(info.settings.forcing.variables, f_var)
+        _name, _units = get_name_units(info.experiment.data_settings.forcing.variables, f_var)
         if isnothing(_units)
             _units = ""
         else

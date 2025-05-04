@@ -93,7 +93,7 @@ function get_name_units_obs(info_f_vars, _var)
     return _standard_name, _unit
 end
 
-_standard_name, _unit = get_name_units_obs(info.settings.optimization.observations.variables, :ndvi)
+_standard_name, _unit = get_name_units_obs(info.experiment.data_settings.optimization.observations.variables, :ndvi)
 
 with_theme() do
     _site_name = Observable(test_names[1])
@@ -118,7 +118,7 @@ with_theme() do
     end
 
     for (i, obs_var) in enumerate(obs_time)
-        _name, _units = get_name_units_obs(info.settings.optimization.observations.variables, obs_var)
+        _name, _units = get_name_units_obs(info.experiment.data_settings.optimization.observations.variables, obs_var)
         if isnothing(_units)
             _units = ""
         else

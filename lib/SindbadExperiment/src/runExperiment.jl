@@ -94,7 +94,7 @@ end
 
 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForward, DoNotRunOptimization})
-    print("-------------------Forward Run Mode---------------------------\n")
+    println("-------------------Forward Run Mode---------------------------\n")
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
     if isempty(additionaldims)
         run_output = runTEMYax(
@@ -113,7 +113,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimizatio
     println("-------------------Optimization Mode---------------------------\n")
     # setLogLevel(:warn)
     observations = getObservation(info, forcing.helpers)
-    additionaldims = setdiff(keys(forcing.helpers.sizes), info.settings.forcing.data_dimension.time)
+    additionaldims = setdiff(keys(forcing.helpers.sizes), info.experiment.data_settings.forcing.data_dimension.time)
     run_output = nothing
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."

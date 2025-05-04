@@ -180,7 +180,9 @@ The `model_output` section configures output format, variables, and storage sett
 :::
 
 ::: info Variable Naming Convention
+
 Variables follow the `field.subfield` convention of the `land` structure.
+
 :::
 
 ### Model Spinup

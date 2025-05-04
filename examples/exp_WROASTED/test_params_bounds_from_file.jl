@@ -43,9 +43,10 @@ full_table = info.models.parameter_table;
 optim_table = info.optimization.parameter_table
 
 forcing = getForcing(info);
+observations = getObservation(info, forcing.helpers);
 run_helpers = prepTEM(forcing, info);
 @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
-@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
+@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info); 

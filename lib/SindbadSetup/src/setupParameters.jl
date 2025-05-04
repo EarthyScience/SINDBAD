@@ -97,7 +97,7 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     dist .= ""
     p_dist .= [num_type[]]
 
-    output = (; model_id, name, actual=default, default,optimized=default, lower, upper, timescale_run=timescale_run, units=unts, timescale_ori=timescale, units_ori=unts_ori, model, model_approach, approach_func, name_full, is_ml, dist, p_dist)
+    output = (; model_id, name, initial=default, default,optimized=default, lower, upper, timescale_run=timescale_run, units=unts, timescale_ori=timescale, units_ori=unts_ori, model, model_approach, approach_func, name_full, is_ml, dist, p_dist)
     output = return_table ? Table(output) : output
     return output
 end

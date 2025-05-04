@@ -455,9 +455,13 @@ function setupInfo(info::NamedTuple)
     end
 
     @info "  setupInfo: Cleaning Info Fields..."
+    data_settings = (; forcing = info.settings.forcing, optimization = info.settings.optimization)
+    exe_rules = info.settings.experiment.exe_rules
     info = dropFields(info, (:model_structure, :experiment, :output, :pools))
     info = (; info..., info.temp...)
-    info = dropFields(info, (:temp, ))
+    info = setTupleSubfield(info, :experiment, (:data_settings, data_settings))
+    info = setTupleSubfield(info, :experiment, (:exe_rules, exe_rules))
+    info = dropFields(info, (:temp, :settings,))
     return info
 end
 
