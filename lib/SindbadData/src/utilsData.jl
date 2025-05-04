@@ -287,7 +287,8 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::B
             if dn in keys(nc)
                 dv = info.helpers.numbers.num_type.(nc[dn][:])
             else
-                error("To avoid possible issues with dimensions, Sindbad does not run when the dimension variable $(dn) is not available in input data file $(data_path). Add the variable to the data, and try again.")
+                data_path_tmp = isnothing(data_path) ? data_path_v : data_path
+                error("To avoid possible issues with dimensions, Sindbad does not run when the dimension variable $(dn) is not available in input data file $(data_path_tmp). Add the variable to the data, and try again.")
             end
             rax = Dim{Symbol(dn)}(dv)
         end

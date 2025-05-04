@@ -3,19 +3,22 @@ using SindbadSetup
 @time using SindbadExperiment
 using Plots
 toggleStackTraceNT()
-domain = "africa";
+domain = "africa_full_parameters";
 optimize_it = true;
 # optimize_it = false;
-
 include("graf_models.jl");
+
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
-    "experiment.basics.config_files.forcing" => "forcing.json",
-    "experiment.basics.config_files.model_structure" => "model_structure_noorder.json",
-    "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.calc_cost" => optimize_it,
+    "experiment.basics.config_files.forcing" => "forcing_full_2d.json",
+    "experiment.basics.config_files.parameters" => "/Net/Groups/BGI/scratch/skoirala/RnD/SINDBAD-RnD-SK/examples/exp_graf/output_africa_spatial_OptimDomain/optimization/OptimDomain_africa_spatial_model_parameters_to_optimize.csv",
+    "experiment.basics.config_files.optimization" => "optimization_full_2d.json",
+    "experiment.flags.run_optimization" => false,
+    "experiment.flags.calc_cost" => true,
     "experiment.flags.catch_model_errors" => true,
     "experiment.flags.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
+    # "optimization.optimization_cost_method" => "CostModelObsMT",
+    # "optimization.optimization_cost_threaded"  => true,
     "model_structure.sindbad_models" => graf_models
     );
 
@@ -43,12 +46,14 @@ end
 
 # setLogLevel(:debug)
 
-@time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
+@time output_cost = runExperimentCost(experiment_json; replace_info=replace_info_spatial);
+
+# return (; forcing, info, loss=loss_vector, observation=obs_array, output=forward_output)
 
 
 ds = forcing.data[1];
-# plotdat = out_opti.output.optimized;
-plotdat = output_default.output;
+# plotdat = output_cost.output.optimized;
+plotdat = output_cost.output;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 output_vars = keys(plotdat)
 for i ∈ eachindex(output_vars)
@@ -61,12 +66,12 @@ for i ∈ eachindex(output_vars)
     if size(pd, 2) == 1
         heatmap(pd[:, 1, :]; title="$(vname)" , size=(2000, 1000))
         # Colorbar(fig[1, 2], obj)
-        savefig(joinpath(info.output.dirs.figure, "afr2d_$(vname).png"))
+        savefig(joinpath(info.output.dirs.figure, "$(domain)_$(vname).png"))
     else
         foreach(axes(pd, 2)) do ll
             heatmap(pd[:, ll, :]; title="$(vname)" , size=(2000, 1000))
             # Colorbar(fig[1, 2], obj)
-            savefig(joinpath(info.output.dirs.figure, "afr2d_$(vname)_$(ll).png"))
+            savefig(joinpath(info.output.dirs.figure, "$(domain)_$(vname)_$(ll).png"))
         end
     end
 end
@@ -86,7 +91,7 @@ for (o, v) in enumerate(forc_vars)
         plot_data =  def_var[:,:]
     end
     heatmap(plot_data; title="$(v):: mean = $(round(SindbadTEM.mean(def_var), digits=2)), nans=$(sum(isInvalid.(plot_data)))", size=(2000, 1000))
-    savefig(joinpath(info.output.dirs.figure, "forc_afr2d_$v.png"))
+    savefig(joinpath(info.output.dirs.figure, "forc_$(domain)_$v.png"))
 end
 #setLogLevel(:debug)
 # @profview metricVector(run_helpers.output_array, obs_array, cost_options) # |> sum
@@ -94,13 +99,12 @@ end
 # @time metricVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 
 
-@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
-obs_array = out_opti.observation;
-info = out_opti.info;
+obs_array = output_cost.observation;
+info = output_cost.info;
 
 # some plots
-opt_dat = out_opti.output.optimized;
-def_dat = out_opti.output.default;
+opt_dat = output_cost.output.optimized;
+def_dat = output_cost.output.default;
 costOpt = prepCostOptions(obs_array, info.optimization.cost_options)
 # ──────────────────────────────────────────────────
 #  1 │ gpp                 NSEInv()    0.193419  1.54357
@@ -132,13 +136,17 @@ losses = map(costOpt) do var_row
     (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row);
     (_, _, opt_var) = getData(opt_dat, obs_array, var_row);
 
+    (obs_var_no_nan, obs_σ_no_nan, def_var_no_nan) = getDataWithoutNaN(obs_var, obs_σ, def_var);
+    (obs_var_no_nan, obs_σ_no_nan, opt_var_no_nan) = getDataWithoutNaN(obs_var, obs_σ, opt_var);
 
     loss_space = map([run_helpers.space_ind...]) do lsi
         opt_pix = getArrayView(opt_var, lsi)
         def_pix = getArrayView(def_var, lsi)
         obs_pix = getArrayView(obs_var, lsi)
         obs_σ_pix = getArrayView(obs_σ, lsi)
-        [metric(obs_pix, obs_σ_pix, def_pix, lossMetric), metric(obs_pix, obs_σ_pix, opt_pix, lossMetric)]
+        (obs_pix_no_nan, obs_σ_pix_no_nan, opt_pix_no_nan) = getDataWithoutNaN(obs_pix, obs_σ_pix, opt_pix)
+        (_, _, def_pix_no_nan) = getDataWithoutNaN(obs_pix, obs_σ_pix, def_pix)
+        [metric(obs_pix_no_nan, obs_σ_pix_no_nan, def_pix_no_nan, lossMetric), metric(obs_pix_no_nan, obs_σ_pix_no_nan, opt_pix_no_nan, lossMetric)]
     end
 
 
@@ -146,14 +154,9 @@ losses = map(costOpt) do var_row
     b_range = range(-1, 1, length=50)
     p_title = "$(var_row.variable) ($(nameof(typeof(lossMetric))))"
     histogram(first.(loss_space); title=p_title, size=(2000, 1000),bins=b_range, alpha=0.9, label="default", color="#FDB311")
-    vline!([metric(obs_var, obs_σ, def_var, lossMetric)], label="default_spatial", color="#FDB311")
+    vline!([metric(obs_var_no_nan, obs_σ_no_nan, def_var_no_nan, lossMetric)], label="default_spatial", color="#FDB311", lw=3)
     histogram!(last.(loss_space); size=(2000, 1000), bins=b_range, alpha=0.5, label="optimized", color="#18A15C")
-    vline!([metric(obs_var, obs_σ, opt_var, lossMetric)], label="optimized_spatial", color="#18A15C")
+    vline!([metric(obs_var_no_nan, obs_σ_no_nan, opt_var_no_nan, lossMetric)], label="optimized_spatial", color="#18A15C", lw=3)
     xlabel!("")
     savefig(joinpath(info.output.dirs.figure, "obs_vs_pred_$(v_key).png"))
-    # loss_space
-    # @show "plot obs", v, lossMetric
-
-    # @show "plot obs", v, metric(obs_var, obs_σ, def_var, lossMetric), metric(obs_var, obs_σ, opt_var, lossMetric)
-    # @show size(obs_var), size(def_var)
 end
