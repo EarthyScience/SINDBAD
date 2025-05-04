@@ -8,21 +8,21 @@ hero:
   text: "STRATEGIES TO INTEGRATE DATA AND BIOGEOCHEMICAL MODELS"
   tagline: A model data integration framework
   image:
-    src: /logo.png
+    src: /sindbad_logo.png
     alt: Sindbad
   actions:
     - theme: brand
       text: Start
       link: pages/concept/overview
     - theme: alt
-      text: Install
-      link: pages/manual/install
+      text: Learn
+      link: pages/develop/overview
     - theme: alt
-      text: Land
-      link: pages/concept/land
+      text: Code
+      link: pages/code/overview
     - theme: alt
       text: Repository
-      link: https://github.com/orgs/EarthyScience
+      link: https://github.com/EarthyScience/SINDBAD
 features:
   - icon: <img width="64" height="64" src="https://img.icons8.com/?size=100&id=B1TKpLjVCRyp&format=png&color=000000" alt="modular-icon"/>
     title: Challenge
@@ -44,7 +44,7 @@ features:
 
   - icon: <img width="78" height="78" src="https://img.icons8.com/external-filled-color-icons-papa-vector/78/external-Adjustment-Problem-choosing-business-tools-filled-color-icons-papa-vector.png" alt="optim-icon"/>
     title: Manual
-    link: /pages/manual/overview
+    link: /pages/develop/overview
     details: Integrate observations via parameter inversion approaches or data assimilation methods.
 
   - icon: <img width="50" height="50" src="https://img.icons8.com/bubbles/50/mind-map.png" alt="hybrid-icon"/>

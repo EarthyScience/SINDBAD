@@ -22,7 +22,8 @@ const settingsItems = [
 ]
 
 const codeItems = [
-  { text: 'Sindbad', link: '/pages/code/sindbad' },
+  { text: 'Sindbad', link: '/pages/code/overview' },
+  { text: ' + Core', link: '/pages/code/sindbad' },
   { text: ' + Data', link: '/pages/code/data' },
   { text: ' + Experiment', link: '/pages/code/experiment' },
   { text: ' + Metrics', link: '/pages/code/metrics' },
@@ -43,30 +44,30 @@ const aboutItems = [
 ]
 
 const manualItems = [
-  { text: 'Overview', link: '/pages/manual/overview' },
-  { text: 'Install', link: '/pages/manual/install' },
-  { text: 'Modeling Convention', link: '/pages/manual/conventions' },
-  { text: 'Model Approach', link: '/pages/manual/model_approach' },
-  { text: 'Array Handling', link: '/pages/manual/array_handling' },
-  { text: 'Land Utils', link: '/pages/manual/land_utils' },
-  { text: 'Experiments', link: '/pages/manual/experiments' },
-  { text: 'Spinup', link: '/pages/manual/spinup' },
-  { text: 'Optimization Methods', link: '/pages/manual/optimization_method' },
-  { text: 'Cost Metrics', link: '/pages/manual/cost_metrics' },
-  { text: 'Cost Function', link: '/pages/manual/cost_function' },
-  { text: 'Documentation', link: '/pages/manual/how_to_doc' },
+  { text: 'Overview', link: '/pages/develop/overview' },
+  { text: 'Install', link: '/pages/develop/install' },
+  { text: 'Modeling Convention', link: '/pages/develop/conventions' },
+  { text: 'Model Approach', link: '/pages/develop/model_approach' },
+  { text: 'Array Handling', link: '/pages/develop/array_handling' },
+  { text: 'Land Utils', link: '/pages/develop/land_utils' },
+  { text: 'Experiments', link: '/pages/develop/experiments' },
+  { text: 'Spinup', link: '/pages/develop/spinup' },
+  { text: 'Optimization Methods', link: '/pages/develop/optimization_method' },
+  { text: 'Cost Metrics', link: '/pages/develop/cost_metrics' },
+  { text: 'Cost Function', link: '/pages/develop/cost_function' },
+  { text: 'Documentation', link: '/pages/develop/how_to_doc' },
 ]
 
 const navTemp = {
   nav: [
     { text: 'Concept', items: conceptItems,
     },
-    { text: 'Manual', items: manualItems,
-    },
     { text: 'Settings',  items: settingsItems, 
     },
-   { text: 'Code', 
+    { text: 'Code', 
       items: codeItems,
+    },
+    { text: 'Develop', items: manualItems,
     },
     { text: 'About', 
       items: aboutItems

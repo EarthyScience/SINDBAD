@@ -1,15 +1,3 @@
-::: tip What are `Exported` and `Internal` entities?
-
-- `Exported` entities (functions, structs, types, constants):
-
-These are explicitly made available to users using the `export` keyword, allowing them to be accessed without prefixing them with the module name.
-
-- `Internal` entities (non-exported):
-
-These remain accessible but require qualification with the module name (e.g., `MyModule.SomeType`), indicating that they are intended for internal use.
-
-:::
-
 
 ```@docs
 Sindbad

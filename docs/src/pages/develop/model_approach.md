@@ -67,7 +67,7 @@ end
 - Sets up model parameters
 - Returns modified `land` structure
 
-For more information about variable initialization, see the [land concept documentation](../concept/land.md#variable-initialization).
+For more information about variable initialization, see the [land concept documentation](../concept/land.md).
 
 ### 2. `compute`
 ```julia
@@ -132,7 +132,7 @@ After implementing a model approach, you can:
 2. Apply the model over multiple time steps
 3. Use `LandWrapper` to collect and analyze results
 
-Also, note that in practice, you would want to do this for multiple time steps. For the output of this operation, we use a `LandWrapper` that collects all fields in a user-friendly manner (see [Land utils](./land_utils)).
+Also, note that in practice, you would want to do this for multiple time steps. For the output of this operation, we use a `LandWrapper` that collects all fields in a user-friendly manner (see [Land utils](./land_utils.md)).
 
 
 ## Performance Considerations

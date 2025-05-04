@@ -27,14 +27,11 @@ The SINDBAD workflow consists of the following key steps:
    - Set up [experiment information](./info.md)
      - Configure [model structure and pools](./TEM.md)
      - Define [simulation parameters](./experiment.md)
-     - Initialize [land data structure](./land.md)
 
 2. **Data Processing**
-   - Load forcing and observation data
-   - Prepare model initialization
-   - Configure optimization settings
+   - Load [forcing](../settings/forcing.md) and [observation](../settings/optimization.md) data using [SindbadData](../code/data.md)
+   - Prepare model initial setups using [SindbadSetup](../code/setup.md)
+   - Configure [optimization settings](../settings/optimization.md)
 
 3. **Execution**
-   - Run the experiment
-   - Process and validate results
-   - Save and analyze output
+   - [Run the experiment](../develop/experiments.md)
