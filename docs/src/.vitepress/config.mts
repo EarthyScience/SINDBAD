@@ -47,7 +47,7 @@ const manualItems = [
   { text: 'Overview', link: '/pages/develop/overview' },
   { text: 'Install', link: '/pages/develop/install' },
   { text: 'Modeling Convention', link: '/pages/develop/conventions' },
-  { text: 'Model Approach', link: '/pages/develop/model_approach' },
+  { text: 'Model/Approach', link: '/pages/develop/model_approach' },
   { text: 'Array Handling', link: '/pages/develop/array_handling' },
   { text: 'Land Utils', link: '/pages/develop/land_utils' },
   { text: 'Experiments', link: '/pages/develop/experiments' },
