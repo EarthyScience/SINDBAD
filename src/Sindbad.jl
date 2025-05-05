@@ -68,14 +68,59 @@ module Sindbad
     @reexport using Reexport
     @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
 
-    ## Define SINDBAD supertype
-    export LandEcosystem
-    abstract type LandEcosystem end
-   
-   include("utilsCore.jl")
+   include("coreTypes.jl")
+   include("utilsCore.jl")   
    include("sindbadVariableCatalog.jl")
    include("modelTools.jl")
    include("Models/models.jl")
    include("generateCode.jl")
    @reexport using .Models
+
+   # append the docstring of the LandEcosystem type to the docstring of the Sindbad module so that all the methods of the LandEcosystem type are included after the models have been described
+   @doc """
+   LandEcosystem
+
+   $(purpose(LandEcosystem))
+
+   # Methods
+   All subtypes of `LandEcosystem` must implement at least one of the following methods:
+   - `define`: Initialize arrays and variables
+   - `precompute`: Update variables with new realizations
+   - `compute`: Update model state in time
+   - `update`: Update pools within a single time step
+
+
+   # Example
+   ```julia
+   # Define a new model type
+   struct MyModel <: LandEcosystem end
+
+   # Implement required methods
+   function define(params::MyModel, forcing, land, helpers)
+   # Initialize arrays and variables
+   return land
+   end
+
+   function precompute(params::MyModel, forcing, land, helpers)
+   # Update variables with new realizations
+   return land
+   end
+
+   function compute(params::MyModel, forcing, land, helpers)
+   # Update model state in time
+   return land
+   end
+
+   function update(params::MyModel, forcing, land, helpers)
+   # Update pools within a single time step
+   return land
+   end
+   ```
+
+   ---
+
+   # Extended Help
+   $(methodsOf(LandEcosystem))
+   """
+   LandEcosystem
 end

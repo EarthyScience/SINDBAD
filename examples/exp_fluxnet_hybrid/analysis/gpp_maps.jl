@@ -13,11 +13,11 @@ CairoMakie.activate!()
 # TODO: GPP
 
 # ? from models PFT
-ds_gpp_PFT = open_dataset(joinpath(@__DIR__, "../data/gpp_maps_FixK_PFT.zarr/"))
+ds_gpp_PFT = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/gpp_maps_FixK_PFT.zarr/"))
 ds_gpp_μ_pft = mapslices(mean, replace(ds_gpp_PFT["layer"][time= DateTime(2002) .. DateTime(2018)], 1.0f32=>missing), dims="time")
 # ? masks
-ds_area = open_dataset(joinpath(@__DIR__, "../data/AreaMask_0d25.zarr"))["area_mask"]
-ds_veg = open_dataset(joinpath(@__DIR__, "../data/VegetatedLand_0d25.zarr"))["VegLand"]
+ds_area = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/AreaMask_0d25.zarr"))["area_mask"]
+ds_veg = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/VegetatedLand_0d25.zarr"))["VegLand"]
 ds_veg_p = permutedims(ds_veg, (2,1))
 
 ds_gpp_μ_pft_new = YAXArray(dims(ds_veg_p), ds_gpp_μ_pft.data)
@@ -120,7 +120,7 @@ for tempo in ds_gpp_pft.time
 end
 
 # ? from models ALL
-ds_gpp_ALL = open_dataset(joinpath(@__DIR__, "../data/gpp_maps_FixK_ALL.zarr/"))
+ds_gpp_ALL = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/gpp_maps_FixK_ALL.zarr/"))
 ds_gpp_μ_all = mapslices(mean, replace(ds_gpp_ALL["layer"][time= DateTime(2002) .. DateTime(2018)], 1.0f32=>missing), dims="time")
 
 ds_gpp_μ_all_new = YAXArray(dims(ds_veg_p), ds_gpp_μ_all.data)
@@ -172,7 +172,7 @@ end
 
 
 # for each year
-ds_gpp_ALL = open_dataset(joinpath(@__DIR__, "../data/gpp_maps_FixK_ALL.zarr/"))
+ds_gpp_ALL = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/gpp_maps_FixK_ALL.zarr/"))
 ds_gpp_ALL = replace(ds_gpp_ALL["layer"], 1.0f32=>missing)
 
 _gpp_all_sums = Float64[]

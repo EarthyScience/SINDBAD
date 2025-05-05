@@ -265,13 +265,7 @@ Prepares the necessary information and objects needed to run the SINDBAD Terrest
     - Spinup settings.
 - `forcing::NamedTuple`: A forcing NamedTuple containing the time series of environmental drivers for all locations.
 - `output::NamedTuple`: An output NamedTuple containing data arrays, variable information, and dimensions.
-- `::LandOutputType`: A type dispatch that determines the output preparation strategy. Supported types include:
-    - `LandOutArray`: Prepares TEM for using a preallocated array for model output.
-    - `LandOutArrayAll`: Prepares TEM for using a preallocated array to output all land variables.
-    - `LandOutArrayFD`: Prepares TEM for using a preallocated array for finite difference (FD) hybrid experiments.
-    - `LandOutStacked`: Prepares TEM for saving output as a stacked land vector.
-    - `LandOutTimeseries`: Prepares TEM for saving land output as a preallocated time series.
-    - `LandOutYAXArray`: Prepares TEM for using a YAX array for model output.
+- `::LandOutputType`: A type dispatch that determines the output preparation strategy.
 
 # Returns:
 - A NamedTuple (`run_helpers`) containing preallocated data and configurations required to run the TEM, including:
@@ -281,6 +275,15 @@ Prepares the necessary information and objects needed to run the SINDBAD Terrest
     - Land variables.
     - Temporal and spatial indices.
     - Model and helper configurations.
+
+    
+# sindbad land output type:
+   
+    $(methodsOf(SindbadLandOutType))
+
+---
+
+# Extended help
 
 # Notes:
 - The function dynamically prepares the required data structures based on the specified `LandOutputType`.
@@ -442,18 +445,18 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutArray())
 
-    forcing_helpers_with_param_set = updateForcingHelpers(deepcopy(forcing.helpers), info.optimization.n_threads_cost);
+    forcing_helpers_with_parameter_set = updateForcingHelpers(deepcopy(forcing.helpers), info.optimization.n_threads_cost);
 
-    output_mt = prepTEMOut(info, forcing_helpers_with_param_set)
+    output_mt = prepTEMOut(info, forcing_helpers_with_parameter_set)
     output_array_mt = output_mt.data
 
-    space_ind_mt, _ = getSpatialInfo(forcing_helpers_with_param_set)
+    space_ind_mt, _ = getSpatialInfo(forcing_helpers_with_parameter_set)
 
     space_output_mt = map([space_ind_mt...]) do lsi
         getLocData(output_array_mt, lsi)
     end
 
-    run_helpers = (; run_helpers..., space_output_mt=space_output_mt, space_ind_mt=space_ind_mt, output_array_mt=output_array_mt, output_dims_mt=output_mt.dims, forcing_helpers_with_param_set=forcing_helpers_with_param_set)
+    run_helpers = (; run_helpers..., space_output_mt=space_output_mt, space_ind_mt=space_ind_mt, output_array_mt=output_array_mt, output_dims_mt=output_mt.dims, forcing_helpers_with_parameter_set=forcing_helpers_with_parameter_set)
     return run_helpers
 end
 
@@ -609,14 +612,14 @@ function runTEMOne(selected_models, loc_forcing, land_init, tem)
     return loc_forcing_t, loc_land
 end
 
-function updateForcingHelpers(new_forcing_helpers, param_set_size)
+function updateForcingHelpers(new_forcing_helpers, parameter_set_size)
     data_dimensions = new_forcing_helpers.dimensions
-    insert!(data_dimensions.space, 1, "param_set")
+    insert!(data_dimensions.space, 1, "parameter_set")
     if !isnothing(data_dimensions.permute)
-        insert!(data_dimensions.permute, 2, "param_set")
+        insert!(data_dimensions.permute, 2, "parameter_set")
     end
-    insert!(new_forcing_helpers.axes, 2, Pair(:param_set, 1:param_set_size))
-    new_sizes = (; new_forcing_helpers.sizes..., param_set=param_set_size)
+    insert!(new_forcing_helpers.axes, 2, Pair(:parameter_set, 1:parameter_set_size))
+    new_sizes = (; new_forcing_helpers.sizes..., parameter_set=parameter_set_size)
     new_forcing_helpers = setTupleField(new_forcing_helpers, (:sizes, new_sizes))
     return new_forcing_helpers
 end

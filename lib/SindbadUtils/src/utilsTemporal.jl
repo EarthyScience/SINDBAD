@@ -96,32 +96,14 @@ a function to create a temporal aggregation struct for a given time step
 - `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
 - `t_step`: a string/Symbol/Type defining the aggregation time target with different types as follows:
   - `::Union{String, Symbol}`: a string/Symbol defining the aggregation time target from the settings
-  - `::TimeAllYears`: aggregation/slicing to include all years
-  - `::TimeMean`: aggregation to mean over all time steps
-  - `::TimeDay`: aggregation to daily time steps
-  - `::TimeDayAnomaly`: aggregation to daily anomalies
-  - `::TimeDayIAV`: aggregation to daily IAV
-  - `::TimeDayMSC`: aggregation to daily MSC
-  - `::TimeDayMSCAnomaly`: aggregation to daily MSC anomalies
-  - `::TimeHour`: aggregation to daily time steps
-  - `::TimeHourAnomaly`: aggregation to daily anomalies
-  - `::TimeHourIAV`: aggregation to daily IAV
-  - `::TimeHourMSC`: aggregation to daily MSC
-  - `::TimeHourMSCAnomaly`: aggregation to daily MSC anomalies
-  - `::TimeFirstYear`: aggregation/slicing of the first year
-  - `::TimeMonth`: aggregation to monthly time steps
-  - `::TimeMonthAnomaly`: aggregation to monthly anomalies
-  - `::TimeMonthIAV`: aggregation to monthly IAV
-  - `::TimeMonthMSC`: aggregation to monthly MSC
-  - `::TimeMonthMSCAnomaly`: aggregation to monthly MSC anomalies
-  - `::TimeRandomYear`: aggregation/slicing of a random year
-  - `::TimeShuffleYears`: aggregation/slicing of shuffled years
-  - `::TimeSizedArray`: aggregation to a sized array
-  - `::TimeYear`: aggregation to yearly time steps
-  - `::TimeYearAnomaly`: aggregation to yearly anomalies
 - `aggr_func`: a function to use for aggregation, defaults to mean
 - `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
 
+# Returns:
+- `::Vector{TimeAggregator}`: a vector of TimeAggregator structs
+
+# t_step:
+$(methodsOf(SindbadTimeAggregator))
 """
 createTimeAggregator
 

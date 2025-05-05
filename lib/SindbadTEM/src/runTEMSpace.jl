@@ -20,7 +20,7 @@ Executes the core SINDBAD Terrestrial Ecosystem Model (TEM) for a single locatio
 Executes the main TEM simulation logic with the provided parameters and data. Handles both
 regular simulation and spinup modes based on the spinup_mode flag.
 
-# Extended help:
+# Extended help
 - **Precomputations**:
     - The function runs `precomputeTEM` to prepare the land state for the simulation.
 """

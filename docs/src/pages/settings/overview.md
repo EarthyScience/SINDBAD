@@ -1,27 +1,31 @@
-## SINDBAD Configuration 
+# SINDBAD Configuration Overview
 
-SINDBAD is configurable to adapt to different model structure and model data integration approaches depending on the scientific goals and challenges. 
+SINDBAD provides a flexible configuration system that adapts to different model structures and data integration approaches, tailored to specific scientific objectives and challenges.
 
-In a conventional modeling experiments, these would require changes to the internal model code and or additional scripts. 
+Unlike traditional modeling experiments that require code modifications or additional scripts, SINDBAD uses **JSON configuration files** to define all necessary settings for running experiments. This approach enables seamless integration of terrestrial ecosystem models with various model-data integration strategies.
 
-In SINDBAD, this is accomplished through a series of **configuration files written in the .json format**, which would set all the information needed to run an experiment based on one realization of terrestrial ecosystem model and associated model-data-integration strategies.
+## Configuration Files
 
-The main configuration files of SINDBAD are listed in the table below
+The following table outlines SINDBAD's main configuration files:
 
-| SN | Prefix | Required? | Purpose | 
-| :----: | :----| :----: | :------|
-| 1 | [experiment](experiment.md) | yes | the basics for experiment along with the information of additional settings of running simulation | 
-| 2 | [forcing](forcing.md) | yes | sets the information related to the forcing dataset | 
-| 3 | [model_structure](model_structure.md) | yes | sets the information of model processes and pools | 
-| 4 | [optimization](optimization.md) | no | sets the information needed to do parameter optimization or calculate model performance compared with observations | 
-| 5 | [parameters](parameters.md) | no | provides interface to run an experiment with non-default parameter values | 
+| # | File | Required | Purpose |
+|:--|:-----|:--------:|:--------|
+| 1 | [Experiment](experiment.md) | Yes | Defines experiment basics and simulation settings |
+| 2 | [Forcing](forcing.md) | Yes | Configures forcing dataset specifications |
+| 3 | [Model Structure](model_structure.md) | Yes | Defines model processes and pools |
+| 4 | [Optimization](optimization.md) | No | Configures parameter optimization and model performance evaluation |
+| 5 | [Parameters](parameters.md) | No | Specifies non-default parameter values for experiments |
 
+::: tip Best Practices
+- Store all configuration files for an experiment in a dedicated directory within the **settings_*** folder of your SINDBAD experiments directory
+- Use descriptive file names that clearly associate configurations with specific experiments
+- Maintain a clear naming convention to ensure traceability and reproducibility
+- Reference the example configurations in the ```examples``` directory as templates
+:::
 
-
-::: tip
-- All the configuration files for a given experiment are recommended to be saved inside a separate directory within the **settings_*** directory of the SINDBAD experiments folder. 
-
-- An example of a set of configuration files are included in ```examples``` directory. 
-While developing, it is recommended to change the names of the configuration files, so that the they can be easily associated with the respective experiment, and to keep the experiment setup traceable and reproducible. 
-
+::: info Configuration Management
+- Each experiment should have its own configuration directory
+- Version control your configuration files to track changes
+- Document any modifications to default settings
+- Keep configuration files organized and well-documented
 :::

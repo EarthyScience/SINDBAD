@@ -145,7 +145,7 @@ end
 
 function getOutDims(info, forcing_helpers, ::OutputYAXArray)
     outdims_pairs = getOutDimsPairs(info.output, forcing_helpers);
-    space_dims = Symbol.(info.settings.forcing.data_dimension.space)
+    space_dims = Symbol.(info.experiment.data_settings.forcing.data_dimension.space)
     var_dims = map(outdims_pairs) do dim_pairs
         od = []
         for _dim in dim_pairs
@@ -370,7 +370,7 @@ variables = output_tuple.variables
 """
 function prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
     @info "  prepTEMOut: preparing output and helpers..."
-    land = info.land_init
+    land = info.helpers.land_init
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land))
     @debug "     prepTEMOut: getting out variables, dimension and arrays..."

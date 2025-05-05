@@ -2,6 +2,7 @@ module Models
 
 # Import & export necessary modules/functions
 using ..Sindbad
+import ..Sindbad: purpose
 using FieldMetadata: @metadata
 using Parameters: @with_kw
 using StatsBase: mean
@@ -15,14 +16,8 @@ export DoNotCatchModelErrors
 export @describe, @bounds, @units, @timescale
 export @with_kw
 export getBaseDocStringForApproach
-export purpose
-export sindbad_compute_methods
-export sindbad_define_methods
-export sindbad_precompute_methods
-export sindbad_update_methods
 # define dispatch structs for catching model errors
-struct DoCatchModelErrors end
-struct DoNotCatchModelErrors end
+
 
 missingApproachPurpose(x) = "$(x) is missing the definition of purpose. Add `purpose(::Type{$(nameof(x))})` = \"the_purpose\"` in `$(nameof(x)).jl` file to define the specific purpose"
 
@@ -321,51 +316,6 @@ The update function is essential for SINDBAD models and approaches that require 
 function update(params::LandEcosystem, forcing, land, helpers)
     return land
 end
-
-"""
-    purpose(x::Type{<:LandEcosystem})
-
-Retrieve the purpose of a SINDBAD model or approach.
-
-# Description
-This function returns the purpose of a SINDBAD model or approach. The purpose is a descriptive string that explains the role or functionality of the model or approach within the SINDBAD framework. If the purpose is not defined for a specific model or approach, it provides guidance on how to define it.
-
-# Arguments
-- `x`: The type of the SINDBAD model or approach for which the purpose is to be retrieved.
-
-# Returns
-- A string describing the purpose of the model or approach.
-
-# Behavior
-- For a specific model or approach, it retrieves the purpose defined using the `purpose(::Type{...})` method.
-- If the purpose is not defined, it provides a message indicating that the purpose is missing and suggests how to define it.
-
-# Example
-```julia
-# Define the purpose for a specific model
-purpose(::Type{ambientCO2_constant}) = "sets the value of ambient_CO2 as a constant"
-```
-# Retrieve the purpose
-````
-println(purpose(ambientCO2_constant))  # Output: "sets the value of ambient_CO2 as a constant"
-````
-"""
-purpose
-
-purpose(::Type{LandEcosystem}) = "Purpose of a SINDBAD land ecosystem model/approach. Add `purpose(::Type{$(nameof(x))}) = \"the_purpose\"` in `$(nameof(x)).jl` file to define the specific purpose of the model/approach"
-
-function purpose(T::Type{<:LandEcosystem}) 
-    foreach(subtypes(T)) do subtype
-        subsubtype = subtypes(subtype)
-        if isempty(subsubtype)
-            purpose(subtype)    
-        else
-            purpose.(subsubtype)
-        end
-    end
-end
-
-purpose(x::LandEcosystem) = purpose(typeof(x))
 
 # Import all models: developed by @lalonso
 all_folders = readdir(joinpath(@__DIR__, "."))
