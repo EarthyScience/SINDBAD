@@ -26,19 +26,19 @@ gfas_years = sum.(sum_gfas_year) /10^9 /1000/(44/12)
 
 
 # ? from models PFT
-ds_carbon_PFT = open_dataset(joinpath(@__DIR__, "../data/carbon_maps_FixK_PFT.zarr/"))
+ds_carbon_PFT = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/carbon_maps_FixK_PFT.zarr/"))
 
 sum_carbon_PFT = mapslices(x -> sum(skipmissing(x .* area_mask)), ds_carbon_PFT["layer"],
     dims=("longitude", "latitude"))
     
 # ? from models ALL
-ds_carbon_ALL = open_dataset(joinpath(@__DIR__, "../data/carbon_maps_FixK_ALL.zarr/"))
+ds_carbon_ALL = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/carbon_maps_FixK_ALL.zarr/"))
 
 sum_carbon_ALL = mapslices(x -> sum(skipmissing(x .* area_mask)), ds_carbon_ALL["layer"],
     dims=("longitude", "latitude"))
     
 # ? fires
-ds_fires = open_dataset(joinpath(@__DIR__, "../data/fire_maps_sums.zarr/"))
+ds_fires = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/fire_maps_sums.zarr/"))
 sum_fires = mapslices(x -> sum(skipmissing(x .* area_mask)), ds_fires["fire_frac_per_area"],
     dims=("longitude", "latitude"))
    
@@ -129,7 +129,7 @@ end
 # TODO: GPP
 
 # ? from models PFT
-ds_gpp_PFT = open_dataset(joinpath(@__DIR__, "../data/gpp_maps_FixK_PFT.zarr/"))
+ds_gpp_PFT = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/gpp_maps_FixK_PFT.zarr/"))
 ds_gpp_μ_pft = mapslices(mean, ds_gpp_PFT["layer"], dims="time")
 to_hist_pft = filter(!ismissing, ds_gpp_μ_pft.data)
 
@@ -164,7 +164,7 @@ with_theme(theme_latexfonts()) do
 end
 
 # ? from models ALL
-ds_gpp_ALL = open_dataset(joinpath(@__DIR__, "../data/gpp_maps_FixK_ALL.zarr/"))
+ds_gpp_ALL = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/gpp_maps_FixK_ALL.zarr/"))
 ds_gpp_μ_all = mapslices(mean, ds_gpp_ALL["layer"], dims="time")
 to_hist_all = filter(!ismissing, ds_gpp_μ_all.data)
 
@@ -201,7 +201,7 @@ end
 # TODO: NEE
 
 # ? from models PFT
-ds_gpp_PFT = open_dataset(joinpath(@__DIR__, "../data/nee_maps_FixK_PFT.zarr/"))
+ds_gpp_PFT = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/nee_maps_FixK_PFT.zarr/"))
 ds_gpp_μ_pft = mapslices(mean, ds_gpp_PFT["layer"], dims="time")
 to_hist_pft = filter(!ismissing, ds_gpp_μ_pft.data)
 n = 256
@@ -241,7 +241,7 @@ with_theme(theme_latexfonts()) do
 end
 
 # ? from models ALL
-ds_nee_ALL = open_dataset(joinpath(@__DIR__, "../data/nee_maps_FixK_ALL.zarr/"))
+ds_nee_ALL = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/nee_maps_FixK_ALL.zarr/"))
 ds_nee_μ_all = mapslices(mean, ds_nee_ALL["layer"], dims="time")
 to_hist_all = filter(!ismissing, ds_nee_μ_all.data)
 

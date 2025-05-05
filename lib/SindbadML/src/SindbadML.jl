@@ -26,6 +26,8 @@ using SindbadData.Zarr
 using SindbadData.AxisKeys
 using SindbadData: AllNaN
 using Enzyme
+@reexport import SindbadUtils: purpose
+
 using Flux
 using Optimisers
 using FiniteDiff

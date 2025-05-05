@@ -19,5 +19,5 @@ obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for p
 
 @time output_default = runExperimentForward(experiment_json);
 @time out_opti = runExperimentOpti(experiment_json);
-opt_params = out_opti.params;
+opt_params = out_opti.parameters;
 out_model = out_opti.output.forward;

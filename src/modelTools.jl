@@ -330,38 +330,37 @@ end
 function getTypedModel(model::Symbol, model_timestep="day", num_type=Float64)
     model_obj = getfield(Sindbad.Models, model)
     model_instance = model_obj()
-    param_names = fieldnames(model_obj)
-    if length(param_names) > 0
-        param_vals = []
-        for pn ∈ param_names
+    parameter_names = fieldnames(model_obj)
+    if length(parameter_names) > 0
+        parameter_vals = []
+        for pn ∈ parameter_names
             param = getParameterValue(model_obj(), pn, model_timestep)
             # param = getfield(model_obj(), pn)
-            param_typed = if typeof(param) <: Array
+            parameter_typed = if typeof(param) <: Array
                 num_type.(param)
             else
                 num_type(param)
             end
-            push!(param_vals, param_typed)
+            push!(parameter_vals, parameter_typed)
         end
-        model_instance = model_obj(param_vals...)
+        model_instance = model_obj(parameter_vals...)
     end
     return model_instance
 end
 
 """
-    getParameterValue(model, param_name, model_timestep)
+    getParameterValue(model, parameter_name, model_timestep)
 
 get a value of a given model parameter with units corrected
 
 # Arguments:
 - `model`: selected model
-- `param_name`: name of the parameter
+- `parameter_name`: name of the parameter
 - `model_timestep`: time step of the model run
 """
-function getParameterValue(model, param_name, model_timestep)
-    param = getfield(model, param_name)
-    p_timescale = Sindbad.Models.timescale(model, param_name)
-    # return param
+function getParameterValue(model, parameter_name, model_timestep)
+    param = getfield(model, parameter_name)
+    p_timescale = Sindbad.Models.timescale(model, parameter_name)
     return param * getUnitConversionForParameter(p_timescale, model_timestep)
 end
 
@@ -479,6 +478,12 @@ function modelParameter(models, model::Symbol)
 end
 
 function modelParameter(model::LandEcosystem, show=true)
+    model_name = Symbol(supertype(typeof(model)))
+    approach_name = nameof(typeof(model))
+    if show
+        println("model: $model_name")
+        println("approach: $approach_name")
+    end
     pnames = fieldnames(typeof(model))
     p_vec = []
     if show
@@ -486,13 +491,12 @@ function modelParameter(model::LandEcosystem, show=true)
     end
     if length(pnames) == 0
         if show
-            println("   non-parametric model")
+            println("   non-parametric model: $(nameof(typeof(model)))")
         end
     else
         p_vec = map(pnames) do fn
-            if show
-                println("   $fn => $(getproperty(mod, fn))")
-            end
+            # @show model, fn
+            mod_prop = getproperty(model, fn)
             p_val = getproperty(model, fn)
             p_describe = Sindbad.Models.describe(model, fn)
             p_unit = Sindbad.Models.units(model, fn)
@@ -501,7 +505,11 @@ function modelParameter(model::LandEcosystem, show=true)
             p_t = isempty(p_timescale) ? "timescale independent" : "$(p_timescale) timescale"
             p_bounds = Sindbad.Models.bounds(model, fn)
             p_w = "$(p_val) ∈ [$(p_bounds[1]), $(p_bounds[2])] => $(p_describe) in $(p_u) units; $(p_t)"
-            Pair(fn, p_w)
+            p_p = Pair(fn, p_w)
+            if show
+                println("  - ", p_p)
+            end
+            p_p
         end
     end
     return p_vec

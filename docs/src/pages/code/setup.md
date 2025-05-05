@@ -18,7 +18,7 @@ Filter = f -> !(f === SindbadSetup)
 
 ## Internal
 ```@meta
-CollapsedDocStrings = true
+CollapsedDocStrings = false
 
 DocTestSetup= quote
 using SindbadSetup

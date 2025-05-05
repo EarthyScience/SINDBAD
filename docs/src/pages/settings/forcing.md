@@ -1,54 +1,58 @@
-## forcing
+# Forcing Configuration
 
-includes the setup of the forcing dataset for an experiment. 
+The `forcing.json` file configures the input dataset for SINDBAD experiments, defining how forcing data is processed and integrated into model runs.
 
-### Dimensions of data
-In this section, the names and orders of the dimensions in the input forcing datasets are given. Based on these, the forcing data are processed in a way SINDBAD needs to run the loops in space and time. 
+## Data Dimensions
+
+The `data_dimension` section specifies the structure of input forcing datasets, enabling proper data processing for spatial and temporal operations.
 
 :::tabs
 
 == Explanation
-````json
-"data_dimension":  {
-    "time": name of the time dimension in data,
-    "permute": a list shows the order of dimension in the data,
-    "space": a list of spatial dimensions
-  },
-````
+```json
+"data_dimension": {
+    "time": "Name of the time dimension in the dataset",
+    "permute": "Order of dimensions in the processed data",
+    "space": "List of spatial dimensions"
+}
+```
+
 == Example
-````json
+```json
 "data_dimension": {
     "time": "time",
     "permute": ["time", "longitude", "latitude"],
     "space": ["longitude", "latitude"]
 }
-````
+```
 :::
 
-### Default forcing variable
-In this section, the default values of the attributes of each forcing variable are set. Each variable takes these attributes unless they are overwritten in the settings of individual variables under ```variables``` section below. The fields for each forcing variable can be a subset of the default forcing. The values for each forcing are generated as a union of default forcing and each variable.
+## Default Forcing Settings
+
+The `default_forcing` section defines default attributes for all forcing variables. These settings apply unless overridden in individual variable configurations.
 
 :::tabs
 
 == Explanation
-````json
-"default_forcing":  {
-    "additive_unit_conversion": a flag to indicated if the unit conversion is additive. If true, the unit conversion factor is added to the data, if false, it is multiplied.
-    "bounds": a list of two numbers indicating the viable bounds of data after unit conversion, e.g., [0, 100] for a variable. Note that the data outside bounds are truncated and not replaced by a NaN,
-    "data_path": path to the data file, e.g., "../data/BE-Vie.1979.2017.daily.nc". Note that the path can be absolute or relative to the base Julia environment of a given experiment,
-    "depth_dimension": name of the depth dimension in case of variables with depth dimension, defaults to null which means none,
-    "is_categorical": flag to indicate if the data is categorical variable,
-    "standard_name": a metadata used to identify variable and improve clarity. Note that it is not used in data processing and calculation.,
-    "sindbad_unit": a metadata used to identify variable units within SINDBAD and improve clarity. Note that it is not used in data processing and calculation.,
-    "source_product": a metadata used to identify data source and improve clarity. Note that it is not used in data processing and calculation, e.g., "FLUXNET",
-    "source_to_sindbad_unit": a numerical value used for unit conversion of the variable on the go,
-    "source_unit": a metadata used to identify variable units in the source data and improve clarity. Note that it is not used in data processing and calculation.,
-    "source_variable": a string variable name in the data file. Note that SINDBAD variable names are the keys listed under variables,
-    "space_time_type": a string indicating the data type , e.g., "spatiotemporal" for data with time and space dimensions
-  },
-````
+```json
+"default_forcing": {
+    "additive_unit_conversion": "Flag for additive (true) or multiplicative (false) unit conversion",
+    "bounds": "Valid data range after unit conversion",
+    "data_path": "Path to the data file (absolute or relative to experiment base)",
+    "depth_dimension": "Name of depth dimension (null if none)",
+    "is_categorical": "Flag for categorical variables",
+    "standard_name": "Descriptive variable name",
+    "sindbad_unit": "Unit used within SINDBAD",
+    "source_product": "Data source identifier",
+    "source_to_sindbad_unit": "Unit conversion factor",
+    "source_unit": "Original data unit",
+    "source_variable": "Variable name in source file",
+    "space_time_type": "Data type classification"
+}
+```
+
 == Example
-````json
+```json
 "default_forcing": {
     "additive_unit_conversion": false,
     "bounds": [],
@@ -62,52 +66,58 @@ In this section, the default values of the attributes of each forcing variable a
     "source_unit": null,
     "source_variable": null,
     "space_time_type": "spatiotemporal"
-  },
-````
+}
+```
 :::
 
-### Forcing subset
-This section sets information related to the mask used for spatial subsetting of the forcing from the data in the file. This setting is envisioned to run the experiment for a small subset without having to create new data every time. Note that the temporal sub-setting is through ```time``` section of the ```experiment``` settings. 
+## Spatial Subsetting
+
+The `forcing_mask` section configures spatial subsetting of forcing data, enabling experiments on specific regions without creating new datasets.
 
 :::tabs
 
 == Explanation
-````json
-"forcing_mask":  {
-    "data_path": path to the mask file,
-    "source_variable": variable name of the mask within the file
-  },
-````
+```json
+"forcing_mask": {
+    "data_path": "Path to the mask file",
+    "source_variable": "Mask variable name in the file"
+}
+```
+
 == Example
-````json
+```json
 "forcing_mask": {
     "data_path": null,
     "source_variable": null
-  }
-````
+}
+```
 :::
 
-### Variables
-In this section, a list of all forcing variables needed for a given experimental run is provided. The list is free-form and can be reduced/extended based on model structure. The variables listed here should be available in the forcing dataset. Note that only the information that differs from the ```default_forcing``` has to be set here.
+::: info Note
+Temporal subsetting is configured in the `time` section of `experiment.json`.
+:::
+
+## Variable Configuration
+
+The `variables` section lists all forcing variables required for the experiment. Only settings that differ from `default_forcing` need to be specified.
 
 :::tabs
 
 == Explanation
-````json
-"variables":  
-  {
-    "f_ambient_CO2": The key is the variable name used internally in SINDBAD. By convention used f_ as the prefix of all forcing variables that are loaded from data file. This allows separation with variables that computed within SINDBAD 
-    {
-      "bounds": same meaning as default forcing but set the bounds for the given variable, e.g. for ambient CO2: [200, 500],
-      "standard_name": "ambient_CO2",
-      "sindbad_unit": "ppm",
-      "source_unit": "ppm",
-      "source_variable": "atmCO2_SCRIPPS_global"
+```json
+"variables": {
+    "f_variable_name": {
+        "bounds": "Valid range for the variable",
+        "standard_name": "Descriptive name",
+        "sindbad_unit": "SINDBAD unit",
+        "source_unit": "Original unit",
+        "source_variable": "Variable name in source file"
     }
-  }
-````
+}
+```
+
 == Example
-````json
+```json
 "variables": {
     "f_ambient_CO2": {
         "bounds": [200, 500],
@@ -125,26 +135,18 @@ In this section, a list of all forcing variables needed for a given experimental
         "source_unit": "%",
         "source_variable": "CLYPPT_SoilGrids",
         "space_time_type": "spatiovertical"
-    },
-    "f_dist_intensity": {
-        "bounds": [-0.001, 1.1],
-        "is_categorical": true,
-        "standard_name": "isDisturbed flag for disturbance",
-        "sindbad_unit": null,
-        "source_product": "Besnard2018",
-        "source_unit": null,
-        "source_variable": "dist_frac_sb2018"
-    },
-    "f_orgm": {
-        "bounds": [0.0, 100.0],
-        "standard_name": "CLAY",
-        "sindbad_unit": "-",
-        "source_product": "soilgrids",
-        "source_to_sindbad_unit": 0.0,
-        "source_unit": "%",
-        "source_variable": "OCSTHA_SoilGrids",
-        "space_time_type": "spatiovertical"
     }
-  }
-````
+}
+```
+:::
+
+::: tip Variable Naming Convention
+- Use `f_` prefix for forcing variables loaded from data files
+- This convention distinguishes them from variables computed within SINDBAD
+:::
+
+::: warning Data Validation
+- Values outside specified bounds are truncated, not replaced with NaN
+- Ensure all required variables are available in the forcing dataset
+- Verify unit conversions and data types match model requirements
 :::

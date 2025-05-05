@@ -4,6 +4,7 @@ export foldlLongTuple
 export foldlUnrolled
 export LongTuple
 export getCombinedNamedTuple
+export getNamedTupleFromTable
 export getTupleFromLongTuple
 export makeLongTuple
 export makeNamedTuple
@@ -12,6 +13,19 @@ export setTupleField
 export setTupleSubfield
 export tcPrint
 
+"""
+    LongTuple{NSPLIT,T}
+
+A data structure that represents a tuple split into smaller chunks for better memory management and performance.
+
+# Fields
+- `data::T`: The underlying tuple data
+- `n::Val{NSPLIT}`: The number of splits as a value type
+
+# Type Parameters
+- `NSPLIT`: The number of elements in each split
+- `T`: The type of the underlying tuple
+"""
 struct LongTuple{NSPLIT,T <: Tuple}
     data::T
     n::Val{NSPLIT}
@@ -110,7 +124,14 @@ end
 """
     collectColorForTypes(d; _color = true)
 
-utility function to collect colors for all types from nested namedtuples
+Collect colors for all types from nested namedtuples.
+
+# Arguments
+- `d`: The input data structure
+- `_color`: Whether to use colors (default: true)
+
+# Returns
+- A dictionary mapping types to color codes
 """
 function collectColorForTypes(d; _color=true)
     all_types = []
@@ -132,7 +153,13 @@ end
 """
     dictToNamedTuple(d::AbstractDict)
 
-covert nested dictionary to NamedTuple
+Convert a nested dictionary to a NamedTuple.
+
+# Arguments
+- `d::AbstractDict`: The input dictionary to convert
+
+# Returns
+- A NamedTuple with the same structure as the input dictionary
 """
 function dictToNamedTuple(d::AbstractDict)
     for k ∈ keys(d)
@@ -165,12 +192,16 @@ end
 """
     foldlUnrolled(f, x::Tuple{Vararg{Any, N}}; init)
 
-generate the expression to run the function for each element of a given Tuple to avoid complexity of for loops for compiler
+Generate an unrolled expression to run a function for each element of a tuple to avoid complexity of for loops 
+for compiler.
 
-# Arguments:
-- `f`: a function call
-- `x`: the iterative to loop through
-- `init`: initial variable to overwrite
+# Arguments
+- `f`: The function to apply
+- `x`: The tuple to iterate through
+- `init`: Initial value for the fold operation
+
+# Returns
+- The result of applying the function to each element
 """
 @generated function foldlUnrolled(f, x::Tuple{Vararg{Any,N}}; init) where {N}
     exes = Any[:(init = f(init, x[$i])) for i ∈ 1:N]
@@ -181,11 +212,14 @@ end
 """
     dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}})
 
-removes/drops the list of fields from a given named tuple
+Remove specified fields from a NamedTuple.
 
-# Arguments:
-- `namedtuple`: a namedtuple to remove the fields from
-- `names`: a tuple of names to be removed
+# Arguments
+- `namedtuple`: The input NamedTuple
+- `names`: A tuple of field names to remove
+
+# Returns
+- A new NamedTuple with the specified fields removed
 """
 function dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}}) 
     keepnames = Base.diff_names(Base._nt_names(namedtuple), names)
@@ -195,8 +229,14 @@ end
 """
     getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
 
-combines the property values of the base NT with the properties set for the particular field from priority NT
+Combine property values from base and priority NamedTuples.
 
+# Arguments
+- `base_nt`: The base NamedTuple
+- `priority_nt`: The priority NamedTuple whose values take precedence
+
+# Returns
+- A new NamedTuple combining values from both inputs
 """
 function getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
     combined_nt = (;)
@@ -222,6 +262,46 @@ function getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
     return combined_nt
 end
 
+
+"""
+    getNamedTupleFromTable(tbl; replace_missing_values=false)
+
+Convert a table to a NamedTuple.
+
+# Arguments
+- `tbl`: The input table
+- `replace_missing_values`: Whether to replace missing values with empty strings
+
+# Returns
+- A NamedTuple representation of the table
+"""
+function getNamedTupleFromTable(tbl;replace_missing_values=false)
+    a_nt = (;)
+    for a_p in propertynames(tbl)
+        t_p = getproperty(tbl, a_p)
+        values_to_replace = t_p
+        if replace_missing_values
+            values_to_replace = [ismissing(t_p[i]) ? "" : t_p[i] for i in eachindex(t_p)]
+        end
+        values_to_replace = [values_to_replace...]
+        a_nt = setTupleField(a_nt, (a_p, values_to_replace))
+    end
+    return a_nt
+end
+
+
+
+"""
+    getTupleFromLongTuple(long_tuple)
+
+Convert a LongTuple to a regular tuple.
+
+# Arguments
+- `long_tuple`: The input LongTuple
+
+# Returns
+- A regular tuple containing all elements from the LongTuple
+"""
 function getTupleFromLongTuple(long_tuple)
     emp_vec = []
     foreach(long_tuple) do lt
@@ -233,7 +313,14 @@ end
 """
     getTypes!(d, all_types)
 
-utility function to collect all types from nested namedtuples
+Collect all types from nested namedtuples.
+
+# Arguments
+- `d`: The input data structure
+- `all_types`: Array to store collected types
+
+# Returns
+- Array of unique types found in the data structure
 """
 function getTypes!(d, all_types)
     for k ∈ keys(d)
@@ -252,9 +339,14 @@ end
 """
     makeLongTuple(normal_tuple; longtuple_size=5)
 
-# Arguments:
-- `normal_tuple`: a normal tuple
-- `longtuple_size`: size to break down the tuple into
+Create a LongTuple from a normal tuple.
+
+# Arguments
+- `normal_tuple`: The input tuple to convert
+- `longtuple_size`: Size to break down the tuple into (default: 5)
+
+# Returns
+- A LongTuple containing the elements of the input tuple
 """
 function makeLongTuple(normal_tuple::Tuple, longtuple_size=5)
     longtuple_size = min(length(normal_tuple), longtuple_size)
@@ -276,9 +368,14 @@ end
 """
     makeNamedTuple(input_data, input_names)
 
-# Arguments:
-- `input_data`: a vector of data
-- `input_names`: a vector/tuple of names
+Create a NamedTuple from input data and names.
+
+# Arguments
+- `input_data`: Vector of data values
+- `input_names`: Vector of names for the fields
+
+# Returns
+- A NamedTuple with the specified names and values
 """
 function makeNamedTuple(input_data, input_names)
     return (; Pair.(input_names, input_data)...)
@@ -313,12 +410,12 @@ end
 """
     mergeNamedTupleSetValue(o, p, v)
 
-Helper function to set the value of a field in the options object.
+Set the value of a field in an options object.
 
-# Arguments:
-- `o`: The options object, which can be a `NamedTuple` or a mutable struct.
-- `p`: The field name to be updated.
-- `v`: The new value to assign to the field.
+# Arguments
+- `o`: The options object (NamedTuple or mutable struct)
+- `p`: The field name to update
+- `v`: The new value to assign
 
 # Variants:
 1. **For `NamedTuple` options**:
@@ -369,10 +466,13 @@ end
 """
     removeEmptyTupleFields(tpl::NamedTuple)
 
-removes all empty files of a NamedTuple
+Remove all empty fields from a NamedTuple.
 
-# Arguments:
-- `tpl`: input tuple    
+# Arguments
+- `tpl`: The input NamedTuple
+
+# Returns
+- A new NamedTuple with empty fields removed
 """
 function removeEmptyTupleFields(tpl::NamedTuple)
     indx = findall(x -> x != NamedTuple(), values(tpl))
@@ -384,12 +484,15 @@ end
 """
     setTupleSubfield(tpl, fieldname, vals)
 
-sets the subfield of a NamedTuple
+Set a subfield of a NamedTuple.
 
-# Arguments:
-- `tpl`: input tuple
-- `fieldname`: fieldname to write
-- `vals`: tuple with subfieldname and value to write
+# Arguments
+- `tpl`: The input NamedTuple
+- `fieldname`: The name of the field to set
+- `vals`: Tuple containing subfield name and value
+
+# Returns
+- A new NamedTuple with the updated subfield
 """
 function setTupleSubfield(tpl::NamedTuple, fieldname::Symbol, vals::Tuple{Symbol, Any})
     if !hasproperty(tpl, fieldname)
@@ -400,13 +503,16 @@ end
 
 
 """
-    setTupleField(tpl, fieldname, vals)
+    setTupleField(tpl, vals)
 
-sets the field of a NamedTuple
+Set a field in a NamedTuple.
 
-# Arguments:
-- `tpl`: input tuple
-- `vals`: tuple with fieldname and value to write
+# Arguments
+- `tpl`: The input NamedTuple
+- `vals`: Tuple containing field name and value
+
+# Returns
+- A new NamedTuple with the updated field
 """
 setTupleField(tpl::NamedTuple, vals::Tuple{Symbol, Any}) = (; tpl..., first(vals) => last(vals))
 
@@ -414,16 +520,18 @@ setTupleField(tpl::NamedTuple, vals::Tuple{Symbol, Any}) = (; tpl..., first(vals
 """
     tcPrint(d; _color=true, _type=true, _value=true, t_op=true)
 
-- a helper function to navigate the input named tuple and annotate types.
-- a random set of colors is chosen per type of the data/field
-- a mixed colored output within a field usually warrants caution on type mismatches
+Print a formatted representation of a data structure with type annotations and colors.
 
-# Arguments:
-- `d`: an object to print on screen
-- `_color`: a flag to turn on/off the colors
-- `_type`: a flag to turn on/off the appending of types
-- `_value`: a flag to turn on/off the values
-- `_tspace`: a starting tab space
+# Arguments
+- `d`: The object to print
+- `_color`: Whether to use colors (default: true)
+- `_type`: Whether to show types (default: false)
+- `_value`: Whether to show values (default: true)
+- `_tspace`: Starting tab space
+- `space_pad`: Additional space padding
+
+# Returns
+- Nothing (prints to console)
 """
 function tcPrint(d; _color=true, _type=false, _value=true, _tspace="", space_pad="")
     colors_types = collectColorForTypes(d; _color=_color)

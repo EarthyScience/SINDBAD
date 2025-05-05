@@ -41,7 +41,7 @@ function getLoss(models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_out
 end
 
 """
-    lossSite(new_params, gradient_lib, models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, param_to_index, parameter_scaling_type, loc_obs, cost_options, constraint_method; optim_mode=true)
+    lossSite(new_params, gradient_lib, models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, parameter_to_index, parameter_scaling_type, loc_obs, cost_options, constraint_method; optim_mode=true)
 
 Function to calculate the loss for a given site. This is used for optimization, hence the `optim_mode` argument is set to `true` by default. Also, a gradient library should be set as well as new parameters to update the models. See all input arguments in the function:
 
@@ -55,22 +55,22 @@ Function to calculate the loss for a given site. This is used for optimization, 
 - `loc_output`: output data location
 - `land_init`: initial land state
 - `tem_info`: model information
-- `param_to_index`: parameter to index
+- `parameter_to_index`: parameter to index
 - `loc_obs`: observation data location
 - `cost_options`: cost options
 - `constraint_method`: constraint method
 """
 function lossSite(new_params, gradient_lib, models, loc_forcing, loc_spinup_forcing, 
-    loc_forcing_t, loc_output, land_init, tem_info, param_to_index, parameter_scaling_type,
+    loc_forcing_t, loc_output, land_init, tem_info, parameter_to_index, parameter_scaling_type,
     loc_obs, cost_options, constraint_method; optim_mode=true)
 
     out_data = getOutputFromCache(loc_output, new_params, gradient_lib)
-    new_models = updateModels(new_params, param_to_index, parameter_scaling_type, models)
+    new_models = updateModels(new_params, parameter_to_index, parameter_scaling_type, models)
     return getLoss(new_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, out_data, land_init, tem_info, loc_obs, cost_options, constraint_method; optim_mode)
 end
 
 """
-    getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_array_split, epoch_number, scaled_params, sites_list, indices_sites, models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, param_to_index, parameter_scaling_type, space_observations, cost_options, constraint_method) where {F}
+    getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_array_split, epoch_number, scaled_params, sites_list, indices_sites, models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, parameter_to_index, parameter_scaling_type, space_observations, cost_options, constraint_method) where {F}
 
 Calculates the loss for all sites. The loss is calculated using the `loss_function` function. The `loss_array_sites` and `loss_array_split` arrays are updated with the loss values. The `loss_array_sites` array stores the loss values for each site and epoch, while the `loss_array_split` array stores the loss values for each model output and epoch.
 
@@ -90,14 +90,14 @@ Calculates the loss for all sites. The loss is calculated using the `loss_functi
 - `space_output`: output data location
 - `loc_land`: initial land state
 - `tem_info`: model information
-- `param_to_index`: parameter to index
+- `parameter_to_index`: parameter to index
 - `space_observations`: observation data location
 - `cost_options`: cost options
 - `constraint_method`: constraint method
 """
 function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_array_split, epoch_number,
     scaled_params, sites_list, indices_sites, models, space_forcing, space_spinup_forcing,
-    loc_forcing_t, space_output, loc_land, tem_info, param_to_index, parameter_scaling_type, space_observations,
+    loc_forcing_t, space_output, loc_land, tem_info, parameter_to_index, parameter_scaling_type, space_observations,
     cost_options, constraint_method) where {F}
     @sync begin
         for idx ∈ eachindex(indices_sites)
@@ -112,7 +112,7 @@ function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_
                 loc_cost_option = cost_options[site_location]
 
                 gg, gg_split, loss_indices = loss_function(loc_params, gradient_lib, models, loc_forcing, loc_spinup_forcing,
-                    loc_forcing_t, loc_output, deepcopy(loc_land), tem_info, param_to_index, parameter_scaling_type, loc_obs, loc_cost_option, constraint_method;
+                    loc_forcing_t, loc_output, deepcopy(loc_land), tem_info, parameter_to_index, parameter_scaling_type, loc_obs, loc_cost_option, constraint_method;
                     optim_mode=false)
                 loss_array_sites[idx, epoch_number] = gg
                 # @show gg_split, idx, loss_indices, epoch_number
@@ -123,7 +123,7 @@ function getLossForSites(gradient_lib, loss_function::F, loss_array_sites, loss_
 end
 
 """
-    getInnerArgs(idx, grads_lib, scaled_params_batch, parameter_scaling_type, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, param_to_index, parameter_scaling_type, space_observations, cost_options, constraint_method, indices_batch, sites_batch)
+    getInnerArgs(idx, grads_lib, scaled_params_batch, parameter_scaling_type, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, loc_land, tem_info, parameter_to_index, parameter_scaling_type, space_observations, cost_options, constraint_method, indices_batch, sites_batch)
 
 Function to get inner arguments for the loss function.
     
@@ -138,7 +138,7 @@ Function to get inner arguments for the loss function.
 - `space_output`: output data location
 - `loc_land`: initial land state
 - `tem_info`: model information
-- `param_to_index`: parameter to index
+- `parameter_to_index`: parameter to index
 - `parameter_scaling_type`: type determining parameter scaling
 - `loc_observations`: observation data location
 - `cost_options`: cost options
@@ -155,7 +155,7 @@ function getInnerArgs(idx, grads_lib,
     space_output,
     loc_land,
     tem_info,
-    param_to_index,
+    parameter_to_index,
     parameter_scaling_type,
     space_observations,
     cost_options,
@@ -183,7 +183,7 @@ function getInnerArgs(idx, grads_lib,
             getCacheFromOutput(loc_output, grads_lib),
             deepcopy(loc_land),
             tem_info,
-            param_to_index,
+            parameter_to_index,
             parameter_scaling_type,
             loc_obs,
             loc_cost_option,

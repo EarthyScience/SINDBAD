@@ -57,6 +57,7 @@ cleaned_data = cleanData(raw_data, mask)
 module SindbadData
     using Reexport: @reexport
     using SindbadUtils
+    @reexport import SindbadUtils: purpose
     using AxisKeys: KeyedArray, AxisKeys
     using FillArrays
     using DimensionalData

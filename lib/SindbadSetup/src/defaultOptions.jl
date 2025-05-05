@@ -26,7 +26,7 @@ sindbadDefaultOptions(::SindbadOptimizationMethod) = (;)
 
 sindbadDefaultOptions(::SindbadGlobalSensitivityMethod) = (;)
 
-sindbadDefaultOptions(::CMAEvolutionStrategyCMAES) = (; popsize = 5, maxiter = 5, maxfevals = 50)
+sindbadDefaultOptions(::CMAEvolutionStrategyCMAES) = (;maxfevals = 50)
 
 sindbadDefaultOptions(::GlobalSensitivityMorris) = (; total_num_trajectory = 200, num_trajectory = 15, len_design_mat=10)
 

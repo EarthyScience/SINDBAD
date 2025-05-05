@@ -66,6 +66,7 @@ node_modules
 package-lock.json
 !docs/src/assets/logo.png
 !docs/src/assets/logo-RnD.png
+!docs/src/assets/sindbad_logo.png
 !.vitepress
 !logo_mpi_grey.png
 !.github

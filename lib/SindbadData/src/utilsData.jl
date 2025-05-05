@@ -237,9 +237,10 @@ The ordered sequence of dimensions for the target.
 """
 function getTargetDimensionOrder(info)
     tar_dims = nothing
-    if !isnothing(info.settings.forcing.data_dimension.permute)
+    permute_dims = info.experiment.data_settings.forcing.data_dimension.permute
+    if !isnothing(permute_dims)
         tar_dims = Symbol[]
-        for pd ∈ info.settings.forcing.data_dimension.permute
+        for pd ∈ permute_dims
             tdn = Symbol(pd)
             push!(tar_dims, tdn)
         end
@@ -277,10 +278,11 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::B
     end
     nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     v = nc[source_variable]
+    forcing_data_settings = info.experiment.data_settings.forcing
     ax = map(NCDatasets.dimnames(v)) do dn
         rax = nothing
-        if dn == info.settings.forcing.data_dimension.time
-            t = nc[info.settings.forcing.data_dimension.time]
+        if dn == forcing_data_settings.data_dimension.time
+            t = nc[forcing_data_settings.data_dimension.time]
             t = [_t for _t in t]
             rax = Dim{Symbol(dn)}(t)
         else
@@ -410,7 +412,7 @@ Processed and subset YAX data according to specified parameters and quality cont
 - `num_type`: Numerical type specification for the processed data
 """
 function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Val{num_type}; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing) where {num_type}
-
+    forcing_data_settings = info.experiment.data_settings.forcing
     if !isnothing(forcing_mask)
         yax = yax #todo: mask the forcing variables here depending on the mask of 1 and 0
     end
@@ -420,14 +422,14 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Va
         @debug "         -> permuting dimensions to $(tar_dims)..."
         yax = permutedims(yax, permutes)
     end
-    if hasproperty(yax, Symbol(info.settings.forcing.data_dimension.time))
+    if hasproperty(yax, Symbol(forcing_data_settings.data_dimension.time))
         init_date = DateTime(info.helpers.dates.date_begin)
         last_date = DateTime(info.helpers.dates.date_end)
         yax = yax[time=(init_date .. last_date)]
     end
 
-    if hasproperty(info.settings.forcing, :subset)
-        yax = getSpatialSubset(info.settings.forcing.subset, yax)
+    if hasproperty(forcing_data_settings, :subset)
+        yax = getSpatialSubset(forcing_data_settings.subset, yax)
     end
 
     #todo mean of the data instead of zero or nan
@@ -483,3 +485,4 @@ arrays with metadata, particularly for time series data with multiple pools or v
 function toDimStackArray(stackArr, time_interval, p_names; name=:pools)
     return DimArray(stackArr,  (p_names=p_names, Ti=time_interval,); name=name,)
 end
+

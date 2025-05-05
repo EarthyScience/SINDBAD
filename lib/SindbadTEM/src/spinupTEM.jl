@@ -205,22 +205,16 @@ Runs the spinup process for the SINDBAD Terrestrial Ecosystem Model (TEM) to ini
 - `land`: A SINDBAD NamedTuple containing all variables for a given time step, which is overwritten at every timestep.
 - `tem_info`: A helper NamedTuple containing necessary objects for model execution and type consistencies.
 - `n_timesteps`: The number of timesteps for the spinup process.
-- `spinup_mode::SindbadSpinupMethod`: A type dispatch that determines the spinup method to be used. Supported modes include:
-    - `SelSpinupModels`: Runs only the models selected for spinup in the model structure. This excludes models that are not used in the spinup process by setting use_in_spinup as `false` in model_structure.json.
-    - `AllForwardModels`: Runs all models in the forward mode.
-    - `NlsolveFixedpointTrustregionTWS`: Uses a fixed-point solver with trust region for Total Water Storage (TWS).
-    - `NlsolveFixedpointTrustregionCEco`: Uses a fixed-point solver with trust region for carbon pools (cEco).
-    - `NlsolveFixedpointTrustregionCEcoTWS`: Uses a fixed-point solver with trust region for both cEco and TWS.
-    - `ODETsit5`: Uses the Tsit5 method from DifferentialEquations.jl for solving ODEs.
-    - `ODEDP5`: Uses the DP5 method from DifferentialEquations.jl for solving ODEs.
-    - `ODEAutoTsit5Rodas5`: Uses the AutoVern7(Rodas5) method from DifferentialEquations.jl for solving ODEs.
-    - `SSPDynamicSSTsit5`: Uses the SteadyState solver with DynamicSS and Tsit5 methods.
-    - `SSPSSRootfind`: Uses the SteadyState solver with SSRootfind method.
-    - `EtaScaleAH`: Scales carbon pools using diagnostic scalars for ηH and ηA.
-    - `EtaScaleA0H`: Scales carbon pools using diagnostic scalars for ηH and c_remain.
+- `spinup_mode::SindbadSpinupMethod`: A type dispatch that determines the spinup method to be used. 
 
 # Returns:
 - `land`: The updated SINDBAD NamedTuple containing the final state of the model after the spinup process.
+
+$(methodsOf(SindbadSpinupMethod))
+
+---
+
+# Extended help
 
 # Notes:
 - The spinup process can use different methods depending on the `spinup_mode`, including fixed-point solvers, ODE solvers, and steady-state solvers.

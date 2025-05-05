@@ -6,15 +6,15 @@ export updateModelParameters
 export updateModels
 
 """
-    backScaleParameters(param_vector_scaled, tbl_params, <:SindbadParameterScaling)
+    backScaleParameters(parameter_vector_scaled, parameter_table, <:SindbadParameterScaling)
 
 Reverts scaling of parameters using a specified scaling strategy.
 
 # Arguments
-- `param_vector_scaled`: Vector of scaled parameters to be converted back to original scale
-- `tbl_params`: Table containing parameter information and scaling factors
+- `parameter_vector_scaled`: Vector of scaled parameters to be converted back to original scale
+- `parameter_table`: Table containing parameter information and scaling factors
 - `SindbadParameterScaling`: Type indicating the scaling strategy to be used
-    - `::ScaleDefault`: Type indicating scaling by default values
+    - `::ScaleDefault`: Type indicating scaling by initial parameter values
     - `::ScaleBounds`: Type indicating scaling by parameter bounds
     - `::ScaleNone`: Type indicating no scaling should be applied (parameters remain unchanged)
 
@@ -23,20 +23,20 @@ Returns the unscaled/actual parameter vector in original units.
 """
 backScaleParameters
 
-function backScaleParameters(param_vector_scaled, tbl_params, ::ScaleNone)
-    return param_vector_scaled
+function backScaleParameters(parameter_vector_scaled, parameter_table, ::ScaleNone)
+    return parameter_vector_scaled
 end
     
-function backScaleParameters(param_vector_scaled, tbl_params, ::ScaleDefault)
-    param_vector_scaled = abs.(tbl_params.default) .* param_vector_scaled
-    return param_vector_scaled
+function backScaleParameters(parameter_vector_scaled, parameter_table, ::ScaleDefault)
+    parameter_vector_scaled = abs.(parameter_table.initial) .* parameter_vector_scaled
+    return parameter_vector_scaled
 end
 
-function backScaleParameters(param_vector_scaled, tbl_params, ::ScaleBounds)
-    ub = tbl_params.upper  # upper bounds
-    lb = tbl_params.lower   # lower bounds
-    param_vector_scaled .= lb + (ub - lb) .* param_vector_scaled
-    return param_vector_scaled
+function backScaleParameters(parameter_vector_scaled, parameter_table, ::ScaleBounds)
+    ub = parameter_table.upper  # upper bounds
+    lb = parameter_table.lower   # lower bounds
+    parameter_vector_scaled .= lb + (ub - lb) .* parameter_vector_scaled
+    return parameter_vector_scaled
 end
 
 """
@@ -95,13 +95,13 @@ end
 
 
 """
-    checkParameterBounds(p_names, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
+    checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
 
 Check and display the parameter bounds information for given parameters.
 
 # Arguments
 - `p_names`: Names or identifier of the parameters. Vector of strings.
-- `default_values`: Default values of the parameters. Vector of Numbers.
+- `parameter_values`: Default values of the parameters. Vector of Numbers.
 - `lower_bounds`: Lower bounds for the parameters. Vector of Numbers.
 - `upper_bounds`: Upper bounds for the parameters. Vector of Numbers.
 - `_sc::SindbadParameterScaling`: Scaling Type for the parameters
@@ -111,21 +111,21 @@ Check and display the parameter bounds information for given parameters.
 # Returns
 Displays a formatted output of parameter bounds information or returns an error when they are violated
 """
-function checkParameterBounds(p_names, default_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
+function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
     if show_info
-        @info "  Parameters Info: $(nameof(typeof(_sc)))"
+        @info "  Checking Parameter Bounds: $(nameof(typeof(_sc))) scaling"
     end
     for (i,n) in enumerate(p_names)
-        in_range = checkInRange(n, default_values[i], lower_bounds[i], upper_bounds[i], show_info)
+        in_range = checkInRange(n, parameter_values[i], lower_bounds[i], upper_bounds[i], show_info)
         if !in_range
-            error("$(String(n)) => $(default_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])] violates the parameter bounds")
+            error("$(String(n)) => value=$(parameter_values[i]) [lower_bound=$(lower_bounds[i]), upper_bound=$(upper_bounds[i])] violates the parameter bounds requirement (lower_bound <= value <= upper_bound). Fix the bounds in the given model ($(model_names[i])) or in the parameters input to continue.")
         end
         if show_info
             ps = String(n)
             if !isnothing(model_names)
                 ps = String(model_names[i]) * " : " * String(n)
             end
-            @info "           $(ps) => $(default_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
+            @info "           $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
         end
     end
 end
@@ -133,12 +133,12 @@ end
 
 
 """
-    scaleParameters(tbl_params, <:SindbadParameterScaling)
+    scaleParameters(parameter_table, <:SindbadParameterScaling)
 
 Scale parameters from the input table using default scaling factors.
 
 # Arguments
-- `tbl_params`: Table containing parameters to be scaled
+- `parameter_table`: Table containing parameters to be scaled
 - `SindbadParameterScaling`: Type indicating the scaling strategy to be used
     - `::ScaleDefault`: Type indicating scaling by default values
     - `::ScaleBounds`: Type parameter indicating scaling by parameter bounds 
@@ -150,104 +150,97 @@ Scaled parameters and their bounds according to default scaling factors
 """
 scaleParameters
 
-function scaleParameters(tbl_params, _sc::ScaleNone)
-    default = copy(tbl_params.default)
-    ub = copy(tbl_params.upper)  # upper bounds
-    lb = copy(tbl_params.lower)   # lower bounds
-    checkParameterBounds(tbl_params.name, default, lb, ub, _sc, show_info=true, model_names=tbl_params.model_approach)
-    return (default, lb, ub)
+function scaleParameters(parameter_table, _sc::ScaleNone)
+    init = copy(parameter_table.initial)
+    ub = copy(parameter_table.upper)  # upper bounds
+    lb = copy(parameter_table.lower)   # lower bounds
+    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
+    return (init, lb, ub)
 end
     
-function scaleParameters(tbl_params, _sc::ScaleDefault)
-    default = abs.(copy(tbl_params.default))
-    ub = copy(tbl_params.upper ./ default)   # upper bounds
-    lb = copy(tbl_params.lower ./ default)   # lower bounds
-    default = tbl_params.default ./ default
-    checkParameterBounds(tbl_params.name, default, lb, ub, _sc, show_info=true, model_names=tbl_params.model_approach)
-    return (default, lb, ub)
+function scaleParameters(parameter_table, _sc::ScaleDefault)
+    init = abs.(copy(parameter_table.initial))
+    ub = copy(parameter_table.upper ./ init)   # upper bounds
+    lb = copy(parameter_table.lower ./ init)   # lower bounds
+    init = parameter_table.initial ./ init
+    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
+    return (init, lb, ub)
 end
 
-function scaleParameters(tbl_params, _sc::ScaleBounds)
-    default = copy(tbl_params.default)
-    ub = copy(tbl_params.upper)  # upper bounds
-    lb = copy(tbl_params.lower)   # lower bounds
-    default = (default - lb)  ./ (ub - lb)
+function scaleParameters(parameter_table, _sc::ScaleBounds)
+    init = copy(parameter_table.initial)
+    ub = copy(parameter_table.upper)  # upper bounds
+    lb = copy(parameter_table.lower)   # lower bounds
+    init = (init - lb)  ./ (ub - lb)
     lb = zero(lb)
     ub = one.(ub)
-    checkParameterBounds(tbl_params.name, default, lb, ub, _sc, show_info=true, model_names=tbl_params.model_approach)
-    return (default, lb, ub)
+    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
+    return (init, lb, ub)
 end
 
 
 """
-    updateModelParameters(tbl_params::Table, selected_models::Tuple, param_vector::AbstractArray)
-    updateModelParameters(tbl_params::Table, selected_models::LongTuple, param_vector::AbstractArray)
-    updateModelParameters(param_to_index::NamedTuple, selected_models::Tuple, param_vector::AbstractArray)
-    updateModelParameters(selected_models::Tuple, param_vector::AbstractArray, ::Val{p_vals})
+    updateModelParameters(parameter_table::Table, selected_models::Tuple, parameter_vector::AbstractArray)
+    updateModelParameters(parameter_table::Table, selected_models::LongTuple, parameter_vector::AbstractArray)
+    updateModelParameters(parameter_to_index::NamedTuple, selected_models::Tuple, parameter_vector::AbstractArray)
 
 Updates the parameters of SINDBAD models based on the provided parameter vector without mutating the original table of parameters.
 
 # Arguments:
-- `tbl_params::Table`: A table of SINDBAD model parameters selected for optimization. Contains parameter names, bounds, and scaling information.
+- `parameter_table::Table`: A table of SINDBAD model parameters selected for optimization. Contains parameter names, bounds, and scaling information.
 - `selected_models::Tuple`: A tuple of all models selected in the given model structure.
 - `selected_models::LongTuple`: A long tuple of models, which is converted into a standard tuple for processing.
-- `param_vector::AbstractArray`: A vector of parameter values to update the models.
-- `param_to_index::NamedTuple`: A mapping of parameter indices to model names, used for updating specific parameters in the models.
-- `::Val{p_vals}`: A generated function argument that allows compile-time parameter updates for specific models and parameters.
+- `parameter_vector::AbstractArray`: A vector of parameter values to update the models.
+- `parameter_to_index::NamedTuple`: A mapping of parameter indices to model names, used for updating specific parameters in the models.
 
 # Returns:
-- A tuple of updated models with their parameters modified according to the provided `param_vector`.
+- A tuple of updated models with their parameters modified according to the provided `parameter_vector`.
 
 # Notes:
 - The function supports multiple input formats for `selected_models` (e.g., `LongTuple`, `NamedTuple`) and adapts accordingly.
-- If `tbl_params` is provided, the function uses it to find and update the relevant parameters for each model.
-- The `param_to_index` variant allows for a more direct mapping of parameters to models, bypassing the need for a parameter table.
+- If `parameter_table` is provided, the function uses it to find and update the relevant parameters for each model.
+- The `parameter_to_index` variant allows for a more direct mapping of parameters to models, bypassing the need for a parameter table.
 - The generated function variant (`::Val{p_vals}`) is used for compile-time optimization of parameter updates.
 
 # Examples:
-1. **Using `tbl_params` and `selected_models`:**
+1. **Using `parameter_table` and `selected_models`:**
 ```julia
-updated_models = updateModelParameters(tbl_params, selected_models, param_vector)
+updated_models = updateModelParameters(parameter_table, selected_models, parameter_vector)
 ```
 
-2. **Using `param_to_index` for direct mapping:**
+2. **Using `parameter_to_index` for direct mapping:**
 ```julia
-updated_models = updateModelParameters(param_to_index, selected_models, param_vector)
-```
-
-3. **Using a generated function for compile-time updates:**
-```julia
-updated_models = updateModelParameters(selected_models, param_vector, Val(p_vals))
+updated_models = updateModelParameters(parameter_to_index, selected_models, parameter_vector)
 ```
 
 # Implementation Details:
-- The function iterates over the models in `selected_models` and updates their parameters based on the provided `param_vector`.
-- For each model, it checks if the parameter belongs to the model's approach (using `tbl_params.model_approach`) and updates the corresponding value.
-- The `param_to_index` variant uses a mapping to directly replace parameter values in the models.
+- The function iterates over the models in `selected_models` and updates their parameters based on the provided `parameter_vector`.
+- For each model, it checks if the parameter belongs to the model's approach (using `parameter_table.model_approach`) and updates the corresponding value.
+- The `parameter_to_index` variant uses a mapping to directly replace parameter values in the models.
 - The generated (with @generated) function variant (`::Val{p_vals}`) creates a compile-time optimized update process for specific parameters and models.
 """
 updateModelParameters
 
-function updateModelParameters(tbl_params::Table, selected_models::LongTuple, param_vector::AbstractArray)
+function updateModelParameters(parameter_table::Table, selected_models::LongTuple, parameter_vector::AbstractArray)
     selected_models = getTupleFromLongTuple(selected_models)
-    return updateModelParameters(tbl_params, selected_models, param_vector)
+    return updateModelParameters(parameter_table, selected_models, parameter_vector)
 end
 
-function updateModelParameters(tbl_params::Table, selected_models::Tuple, param_vector::AbstractArray)
+function updateModelParameters(parameter_table::Table, selected_models::Tuple, parameter_vector::AbstractArray)
     updatedModels = eltype(selected_models)[]
     namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
         approachx = selected_models[idx]
         model_obj = approachx
-        newapproachx = if modelName in tbl_params.model_approach
+        newapproachx = if modelName in parameter_table.model_approach
             vars = propertynames(approachx)
             newvals = Pair[]
             for var ∈ vars
                 pindex = findall(row -> row.name == var && row.model_approach == modelName,
-                    tbl_params)
+                    parameter_table)
                 pval = getproperty(approachx, var)
                 if !isempty(pindex)
-                    pval = param_vector[pindex[1]]
+                    pval = parameter_vector[pindex[1]]
                 end
                 push!(newvals, var => pval)
             end
@@ -260,49 +253,30 @@ function updateModelParameters(tbl_params::Table, selected_models::Tuple, param_
     return (updatedModels...,)
 end
 
-function updateModelParameters(param_to_index::NamedTuple, selected_models, param_vector::AbstractArray)
+function updateModelParameters(parameter_to_index::NamedTuple, selected_models, parameter_vector::AbstractArray)
     map(selected_models) do model
-          modelmap = param_to_index[nameof(typeof(model))]
-          varsreplace = map(i->param_vector[i],modelmap)
+          modelmap = parameter_to_index[nameof(typeof(model))]
+          varsreplace = map(i->parameter_vector[i],modelmap)
           ConstructionBase.setproperties(model,varsreplace)
     end
 end
 
-
-@generated function updateModelParameters(selected_models, param_vector::AbstractArray, ::Val{p_vals}) where p_vals
-    gen_output = quote end
-    p_index = 1
-    foreach(p_vals) do p
-        param = Symbol(split(string(first(p)), "____")[end])
-        mod_index = last(p)
-        push!(gen_output.args,
-            Expr(:(=),
-                :selected_models,
-                Expr(:macrocall,
-                    Symbol("@set"),
-                    :(),
-                    Expr(:(=), Expr(:., Expr(:ref, :selected_models, mod_index), QuoteNode(param)), Expr(:ref, :param_vector, p_index))))) #= none:1 =#
-                    p_index += 1
-    end
-    return gen_output
-end
-
 """
-    updateModels(param_vector, param_updater, parameter_scaling_type, selected_models)
+    updateModels(parameter_vector, parameter_updater, parameter_scaling_type, selected_models)
 
 Updates the parameters of selected models using the provided parameter vector.
 
 # Arguments
-- `param_vector`: Vector containing the new parameter values
-- `param_updater`: Function or object that defines how parameters should be updated
+- `parameter_vector`: Vector containing the new parameter values
+- `parameter_updater`: Function or object that defines how parameters should be updated
 - `parameter_scaling_type`: Specifies the type of scaling to be applied to parameters
 - `selected_models`: Collection of models whose parameters need to be updated
 
 # Returns
 Updated models with new parameter values
 """
-function updateModels(param_vector, param_updater, parameter_scaling_type, selected_models)
-    param_vector = backScaleParameters(param_vector, param_updater, parameter_scaling_type)
-    updated_models = updateModelParameters(param_updater, selected_models, param_vector)
+function updateModels(parameter_vector, parameter_updater, parameter_scaling_type, selected_models)
+    parameter_vector = backScaleParameters(parameter_vector, parameter_updater, parameter_scaling_type)
+    updated_models = updateModelParameters(parameter_updater, selected_models, parameter_vector)
     return updated_models
 end
