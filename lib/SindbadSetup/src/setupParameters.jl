@@ -103,12 +103,12 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
 end
 
 """
-    getOptimizationParametersTable(tbl_parameters_all::Table, model_parameter_default, optimization_parameters)
+    getOptimizationParametersTable(parameter_table_all::Table, model_parameter_default, optimization_parameters)
 
 Creates a filtered and enhanced parameter table for optimization by combining input parameters with default model parameters with the table of all parameters in the selected model structure.
 
 # Arguments
-- `tbl_parameters_all::Table`: A table containing all model parameters
+- `parameter_table_all::Table`: A table containing all model parameters
 - `model_parameter_default`: Default parameter settings including distribution and a flag differentiating if the parameter is to be ML-parameter-learnt
 - `optimization_parameters`: Parameters to be optimized, specified either as:
     - `::NamedTuple`: Named tuple with parameter configurations
@@ -125,7 +125,7 @@ A filtered `Table` containing only the optimization parameters, enhanced with:
 - For NamedTuple inputs, individual parameter configurations override model_parameter_default
 - The output table preserves the numeric type of the input parameters
 """
-function getOptimizationParametersTable(tbl_parameters_all::Table, model_parameter_default, optimization_parameters)
+function getOptimizationParametersTable(parameter_table_all::Table, model_parameter_default, optimization_parameters)
     parameter_list = []
     parameter_keys = []
     if isa(optimization_parameters, NamedTuple)
@@ -135,11 +135,11 @@ function getOptimizationParametersTable(tbl_parameters_all::Table, model_paramet
         parameter_list = replaceCommaSeparatedParams(optimization_parameters)
         parameter_keys = optimization_parameters
     end
-    tbl_parameters_all_filtered = filter(row -> row.name_full in parameter_list, tbl_parameters_all)
-    num_type = typeof(tbl_parameters_all_filtered.default[1])
-    is_ml = tbl_parameters_all_filtered.is_ml
-    dist = tbl_parameters_all_filtered.dist
-    p_dist = tbl_parameters_all_filtered.p_dist
+    parameter_table_all_filtered = filter(row -> row.name_full in parameter_list, parameter_table_all)
+    num_type = typeof(parameter_table_all_filtered.default[1])
+    is_ml = parameter_table_all_filtered.is_ml
+    dist = parameter_table_all_filtered.dist
+    p_dist = parameter_table_all_filtered.p_dist
     for (p_ind, p_key) ∈ enumerate(parameter_keys)
         p_field = nothing
         was_default_used = false
@@ -161,7 +161,7 @@ function getOptimizationParametersTable(tbl_parameters_all::Table, model_paramet
             p_dist[p_ind] = [num_type.(nd_json[2])...]
         end
     end
-    return tbl_parameters_all_filtered
+    return parameter_table_all_filtered
 end
 
 
