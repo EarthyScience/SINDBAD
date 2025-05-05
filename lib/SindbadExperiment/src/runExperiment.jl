@@ -151,7 +151,7 @@ function runExperimentCost(sindbad_experiment::String; replace_info=Dict(), log_
     replace_info["experiment.flags.calc_cost"] = true
     replace_info["experiment.flags.run_forward"] = true
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    cost_output = runExperiment(info, forcing, info.helpers.run.calc_cost, log_level=log_level)
+    cost_output = runExperiment(info, forcing, info.helpers.run.calc_cost)
     setLogLevel()
     return cost_output
 end
@@ -176,7 +176,7 @@ function runExperimentForward(sindbad_experiment::String; replace_info=Dict(), l
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    run_output = runExperiment(info, forcing, info.helpers.run.run_forward, log_level=log_level)
+    run_output = runExperiment(info, forcing, info.helpers.run.run_forward)
     output_dims = getOutDims(info, forcing.helpers)
     saveOutCubes(info, values(run_output.output), output_dims, info.output.variables)
     setLogLevel()
@@ -276,7 +276,7 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=Dict(), log_
     replace_info["experiment.flags.calc_cost"] = false
     replace_info["experiment.flags.run_forward"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization, log_level=log_level)
+    opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization)
     setLogLevel(:info)
     fp_output = runExperimentForwardParams(opti_output.parameters.optimized, sindbad_experiment; replace_info=replace_info)
     cost_options = prepCostOptions(opti_output.observation, info.optimization.cost_options)

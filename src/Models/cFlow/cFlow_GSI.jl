@@ -2,10 +2,10 @@ export cFlow_GSI
 
 #! format: off
 @bounds @describe @units @timescale @with_kw struct cFlow_GSI{T1,T2,T3,T4} <: cFlow
-    slope_leaf_root_to_reserve::T1 = 0.1 | (0.01, 0.99) | "Leaf-Root to Reserve" | "fraction" | "day"
-    slope_reserve_to_leaf_root::T2 = 0.1 | (0.01, 0.99) | "Reserve to Leaf-Root" | "fraction" | "day"
-    k_shedding::T3 = 0.1 | (0.01, 0.99) | "rate of shedding" | "fraction" | "day"
-    f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction" | "day"
+    slope_leaf_root_to_reserve::T1 = 0.14 | (0.033, 0.33) | "Leaf-Root to Reserve" | "fraction" | "day"
+    slope_reserve_to_leaf_root::T2 = 0.14 | (0.033, 0.33) | "Reserve to Leaf-Root" | "fraction" | "day"
+    k_shedding::T3 = 0.14 | (0.033, 0.33) | "rate of shedding" | "fraction" | "day"
+    f_τ::T4 = 0.03 | (0.01, 0.10) | "contribution factor for current stressor" | "fraction" | "day"
 end
 #! format: on
 
@@ -56,11 +56,12 @@ function define(params::cFlow_GSI, forcing, land, helpers)
     end
 
     eco_stressor_prev = totalS(soilW) / ∑w_sat
-
+    slope_eco_stressor_prev = zero(eco_stressor_prev)
 
     @pack_nt begin
         c_flow_A_vec_ind ⇒ land.cFlow
         eco_stressor_prev ⇒ land.diagnostics
+        slope_eco_stressor_prev ⇒ land.diagnostics
         c_flow_A_vec ⇒ land.diagnostics
     end
 
@@ -84,7 +85,7 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_nt begin
         c_flow_A_vec_ind ⇐ land.cFlow
-        (c_allocation_f_soilW, c_allocation_f_soilT, c_allocation_f_cloud, eco_stressor_prev)  ⇐ land.diagnostics
+        (c_allocation_f_soilW, c_allocation_f_soilT, c_allocation_f_cloud, eco_stressor_prev, slope_eco_stressor_prev)  ⇐ land.diagnostics
         c_eco_k ⇐ land.diagnostics
         c_flow_A_vec ⇐ land.diagnostics
     end
@@ -92,18 +93,27 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     # Compute sigmoid functions
     # LPJ-GSI formulation: In GSI; the stressors are smoothened per control variable. That means; gppfsoilW; fTair; and fRdiff should all have a GSI approach for 1:1 conversion. For now; the function below smoothens the combined stressors; & then calculates the slope for allocation
     # current time step before smoothing
-    eco_stressor_now = c_allocation_f_soilW * c_allocation_f_soilT * c_allocation_f_cloud
+    # attention, the stressors are to be interepreted like this: 
+    
+    #   high stressor (close to 1) means actually low stress
+    #   low stressor (close to 0) means actually high stress
+    # this is counterintuitive, but it is how the GSI formulation works
+
+    eco_stressor = c_allocation_f_soilW * c_allocation_f_soilT * c_allocation_f_cloud
 
     # get the smoothened stressor based on contribution of previous steps using ARMA-like formulation
-    eco_stressor = (one(f_τ) - f_τ) * eco_stressor_prev + f_τ * eco_stressor_now
+    slope_eco_stressor_now = eco_stressor - eco_stressor_prev
 
-    slope_eco_stressor = eco_stressor - eco_stressor_prev
+    
+    slope_eco_stressor = (one(f_τ) - f_τ) * slope_eco_stressor_prev + f_τ * slope_eco_stressor_now
+
 
     # calculate the flow rate for exchange with reserve pools based on the slopes
     # get the flow & shedding rates
-    leaf_root_to_reserve = minOne(maxZero(-slope_eco_stressor) * slope_leaf_root_to_reserve) # * (cVeg_growth < z_zero)
-    reserve_to_leaf_root = minOne(maxZero(slope_eco_stressor) * slope_reserve_to_leaf_root) # * (cVeg_growth > 0.0)
-    shedding_rate = minOne(maxZero(-slope_eco_stressor) * k_shedding)
+    leaf_root_to_reserve = minOne(maxZero(-slope_eco_stressor) * slope_leaf_root_to_reserve) # number when negative (increasing stress; decreasing stressor), 0 when positive
+    reserve_to_leaf_root = minOne(maxZero(slope_eco_stressor) * slope_reserve_to_leaf_root) # number when positive, 0 when negative
+    shedding_rate = minOne(maxZero(-slope_eco_stressor) * k_shedding) # number when negative, 0 when positive
+
 
     # set the Leaf & Root to Reserve flow rate as the same
     leaf_to_reserve = leaf_root_to_reserve # should it be divided by 2?
@@ -148,10 +158,11 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     leaf_to_reserve_frac = leaf_to_reserve_frac # should it be divided by 2?
 
     eco_stressor_prev = eco_stressor
+    slope_eco_stressor_prev = slope_eco_stressor
 
     ## pack land variables
     @pack_nt begin
-        (leaf_to_reserve, leaf_to_reserve_frac, root_to_reserve, root_to_reserve_frac, reserve_to_leaf, reserve_to_leaf_frac, reserve_to_root, reserve_to_root_frac, eco_stressor, k_shedding_leaf, k_shedding_leaf_frac, k_shedding_root, k_shedding_root_frac, slope_eco_stressor, eco_stressor_prev, c_eco_k) ⇒ land.diagnostics
+        (leaf_to_reserve, leaf_to_reserve_frac, root_to_reserve, root_to_reserve_frac, reserve_to_leaf, reserve_to_leaf_frac, reserve_to_root, reserve_to_root_frac, eco_stressor, k_shedding_leaf, k_shedding_leaf_frac, k_shedding_root, k_shedding_root_frac, slope_eco_stressor, eco_stressor_prev, slope_eco_stressor_prev, c_eco_k) ⇒ land.diagnostics
         c_flow_A_vec ⇒ land.diagnostics
     end
     return land
