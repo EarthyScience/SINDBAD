@@ -12,16 +12,16 @@ getSindbadDataDepot(; env_data_depot_var="SINDBAD_DATA_DEPOT", local_data_depot=
 
 Retrieves the path to the SINDBAD data depot, which is used for storing and accessing data files.
 
-#### Arguments
+**Arguments**
 - `env_data_depot_var`: Environment variable name for the data depot (default: "SINDBAD_DATA_DEPOT")
 - `local_data_depot`: Local path to the data depot (default: "../data")
 
-#### Returns
+**Returns**
 The path to the SINDBAD data depot, determined by:
 1. First checking the environment variable specified by `env_data_depot_var`
 2. If not found, falling back to the `local_data_depot` path
 
-#### Usage
+**Usage**
 ```julia
 # Get the data depot path
 data_path = getSindbadDataDepot()
@@ -32,6 +32,7 @@ data_path = getSindbadDataDepot(env_data_depot_var="CUSTOM_DATA_DEPOT")
 # Use custom local path
 data_path = getSindbadDataDepot(local_data_depot="path/to/data")
 ```
+
 ::: tip
 
 SINDBAD uses `getSindbadDataDepot` to convert relative data paths to absolute data path. In case of sharing data directory across experiments, set the environment variable `SINDBAD_DATA_DEPOT`. In UNIX-like systems, add the following in `.bashrc`/SHELL settings.
@@ -53,11 +54,11 @@ getVariableInfo(vari_b, t_step="day")
 
 Retrieves detailed information about a SINDBAD variable from the variable catalog.
 
-#### Arguments
+**Arguments**
 - `vari_b`: The variable name (either as a Symbol or in the form of field__subfield)
 - `t_step`: Time step of the variable (default: "day")
 
-#### Returns
+**Returns**
 A dictionary containing the following information about the variable:
 - `standard_name`: The standard name of the variable
 - `long_name`: A longer description of the variable
@@ -65,7 +66,7 @@ A dictionary containing the following information about the variable:
 - `land_field`: The field in the SINDBAD model where the variable is used
 - `description`: A detailed description of the variable
 
-#### Usage
+**Usage**
 ```julia
 # Get information about a variable
 var_info = getVariableInfo(:fluxes__gpp)
@@ -85,18 +86,18 @@ whatIs(var_name::Symbol)
 
 A helper function to display information about a SINDBAD variable from the variable catalog.
 
-#### Arguments
+**Arguments**
 - `var_name`: The full variable name (e.g., "land.fluxes.gpp" or "fluxes__gpp")
 - `var_field`: The field name of the variable (e.g., "fluxes")
 - `var_sfield`: The subfield name of the variable (e.g., "gpp")
 
-#### Behavior
+**Behavior**
 - Checks if the variable exists in the SINDBAD variable catalog
 - If the variable exists, displays its complete information
 - If the variable doesn't exist, displays a template for adding it to the catalog
 - Automatically handles different input formats (String or Symbol)
 
-#### Usage
+**Usage**
 ```julia
 # Using full variable name
 whatIs("land.fluxes.gpp")
@@ -109,7 +110,7 @@ whatIs(:fluxes, :gpp)
 
 ::: tip
 
-When Sindbad is imported, `sindbad_variables` with all the variables in the catalog is available automatically:
+When Sindbad is imported, `sindbad_variables` with all the variables in the catalog is available automatically.
 
 `whatIs` is particularly useful for:
 - Quickly looking up variable information during development
@@ -130,17 +131,17 @@ modelParameter(model::LandEcosystem, show=true)
 
 Returns and optionally displays the current parameters of a given SINDBAD model.
 
-#### Arguments
+**Arguments**
 - `models`: A list/collection of SINDBAD models (required when `model` is a Symbol)
 - `model::Symbol`: A SINDBAD model name
 - `model::LandEcosystem`: A SINDBAD model instance of type LandEcosystem
 - `show::Bool`: Flag to print parameters to the screen (default: true)
 
-#### Returns
+**Returns**
 - For `model::LandEcosystem`: A vector of parameter information pairs
 - For `model::Symbol`: An OrderedDict containing parameter names and values
 
-#### Usage
+**Usage**
 ```julia
 # get models from info
 selected_models = info.models.forward
@@ -156,11 +157,10 @@ modelParameters(selected_models)
 
 Displays the current parameters of all given SINDBAD models.
 
-#### Arguments
+**Arguments**
 - `models`: A list/collection of SINDBAD models
 
-
-#### Usage
+**Usage**
 ```julia
 # Display parameters of all models
 modelParameters(selected_models)
@@ -176,7 +176,7 @@ sindbadDefaultOptions(::MethodType)
 
 Retrieves the default configuration options for optimization or sensitivity analysis methods in SINDBAD.
 
-#### Arguments
+**Arguments**
 - `::MethodType`: The method type for which default options are requested. Supported types:
   - `SindbadOptimizationMethod`: General optimization methods
   - `SindbadGlobalSensitivityMethod`: General global sensitivity analysis methods
@@ -185,10 +185,10 @@ Retrieves the default configuration options for optimization or sensitivity anal
   - `GlobalSensitivitySobolDM`: Sobol method with derivative-based measures
   - `CMAEvolutionStrategyCMAES`: CMA-ES optimization method
 
-#### Returns
+**Returns**
 A `NamedTuple` containing the default options for the specified method.
 
-#### Default Options by Method
+**Default Options by Method**
 - `GlobalSensitivityMorris`: 
   - `total_num_trajectory = 200`
   - `num_trajectory = 15`
@@ -201,7 +201,7 @@ A `NamedTuple` containing the default options for the specified method.
 - `CMAEvolutionStrategyCMAES`:
   - `maxfevals = 50`
 
-#### Usage
+**Usage**
 ```julia
 # Get default options for Morris method
 opts = sindbadDefaultOptions(GlobalSensitivityMorris())
@@ -220,20 +220,22 @@ getSindbadModels()
 
 Retrieves a dictionary of SINDBAD models and their approaches.
 
-#### Returns
+**Returns**
 A dictionary containing:
 - Keys: Model names as symbols
 - Values: Corresponding model approaches and implementations
 
-#### Usage
+**Usage**
 ```julia
 # Get all SINDBAD models and their approaches
 models = getSindbadModels()
 ```
 
 ::: tip
+
 `getSindbadModels` is particularly useful for:
 - Discovering available models in `standard_sindbad_models` in the SINDBAD framework
+
 :::
 
 ### `getSindbadDefinitions`
@@ -244,15 +246,15 @@ getSindbadDefinitions(sindbad_module, what_to_get; internal_only=true)
 
 Returns all defined (and optionally internal) objects in the SINDBAD framework.
 
-#### Arguments
+**Arguments**
 - `sindbad_module`: The module to search for defined things
 - `what_to_get`: The type of things to get (e.g., Type, Function)
 - `internal_only`: Whether to only include internal definitions (default: true)
 
-#### Returns
+**Returns**
 An array of all defined things in the SINDBAD framework that match the specified type.
 
-#### Usage
+**Usage**
 ```julia
 # Get all defined types in the SINDBAD framework
 defined_types = getSindbadDefinitions(Sindbad, Type)
@@ -265,8 +267,10 @@ all_definitions = getSindbadDefinitions(Sindbad, Any, internal_only=false)
 ```
 
 ::: tip
+
 `getSindbadDefinitions` is particularly useful for:
 - Discovering available types and functions in SINDBAD modules
 - Understanding the structure of SINDBAD's codebase
 - Accessing internal implementations for debugging or development
+
 :::
