@@ -1,29 +1,23 @@
+export getOptimizationParametersTable
 export getParameters
 export getParameterIndices
-
+export perturbParameters
 
 """
     getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
     getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true)
-    getParameters(selected_models, model_parameter_default::NamedTuple, num_type, model_timestep)
-    getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type)
-    getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type)
-
-Retrieves parameters for the specified models with given numerical type and timestep settings.
+Retrieves parameters for the specified models with given numerical type and timestep settings. 
 
 # Arguments
 - `selected_models`: A collection of selected models
     - `::Tuple`: as a tuple 
     - `::LongTuple`: as a long tuple
 - `num_type`: The numerical type to be used for parameters
-- `model_parameter_default::NamedTuple`: A named tuple containing the default parameters for the models and their distributions
-- `opt_parameter::Vector`: A vector containing the names of the parameters to be optimized
-- `opt_parameter::NamedTuple`: A named tuple containing the parameters to be optimized with their distributions and whether they are machine learning parameters
 - `model_timestep`: The timestep setting for the model simulation
 - `return_table::Bool=true`: Whether to return results in table format
 
 # Returns
-Parameters configuration for the selected models based on the specified settings.
+Parameters information for the selected models based on the specified settings.
 """
 getParameters
 
@@ -31,7 +25,6 @@ function getParameters(selected_models::LongTuple, num_type, model_timestep; ret
     selected_models = getTupleFromLongTuple(selected_models)
     return getParameters(selected_models, num_type, model_timestep; return_table=return_table, show_info=show_info)
 end
-
 
 function getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true, show_info=false)
     model_names_list = nameof.(typeof.(selected_models))
@@ -97,78 +90,101 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
         isempty(ts) ? ts : model_timestep
     end
     checkParameterBounds(name, default, lower, upper, ScaleNone(),show_info=show_info, model_names=model_approach)
-    output = (; model_id, name, default, optim=default, lower, upper, timescale_run=timescale_run, units=unts, timescale_ori=timescale, units_ori=unts_ori, model, model_approach, approach_func, name_full)
+    is_ml = Array{Bool}(undef, length(default))
+    dist = Array{String}(undef, length(default))
+    p_dist = Array{Array{num_type,1}}(undef, length(default))
+    is_ml .= false
+    dist .= ""
+    p_dist .= [num_type[]]
+
+    output = (; model_id, name, initial=default, default,optimized=default, lower, upper, timescale_run=timescale_run, units=unts, timescale_ori=timescale, units_ori=unts_ori, model, model_approach, approach_func, name_full, is_ml, dist, p_dist)
     output = return_table ? Table(output) : output
     return output
 end
 
+"""
+    getOptimizationParametersTable(parameter_table_all::Table, model_parameter_default, optimization_parameters)
 
-function getParameters(selected_models, model_parameter_default::NamedTuple, num_type, model_timestep; show_info=false)
-    models_tuple = getParameters(selected_models, num_type, model_timestep; return_table=false, show_info=show_info)
-    default = models_tuple.default
-    model_approach = models_tuple.model_approach
-    dp_dist = typeof(default[1]).(model_parameter_default[:distribution][2])
-    dist = [model_parameter_default[:distribution][1] for m ∈ model_approach]
-    p_dist = [dp_dist for m ∈ model_approach]
-    is_ml = [model_parameter_default.is_ml for m ∈ model_approach]
-    return Table(; models_tuple... ,dist, p_dist, is_ml)
-end
+Creates a filtered and enhanced parameter table for optimization by combining input parameters with default model parameters with the table of all parameters in the selected model structure.
 
-function getParameters(selected_models, model_parameter_default, opt_parameter::Vector, num_type, model_timestep; show_info=false)
-    opt_parameter = replaceCommaSeparatorParams(opt_parameter)
-    tbl_parameters = getParameters(selected_models, model_parameter_default, num_type, model_timestep, show_info=show_info)
-    return filter(row -> row.name_full in opt_parameter, tbl_parameters)
-end
+# Arguments
+- `parameter_table_all::Table`: A table containing all model parameters
+- `model_parameter_default`: Default parameter settings including distribution and a flag differentiating if the parameter is to be ML-parameter-learnt
+- `optimization_parameters`: Parameters to be optimized, specified either as:
+    - `::NamedTuple`: Named tuple with parameter configurations
+    - `::Vector`: Vector of parameter names to use with default settings
 
-function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple, num_type, model_timestep; show_info=false)
-    param_list = replaceCommaSeparatorParams(keys(opt_parameter))
-    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list, num_type, model_timestep, show_info=show_info)
-    tbl_parameters_filtered = filter(row -> row.name_full in param_list, tbl_parameters)
-    new_dist = tbl_parameters_filtered.dist
-    new_p_dist = tbl_parameters_filtered.p_dist
-    new_is_ml = tbl_parameters_filtered.is_ml
-    pInd = 1
-    for pp ∈ param_list
-        p_ = opt_parameter[pInd]
-        if !isnothing(p_)
-            if hasproperty(p_, :is_ml)
-                new_is_ml[pInd] = getfield(p_, :is_ml)
-            end
-            if hasproperty(p_, :distribution)
-                nd = getproperty(p_, :distribution)
-                new_dist[pInd] = nd[1]
-                new_p_dist[pInd] = nd[2]
-            end
-        end
-        pInd = pInd + 1
+# Returns
+A filtered `Table` containing only the optimization parameters, enhanced with:
+- `is_ml`: Boolean flag indicating if parameter uses machine learning
+- `dist`: Distribution type for each parameter
+- `p_dist`: Distribution parameters as an array of numeric values
+
+# Notes
+- Parameters can be specified using comma-separated strings for model.parameter pairs
+- For NamedTuple inputs, individual parameter configurations override model_parameter_default
+- The output table preserves the numeric type of the input parameters
+"""
+function getOptimizationParametersTable(parameter_table_all::Table, model_parameter_default, optimization_parameters)
+    parameter_list = []
+    parameter_keys = []
+    if isa(optimization_parameters, NamedTuple)
+        parameter_list = replaceCommaSeparatedParams(keys(optimization_parameters))
+        parameter_keys = keys(optimization_parameters)
+    else
+        parameter_list = replaceCommaSeparatedParams(optimization_parameters)
+        parameter_keys = optimization_parameters
     end
-    tbl_parameters_filtered.is_ml .= new_is_ml
-    tbl_parameters_filtered.dist .= new_dist
-    tbl_parameters_filtered.p_dist .= new_p_dist
-    return tbl_parameters_filtered
+    parameter_table_all_filtered = filter(row -> row.name_full in parameter_list, parameter_table_all)
+    num_type = typeof(parameter_table_all_filtered.default[1])
+    is_ml = parameter_table_all_filtered.is_ml
+    dist = parameter_table_all_filtered.dist
+    p_dist = parameter_table_all_filtered.p_dist
+    for (p_ind, p_key) ∈ enumerate(parameter_keys)
+        p_field = nothing
+        was_default_used = false
+        if isa(optimization_parameters, NamedTuple)
+            p_field = getproperty(optimization_parameters, p_key)
+            if isnothing(p_field)
+                p_field = model_parameter_default
+                was_default_used = true
+            end
+        else 
+            was_default_used = true
+            p_field = model_parameter_default
+        end
+        if !isnothing(p_field)
+            ml_json = getproperty(p_field, :is_ml)
+            nd_json = getproperty(p_field, :distribution)
+            is_ml[p_ind] = ml_json
+            dist[p_ind] = nd_json[1]
+            p_dist[p_ind] = [num_type.(nd_json[2])...]
+        end
+    end
+    return parameter_table_all_filtered
 end
 
 
 """
-    getModelParameterIndices(model, tbl_params::Table, r)
+    getModelParameterIndices(model, parameter_table::Table, r)
 
 Retrieves indices for model parameters from a parameter table.
 
 # Arguments
 
 - `model`: A model object for which parameters are being indexed
-- `tbl_params::Table`: Table containing parameter information
+- `parameter_table::Table`: Table containing parameter information
 - `r`: Row index or identifier for the specific parameter set
 
 # Returns
 Indices corresponding to the model parameters in the parameter table for a model.
 """
-function getModelParameterIndices(model, tbl_params::Table, r)
+function getModelParameterIndices(model, parameter_table::Table, r)
     modelName = nameof(typeof(model))
     empty!(r)
     for var in propertynames(model)
 
-        pindex = findfirst(row -> row.name == var && row.model_approach == modelName, tbl_params)
+        pindex = findfirst(row -> row.name == var && row.model_approach == modelName, parameter_table)
         if !isnothing(pindex)
             push!(r, var => pindex)
         end
@@ -178,8 +194,8 @@ end
 
 
 """
-    getParameterIndices(selected_models::LongTuple, tbl_params::Table)
-    getParameterIndices(selected_models::Tuple, tbl_params::Table)
+    getParameterIndices(selected_models::LongTuple, parameter_table::Table)
+    getParameterIndices(selected_models::Tuple, parameter_table::Table)
 
 Retrieves indices for model parameters from a parameter table.
 
@@ -187,34 +203,79 @@ Retrieves indices for model parameters from a parameter table.
 - `selected_models`
     - `::LongTuple`: A long tuple of selected models
     - `::Tuple`: A tuple of selected models
-- `tbl_params::Table`: Table containing parameter information
+- `parameter_table::Table`: Table containing parameter information
 
 # Returns
 A Tuple of Pair of Name and Indices corresponding to the model parameters in the parameter table for  selected models.
 """
 getModelParameterIndices
 
-function getParameterIndices(selected_models::LongTuple, tbl_params::Table)
+function getParameterIndices(selected_models::LongTuple, parameter_table::Table)
     selected_models_tuple = getTupleFromLongTuple(selected_models)
-    return getParameterIndices(selected_models_tuple, tbl_params)
+    return getParameterIndices(selected_models_tuple, parameter_table)
 end
 
-function getParameterIndices(selected_models::Tuple, tbl_params::Table)
+function getParameterIndices(selected_models::Tuple, parameter_table::Table)
     r = (;)
     tempvec = Pair{Symbol,Int}[]
     for m in selected_models
-        r = (; r..., getModelParameterIndices(m, tbl_params, tempvec)...)
+        r = (; r..., getModelParameterIndices(m, parameter_table, tempvec)...)
     end
     r
 end
 
 
+
 """
-    replaceCommaSeparatorParams(p_names_list)
+    perturbParameters(x::AbstractVector, lower::AbstractVector, upper::AbstractVector, percent_range::Tuple{Float64,Float64}=(0.0, 0.1))
+
+Modify each element of vector `x` by a random percentage within `percent_range`, while ensuring the result stays within the bounds defined by `lower` and `upper` vectors.
+
+# Arguments
+- `x`: Vector to modify
+- `lower`: Vector of lower bounds
+- `upper`: Vector of upper bounds
+- `percent_range`: Tuple of (min_percent, max_percent) for random modification (default: (0.0, 0.1))
+
+# Returns
+- Modified vector `x` (modified in-place)
+
+# Example
+```julia
+x = [1.0, 2.0, 3.0]
+lower = [0.5, 1.5, 2.5]
+upper = [1.5, 2.5, 3.5]
+modify_within_bounds!(x, lower, upper, (0.0, 0.1))  # Modify by 0-10%
+```
+"""
+function perturbParameters(x::AbstractVector, lower::AbstractVector, upper::AbstractVector; percent_range::Tuple{Float64,Float64}=(0.0, 0.1))
+    @assert length(x) == length(lower) == length(upper) "Vectors must have the same length"
+    @assert all(lower .<= upper) "Lower bounds must be less than or equal to upper bounds"
+    @assert all(lower .<= x .<= upper) "Initial values must be within bounds"
+    @assert percent_range[1] >= 0.0 "Minimum percent must be non-negative"
+    @assert percent_range[2] >= percent_range[1] "Maximum percent must be greater than or equal to minimum percent"
+
+    min_pct, max_pct = percent_range
+    for i in eachindex(x)
+        # Generate random percentage within range
+        pct = min_pct + rand() * (max_pct - min_pct)
+        
+        # Calculate new value
+        new_val = x[i] * (1 + pct)
+        
+        # Ensure value stays within bounds
+        x[i] = clamp(new_val, lower[i], upper[i])
+    end
+    return x
+end
+
+
+"""
+    replaceCommaSeparatedParams(p_names_list)
 
 get a list/vector of parameters in which each parameter string is split with comma to separate model name and parameter name
 """
-function replaceCommaSeparatorParams(p_names_list)
+function replaceCommaSeparatedParams(p_names_list)
     o_p_names_list = []
     foreach(p_names_list) do p
         p_name = splitRenameParam(p, ",")
@@ -258,34 +319,58 @@ end
 
 
 """
-    setInputParameters(original_table::Table, updated_table::Table)
+    setInputParameters(original_table::Table, input_table::Table)
 
 Updates input parameters by comparing an original table with an updated table from params.json.
 
 # Arguments
 - `original_table::Table`: The reference table containing original parameters
-- `updated_table::Table`: The table containing updated parameters to be compared with original
+- `input_table::Table`: The table containing updated parameters to be compared with original
 
 # Returns
 a merged table with updated parameters
 """
-function setInputParameters(original_table::Table, updated_table::Table)
-    upoTable = copy(original_table)
-    for i ∈ eachindex(updated_table)
+function setInputParameters(original_table::Table, input_table::Table, model_timestep)
+    @info "        ...setInputParameters: override the default parameters and merge tables."
+    merged_table = copy(original_table)
+    done_parameter_input = []
+    skip_property = (:model_id, :initial, :default, :optimized, :approach_func, :lower, :upper)
+    for i ∈ eachindex(input_table)
         subtbl = filter(
             row ->
-                row.name == Symbol(updated_table[i].name) &&
-                    row.model == Symbol(updated_table[i].model),
-            original_table)
+                row.name == Symbol(input_table[i].name) &&row.model == Symbol(input_table[i].model) && row.name_full == input_table[i].name_full, original_table)
         if isempty(subtbl)
-            error("model: parameter $(updated_table[i].name) not found in model $(updated_table[i].model). Make sure that the parameter exists in the selected approach for $(updated_table[i].model) or correct the parameter name in params input.")
+            error("parameter $(input_table[i].name) not found (model: $(input_table[i].model), name_full: $(input_table[i].name_full), approach: $(input_table[i].model_approach)). Make sure that the parameter exists in the selected approach/model structure or correct the parameter information in parameters input.")
         else
-            posmodel = findall(x -> x == Symbol(updated_table[i].model), upoTable.model)
-            posvar = findall(x -> x == Symbol(updated_table[i].name), upoTable.name)
-            pindx = intersect(posmodel, posvar)
-            pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
-            upoTable.optim[pindx] = updated_table.optim[i]
+            pindx_p = findall(x -> x == input_table[i].name_full, merged_table.name_full)
+            p_indx = pindx_p[1]
+            if p_indx ∉ done_parameter_input
+                push!(done_parameter_input, p_indx)
+                t_actual = typeof(merged_table.initial[p_indx])
+                input_timescale_run = ismissing(input_table.timescale_run[i]) ? "" : input_table.timescale_run[i]
+                unit_factor = getUnitConversionForParameter(input_timescale_run, model_timestep)
+                merged_table.initial[p_indx] = t_actual(input_table.optimized[i] * unit_factor)
+                merged_table.optimized[p_indx] = t_actual(input_table.optimized[i] * unit_factor)
+                merged_table.lower[p_indx] = t_actual(input_table.lower[i] * unit_factor)
+                merged_table.upper[p_indx] = t_actual(input_table.upper[i] * unit_factor)
+                for tp in propertynames(input_table)
+                    if tp ∉ skip_property
+                        in_pf = getproperty(input_table, tp)
+                        me_pg = getproperty(merged_table, tp)
+                        v_to_assign = in_pf[i]
+                        if tp == :p_dist
+                            v_to_assign = eval(Meta.parse(v_to_assign))
+                        end
+                        if ~ismissing(v_to_assign)
+                            t_me_pg = typeof(me_pg[p_indx])
+                            me_pg[p_indx] = t_me_pg(v_to_assign)
+                        end
+                    end
+                end
+            else
+                error("Delete duplicate parameter at row $(i) for $(input_table[i].name) (name_full: $(input_table[i].name_full) in the parameter table (or line $(i+1) of input csv or model $(input_table[i].model_approach)). The same parameter was already used to update the model parameters.")
+            end
         end
     end
-    return upoTable
+    return merged_table
 end

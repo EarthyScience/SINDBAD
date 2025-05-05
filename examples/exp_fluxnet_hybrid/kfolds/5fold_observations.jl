@@ -26,7 +26,7 @@ _nfold = 1
 xtrain, xval, xtest = file_folds["unfold_training"][_nfold], file_folds["unfold_validation"][_nfold], file_folds["unfold_tests"][_nfold]
 
 # get all PFTs from dataset
-ds = open_dataset(joinpath(@__DIR__, "../../data/FLUXNET_v2023_12_1D.zarr"))
+ds = open_dataset(joinpath(@__DIR__, "../$(getSindbadDataDepot())/FLUXNET_v2023_12_1D.zarr"))
 ds.properties["PFT"][[98, 99, 100, 137, 138]] .= ["WET", "WET", "GRA", "WET", "SNO"]
 updatePFTs = ds.properties["PFT"]
 # ? site names
@@ -73,14 +73,9 @@ replace_info = Dict()
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 selected_models = info.models.forward
 
-tbl_params = getParameters(
-    selected_models,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution);
+parameter_table = info.optimization.parameter_table;
 
-param_to_index = getParameterIndices(selected_models, tbl_params);
+parameter_to_index = getParameterIndices(selected_models, parameter_table);
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 lines(observations.data[1](;site="AR-SLu"))
@@ -98,7 +93,7 @@ function get_name_units_obs(info_f_vars, _var)
     return _standard_name, _unit
 end
 
-_standard_name, _unit = get_name_units_obs(info.settings.optimization.observations.variables, :ndvi)
+_standard_name, _unit = get_name_units_obs(info.experiment.data_settings.optimization.observations.variables, :ndvi)
 
 with_theme() do
     _site_name = Observable(test_names[1])
@@ -123,7 +118,7 @@ with_theme() do
     end
 
     for (i, obs_var) in enumerate(obs_time)
-        _name, _units = get_name_units_obs(info.settings.optimization.observations.variables, obs_var)
+        _name, _units = get_name_units_obs(info.experiment.data_settings.optimization.observations.variables, obs_var)
         if isnothing(_units)
             _units = ""
         else

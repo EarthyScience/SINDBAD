@@ -1,30 +1,61 @@
-```land``` is a NamedTuple that carries and passes information across SINDBAD models.
+# Land Data Structure
 
-## Fields of land
+The `land` structure is a `NamedTuple` that serves as the primary data container for SINDBAD models, facilitating information exchange between different model components.
 
-The ```land``` variables are organized in the subfields, and the depth of the NT should be exactly 2: a field diving the variable groups, and a subfield storing the data.
+## Structure Organization
 
-If a variable is only used in only one model, but it is necessary to be precomputed, the model name itself, (e.g., cCycleBase) is used as the field. So, ```land``` can technically have many fields. But, anything that is shared across models are grouped to contain the variables that have common characteristics as,
+The `land` variables are organized hierarchically with exactly two levels:
+1. **Field**: Groups variables by their functional category
+2. **Subfield**: Contains the actual data values
 
-- constants: helpers and variables that are dependent on the model structure but do not change in time or model iterations/parameters
-- diagnostics: variables that are derived from either forcing/pools/states to indicates stressors, controllers, rates and so on.
-- fluxes: variables in mass/area/time units
-- models: instances that help model computation by dispatching on types. used in calculation of soil properties or updating pools
-- pools: model storages and pools and their changes, usually only those variables automatically generated from model_structure.json
-- properties: variables pertaining to characteristics of the land surface, e.g., soil and vegetation properties, and those directly derived from them
-- states: ecosystem states and variables derived from these states and pools
+## Field Categories
 
-## Displaying land
-For every model structure/implementation, the ```land``` should be examined for potential violations of the variable grouping using:
+Variables are grouped into the following categories based on their characteristics and usage:
 
+### Shared Fields
+These fields contain variables used across multiple models:
 
-````julia
+- **constants**: Helper variables and structure-dependent parameters that remain constant throughout the simulation
+- **diagnostics**: Derived variables indicating stressors, controllers, and rates based on forcing, pools, or states
+- **fluxes**: Mass/area/time variables representing ecosystem fluxes
+- **models**: Type-based instances used for soil property calculations and pool updates
+- **pools**: Storage variables automatically generated from `model_structure.json`
+- **properties**: Land surface characteristics (soil, vegetation) and their derivatives
+- **states**: Ecosystem states and derived variables
+
+### Model-Specific Fields
+Variables used exclusively by a single model are stored under the model name (e.g., `cCycleBase`).
+
+## Structure Validation
+
+To ensure proper organization and prevent potential issues, use the following command to examine the `land` structure:
+
+```julia
 julia> tcPrint(land)
-````
+```
 
-::: danger
+::: danger Important Considerations
 
-- there are no-cross checks for overwriting of variables
-- repeated fields across groups should be avoided
+- No automatic checks prevent variable overwriting
+- Avoid duplicating fields across different groups
+- Maintain consistent naming conventions
+- Ensure proper variable grouping
 
 :::
+
+## Best Practices
+
+1. **Organization**
+   - Keep variables in their appropriate categories
+   - Use consistent naming conventions
+   - Document any model-specific fields
+
+2. **Validation**
+   - Regularly check structure using `tcPrint`
+   - Verify variable grouping
+   - Ensure no unintended overwrites
+
+3. **Maintenance**
+   - Update documentation when adding new fields
+   - Review structure after model modifications
+   - Maintain clear variable categorization

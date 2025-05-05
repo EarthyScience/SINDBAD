@@ -1,28 +1,57 @@
-As a first step of an experiment, SINDBAD preprocessor parses the settings and consolidates them into 
-information that is needed for building the model structure, and running the experiment. This ```NamedTuple``` is named ```info```.
+# SINDBAD Information Structure
 
-::: warning
+The `info` structure serves as the central information hub for SINDBAD experiments. During experiment initialization, the SINDBAD preprocessor parses configuration settings and consolidates them into a comprehensive `NamedTuple` named `info`.
 
-```info``` is reserved variable name and users should not overwrite.
+::: warning Reserved Variable
+
+The `info` variable name is reserved within SINDBAD. Users should not attempt to overwrite or modify this variable directly.
 
 :::
 
+## Purpose and Functionality
 
-The ```info``` is essentially the brain of SINDBAD experiment, as it stores all the information needed to read the data, run and/or optimize the model, and process the output.
+The `info` structure acts as the central nervous system of a SINDBAD experiment, containing all necessary information for:
+- Data ingestion and processing
+- Model initialization and execution
+- Optimization configuration
+- Output generation and analysis
 
-### The main fields
-The main fields or branches of the info structure are as follows:
+## Structure Overview
 
--   **experiment**: name, domain, version, user, date of running, full
-    paths of all other configuration files (forcing, model structure,
-    constants (physical), model run, output, and optimization (optional)
+The `info` structure is organized into three main branches:
 
--   **tem**: information on model, forcing, parameters, spinup runs,
-    etc.
+### 1. Experiment Configuration (`experiment`)
+Contains experiment metadata and file paths:
+- Basic information: name, domain, version, user, execution date
+- Configuration file paths:
+  - Forcing data
+  - Model structure
+  - Physical constants
+  - Model run settings
+  - Output configuration
+  - Optimization settings (optional)
 
--   **opti**: all Information related to optimization including cost
-    function, optimization method, data constraints, parameters, etc.
+### 2. Terrestrial Ecosystem Model (`tem`)
+Stores model-specific information:
+- Model structure and processes
+- Forcing data configuration
+- Parameter settings
+- Spinup configuration
+- Additional model-related settings
 
-### Conventions on info
+### 3. Optimization Settings (`opti`)
+Contains optimization-related information:
+- Cost function configuration
+- Optimization algorithm settings
+- Observational constraints
+- Parameter optimization settings
+- Performance metrics
+
+## Usage Guidelines
+
+- Access information using dot notation (e.g., `info.experiment.name`)
+- Refer to specific fields when configuring model components
+- Use the structure to track experiment settings and state
+- Maintain consistency with configuration files
 
 

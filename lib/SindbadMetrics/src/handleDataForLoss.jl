@@ -1,7 +1,6 @@
 export getDataWithoutNaN
 export getData
 export getModelOutputView
-export getData
 
 """
     aggregateData(dat, cost_option, ::TimeSpace)

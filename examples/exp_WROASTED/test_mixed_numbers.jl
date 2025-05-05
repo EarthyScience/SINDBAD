@@ -8,7 +8,7 @@ begin_year = "1979"
 end_year = "2017"
 
 domain = "DE-Hai"
-path_input = "../data/fn/$(domain).1979.2017.daily.nc"
+path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
 
 path_observation = path_input
@@ -40,11 +40,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-tbl_params = getParameters(info.models.forward,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type, 
-    info.helpers.dates.temporal_resolution);
+parameter_table = info.optimization.parameter_table;
 
 forcing = getForcing(info);
 
@@ -54,20 +50,17 @@ run_helpers = prepTEM(forcing, info);
 
 
 optimized_models = info.models.forward;
-tbl_params = getParameters(info.models.forward,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type, 
-    info.helpers.dates.temporal_resolution);
+parameter_table = info.optimization.parameter_table;
 selected_models = info.models.forward;
 
 rand_m = rand()
-# param_vector = tbl_params.default .* info.helpers.numbers.num_type(rand_m);
-param_vector = tbl_params.default .* rand_m;
-param_vector = ForwardDiff.Dual.(tbl_params.default .* rand_m);
-@time selected_models = updateModelParameters(info.models.forward, param_vector, info.optimization.param_model_id_val);
-n_m = updateModelParameters(tbl_params, info.models.forward, param_vector);
-# updateModelParameters(selected_models, param_vector, info.optimization.param_model_id_val)
+# parameter_vector = parameter_table.initial .* info.helpers.numbers.num_type(rand_m);
+parameter_vector = parameter_table.initial .* rand_m;
+@time selected_models = updateModelParameters(parameter_table, info.models.forward, parameter_vector);
+
+parameter_vector = ForwardDiff.Dual.(parameter_table.initial .* rand_m);
+
+n_m = updateModelParameters(parameter_table, info.models.forward, parameter_vector);
 run_helpers_s = prepTEM(selected_models, forcing, info);
 @time runTEM!(selected_models,
     run_helpers_s.space_forcing,

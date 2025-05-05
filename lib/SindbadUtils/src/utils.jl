@@ -2,6 +2,7 @@ export booleanizeArray
 export doNothing
 export entertainMe
 export getAbsDataPath
+export getSindbadDataDepot
 export isInvalid
 export LandWrapper
 export nonUnique
@@ -18,8 +19,6 @@ figlet_fonts = ("3D Diagonal", "3D-ASCII", "3d", "4max", "5 Line Oblique", "5x7"
 """
     LandWrapper{S}
 
-Wraps the nested fields of a NamedTuple output of SINDBAD land into a nested structure of views that can be easily accessed with dot notation.
-
 # Fields:
 - `s::S`: The underlying NamedTuple or data structure being wrapped.
 """
@@ -27,10 +26,10 @@ struct LandWrapper{S}
     s::S
 end
 
+purpose(::Type{LandWrapper}) = "Wraps the nested fields of a NamedTuple output of SINDBAD land into a nested structure of views that can be easily accessed with dot notation."
+
 """
     GroupView{S}
-
-Represents a group of data within a `LandWrapper`, allowing access to specific groups of variables.
 
 # Fields:
 - `groupname::Symbol`: The name of the group being accessed.
@@ -41,10 +40,10 @@ struct GroupView{S}
     s::S
 end
 
+purpose(::Type{GroupView}) = "Represents a group of data within a `LandWrapper`, allowing access to specific groups of variables."
+
 """
     ArrayView{T,N,S<:AbstractArray{<:Any,N}}
-
-A view into a specific array within a group of data, enabling efficient access and manipulation.
 
 # Fields:
 - `s::S`: The underlying array being viewed.
@@ -56,6 +55,8 @@ struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
     groupname::Symbol
     arrayname::Symbol
 end
+
+purpose(::Type{ArrayView}) = "A view into a specific array within a group of data, enabling efficient access and manipulation."
 
 Base.getproperty(s::LandWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfield(s, :s))
 
@@ -225,10 +226,34 @@ An absolute data path.
 """
 function getAbsDataPath(info, data_path)
     if !isabspath(data_path)
-        data_path = joinpath(info.experiment.dirs.experiment, data_path)
+        d_data_path = getSindbadDataDepot(local_data_depot=data_path)
+        if data_path == d_data_path
+            data_path = joinpath(info.experiment.dirs.experiment, data_path)
+        else
+            data_path = joinpath(d_data_path, data_path)
+        end
     end
     return data_path
 end
+
+
+"""
+    getSindbadDataDepot(; env_data_depot_var="SINDBAD_DATA_DEPOT", local_data_depot="../data")
+
+Retrieve the Sindbad data depot path.
+
+# Arguments
+- `env_data_depot_var`: Environment variable name for the data depot (default: "SINDBAD\\_DATA\\_DEPOT")
+- `local_data_depot`: Local path to the data depot (default: "../data")
+
+# Returns
+The path to the Sindbad data depot.
+"""
+function getSindbadDataDepot(; env_data_depot_var="SINDBAD_DATA_DEPOT", local_data_depot="../data")
+    data_depot = haskey(ENV, env_data_depot_var) ? ENV[env_data_depot_var] : local_data_depot
+    return data_depot
+end
+
 
 """
     isInvalid(_data::Number)

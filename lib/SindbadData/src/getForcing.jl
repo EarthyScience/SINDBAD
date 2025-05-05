@@ -17,7 +17,7 @@ Collects the sizes of forcing dimensions from the input YAXArray.
 - If the dimension is not directly accessible, it uses `DimensionalData.lookup` to retrieve the size.
 """
 function collectForcingSizes(info, in_yax)
-    time_dim_name = Symbol(info.settings.forcing.data_dimension.time)
+    time_dim_name = Symbol(info.experiment.data_settings.forcing.data_dimension.time)
     dnames = Symbol[]
     dsizes = []
     push!(dnames, time_dim_name)
@@ -26,7 +26,7 @@ function collectForcingSizes(info, in_yax)
     else
         push!(dsizes, length(DimensionalData.lookup(in_yax, time_dim_name)))
     end
-    for space ∈ info.settings.forcing.data_dimension.space
+    for space ∈ info.experiment.data_settings.forcing.data_dimension.space
         push!(dnames, Symbol(space))
         push!(dsizes, length(getproperty(in_yax, Symbol(space))))
     end
@@ -52,10 +52,10 @@ Generates a NamedTuple of helper information for forcing data.
 """
 function collectForcingHelpers(info, f_sizes, f_dimensions)
     f_helpers = (;)
-    f_helpers = setTupleField(f_helpers, (:dimensions, info.settings.forcing.data_dimension))
+    f_helpers = setTupleField(f_helpers, (:dimensions, info.experiment.data_settings.forcing.data_dimension))
     f_helpers = setTupleField(f_helpers, (:axes, f_dimensions))
-    if hasproperty(info.settings.forcing, :subset)
-        f_helpers = setTupleField(f_helpers, (:subset, info.settings.forcing.subset))
+    if hasproperty(info.experiment.data_settings.forcing, :subset)
+        f_helpers = setTupleField(f_helpers, (:subset, info.experiment.data_settings.forcing.subset))
     else
         f_helpers = setTupleField(f_helpers, (:subset, nothing))
     end
@@ -89,9 +89,9 @@ Creates a NamedTuple containing forcing data and metadata.
 function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @info "getForcing: processing forcing helpers..."
     @debug "     ::dimensions::"
-    indims = getDataDims.(incubes, Ref(Symbol.(info.settings.forcing.data_dimension.space)))
+    indims = getDataDims.(incubes, Ref(Symbol.(info.experiment.data_settings.forcing.data_dimension.space)))
     @debug "     ::variable names::"
-    forcing_vars = keys(info.settings.forcing.variables)
+    forcing_vars = keys(info.experiment.data_settings.forcing.variables)
     f_helpers = collectForcingHelpers(info, f_sizes, f_dimensions)
     input_array_type = getfield(SindbadData, toUpperCaseFirst(info.helpers.run.input_array_type, "Input"))()
     typed_cubes = getInputArrayOfType(incubes, input_array_type)
@@ -139,7 +139,9 @@ Reads forcing data from the `data_path` specified in the experiment configuratio
 """
 function getForcing(info::NamedTuple)
     nc_default = nothing
-    data_path = info.settings.forcing.default_forcing.data_path
+    forcing_data_settings = info.experiment.data_settings.forcing
+    # forcing_data_settings = info.experiment.data_settings.forcing
+    data_path = forcing_data_settings.default_forcing.data_path
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
         @info "getForcing: default_data_path: $(data_path)"
@@ -148,16 +150,16 @@ function getForcing(info::NamedTuple)
     data_backend = getfield(SindbadData, toUpperCaseFirst(info.helpers.run.input_data_backend, "Backend"))()
 
     forcing_mask = nothing
-    if :sel_mask ∈ keys(info.settings.forcing)
-        if !isnothing(info.settings.forcing.forcing_mask.data_path)
-            mask_path = getAbsDataPath(info, info.settings.forcing.forcing_mask.data_path)
-            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, info.settings.forcing.forcing_mask.source_variable, info, data_backend)
+    if :sel_mask ∈ keys(forcing_data_settings)
+        if !isnothing(forcing_data_settings.forcing_mask.data_path)
+            mask_path = getAbsDataPath(info, forcing_data_settings.forcing_mask.data_path)
+            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, forcing_data_settings.forcing_mask.source_variable, info, data_backend)
             forcing_mask = booleanizeArray(forcing_mask)
         end
     end
 
-    default_info = info.settings.forcing.default_forcing
-    forcing_vars = keys(info.settings.forcing.variables)
+    default_info = info.experiment.data_settings.forcing.default_forcing
+    forcing_vars = keys(forcing_data_settings.variables)
     tar_dims = getTargetDimensionOrder(info)
     @info "getForcing: getting forcing variables..."
     vinfo = nothing
@@ -166,7 +168,7 @@ function getForcing(info::NamedTuple)
     num_type = Val{info.helpers.numbers.num_type}()
     incubes = map(forcing_vars) do k
         nc = nc_default
-        vinfo = getCombinedNamedTuple(default_info, info.settings.forcing.variables[k])
+        vinfo = getCombinedNamedTuple(default_info, forcing_data_settings.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)

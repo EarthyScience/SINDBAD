@@ -18,7 +18,7 @@ Filter = f -> !(f === SindbadTEM)
 
 ## Internal
 ```@meta
-CollapsedDocStrings = true
+CollapsedDocStrings = false
 
 DocTestSetup= quote
 using SindbadTEM

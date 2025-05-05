@@ -280,6 +280,7 @@ Sets up and creates the output directory for the experiment.
 - Validates the output path and ensures it is not within the SINDBAD root directory.
 """
 function setExperimentOutput(info)
+    @info "  setExperimentOutput: setting Output Basics..."
     path_output = info[:settings][:experiment][:model_output][:path]
     if isnothing(path_output)
         path_output_new = "output_"
@@ -344,6 +345,7 @@ Sets the output variables to be written and stored based on the experiment confi
 - The updated `info` NamedTuple with output variables and depth information added.
 """
 function setModelOutput(info::NamedTuple)
+    @info "  setModelOutput: setting Model Output Info..."
     output_vars = collect(propertynames(info.settings.experiment.model_output.variables))
     info = (; info..., temp=(; info.temp..., output=getDepthInfoAndVariables(info, output_vars)))
     return info

@@ -3,8 +3,13 @@ export FiniteDiffGrad
 export ForwardDiffGrad
 
 struct FiniteDifferencesGrad end
+purpose(::Type{FiniteDifferencesGrad}) = "Use FiniteDifferences.jl for finite difference calculations"
+
 struct FiniteDiffGrad end
+purpose(::Type{FiniteDiffGrad}) = "Use FiniteDiff.jl for finite difference calculations"
+
 struct ForwardDiffGrad end
+purpose(::Type{ForwardDiffGrad}) = "Use ForwardDiff.jl for automatic differentiation"
 
 function getCacheFromOutput(loc_output, ::ForwardDiffGrad)
     return DiffCache.(loc_output)

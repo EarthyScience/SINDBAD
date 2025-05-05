@@ -46,7 +46,7 @@ observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
-opt_params = out_opti.params;
+opt_params = out_opti.parameters;
 
 
 """
@@ -59,7 +59,7 @@ extract a matrix with columns:
 """
 function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
     cost_options = optim.cost_options
-    optim_vars = optim.variables.optim
+    optim_vars = optim.variables.optimized
     res = map(cost_options) do var_row
         obsV = var_row.variable
         y = getproperty(obs_array, obsV)
@@ -85,7 +85,7 @@ function getPredAndObsVector(observations::NamedTuple,
     optim::NamedTuple;
     removeNaN=true)
     cost_options = optim.cost_options
-    optim_vars = optim.variables.optim
+    optim_vars = optim.variables.optimized
     res = map(cost_options) do var_row
         obsV = var_row.variable
         mod_variable = getfield(optim_vars, obsV)
@@ -99,7 +99,7 @@ function getPredAndObsVector(observations::NamedTuple,
 end
 
 @time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
-opt_params = out_opti.params;
+opt_params = out_opti.parameters;
 pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optimization)
 
 develop_f =
@@ -109,13 +109,11 @@ develop_f =
         # using StatsPlots
         # plot(d)
 
-        tbl_params = getParameters(tem.models.forward, optim.model_parameter_default,
-            optim.model_parameters_to_optimize,
-            info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
+        parameter_table = info.optimization.parameter_table;
         # get the default and bounds
-        default_values = tem.helpers.numbers.num_type.(tbl_params.default)
-        lower_bounds = tem.helpers.numbers.num_type.(tbl_params.lower)
-        upper_bounds = tem.helpers.numbers.num_type.(tbl_params.upper)
+        default_values = tem.helpers.numbers.num_type.(parameter_table.initial)
+        lower_bounds = tem.helpers.numbers.num_type.(parameter_table.lower)
+        upper_bounds = tem.helpers.numbers.num_type.(parameter_table.upper)
 
         run_helpers = prepTEM(forcing, info)
 
@@ -136,9 +134,9 @@ develop_f =
             end
             local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
             #
-            # tbl_params.optim .= popt  # TODO replace mutation
+            # parameter_table.optimized .= popt  # TODO replace mutation
 
-            updated_models = updateModelParameters(tbl_params, tem.models.forward, popt)
+            updated_models = updateModelParameters(parameter_table, tem.models.forward, popt)
             # TODO run model with updated parameters
 
             @time runTEM!(updated_models,
