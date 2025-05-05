@@ -478,6 +478,12 @@ function modelParameter(models, model::Symbol)
 end
 
 function modelParameter(model::LandEcosystem, show=true)
+    model_name = Symbol(supertype(typeof(model)))
+    approach_name = nameof(typeof(model))
+    if show
+        println("model: $model_name")
+        println("approach: $approach_name")
+    end
     pnames = fieldnames(typeof(model))
     p_vec = []
     if show
@@ -485,13 +491,12 @@ function modelParameter(model::LandEcosystem, show=true)
     end
     if length(pnames) == 0
         if show
-            println("   non-parametric model")
+            println("   non-parametric model: $(nameof(typeof(model)))")
         end
     else
         p_vec = map(pnames) do fn
-            if show
-                println("   $fn => $(getproperty(mod, fn))")
-            end
+            # @show model, fn
+            mod_prop = getproperty(model, fn)
             p_val = getproperty(model, fn)
             p_describe = Sindbad.Models.describe(model, fn)
             p_unit = Sindbad.Models.units(model, fn)
@@ -500,7 +505,11 @@ function modelParameter(model::LandEcosystem, show=true)
             p_t = isempty(p_timescale) ? "timescale independent" : "$(p_timescale) timescale"
             p_bounds = Sindbad.Models.bounds(model, fn)
             p_w = "$(p_val) ∈ [$(p_bounds[1]), $(p_bounds[2])] => $(p_describe) in $(p_u) units; $(p_t)"
-            Pair(fn, p_w)
+            p_p = Pair(fn, p_w)
+            if show
+                println("  - ", p_p)
+            end
+            p_p
         end
     end
     return p_vec

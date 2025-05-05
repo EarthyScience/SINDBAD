@@ -84,6 +84,26 @@ This will display a formatted list of all optimization methods and their descrip
 
 :::
 
+:::tip
+To get default options for any optimization method, use `sindbadDefaultOptions`:
+
+```julia
+# Get default options for CMA-ES
+opts = sindbadDefaultOptions(CMAEvolutionStrategyCMAES())
+# Returns: (maxfevals = 50,)
+
+# Get default options for Morris method
+opts = sindbadDefaultOptions(GlobalSensitivityMorris())
+# Returns: (total_num_trajectory = 200, num_trajectory = 15, len_design_mat = 10)
+
+# Get default options for Sobol method
+opts = sindbadDefaultOptions(GlobalSensitivitySobol())
+# Returns: (samples = 5, method_options = (order = [0, 1],), sampler = "Sobol", sampler_options = ())
+```
+
+These default options can be used as a starting point for customizing optimization parameters in your configuration files.
+:::
+
 Current methods include:
 
 ### Bayesian Optimization
@@ -137,7 +157,41 @@ This convention helps identify both the package and the specific method being us
 
 :::
 
-### 2. Implement the Optimization Function
+### 2. Set Default Options
+
+In `defaultOptions.jl`, add default options for your new optimization method:
+
+```julia
+# Add default options for your new method
+sindbadDefaultOptions(::YourNewOptimizationMethod) = (
+    max_iterations = 1000,
+    tolerance = 1e-6,
+    population_size = 50,
+    # Add other default parameters specific to your method
+)
+```
+
+:::tip
+When setting default options:
+1. Choose reasonable default values that work well for most cases
+2. Include all essential parameters needed by the optimization method
+3. Use descriptive parameter names that match the underlying package's terminology
+4. Consider adding parameters for:
+   - Convergence criteria (e.g., `max_iterations`, `tolerance`)
+   - Population/ensemble settings (e.g., `population_size`)
+   - Algorithm-specific parameters
+   - Performance tuning options
+:::
+
+:::warning Make sure:
+
+1. Test the default options with different problem sizes
+3. Consider adding validation for parameter values in your implementation
+4. Keep the default options simple but flexible enough for common use cases
+
+:::
+
+### 3. Implement the Optimization Function
 
 In `optimizer.jl`, implement your optimization function with the following signature:
 
@@ -174,7 +228,7 @@ function optimizer(cost_function, default_values, lower_bounds, upper_bounds, al
 end
 ```
 
-### 3. Update Algorithm Configuration (if needed)
+### 4. Update Algorithm Configuration (if needed)
 
 If your method requires special configuration, update the algorithm configuration file:
 

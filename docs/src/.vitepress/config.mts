@@ -56,6 +56,7 @@ const manualItems = [
   { text: 'Cost Metrics', link: '/pages/develop/cost_metrics' },
   { text: 'Cost Function', link: '/pages/develop/cost_function' },
   { text: 'Documentation', link: '/pages/develop/how_to_doc' },
+  { text: 'Useful Helpers', link: '/pages/develop/helpers' },
 ]
 
 const navTemp = {
