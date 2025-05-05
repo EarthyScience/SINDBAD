@@ -12,24 +12,29 @@ This package defines the `LandEcosystem` supertype, which serves as the base for
 - `Reexport`: Simplifies re-exporting functionality from other packages, ensuring a clean and modular design.
 - `CodeTracking`: Enables tracking of code definitions, useful for debugging and development workflows.
 - `DataStructures`: Provides advanced data structures (e.g., `OrderedDict`, `Deque`) for efficient data handling in SINDBAD models.
-- `DocStringExtensions`: Facilitates the creation of structured and extensible docstrings for improved documentation.
 - `Flatten`: Supplies tools for flattening nested data structures, simplifying the handling of hierarchical model variables.
 - `InteractiveUtils`: Enables interactive exploration and debugging during development.
 - `Parameters`: Provides macros for defining and managing model parameters in a concise and readable manner.
 - `StaticArraysCore`: Supports efficient, fixed-size arrays (e.g., `SVector`, `MArray`) for performance-critical operations in SINDBAD models.
 
 # Included Files:
-1. **`utilsCore.jl`**:
+1. **`coreTypes.jl`**:
+   - Defines the core types used in SINDBAD, including the `LandEcosystem` supertype and other fundamental types.
+
+2. **`utilsCore.jl`**:
    - Contains core utility functions for SINDBAD, including helper methods for array operations and code generation macros for NamedTuple packing and unpacking.
 
-2. **`sindbadVariableCatalog.jl`**:
+3. **`sindbadVariableCatalog.jl`**:
    - Defines a catalog of variables used in SINDBAD models, ensuring consistency and standardization across workflows. Note that every new variable would need a manual entry in the catalog so that the output files are written with correct information.
-
-3. **`Models/models.jl`**:
-   - Implements the core SINDBAD models, inheriting from the `LandEcosystem` supertype. Also, introduces the fallback function for compute, precompute, etc. so that they are optional in every model.
 
 4. **`modelTools.jl`**:
    - Provides tools for extracting information from SINDBAD models, including mode code, variables, and parameters.
+
+5. **`Models/models.jl`**:
+   - Implements the core SINDBAD models, inheriting from the `LandEcosystem` supertype. Also, introduces the fallback function for compute, precompute, etc. so that they are optional in every model.
+
+6. **`generateCode.jl`**:
+   - Contains code generation utilities for SINDBAD models and workflows.
 
 # Notes:
 - The `LandEcosystem` supertype serves as the foundation for all SINDBAD models, enabling extensibility and modularity.
@@ -61,7 +66,6 @@ module Sindbad
     using Reexport: @reexport
     @reexport using CodeTracking
     @reexport using DataStructures: DataStructures
-    using DocStringExtensions
     @reexport using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
     @reexport using InteractiveUtils
     using Parameters
@@ -84,7 +88,6 @@ module Sindbad
       println("Created a blank file: $file_path to track precompilation of new models and approaches")
    end
 
-   include("utilsCore.jl")
    include("coreTypes.jl")
    include("utilsCore.jl")   
    include("sindbadVariableCatalog.jl")

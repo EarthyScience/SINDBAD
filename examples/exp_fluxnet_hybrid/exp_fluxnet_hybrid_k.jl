@@ -30,12 +30,7 @@ selected_models = info.models.forward;
 parameter_scaling_type = info.optimization.optimization_parameter_scaling
 
 ## parameters
-tbl_params = getParameters(
-    selected_models,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution);
+tbl_params = info.optimization.parameter_table;
 param_to_index = getParameterIndices(selected_models, tbl_params);
 
 ## forcing and obs

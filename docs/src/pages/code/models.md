@@ -1,4 +1,7 @@
-## Models
+```@docs
+Sindbad.Models
+```
+## Available Models
 
 ### EVI
 
@@ -528,6 +531,10 @@ cCycleBase_CASA
 == cCycleBase_GSI
 ```@docs
 cCycleBase_GSI
+```
+== cCycleBase_GSI_PlantForm
+```@docs
+cCycleBase_GSI_PlantForm
 ```
 == cCycleBase_simple
 ```@docs
@@ -1380,6 +1387,29 @@ percolation
 == percolation_WBP
 ```@docs
 percolation_WBP
+```
+
+:::
+
+
+----
+
+### plantForm
+
+```@docs
+plantForm
+```
+:::details plantForm approaches
+
+:::tabs
+
+== plantForm_PFT
+```@docs
+plantForm_PFT
+```
+== plantForm_fixed
+```@docs
+plantForm_fixed
 ```
 
 :::

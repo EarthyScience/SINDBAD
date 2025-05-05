@@ -25,12 +25,7 @@ replace_info["experiment.basics.config_files.optimization"] = "optimization_PF.j
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 selected_models = info.models.forward;
 
-tbl_params = getParameters(
-    selected_models,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution);
+tbl_params = info.optimization.parameter_table;
 
 param_to_index = getParameterIndices(selected_models, tbl_params);
 

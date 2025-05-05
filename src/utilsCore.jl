@@ -13,12 +13,8 @@ export @pack_nt, @unpack_nt
 export repElem, @rep_elem, repVec, @rep_vec
 export setComponents
 export setComponentFromMainPool, setMainFromComponentPool
-export SindbadParameters
 export totalS
 
-struct BoundFields <: DocStringExtensions.Abbreviation
-    types::Bool
-end
 
 """
     @add_to_elem
@@ -152,67 +148,6 @@ function cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
     end
     return o_ut
 end
-
-
-"""
-    DocStringExtensions.format(abbrv::BoundFields, buf, doc)
-$(SIGNATURES)
-
-Format documentation for bound fields extension.
-
-This method extends the `DocStringExtensions.format` functionality to handle `BoundFields` type.
-It processes and formats the documentation for fields that are bound to a specific type or structure.
-
-# Arguments
-- `abbrv::BoundFields`: The bound fields abbreviation instance to be formatted
-- `buf`: Buffer where the formatted documentation will be written
-- `doc`: Documentation object containing the information to be formatted
-
-# Note
-This is an extension method for DocStringExtensions.jl package.
-"""
-function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
-    local docs = get(doc.data, :fields, Dict())
-    local binding = doc.data[:binding]
-    local object = Docs.resolve(binding)
-    local fields = isabstracttype(object) ? Symbol[] : fieldnames(object)
-    if !isempty(fields)
-        for field ∈ fields
-            if abbrv.types
-                println(buf, "  - `", field, "::", fieldtype(object, field), "`")
-            else
-                bnds = [nothing, nothing]
-                try
-                    bnds = collect(bounds(object, field))
-                catch
-                    bnds = [nothing, nothing]
-                end
-                println(buf,
-                    "  - `",
-                    field,
-                    " = ",
-                    getfield(getfield(Sindbad.Models, Symbol(object))(), field),
-                    ", ",
-                    bnds,
-                    ", (",
-                    units(object, field),
-                    ")",
-                    "` => " * describe(object, field))
-            end
-            if haskey(docs, field) && isa(docs[field], AbstractString)
-                println(buf)
-                println(docs[field])
-                for line ∈ split(docs[field], ": ")
-                    println(buf, isempty(line) ? "" : "    ", rstrip(line))
-                end
-            end
-            println(buf)
-        end
-        println(buf)
-    end
-    return nothing
-end
-
 
 
 """
@@ -818,8 +753,6 @@ end
                         Expr(:kw, s_main, s_main))))))))
     return gen_output
 end
-
-const SindbadParameters = BoundFields(false)
 
 """
     totalS(s, sΔ)

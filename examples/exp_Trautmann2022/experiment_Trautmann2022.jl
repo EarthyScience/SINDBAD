@@ -39,11 +39,7 @@ for x ∈ 1:10
 end
 
 
-tbl_params = getParameters(info.models.forward,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution)
+tbl_params = info.optimization.parameter_table;
 
 
 cost_options = prepCostOptions(obs_array, info.optimization.cost_options)

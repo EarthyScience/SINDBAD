@@ -29,16 +29,63 @@ if Sys.islinux()
 end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
+
+
+
+
+"""
+    namedTupleToFlareJSON(info::NamedTuple)
+
+Convert a nested NamedTuple into a flare.json format suitable for d3.js visualization.
+
+# Arguments
+- `info::NamedTuple`: The input NamedTuple to convert
+
+# Returns
+- A dictionary in flare.json format with the following structure:
+  ```json
+  {
+    "name": "root",
+    "children": [
+      {
+        "name": "field1",
+        "children": [...]
+      },
+      {
+        "name": "field2",
+        "value": 42
+      }
+    ]
+  }
+  ```
+
+# Notes
+- The function recursively traverses the NamedTuple structure
+- Fields with no children are treated as leaf nodes with a value of 1
+- The structure is flattened to show the full path to each field
+"""
+function namedTupleToFlareJSON(info::NamedTuple)
+    function _convert_to_flare(nt::NamedTuple, name="root")
+        children = []
+        for field in propertynames(nt)
+            value = getfield(nt, field)
+            if value isa NamedTuple
+                push!(children, _convert_to_flare(value, string(field)))
+            else
+                push!(children, Dict("name" => string(field), "value" => 1))
+            end
+        end
+        return Dict("name" => name, "children" => children)
+    end
+    
+    return _convert_to_flare(info)
+end
+
 selected_models = info.models.forward;
 parameter_scaling_type = info.optimization.optimization_parameter_scaling
 
 ## parameters
-tbl_params = getParameters(
-    selected_models,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution);
+tbl_params = info.optimization.parameter_table;
 param_to_index = getParameterIndices(selected_models, tbl_params);
 
 ## forcing and obs
@@ -146,13 +193,13 @@ grads_lib = FiniteDiffGrad();
 grads_lib = PolyesterForwardDiffGrad();
 # grads_lib = ZygoteGrad();
 # grads_lib = EnzymeGrad();
-backend = AD.ZygoteBackend();
+# backend = AD.ZygoteBackend();
 
 loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
 
 loss_tmp(x) = lossSite(x, grads_lib, inner_args...)
 
-AD.gradient(backend, loss_tmp, collect(loc_params))
+# AD.gradient(backend, loss_tmp, collect(loc_params))
 
 @time gg = gradientSite(grads_lib, loc_params, 2, lossSite, inner_args...)
 

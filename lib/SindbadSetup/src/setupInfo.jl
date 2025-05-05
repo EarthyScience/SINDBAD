@@ -148,7 +148,7 @@ function parseSaveCode(info)
             mod_string = "# Call order: $mi\n\n"
             write(o_file, mod_string)
 
-            write(o_file, "abstract type $mod_name <: LandEcosystem end\n")
+            write(o_file, "abstract type $mod_name <: LandEcosystem end\n\n")
 
             mod_string = string(@code_expr typeof(_mod)())
             for xx = 1:100

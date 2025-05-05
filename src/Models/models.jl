@@ -1,3 +1,58 @@
+"""
+    Sindbad.Models
+
+The core module for defining and implementing models and approaches of ecosystem processes in the SINDBAD framework.
+
+# Description
+The `Sindbad.Models` module provides the infrastructure for defining and implementing terrestrial ecosystem models within the SINDBAD framework. It includes tools for model definition, parameter management, and method implementation.
+
+# Key Features
+- Model definition and inheritance from `LandEcosystem`
+- Parameter management with metadata (bounds, units, timescale)
+- Standardized method implementation (define, precompute, compute, update)
+- Model documentation and purpose tracking
+- Model approach management and validation
+
+# Required Methods
+All models must implement at least one of the following methods:
+- `define`: Initialize arrays and variables
+- `precompute`: Prepare variables for computation
+- `compute`: Perform model calculations
+- `update`: Update model state
+
+# Metadata Macros
+- `@bounds`: Define parameter bounds
+- `@describe`: Add parameter descriptions
+- `@units`: Specify parameter units
+- `@timescale`: Define temporal scale of the parameter that is used to determine the units of the parameter and their conversion factors
+- `@with_kw`: Enable keyword argument construction
+
+# Usage
+```julia
+using Sindbad.Models
+
+# Define a new model
+abstract type MyModel <: LandEcosystem end
+purpose(::Type{MyModel}) = "Description of my model"
+
+# Define an approach
+@bounds @describe @units @timescale @with_kw struct MyModel_v1{T} <: MyModel
+    param1::T = 1.0 | (0.0, 2.0) | "Description" | "units" | "timescale"
+end
+
+# Implement required methods
+function define(params::MyModel_v1, forcing, land, helpers)
+    # Initialize arrays and variables
+    return land
+end
+```
+
+# Notes
+- Models should follow the SINDBAD modeling conventions
+- All parameters should have appropriate metadata
+- Methods should be implemented efficiently for performance
+- Documentation should be comprehensive and clear
+"""
 module Models
 
 # Import & export necessary modules/functions

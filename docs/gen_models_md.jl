@@ -1,7 +1,11 @@
 using Sindbad
 
 open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
-    write(o_file, "## Models\n\n")
+    # write(o_file, "## Models\n\n")
+    write(o_file, "```@docs\nSindbad.Models\n```\n")
+
+    write(o_file, "## Available Models\n\n")
+
     sindbad_models_from_types = nameof.(subtypes(Sindbad.LandEcosystem))
     foreach(sort(collect(sindbad_models_from_types))) do sm
         sms = string(sm)
