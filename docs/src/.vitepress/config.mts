@@ -35,6 +35,21 @@ const codeItems = [
   { text: ' + Utils', link: '/pages/code/utils' },
   { text: ' + Visuals', link: '/pages/code/visuals' }
 ]
+
+const codeGenItems = [
+  { text: 'Sindbad', link: '/pages/code_gen/Sindbad' },
+  { text: ' + Core', link: '/pages/code_gen/Sindbad' },
+  { text: ' + Data', link: '/pages/code_gen/SindbadData' },
+  { text: ' + Experiment', link: '/pages/code_gen/SindbadExperiment' },
+  { text: ' + Metrics', link: '/pages/code_gen/SindbadMetrics' },
+  { text: ' + ML', link: '/pages/code_gen/SindbadML' },
+  { text: ' + Models', link: '/pages/code_gen/SindbadModels' },
+  { text: ' + Optimization', link: '/pages/code_gen/SindbadOptimization' },
+  { text: ' + Setup', link: '/pages/code_gen/SindbadSetup' },
+  { text: ' + TEM', link: '/pages/code_gen/SindbadTEM' },
+  { text: ' + Utils', link: '/pages/code_gen/SindbadUtils' },
+  // { text: ' + Visuals', link: '/pages/code_gen/SindbadVisuals' }
+]
 const aboutItems = [
   { text: 'Contact', link: '/pages/about/contact' },
   { text: 'License', link: '/pages/about/license' },
@@ -68,6 +83,9 @@ const navTemp = {
     { text: 'Code', 
       items: codeItems,
     },
+    { text: 'CodeGen',
+      items: codeGenItems,
+    },
     { text: 'Develop', items: manualItems,
     },
     { text: 'About', 
@@ -93,6 +111,10 @@ const sidebar = [
   { text: 'Code',
     collapsed: true,
     items: codeItems
+  },
+  { text: 'CodeGen',
+    collapsed: true,
+    items: codeGenItems
   },
   { text: 'About',
     items: aboutItems
@@ -148,7 +170,7 @@ export default defineConfig({
 
   themeConfig: {
     outline: 'deep',
-    logo: { src: '/logo.png', width: 24, height: 24 },
+    logo: { src: '/sindbad_logo.png', width: 24, height: 24 },
     search: {
           provider: 'local',
           options: {
@@ -168,7 +190,7 @@ export default defineConfig({
     ],
     footer: {
       message: '<a href="https://www.bgc-jena.mpg.de/en" target="_blank"><img src="/logo_mpi_grey.png" class="footer-logo" alt="MPI Logo"/></a>',
-      copyright: '<span>Powered by the <a href="https://julialang.org" target="_blank">Julia Programming Language</a></span><span>© Copyright 2023 <strong>SINDBAD Development Team</strong></span>'
+      copyright: '© Copyright 2025 <strong> SINDBAD Development Team</strong></span>'
     }
   }
 })
