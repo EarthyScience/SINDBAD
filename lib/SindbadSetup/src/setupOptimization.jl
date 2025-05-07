@@ -16,9 +16,7 @@ Checks if the parameters listed in `model_parameters_to_optimize` from `optimiza
 - Issues a warning and throws an error if any parameter in `model_parameters_to_optimize` does not exist in the model structure.
 """
 function checkOptimizedParametersInModels(info::NamedTuple, parameter_table)
-    # @show info.settings.optimization.observations, info.settings.optimization.model_parameters_to_optimize
     model_parameters = parameter_table.name_full
-    # @show model_parameters
     optim_parameters = info.settings.optimization.model_parameters_to_optimize
     op_names = nothing
     if typeof(optim_parameters) <: Vector
@@ -241,7 +239,8 @@ function setAlgorithmOptions(info, which_algorithm)
     merged_options = mergeNamedTuple(default_opt, algo_options)
     tmp_algorithm = setTupleField(tmp_algorithm, (:method, algo_method))
     tmp_algorithm = setTupleField(tmp_algorithm, (:options, merged_options))
-    info = setTupleSubfield(info, :optimization, (which_algorithm, tmp_algorithm))
+    algo_field = which_algorithm == :algorithm_sensitivity_analysis ? :sensitivity_analysis : :optimizer
+    info = setTupleSubfield(info, :optimization, (algo_field, tmp_algorithm))
     return info
 end
 
@@ -267,31 +266,27 @@ function setOptimization(info::NamedTuple)
     # set information related to cost metrics for each variable
     info = setTupleSubfield(info, :optimization, (:model_parameter_default, info.settings.optimization.model_parameter_default))
     info = setTupleSubfield(info, :optimization, (:observational_constraints, info.settings.optimization.observational_constraints))
-    info = setTupleSubfield(info,
-        :optimization,
-        (:multi_constraint_method, getTypeInstanceForNamedOptions(info.settings.optimization.multi_constraint_method)))
 
-    scaling_method = isnothing(info.settings.optimization.optimization_parameter_scaling) ? "scale_none" : info.settings.optimization.optimization_parameter_scaling
-
+    n_threads_cost = 1
     if info.settings.optimization.optimization_cost_threaded > 0 && info.settings.experiment.flags.run_optimization
         n_threads_cost = info.settings.optimization.optimization_cost_threaded > 1 ? info.settings.optimization.optimization_cost_threaded : Threads.nthreads()
         # overwrite land array type when threaded optimization is set
         info = @set info.temp.helpers.run.land_output_type = LandOutArrayMT()
-        info = setTupleSubfield(info,
-        :optimization,
-        (:n_threads_cost, n_threads_cost))
+        # info = setTupleSubfield(info,
+        # :optimization,
+        # (:n_threads_cost, n_threads_cost))
     end
 
-    info = setTupleSubfield(info,
-        :optimization,
-        (:optimization_parameter_scaling, getTypeInstanceForNamedOptions(scaling_method)))
-    info = setTupleSubfield(info,
-        :optimization,
-        (:optimization_cost_method, getTypeInstanceForNamedOptions(info.settings.optimization.optimization_cost_method)))
+    # get types for optimization run options
+    multi_constraint_method = getTypeInstanceForNamedOptions(info.settings.optimization.multi_constraint_method)
+    cost_method = getTypeInstanceForNamedOptions(info.settings.optimization.optimization_cost_method)
+    scaling_method = isnothing(info.settings.optimization.optimization_parameter_scaling) ? "scale_none" : info.settings.optimization.optimization_parameter_scaling
+    parameter_scaling = getTypeInstanceForNamedOptions(scaling_method)
+    optimization_types = (; cost_method, parameter_scaling, multi_constraint_method, n_threads_cost)
+    info = setTupleSubfield(info, :optimization, (:run_options, optimization_types))
         
     # check and set the list of parameters to be optimized
-    info = setTupleSubfield(info, :optimization, (:model_parameters_to_optimize, info.settings.optimization.model_parameters_to_optimize))
-
+    
     # set algorithm related options
     info = setAlgorithmOptions(info, :algorithm_optimization)
     info = setAlgorithmOptions(info, :algorithm_sensitivity_analysis)
@@ -299,7 +294,7 @@ function setOptimization(info::NamedTuple)
     
     checkOptimizedParametersInModels(info, parameter_table)
 
-    checkParameterBounds(parameter_table.name, parameter_table.initial, parameter_table.lower, parameter_table.upper, info.optimization.optimization_parameter_scaling, show_info=true, model_names=parameter_table.model_approach)
+    checkParameterBounds(parameter_table.name, parameter_table.initial, parameter_table.lower, parameter_table.upper, info.optimization.run_options.parameter_scaling, show_info=true, model_names=parameter_table.model_approach)
 
     # get the variables to be used during optimization
     obs_vars, optim_vars, store_vars, model_vars = getConstraintNames(info.settings.optimization)
@@ -313,6 +308,9 @@ function setOptimization(info::NamedTuple)
     cost_options = getCostOptions(info.settings.optimization, vars_info, info.temp.output.variables, info.temp.helpers.numbers, info.temp.helpers.dates)
     info = setTupleSubfield(info, :optimization, (:cost_options, cost_options))
     info = setTupleSubfield(info, :optimization, (:parameter_table, parameter_table))
+    optimization_info = info.optimization
+    optimization_info = dropFields(optimization_info, (:model_parameter_default, :model_parameters_to_optimize, :observational_constraints, :variables))
+    info = (; info..., optimization = optimization_info)
     return info
 end
 

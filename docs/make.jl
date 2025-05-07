@@ -26,6 +26,10 @@ makedocs(; sitename="Sindbad",
     build="build",
     )
 
+if !isdir(joinpath(@__DIR__,"build/final_site/pages/concept/sindbad_info"))
+    cp(joinpath(@__DIR__,"src/pages/concept/sindbad_info"), joinpath(@__DIR__,"build/final_site/pages/concept/sindbad_info"); force=true)
+end
+
 deploydocs(; 
     repo = "github.com/EarthyScience/SINDBAD", # this must be the full URL!
     target = "build", # this is where Vitepress stores its output

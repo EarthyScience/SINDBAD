@@ -151,7 +151,7 @@ function runExperimentCost(sindbad_experiment::String; replace_info=Dict(), log_
     replace_info["experiment.flags.calc_cost"] = true
     replace_info["experiment.flags.run_forward"] = true
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    cost_output = runExperiment(info, forcing, info.helpers.run.calc_cost, log_level=log_level)
+    cost_output = runExperiment(info, forcing, info.helpers.run.calc_cost)
     setLogLevel()
     return cost_output
 end
@@ -176,7 +176,7 @@ function runExperimentForward(sindbad_experiment::String; replace_info=Dict(), l
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    run_output = runExperiment(info, forcing, info.helpers.run.run_forward, log_level=log_level)
+    run_output = runExperiment(info, forcing, info.helpers.run.run_forward)
     output_dims = getOutDims(info, forcing.helpers)
     saveOutCubes(info, values(run_output.output), output_dims, info.output.variables)
     setLogLevel()
@@ -276,7 +276,7 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=Dict(), log_
     replace_info["experiment.flags.calc_cost"] = false
     replace_info["experiment.flags.run_forward"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization, log_level=log_level)
+    opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization)
     setLogLevel(:info)
     fp_output = runExperimentForwardParams(opti_output.parameters.optimized, sindbad_experiment; replace_info=replace_info)
     cost_options = prepCostOptions(opti_output.observation, info.optimization.cost_options)
@@ -313,7 +313,7 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
 
     obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
-    opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method; algorithm_info_field=:algorithm_sensitivity_analysis);
+    opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.run_options.cost_method; algorithm_info_field=:sensitivity_analysis);
 
     # parameter_table = opti_helpers.parameter_table
     p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds))
@@ -321,13 +321,13 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
     cost_function = opti_helpers.cost_function
 
     # d_opt = getproperty(SindbadSetup, :GlobalSensitivityMorris)()
-    method_options =info.optimization.algorithm_sensitivity_analysis.options
+    method_options =info.optimization.sensitivity_analysis.options
     setLogLevel(log_level)
 
-    sensitivity = globalSensitivity(cost_function, method_options, p_bounds, info.optimization.algorithm_sensitivity_analysis.method, batch=batch)
+    sensitivity = globalSensitivity(cost_function, method_options, p_bounds, info.optimization.sensitivity_analysis.method, batch=batch)
     sensitivity_output = (; opti_helpers..., info=info, forcing=forcing, obs_array=obs_array, observations=observations,sensitivity=sensitivity, p_bounds=p_bounds)
     setLogLevel(:info)
-    sensitivity_output_file = joinpath(info.output.dirs.data, "sensitivity_analysis_$(nameof(typeof(info.optimization.algorithm_sensitivity_analysis.method)))_$(length(opti_helpers.cost_vector))-cost_evals.jld2")
+    sensitivity_output_file = joinpath(info.output.dirs.data, "sensitivity_analysis_$(nameof(typeof(info.optimization.sensitivity_analysis.method)))_$(length(opti_helpers.cost_vector))-cost_evals.jld2")
     @info "saving output for sensitivity: "
     @save  sensitivity_output_file sensitivity_output
     return sensitivity_output

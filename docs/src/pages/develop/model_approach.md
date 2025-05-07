@@ -1,10 +1,10 @@
 # Model Approach in SINDBAD
 
-This documentation explains how to work with model approaches in SINDBAD. For a comprehensive understanding of SINDBAD's modeling framework, see the [SINDBAD concept documentation](../concept/sindbad.md).
+This documentation explains how to work with model approaches in SINDBAD. For a comprehensive understanding of SINDBAD's modeling framework, see the [SINDBAD concept documentation](../concept/overview.md).
 
 :::info
 
-It is not recommended to build a model and approach from scratch by typing things. SINDBAD has a builtin function `generateSindbadApproach` to create the model and approach files that has all the components described. This ensures following the modeling conventions around which the performance and modularity are built.
+When working with SINDBAD, it is highly recommended to utilize the built-in function `generateSindbadApproach` to create your model and approach files. This function automates the process of setting up the necessary structs and functions of the model, ensuring that your model adheres to the established conventions for code structure, performance tips, modularity, and documentation.
 
 Check the documentation of the function for further details as:
 ```julia
@@ -41,7 +41,7 @@ end
 purpose(::Type{newModel}) = "Description of what this model does"
 ```
 
-For more details about the modeling conventions and required methods, see the [modeling conventions documentation](../concept/modeling_conventions.md).
+For more details about the modeling conventions and required methods, see the [modeling conventions documentation](./conventions.md).
 
 ## Required Methods
 

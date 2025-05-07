@@ -33,7 +33,7 @@ end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 selected_models = info.models.forward;
-parameter_scaling_type = info.optimization.optimization_parameter_scaling
+parameter_scaling_type = info.optimization.run_options.parameter_scaling
 
 
 
@@ -72,7 +72,7 @@ loc_spinup_forcing = space_spinup_forcing[site_location];
 # ? optimization
 # costs related
 cost_options = [prepCostOptions(loc_obs, info.optimization.cost_options) for loc_obs in space_observations];
-constraint_method = info.optimization.multi_constraint_method;
+constraint_method = info.optimization.run_options.multi_constraint_method;
 
 # ? load available covariates
 xfeatures = loadCovariates(sites_forcing; kind="all")

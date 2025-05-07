@@ -142,7 +142,7 @@ end
 
 
 """
-    prepOpti(forcing, observations, info, optimization_cost_method::CostModelObs)
+    prepOpti(forcing, observations, info, cost_method::CostModelObs)
 
 Prepares optimization parameters, settings, and helper functions based on the provided inputs.
 
@@ -150,7 +150,7 @@ Prepares optimization parameters, settings, and helper functions based on the pr
 - `forcing`: Input forcing data used for the optimization process.
 - `observations`: Observed data used for comparison or calibration during optimization.
 - `info`: A SINDBAD NamedTuple containing all information needed for setup and execution of the experiment.
-- `optimization_cost_method`: The method used to calculate the cost function. 
+- `cost_method`: The method used to calculate the cost function. 
 
 # Returns:
 - A NamedTuple `opti_helpers` containing:
@@ -163,7 +163,7 @@ Prepares optimization parameters, settings, and helper functions based on the pr
   - `run_helpers`: Helper information for running the optimization.
 
 
-# optimization_cost_method:
+# cost_method:
 $(methodsOf(SindbadCostMethod))
 
 ---
@@ -173,7 +173,7 @@ $(methodsOf(SindbadCostMethod))
 # Notes:
 - The function processes the input data and configuration to set up the optimization problem.
 - It prepares model parameters, cost options, and helper functions required for the optimization process.
-- Depending on the `optimization_cost_method`, the cost function is customized to handle specific data types or computation methods.
+- Depending on the `cost_method`, the cost function is customized to handle specific data types or computation methods.
 """
 prepOpti
 
@@ -181,7 +181,7 @@ function prepOpti(forcing, observations, info)
     return prepOpti(forcing, observations, info, CostModelObs())
 end
 
-function  prepOpti(forcing, observations, info, ::CostModelObsMT; algorithm_info_field=:algorithm_optimization)
+function  prepOpti(forcing, observations, info, ::CostModelObsMT; algorithm_info_field=:optimizer)
     algorithm_info = getproperty(info.optimization, algorithm_info_field)
     opti_helpers = prepOpti(forcing, observations, info, CostModelObs())
     run_helpers = opti_helpers.run_helpers
@@ -190,7 +190,7 @@ function  prepOpti(forcing, observations, info, ::CostModelObsMT; algorithm_info
     
     space_index = 1 # the parallelization of cost computation only runs in single pixel runs
 
-    cost_function = x -> cost(x, opti_helpers.default_values, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, deepcopy(run_helpers.space_land[space_index]), run_helpers.tem_info, observations, opti_helpers.parameter_table, opti_helpers.cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, cost_vector, info.optimization.optimization_cost_method)
+    cost_function = x -> cost(x, opti_helpers.default_values, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, deepcopy(run_helpers.space_land[space_index]), run_helpers.tem_info, observations, opti_helpers.parameter_table, opti_helpers.cost_options, info.optimization.run_options.multi_constraint_method, info.optimization.run_options.parameter_scaling, cost_vector, info.optimization.run_options.cost_method)
 
     opti_helpers = (; opti_helpers..., cost_function=cost_function, cost_vector=cost_vector)
     return opti_helpers
@@ -200,7 +200,7 @@ function  prepOpti(forcing, observations, info, ::CostModelObsLandTS)
     opti_helpers = prepOpti(forcing, observations, info, CostModelObs())
     run_helpers = opti_helpers.run_helpers
 
-    cost_function = x -> costLand(x, info.models.forward, run_helpers.loc_forcing, run_helpers.loc_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.land_time_series, run_helpers.loc_land, run_helpers.tem_info, observations, opti_helpers.parameter_table, opti_helpers.cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling)
+    cost_function = x -> costLand(x, info.models.forward, run_helpers.loc_forcing, run_helpers.loc_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.land_time_series, run_helpers.loc_land, run_helpers.tem_info, observations, opti_helpers.parameter_table, opti_helpers.cost_options, info.optimization.run_options.multi_constraint_method, info.optimization.run_options.parameter_scaling)
 
     opti_helpers = (; opti_helpers..., cost_function=cost_function)
     
@@ -208,19 +208,19 @@ function  prepOpti(forcing, observations, info, ::CostModelObsLandTS)
 end
 
 
-function  prepOpti(forcing, observations, info, optimization_cost_method::CostModelObs)
+function  prepOpti(forcing, observations, info, cost_method::CostModelObs)
     run_helpers = prepTEM(forcing, info)
 
-    parameter_helpers = prepParameters(info.optimization.parameter_table, info.optimization.optimization_parameter_scaling)
+    parameter_helpers = prepParameters(info.optimization.parameter_table, info.optimization.run_options.parameter_scaling)
     
     parameter_table = parameter_helpers.parameter_table
     default_values = parameter_helpers.default_values
     lower_bounds = parameter_helpers.lower_bounds
     upper_bounds = parameter_helpers.upper_bounds
 
-    cost_options = prepCostOptions(observations, info.optimization.cost_options, optimization_cost_method)
+    cost_options = prepCostOptions(observations, info.optimization.cost_options, cost_method)
 
-    cost_function = x -> cost(x, default_values, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, deepcopy(run_helpers.space_land), run_helpers.tem_info, observations, parameter_table, cost_options, info.optimization.multi_constraint_method, info.optimization.optimization_parameter_scaling, optimization_cost_method)
+    cost_function = x -> cost(x, default_values, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, deepcopy(run_helpers.space_land), run_helpers.tem_info, observations, parameter_table, cost_options, info.optimization.run_options.multi_constraint_method, info.optimization.run_options.parameter_scaling, cost_method)
 
     opti_helpers = (; parameter_table=parameter_table, cost_function=cost_function, cost_options=cost_options, default_values=default_values, lower_bounds=lower_bounds, upper_bounds=upper_bounds, run_helpers=run_helpers)
     

@@ -15,12 +15,12 @@ optimizeTEM
 
 function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple)
     # get the subset of parameters table that consists of only optimized parameters
-    opti_helpers = prepOpti(forcing, observations, info, info.optimization.optimization_cost_method)
+    opti_helpers = prepOpti(forcing, observations, info, info.optimization.run_options.cost_method)
 
     # run the optimizer
-    optim_para = optimizer(opti_helpers.cost_function, opti_helpers.default_values, opti_helpers.lower_bounds, opti_helpers.upper_bounds, info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
+    optim_para = optimizer(opti_helpers.cost_function, opti_helpers.default_values, opti_helpers.lower_bounds, opti_helpers.upper_bounds, info.optimization.optimizer.options, info.optimization.optimizer.method)
 
-    optim_para = backScaleParameters(optim_para, opti_helpers.parameter_table, info.optimization.optimization_parameter_scaling)
+    optim_para = backScaleParameters(optim_para, opti_helpers.parameter_table, info.optimization.run_options.parameter_scaling)
 
     # update the parameter table with the optimized values
     opti_helpers.parameter_table.optimized .= optim_para

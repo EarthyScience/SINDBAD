@@ -66,7 +66,7 @@ p_vec_tmp = Float32[0.57369316, 0.13665639, 0.021589328, 0.50214106, 5.8623033, 
 
 @time metricVector(run_helpers.output_array, obs_array, cost_options) # |> sum
 
-@time cost(parameter_table.initial, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, obs_array, parameter_table, cost_options, info.optimization.multi_constraint_method)
+@time cost(parameter_table.initial, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, obs_array, parameter_table, cost_options, info.optimization.run_options.multi_constraint_method)
 
-@time cost(p_vec_tmp, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, obs_array, parameter_table, cost_options, info.optimization.multi_constraint_method)
+@time cost(p_vec_tmp, info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info, obs_array, parameter_table, cost_options, info.optimization.run_options.multi_constraint_method)
 

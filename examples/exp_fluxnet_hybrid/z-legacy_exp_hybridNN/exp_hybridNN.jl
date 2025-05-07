@@ -56,7 +56,7 @@ loc_spinup_forcing = space_spinup_forcing[site_location];
 
 cost_options = [prepCostOptions(loc_obs, info.optimization.cost_options) for loc_obs in loc_observations];
 
-constraint_method = info.optimization.multi_constraint_method;
+constraint_method = info.optimization.run_options.multi_constraint_method;
 
 
 # ForwardDiff.gradient(f, x)

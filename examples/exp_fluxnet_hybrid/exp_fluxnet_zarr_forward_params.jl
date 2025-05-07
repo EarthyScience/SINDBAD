@@ -122,7 +122,7 @@ for site_index in 1:205
                 "experiment.exe_rules.parallelization" => parallelization_lib,
                 "optimization.optimization_cost_method" => "CostModelObsMT",
                 "optimization.optimization_cost_threaded" => true,
-                "optimization.optimization_parameter_scaling" => "scale_bounds",
+                "optimization.parameter_scaling" => "scale_bounds",
                 "optimization.algorithm_optimization" => "CMAEvolutionStrategy_CMAES_fn_insitu.json",
                 "optimization.observations.default_observation.data_path" => path_observation,
                 "optimization.observational_constraints" => opti_sets[o_set],)

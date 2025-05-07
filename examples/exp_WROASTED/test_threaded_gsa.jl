@@ -68,7 +68,7 @@ out_sensitivity = runExperimentSensitivity(experiment_json; replace_info=replace
 info = out_sensitivity.info;
 parameter_names=String.(out_sensitivity.parameter_table.name);
 
-sa_method = nameof(typeof(info.optimization.algorithm_sensitivity_analysis.method))
+sa_method = nameof(typeof(info.optimization.sensitivity_analysis.method))
 if sa_method in (:GlobalSensitivitySobol, :GlobalSensitivitySobolDM)
     sobol_result = out_sensitivity.sensitivity;
     xt=1:length(parameter_names)
@@ -100,11 +100,11 @@ observations = getObservation(info, forcing.helpers);
 
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
-opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method; algorithm_info_field=:algorithm_sensitivity_analysis);
+opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.run_options.cost_method; algorithm_info_field=:sensitivity_analysis);
 
 cost_function = opti_helpers.cost_function
 p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds));
-method_options = info.optimization.algorithm_sensitivity_analysis.options;
+method_options = info.optimization.sensitivity_analysis.options;
 
 sampler = getproperty(SindbadOptimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options..., method_options.method_options... )
 results = gsa(cost_function, sampler, p_bounds; method_options..., batch=true)

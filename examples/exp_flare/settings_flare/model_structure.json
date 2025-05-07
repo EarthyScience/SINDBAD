@@ -1,0 +1,25 @@
+{
+  "default_model": {
+    "implicit_t_repeat": 1,
+    "use_in_spinup": true
+  },
+  "models": {
+
+    "cCycleBase": {
+      "approach": "GSI"
+    },
+    "wCycleBase": {
+      "approach": "simple"
+    },
+    "WUE": {
+      "approach": "expVPDDayCo2"
+    }
+  },
+  "pools": {
+    "carbon": {
+      "combine": "cPool",
+      "components": {},
+      "state_variables": {}
+    }
+  }
+}

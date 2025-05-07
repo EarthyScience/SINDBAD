@@ -47,7 +47,7 @@ run_helpers = prepTEM(forcing, info);
 # observations = getObservation(info, forcing.helpers);
 # obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because 
 
-# opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method);
+# opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.run_options.cost_method);
 
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 # @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);

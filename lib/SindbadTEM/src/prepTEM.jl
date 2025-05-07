@@ -445,7 +445,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutArray())
 
-    forcing_helpers_with_parameter_set = updateForcingHelpers(deepcopy(forcing.helpers), info.optimization.n_threads_cost);
+    forcing_helpers_with_parameter_set = updateForcingHelpers(deepcopy(forcing.helpers), info.optimization.run_options.n_threads_cost);
 
     output_mt = prepTEMOut(info, forcing_helpers_with_parameter_set)
     output_array_mt = output_mt.data

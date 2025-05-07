@@ -88,7 +88,7 @@ module SindbadSetup
     @reexport using CSV: CSV
     @reexport using Dates
     @reexport using Infiltrator
-    using JSON: parsefile, json
+    using JSON: parsefile, json, print as json_print
     @reexport using JLD2: @save, load
     @reexport using Sindbad
     @reexport using SindbadUtils

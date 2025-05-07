@@ -1,0 +1,64 @@
+{
+  "algorithm_optimization": "CMAEvolutionStrategy_CMAES",
+  "algorithm_sensitivity_analysis": null,
+  "model_parameter_default": {
+    "distribution": ["normal", [0.0, 1.0]],
+    "is_ml": false
+  },
+  "model_parameters_to_optimize": {
+    "cCycleBase,c_τ_Wood": null
+  },
+  "multi_constraint_method": "metric_sum",
+  "subset_model_output": true,
+  "optimization_parameter_scaling": "scale_default",
+  "optimization_cost_method": "cost_model_obs",
+  "optimization_cost_threaded": false,
+  "observational_constraints": [
+    "constraint_a"
+  ],
+  "observations": {
+    "default_cost": {
+      "aggr_func": "nanmean",
+      "aggr_obs": false,
+      "aggr_order": "time_space",
+      "cost_metric": "NSE_inv",
+      "cost_weight": 1.0,
+      "min_data_points": 1,
+      "spatial_data_aggr": "concat_data",
+      "spatial_cost_aggr": "metric_spatial",
+      "spatial_weight": false,
+      "temporal_data_aggr": "day"
+    },
+    "default_observation": {
+      "additive_unit_conversion": false,
+      "bounds": null,
+      "data_path": "../data/BE-Vie.1979.2017.daily.nc",
+      "is_categorical": false,
+      "standard_name": null,
+      "sindbad_unit": null,
+      "source_product": "",
+      "source_to_sindbad_unit": 1.0,
+      "source_unit": null,
+      "source_variable": null,
+      "space_time_type": "spatiotemporal"
+    },
+    "use_quality_flag": true,
+    "use_spatial_weight": false,
+    "use_uncertainty": false,
+    "variables": {
+      "constraint_a": {
+        "cost_options": {
+          "cost_metric": "NMAE1R"
+        },
+        "data": {
+          "bounds": [0.0, 100000.0],
+          "standard_name": "constraint_a",
+          "sindbad_unit": "unit",
+          "source_unit": "unit",
+          "source_variable": "src_var_name"
+        },
+        "model_full_var": "field.var_name"
+      }
+    }
+  }
+}

@@ -4,10 +4,10 @@ using Plots
 sigmoid(x, K) = 1 / (1 + exp(-K * x))
 
 # Define the range for x
-x = -10:0.1:10
+x = -1:0.1:1
 
 # Define different values of K
-K_values = [0.25, 0.5, 1, 2, 4]
+K_values = [0.125,0.25, 0.5, 1, 2, 4, 8]
 
 # Initialize the plot
 f=plot(title="Sigmoid Curves for Different Values of K", xlabel="x", ylabel="Sigmoid(x, K)", legend=:topright) 

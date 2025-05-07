@@ -86,7 +86,7 @@ const nav = [
 const sidebar = [
   { text: 'Concept', items: conceptItems,
   },
-    { text: 'Manual', items: manualItems,
+    { text: 'Develop', items: manualItems,
   },
   { text: 'Settings',  items: settingsItems,
   },
@@ -102,7 +102,7 @@ const sidebar = [
 export default defineConfig({
   base: '/',
   title: "SINDBAD",
-  description: "A model data integration framework",
+  description: "A model-data integration framework for terrestrial ecosystem processes",
   lastUpdated: true,
   cleanUrls: false,
   ignoreDeadLinks: true,

@@ -61,7 +61,7 @@ loc_spinup_forcing = space_spinup_forcing[site_location];
 # ? optimization
 # costs related
 cost_options = [prepCostOptions(loc_obs, info.optimization.cost_options) for loc_obs in space_observations];
-constraint_method = info.optimization.multi_constraint_method;
+constraint_method = info.optimization.run_options.multi_constraint_method;
 
 #! yes?
 loc_cost_options = cost_options[site_location]
@@ -110,7 +110,7 @@ lower_bounds = tbl_params.lower
 upper_bounds = tbl_params.upper
 
 # optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds,
-#     info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
+#     info.optimization.optimizer.options, info.optimization.optimizer.method)
 
 
 # ? https://github.com/jbrea/CMAEvolutionStrategy.jl

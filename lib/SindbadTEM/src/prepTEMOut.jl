@@ -419,8 +419,8 @@ output = setupOptiOutput(info, output, DoNotRunOptimization())
 setupOptiOutput
 
 function setupOptiOutput(info::NamedTuple, output::NamedTuple, ::DoRunOptimization)
-    @debug "     prepTEMOut: getting parameter output for optimization..."
-    params = info.optimization.model_parameters_to_optimize
+    @debug "     setupOptiOutput: getting parameter output for optimization..."
+    params = info.optimization.parameter_table.name_full    
     paramaxis = Dim{:parameter}(params)
     outformat = info.output.format
     backend = outformat == "nc" ? :netcdf : :zarr
