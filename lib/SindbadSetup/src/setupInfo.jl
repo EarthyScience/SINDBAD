@@ -168,6 +168,7 @@ function parseSaveCode(info)
             mod_string = replace(mod_string, "                                                " => "    ")
             mod_string = replace(mod_string, " = (((" => " = ")
             mod_string = replace(mod_string, ") |" => " |")
+            mod_string = replace(mod_string, "] |" => "]) |")
             write(o_file, mod_string * "\n\n")
             mod_string = "# --------------------------------------\n"
             if mi == lastindex(models)

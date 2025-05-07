@@ -39,7 +39,7 @@ struct CCycleBaseGSIPlantForm end
     c_τ_LitSlow::T11 = 3.9 | (0.39, 39.0) | "turnover rate of slow litter carbon (wood litter) pool" | "year-1" | "year"
     c_τ_SoilSlow::T12 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "year-1" | "year"
     c_τ_SoilOld::T13 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "year-1" | "year"
-    c_flow_A_array::T14 = Float64[
+    c_flow_A_array::T14 = Float64.([
                      -1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0
                      0.0 -1.0 0.0 0.0 0 0.0 0.0 0.0
                      0.0 0.0 -1.0 1.0 0.0 0 0.0 0.0
@@ -48,8 +48,8 @@ struct CCycleBaseGSIPlantForm end
                      0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
                      0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
                      0.0 0.0 0 0.0 0.0 0.0 1.0 -1.0
-                 ] | (-Inf, Inf) | "Transfer matrix for carbon at ecosystem level" | "" | ""
-    p_C_to_N_cVeg::T15 = Float64[25.0, 260.0, 260.0, 10.0] | (-Inf, Inf) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN" | ""
+                 ]) | (-Inf, Inf) | "Transfer matrix for carbon at ecosystem level" | "" | ""
+    p_C_to_N_cVeg::T15 = Float64.([25.0, 260.0, 260.0, 10.0]) | (-Inf, Inf) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN" | ""
     ηH::T16 = 1.0 | (0.125, 8.0) | "scaling factor for heterotrophic pools after spinup" | "" | ""
     ηA::T17 = 1.0 | (0.25, 4.0) | "scaling factor for vegetation pools after spinup" | "" | ""
     c_remain::T18 = 50.0 | (0.1, 100.0) | "remaining carbon after disturbance" | "gC/m2" | ""
