@@ -31,9 +31,12 @@ struct CCycleBaseGSIPlantForm end
     c_τ_Reserve_scalar::T5 = 1.0 | (0.25, 4) | "scalar for Reserve does not respire, but has a small value to avoid numerical error" | "-" | ""
     c_τ_Soil_scalar::T6 = 1.0 | (0.25, 4) | "scalar for turnover rate of soil carbon pool" | "-" | ""
 
+    # c_τ_tree::T7 = Float64.(1.0 ./ [1.0, 50.0, 1.0, 1.0e1]) | (1 ./[4.0, 200.0, 4.0, 4.0e1], 1 ./[0.25, 12.5, 0.25, 0.25e1]) | "turnover of different organs of trees" | "year-1" | "year"
+    # c_τ_shrub::T8 = Float64.(1.0 ./ [1.0, 5.0, 1.0, 1.0e1]) | (1 ./[4.0, 20.0, 4.0, 4.0e1], 1 ./[0.25, 1.25, 0.25, 0.25e1]) | "turnover of different organs of shrubs" | "year-1" | "year"
+    # c_τ_herb::T9 = Float64.(1.0 ./ [0.75, 0.75, 0.75, 0.75e1]) | (1 ./[3.0, 3.0, 3.0, 3.0e1], 1 ./[0.1875, 0.1875, 0.1875, 0.1875e1]) | "turnover of different organs of herbs" | "year-1" | "year"
     c_τ_tree::T7 = Float64.(1.0 ./ [1.0, 50.0, 1.0, 1.0e11]) | (1 ./[4.0, 200.0, 4.0, 4.0e11], 1 ./[0.25, 12.5, 0.25, 0.25e11]) | "turnover of different organs of trees" | "year-1" | "year"
     c_τ_shrub::T8 = Float64.(1.0 ./ [1.0, 5.0, 1.0, 1.0e11]) | (1 ./[4.0, 20.0, 4.0, 4.0e11], 1 ./[0.25, 1.25, 0.25, 0.25e11]) | "turnover of different organs of shrubs" | "year-1" | "year"
-    c_τ_herb::T9 = Float64.(1.0 ./ [0.75, 0.75, 0.75, 1.0e11]) | (1 ./[3.0, 3.0, 3.0, 4.0e11], 1 ./[0.1875, 0.1875, 0.1875, 0.25e11]) | "turnover of different organs of herbs" | "year-1" | "year"
+    c_τ_herb::T9 = Float64.(1.0 ./ [0.75, 0.75, 0.75, 1.0e11]) | (1 ./[3.0, 3.0, 3.0, 3.0e11], 1 ./[0.1875, 0.1875, 0.1875, 0.1875e11]) | "turnover of different organs of herbs" | "year-1" | "year"
 
     c_τ_LitFast::T10 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "year-1" | "year"
     c_τ_LitSlow::T11 = 3.9 | (0.39, 39.0) | "turnover rate of slow litter carbon (wood litter) pool" | "year-1" | "year"

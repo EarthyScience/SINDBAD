@@ -607,7 +607,7 @@ function spinupSequenceLoop(spinup_models, sel_forcing, loc_forcing_t, land, tem
             tem_info,
             n_timesteps,
             spinup_mode)
-        # land = setSpinupLog(land, log_loop, tem_info.run.store_spinup)
+        land = setSpinupLog(land, log_loop, tem_info.run.store_spinup)
         log_loop += 1
     end
     return land

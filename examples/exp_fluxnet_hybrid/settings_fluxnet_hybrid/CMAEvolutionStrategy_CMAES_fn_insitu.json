@@ -1,7 +1,7 @@
 {
   "method": "CMAES",
   "options": {
-    "maxfevals": 25000,
+    "maxfevals": 5000,
     "popsize": 16,
     "maxiter": 100000, 
     "multi_threading": true,

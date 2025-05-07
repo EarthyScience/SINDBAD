@@ -23,7 +23,7 @@
       "approach": "none"
     },
     "cAllocationRadiation": {
-      "approach": "gpp"
+      "approach": "RgPot"
     },
     "cAllocationSoilT": {
       "approach": "gpp"
@@ -36,6 +36,9 @@
     },
     "capillaryFlow": {
       "approach": "VanDijk2010"
+    },
+    "cBiomass": {
+      "approach": "treeGrass_cVegReserveScaling"
     },
     "cCycle": {
       "approach": "GSI"
@@ -80,9 +83,6 @@
     },
     "cTauVegProperties": {
       "approach": "none"
-    },
-    "cBiomass": {
-      "approach": "treeGrass"
     },
     "drainage": {
       "approach": "dos"
