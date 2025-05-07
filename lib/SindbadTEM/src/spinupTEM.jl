@@ -330,6 +330,33 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleAH)
 end
 
 
+function spinup(_, _, _, land, helpers, _, ::EtaScaleAHCWD)
+    @unpack_nt cEco ⇐ land.pools
+    helpers = helpers.model_helpers
+    cEco_prev = copy(cEco)
+    ηH = one(eltype(cEco))
+    if :ηH ∈ propertynames(land.diagnostics)
+        ηH = land.diagnostics.ηH
+    end
+    ηA = one(eltype(cEco))
+    if :ηA ∈ propertynames(land.diagnostics)
+        ηA = land.diagnostics.ηA
+    end
+    for cLitZix ∈ helpers.pools.zix.cLitSlow
+        cLitNew = cEco[cLitZix] * ηH
+        @rep_elem cLitNew ⇒ (cEco, cLitZix, :cEco)
+    end
+    for cVegZix ∈ helpers.pools.zix.cVeg
+        cVegNew = cEco[cVegZix] * ηA
+        @rep_elem cVegNew ⇒ (cEco, cVegZix, :cEco)
+    end
+    @pack_nt cEco ⇒ land.pools
+    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    @pack_nt cEco_prev ⇒ land.states
+    return land
+end
+
+
 function spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     @unpack_nt cEco ⇐ land.pools
     helpers = helpers.model_helpers
@@ -362,6 +389,34 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     return land
 end
 
+
+function spinup(_, _, _, land, helpers, _, ::EtaScaleA0HCWD)
+    @unpack_nt cEco ⇐ land.pools
+    helpers = helpers.model_helpers
+    cEco_prev = copy(cEco)
+    ηH = one(eltype(cEco))
+    c_remain = one(eltype(cEco))
+    if :ηH ∈ propertynames(land.diagnostics)
+        ηH = land.diagnostics.ηH
+        c_remain = land.states.c_remain
+    end
+
+    for cLitZix ∈ helpers.pools.zix.cLitSlow
+        cLitNew = cEco[cLitZix] * ηH
+        @rep_elem cLitNew ⇒ (cEco, cLitZix, :cEco)
+    end
+
+    for cVegZix ∈ helpers.pools.zix.cVeg
+        cLoss = maxZero(cEco[cVegZix] - c_remain)
+        cVegNew = cEco[cVegZix] - cLoss
+        @rep_elem cVegNew ⇒ (cEco, cVegZix, :cEco)
+    end
+
+    @pack_nt cEco ⇒ land.pools
+    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    @pack_nt cEco_prev ⇒ land.states
+    return land
+end
 
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::ODEAutoTsit5Rodas5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools

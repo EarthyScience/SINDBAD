@@ -208,6 +208,8 @@ export SindbadSpinupMethod
 export AllForwardModels
 export SelSpinupModels
 export EtaScaleA0H
+export EtaScaleA0HCWD
+export EtaScaleAHCWD
 export EtaScaleAH
 export NlsolveFixedpointTrustregionCEco
 export NlsolveFixedpointTrustregionCEcoTWS
@@ -226,6 +228,12 @@ purpose(::Type{AllForwardModels}) = "Use all forward models for spinup"
 
 struct EtaScaleA0H <: SindbadSpinupMethod end
 purpose(::Type{EtaScaleA0H}) = "scale carbon pools using diagnostic scalars for ηH and c_remain"
+
+struct EtaScaleA0HCWD <: SindbadSpinupMethod end
+purpose(::Type{EtaScaleA0HCWD}) = "scale carbon pools of CWD (cLitSlow) using ηH and set vegetation pools to c_remain"
+
+struct EtaScaleAHCWD <: SindbadSpinupMethod end
+purpose(::Type{EtaScaleAHCWD}) = "scale carbon pools of CWD (cLitSlow) using ηH and scale vegetation pools by ηA"
 
 struct EtaScaleAH <: SindbadSpinupMethod end
 purpose(::Type{EtaScaleAH}) = "scale carbon pools using diagnostic scalars for ηH and ηA"

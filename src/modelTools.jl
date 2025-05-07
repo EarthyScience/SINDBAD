@@ -403,7 +403,7 @@ function getUnitConversionForParameter(p_timescale, model_timestep)
     if p_timescale == "second"
         conversion = 60 * 60 * 24 * time_multiplier
     elseif p_timescale == "minute"
-            conversion = 60 * 24 * time_multiplier
+        conversion = 60 * 24 * time_multiplier
     elseif p_timescale == "halfhour"
         conversion = 48 * time_multiplier
     elseif p_timescale == "hour"
