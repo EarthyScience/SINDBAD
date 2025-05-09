@@ -1,6 +1,6 @@
 name = "SindbadUtils"
 uuid = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
-authors = ["dr-ko <skoirala@bgc-jena.mpg.de>"]
+authors = ["SINDBAD Contributors <sindbad@bgc-jena.mpg.de>"]
 version = "0.1.0"
 
 [deps]
@@ -16,10 +16,6 @@ Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 StyledStrings = "f489334b-da3d-4c2e-b8f0-e476e12c162b"
-TypedTables = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
 
 [compat]
 Accessors = "0.1.42"
-
-[sources]
-Sindbad = {path = "../.."}

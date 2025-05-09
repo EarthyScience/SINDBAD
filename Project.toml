@@ -1,6 +1,6 @@
 name = "Sindbad"
 uuid = "6686e6de-2010-4bf8-9178-b2bcc470766e"
-authors = ["SINDBAD <sindbad@bgc-jena.mpg.de> and contributors"]
+authors = ["SINDBAD Contributors <sindbad@bgc-jena.mpg.de>"]
 version = "0.1.0"
 
 [deps]
@@ -15,8 +15,10 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+TypedTables = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
 
 [compat]
+TypedTables = "1.4.6"
 julia = "1.9"
 
 [extras]
