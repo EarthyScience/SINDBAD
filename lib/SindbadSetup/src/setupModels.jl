@@ -52,7 +52,7 @@ function getAllSindbadModels(info; sindbad_models=standard_sindbad_models)
         @info "  ....using standard model order and list from standard_sindbad_models: "
     end
         foreach((Pair.(eachindex(sindbad_models), sindbad_models))) do sm
-            @info "        $(sm)"
+            @info "        $(first(sm)) => $(last(sm)): $(purpose(getproperty(Sindbad, last(sm))))"
         end
     return sindbad_models
 end

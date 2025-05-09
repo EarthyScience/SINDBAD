@@ -142,7 +142,7 @@ observations = getObservation(info, forcing.helpers);
 run_helpers = prepTEM(forcing, info);
 
 long_spin =  spinupTEM(info.models.forward, run_helpers.space_spinup_forcing[1], run_helpers.loc_forcing_t, run_helpers.loc_land, run_helpers.tem_info, DoSpinupTEM());
-lw=LandWrapper(long_spin)
+lw=LandWrapper(long_spin.states.spinuplog)
 # spinupTEM(info.models.forward, run_helpers.spac spinup_forcings, loc_forcing_t, land, tem_info, ::DoSpinupTEM) 
 # # @ SindbadTEM /Net/Groups/BGI/scratch/skoirala/RnD/SINDBAD-RnD-SK/lib/SindbadTEM/src/spinupTEM.jl:641
 
@@ -150,14 +150,31 @@ cEco_all = map(long_spin.states.spinuplog) do ll
     ll.cEco
 end;
 
+pool_comps = info.helpers.pools.components.cEco;
+rot_max = 90
 for i in 1:8
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue));
     fig_prefix = joinpath(info.output.dirs.figure, "pool_comparison_" * info.experiment.basics.name * "_" * info.experiment.basics.domain);    
     cpool = map(cEco_all) do cE
         cE[i]
     end
-    plot(cpool[1:end-1]; label="Spinup ($(round(SindbadTEM.mean(cpool), digits=2)))", size=(2000, 1000), title="layer $(i)", left_margin=1Plots.cm, color=:steelblue2)
-    savefig(fig_prefix * "$(forcing_set).png")
+    plot(cpool; label="Spinup ($(round(SindbadTEM.mean(cpool), digits=2)))", size=(2000, 1000), title="layer $(i): $(pool_comps[i])", left_margin=1Plots.cm, color=:steelblue2)
+    vline!([1], color=:red, linestyle=:dash, label="Init")
+    annotate!(1, cpool[1], text("Init", :red, :bold, rotation=rot_max))
+    v_loc = 1
+    s_ind = 2
+    for seq in sequence
+        println("n_repeat: $(seq["n_repeat"]), spinup_mode: $(seq["spinup_mode"]), forcing: $(seq["forcing"])")
+        s_name = string(seq["n_repeat"]) * "_" * string(seq["spinup_mode"]) * "_" * string(seq["forcing"]) 
+        v_loc = v_loc + seq["n_repeat"]
+        random_color = RGB(rand(), rand(), rand())
+        vline!([v_loc], color=random_color, linestyle=:dash, label="$(s_name)")
+        annotate!(v_loc, cpool[v_loc]/s_ind, text("$(s_name)", random_color, :bold, rotation=rot_max))
+        s_ind += 1
+    end
+    savefig(fig_prefix * "$(forcing_set)_layer$(i).png")
+    println("--------------------------------")
+
 end
 
 

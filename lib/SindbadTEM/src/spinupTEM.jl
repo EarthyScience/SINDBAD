@@ -608,7 +608,8 @@ The main spinup function that handles the spinup method based on inputs from spi
 spinupTEM
 
 function spinupTEM(selected_models, spinup_forcings, loc_forcing_t, land, tem_info, ::DoSpinupTEM)
-    log_index = 1
+    land = setSpinupLog(land, 1, tem_info.run.store_spinup)
+    log_index = 2
     for spin_seq ∈ tem_info.spinup_sequence
         forc_name = spin_seq.forcing
         n_timesteps = spin_seq.n_timesteps
