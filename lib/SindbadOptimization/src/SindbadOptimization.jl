@@ -71,8 +71,10 @@ module SindbadOptimization
    # using OptimizationQuadDIRECT
    using QuasiMonteCarlo
    using StableRNGs
-   using SindbadTEM
    using Sindbad
+   using SindbadUtils
+   using SindbadSetup
+   using SindbadTEM
 
    include("prepOpti.jl")
    include("optimizer.jl")

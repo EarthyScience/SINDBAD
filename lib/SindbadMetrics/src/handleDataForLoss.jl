@@ -18,14 +18,14 @@ aggregateData
 
 function aggregateData(dat, cost_option, ::TimeSpace)
     @debug "aggregating data", size(dat)
-    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
-    dat = spatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
+    dat = doTemporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
+    dat = doSpatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
     return dat
 end
 
 function aggregateData(dat, cost_option, ::SpaceTime)
-    dat = spatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
-    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
+    dat = doSpatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
+    dat = doTemporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     return dat
 end
 
@@ -172,13 +172,13 @@ end
 
 
 """
-    spatialAggregation(dat, _, ::ConcatData)
+    doSpatialAggregation(dat, _, ::ConcatData)
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
 - `_`: unused argument
 - `::ConcatData`: A type indicating that the data should not be aggregated spatially
 """
-function spatialAggregation(dat, _, ::ConcatData)
+function doSpatialAggregation(dat, _, ::ConcatData)
     return dat
 end

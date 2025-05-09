@@ -21,6 +21,7 @@ combines the metric from all constraints based on the type of combination.
 
 """
 function combineMetric end
+
 function combineMetric(metric_vector::AbstractArray, ::MetricSum)
     return sum(metric_vector)
 end
@@ -78,7 +79,7 @@ returns a vector of metrics for variables in info.cost_options.observational_con
 - `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT
 - `cost_options`: a table listing each observation constraint and how it should be used to calculate the loss/metric of model performance    
 """
-metricVector
+function metricVector end
 
 function metricVector(model_output, observations, cost_options)
     loss_vector = map(cost_options) do cost_option

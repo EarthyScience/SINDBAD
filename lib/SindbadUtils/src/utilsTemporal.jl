@@ -1,6 +1,6 @@
 export createTimeAggregator
 export getTimeAggregatorTypeInstance
-export temporalAggregation
+export doTemporalAggregation
 
 """
     getdim(a::TimeAggregatorViewInstance{<:Any, <:Any, D})
@@ -356,7 +356,7 @@ function doTemporalAggregation(dat, temporal_aggregator::Nothing, dim=1)
 end
 
 """
-    temporalAggregation(dat, temporal_aggregators, aggregation_type)
+    doTemporalAggregation(dat, temporal_aggregators, aggregation_type)
 
 a temporal aggregation function to aggregate the data using a vector of aggregators
 
@@ -368,17 +368,17 @@ a temporal aggregation function to aggregate the data using a vector of aggregat
     - `::TimeDiff`: a type defining that the aggregator requires removing/reducing values from original time series. First aggregator aggregates the main time series, second aggregator aggregates to the time series to be removed.
     - `::TimeIndexed`: a type defining that the aggregator requires indexing the original time series
 """
-temporalAggregation
+function doTemporalAggregation end
 
-function temporalAggregation(dat, temporal_aggregators, ::TimeIndexed)
+function doTemporalAggregation(dat, temporal_aggregators, ::TimeIndexed)
     return dat[first(temporal_aggregators).indices...]
 end
 
-function temporalAggregation(dat, temporal_aggregators, ::TimeNoDiff)
+function doTemporalAggregation(dat, temporal_aggregators, ::TimeNoDiff)
     return doTemporalAggregation(dat, first(temporal_aggregators))
 end
 
-function temporalAggregation(dat, temporal_aggregators, ::TimeDiff)
+function doTemporalAggregation(dat, temporal_aggregators, ::TimeDiff)
     dat_agg = doTemporalAggregation(dat, first(temporal_aggregators))
     dat_agg_to_remove = doTemporalAggregation(dat, last(temporal_aggregators))
     return dat_agg .- dat_agg_to_remove

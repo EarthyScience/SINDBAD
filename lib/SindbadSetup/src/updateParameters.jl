@@ -125,7 +125,7 @@ function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bou
             if !isnothing(model_names)
                 ps = String(model_names[i]) * " : " * String(n)
             end
-            @info "           $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
+            @info "       $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
         end
     end
 end

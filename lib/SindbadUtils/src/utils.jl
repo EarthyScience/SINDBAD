@@ -3,7 +3,6 @@ export doNothing
 export entertainMe
 export getAbsDataPath
 export getSindbadDataDepot
-export isInvalid
 export nonUnique
 export replaceInvalid
 export setLogLevel
@@ -107,21 +106,6 @@ function getSindbadDataDepot(; env_data_depot_var="SINDBAD_DATA_DEPOT", local_da
     return data_depot
 end
 
-
-"""
-    isInvalid(_data::Number)
-
-Checks if a number is invalid (e.g., `nothing`, `missing`, `NaN`, or `Inf`).
-
-# Arguments:
-- `_data`: The input number.
-
-# Returns:
-`true` if the number is invalid, otherwise `false`.
-"""
-function isInvalid(_data)
-    return isnothing(_data) || ismissing(_data) || isnan(_data) || isinf(_data)
-end
 
 """
     nonUnique(x::AbstractArray{T}) where T

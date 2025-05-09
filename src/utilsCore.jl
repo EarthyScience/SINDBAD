@@ -7,6 +7,7 @@ export getMethodTypes
 export getSindbadModelOrder
 export getSindbadModels
 export getZix
+export isInvalid
 export maxZero, maxOne, minZero, minOne
 export offDiag, offDiagUpper, offDiagLower
 export @pack_nt, @unpack_nt
@@ -809,3 +810,18 @@ macro unpack_nt(inparams)
     return outCode
 end
 
+
+"""
+    isInvalid(_data::Number)
+
+Checks if a number is invalid (e.g., `nothing`, `missing`, `NaN`, or `Inf`).
+
+# Arguments:
+- `_data`: The input number.
+
+# Returns:
+`true` if the number is invalid, otherwise `false`.
+"""
+function isInvalid(_data)
+    return isnothing(_data) || ismissing(_data) || isnan(_data) || isinf(_data)
+end

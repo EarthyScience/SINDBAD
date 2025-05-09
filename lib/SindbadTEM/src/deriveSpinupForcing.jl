@@ -84,7 +84,7 @@ aggregate the forcing variable with time where an aggregation/collection is need
 - `ag_type::TimeNoDiff`: a type dispatch to indicate that the variable has to be aggregated in time
 """
 function timeAggregateForcingV(v, _, aggregator, ag_type::TimeNoDiff)
-    vt=temporalAggregation(v, aggregator, ag_type)
+    vt=doTemporalAggregation(v, aggregator, ag_type)
     vt[:]
 end
 

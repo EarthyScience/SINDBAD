@@ -213,9 +213,9 @@ tcPrint
 
 ----
 
-### temporalAggregation
+### doTemporalAggregation
 ```@docs
-temporalAggregation
+doTemporalAggregation
 ```
 
 ----
