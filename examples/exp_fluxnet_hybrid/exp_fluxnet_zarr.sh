@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name InSZ_NS
-#SBATCH -o ./tmp_run_logs/InSZ_NS-%A_%a.o.log
-#SBATCH -e ./tmp_run_logs/InSZ_NS-%A_%a.e.log
+#SBATCH --job-name No_Res
+#SBATCH -o ./tmp_run_logs/No_Res-%A_%a.o.log
+#SBATCH -e ./tmp_run_logs/No_Res-%A_%a.e.log
 #SBATCH -p gpu
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=36
 #SBATCH --mem-per-cpu=12G
 #SBATCH --array=1-205%50
 #SBATCH --time=07-00:00:00

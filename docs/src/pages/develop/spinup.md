@@ -48,7 +48,7 @@ using SindbadTEM
 ::: tip
 To list all available spinup methods and their purposes, use:
 ```julia
-using SindbadUtils
+using Sindbad
 showMethodsOf(SpinupMode)
 ```
 This will display a formatted list of all spinup methods and their descriptions.

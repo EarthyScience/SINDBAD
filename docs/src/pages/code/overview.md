@@ -13,6 +13,7 @@ This page provides an overview of all SINDBAD packages and their main functional
 | [Optimization](optimization.md) | Optimization methods | Parameter optimization and calibration |
 | [Setup](setup.md) | Setup utilities | configuration of SINDBAD experiment and setup |
 | [TEM](tem.md) | Terrestrial Ecosystem Model | Core ecosystem modeling framework |
+| [Types](types.md) | SINDBAD Types | Definition of all SINDBAD types and purposes |
 | [Utils](utils.md) | Utility functions | Helper functions and common utilities for all packages|
 | [Visuals](visuals.md) | Visualization tools | Plotting and data visualization (to be developed..) |
 

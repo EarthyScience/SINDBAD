@@ -18,7 +18,7 @@ using Sindbad
 To view available model approaches and their implementations:
 
 ```julia
-using SindbadUtils: showMethodsOf
+using Sindbad: showMethodsOf
 showMethodsOf(LandEcosystem)
 ```
 
