@@ -27,7 +27,7 @@ purpose(::Type{fAPAR_EVI}) = "calculates the value of fAPAR as a linear function
 
 @doc """
 
-$(getBaseDocString(fAPAR_EVI))
+$(getModelDocString(fAPAR_EVI))
 
 ---
 

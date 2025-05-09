@@ -17,7 +17,7 @@ purpose(::Type{NDVI_forcing}) = "sets the value of land.states.NDVI from the for
 
 @doc """
 
-$(getBaseDocString(NDVI_forcing))
+$(getModelDocString(NDVI_forcing))
 
 ---
 

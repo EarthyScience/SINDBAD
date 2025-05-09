@@ -46,7 +46,7 @@ purpose(::Type{cTauSoilProperties_CASA}) = "Compute soil texture effects on turn
 
 @doc """
 
-$(getBaseDocString(cTauSoilProperties_CASA))
+$(getModelDocString(cTauSoilProperties_CASA))
 
 ---
 

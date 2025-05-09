@@ -78,7 +78,7 @@ purpose(::Type{rootWaterEfficiency_expCvegRoot}) = "maximum root water fraction 
 
 @doc """
 
-$(getBaseDocString(rootWaterEfficiency_expCvegRoot))
+$(getModelDocString(rootWaterEfficiency_expCvegRoot))
 
 ---
 

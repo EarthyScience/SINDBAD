@@ -17,7 +17,7 @@ purpose(::Type{cAllocationRadiation_none}) = "sets the radiation effect on alloc
 
 @doc """
 
-$(getBaseDocString(cAllocationRadiation_none))
+$(getModelDocString(cAllocationRadiation_none))
 
 ---
 

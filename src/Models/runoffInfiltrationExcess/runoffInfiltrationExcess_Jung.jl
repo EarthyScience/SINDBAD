@@ -34,7 +34,7 @@ purpose(::Type{runoffInfiltrationExcess_Jung}) = "infiltration excess runoff as 
 
 @doc """
 
-$(getBaseDocString(runoffInfiltrationExcess_Jung))
+$(getModelDocString(runoffInfiltrationExcess_Jung))
 
 ---
 

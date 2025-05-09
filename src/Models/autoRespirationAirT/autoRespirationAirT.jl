@@ -7,6 +7,6 @@ purpose(::Type{autoRespirationAirT}) = "Temperature effect on autotrophic mainte
 includeApproaches(autoRespirationAirT, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(autoRespirationAirT))
+	$(getModelDocString(autoRespirationAirT))
 """
 autoRespirationAirT

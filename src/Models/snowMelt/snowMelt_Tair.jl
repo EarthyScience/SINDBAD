@@ -46,7 +46,7 @@ purpose(::Type{snowMelt_Tair}) = "computes the snow melt term as function of air
 
 @doc """
 
-$(getBaseDocString(snowMelt_Tair))
+$(getModelDocString(snowMelt_Tair))
 
 ---
 

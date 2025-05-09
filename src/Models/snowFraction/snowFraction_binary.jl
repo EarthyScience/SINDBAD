@@ -24,7 +24,7 @@ purpose(::Type{snowFraction_binary}) = "compute the fraction of snow cover."
 
 @doc """
 
-$(getBaseDocString(snowFraction_binary))
+$(getModelDocString(snowFraction_binary))
 
 ---
 

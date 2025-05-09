@@ -28,7 +28,7 @@ purpose(::Type{cBiomass_treeGrass_cVegReserveScaling}) = "same as treeGrass, but
 
 @doc """ 
 
-	$(getBaseDocString(cBiomass_treeGrass_cVegReserveScaling))
+	$(getModelDocString(cBiomass_treeGrass_cVegReserveScaling))
 
 ---
 

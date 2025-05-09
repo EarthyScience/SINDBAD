@@ -20,7 +20,7 @@ purpose(::Type{cAllocationSoilT_gpp}) = "temperature effect on allocation = the 
 
 @doc """
 
-$(getBaseDocString(cAllocationSoilT_gpp))
+$(getModelDocString(cAllocationSoilT_gpp))
 
 ---
 

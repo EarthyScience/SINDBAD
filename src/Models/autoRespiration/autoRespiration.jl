@@ -7,6 +7,6 @@ purpose(::Type{autoRespiration}) = "Determine autotrophic respiration (RA) based
 includeApproaches(autoRespiration, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(autoRespiration))
+	$(getModelDocString(autoRespiration))
 """
 autoRespiration

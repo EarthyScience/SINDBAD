@@ -85,7 +85,7 @@ purpose(::Type{PET_Lu2005}) = "Calculates the value of land.fluxes.PET from the 
 
 @doc """
 
-$(getBaseDocString(PET_Lu2005))
+$(getModelDocString(PET_Lu2005))
 
 ---
 

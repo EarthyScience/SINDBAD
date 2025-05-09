@@ -16,6 +16,8 @@ This package defines the `LandEcosystem` supertype, which serves as the base for
 - `InteractiveUtils`: Enables interactive exploration and debugging during development.
 - `Parameters`: Provides macros for defining and managing model parameters in a concise and readable manner.
 - `StaticArraysCore`: Supports efficient, fixed-size arrays (e.g., `SVector`, `MArray`) for performance-critical operations in SINDBAD models.
+- `TypedTables`: Provides lightweight, type-stable tables for structured data manipulation.
+
 
 # Included Files:
 1. **`coreTypes.jl`**:
@@ -71,6 +73,7 @@ module Sindbad
     using Parameters
     @reexport using Reexport
     @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
+    @reexport using TypedTables: Table
 
 
     # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of Sindbad.
@@ -88,7 +91,7 @@ module Sindbad
       println("Created a blank file: $file_path to track precompilation of new models and approaches")
    end
 
-   include("coreTypes.jl")
+   include("SindbadTypes/SindbadTypes.jl")
    include("utilsCore.jl")   
    include("sindbadVariableCatalog.jl")
    include("modelTools.jl")
@@ -143,4 +146,22 @@ module Sindbad
    $(methodsOf(LandEcosystem))
    """
    LandEcosystem
+
+   ds_file = joinpath(@__DIR__, "SindbadTypes/docStringForTypes.jl")
+    loc_types = getSindbadDefinitions(Main, Type)
+    open(ds_file, "w") do o_file
+        for T in loc_types
+            @show T
+            @show Base_docs_doc(AllForwardModels)
+            @show Base_docs_doc(T)
+            if startswith(string(Base_docs_doc(T)), "No documentation found for public symbol")
+                @info "Generating missing docstring for $T"
+                # write(o_file, "export ")
+                write(o_file, "@doc \"\"\"\n$(getTypeDocString(T))\n\"\"\"\n")
+                write(o_file, "$(T)\n\n")
+            end
+        end
+    end
+    include(ds_file)
+
 end

@@ -40,7 +40,7 @@ purpose(::Type{cAllocationNutrients_Friedlingstein1999}) = "pseudo-nutrient limi
 
 @doc """
 
-$(getBaseDocString(cAllocationNutrients_Friedlingstein1999))
+$(getModelDocString(cAllocationNutrients_Friedlingstein1999))
 
 ---
 

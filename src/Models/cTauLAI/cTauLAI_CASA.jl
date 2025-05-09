@@ -102,7 +102,7 @@ purpose(::Type{cTauLAI_CASA}) = "calc LAI stressor on τ. Compute the seasonal c
 
 @doc """
 
-$(getBaseDocString(cTauLAI_CASA))
+$(getModelDocString(cTauLAI_CASA))
 
 ---
 

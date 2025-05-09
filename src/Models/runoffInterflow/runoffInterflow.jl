@@ -7,6 +7,6 @@ purpose(::Type{runoffInterflow}) = "Interflow"
 includeApproaches(runoffInterflow, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(runoffInterflow))
+	$(getModelDocString(runoffInterflow))
 """
 runoffInterflow

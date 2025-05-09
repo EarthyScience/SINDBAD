@@ -7,6 +7,6 @@ purpose(::Type{waterBalance}) = "Calculate the water balance"
 includeApproaches(waterBalance, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(waterBalance))
+	$(getModelDocString(waterBalance))
 """
 waterBalance

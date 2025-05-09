@@ -36,7 +36,7 @@ purpose(::Type{evapotranspiration_sum}) = "calculates evapotranspiration as a su
 
 @doc """
 
-$(getBaseDocString(evapotranspiration_sum))
+$(getModelDocString(evapotranspiration_sum))
 
 ---
 

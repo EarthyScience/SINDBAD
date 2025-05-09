@@ -27,7 +27,7 @@ purpose(::Type{vegFraction_scaledLAI}) = "sets the value of frac_vegetation by s
 
 @doc """
 
-$(getBaseDocString(vegFraction_scaledLAI))
+$(getModelDocString(vegFraction_scaledLAI))
 
 ---
 

@@ -21,7 +21,7 @@ purpose(::Type{gpp_transpirationWUE}) = "calculate GPP based on transpiration & 
 
 @doc """
 
-$(getBaseDocString(gpp_transpirationWUE))
+$(getModelDocString(gpp_transpirationWUE))
 
 ---
 

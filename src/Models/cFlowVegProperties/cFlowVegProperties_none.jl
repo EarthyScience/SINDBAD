@@ -28,7 +28,7 @@ purpose(::Type{cFlowVegProperties_none}) = "set transfer between pools to 0 [i.e
 
 @doc """
 
-$(getBaseDocString(cFlowVegProperties_none))
+$(getModelDocString(cFlowVegProperties_none))
 
 ---
 

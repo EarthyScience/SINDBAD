@@ -7,6 +7,6 @@ purpose(::Type{snowFraction}) = "Calculate snow cover fraction"
 includeApproaches(snowFraction, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(snowFraction))
+	$(getModelDocString(snowFraction))
 """
 snowFraction

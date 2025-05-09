@@ -48,7 +48,7 @@ purpose(::Type{runoffSurface_directIndirectFroSoil}) = "assumes surface runoff i
 
 @doc """
 
-$(getBaseDocString(runoffSurface_directIndirectFroSoil))
+$(getModelDocString(runoffSurface_directIndirectFroSoil))
 
 ---
 

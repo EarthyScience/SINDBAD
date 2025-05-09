@@ -132,7 +132,7 @@ purpose(::Type{wCycleBase_simple}) = "counts the number of layers in each water 
 
 @doc """
 
-$(getBaseDocString(wCycleBase_simple))
+$(getModelDocString(wCycleBase_simple))
 
 ---
 

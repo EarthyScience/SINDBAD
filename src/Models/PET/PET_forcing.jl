@@ -16,7 +16,7 @@ purpose(::Type{PET_forcing}) = "sets the value of land.fluxes.PET from the forci
 
 @doc """
 
-$(getBaseDocString(PET_forcing))
+$(getModelDocString(PET_forcing))
 
 ---
 

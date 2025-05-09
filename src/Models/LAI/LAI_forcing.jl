@@ -16,7 +16,7 @@ purpose(::Type{LAI_forcing}) = "sets the value of land.states.LAI from the forci
 
 @doc """
 
-$(getBaseDocString(LAI_forcing))
+$(getModelDocString(LAI_forcing))
 
 ---
 

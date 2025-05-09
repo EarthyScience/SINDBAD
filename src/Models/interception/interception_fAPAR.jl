@@ -33,7 +33,7 @@ purpose(::Type{interception_fAPAR}) = "computes canopy interception evaporation 
 
 @doc """
 
-$(getBaseDocString(interception_fAPAR))
+$(getModelDocString(interception_fAPAR))
 
 ---
 

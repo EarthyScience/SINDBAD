@@ -15,7 +15,7 @@ end
 
 purpose(::Type{autoRespiration_none}) = "No RA. Sets the C respiration flux from all vegetation pools to zero."
 @doc """
-    $(getBaseDocString(autoRespiration_none))
+    $(getModelDocString(autoRespiration_none))
 
 ---
 # Extended help

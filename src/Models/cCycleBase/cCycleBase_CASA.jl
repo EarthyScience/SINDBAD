@@ -70,7 +70,7 @@ purpose(::Type{cCycleBase_CASA}) = "Compute carbon to nitrogen ratio & base turn
 
 @doc """
 
-$(getBaseDocString(cCycleBase_CASA))
+$(getModelDocString(cCycleBase_CASA))
 
 ---
 

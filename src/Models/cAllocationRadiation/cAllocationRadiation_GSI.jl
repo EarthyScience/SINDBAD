@@ -46,7 +46,7 @@ purpose(::Type{cAllocationRadiation_GSI}) = "radiation effect on allocation usin
 
 @doc """
 
-$(getBaseDocString(cAllocationRadiation_GSI))
+$(getModelDocString(cAllocationRadiation_GSI))
 
 ---
 

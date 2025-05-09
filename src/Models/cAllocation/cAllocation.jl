@@ -7,6 +7,6 @@ purpose(::Type{cAllocation}) = "Compute the allocation of C fixed by photosynthe
 includeApproaches(cAllocation, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cAllocation))
+	$(getModelDocString(cAllocation))
 """
 cAllocation

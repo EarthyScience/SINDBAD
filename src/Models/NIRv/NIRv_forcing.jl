@@ -17,7 +17,7 @@ purpose(::Type{NIRv_forcing}) = "sets the value of land.states.NIRv from the for
 
 @doc """
 
-$(getBaseDocString(NIRv_forcing))
+$(getModelDocString(NIRv_forcing))
 
 ---
 

@@ -58,7 +58,7 @@ purpose(::Type{capillaryFlow_VanDijk2010}) = "computes the upward water flow in 
 
 @doc """
 
-$(getBaseDocString(capillaryFlow_VanDijk2010))
+$(getModelDocString(capillaryFlow_VanDijk2010))
 
 ---
 

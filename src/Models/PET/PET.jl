@@ -6,6 +6,6 @@ purpose(::Type{PET}) = "Set potential evapotranspiration"
 
 includeApproaches(PET, @__DIR__)
 @doc """ 
-	$(getBaseDocString(PET))
+	$(getModelDocString(PET))
 """
 PET

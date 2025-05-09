@@ -24,7 +24,7 @@ purpose(::Type{fAPAR_vegFraction}) = "sets the value of fAPAR as a linear functi
 
 @doc """
 
-$(getBaseDocString(fAPAR_vegFraction))
+$(getModelDocString(fAPAR_vegFraction))
 
 ---
 

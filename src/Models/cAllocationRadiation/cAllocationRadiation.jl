@@ -7,6 +7,6 @@ purpose(::Type{cAllocationRadiation}) = "Effect of radiation on carbon allocatio
 includeApproaches(cAllocationRadiation, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cAllocationRadiation))
+	$(getModelDocString(cAllocationRadiation))
 """
 cAllocationRadiation

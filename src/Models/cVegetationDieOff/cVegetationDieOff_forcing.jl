@@ -22,7 +22,7 @@ purpose(::Type{cVegetationDieOff_forcing}) = "reads and passes along to the land
 
 @doc """
 
-$(getBaseDocString(cVegetationDieOff_forcing))
+$(getModelDocString(cVegetationDieOff_forcing))
 
 ---
 

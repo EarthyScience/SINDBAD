@@ -52,7 +52,7 @@ purpose(::Type{wCycle_combined}) = "computes the algebraic sum of storage and de
 
 @doc """
 
-$(getBaseDocString(wCycle_combined))
+$(getModelDocString(wCycle_combined))
 
 ---
 

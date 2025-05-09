@@ -50,7 +50,7 @@ purpose(::Type{WUE_Medlyn2011}) = "calculates the WUE/AOE ci/ca as a function of
 
 @doc """
 
-$(getBaseDocString(WUE_Medlyn2011))
+$(getModelDocString(WUE_Medlyn2011))
 
 ---
 

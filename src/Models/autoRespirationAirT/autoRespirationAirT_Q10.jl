@@ -27,7 +27,7 @@ purpose(::Type{autoRespirationAirT_Q10}) = "Sets the temperature effect on autot
 
 @doc """
 
-$(getBaseDocString(autoRespirationAirT_Q10))
+$(getModelDocString(autoRespirationAirT_Q10))
 
 ---
 

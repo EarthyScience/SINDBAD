@@ -18,7 +18,7 @@ purpose(::Type{ambientCO2_forcing}) = "sets the value of ambient_CO2 from the fo
 
 @doc """
 
-$(getBaseDocString(ambientCO2_forcing))
+$(getModelDocString(ambientCO2_forcing))
 
 ---
 

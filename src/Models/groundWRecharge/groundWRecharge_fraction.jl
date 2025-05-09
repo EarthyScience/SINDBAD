@@ -35,7 +35,7 @@ purpose(::Type{groundWRecharge_fraction}) = "GW recharge as a fraction of moistu
 
 @doc """
 
-$(getBaseDocString(groundWRecharge_fraction))
+$(getModelDocString(groundWRecharge_fraction))
 
 ---
 

@@ -42,7 +42,7 @@ purpose(::Type{plantForm_fixed}) = "use a fixed plant form with 1: tree, 2: shru
 
 @doc """ 
 
-	$(getBaseDocString(plantForm_fixed))
+	$(getModelDocString(plantForm_fixed))
 
 ---
 

@@ -70,14 +70,15 @@ export DoCatchModelErrors
 export DoNotCatchModelErrors
 export @describe, @bounds, @units, @timescale
 export @with_kw
-export getBaseDocStringForApproach
+export getModelDocStringForApproach
+export getTypeDocString
 # define dispatch structs for catching model errors
 
 
 missingApproachPurpose(x) = "$(x) is missing the definition of purpose. Add `purpose(::Type{$(nameof(x))})` = \"the_purpose\"` in `$(nameof(x)).jl` file to define the specific purpose"
 
 """
-    getBaseDocString()
+    getModelDocString()
 
 Generate a base docstring for a SINDBAD model or approach.
 
@@ -95,16 +96,16 @@ This function dynamically generates a base docstring for a SINDBAD model or appr
 - If the caller is an approach, it generates a docstring with the approach's purpose, parameters, and methods (`define`, `precompute`, `compute`, `update`), including their inputs and outputs.
 
 # Methods
-- `getBaseDocString()`: Determines the calling context using the stack trace and generates the appropriate docstring.
-- `getBaseDocString(modl_appr)`: Generates a docstring for a specific model or approach.
-- `getBaseDocStringForModel(modl)`: Generates a docstring for a SINDBAD model, including its purpose and subtypes.
-- `getBaseDocStringForApproach(appr)`: Generates a docstring for a SINDBAD approach, including its purpose, parameters, and methods.
-- `getBaseDocStringForIO(doc_string, io_list)`: Appends input/output details to the docstring for a given list of variables.
+- `getModelDocString()`: Determines the calling context using the stack trace and generates the appropriate docstring.
+- `getModelDocString(modl_appr)`: Generates a docstring for a specific model or approach.
+- `getModelDocStringForModel(modl)`: Generates a docstring for a SINDBAD model, including its purpose and subtypes.
+- `getModelDocStringForApproach(appr)`: Generates a docstring for a SINDBAD approach, including its purpose, parameters, and methods.
+- `getModelDocStringForIO(doc_string, io_list)`: Appends input/output details to the docstring for a given list of variables.
 """
-getBaseDocString
+function getModelDocString end
 
 
-function getBaseDocString()
+function getModelDocString()
     stack = stacktrace()
     
     # Extract the file and line number of the caller
@@ -113,24 +114,24 @@ function getBaseDocString()
         c_name = split(caller_info, "at ")[2]
         c_name = split(c_name, ".jl")[1]
         c_type = getproperty(Sindbad.Models, Symbol(c_name))
-        return getBaseDocString(c_type)
+        return getModelDocString(c_type)
     else
         return ("Information of the caller file is not available.")
     end
 end
 
-function getBaseDocString(modl_appr)
+function getModelDocString(modl_appr)
     doc_string = ""
     if supertype(modl_appr) == LandEcosystem
-        doc_string = getBaseDocStringForModel(modl_appr)
+        doc_string = getModelDocStringForModel(modl_appr)
     else
-        doc_string = getBaseDocStringForApproach(modl_appr)
+        doc_string = getModelDocStringForApproach(modl_appr)
     end
     return doc_string
 end
 
 
-function getBaseDocStringForApproach(appr)
+function getModelDocStringForApproach(appr)
     doc_string = "\n"
 
     doc_string *= "$(purpose(appr))\n\n"
@@ -161,20 +162,20 @@ function getBaseDocStringForApproach(appr)
             doc_string *= "\n`$(d_method)`:\n"
         end
         doc_string *= "- **Inputs**\n"
-        doc_string = getBaseDocStringForIO(doc_string, inputs)
+        doc_string = getModelDocStringForIO(doc_string, inputs)
         doc_string *= "- **Outputs**\n"
-        doc_string = getBaseDocStringForIO(doc_string, outputs)
+        doc_string = getModelDocStringForIO(doc_string, outputs)
     end
     if length(undefined_str) > 0
         doc_string *= "\n`$(undefined_str[1:end-2]) methods are not defined`\n"        
     end
     appr_name = string(nameof(appr))
-    doc_string *= "\n*End of `getBaseDocString-generated docstring` for `$(appr_name).jl`. Check the Extended help for user-defined information.*"
+    doc_string *= "\n*End of `getModelDocString-generated docstring` for `$(appr_name).jl`. Check the Extended help for user-defined information.*"
     return doc_string
 end
 
 
-function getBaseDocStringForIO(doc_string, io_list)
+function getModelDocStringForIO(doc_string, io_list)
     if length(io_list) == 0
         doc_string *= "     - None\n"
         return doc_string
@@ -195,7 +196,7 @@ function getBaseDocStringForIO(doc_string, io_list)
     return doc_string
 end
 
-function getBaseDocStringForModel(modl)
+function getModelDocStringForModel(modl)
     doc_string = "\n"
 
     doc_string *= "\t$(purpose(modl))\n\n"
@@ -210,6 +211,37 @@ function getBaseDocStringForModel(modl)
         p_s_w = p_s
         p_s_w = isnothing(p_s) ? missingApproachPurpose(subtype) : p_s
         doc_string *= " - ```$(mod_name)```: " * "$(p_s_w)\n"
+    end
+    return doc_string
+end
+
+
+"""
+    getTypeDocString(T::Type)
+
+Generate a docstring for a type in a formatted way.
+
+# Description
+This function generates a formatted docstring for a type, including its purpose and type hierarchy.
+
+# Arguments
+- `T`: The type for which the docstring is to be generated 
+
+# Returns
+- A string containing the formatted docstring for the type.
+
+"""
+function getTypeDocString(T::Type)
+    doc_string = ""
+    doc_string *= "\n# $(nameof(T))\n\n"
+    doc_string *= "$(purpose(T))\n\n"
+    doc_string *= "## Type Hierarchy\n\n"
+    doc_string *= "```$(join(nameof.(supertypes(T)), " <: "))```\n\n"
+    sub_types = subtypes(T)
+    if length(sub_types) > 0
+        doc_string *= "-----\n\n"
+        doc_string *= "# Extended Help\n\n"
+        doc_string *= "```$(methodsOf(T))```\n\n"
     end
     return doc_string
 end

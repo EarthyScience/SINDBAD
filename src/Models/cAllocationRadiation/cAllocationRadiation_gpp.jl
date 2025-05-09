@@ -20,7 +20,7 @@ purpose(::Type{cAllocationRadiation_gpp}) = "radiation effect on allocation = th
 
 @doc """
 
-$(getBaseDocString(cAllocationRadiation_gpp))
+$(getModelDocString(cAllocationRadiation_gpp))
 
 ---
 

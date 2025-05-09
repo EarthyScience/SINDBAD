@@ -17,7 +17,7 @@ purpose(::Type{interception_none}) = "sets the interception evaporation to zero"
 
 @doc """
 
-$(getBaseDocString(interception_none))
+$(getModelDocString(interception_none))
 
 ---
 

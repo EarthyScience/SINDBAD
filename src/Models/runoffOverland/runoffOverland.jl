@@ -7,6 +7,6 @@ purpose(::Type{runoffOverland}) = "calculates total overland runoff that passes 
 includeApproaches(runoffOverland, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(runoffOverland))
+	$(getModelDocString(runoffOverland))
 """
 runoffOverland

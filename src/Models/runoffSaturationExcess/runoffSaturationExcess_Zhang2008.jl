@@ -41,7 +41,7 @@ purpose(::Type{runoffSaturationExcess_Zhang2008}) = "saturation excess runoff as
 
 @doc """
 
-$(getBaseDocString(runoffSaturationExcess_Zhang2008))
+$(getModelDocString(runoffSaturationExcess_Zhang2008))
 
 ---
 

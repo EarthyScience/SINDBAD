@@ -7,6 +7,6 @@ purpose(::Type{cTauVegProperties}) = "Effect of vegetation properties on soil de
 includeApproaches(cTauVegProperties, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cTauVegProperties))
+	$(getModelDocString(cTauVegProperties))
 """
 cTauVegProperties

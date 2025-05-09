@@ -222,7 +222,7 @@ purpose(::Type{cCycleBase_GSI_PlantForm}) = "sets the basics for carbon cycle  p
 
 @doc """
 
-$(getBaseDocString(cCycleBase_GSI_PlantForm))
+$(getModelDocString(cCycleBase_GSI_PlantForm))
 
 ---
 

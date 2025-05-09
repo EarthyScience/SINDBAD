@@ -66,7 +66,7 @@ purpose(::Type{cCycle_CASA}) = "Calculate decay rates for the ecosystem C pools 
 
 @doc """
 
-$(getBaseDocString(cCycle_CASA))
+$(getModelDocString(cCycle_CASA))
 
 ---
 

@@ -7,7 +7,7 @@ purpose(::Type{rainSnow}) = "Set rain and snow to fe.rainsnow."
 includeApproaches(rainSnow, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(rainSnow))
+	$(getModelDocString(rainSnow))
 """
 rainSnow
 

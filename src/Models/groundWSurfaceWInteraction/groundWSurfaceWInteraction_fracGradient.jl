@@ -36,7 +36,7 @@ purpose(::Type{groundWSurfaceWInteraction_fracGradient}) = "calculates the moist
 
 @doc """
 
-$(getBaseDocString(groundWSurfaceWInteraction_fracGradient))
+$(getModelDocString(groundWSurfaceWInteraction_fracGradient))
 
 ---
 

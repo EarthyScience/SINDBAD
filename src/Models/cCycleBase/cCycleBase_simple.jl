@@ -66,7 +66,7 @@ purpose(::Type{cCycleBase_simple}) = "Compute carbon to nitrogen ratio & annual 
 
 @doc """
 
-$(getBaseDocString(cCycleBase_simple))
+$(getModelDocString(cCycleBase_simple))
 
 ---
 

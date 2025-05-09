@@ -39,7 +39,7 @@ purpose(::Type{evaporation_bareFraction}) = "calculates the bare soil evaporatio
 
 @doc """
 
-$(getBaseDocString(evaporation_bareFraction))
+$(getModelDocString(evaporation_bareFraction))
 
 ---
 

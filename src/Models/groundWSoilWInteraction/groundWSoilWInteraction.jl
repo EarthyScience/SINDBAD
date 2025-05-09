@@ -7,7 +7,7 @@ purpose(::Type{groundWSoilWInteraction}) = "Groundwater soil moisture interactio
 includeApproaches(groundWSoilWInteraction, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(groundWSoilWInteraction))
+	$(getModelDocString(groundWSoilWInteraction))
 """
 groundWSoilWInteraction
 

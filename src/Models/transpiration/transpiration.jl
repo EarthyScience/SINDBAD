@@ -7,6 +7,6 @@ purpose(::Type{transpiration}) = "calclulate the actual transpiration"
 includeApproaches(transpiration, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(transpiration))
+	$(getModelDocString(transpiration))
 """
 transpiration

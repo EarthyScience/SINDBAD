@@ -42,7 +42,7 @@ purpose(::Type{cAllocationSoilW_gppGSI}) = "moisture effect on allocation from s
 
 @doc """
 
-$(getBaseDocString(cAllocationSoilW_gppGSI))
+$(getModelDocString(cAllocationSoilW_gppGSI))
 
 ---
 

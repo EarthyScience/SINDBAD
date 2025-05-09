@@ -83,7 +83,7 @@ purpose(::Type{autoRespiration_Thornley2000B}) = "estimate autotrophic respirati
 
 @doc """
 
-    $(getBaseDocString(autoRespiration_Thornley2000B))   
+    $(getModelDocString(autoRespiration_Thornley2000B))   
 
 ---
 

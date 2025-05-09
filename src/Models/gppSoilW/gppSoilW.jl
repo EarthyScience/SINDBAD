@@ -7,6 +7,6 @@ purpose(::Type{gppSoilW}) = "Gpp as a function of soilW; should be set to none i
 includeApproaches(gppSoilW, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(gppSoilW))
+	$(getModelDocString(gppSoilW))
 """
 gppSoilW
