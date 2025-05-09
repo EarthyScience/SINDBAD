@@ -39,8 +39,8 @@ foreach(packages_list) do package_name
             end
         end
         write(o_file, "```@meta\nCollapsedDocStrings = false\nDocTestSetup= quote\nusing $(package_name)\nend\n```\n")
-        write(o_file, "\n```@autodocs\nModules = [$(package_name)]\nPublic = false\n```")
-        println("wrote $(doc_path)")
+        # write(o_file, "\n```@autodocs\nModules = [$(package_name)]\nPublic = false\n```")
+        println("Generation Complete:: $(doc_path)")
     end
 end
 
