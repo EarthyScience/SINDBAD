@@ -69,7 +69,7 @@ info = out_sensitivity.info;
 parameter_names=String.(out_sensitivity.parameter_table.name);
 
 sa_method = nameof(typeof(info.optimization.sensitivity_analysis.method))
-if sa_method in (:GlobalSensitivitySobol, :GlobalSensitivitySobolDM)
+if sa_method in (:GSASobol, :GSASobolDM)
     sobol_result = out_sensitivity.sensitivity;
     xt=1:length(parameter_names)
     pb = bar(xt, sobol_result.ST[:, :], label="Total",
@@ -82,7 +82,7 @@ if sa_method in (:GlobalSensitivitySobol, :GlobalSensitivitySobolDM)
     savefig(joinpath(info.output.dirs.figure, "GSA_$(sa_method)_S2_$(domain)_$(length(out_sensitivity.cost_vector))-cost_evals.png"))    
 end
 
-if sa_method in (:GlobalSensitivityMorris, )
+if sa_method in (:GSAMorris, )
     morris_result = out_sensitivity.sensitivity;
     xt=1:length(parameter_names)
     ps=scatter(morris_result.means[1, :], morris_result.variances[1, :], series_annotations = parameter_names, color = :gray, size=(2000, 1000))

@@ -146,22 +146,6 @@ module Sindbad
    $(methodsOf(LandEcosystem))
    """
    LandEcosystem
-
-   ds_file = joinpath(@__DIR__, "SindbadTypes/docStringForTypes.jl")
-    loc_types = getSindbadDefinitions(Main, Type)
-    open(ds_file, "w") do o_file
-        for T in loc_types
-            @show T
-            @show Base_docs_doc(AllForwardModels)
-            @show Base_docs_doc(T)
-            if startswith(string(Base_docs_doc(T)), "No documentation found for public symbol")
-                @info "Generating missing docstring for $T"
-                # write(o_file, "export ")
-                write(o_file, "@doc \"\"\"\n$(getTypeDocString(T))\n\"\"\"\n")
-                write(o_file, "$(T)\n\n")
-            end
-        end
-    end
-    include(ds_file)
-
+   
+   include(joinpath(@__DIR__, "SindbadTypes/docStringForTypes.jl"))
 end

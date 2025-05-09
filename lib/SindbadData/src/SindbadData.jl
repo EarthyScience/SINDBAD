@@ -55,21 +55,21 @@ cleaned_data = cleanData(raw_data, mask)
 ```
 """
 module SindbadData
-    using Reexport: @reexport
-    using Sindbad
-    using SindbadUtils
-    using AxisKeys: KeyedArray, AxisKeys
-    using FillArrays
-    using DimensionalData
-    using NCDatasets
-    @reexport using NetCDF
-    @reexport using YAXArrays
-    @reexport using Zarr
-    using YAXArrayBase
+   using Reexport: @reexport
+   using Sindbad
+   using SindbadUtils
+   using AxisKeys: KeyedArray, AxisKeys
+   using FillArrays
+   using DimensionalData
+   using NCDatasets
+   @reexport using NetCDF
+   @reexport using YAXArrays
+   @reexport using Zarr
+   using YAXArrayBase
 
-    include("utilsData.jl")
-    include("spatialSubset.jl")
-    include("getForcing.jl")
-    include("getObservation.jl")
-    
+   include("utilsData.jl")
+   include("spatialSubset.jl")
+   include("getForcing.jl")
+   include("getObservation.jl")
+   
 end # module SindbadData

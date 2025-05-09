@@ -6,14 +6,14 @@ export updateModelParameters
 export updateModels
 
 """
-    backScaleParameters(parameter_vector_scaled, parameter_table, <:SindbadParameterScaling)
+    backScaleParameters(parameter_vector_scaled, parameter_table, <: ParameterScaling)
 
 Reverts scaling of parameters using a specified scaling strategy.
 
 # Arguments
 - `parameter_vector_scaled`: Vector of scaled parameters to be converted back to original scale
 - `parameter_table`: Table containing parameter information and scaling factors
-- `SindbadParameterScaling`: Type indicating the scaling strategy to be used
+- `ParameterScaling`: Type indicating the scaling strategy to be used
     - `::ScaleDefault`: Type indicating scaling by initial parameter values
     - `::ScaleBounds`: Type indicating scaling by parameter bounds
     - `::ScaleNone`: Type indicating no scaling should be applied (parameters remain unchanged)
@@ -95,7 +95,7 @@ end
 
 
 """
-    checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
+    checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::ParameterScaling; show_info=false, model_names=nothing)
 
 Check and display the parameter bounds information for given parameters.
 
@@ -104,14 +104,14 @@ Check and display the parameter bounds information for given parameters.
 - `parameter_values`: Default values of the parameters. Vector of Numbers.
 - `lower_bounds`: Lower bounds for the parameters. Vector of Numbers.
 - `upper_bounds`: Upper bounds for the parameters. Vector of Numbers.
-- `_sc::SindbadParameterScaling`: Scaling Type for the parameters
+- `_sc::ParameterScaling`: Scaling Type for the parameters
 - `show_info`: a flag to display model parameters and their bounds. Boolean.
 - `model_names`: Names or identifier of the approaches where the parameters are defined.
 
 # Returns
 Displays a formatted output of parameter bounds information or returns an error when they are violated
 """
-function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::SindbadParameterScaling; show_info=false, model_names=nothing)
+function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::ParameterScaling; show_info=false, model_names=nothing)
     if show_info
         @info "  Checking Parameter Bounds: $(nameof(typeof(_sc))) scaling"
     end
@@ -133,13 +133,13 @@ end
 
 
 """
-    scaleParameters(parameter_table, <:SindbadParameterScaling)
+    scaleParameters(parameter_table, <: ParameterScaling)
 
 Scale parameters from the input table using default scaling factors.
 
 # Arguments
 - `parameter_table`: Table containing parameters to be scaled
-- `SindbadParameterScaling`: Type indicating the scaling strategy to be used
+- `ParameterScaling`: Type indicating the scaling strategy to be used
     - `::ScaleDefault`: Type indicating scaling by default values
     - `::ScaleBounds`: Type parameter indicating scaling by parameter bounds 
     - `::ScaleNone`: Type parameter indicating no scaling should be applied

@@ -34,7 +34,7 @@ function getSpatialSubset(ss, v)
 end
 
 """
-    spatialSubset(v, ss_range, <:SindbadSpatialSubsetter)
+    spatialSubset(v, ss_range, <: SpatialSubsetter)
 
 Extracts a spatial subset of the input data `v` based on the specified range and spatial dimension.
 
@@ -45,7 +45,7 @@ Extracts a spatial subset of the input data `v` based on the specified range and
 # Returns:
 - A subset of the input data `v` corresponding to the specified spatial range and dimension.
 
-$(methodsOf(SindbadSpatialSubsetter))
+$(methodsOf(SpatialSubsetter))
 
 ---
 

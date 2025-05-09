@@ -278,9 +278,9 @@ SindbadSpatialSubsetType
 
 ----
 
-### SindbadTimeAggregator
+### TimeAggregation
 ```@docs
-SindbadTimeAggregator
+TimeAggregation
 ```
 
 ----

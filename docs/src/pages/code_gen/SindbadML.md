@@ -215,9 +215,9 @@ PolyesterForwardDiffGrad
 
 ----
 
-### SindbadMLGradType
+### GradType
 ```@docs
-SindbadMLGradType
+GradType
 ```
 
 ----

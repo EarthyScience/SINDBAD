@@ -63,14 +63,14 @@ function getForcingForTimeStep(forcing, loc_forcing_t, ts, ::Val{forc_with_type}
 end
 
 """
-    getForcingV(v, ts, <:SindbadForcingType)
+    getForcingV(v, ts, <: ForcingTime)
 
 Retrieves forcing values for a specific time step or returns constant forcing values, depending on the forcing type.
 
 # Arguments:
 - `v`: The input forcing data. Can be time-dependent or constant.
 - `ts`: The time step (integer) for which the forcing value is retrieved. Ignored for constant forcing types.
-- `<:SindbadForcingType`: The type of forcing, which determines how the value is retrieved:
+- `<: ForcingTime`: The type of forcing, which determines how the value is retrieved:
     - `ForcingWithTime`: Retrieves the forcing value for the specified time step `ts`.
     - `ForcingWithoutTime`: Returns the constant forcing value, ignoring `ts`.
 

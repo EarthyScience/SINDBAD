@@ -70,8 +70,7 @@ export DoCatchModelErrors
 export DoNotCatchModelErrors
 export @describe, @bounds, @units, @timescale
 export @with_kw
-export getModelDocStringForApproach
-export getTypeDocString
+export getApproachDocString
 # define dispatch structs for catching model errors
 
 
@@ -99,7 +98,7 @@ This function dynamically generates a base docstring for a SINDBAD model or appr
 - `getModelDocString()`: Determines the calling context using the stack trace and generates the appropriate docstring.
 - `getModelDocString(modl_appr)`: Generates a docstring for a specific model or approach.
 - `getModelDocStringForModel(modl)`: Generates a docstring for a SINDBAD model, including its purpose and subtypes.
-- `getModelDocStringForApproach(appr)`: Generates a docstring for a SINDBAD approach, including its purpose, parameters, and methods.
+- `getApproachDocString(appr)`: Generates a docstring for a SINDBAD approach, including its purpose, parameters, and methods.
 - `getModelDocStringForIO(doc_string, io_list)`: Appends input/output details to the docstring for a given list of variables.
 """
 function getModelDocString end
@@ -125,13 +124,13 @@ function getModelDocString(modl_appr)
     if supertype(modl_appr) == LandEcosystem
         doc_string = getModelDocStringForModel(modl_appr)
     else
-        doc_string = getModelDocStringForApproach(modl_appr)
+        doc_string = getApproachDocString(modl_appr)
     end
     return doc_string
 end
 
 
-function getModelDocStringForApproach(appr)
+function getApproachDocString(appr)
     doc_string = "\n"
 
     doc_string *= "$(purpose(appr))\n\n"
@@ -215,36 +214,6 @@ function getModelDocStringForModel(modl)
     return doc_string
 end
 
-
-"""
-    getTypeDocString(T::Type)
-
-Generate a docstring for a type in a formatted way.
-
-# Description
-This function generates a formatted docstring for a type, including its purpose and type hierarchy.
-
-# Arguments
-- `T`: The type for which the docstring is to be generated 
-
-# Returns
-- A string containing the formatted docstring for the type.
-
-"""
-function getTypeDocString(T::Type)
-    doc_string = ""
-    doc_string *= "\n# $(nameof(T))\n\n"
-    doc_string *= "$(purpose(T))\n\n"
-    doc_string *= "## Type Hierarchy\n\n"
-    doc_string *= "```$(join(nameof.(supertypes(T)), " <: "))```\n\n"
-    sub_types = subtypes(T)
-    if length(sub_types) > 0
-        doc_string *= "-----\n\n"
-        doc_string *= "# Extended Help\n\n"
-        doc_string *= "```$(methodsOf(T))```\n\n"
-    end
-    return doc_string
-end
 
 """
     includeApproaches(modl, dir)

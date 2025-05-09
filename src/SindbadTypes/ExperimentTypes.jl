@@ -1,10 +1,10 @@
 
-export SindbadExperimentType
-abstract type SindbadExperimentType <: SindbadType end
-purpose(::Type{SindbadExperimentType}) = "Abstract type for model run flags and experimental setup and simulations in SINDBAD"
+export ExperimentType
+abstract type ExperimentType <: SindbadType end
+purpose(::Type{ExperimentType}) = "Abstract type for model run flags and experimental setup and simulations in SINDBAD"
 
 # ------------------------- running flags -------------------------
-export SindbadRunMethod
+export RunFlag
 export DoCalcCost
 export DoNotCalcCost
 export DoDebugModel
@@ -27,103 +27,103 @@ export DoStoreSpinup
 export DoNotStoreSpinup
 
 
-abstract type SindbadRunFlag <: SindbadExperimentType end
-purpose(::Type{SindbadRunFlag}) = "Abstract type for model run configuration flags in SINDBAD"
+abstract type RunFlag <: ExperimentType end
+purpose(::Type{RunFlag}) = "Abstract type for model run configuration flags in SINDBAD"
 
-struct DoCalcCost <:SindbadRunFlag end
+struct DoCalcCost <: RunFlag end
 purpose(::Type{DoCalcCost}) = "Enable cost calculation between model output and observations"
 
-struct DoNotCalcCost <:SindbadRunFlag end
+struct DoNotCalcCost <: RunFlag end
 purpose(::Type{DoNotCalcCost}) = "Disable cost calculation between model output and observations"
 
-struct DoDebugModel <:SindbadRunFlag end
+struct DoDebugModel <: RunFlag end
 purpose(::Type{DoDebugModel}) = "Enable model debugging mode"
 
-struct DoNotDebugModel <:SindbadRunFlag end
+struct DoNotDebugModel <: RunFlag end
 purpose(::Type{DoNotDebugModel}) = "Disable model debugging mode"
 
-struct DoFilterNanPixels <:SindbadRunFlag end
+struct DoFilterNanPixels <: RunFlag end
 purpose(::Type{DoFilterNanPixels}) = "Enable filtering of NaN values in spatial data"
 
-struct DoNotFilterNanPixels <:SindbadRunFlag end
+struct DoNotFilterNanPixels <: RunFlag end
 purpose(::Type{DoNotFilterNanPixels}) = "Disable filtering of NaN values in spatial data"
 
-struct DoInlineUpdate <:SindbadRunFlag end
+struct DoInlineUpdate <: RunFlag end
 purpose(::Type{DoInlineUpdate}) = "Enable inline updates of model state"
 
-struct DoNotInlineUpdate <:SindbadRunFlag end
+struct DoNotInlineUpdate <: RunFlag end
 purpose(::Type{DoNotInlineUpdate}) = "Disable inline updates of model state"
 
-struct DoRunForward <:SindbadRunFlag end
+struct DoRunForward <: RunFlag end
 purpose(::Type{DoRunForward}) = "Enable forward model run"
 
-struct DoNotRunForward <:SindbadRunFlag end
+struct DoNotRunForward <: RunFlag end
 purpose(::Type{DoNotRunForward}) = "Disable forward model run"
 
-struct DoRunOptimization <:SindbadRunFlag end
+struct DoRunOptimization <: RunFlag end
 purpose(::Type{DoRunOptimization}) = "Enable model parameter optimization"
 
-struct DoNotRunOptimization <:SindbadRunFlag end
+struct DoNotRunOptimization <: RunFlag end
 purpose(::Type{DoNotRunOptimization}) = "Disable model parameter optimization"
 
-struct DoSaveInfo <:SindbadRunFlag end
+struct DoSaveInfo <: RunFlag end
 purpose(::Type{DoSaveInfo}) = "Enable saving of model information"
 
-struct DoNotSaveInfo <:SindbadRunFlag end
+struct DoNotSaveInfo <: RunFlag end
 purpose(::Type{DoNotSaveInfo}) = "Disable saving of model information"
 
-struct DoSpinupTEM <:SindbadRunFlag end
+struct DoSpinupTEM <: RunFlag end
 purpose(::Type{DoSpinupTEM}) = "Enable terrestrial ecosystem model spinup"
 
-struct DoNotSpinupTEM <:SindbadRunFlag end
+struct DoNotSpinupTEM <: RunFlag end
 purpose(::Type{DoNotSpinupTEM}) = "Disable terrestrial ecosystem model spinup"
 
-struct DoStoreSpinup <:SindbadRunFlag end
+struct DoStoreSpinup <: RunFlag end
 purpose(::Type{DoStoreSpinup}) = "Enable storing of spinup results"
 
-struct DoNotStoreSpinup <:SindbadRunFlag end
+struct DoNotStoreSpinup <: RunFlag end
 purpose(::Type{DoNotStoreSpinup}) = "Disable storing of spinup results"
 
-struct DoUseForwardDiff <:SindbadRunFlag end
+struct DoUseForwardDiff <: RunFlag end
 purpose(::Type{DoUseForwardDiff}) = "Enable forward mode automatic differentiation"
 
-struct DoNotUseForwardDiff <:SindbadRunFlag end
+struct DoNotUseForwardDiff <: RunFlag end
 purpose(::Type{DoNotUseForwardDiff}) = "Disable forward mode automatic differentiation"
 
 # ------------------------- parallelization options-------------------------
-export SindbadParallelizationPackage
-export UseQbmapParallelization
-export UseThreadsParallelization
+export ParallelizationPackage
+export QbmapParallelization
+export ThreadsParallelization
 
 
-abstract type SindbadParallelizationPackage <: SindbadExperimentType end
+abstract type ParallelizationPackage <: ExperimentType end
 
-purpose(::Type{SindbadParallelizationPackage}) = "Abstract type for using different parallelization packages in SINDBAD"
+purpose(::Type{ParallelizationPackage}) = "Abstract type for using different parallelization packages in SINDBAD"
 
-struct UseQbmapParallelization <:SindbadParallelizationPackage end
-purpose(::Type{UseQbmapParallelization}) = "Use Qbmap for parallelization"
+struct QbmapParallelization <: ParallelizationPackage end
+purpose(::Type{QbmapParallelization}) = "Use Qbmap for parallelization"
 
-struct UseThreadsParallelization <:SindbadParallelizationPackage end
-purpose(::Type{UseThreadsParallelization}) = "Use Julia threads for parallelization"
+struct ThreadsParallelization <: ParallelizationPackage end
+purpose(::Type{ThreadsParallelization}) = "Use Julia threads for parallelization"
 
 # ------------------------- model output options-------------------------
-export SindbadOutputStrategyType
+export OutputStrategy
 export DoOutputAll
 export DoNotOutputAll
 export DoSaveSingleFile
 export DoNotSaveSingleFile
 
-abstract type SindbadOutputStrategyType <: SindbadExperimentType end
-purpose(::Type{SindbadOutputStrategyType}) = "Abstract type for model output strategies in SINDBAD"
+abstract type OutputStrategy <: ExperimentType end
+purpose(::Type{OutputStrategy}) = "Abstract type for model output strategies in SINDBAD"
 
-struct DoOutputAll <:SindbadOutputStrategyType end
+struct DoOutputAll <: OutputStrategy end
 purpose(::Type{DoOutputAll}) = "Enable output of all model variables"
 
-struct DoNotOutputAll <:SindbadOutputStrategyType end
+struct DoNotOutputAll <: OutputStrategy end
 purpose(::Type{DoNotOutputAll}) = "Disable output of all model variables"
 
-struct DoSaveSingleFile <:SindbadOutputStrategyType end
+struct DoSaveSingleFile <: OutputStrategy end
 purpose(::Type{DoSaveSingleFile}) = "Save all output variables in a single file"
 
-struct DoNotSaveSingleFile <:SindbadOutputStrategyType end
+struct DoNotSaveSingleFile <: OutputStrategy end
 purpose(::Type{DoNotSaveSingleFile}) = "Save output variables in separate files"

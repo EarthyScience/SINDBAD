@@ -81,7 +81,7 @@ Using a JSON file for `algorithm_optimization` allows for:
 To list all available optimization methods and their purposes, use:
 ```julia
 using SindbadUtils
-showMethodsOf(SindbadOptimizationMethod)
+showMethodsOf(OptimizationMethod)
 ```
 This will display a formatted list of all optimization methods and their descriptions.
 
@@ -97,11 +97,11 @@ opts = sindbadDefaultOptions(CMAEvolutionStrategyCMAES())
 # Returns: (maxfevals = 50,)
 
 # Get default options for Morris method
-opts = sindbadDefaultOptions(GlobalSensitivityMorris())
+opts = sindbadDefaultOptions(GSAMorris())
 # Returns: (total_num_trajectory = 200, num_trajectory = 15, len_design_mat = 10)
 
 # Get default options for Sobol method
-opts = sindbadDefaultOptions(GlobalSensitivitySobol())
+opts = sindbadDefaultOptions(GSASobol())
 # Returns: (samples = 5, method_options = (order = [0, 1],), sampler = "Sobol", sampler_options = ())
 ```
 
@@ -140,13 +140,13 @@ Current methods include:
 
 ### 1. Define the New Optimization Method Type
 
-In `runtimeDispatchTypes.jl`, add a new struct that subtypes `SindbadOptimizationMethod`:
+In `runtimeDispatchTypes.jl`, add a new struct that subtypes `OptimizationMethod`:
 
 ```julia
 import SindbadUtils: purpose
 
 # Define the new optimization type
-struct YourNewOptimizationMethod <: SindbadOptimizationMethod end
+struct YourNewOptimizationMethod <: OptimizationMethod end
 
 # Define its purpose
 purpose(::Type{YourNewOptimizationMethod}) = "Description of what YourNewOptimizationMethod does"

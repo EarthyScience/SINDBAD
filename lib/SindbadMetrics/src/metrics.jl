@@ -2,7 +2,7 @@ export metric
 
 @doc """
 
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, <:SindbadMetric)
+    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, <: PerfMetric)
 
 calculate the performance/loss metric for given observation and model simulation data stream
 
@@ -14,7 +14,7 @@ calculate the performance/loss metric for given observation and model simulation
 # Returns:
 - `metric`: The calculated metric value
 
-$(methodsOf(SindbadMetric))
+$(methodsOf(PerfMetric))
 """
 metric
 

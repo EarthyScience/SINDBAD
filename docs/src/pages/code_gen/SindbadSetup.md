@@ -495,72 +495,72 @@ EvolutionaryCMAES
 
 ----
 
-### GlobalSensitivityMorris
+### GSAMorris
 ```@docs
-GlobalSensitivityMorris
+GSAMorris
 ```
 
 ----
 
-### GlobalSensitivitySobol
+### GSASobol
 ```@docs
-GlobalSensitivitySobol
+GSASobol
 ```
 
 ----
 
-### GlobalSensitivitySobolDM
+### GSASobolDM
 ```@docs
-GlobalSensitivitySobolDM
+GSASobolDM
 ```
 
 ----
 
-### LandOutArray
+### PreAllocArray
 ```@docs
-LandOutArray
+PreAllocArray
 ```
 
 ----
 
-### LandOutArrayAll
+### PreAllocArrayAll
 ```@docs
-LandOutArrayAll
+PreAllocArrayAll
 ```
 
 ----
 
-### LandOutArrayFD
+### PreAllocArrayFD
 ```@docs
-LandOutArrayFD
+PreAllocArrayFD
 ```
 
 ----
 
-### LandOutArrayMT
+### PreAllocArrayMT
 ```@docs
-LandOutArrayMT
+PreAllocArrayMT
 ```
 
 ----
 
-### LandOutStacked
+### PreAllocStacked
 ```@docs
-LandOutStacked
+PreAllocStacked
 ```
 
 ----
 
-### LandOutTimeseries
+### PreAllocTimeseries
 ```@docs
-LandOutTimeseries
+PreAllocTimeseries
 ```
 
 ----
 
-### LandOutYAXArray
+### PreAllocYAXArray
 ```@docs
-LandOutYAXArray
+PreAllocYAXArray
 ```
 
 ----
@@ -761,51 +761,51 @@ SelSpinupModels
 
 ----
 
-### SindbadCostMethod
+### CostMethod
 ```@docs
-SindbadCostMethod
+CostMethod
 ```
 
 ----
 
-### SindbadGlobalSensitivityMethod
+### GSAMethod
 ```@docs
-SindbadGlobalSensitivityMethod
+GSAMethod
 ```
 
 ----
 
-### SindbadLandOutType
+### PreAlloc
 ```@docs
-SindbadLandOutType
+PreAlloc
 ```
 
 ----
 
-### SindbadModelArrayType
+### ModelArrayType
 ```@docs
-SindbadModelArrayType
+ModelArrayType
 ```
 
 ----
 
-### SindbadOptimizationMethod
+### OptimizationMethod
 ```@docs
-SindbadOptimizationMethod
+OptimizationMethod
 ```
 
 ----
 
-### SindbadOutputArrayType
+### OutputArrayType
 ```@docs
-SindbadOutputArrayType
+OutputArrayType
 ```
 
 ----
 
-### SindbadOutputStrategyType
+### OutputStrategy
 ```@docs
-SindbadOutputStrategyType
+OutputStrategy
 ```
 
 ----
@@ -845,16 +845,16 @@ SpinSequenceWithAggregator
 
 ----
 
-### UseQbmapParallelization
+### QbmapParallelization
 ```@docs
-UseQbmapParallelization
+QbmapParallelization
 ```
 
 ----
 
-### UseThreadsParallelization
+### ThreadsParallelization
 ```@docs
-UseThreadsParallelization
+ThreadsParallelization
 ```
 
 ----

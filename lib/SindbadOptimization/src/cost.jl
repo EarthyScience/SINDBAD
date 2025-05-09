@@ -3,7 +3,7 @@ export costLand
 
 
 """
-    cost(parameter_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, parameter_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_method<:SindbadCostMethod)
+    cost(parameter_vector, default_values, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, parameter_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_method<: CostMethod)
 
 Calculate the cost for a parameter vector.
 
@@ -23,13 +23,13 @@ Calculate the cost for a parameter vector.
 - `cost_options`: Options for cost function calculation
 - `multi_constraint_method`: Method for handling multiple constraints
 - `parameter_scaling_type`: Type of parameter scaling
--  `sindbad_cost_method <:SindbadCostMethod`: a type parameter indicating cost calculation method
+-  `sindbad_cost_method <: CostMethod`: a type parameter indicating cost calculation method
 
 # Returns
 Cost value representing the difference between model outputs and observations
 
 # sindbad\\_cost\\_method:
-$(methodsOf(SindbadCostMethod))
+$(methodsOf(CostMethod))
 
 """
 cost

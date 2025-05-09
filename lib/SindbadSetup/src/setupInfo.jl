@@ -241,8 +241,8 @@ function setModelRunInfo(info::NamedTuple)
     run_info = setTupleField(run_info, (:input_array_type, info.settings.experiment.exe_rules.input_array_type))
 
     parallelization = titlecase(info.settings.experiment.exe_rules.parallelization)
-    run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol("Use"*parallelization*"Parallelization"))()))
-    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "LandOut"))()
+    run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol(parallelization*"Parallelization"))()))
+    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "PreAlloc"))()
     run_info = setTupleField(run_info, (:land_output_type, land_output_type))
     info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., run=run_info)))
     return info

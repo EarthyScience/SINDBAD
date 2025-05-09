@@ -327,37 +327,37 @@ ScorInv
 
 ----
 
-### SindbadDataAggrOrder
+### DataAggrOrder
 ```@docs
-SindbadDataAggrOrder
+DataAggrOrder
 ```
 
 ----
 
-### SindbadMetric
+### PerfMetric
 ```@docs
-SindbadMetric
+PerfMetric
 ```
 
 ----
 
-### SindbadParameterScaling
+### ParameterScaling
 ```@docs
-SindbadParameterScaling
+ParameterScaling
 ```
 
 ----
 
-### SindbadSpatialDataAggr
+### SpatialDataAggr
 ```@docs
-SindbadSpatialDataAggr
+SpatialDataAggr
 ```
 
 ----
 
-### SindbadSpatialMetricAggr
+### SpatialMetricAggr
 ```@docs
-SindbadSpatialMetricAggr
+SpatialMetricAggr
 ```
 
 ----

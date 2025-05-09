@@ -54,24 +54,22 @@ mean_value = mean(data_with_nans, skipmissing=true)
 ```
 """
 module SindbadUtils
-    using Crayons
-    using StyledStrings
-    using DataStructures
-    using Dates
-    using FIGlet
-    using Logging
-    using Reexport: @reexport
-    @reexport using Accessors: @set
-    @reexport using NaNStatistics
-    using StaticArraysCore
-    @reexport using StatsBase: mean, rle, sample, sum
-    using Sindbad
-    using Base.Docs: doc as Base_docs_doc
-    # @reexport import Sindbad: subtypes, methodsOf, showMethodsOf
+   using Crayons
+   using StyledStrings
+   using DataStructures
+   using Dates
+   using FIGlet
+   using Logging
+   using Reexport: @reexport
+   @reexport using Accessors: @set
+   @reexport using NaNStatistics
+   using StaticArraysCore
+   @reexport using StatsBase: mean, rle, sample, sum
+   using Sindbad
 
-    include("getArrayView.jl")
-    include("utils.jl")
-    include("utilsNT.jl")
-    include("utilsTemporal.jl")
-        
+   include("getArrayView.jl")
+   include("utils.jl")
+   include("utilsNT.jl")
+   include("utilsTemporal.jl")
+   
 end # module SindbadUtils

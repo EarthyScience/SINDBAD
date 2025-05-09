@@ -132,13 +132,13 @@ function getDimPermutation(datDims, permDims)
 end
 
 """
-    getInputArrayOfType(input_data, <:SindbadInputDataType)
+    getInputArrayOfType(input_data, <: SindbadInputDataType)
 
 Converts the provided input data into a specific input array type.
 
 # Arguments
 - `input_data`: The data to be converted into an input array
-- <:SindbadInputDataType: The specific input array type to convert the data into
+- <: SindbadInputDataType: The specific input array type to convert the data into
     - `::InputArray`: Specifies the input array type as a simple array
     - `::InputKeyedArray`: Specifies the input array type as a keyed array
     - `::InputNamedDimsArray`: Specifies the input array type as a named dims array
@@ -246,7 +246,7 @@ function getTargetDimensionOrder(info)
 end
 
 """
-    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, <:SindbadInputBackend)
+    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, <: DataFormatBackend)
 
 Retrieve the data from a specified source.
 
@@ -256,7 +256,7 @@ Retrieve the data from a specified source.
 - `data_path_v`: The path to the variable within the NetCDF file.
 - `source_variable`: The name of the source variable to extract data for.
 - `info`: Additional information or metadata required for processing.
-- `<:SindbadInputBackend`: Specifies the SINDBAD backend being used.
+- `<: DataFormatBackend`: Specifies the SINDBAD backend being used.
     - `::BackendNetcdf`: Specifies that the function operates on a NetCDF backend.
     - `::BackendZarr`: Specifies that the backend being used is Zarr.
 

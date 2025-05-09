@@ -4,7 +4,7 @@ export prepOpti
 export prepParameters
 
 """
-    getCostVectorSize(algo_options, parameter_vector, ::SindbadOptimizationMethod || SindbadGlobalSensitivityMethod)
+    getCostVectorSize(algo_options, parameter_vector, ::OptimizationMethod || GSAMethod)
 
 Calculates the size of the cost vector required for a specific optimization or sensitivity analysis method.
 
@@ -13,18 +13,18 @@ Calculates the size of the cost vector required for a specific optimization or s
 - `parameter_vector`: A vector of parameters used in the optimization or sensitivity analysis.
 - `::OptimizationMethod`: The optimization or sensitivity analysis method. Supported methods include:
     - `CMAEvolutionStrategyCMAES`: Covariance Matrix Adaptation Evolution Strategy.
-    - `GlobalSensitivityMorris`: Morris method for global sensitivity analysis.
-    - `GlobalSensitivitySobol`: Sobol method for global sensitivity analysis.
-    - `GlobalSensitivitySobolDM`: Sobol method with Design Matrices.
+    - `GSAMorris`: Morris method for global sensitivity analysis.
+    - `GSASobol`: Sobol method for global sensitivity analysis.
+    - `GSASobolDM`: Sobol method with Design Matrices.
 
 # Returns:
 - An integer representing the size of the cost vector required for the specified method.
 
 # Notes:
 - For `CMAEvolutionStrategyCMAES`, the size is determined by the population size or a default formula based on the parameter vector length.
-- For `GlobalSensitivityMorris`, the size is calculated as the product of the number of trajectories and the length of the design matrix.
-- For `GlobalSensitivitySobol`, the size is determined by the number of parameters and the number of samples.
-- For `GlobalSensitivitySobolDM`, the size is equivalent to that of `GlobalSensitivitySobol`.
+- For `GSAMorris`, the size is calculated as the product of the number of trajectories and the length of the design matrix.
+- For `GSASobol`, the size is determined by the number of parameters and the number of samples.
+- For `GSASobolDM`, the size is equivalent to that of `GSASobol`.
 """
 getCostVectorSize
 
@@ -42,8 +42,8 @@ function getCostVectorSize(algo_options, parameter_vector, ::CMAEvolutionStrateg
     return cost_vector_size
 end
 
-function getCostVectorSize(algo_options, __precompile__, ::GlobalSensitivityMorris)
-    default_opt = sindbadDefaultOptions(GlobalSensitivityMorris())
+function getCostVectorSize(algo_options, __precompile__, ::GSAMorris)
+    default_opt = sindbadDefaultOptions(GSAMorris())
     num_trajectory = default_opt.num_trajectory
     len_design_mat = default_opt.len_design_mat
     if hasproperty(algo_options, :num_trajectory)
@@ -57,8 +57,8 @@ function getCostVectorSize(algo_options, __precompile__, ::GlobalSensitivityMorr
 end
 
 
-function getCostVectorSize(algo_options, parameter_vector, ::GlobalSensitivitySobol)
-    default_opt = sindbadDefaultOptions(GlobalSensitivitySobol())
+function getCostVectorSize(algo_options, parameter_vector, ::GSASobol)
+    default_opt = sindbadDefaultOptions(GSASobol())
     samples = default_opt.samples
     nparam = length(parameter_vector)
     norder = length(algo_options.method_options.order) - 1
@@ -70,25 +70,25 @@ function getCostVectorSize(algo_options, parameter_vector, ::GlobalSensitivitySo
 end
 
 
-function getCostVectorSize(algo_options, parameter_vector, ::GlobalSensitivitySobolDM)
-    return getCostVectorSize(algo_options, parameter_vector, GlobalSensitivitySobol())
+function getCostVectorSize(algo_options, parameter_vector, ::GSASobolDM)
+    return getCostVectorSize(algo_options, parameter_vector, GSASobol())
 end
 
 """
-    prepCostOptions(observations, cost_options, ::SindbadCostMethod)
+    prepCostOptions(observations, cost_options, ::CostMethod)
 
 Prepares cost options for optimization by filtering variables with insufficient data points and setting up the required configurations.
 
 # Arguments:
 - `observations`: A NamedTuple or a vector of arrays containing observation data, uncertainties, and masks used for calculating performance metrics or loss.
 - `cost_options`: A table listing each observation constraint and its configuration for calculating the loss or performance metric.
-- `::SindbadCostMethod`: A type indicating the cost function method. 
+- `::CostMethod`: A type indicating the cost function method. 
 
 # Returns:
 - A filtered table of `cost_options` containing only valid variables with sufficient data points.
 
 # cost methods:
-$(methodsOf(SindbadCostMethod))
+$(methodsOf(CostMethod))
 
 ---
 # Extended help
@@ -164,7 +164,7 @@ Prepares optimization parameters, settings, and helper functions based on the pr
 
 
 # cost_method:
-$(methodsOf(SindbadCostMethod))
+$(methodsOf(CostMethod))
 
 ---
 

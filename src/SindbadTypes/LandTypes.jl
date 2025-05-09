@@ -1,48 +1,48 @@
 
-export SindbadLandType
-abstract type SindbadLandType end
-purpose(::Type{SindbadLandType}) = "Abstract type for land related types that are typically used in preparing objects for model runs in SINDBAD"
+export LandType
+abstract type LandType <: SindbadType end
+purpose(::Type{LandType}) = "Abstract type for land related types that are typically used in preparing objects for model runs in SINDBAD"
 
 # ------------------------- land related helper types ------------------------------------------------------------
-export SindbadLandOutType
-export LandOutArray
-export LandOutArrayAll
-export LandOutArrayFD
-export LandOutArrayMT
-export LandOutStacked
-export LandOutTimeseries
-export LandOutYAXArray
+export PreAlloc
+export PreAllocArray
+export PreAllocArrayAll
+export PreAllocArrayFD
+export PreAllocArrayMT
+export PreAllocStacked
+export PreAllocTimeseries
+export PreAllocYAXArray
 
-abstract type SindbadLandOutType <: SindbadLandType end
-purpose(::Type{SindbadLandOutType}) = "Abstract type for preallocated land helpers types in prepTEM of SINDBAD"
+abstract type PreAlloc <: LandType end
+purpose(::Type{PreAlloc}) = "Abstract type for preallocated land helpers types in prepTEM of SINDBAD"
 
-struct LandOutArray <: SindbadLandOutType end
-purpose(::Type{LandOutArray}) = "use a preallocated array for model output"
+struct PreAllocArray <: PreAlloc end
+purpose(::Type{PreAllocArray}) = "use a preallocated array for model output"
 
-struct LandOutArrayAll <: SindbadLandOutType end
-purpose(::Type{LandOutArrayAll}) = "use a preallocated array to output all land variables"
+struct PreAllocArrayAll <: PreAlloc end
+purpose(::Type{PreAllocArrayAll}) = "use a preallocated array to output all land variables"
 
-struct LandOutArrayFD <: SindbadLandOutType end
-purpose(::Type{LandOutArrayFD}) = "use a preallocated array for finite difference (FD) hybrid experiments"
+struct PreAllocArrayFD <: PreAlloc end
+purpose(::Type{PreAllocArrayFD}) = "use a preallocated array for finite difference (FD) hybrid experiments"
 
-struct LandOutArrayMT <: SindbadLandOutType end
-purpose(::Type{LandOutArrayMT}) = "use arrays of nThreads size for land model output for replicates of multiple threads"
+struct PreAllocArrayMT <: PreAlloc end
+purpose(::Type{PreAllocArrayMT}) = "use arrays of nThreads size for land model output for replicates of multiple threads"
 
-struct LandOutStacked <: SindbadLandOutType end
-purpose(::Type{LandOutStacked}) = "save output as a stacked vector of land using map over temporal dimension"
+struct PreAllocStacked <: PreAlloc end
+purpose(::Type{PreAllocStacked}) = "save output as a stacked vector of land using map over temporal dimension"
 
-struct LandOutTimeseries <: SindbadLandOutType end
-purpose(::Type{LandOutTimeseries}) = "save land output as a preallocated vector for time series of land"
+struct PreAllocTimeseries <: PreAlloc end
+purpose(::Type{PreAllocTimeseries}) = "save land output as a preallocated vector for time series of land"
 
-struct LandOutYAXArray <: SindbadLandOutType end
-purpose(::Type{LandOutYAXArray}) = "use YAX arrays for model output"
+struct PreAllocYAXArray <: PreAlloc end
+purpose(::Type{PreAllocYAXArray}) = "use YAX arrays for model output"
 
 # ------------------------- land wrapper and group view types ------------------------------------------------------------
 export LandWrapper
 export GroupView
 export ArrayView
-abstract type SindbadLandWrapperType <: SindbadLandType end
-purpose(::Type{SindbadLandWrapperType}) = "Abstract type for land wrapper types in SINDBAD"
+abstract type LandWrapperType <: LandType end
+purpose(::Type{LandWrapperType}) = "Abstract type for land wrapper types in SINDBAD"
 
 """
     LandWrapper{S}
@@ -50,7 +50,7 @@ purpose(::Type{SindbadLandWrapperType}) = "Abstract type for land wrapper types 
 # Fields:
 - `s::S`: The underlying NamedTuple or data structure being wrapped.
 """
-struct LandWrapper{S} <: SindbadLandWrapperType
+struct LandWrapper{S} <: LandWrapperType
     s::S
 end
 
@@ -63,7 +63,7 @@ purpose(::Type{LandWrapper}) = "Wraps the nested fields of a NamedTuple output o
 - `groupname::Symbol`: The name of the group being accessed.
 - `s::S`: The underlying data structure containing the group.
 """
-struct GroupView{S} <: SindbadLandWrapperType
+struct GroupView{S} <: LandWrapperType
     groupname::Symbol
     s::S
 end

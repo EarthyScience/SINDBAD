@@ -70,7 +70,7 @@ a function to create a temporal aggregation struct for a given time step
 - `::Vector{TimeAggregator}`: a vector of TimeAggregator structs
 
 # t_step:
-$(methodsOf(SindbadTimeAggregator))
+$(methodsOf(TimeAggregation))
 """
 createTimeAggregator
 

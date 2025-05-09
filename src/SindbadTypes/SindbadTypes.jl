@@ -36,16 +36,22 @@ export SindbadType
 abstract type SindbadType end
 purpose(::Type{SindbadType}) = "Abstract type for all Julia types in SINDBAD"
 
-include("SindbadModelTypes.jl")
-include("SindbadTimeTypes.jl")
-include("SindbadSpinupTypes.jl")
-include("SindbadLandTypes.jl")
-include("SindbadArrayTypes.jl")
-include("SindbadInputTypes.jl")
-include("SindbadExperimentTypes.jl")
-include("SindbadOptimizationTypes.jl")
-include("SindbadMetricsTypes.jl")
-include("SindbadMLTypes.jl")
+include("ModelTypes.jl")
+include("TimeTypes.jl")
+include("SpinupTypes.jl")
+include("LandTypes.jl")
+include("ArrayTypes.jl")
+include("InputTypes.jl")
+include("ExperimentTypes.jl")
+include("OptimizationTypes.jl")
+include("MetricsTypes.jl")
+include("MLTypes.jl")
 include("LongTuple.jl")
-include("SindbadTypesFunctions.jl")
+include("TypesFunctions.jl")
 
+
+# append the docstring of the SindbadType type to the docstring of the Sindbad module so that all the methods of the SindbadType type are included after the models have been described
+@doc """
+$(getTypeDocString(SindbadType))
+"""
+SindbadType

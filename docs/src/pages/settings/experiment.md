@@ -88,7 +88,7 @@ The `exe_rules` section defines model execution settings and performance configu
 
 ::: tip Available Options
 - Use `showMethodsOf(SindbadInputDataType)` to list available `input_array_type` options
-- Use `showMethodsOf(SindbadInputBackend)` to list supported `input_data_backend` options
+- Use `showMethodsOf(DataFormatBackend)` to list supported `input_data_backend` options
 :::
 
 ### Flags

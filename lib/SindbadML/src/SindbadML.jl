@@ -12,40 +12,40 @@ This package is still under development and is not yet ready for production use.
 """
 module SindbadML
 
-using Distributed:
-    nworkers,
-    pmap,
-    workers,
-    nprocs,
-    CachingPool
+    using Distributed:
+        nworkers,
+        pmap,
+        workers,
+        nprocs,
+        CachingPool
 
-using Reexport: @reexport
-using SindbadTEM
-using SindbadData.YAXArrays
-using SindbadData.Zarr
-using SindbadData.AxisKeys
-using SindbadData: AllNaN
-using Enzyme
+    using Reexport: @reexport
+    using SindbadTEM
+    using SindbadData.YAXArrays
+    using SindbadData.Zarr
+    using SindbadData.AxisKeys
+    using SindbadData: AllNaN
+    using Enzyme
 
-using Flux
-using Optimisers
-using FiniteDiff
-using FiniteDifferences
-using ForwardDiff
-using PolyesterForwardDiff
-using Zygote
-using Statistics
-import ProgressMeter: @showprogress, Progress, next!, progress_pmap, progress_map
-using PreallocationTools
-using Base.Iterators: repeated, partition
-using Random
-using JLD2
+    using Flux
+    using Optimisers
+    using FiniteDiff
+    using FiniteDifferences
+    using ForwardDiff
+    using PolyesterForwardDiff
+    using Zygote
+    using Statistics
+    import ProgressMeter: @showprogress, Progress, next!, progress_pmap, progress_map
+    using PreallocationTools
+    using Base.Iterators: repeated, partition
+    using Random
+    using JLD2
 
-include("SindbadMLTypes.jl")
-include("utilsML.jl")
-include("diffCaches.jl")
-include("neuralNetwork.jl")
-include("siteLosses.jl")
-include("trainPBM.jl")
-include("oneHots.jl")
+    include("utilsML.jl")
+    include("diffCaches.jl")
+    include("neuralNetwork.jl")
+    include("siteLosses.jl")
+    include("trainPBM.jl")
+    include("oneHots.jl")
+
 end

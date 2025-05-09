@@ -169,7 +169,7 @@ end
 # Arguments
 - `grads_lib`: 
     - PolyesterForwardDiffGrad: uses PolyesterForwardDiff.jl for gradients computation.
-    - SindbadMLGradType: For all the other package based gradients.
+    - GradType: For all the other package based gradients.
 - `dx_batch`: pre-allocated array for batched gradients.
 - `chunk_size`: Int, chunk size for PolyesterForwardDiff's threads.
 - `loss_f`: loss function to be applied.
@@ -195,7 +195,7 @@ function gradientBatch!(grads_lib::PolyesterForwardDiffGrad, dx_batch, chunk_siz
     end
 end
 
-function gradientBatch!(grads_lib::SindbadMLGradType, dx_batch, chunk_size::Int, loss_f::F, get_inner_args::Function, input_args...; showprog=false) where {F}
+function gradientBatch!(grads_lib::GradType, dx_batch, chunk_size::Int, loss_f::F, get_inner_args::Function, input_args...; showprog=false) where {F}
         # Threads.@spawn allows dynamic scheduling instead of static scheduling
         # of Threads.@threads macro.
         # See <https://github.com/JuliaLang/julia/issues/21017>

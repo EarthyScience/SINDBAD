@@ -245,7 +245,7 @@ function runExperimentFullOutput(sindbad_experiment::String; replace_info=Dict()
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    info = @set info.helpers.run.land_output_type = LandOutArrayAll()
+    info = @set info.helpers.run.land_output_type = PreAllocArrayAll()
     run_helpers = prepTEM(info.models.forward, forcing, info)
     info = @set info.output.variables = run_helpers.output_vars
     runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
@@ -320,7 +320,7 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
     
     cost_function = opti_helpers.cost_function
 
-    # d_opt = getproperty(SindbadSetup, :GlobalSensitivityMorris)()
+    # d_opt = getproperty(SindbadSetup, :GSAMorris)()
     method_options =info.optimization.sensitivity_analysis.options
     setLogLevel(log_level)
 

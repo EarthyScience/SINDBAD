@@ -1,10 +1,10 @@
 
-export SindbadOptimizationType
-abstract type SindbadOptimizationType <: SindbadType end
-purpose(::Type{SindbadOptimizationType}) = "Abstract type for optimization related functions and methods in SINDBAD"
+export OptimizationType
+abstract type OptimizationType <: SindbadType end
+purpose(::Type{OptimizationType}) = "Abstract type for optimization related functions and methods in SINDBAD"
 
 # ------------------------- optimization TEM and algorithm -------------------------
-export SindbadOptimizationMethod
+export OptimizationMethod
 export BayesOptKMaternARD5
 export CMAEvolutionStrategyCMAES
 export EvolutionaryCMAES
@@ -21,111 +21,111 @@ export OptimizationMultistartOptimization
 export OptimizationNelderMead
 export OptimizationQuadDirect
 
-abstract type SindbadOptimizationMethod <: SindbadOptimizationType end
-purpose(::Type{SindbadOptimizationMethod}) = "Abstract type for optimization methods in SINDBAD"
+abstract type OptimizationMethod <: OptimizationType end
+purpose(::Type{OptimizationMethod}) = "Abstract type for optimization methods in SINDBAD"
 
-struct BayesOptKMaternARD5 <: SindbadOptimizationMethod end
+struct BayesOptKMaternARD5 <: OptimizationMethod end
 purpose(::Type{BayesOptKMaternARD5}) = "Bayesian Optimization using Matern 5/2 kernel with Automatic Relevance Determination from BayesOpt.jl"
 
-struct CMAEvolutionStrategyCMAES <: SindbadOptimizationMethod end
+struct CMAEvolutionStrategyCMAES <: OptimizationMethod end
 purpose(::Type{CMAEvolutionStrategyCMAES}) = "Covariance Matrix Adaptation Evolution Strategy (CMA-ES) from CMAEvolutionStrategy.jl"
 
-struct EvolutionaryCMAES <: SindbadOptimizationMethod end
+struct EvolutionaryCMAES <: OptimizationMethod end
 purpose(::Type{EvolutionaryCMAES}) = "Evolutionary version of CMA-ES optimization from Evolutionary.jl"
 
-struct OptimLBFGS <: SindbadOptimizationMethod end
+struct OptimLBFGS <: OptimizationMethod end
 purpose(::Type{OptimLBFGS}) = "Limited-memory Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) from Optim.jl"
 
-struct OptimBFGS <: SindbadOptimizationMethod end
+struct OptimBFGS <: OptimizationMethod end
 purpose(::Type{OptimBFGS}) = "Broyden-Fletcher-Goldfarb-Shanno (BFGS) from Optim.jl"
 
-struct OptimizationBBOadaptive <: SindbadOptimizationMethod end
+struct OptimizationBBOadaptive <: OptimizationMethod end
 purpose(::Type{OptimizationBBOadaptive}) = "Black Box Optimization with adaptive parameters from Optimization.jl"
 
-struct OptimizationBBOxnes <: SindbadOptimizationMethod end
+struct OptimizationBBOxnes <: OptimizationMethod end
 purpose(::Type{OptimizationBBOxnes}) = "Black Box Optimization using Natural Evolution Strategy (xNES) from Optimization.jl"
 
-struct OptimizationBFGS <: SindbadOptimizationMethod end
+struct OptimizationBFGS <: OptimizationMethod end
 purpose(::Type{OptimizationBFGS}) = "BFGS optimization with box constraints from Optimization.jl"
 
-struct OptimizationFminboxGradientDescent <: SindbadOptimizationMethod end
+struct OptimizationFminboxGradientDescent <: OptimizationMethod end
 purpose(::Type{OptimizationFminboxGradientDescent}) = "Gradient descent optimization with box constraints from Optimization.jl"
 
-struct OptimizationFminboxGradientDescentFD <: SindbadOptimizationMethod end
+struct OptimizationFminboxGradientDescentFD <: OptimizationMethod end
 purpose(::Type{OptimizationFminboxGradientDescentFD}) = "Gradient descent optimization with box constraints using forward differentiation from Optimization.jl"
 
-struct OptimizationGCMAESDef <: SindbadOptimizationMethod end
+struct OptimizationGCMAESDef <: OptimizationMethod end
 purpose(::Type{OptimizationGCMAESDef}) = "Global CMA-ES optimization with default settings from Optimization.jl"
 
-struct OptimizationGCMAESFD <: SindbadOptimizationMethod end
+struct OptimizationGCMAESFD <: OptimizationMethod end
 purpose(::Type{OptimizationGCMAESFD}) = "Global CMA-ES optimization using forward differentiation from Optimization.jl"
 
-struct OptimizationMultistartOptimization <: SindbadOptimizationMethod end
+struct OptimizationMultistartOptimization <: OptimizationMethod end
 purpose(::Type{OptimizationMultistartOptimization}) = "Multi-start optimization to find global optimum from Optimization.jl"
 
-struct OptimizationNelderMead <: SindbadOptimizationMethod end
+struct OptimizationNelderMead <: OptimizationMethod end
 purpose(::Type{OptimizationNelderMead}) = "Nelder-Mead simplex optimization method from Optimization.jl"
 
-struct OptimizationQuadDirect <: SindbadOptimizationMethod end
+struct OptimizationQuadDirect <: OptimizationMethod end
 purpose(::Type{OptimizationQuadDirect}) = "Quadratic Direct optimization method from Optimization.jl"
 
 # ------------------------- global sensitivity analysis -------------------------
 
-export SindbadGlobalSensitivityMethod
-export GlobalSensitivityMorris
-export GlobalSensitivitySobol
-export GlobalSensitivitySobolDM
+export GSAMethod
+export GSAMorris
+export GSASobol
+export GSASobolDM
 
-abstract type SindbadGlobalSensitivityMethod <: SindbadOptimizationType end
-purpose(::Type{SindbadGlobalSensitivityMethod}) = "Abstract type for global sensitivity analysis methods in SINDBAD"
+abstract type GSAMethod <: OptimizationType end
+purpose(::Type{GSAMethod}) = "Abstract type for global sensitivity analysis methods in SINDBAD"
 
-struct GlobalSensitivityMorris <: SindbadGlobalSensitivityMethod end
-purpose(::Type{GlobalSensitivityMorris}) = "Morris method for global sensitivity analysis"
+struct GSAMorris <: GSAMethod end
+purpose(::Type{GSAMorris}) = "Morris method for global sensitivity analysis"
 
-struct GlobalSensitivitySobol <: SindbadGlobalSensitivityMethod end
-purpose(::Type{GlobalSensitivitySobol}) = "Sobol method for global sensitivity analysis"
+struct GSASobol <: GSAMethod end
+purpose(::Type{GSASobol}) = "Sobol method for global sensitivity analysis"
 
-struct GlobalSensitivitySobolDM <: SindbadGlobalSensitivityMethod end
-purpose(::Type{GlobalSensitivitySobolDM}) = "Sobol method with derivative-based measures for global sensitivity analysis"
+struct GSASobolDM <: GSAMethod end
+purpose(::Type{GSASobolDM}) = "Sobol method with derivative-based measures for global sensitivity analysis"
 
 # ------------------------- loss calculation -------------------------
 
-export SindbadCostMethod
+export CostMethod
 export CostModelObs
 export CostModelObsLandTS
 export CostModelObsMT
 export CostModelObsPriors
 
-abstract type SindbadCostMethod <: SindbadOptimizationType end
-purpose(::Type{SindbadCostMethod}) = "Abstract type for cost calculation methods in SINDBAD"
+abstract type CostMethod <: OptimizationType end
+purpose(::Type{CostMethod}) = "Abstract type for cost calculation methods in SINDBAD"
 
-struct CostModelObs <: SindbadCostMethod end
+struct CostModelObs <: CostMethod end
 purpose(::Type{CostModelObs}) = "cost calculation between model output and observations"
 
-struct CostModelObsLandTS <: SindbadCostMethod end
+struct CostModelObsLandTS <: CostMethod end
 purpose(::Type{CostModelObsLandTS}) = "cost calculation between land model output and time series observations"
 
-struct CostModelObsMT <: SindbadCostMethod end
+struct CostModelObsMT <: CostMethod end
 purpose(::Type{CostModelObsMT}) = "multi-threaded cost calculation between model output and observations"
 
-struct CostModelObsPriors <: SindbadCostMethod end
+struct CostModelObsPriors <: CostMethod end
 purpose(::Type{CostModelObsPriors}) = "cost calculation between model output, observations, and priors. NOTE THAT THIS METHOD IS JUST A PLACEHOLDER AND DOES NOT CALCULATE PRIOR COST PROPERLY YET"
 
 # ------------------------- parameter scaling -------------------------
 
-export SindbadParameterScaling
+export ParameterScaling
 export ScaleNone
 export ScaleDefault
 export ScaleBounds
 
-abstract type SindbadParameterScaling <: SindbadOptimizationType end
-purpose(::Type{SindbadParameterScaling}) = "Abstract type for parameter scaling methods in SINDBAD"
+abstract type ParameterScaling <: OptimizationType end
+purpose(::Type{ParameterScaling}) = "Abstract type for parameter scaling methods in SINDBAD"
 
-struct ScaleNone <: SindbadParameterScaling end
+struct ScaleNone <: ParameterScaling end
 purpose(::Type{ScaleNone}) = "No parameter scaling applied"
 
-struct ScaleDefault <: SindbadParameterScaling end
+struct ScaleDefault <: ParameterScaling end
 purpose(::Type{ScaleDefault}) = "Scale parameters relative to default values"
 
-struct ScaleBounds <: SindbadParameterScaling end
+struct ScaleBounds <: ParameterScaling end
 purpose(::Type{ScaleBounds}) = "Scale parameters relative to their bounds"

@@ -232,7 +232,7 @@ function setAlgorithmOptions(info, which_algorithm)
         end
     else
         if which_algorithm == :algorithm_sensitivity_analysis
-            algo_method = GlobalSensitivityMorris()
+            algo_method = GSAMorris()
         end
     end
     default_opt = sindbadDefaultOptions(getproperty(SindbadSetup, nameof(typeof(algo_method)))())
@@ -271,7 +271,7 @@ function setOptimization(info::NamedTuple)
     if info.settings.optimization.optimization_cost_threaded > 0 && info.settings.experiment.flags.run_optimization
         n_threads_cost = info.settings.optimization.optimization_cost_threaded > 1 ? info.settings.optimization.optimization_cost_threaded : Threads.nthreads()
         # overwrite land array type when threaded optimization is set
-        info = @set info.temp.helpers.run.land_output_type = LandOutArrayMT()
+        info = @set info.temp.helpers.run.land_output_type = PreAllocArrayMT()
         # info = setTupleSubfield(info,
         # :optimization,
         # (:n_threads_cost, n_threads_cost))

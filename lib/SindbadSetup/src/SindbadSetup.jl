@@ -82,26 +82,38 @@ outputs = setupOutput(experiment_info)
 """
 module SindbadSetup
 
-    using Sindbad
-    using SindbadUtils
-    @reexport using Accessors
-    @reexport using ForwardDiff
-    @reexport using CSV: CSV
-    @reexport using Dates
-    @reexport using Infiltrator
-    using JSON: parsefile, json, print as json_print
-    @reexport using JLD2: @save, load
+   using Sindbad
+   using SindbadUtils
+   @reexport using Accessors
+   @reexport using ForwardDiff
+   @reexport using CSV: CSV
+   @reexport using Dates
+   @reexport using Infiltrator
+   using JSON: parsefile, json, print as json_print
+   @reexport using JLD2: @save, load
 
-    include("defaultOptions.jl")
-    include("getConfiguration.jl")
-    include("setupExperimentInfo.jl")
-    include("setupTypes.jl")
-    include("setupPools.jl")
-    include("updateParameters.jl")
-    include("setupParameters.jl")
-    include("setupModels.jl")
-    include("setupOutput.jl")
-    include("setupOptimization.jl")
-    include("setupInfo.jl")
+   include("defaultOptions.jl")
+   include("getConfiguration.jl")
+   include("setupExperimentInfo.jl")
+   include("setupTypes.jl")
+   include("setupPools.jl")
+   include("updateParameters.jl")
+   include("setupParameters.jl")
+   include("setupModels.jl")
+   include("setupOutput.jl")
+   include("setupOptimization.jl")
+   include("setupInfo.jl")
+
+   #  include doc strings for all types in SindbadTypes
+   doc_path = dirname(pathof(Sindbad))
+   ds_file = joinpath(doc_path, "SindbadTypes/docStringForTypes.jl")
+   loc_types = subtypes(SindbadType)
+   open(ds_file, "a") do o_file
+      writeTypeDocString(o_file, SindbadType)
+      for T in loc_types
+         o_file = loopWriteTypeDocString(o_file, T)
+      end
+   end
+   include(ds_file)
 
 end # module SindbadSetup

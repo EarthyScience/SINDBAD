@@ -178,22 +178,22 @@ Retrieves the default configuration options for optimization or sensitivity anal
 
 **Arguments**
 - `::MethodType`: The method type for which default options are requested. Supported types:
-  - `SindbadOptimizationMethod`: General optimization methods
-  - `SindbadGlobalSensitivityMethod`: General global sensitivity analysis methods
-  - `GlobalSensitivityMorris`: Morris method for global sensitivity analysis
-  - `GlobalSensitivitySobol`: Sobol method for global sensitivity analysis
-  - `GlobalSensitivitySobolDM`: Sobol method with derivative-based measures
+  - `OptimizationMethod`: General optimization methods
+  - `GSAMethod`: General global sensitivity analysis methods
+  - `GSAMorris`: Morris method for global sensitivity analysis
+  - `GSASobol`: Sobol method for global sensitivity analysis
+  - `GSASobolDM`: Sobol method with derivative-based measures
   - `CMAEvolutionStrategyCMAES`: CMA-ES optimization method
 
 **Returns**
 A `NamedTuple` containing the default options for the specified method.
 
 **Default Options by Method**
-- `GlobalSensitivityMorris`: 
+- `GSAMorris`: 
   - `total_num_trajectory = 200`
   - `num_trajectory = 15`
   - `len_design_mat = 10`
-- `GlobalSensitivitySobol`:
+- `GSASobol`:
   - `samples = 5`
   - `method_options = (order=[0, 1])`
   - `sampler = "Sobol"`
@@ -204,10 +204,10 @@ A `NamedTuple` containing the default options for the specified method.
 **Usage**
 ```julia
 # Get default options for Morris method
-opts = sindbadDefaultOptions(GlobalSensitivityMorris())
+opts = sindbadDefaultOptions(GSAMorris())
 
 # Get default options for Sobol method
-opts = sindbadDefaultOptions(GlobalSensitivitySobol())
+opts = sindbadDefaultOptions(GSASobol())
 ```
 
 ## Model and Definition Functions

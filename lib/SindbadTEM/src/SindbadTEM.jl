@@ -51,25 +51,25 @@ This package integrates various components and utilities required to execute the
 - It integrates tightly with the SINDBAD framework, leveraging shared types and utilities from `SindbadSetup`.
 """
 module SindbadTEM
-    using ComponentArrays
-    using NLsolve
-    using ProgressMeter
-    using Sindbad
-    using SindbadUtils
-    using SindbadSetup
+   using ComponentArrays
+   using NLsolve
+   using ProgressMeter
+   using Sindbad
+   using SindbadUtils
+   using SindbadSetup
 
-    using ThreadPools
-    using YAXArrays
+   using ThreadPools
+   using YAXArrays
 
-    include("utilsTEM.jl")
-    include("deriveSpinupForcing.jl")
-    include("prepTEMOut.jl")
-    include("runModels.jl")
-    include("prepTEM.jl")
-    include("runTEMLoc.jl")
-    include("runTEMSpace.jl")
-    include("runTEMCube.jl")
-    include("spinupTEM.jl")
-    include("spinupSequence.jl")
+   include("utilsTEM.jl")
+   include("deriveSpinupForcing.jl")
+   include("prepTEMOut.jl")
+   include("runModels.jl")
+   include("prepTEM.jl")
+   include("runTEMLoc.jl")
+   include("runTEMSpace.jl")
+   include("runTEMCube.jl")
+   include("spinupTEM.jl")
+   include("spinupSequence.jl")
 
 end # module SindbadTEM

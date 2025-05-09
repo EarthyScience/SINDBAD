@@ -1,7 +1,7 @@
 
-export SindbadMLType
-abstract type SindbadMLType <: SindbadType end
-purpose(::Type{SindbadMLType}) = "Abstract type for types in machine learning related methods in SINDBAD"
+export MLType
+abstract type MLType <: SindbadType end
+purpose(::Type{MLType}) = "Abstract type for types in machine learning related methods in SINDBAD"
 
 # ------------------------- gradient related types ------------------------------------------------------------
 export EnzymeGrad
@@ -9,25 +9,25 @@ export FiniteDifferencesGrad
 export FiniteDiffGrad
 export ForwardDiffGrad
 export PolyesterForwardDiffGrad
-export SindbadMLGradType
+export GradType
 export ZygoteGrad
 
-abstract type SindbadMLGradType <: SindbadMLType end
-purpose(::Type{SindbadMLGradType}) = "Abstract type for automatic differentiation or finite differences for gradient calculations"
+abstract type GradType <: MLType end
+purpose(::Type{GradType}) = "Abstract type for automatic differentiation or finite differences for gradient calculations"
 
-struct EnzymeGrad <: SindbadMLGradType  end
+struct EnzymeGrad <: GradType  end
 purpose(::Type{EnzymeGrad}) = "Use Enzyme.jl for automatic differentiation"
-struct FiniteDifferencesGrad <: SindbadMLGradType end
+struct FiniteDifferencesGrad <: GradType end
 purpose(::Type{FiniteDifferencesGrad}) = "Use FiniteDifferences.jl for finite difference calculations"
 
-struct FiniteDiffGrad <: SindbadMLGradType end
+struct FiniteDiffGrad <: GradType end
 purpose(::Type{FiniteDiffGrad}) = "Use FiniteDiff.jl for finite difference calculations"
 
-struct ForwardDiffGrad <: SindbadMLGradType end
+struct ForwardDiffGrad <: GradType end
 purpose(::Type{ForwardDiffGrad}) = "Use ForwardDiff.jl for automatic differentiation"
 
-struct PolyesterForwardDiffGrad <: SindbadMLGradType end
+struct PolyesterForwardDiffGrad <: GradType end
 purpose(::Type{PolyesterForwardDiffGrad}) = "Use PolyesterForwardDiff.jl for automatic differentiation"
 
-struct ZygoteGrad <: SindbadMLGradType  end
+struct ZygoteGrad <: GradType  end
 purpose(::Type{ZygoteGrad}) = "Use Zygote.jl for automatic differentiation"

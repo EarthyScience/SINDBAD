@@ -1,42 +1,42 @@
 
-export SindbadInputType
-abstract type SindbadInputType <: SindbadType end
-purpose(::Type{SindbadInputType}) = "Abstract type for input data and processing related options in SINDBAD"
+export InputType
+abstract type InputType <: SindbadType end
+purpose(::Type{InputType}) = "Abstract type for input data and processing related options in SINDBAD"
 
 # -------------------------------- forcing backend --------------------------------
-export SindbadInputBackend
+export DataFormatBackend
 export BackendNetcdf
 export BackendZarr
 
-abstract type SindbadInputBackend <: SindbadInputType end
-purpose(::Type{SindbadInputBackend}) = "Abstract type for input data backends in SINDBAD"
+abstract type DataFormatBackend <: InputType end
+purpose(::Type{DataFormatBackend}) = "Abstract type for input data backends in SINDBAD"
 
-struct BackendNetcdf <: SindbadInputBackend end
+struct BackendNetcdf <: DataFormatBackend end
 purpose(::Type{BackendNetcdf}) = "Use NetCDF format for input data"
 
-struct BackendZarr <: SindbadInputBackend end
+struct BackendZarr <: DataFormatBackend end
 purpose(::Type{BackendZarr}) = "Use Zarr format for input data"
 
 # -------------------------------- input array type in named tuple --------------------------------
-export SindbadInputArrayType
+export InputArrayBackend
 export InputArray
 export InputKeyedArray
 export InputNamedDimsArray
 export InputYaxArray
 
-abstract type SindbadInputArrayType <: SindbadInputType end
-purpose(::Type{SindbadInputArrayType}) = "Abstract type for input data array types in SINDBAD"
+abstract type InputArrayBackend <: InputType end
+purpose(::Type{InputArrayBackend}) = "Abstract type for input data array types in SINDBAD"
 
-struct InputArray <: SindbadInputArrayType end
+struct InputArray <: InputArrayBackend end
 purpose(::Type{InputArray}) = "Use standard Julia arrays for input data"
 
-struct InputKeyedArray <: SindbadInputArrayType end
+struct InputKeyedArray <: InputArrayBackend end
 purpose(::Type{InputKeyedArray}) = "Use keyed arrays for input data"
 
-struct InputNamedDimsArray <: SindbadInputArrayType end
+struct InputNamedDimsArray <: InputArrayBackend end
 purpose(::Type{InputNamedDimsArray}) = "Use named dimension arrays for input data"
 
-struct InputYaxArray <: SindbadInputArrayType end
+struct InputYaxArray <: InputArrayBackend end
 purpose(::Type{InputYaxArray}) = "Use YAXArray for input data"
 
 
@@ -44,13 +44,13 @@ purpose(::Type{InputYaxArray}) = "Use YAXArray for input data"
 export ForcingWithTime
 export ForcingWithoutTime
 
-abstract type SindbadForcingType <: SindbadInputType end
-purpose(::Type{SindbadForcingType}) = "Abstract type for forcing variable types in SINDBAD"
+abstract type ForcingTime <: InputType end
+purpose(::Type{ForcingTime}) = "Abstract type for forcing variable types in SINDBAD"
 
-struct ForcingWithTime <: SindbadForcingType end
+struct ForcingWithTime <: ForcingTime end
 purpose(::Type{ForcingWithTime}) = "Forcing variable with time dimension"
 
-struct ForcingWithoutTime <: SindbadForcingType end
+struct ForcingWithoutTime <: ForcingTime end
 purpose(::Type{ForcingWithoutTime}) = "Forcing variable without time dimension"
 
 
@@ -63,32 +63,32 @@ export Spacelatitude
 export Spacelongitude
 export Spacelon
 export Spacesite
-export SindbadSpatialSubsetter
+export SpatialSubsetter
 
-abstract type SindbadSpatialSubsetter <: SindbadInputType end
-purpose(::Type{SindbadSpatialSubsetter}) = "Abstract type for spatial subsetting methods in SINDBAD"
+abstract type SpatialSubsetter <: InputType end
+purpose(::Type{SpatialSubsetter}) = "Abstract type for spatial subsetting methods in SINDBAD"
 
-struct Spaceid <: SindbadSpatialSubsetter end
+struct Spaceid <: SpatialSubsetter end
 purpose(::Type{Spaceid}) = "Use site ID for spatial subsetting"
 
-struct SpaceId <: SindbadSpatialSubsetter end
+struct SpaceId <: SpatialSubsetter end
 purpose(::Type{SpaceId}) = "Use site ID (capitalized) for spatial subsetting"
 
-struct SpaceID <: SindbadSpatialSubsetter end
+struct SpaceID <: SpatialSubsetter end
 purpose(::Type{SpaceID}) = "Use site ID (all caps) for spatial subsetting"
 
-struct Spacelat <: SindbadSpatialSubsetter end
+struct Spacelat <: SpatialSubsetter end
 purpose(::Type{Spacelat}) = "Use latitude for spatial subsetting"
 
-struct Spacelatitude <: SindbadSpatialSubsetter end
+struct Spacelatitude <: SpatialSubsetter end
 purpose(::Type{Spacelatitude}) = "Use full latitude for spatial subsetting"
 
-struct Spacelongitude <: SindbadSpatialSubsetter end
+struct Spacelongitude <: SpatialSubsetter end
 purpose(::Type{Spacelongitude}) = "Use full longitude for spatial subsetting"
 
-struct Spacelon <: SindbadSpatialSubsetter end
+struct Spacelon <: SpatialSubsetter end
 purpose(::Type{Spacelon}) = "Use longitude for spatial subsetting"
 
-struct Spacesite <: SindbadSpatialSubsetter end
+struct Spacesite <: SpatialSubsetter end
 purpose(::Type{Spacesite}) = "Use site location for spatial subsetting"
 

@@ -163,7 +163,7 @@ end
 
 
 """
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, spinup_mode::SindbadSpinupMode)
+    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, spinup_mode::SpinupMode)
 
 Runs the spinup process for the SINDBAD Terrestrial Ecosystem Model (TEM) to initialize the model to a steady state. The spinup process updates the state variables (e.g., pools) using various spinup methods.
 
@@ -174,12 +174,12 @@ Runs the spinup process for the SINDBAD Terrestrial Ecosystem Model (TEM) to ini
 - `land`: A SINDBAD NamedTuple containing all variables for a given time step, which is overwritten at every timestep.
 - `tem_info`: A helper NamedTuple containing necessary objects for model execution and type consistencies.
 - `n_timesteps`: The number of timesteps for the spinup process.
-- `spinup_mode::SindbadSpinupMode`: A type dispatch that determines the spinup method to be used. 
+- `spinup_mode::SpinupMode`: A type dispatch that determines the spinup method to be used. 
 
 # Returns:
 - `land`: The updated SINDBAD NamedTuple containing the final state of the model after the spinup process.
 
-$(methodsOf(SindbadSpinupMode))
+$(methodsOf(SpinupMode))
 
 ---
 

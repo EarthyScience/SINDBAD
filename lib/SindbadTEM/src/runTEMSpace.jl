@@ -50,17 +50,17 @@ Parallelizes the SINDBAD Terrestrial Ecosystem Model (TEM) across multiple locat
 - `space_land`: A collection of initial SINDBAD land NamedTuples for multiple locations, ensuring that the model states for one location do not overwrite those of another.
 - `tem_info`: A helper NamedTuple containing necessary objects for model execution and type consistencies.
 - `parallelization_mode`: A type dispatch that determines the parallelization backend to use:
-    - `UseThreadsParallelization`: Uses Julia's `Threads.@threads` for parallel execution.
-    - `UseQbmapParallelization`: Uses `qbmap` for parallel execution.
+    - `ThreadsParallelization`: Uses Julia's `Threads.@threads` for parallel execution.
+    - `QbmapParallelization`: Uses `qbmap` for parallel execution.
 
 # Returns:
 - `nothing`: The function modifies `space_output` and `space_land` in place to store the results for each location.
 
 # Notes:
 - **Thread-based Parallelization**:
-    - When `UseThreadsParallelization` is used, the function distributes the locations across threads using `Threads.@threads`.
+    - When `ThreadsParallelization` is used, the function distributes the locations across threads using `Threads.@threads`.
 - **Qbmap-based Parallelization**:
-    - When `UseQbmapParallelization` is used, the function distributes the locations using the `qbmap` backend.
+    - When `QbmapParallelization` is used, the function distributes the locations using the `qbmap` backend.
 - **Core Execution**:
     - For each location, the function calls `coreTEM!` to execute the TEM simulation, including spinup (if enabled) and the main time loop.
 - **Data Safety**:
@@ -69,24 +69,24 @@ Parallelizes the SINDBAD Terrestrial Ecosystem Model (TEM) across multiple locat
 # Examples:
 1. **Parallelizing TEM using threads**:
 ```julia
-parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, UseThreadsParallelization())
+parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ThreadsParallelization())
 ```
 
 2. **Parallelizing TEM using qbmap**:
 ```julia
-parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, UseQbmapParallelization())
+parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, QbmapParallelization())
 ```
 """
 parallelizeTEM!
 
-function parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::UseThreadsParallelization)
+function parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::ThreadsParallelization)
     Threads.@threads for space_index ∈ eachindex(space_forcing)
         coreTEM!(selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
     end
     return nothing
 end
 
-function parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::UseQbmapParallelization)
+function parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::QbmapParallelization)
     space_index = 1
     qbmap(space_forcing) do _
         coreTEM!(selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)

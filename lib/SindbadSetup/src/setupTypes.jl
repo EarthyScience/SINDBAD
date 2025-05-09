@@ -45,7 +45,7 @@ end
 
 
 """
-    createArrayofType(input_values, pool_array, num_type, indx, ismain, array_type::SindbadModelArrayType)
+    createArrayofType(input_values, pool_array, num_type, indx, ismain, array_type::ModelArrayType)
 
 Creates an array or view of the specified type `array_type` based on the input values and configuration.
 

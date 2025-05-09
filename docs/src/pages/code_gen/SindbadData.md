@@ -103,9 +103,9 @@ InputYaxArray
 
 ----
 
-### SindbadInputBackend
+### DataFormatBackend
 ```@docs
-SindbadInputBackend
+DataFormatBackend
 ```
 
 ----

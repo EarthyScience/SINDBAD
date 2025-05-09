@@ -55,29 +55,29 @@ results = optimizeTEM(model, forcing, observations, info)
 """
 module SindbadOptimization
 
-    using CMAEvolutionStrategy: minimize, xbest
-    # using BayesOpt: ConfigParameters, set_kernel!, bayes_optimization, SC_MAP
-    using Evolutionary: Evolutionary
-    using ForwardDiff
-    using GlobalSensitivity
-    using MultistartOptimization: MultistartOptimization
-    using NLopt: NLopt
-    using Optim
-    using Optimization
-    using OptimizationOptimJL
-    using OptimizationBBO
-    using OptimizationGCMAES
-    using OptimizationCMAEvolutionStrategy
-    # using OptimizationQuadDIRECT
-    using QuasiMonteCarlo
-    using StableRNGs
-    using SindbadTEM
-    using Sindbad
+   using CMAEvolutionStrategy: minimize, xbest
+   # using BayesOpt: ConfigParameters, set_kernel!, bayes_optimization, SC_MAP
+   using Evolutionary: Evolutionary
+   using ForwardDiff
+   using GlobalSensitivity
+   using MultistartOptimization: MultistartOptimization
+   using NLopt: NLopt
+   using Optim
+   using Optimization
+   using OptimizationOptimJL
+   using OptimizationBBO
+   using OptimizationGCMAES
+   using OptimizationCMAEvolutionStrategy
+   # using OptimizationQuadDIRECT
+   using QuasiMonteCarlo
+   using StableRNGs
+   using SindbadTEM
+   using Sindbad
 
-    include("prepOpti.jl")
-    include("optimizer.jl")
-    include("cost.jl")
-    include("optimizeTEM.jl")
-    include("sensitivityAnalysis.jl")
+   include("prepOpti.jl")
+   include("optimizer.jl")
+   include("cost.jl")
+   include("optimizeTEM.jl")
+   include("sensitivityAnalysis.jl")
 
 end # module SindbadOptimization
