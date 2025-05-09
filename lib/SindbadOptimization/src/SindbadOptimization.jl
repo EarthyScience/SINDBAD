@@ -10,7 +10,6 @@ This package is designed to support optimization tasks in SINDBAD, such as calib
 - `CMAEvolutionStrategy`: Provides the CMA-ES (Covariance Matrix Adaptation Evolution Strategy) algorithm for global optimization.
 - `Evolutionary`: Supplies evolutionary algorithms for optimization, useful for non-convex problems.
 - `ForwardDiff`: Enables automatic differentiation for gradient-based optimization methods.
-- `InteractiveUtils`: Facilitates interactive exploration and debugging during optimization.
 - `MultistartOptimization`: Implements multistart optimization for finding global optima by running multiple local optimizations.
 - `NLopt`: Provides a collection of nonlinear optimization algorithms, including derivative-free methods.
 - `Optim`: Supplies optimization algorithms such as BFGS and LBFGS for gradient-based optimization.
@@ -61,7 +60,6 @@ module SindbadOptimization
     using Evolutionary: Evolutionary
     using ForwardDiff
     using GlobalSensitivity
-    using InteractiveUtils
     using MultistartOptimization: MultistartOptimization
     using NLopt: NLopt
     using Optim
@@ -74,7 +72,7 @@ module SindbadOptimization
     using QuasiMonteCarlo
     using StableRNGs
     using SindbadTEM
-    using SindbadMetrics
+    using Sindbad
 
     include("prepOpti.jl")
     include("optimizer.jl")

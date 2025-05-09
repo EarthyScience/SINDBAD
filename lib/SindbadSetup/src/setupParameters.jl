@@ -19,7 +19,7 @@ Retrieves parameters for the specified models with given numerical type and time
 # Returns
 Parameters information for the selected models based on the specified settings.
 """
-getParameters
+function getParameters end
 
 function getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true, show_info=false)
     selected_models = getTupleFromLongTuple(selected_models)

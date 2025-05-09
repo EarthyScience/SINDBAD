@@ -83,6 +83,7 @@ outputs = setupOutput(experiment_info)
 module SindbadSetup
 
     using Sindbad
+    using SindbadUtils
     @reexport using Accessors
     @reexport using ForwardDiff
     @reexport using CSV: CSV
@@ -90,17 +91,13 @@ module SindbadSetup
     @reexport using Infiltrator
     using JSON: parsefile, json, print as json_print
     @reexport using JLD2: @save, load
-    @reexport using Sindbad
-    @reexport using SindbadUtils
-    @reexport import SindbadUtils: purpose
-    @reexport using SindbadMetrics
 
-    include("runtimeDispatchTypes.jl")
     include("defaultOptions.jl")
     include("getConfiguration.jl")
     include("setupExperimentInfo.jl")
     include("setupTypes.jl")
     include("setupPools.jl")
+    include("updateParameters.jl")
     include("setupParameters.jl")
     include("setupModels.jl")
     include("setupOutput.jl")

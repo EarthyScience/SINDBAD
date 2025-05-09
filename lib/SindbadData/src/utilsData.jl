@@ -1,22 +1,19 @@
-export AllNaN
 export getNumberOfTimeSteps
 export mapCleanData
 export subsetAndProcessYax
 export yaxCubeToKeyedArray
 export toDimStackArray
-
+export AllNaN
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
 
-Add skipping filter for pixels with all `NaN` or `missing` in YAXArrays
+Specialized filter for YAXArrays to skip pixels with all `NaN` or `missing` values.
 
-A filter type that inherits from `YAXArrays.DAT.ProcFilter`.
-
+# Description
 This struct is used as a specialized filter in data processing pipelines to identify or handle cases where all values in a data segment are NaN (Not a Number).
 """
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(ismissing, x) || all(isnan, x)
-
 
 """
     applyQCBound(_data, data_qc, bounds_qc, _data_fill)

@@ -10,7 +10,7 @@ prepare the spinup forcing all forcing setups in the spinup sequence
 - `spin_seq`: a sequence of information to carry out spinup at different steps with information on models to use, forcing, stopping critera, etc.
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
-function getAllSpinupForcing(forcing, spin_sequences::Vector{SpinSequenceWithAggregator}, tem_helpers)
+function getAllSpinupForcing(forcing, spin_sequences::Vector{SpinupSequenceWithAggregator}, tem_helpers)
     spinup_forcing = (;)
     for seq ∈ spin_sequences
         forc = getfield(seq, :forcing)
@@ -33,7 +33,7 @@ prepare the spinup forcing set for a given spinup sequence
 - `sequence`: a with all information needed to run a spinup sequence
 - `:Val{forcing_types}`: a type dispatch with the tuple of pairs of forcing name and time/no time types
 """
-function getSpinupForcing(forcing, sequence::SpinSequenceWithAggregator, ::Val{forcing_types}) where {forcing_types}
+function getSpinupForcing(forcing, sequence::SpinupSequenceWithAggregator, ::Val{forcing_types}) where {forcing_types}
     seq_forcing = map(forcing_types) do fnt
         f_name = first(fnt)
         f_type = last(fnt)
@@ -55,7 +55,7 @@ get the aggregated spinup forcing variable
 - `sequence`: a with all information needed to run a spinup sequence
 - `::ForcingWithTime`: a type dispatch to indicate that the variable has a time axis
 """
-function getSpinupForcingVariable(v, sequence::SpinSequenceWithAggregator, ::ForcingWithTime)
+function getSpinupForcingVariable(v, sequence::SpinupSequenceWithAggregator, ::ForcingWithTime)
     timeAggregateForcingV(v, sequence.aggregator_indices, sequence.aggregator, sequence.aggregator_type)
 end
 

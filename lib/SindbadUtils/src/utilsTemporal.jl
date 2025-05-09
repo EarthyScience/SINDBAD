@@ -1,39 +1,6 @@
 export createTimeAggregator
 export getTimeAggregatorTypeInstance
 export temporalAggregation
-export TimeAggregator
-export TimeAggregatorViewInstance
-
-"""
-    TimeAggregator{I, aggr_func}
-
-define a new type of temporal aggregation
-
-# Fields:
-- `indices::I`: indices to be collected for aggregation
-- `aggr_func::aggr_func`: a function to use for aggregation, defaults to mean
-"""
-struct TimeAggregator{I,aggr_func}
-    indices::I
-    aggr_func::aggr_func
-end
-
-
-"""
-    TimeAggregatorViewInstance{T, N, D, P, AV <: TimeAggregator}
-
-
-
-# Fields:
-- `parent::P`: the parent data
-- `agg::AV`: a view of the parent data
-- `dim::Val{D}`: a val instance of the type that stores the dimension to be aggregated on
-"""
-struct TimeAggregatorViewInstance{T,N,D,P,AV<:TimeAggregator} <: AbstractArray{T,N}
-    parent::P
-    agg::AV
-    dim::Val{D}
-end
 
 """
     getdim(a::TimeAggregatorViewInstance{<:Any, <:Any, D})

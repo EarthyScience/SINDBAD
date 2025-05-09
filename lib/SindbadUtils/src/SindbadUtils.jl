@@ -16,7 +16,6 @@ This package is designed to provide reusable utilities for data manipulation, st
 - `NaNStatistics`: Extends statistical operations to handle missing values (`NaN`), ensuring robust data analysis.
 - `StaticArraysCore`: Supports efficient, fixed-size arrays for performance-critical operations.
 - `StatsBase`: Supplies basic statistical functions (e.g., `mean`, `sum`, `sample`) for data analysis.
-- `TypedTables`: Provides lightweight, type-stable tables for structured data manipulation.
 
 # Included Files:
 1. **`utilsTypes.jl`**:
@@ -38,23 +37,17 @@ This package is designed to provide reusable utilities for data manipulation, st
    - Handles temporal operations, including time-based filtering and aggregation.
 
 # Notes:
-- The package re-exports key packages (`NaNStatistics`, `StatsBase`, `TypedTables`) for convenience, allowing users to access their functionality directly through `SindbadUtils`.
+- The package re-exports key packages (`NaNStatistics`, `StatsBase`) for convenience, allowing users to access their functionality directly through `SindbadUtils`.
 - Designed to be lightweight and modular, enabling seamless integration with other SINDBAD packages.
 
 # Examples:
-1. **Performing spatial subsetting**:
-```julia
-using SindbadUtils
-spatial_subset = getSpatialSubset(spatial_data, region_of_interest)
-```
-
-2. **Handling NamedTuples**:
+1. **Handling NamedTuples**:
 ```julia
 using SindbadUtils
 transformed_nt = transformNamedTuple(input_nt, transformation_function)
 ```
 
-3. **Calculating statistics with missing values**:
+2. **Calculating statistics with missing values**:
 ```julia
 using SindbadUtils
 mean_value = mean(data_with_nans, skipmissing=true)
@@ -72,14 +65,13 @@ module SindbadUtils
     @reexport using NaNStatistics
     using StaticArraysCore
     @reexport using StatsBase: mean, rle, sample, sum
-    @reexport using TypedTables: Table
-    @reexport import Sindbad: purpose, subtypes, methodsOf, showMethodsOf
+    using Sindbad
+    using Base.Docs: doc as Base_docs_doc
+    # @reexport import Sindbad: subtypes, methodsOf, showMethodsOf
 
-    include("utilsTypes.jl")
     include("getArrayView.jl")
     include("utils.jl")
     include("utilsNT.jl")
-    include("utilsSpatial.jl")
     include("utilsTemporal.jl")
-    
+        
 end # module SindbadUtils

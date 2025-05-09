@@ -55,15 +55,12 @@ updated_params = updateParameters(current_params, metrics)
 """
 module SindbadMetrics
 
-    using SindbadUtils
-    import SindbadUtils: purpose
+    using Sindbad
     using StatsBase: mean, percentile, cor, corspearman
     using ConstructionBase
 
-    include("metricTypes.jl")
     include("handleDataForLoss.jl")
     include("getMetrics.jl")
     include("metrics.jl")
-    include("updateParameters.jl")
 
 end # module SindbadMetrics

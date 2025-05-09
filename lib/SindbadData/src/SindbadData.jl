@@ -56,8 +56,7 @@ cleaned_data = cleanData(raw_data, mask)
 """
 module SindbadData
     using Reexport: @reexport
-    using SindbadUtils
-    @reexport import SindbadUtils: purpose
+    using Sindbad
     using AxisKeys: KeyedArray, AxisKeys
     using FillArrays
     using DimensionalData
@@ -67,8 +66,8 @@ module SindbadData
     @reexport using Zarr
     using YAXArrayBase
 
-    include("inputTypes.jl")
     include("utilsData.jl")
+    include("spatialSubset.jl")
     include("getForcing.jl")
     include("getObservation.jl")
     

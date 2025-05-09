@@ -21,7 +21,7 @@ Reverts scaling of parameters using a specified scaling strategy.
 # Returns
 Returns the unscaled/actual parameter vector in original units.
 """
-backScaleParameters
+function backScaleParameters end
 
 function backScaleParameters(parameter_vector_scaled, parameter_table, ::ScaleNone)
     return parameter_vector_scaled
@@ -80,7 +80,7 @@ is_in_range = checkInRange("parameter3", -1.0, 0.0, 10.0, true)
 # Output: false (logs a message indicating the violation)
 ```
 """
-checkInRange
+function checkInRange end
 
 function checkInRange(n, d::Real, l::Real, u::Real, show_info)
     return l <= d <= u
@@ -148,7 +148,7 @@ Scale parameters from the input table using default scaling factors.
 # Returns
 Scaled parameters and their bounds according to default scaling factors
 """
-scaleParameters
+function scaleParameters end
 
 function scaleParameters(parameter_table, _sc::ScaleNone)
     init = copy(parameter_table.initial)
@@ -219,7 +219,7 @@ updated_models = updateModelParameters(parameter_to_index, selected_models, para
 - The `parameter_to_index` variant uses a mapping to directly replace parameter values in the models.
 - The generated (with @generated) function variant (`::Val{p_vals}`) creates a compile-time optimized update process for specific parameters and models.
 """
-updateModelParameters
+function updateModelParameters end
 
 function updateModelParameters(parameter_table::Table, selected_models::LongTuple, parameter_vector::AbstractArray)
     selected_models = getTupleFromLongTuple(selected_models)
