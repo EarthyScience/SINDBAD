@@ -66,7 +66,8 @@ function getTypeDocString(T::Type)
     if length(sub_types) > 0
         doc_string *= "-----\n\n"
         doc_string *= "# Extended Help\n\n"
-        doc_string *= "```$(methodsOf(T))```\n\n"
+        doc_string *= "## Available methods/subtypes:\n"
+        doc_string *= "$(methodsOf(T, is_subtype=true))\n\n"
     end
     return doc_string
 end

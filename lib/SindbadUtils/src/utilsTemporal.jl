@@ -327,7 +327,7 @@ end
 
 
 """
-    doTemporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim = 1)
+    temporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim = 1)
 
 a temporal aggregation function to aggregate the data using a given aggregator when the input data is an array
 
@@ -339,19 +339,19 @@ a temporal aggregation function to aggregate the data using a given aggregator w
 - `temporal_aggregator`: a time aggregator struct with indices and function to do aggregation
 - `dim`: the dimension along which the aggregation should be done
 """
-doTemporalAggregation
+function temporalAggregation end
 
-function doTemporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim=1)
+function temporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim=1)
     dat = view(dat, temporal_aggregator, dim=dim)
     return getTimeAggrArray(dat)
 end
 
-function doTemporalAggregation(dat::SubArray, temporal_aggregator::TimeAggregator, dim=1)
+function temporalAggregation(dat::SubArray, temporal_aggregator::TimeAggregator, dim=1)
     dat = view(dat, temporal_aggregator, dim=dim)
     return getTimeAggrArray(dat)
 end
 
-function doTemporalAggregation(dat, temporal_aggregator::Nothing, dim=1)
+function temporalAggregation(dat, temporal_aggregator::Nothing, dim=1)
     return dat
 end
 
@@ -375,11 +375,11 @@ function doTemporalAggregation(dat, temporal_aggregators, ::TimeIndexed)
 end
 
 function doTemporalAggregation(dat, temporal_aggregators, ::TimeNoDiff)
-    return doTemporalAggregation(dat, first(temporal_aggregators))
+    return temporalAggregation(dat, first(temporal_aggregators))
 end
 
 function doTemporalAggregation(dat, temporal_aggregators, ::TimeDiff)
-    dat_agg = doTemporalAggregation(dat, first(temporal_aggregators))
-    dat_agg_to_remove = doTemporalAggregation(dat, last(temporal_aggregators))
+    dat_agg = temporalAggregation(dat, first(temporal_aggregators))
+    dat_agg_to_remove = temporalAggregation(dat, last(temporal_aggregators))
     return dat_agg .- dat_agg_to_remove
 end

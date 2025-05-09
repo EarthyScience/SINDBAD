@@ -49,7 +49,7 @@ using SindbadTEM
 To list all available spinup methods and their purposes, use:
 ```julia
 using SindbadUtils
-showMethodsOf(SindbadSpinupMethod)
+showMethodsOf(SpinupMode)
 ```
 This will display a formatted list of all spinup methods and their descriptions.
 
@@ -73,22 +73,22 @@ Current methods include:
 
 SINDBAD uses a type-based dispatch system for spinup methods. To add a new spinup method, you need to:
 
-1. Define a new type in `runtimeDispatchTypes.jl`
+1. Define a new type in `src/SindbadTypes/SpinupTypes.jl`
 2. Implement the spinup function in `spinupTEM.jl`
 3. Update the spinup sequence handling if needed
 
 ### 1. Define the New Spinup Method Type
 
-In `runtimeDispatchTypes.jl`, add a new struct and its purpose function:
+In `src/SindbadTypes/SpinupTypes.jl`, add a new struct and its purpose function:
 
 ```julia
 import SindbadUtils: purpose
 
 # Define the new spinup type
-struct YourNewSpinupMethod <: SindbadSpinupMethod end
+struct YourNewSpinupMode <: SpinupMode end
 
 # Define its purpose
-purpose(::Type{YourNewSpinupMethod}) = "Description of what YourNewSpinupMethod does"
+purpose(::Type{YourNewSpinupMode}) = "Description of what YourNewSpinupMode does"
 ```
 
 ::: info
@@ -111,7 +111,7 @@ The purpose function should:
 
 In `spinupTEM.jl`, implement the spinup function:
 ```julia
-function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::YourNewSpinupMethod)
+function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::YourNewSpinupMode)
     # Your implementation here
 end
 ```
@@ -122,7 +122,7 @@ The function should:
 
 Example implementation:
 ```julia
-function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::YourNewSpinupMethod)
+function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::YourNewSpinupMode)
     # Create custom spinup structure if needed
     spinup_struct = YourSpinupStruct(spinup_models, spinup_forcing, tem_info, land, loc_forcing_t, n_timesteps)
     
@@ -143,8 +143,8 @@ end
 
 If your method requires special sequence handling:
 ```julia
-function spinupSequence(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, ::YourNewSpinupMethod)
-    land = spinupSequenceLoop(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, YourNewSpinupMethod())
+function spinupSequence(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, ::YourNewSpinupMode)
+    land = spinupSequenceLoop(spinup_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, YourNewSpinupMode())
     return land
 end
 ```
@@ -158,7 +158,7 @@ end
 3. **Convergence**: Include appropriate convergence criteria and error handling
 
 4. **Documentation**: Add comprehensive docstrings explaining:
-   - Method purpose
+   - Mode/Method purpose
    - Required parameters
    - Return values
    - Special considerations
@@ -166,8 +166,6 @@ end
 ## Testing
 
 After implementation:
-1. Test with small parameter sets
+1. Test with small experiments
 2. Verify spinup results match expectations
-3. Check performance with larger parameter sets
-4. Ensure compatibility with different model configurations
 

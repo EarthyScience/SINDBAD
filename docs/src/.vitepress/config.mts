@@ -32,6 +32,7 @@ const codeItems = [
   { text: ' + Optimization', link: '/pages/code/optimization' },
   { text: ' + Setup', link: '/pages/code/setup' },
   { text: ' + TEM', link: '/pages/code/tem' },
+  { text: ' + Types', link: '/pages/code/types' },
   { text: ' + Utils', link: '/pages/code/utils' },
   { text: ' + Visuals', link: '/pages/code/visuals' }
 ]
@@ -63,6 +64,7 @@ const manualItems = [
   { text: 'Install', link: '/pages/develop/install' },
   { text: 'Modeling Convention', link: '/pages/develop/conventions' },
   { text: 'Model/Approach', link: '/pages/develop/model_approach' },
+  { text: 'Sindbad Types', link: '/pages/develop/sindbad_types' },
   { text: 'Array Handling', link: '/pages/develop/array_handling' },
   { text: 'Land Utils', link: '/pages/develop/land_utils' },
   { text: 'Experiments', link: '/pages/develop/experiments' },

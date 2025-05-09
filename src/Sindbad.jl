@@ -90,8 +90,9 @@ module Sindbad
       end
       println("Created a blank file: $file_path to track precompilation of new models and approaches")
    end
-
+   
    include("SindbadTypes/SindbadTypes.jl")
+   @reexport using .SindbadTypes
    include("utilsCore.jl")   
    include("sindbadVariableCatalog.jl")
    include("modelTools.jl")
