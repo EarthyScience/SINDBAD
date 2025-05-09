@@ -56,6 +56,7 @@ updated_params = updateParameters(current_params, metrics)
 module SindbadMetrics
 
    using Sindbad
+   using SindbadUtils
    using StatsBase: mean, percentile, cor, corspearman
    using ConstructionBase
 

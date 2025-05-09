@@ -1,5 +1,0 @@
-```@docs
-SindbadPlot
-```
-## Functions
-

@@ -23,7 +23,7 @@ function compute(params::vegFraction_scaledEVI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{vegFraction_scaledEVI}) = "sets the value of frac_vegetation by scaling the EVI value"
+purpose(::Type{vegFraction_scaledEVI}) = "sets frac_vegetation by scaling the EVI value"
 
 @doc """
 

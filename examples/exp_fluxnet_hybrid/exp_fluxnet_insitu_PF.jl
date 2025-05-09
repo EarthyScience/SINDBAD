@@ -1,4 +1,6 @@
 using Sindbad
+using SindbadSetup
+using SindbadUtils
 using SindbadData
 using SindbadData.DimensionalData
 using SindbadData.AxisKeys
@@ -7,6 +9,7 @@ using SindbadTEM
 using SindbadML
 using SindbadML.JLD2
 using SindbadOptimization
+using SindbadMetrics
 using ProgressMeter
 
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
@@ -14,8 +17,8 @@ experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json
 replace_info = Dict()
 if Sys.islinux()
     replace_info = Dict(
-        "forcing.default_forcing.data_path" => "/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr",
-        "optimization.observations.default_observation.data_path" => "/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr"
+        "forcing.default_forcing.data_path" => "$(getSindbadDataDepot())/FLUXNET_v2023_12_1D.zarr",
+        "optimization.observations.default_observation.data_path" => "$(getSindbadDataDepot())/FLUXNET_v2023_12_1D.zarr"
     )
 end
 
@@ -142,7 +145,7 @@ maxiter = 5
 xmin, fmin, status = GCMAES.minimize(cost_function, x0, σ0, lo, hi, maxiter=maxiter)
 
 # ? now speedup convergence with some gradient information
-using ForwardDiff
+using SindbadOptimization.ForwardDiff
 ∇loss(x) = ForwardDiff.gradient(cost_functionFD, x)
 
 xmin, fmin, status = GCMAES.minimize((cost_functionFD, ∇loss), x0, σ0, lo, hi, maxiter=100);

@@ -12,7 +12,7 @@ function compute(params::treeFraction_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{treeFraction_forcing}) = "sets the value of land.states.frac_tree from the forcing in every time step"
+purpose(::Type{treeFraction_forcing}) = "sets land.states.frac_tree from forcing"
 
 @doc """
 

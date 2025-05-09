@@ -19,11 +19,11 @@ Returns a string describing the purpose of a type in the SINDBAD framework.
 # Example
 ```julia
 # Define the purpose for a specific model
-purpose(::Type{ambientCO2_constant}) = "sets the value of ambient_CO2 as a constant"
+purpose(::Type{ambientCO2_constant}) = "sets ambient_CO2 as a constant"
 ```
 # Retrieve the purpose
 ````
-println(purpose(ambientCO2_constant))  # Output: "sets the value of ambient_CO2 as a constant"
+println(purpose(ambientCO2_constant))  # Output: "sets ambient_CO2 as a constant"
 ````
 """
 function purpose end

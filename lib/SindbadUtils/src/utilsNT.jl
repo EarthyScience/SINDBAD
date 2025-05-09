@@ -302,7 +302,7 @@ end
 """
     mergeNamedTupleSetValue(o, p, v)
 
-Set the value of a field in an options object.
+Set a field in an options object.
 
 # Arguments
 - `o`: The options object (NamedTuple or mutable struct)

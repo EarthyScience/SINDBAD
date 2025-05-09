@@ -14,7 +14,7 @@ function compute(params::ambientCO2_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{ambientCO2_forcing}) = "sets the value of ambient_CO2 from the forcing in every time step"
+purpose(::Type{ambientCO2_forcing}) = "sets ambient_CO2 from forcing"
 
 @doc """
 
@@ -23,7 +23,7 @@ $(getModelDocString(ambientCO2_forcing))
 ---
 
 # Extended help
-This function assigns the value of ambient CO2 concentration from the forcing data (`f_ambient_CO2`) to the land model state for the current time step.
+This function assigns ambient CO2 concentration from the forcing data (`f_ambient_CO2`) to the land model state for the current time step.
 
 *References*
  - None

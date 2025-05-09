@@ -23,7 +23,7 @@ function compute(params::vegFraction_scaledfAPAR, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{vegFraction_scaledfAPAR}) = "sets the value of frac_vegetation by scaling the fAPAR value"
+purpose(::Type{vegFraction_scaledfAPAR}) = "sets frac_vegetation by scaling the fAPAR value"
 
 @doc """
 

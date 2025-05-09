@@ -83,9 +83,9 @@ const navTemp = {
     { text: 'Code', 
       items: codeItems,
     },
-    { text: 'CodeGen',
-      items: codeGenItems,
-    },
+    // { text: 'CodeGen',
+    //   items: codeGenItems,
+    // },
     { text: 'Develop', items: manualItems,
     },
     { text: 'About', 
@@ -112,10 +112,10 @@ const sidebar = [
     collapsed: true,
     items: codeItems
   },
-  { text: 'CodeGen',
-    collapsed: true,
-    items: codeGenItems
-  },
+  // { text: 'CodeGen',
+  //   collapsed: true,
+  //   items: codeGenItems
+  // },
   { text: 'About',
     items: aboutItems
   },

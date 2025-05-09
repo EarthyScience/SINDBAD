@@ -86,7 +86,7 @@ function compute(params::autoRespiration_Thornley2000A, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{autoRespiration_Thornley2000A}) = "Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper]."
+purpose(::Type{autoRespiration_Thornley2000A}) = "estimates autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority."
 
 @doc """
 

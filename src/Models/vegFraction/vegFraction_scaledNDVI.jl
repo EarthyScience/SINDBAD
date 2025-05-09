@@ -23,7 +23,7 @@ function compute(params::vegFraction_scaledNDVI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{vegFraction_scaledNDVI}) = "sets the value of frac_vegetation by scaling the NDVI value"
+purpose(::Type{vegFraction_scaledNDVI}) = "sets frac_vegetation by scaling the NDVI value"
 
 @doc """
 

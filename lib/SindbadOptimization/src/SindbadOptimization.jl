@@ -75,6 +75,7 @@ module SindbadOptimization
    using SindbadUtils
    using SindbadSetup
    using SindbadTEM
+   using SindbadMetrics
 
    include("prepOpti.jl")
    include("optimizer.jl")

@@ -1982,25 +1982,25 @@ Abstract type for model types in SINDBAD
  -  `DoNotCatchModelErrors`: Disable error catching during model execution 
  -  `LandEcosystem`: Abstract type for all SINDBAD land ecosystem models/approaches 
      -  `EVI`: Enhanced vegetation index 
-         -  `EVI_constant`: sets the value of EVI as a constant 
-         -  `EVI_forcing`: sets the value of land.states.EVI from the forcing in every time step 
+         -  `EVI_constant`: sets EVI as a constant 
+         -  `EVI_forcing`: sets land.states.EVI from forcing 
      -  `LAI`: Leaf area index 
-         -  `LAI_cVegLeaf`: sets the value of land.states.LAI from the carbon in the leaves of the previous time step 
-         -  `LAI_constant`: sets the value of LAI as a constant 
-         -  `LAI_forcing`: sets the value of land.states.LAI from the forcing in every time step 
+         -  `LAI_cVegLeaf`: sets land.states.LAI from the carbon in the leaves of the previous time step 
+         -  `LAI_constant`: sets LAI as a constant 
+         -  `LAI_forcing`: sets land.states.LAI from forcing 
      -  `NDVI`: Normalized difference vegetation index 
-         -  `NDVI_constant`: sets the value of NDVI as a constant 
-         -  `NDVI_forcing`: sets the value of land.states.NDVI from the forcing in every time step 
+         -  `NDVI_constant`: sets NDVI as a constant 
+         -  `NDVI_forcing`: sets land.states.NDVI from forcing 
      -  `NDWI`: Normalized difference water index 
-         -  `NDWI_constant`: sets the value of NDWI as a constant 
-         -  `NDWI_forcing`: sets the value of land.states.NDWI from the forcing in every time step 
+         -  `NDWI_constant`: sets NDWI as a constant 
+         -  `NDWI_forcing`: sets land.states.NDWI from forcing 
      -  `NIRv`: Near-infrared reflectance of terrestrial vegetation 
-         -  `NIRv_constant`: sets the value of NIRv as a constant 
-         -  `NIRv_forcing`: sets the value of land.states.NIRv from the forcing in every time step 
+         -  `NIRv_constant`: sets NIRv as a constant 
+         -  `NIRv_forcing`: sets land.states.NIRv from forcing 
      -  `PET`: Set/get potential evapotranspiration 
-         -  `PET_Lu2005`: Calculates the value of land.fluxes.PET from the forcing variables 
-         -  `PET_PriestleyTaylor1972`: Calculates the value of land.fluxes.PET from the forcing variables 
-         -  `PET_forcing`: sets the value of land.fluxes.PET from the forcing 
+         -  `PET_Lu2005`: Calculates land.fluxes.PET from the forcing variables 
+         -  `PET_PriestleyTaylor1972`: Calculates land.fluxes.PET from the forcing variables 
+         -  `PET_forcing`: sets land.fluxes.PET from the forcing 
      -  `PFT`: Vegetation PFT 
          -  `PFT_constant`: sets a uniform PFT class 
      -  `WUE`: Estimate wue 
@@ -2010,8 +2010,8 @@ Abstract type for model types in SINDBAD
          -  `WUE_constant`: calculates the WUE/AOE as a constant in space & time 
          -  `WUE_expVPDDayCo2`: calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD 
      -  `ambientCO2`: set/get ambient CO2 concentration 
-         -  `ambientCO2_constant`: sets the value of ambient_CO2 as a constant 
-         -  `ambientCO2_forcing`: sets the value of ambient_CO2 from the forcing in every time step 
+         -  `ambientCO2_constant`: sets ambient_CO2 as a constant 
+         -  `ambientCO2_forcing`: sets ambient_CO2 from forcing 
      -  `autoRespiration`: Determine autotrophic respiration (RA) based on the growth and maintenance respiration components. 
          -  `autoRespiration_Thornley2000A`: Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper]. 
          -  `autoRespiration_Thornley2000B`: estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL B - growth respiration is given priority [check Fig.1 of the paper]. 
@@ -2116,13 +2116,13 @@ Abstract type for model types in SINDBAD
      -  `evapotranspiration`: Calculate the evapotranspiration as a sum of components 
          -  `evapotranspiration_sum`: calculates evapotranspiration as a sum of all potential components 
      -  `fAPAR`: Fraction of absorbed photosynthetically active radiation 
-         -  `fAPAR_EVI`: calculates the value of fAPAR as a linear function of EVI 
-         -  `fAPAR_LAI`: sets the value of fAPAR as a function of LAI 
+         -  `fAPAR_EVI`: calculates fAPAR as a linear function of EVI 
+         -  `fAPAR_LAI`: sets fAPAR as a function of LAI 
          -  `fAPAR_cVegLeaf`: Compute FAPAR based on carbon pool of the leave; SLA; kLAI 
          -  `fAPAR_cVegLeafBareFrac`: Compute FAPAR based on carbon pool of the leaf, but only for the vegetation fraction 
-         -  `fAPAR_constant`: sets the value of fAPAR as a constant 
-         -  `fAPAR_forcing`: sets the value of land.states.fAPAR from the forcing in every time step 
-         -  `fAPAR_vegFraction`: sets the value of fAPAR as a linear function of vegetation fraction 
+         -  `fAPAR_constant`: sets fAPAR as a constant 
+         -  `fAPAR_forcing`: sets land.states.fAPAR from forcing 
+         -  `fAPAR_vegFraction`: sets fAPAR as a linear function of vegetation fraction 
      -  `getPools`: Get the amount of water at the beginning of timestep 
          -  `getPools_simple`: gets the amount of water available for the current time step 
      -  `gpp`: Combine effects as multiplicative or minimum; if coupled, uses transup 
@@ -2278,19 +2278,19 @@ Abstract type for model types in SINDBAD
          -  `transpirationSupply_wAWC`: calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture 
          -  `transpirationSupply_wAWCvegFraction`: calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture; scaled by vegetated fractions 
      -  `treeFraction`: Fractional coverage of trees 
-         -  `treeFraction_constant`: sets the value of frac_tree as a constant 
-         -  `treeFraction_forcing`: sets the value of land.states.frac_tree from the forcing in every time step 
+         -  `treeFraction_constant`: sets frac_tree as a constant 
+         -  `treeFraction_forcing`: sets land.states.frac_tree from forcing 
      -  `vegAvailableWater`: Plant available water 
          -  `vegAvailableWater_rootWaterEfficiency`: sets the maximum fraction of water that root can uptake from soil layers as constant. calculate the actual amount of water that is available for plants 
          -  `vegAvailableWater_sigmoid`: calculate the actual amount of water that is available for plants 
      -  `vegFraction`: Fractional coverage of vegetation 
-         -  `vegFraction_constant`: sets the value of frac_vegetation as a constant 
-         -  `vegFraction_forcing`: sets the value of land.states.frac_vegetation from the forcing in every time step 
-         -  `vegFraction_scaledEVI`: sets the value of frac_vegetation by scaling the EVI value 
-         -  `vegFraction_scaledLAI`: sets the value of frac_vegetation by scaling the LAI value 
-         -  `vegFraction_scaledNDVI`: sets the value of frac_vegetation by scaling the NDVI value 
-         -  `vegFraction_scaledNIRv`: sets the value of frac_vegetation by scaling the NIRv value 
-         -  `vegFraction_scaledfAPAR`: sets the value of frac_vegetation by scaling the fAPAR value 
+         -  `vegFraction_constant`: sets frac_vegetation as a constant 
+         -  `vegFraction_forcing`: sets land.states.frac_vegetation from forcing 
+         -  `vegFraction_scaledEVI`: sets frac_vegetation by scaling the EVI value 
+         -  `vegFraction_scaledLAI`: sets frac_vegetation by scaling the LAI value 
+         -  `vegFraction_scaledNDVI`: sets frac_vegetation by scaling the NDVI value 
+         -  `vegFraction_scaledNIRv`: sets frac_vegetation by scaling the NIRv value 
+         -  `vegFraction_scaledfAPAR`: sets frac_vegetation by scaling the fAPAR value 
      -  `wCycle`: Apply the delta storage changes to storage variables 
          -  `wCycle_combined`: computes the algebraic sum of storage and delta storage 
          -  `wCycle_components`: update the water cycle pools per component 

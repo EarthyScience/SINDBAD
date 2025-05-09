@@ -11,19 +11,25 @@ Performs global sensitivity analysis using the specified method.
 - `cost_function`: A function that computes the cost or output of the model based on input parameters.
 - `method_options`: A set of options specific to the chosen sensitivity analysis method.
 - `p_bounds`: A vector or matrix specifying the bounds of the parameters for sensitivity analysis.
-- `::GSAMethod`: The sensitivity analysis method to use. Supported methods include:
-  - `GSAMorris`: Uses the Morris method for sensitivity analysis.
-  - `GSASobol`: Uses the Sobol method for sensitivity analysis.
-  - `GSASobolDM`: Uses the Sobol method with Design Matrices.
+- `::GSAMethod`: The sensitivity analysis method to use.
 - `batch`: A boolean flag indicating whether to perform batch processing (default: `true`).
 
 # Returns:
 - A `results` object containing the sensitivity indices and other relevant outputs for the specified method.
 
-# Notes:
+# algorithm:
+    
+    $(methodsOf(GSAMethod))
+
+---
+
+# Extended help
+
+## Notes:
 - The function internally calls the `gsa` function from the GlobalSensitivity.jl package with the specified method and options.
 - The `cost_function` should be defined to compute the model output based on the input parameters.
 - The `method_options` argument allows fine-tuning of the sensitivity analysis process for each method.
+
 """
 globalSensitivity
 

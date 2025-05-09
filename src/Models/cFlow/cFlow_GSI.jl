@@ -168,7 +168,7 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cFlow_GSI}) = "Precomputations for the transfers between carbon pools based on GSI method. combine all the effects that change the transfers between carbon pools based on GSI method"
+purpose(::Type{cFlow_GSI}) = "compute the flow rates between the different pools. The flow rates are based on the GSI approach. The flow rates are computed based on the stressors (soil moisture, temperature, and light) and the slope of the stressors. The flow rates are computed for the following pools: leaf, root, reserve, and litter. The flow rates are computed for the following processes: leaf to reserve, root to reserve, reserve to leaf, reserve to root, shedding from leaf, and shedding from root."
 
 @doc """
 

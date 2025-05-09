@@ -26,7 +26,7 @@ The `generateApproachCode` function creates a code template for a SINDBAD approa
 # Example
 ```julia
 # Generate code for an approach with 2 parameters
-approach_code = generateApproachCode(:ambientCO2, :ambientCO2_constant, "sets the value of ambient_CO2 as a constant", 2)
+approach_code = generateApproachCode(:ambientCO2, :ambientCO2_constant, "sets ambient_CO2 as a constant", 2)
 
 println(approach_code)
 ```
@@ -166,7 +166,7 @@ The `generateSindbadApproach` function creates a SINDBAD model and/or approach b
 ```julia
 # Generate a new SINDBAD approach for an existing model
 
-generateSindbadApproach(:ambientCO2, "Represents ambient CO2 concentration", :constant, "Sets the value of ambient CO2 as a constant", 1)
+generateSindbadApproach(:ambientCO2, "Represents ambient CO2 concentration", :constant, "Sets ambient CO2 as a constant", 1)
 
 # Generate a new SINDBAD model and approach
 

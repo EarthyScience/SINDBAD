@@ -18,7 +18,7 @@ function precompute(params::vegFraction_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{vegFraction_constant}) = "sets the value of frac_vegetation as a constant"
+purpose(::Type{vegFraction_constant}) = "sets frac_vegetation as a constant"
 
 @doc """
 

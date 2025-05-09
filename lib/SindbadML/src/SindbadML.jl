@@ -20,6 +20,7 @@ module SindbadML
         CachingPool
 
     using Reexport: @reexport
+    using Sindbad
     using SindbadTEM
     using SindbadData.YAXArrays
     using SindbadData.Zarr

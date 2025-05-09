@@ -12,7 +12,7 @@ function compute(params::PET_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{PET_forcing}) = "sets the value of land.fluxes.PET from the forcing"
+purpose(::Type{PET_forcing}) = "sets land.fluxes.PET from the forcing"
 
 @doc """
 

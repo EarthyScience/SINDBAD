@@ -21,7 +21,7 @@ function compute(params::LAI_cVegLeaf, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{LAI_cVegLeaf}) = "sets the value of land.states.LAI from the carbon in the leaves of the previous time step"
+purpose(::Type{LAI_cVegLeaf}) = "sets land.states.LAI from the carbon in the leaves of the previous time step"
 
 @doc """
 

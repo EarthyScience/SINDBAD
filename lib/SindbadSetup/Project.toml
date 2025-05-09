@@ -6,6 +6,7 @@ version = "0.1.0"
 [deps]
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+ConstructionBase = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 Infiltrator = "5903a43b-9cc3-4c30-8d17-598619ec4e9b"
@@ -17,3 +18,6 @@ SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
 [sources]
 Sindbad = {path = "../.."}
 SindbadUtils = {path = "../../lib/SindbadUtils"}
+
+[compat]
+ConstructionBase = "1.5.8"

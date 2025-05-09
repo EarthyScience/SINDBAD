@@ -88,7 +88,7 @@ function compute(params::autoRespiration_Thornley2000C, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{autoRespiration_Thornley2000C}) = "estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL C - growth, degradation & resynthesis view of respiration (check Fig.1 of the paper). Computes the km [maintenance [respiration] coefficient]."
+purpose(::Type{autoRespiration_Thornley2000C}) = "estimates autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL C - growth, degradation & resynthesis view of respiration. Computes the km [maintenance [respiration] coefficient]."
 
 @doc """
 

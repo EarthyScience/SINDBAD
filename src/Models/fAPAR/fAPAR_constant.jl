@@ -18,7 +18,7 @@ function precompute(params::fAPAR_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{fAPAR_constant}) = "sets the value of fAPAR as a constant"
+purpose(::Type{fAPAR_constant}) = "sets fAPAR as a constant"
 
 @doc """
 
