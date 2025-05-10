@@ -1,7 +1,6 @@
-export cCycleBase_GSI_PlantForm, adjustPackPoolComponents
+export cCycleBase_GSI_PlantForm_LargeKReserve, adjustPackPoolComponents
 
-#! format: off
-@bounds @describe @units @timescale @with_kw struct cCycleBase_GSI_PlantForm{
+@bounds @describe @units @timescale @with_kw struct cCycleBase_GSI_PlantForm_LargeKReserve{
     T1,  # c_τ_Root_scalar
     T2,  # c_τ_Wood_scalar
     T3,  # c_τ_Leaf_scalar
@@ -28,9 +27,9 @@ export cCycleBase_GSI_PlantForm, adjustPackPoolComponents
     c_τ_Reserve_scalar::T5 = 1.0 | (0.25, 4) | "scalar for Reserve does not respire, but has a small value to avoid numerical error" | "-" | ""
     c_τ_Soil_scalar::T6 = 1.0 | (0.25, 4) | "scalar for turnover rate of soil carbon pool" | "-" | ""
 
-    c_τ_tree::T7 = Float64.(1.0 ./ [1.0, 50.0, 1.0, 1.0e11]) | (1 ./[4.0, 200.0, 4.0, 4.0e11], 1 ./[0.25, 12.5, 0.25, 0.25e11]) | "turnover of different organs of trees" | "year-1" | "year"
-    c_τ_shrub::T8 = Float64.(1.0 ./ [1.0, 5.0, 1.0, 1.0e11]) | (1 ./[4.0, 20.0, 4.0, 4.0e11], 1 ./[0.25, 1.25, 0.25, 0.25e11]) | "turnover of different organs of shrubs" | "year-1" | "year"
-    c_τ_herb::T9 = Float64.(1.0 ./ [0.75, 0.75, 0.75, 0.75e11]) | (1 ./[3.0, 3.0, 3.0, 3.0e11], 1 ./[0.1875, 0.1875, 0.1875, 0.1875e11]) | "turnover of different organs of herbs" | "year-1" | "year"
+    c_τ_tree::T7 = Float64.(1.0 ./ [1.0, 50.0, 1.0, 1.0e3]) | (1 ./[4.0, 200.0, 4.0, 4.0e3], 1 ./[0.25, 12.5, 0.25, 0.25e3]) | "turnover of different organs of trees" | "year-1" | "year"
+    c_τ_shrub::T8 = Float64.(1.0 ./ [1.0, 5.0, 1.0, 1.0e3]) | (1 ./[4.0, 20.0, 4.0, 4.0e3], 1 ./[0.25, 1.25, 0.25, 0.25e3]) | "turnover of different organs of shrubs" | "year-1" | "year"
+    c_τ_herb::T9 = Float64.(1.0 ./ [0.75, 0.75, 0.75, 0.75e3]) | (1 ./[3.0, 3.0, 3.0, 3.0e3], 1 ./[0.1875, 0.1875, 0.1875, 0.1875e3]) | "turnover of different organs of herbs" | "year-1" | "year"
 
     c_τ_LitFast::T10 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "year-1" | "year"
     c_τ_LitSlow::T11 = 3.9 | (0.39, 39.0) | "turnover rate of slow litter carbon (wood litter) pool" | "year-1" | "year"
@@ -53,8 +52,8 @@ export cCycleBase_GSI_PlantForm, adjustPackPoolComponents
 end
 #! format: on
 
-function define(params::cCycleBase_GSI_PlantForm, forcing, land, helpers)
-    @unpack_cCycleBase_GSI_PlantForm params
+function define(params::cCycleBase_GSI_PlantForm_LargeKReserve, forcing, land, helpers)
+    @unpack_cCycleBase_GSI_PlantForm_LargeKReserve params
     @unpack_nt begin
         cEco ⇐ land.pools
         (z_zero, o_one) ⇐ land.constants
@@ -70,7 +69,7 @@ function define(params::cCycleBase_GSI_PlantForm, forcing, land, helpers)
     c_taker = Tuple([ind[1] for ind ∈ findall(>(z_zero), c_flow_A_array)])
     c_giver = Tuple([ind[2] for ind ∈ findall(>(z_zero), c_flow_A_array)])
 
-    c_model = cCycleBase_GSI_PlantForm()
+    c_model = cCycleBase_GSI_PlantForm_LargeKReserve()
 
     zero_c_τ_pf = zero(c_τ_tree)
 
@@ -84,7 +83,7 @@ function define(params::cCycleBase_GSI_PlantForm, forcing, land, helpers)
     return land
 end
 
-function get_c_τ(τ_pf, ::cCycleBase_GSI_PlantForm)
+function get_c_τ(τ_pf, ::cCycleBase_GSI_PlantForm_LargeKReserve)
     τ_root = τ_pf[1]
     τ_wood = τ_pf[2]
     τ_leaf = τ_pf[3]
@@ -92,8 +91,8 @@ function get_c_τ(τ_pf, ::cCycleBase_GSI_PlantForm)
     return τ_root, τ_wood, τ_leaf, τ_reserve 
 end
 
-function precompute(params::cCycleBase_GSI_PlantForm, forcing, land, helpers)
-    @unpack_cCycleBase_GSI_PlantForm params
+function precompute(params::cCycleBase_GSI_PlantForm_LargeKReserve, forcing, land, helpers)
+    @unpack_cCycleBase_GSI_PlantForm_LargeKReserve params
     @unpack_nt begin
         (C_to_N_cVeg, c_eco_k_base, c_eco_τ, zero_c_τ_pf) ⇐ land.diagnostics
         (z_zero, o_one) ⇐ land.constants
@@ -139,7 +138,7 @@ function precompute(params::cCycleBase_GSI_PlantForm, forcing, land, helpers)
     return land
 end
 
-function adjustPackPoolComponents(land, helpers, ::cCycleBase_GSI_PlantForm)
+function adjustPackPoolComponents(land, helpers, ::cCycleBase_GSI_PlantForm_LargeKReserve)
     @unpack_nt (cVeg,
         cLit,
         cSoil,
@@ -212,11 +211,11 @@ function adjustPackPoolComponents(land, helpers, ::cCycleBase_GSI_PlantForm)
     return land
 end
 
-purpose(::Type{cCycleBase_GSI_PlantForm}) = "sets the basics for carbon cycle  pools as in the GSI, but allows for scaling of turnover parameters based on plant forms"
+purpose(::Type{cCycleBase_GSI_PlantForm_LargeKReserve}) = "same as cCycleBase_GSI_PlantForm_LargeKReserves but with a larger turnover of reserve so that they respire and flow"
 
 @doc """
 
-$(getModelDocString(cCycleBase_GSI_PlantForm))
+$(getModelDocString(cCycleBase_GSI_PlantForm_LargeKReserve))
 
 ---
 
@@ -229,6 +228,6 @@ $(getModelDocString(cCycleBase_GSI_PlantForm))
  - 1.0 on 28.02.2020 [skoirala | @dr-ko]  
 
 *Created by*
- - ncarvalhais
+ - skoirala based on cCycleBase_GSI_PlantForm.jl from ncarvalhais
 """
-cCycleBase_GSI_PlantForm
+cCycleBase_GSI_PlantForm_LargeKReserve

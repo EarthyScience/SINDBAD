@@ -24,15 +24,15 @@ const settingsItems = [
 const codeItems = [
   { text: 'Sindbad', link: '/pages/code/overview' },
   { text: ' + Core', link: '/pages/code/sindbad' },
+  { text: ' \u00A0\u00A0++ Models', link: '/pages/code/models' },
+  { text: ' \u00A0\u00A0++ Types', link: '/pages/code/types' },
   { text: ' + Data', link: '/pages/code/data' },
   { text: ' + Experiment', link: '/pages/code/experiment' },
   { text: ' + Metrics', link: '/pages/code/metrics' },
   { text: ' + ML', link: '/pages/code/ml' },
-  { text: ' + Models', link: '/pages/code/models' },
   { text: ' + Optimization', link: '/pages/code/optimization' },
   { text: ' + Setup', link: '/pages/code/setup' },
   { text: ' + TEM', link: '/pages/code/tem' },
-  { text: ' + Types', link: '/pages/code/types' },
   { text: ' + Utils', link: '/pages/code/utils' },
   { text: ' + Visuals', link: '/pages/code/visuals' }
 ]

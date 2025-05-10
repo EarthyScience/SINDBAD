@@ -5,15 +5,15 @@ This page provides an overview of all SINDBAD packages and their main functional
 | Package | Description | Key Features |
 |---------|-------------|--------------|
 | [Core](sindbad.md) | Core package `Sindbad` | Main framework for model core and processes |
+| [ Models](models.md) | Model implementations | Ecosystem model processes and approaches |
+| [ Types](types.md) | SINDBAD Types | Definition of all SINDBAD types and purposes |
 | [Data](data.md) | Data handling | Input/output operations, data processing, and handling |
 | [Experiment](experiment.md) | Simulation experiments | Experiment setup, configuration, and execution |
 | [Metrics](metrics.md) | Performance metrics | Cost functions, evaluation metrics, and validation tools |
 | [ML](ml.md) | Machine learning | Machine learning integration and model training |
-| [Models](models.md) | Model implementations | Ecosystem model processes and approaches |
 | [Optimization](optimization.md) | Optimization methods | Parameter optimization and calibration |
 | [Setup](setup.md) | Setup utilities | configuration of SINDBAD experiment and setup |
 | [TEM](tem.md) | Terrestrial Ecosystem Model | Core ecosystem modeling framework |
-| [Types](types.md) | SINDBAD Types | Definition of all SINDBAD types and purposes |
 | [Utils](utils.md) | Utility functions | Helper functions and common utilities for all packages|
 | [Visuals](visuals.md) | Visualization tools | Plotting and data visualization (to be developed..) |
 

@@ -544,6 +544,10 @@ cCycleBase_GSI
 ```@docs
 cCycleBase_GSI_PlantForm
 ```
+== cCycleBase_GSI_PlantForm_LargeKReserve
+```@docs
+cCycleBase_GSI_PlantForm_LargeKReserve
+```
 == cCycleBase_simple
 ```@docs
 cCycleBase_simple

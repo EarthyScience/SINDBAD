@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name No_Res
-#SBATCH -o ./tmp_run_logs/No_Res-%A_%a.o.log
-#SBATCH -e ./tmp_run_logs/No_Res-%A_%a.e.log
+#SBATCH --job-name LK_Res
+#SBATCH -o ./tmp_run_logs/LK_Res-%A_%a.o.log
+#SBATCH -e ./tmp_run_logs/LK_Res-%A_%a.e.log
 #SBATCH -p gpu
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=36
@@ -11,4 +11,4 @@
 export JULIA_NUM_THREADS=${SLURM_CPUS_PER_TASK}
 sleep $SLURM_ARRAY_TASK_ID
 
-/Net/Groups/Services/HPC_22/apps/julia/julia-1.11.4/bin/julia --project=../exp_WROASTED --heap-size-hint=12G exp_fluxnet_zarr_PF_noscaling.jl
+/Net/Groups/Services/HPC_22/apps/julia/julia-1.11.4/bin/julia --project=../exp_WROASTED --heap-size-hint=12G exp_fluxnet_zarr_PF_largeK.jl

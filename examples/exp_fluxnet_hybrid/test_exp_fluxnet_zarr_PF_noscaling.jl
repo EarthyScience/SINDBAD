@@ -85,7 +85,7 @@ opti_sets = Dict(
 # forcing_set = "zarr";
 # forcing_config = "forcing_$(forcing_set).json";
 parallelization_lib = "threads"
-exp_main = "Insitu_v202503_PF_Slopes_NoScaling_RgPot"
+exp_main = "Insitu_v202503_PF_Slopes_LargeK"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1, :set3, :set9)
@@ -126,7 +126,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "optimization.observations.default_observation.data_path" => path_observation,
     "optimization.observational_constraints" => opti_sets[o_set],)
 
-replace_info["experiment.basics.config_files.model_structure"] = "model_structure_PF.json";
+replace_info["experiment.basics.config_files.model_structure"] = "model_structure_PF_largeK.json";
 replace_info["experiment.basics.config_files.optimization"] = "optimization_PF.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info

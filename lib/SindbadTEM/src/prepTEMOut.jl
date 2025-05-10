@@ -136,7 +136,7 @@ function getOutDims(info, forcing_helpers, ::Union{OutputArray, OutputMArray, Ou
     outdims = map(outdims_pairs) do dim_pairs
         od = []
         for _dim in dim_pairs
-            push!(od, Dim{first(_dim)}(last(_dim)))
+            push!(od, YAXArrays.Dim{first(_dim)}(last(_dim)))
         end
         Tuple(od)
     end
@@ -150,7 +150,7 @@ function getOutDims(info, forcing_helpers, ::OutputYAXArray)
         od = []
         for _dim in dim_pairs
             if first(_dim) ∉ space_dims
-                push!(od, Dim{first(_dim)}(last(_dim)))
+                push!(od, YAXArrays.Dim{first(_dim)}(last(_dim)))
             end
         end
         Tuple(od)
@@ -162,7 +162,7 @@ function getOutDims(info, forcing_helpers, ::OutputYAXArray)
         vdims = var_dims[v_index]
         outformat = info.settings.experiment.model_output.format
         backend = outformat == "nc" ? :netcdf : :zarr
-        out_dim = OutDims(vdims...;
+        out_dim = YAXArrays.OutDims(vdims...;
         properties = _properties,
         path=info.output.file_info.file_prefix * "_$(vname).$(outformat)",
         backend=backend,
