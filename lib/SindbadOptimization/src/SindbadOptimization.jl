@@ -18,6 +18,12 @@ This package is designed to support optimization tasks in SINDBAD, such as calib
 - `OptimizationBBO`: Provides black-box optimization methods for derivative-free optimization.
 - `OptimizationGCMAES`: Implements the GCMA-ES (Global Covariance Matrix Adaptation Evolution Strategy) algorithm.
 - `OptimizationCMAEvolutionStrategy`: Integrates CMA-ES into the `Optimization` interface.
+- `QuasiMonteCarlo`: Provides quasi-Monte Carlo methods for optimization, useful for high-dimensional problems.
+- `StableRNGs`: Supplies stable random number generators for reproducible optimization results.
+- `GlobalSensitivity`: Provides tools for global sensitivity analysis, including Sobol indices and variance-based sensitivity analysis.
+- `Sindbad`: Provides the core SINDBAD framework and its core functionality.
+- `SindbadUtils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
+- `SindbadSetup`: Provides the SINDBAD setup.
 - `SindbadTEM`: Provides the SINDBAD Terrestrial Ecosystem Model (TEM) as the target for optimization tasks.
 - `SindbadMetrics`: Supplies metrics for evaluating model performance, which are used in cost function calculations.
 
@@ -35,22 +41,28 @@ This package is designed to support optimization tasks in SINDBAD, such as calib
    - Provides functions for optimizing SINDBAD TEM parameters for single locations or small spatial grids.
    - Functionality to handle optimization using large-scale 3D data YAXArrays cubes, enabling parameter calibration across spatial dimensions.
 
+5. **`sensitivityAnalysis.jl`**:
+   - Provides functions for performing sensitivity analysis on SINDBAD models, including global sensitivity analysis and local sensitivity analysis.
+
 !!! note
     - The package integrates multiple optimization libraries, allowing users to choose the most suitable algorithm for their problem.
     - Designed to be modular and extensible, enabling users to customize optimization workflows for specific use cases.
     - Supports both gradient-based and derivative-free optimization methods, ensuring flexibility for different types of cost functions.
 
 # Examples:
-1. **Running a CMA-ES optimization**:
+1. **Running an experiment**:
+```julia
+using SindbadExperiment
+# Set up experiment parameters
+experiment_config = ...
+
+# Run the experiment
+runExperimentOpti(experiment_config)
+```
+2. **Running a CMA-ES optimization**:
 ```julia
 using SindbadOptimization
 optimized_params = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, CMAEvolutionStrategyCMAES())
-```
-
-2. **Optimizing SINDBAD TEM parameters**:
-```julia
-using SindbadOptimization
-results = optimizeTEM(model, forcing, observations, info)
 ```
 """
 module SindbadOptimization

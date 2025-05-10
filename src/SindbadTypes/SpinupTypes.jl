@@ -115,7 +115,7 @@ struct SpinupSequenceWithAggregator <: SpinupType
     aggregator::Vector{TimeAggregator}
     aggregator_type::TimeAggregation
 end
-purpose(::Type{SpinupSequenceWithAggregator}) = "Spinup sequence with time aggregation capabilities"
+purpose(::Type{SpinupSequenceWithAggregator}) = "Spinup sequence with time aggregation for corresponding forcingtime series"
 
 struct SpinupSequence <: SpinupType
     forcing::Symbol
@@ -124,3 +124,4 @@ struct SpinupSequence <: SpinupType
     spinup_mode::SpinupMode
     options::NamedTuple
 end
+purpose(::Type{SpinupSequence}) = "Basic Spinup sequence without time aggregation"

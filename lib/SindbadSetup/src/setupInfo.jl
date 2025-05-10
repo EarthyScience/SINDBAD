@@ -448,7 +448,7 @@ function setupInfo(info::NamedTuple)
         info = setOptimization(info)
     else
         parameter_table = info.temp.models.parameter_table
-        checkParameterBounds(parameter_table.name, parameter_table.initial, parameter_table.lower, parameter_table.upper, ScaleNone(), show_info=true, model_names=parameter_table.model_approach)
+        checkParameterBounds(parameter_table.name, parameter_table.initial, parameter_table.lower, parameter_table.upper, ScaleNone(), p_units=parameter_table.units, show_info=true, model_names=parameter_table.model_approach)
      end
 
     if !isnothing(info.settings.experiment.exe_rules.longtuple_size)

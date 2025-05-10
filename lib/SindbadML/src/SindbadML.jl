@@ -19,7 +19,6 @@ module SindbadML
         nprocs,
         CachingPool
 
-    using Reexport: @reexport
     using Sindbad
     using SindbadTEM
     using SindbadData.YAXArrays

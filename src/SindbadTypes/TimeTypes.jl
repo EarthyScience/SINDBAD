@@ -38,7 +38,7 @@ export TimeAggregatorViewInstance
 """
     TimeAggregator{I, aggr_func}
 
-define a new type of temporal aggregation
+define a type for temporal aggregation of an array
 
 # Fields:
 - `indices::I`: indices to be collected for aggregation
@@ -48,7 +48,7 @@ struct TimeAggregator{I,aggr_func} <: TimeType
     indices::I
     aggr_func::aggr_func
 end
-
+purpose(::Type{TimeAggregator}) = "define a type for temporal aggregation of an array"
 
 """
     TimeAggregatorViewInstance{T, N, D, P, AV <: TimeAggregator}
@@ -65,6 +65,7 @@ struct TimeAggregatorViewInstance{T,N,D,P,AV<:TimeAggregator} <: AbstractArray{T
     agg::AV
     dim::Val{D}
 end
+purpose(::Type{TimeAggregatorViewInstance}) = "view of a TimeAggregator"
 
 
 abstract type TimeAggregation <: TimeType end

@@ -4,13 +4,8 @@ authors = ["SINDBAD Contributors <sindbad@bgc-jena.mpg.de>"]
 version = "0.1.0"
 
 [deps]
-ConstructionBase = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
-StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [sources]
 Sindbad = {path = "../.."}
-
-[compat]
-ConstructionBase = "1.5.8"

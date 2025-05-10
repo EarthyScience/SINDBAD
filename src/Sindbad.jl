@@ -12,11 +12,15 @@ This package defines the `LandEcosystem` supertype, which serves as the base for
 - `Reexport`: Simplifies re-exporting functionality from other packages, ensuring a clean and modular design.
 - `CodeTracking`: Enables tracking of code definitions, useful for debugging and development workflows.
 - `DataStructures`: Provides advanced data structures (e.g., `OrderedDict`, `Deque`) for efficient data handling in SINDBAD models.
+- `Dates`: Handles date and time operations, useful for managing temporal data in SINDBAD experiments.
 - `Flatten`: Supplies tools for flattening nested data structures, simplifying the handling of hierarchical model variables.
 - `InteractiveUtils`: Enables interactive exploration and debugging during development.
 - `Parameters`: Provides macros for defining and managing model parameters in a concise and readable manner.
 - `StaticArraysCore`: Supports efficient, fixed-size arrays (e.g., `SVector`, `MArray`) for performance-critical operations in SINDBAD models.
 - `TypedTables`: Provides lightweight, type-stable tables for structured data manipulation.
+- `Accessors`: Enables efficient access and modification of nested data structures, simplifying the handling of SINDBAD configurations.
+- `StatsBase`: Supplies statistical functions such as `mean`, `percentile`, `cor`, and `corspearman` for computing metrics like correlation and distribution-based statistics.
+- `NaNStatistics`: Extends statistical operations to handle missing values (`NaN`), ensuring robust data analysis.
 
 
 # Included Files:
@@ -65,18 +69,21 @@ catalog = getVariableCatalog()
 ```
 """
 module Sindbad
-    using Reexport: @reexport
-    @reexport using CodeTracking
-    @reexport using DataStructures: DataStructures
-    @reexport using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
-    @reexport using InteractiveUtils
-    using Parameters
-    @reexport using Reexport
-    @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
-    @reexport using TypedTables: Table
+   using Reexport: @reexport
+   @reexport using Reexport
+   @reexport using CodeTracking
+   @reexport using DataStructures: DataStructures
+   @reexport using Dates
+   @reexport using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
+   @reexport using InteractiveUtils
+   @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
+   @reexport using TypedTables: Table
+   @reexport using Accessors: @set
+   @reexport using StatsBase
+   @reexport using NaNStatistics
 
 
-    # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of Sindbad.
+   # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of Sindbad.
    file_path = file_path = joinpath(@__DIR__, "tmp_precompile_placeholder.jl")
    # Check if the file exists
    if isfile(file_path)
@@ -144,9 +151,9 @@ module Sindbad
    ---
 
    # Extended Help
-   $(methodsOf(LandEcosystem))
+   $(methodsOf(SindbadTypes.LandEcosystem))
    """
-   LandEcosystem
+   SindbadTypes.LandEcosystem
    
    include(joinpath(@__DIR__, "SindbadTypes/docStringForTypes.jl"))
 end

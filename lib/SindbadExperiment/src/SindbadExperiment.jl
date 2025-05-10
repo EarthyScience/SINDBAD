@@ -1,7 +1,7 @@
 """
     SindbadExperiment
 
-The `SindbadExperiment` package provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates core SINDBAD packages and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
+The `SindbadExperiment` package provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates SINDBAD packages and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
 
 # Purpose:
 This package acts as a high-level interface for conducting experiments using the SINDBAD framework. It leverages the functionality of core SINDBAD packages and provides additional utilities for running experiments and managing outputs.
@@ -35,14 +35,7 @@ using SindbadExperiment
 experiment_config = ...
 
 # Run the experiment
-runExperiment(experiment_config)
-```
-
-2. **Saving experiment outputs**:
-```julia
-using SindbadExperiment
-# Save outputs to a file
-saveOutput(output_data, "results.nc")
+runExperimentForward(experiment_config)
 ```
 """
 module SindbadExperiment

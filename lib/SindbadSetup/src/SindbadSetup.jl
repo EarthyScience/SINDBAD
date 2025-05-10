@@ -8,16 +8,13 @@ The `SindbadSetup` package provides tools for setting up and configuring SINDBAD
 This package is designed to produce the SINDBAD `info` object, which contains all the necessary configurations and metadata for running SINDBAD experiments. It facilitates reading configurations, building model structures, and preparing outputs.
 
 # Dependencies:
-- `Sindbad`: Provides the core SINDBAD models.
-- `Accessors`: Enables efficient access and modification of nested data structures, simplifying the handling of SINDBAD configurations.
-- `ForwardDiff`: Supports automatic differentiation for parameter optimization and sensitivity analysis.
+- `Sindbad`: Provides the core SINDBAD framework and its core functionality.
+- `SindbadUtils`: Supplies utility functions for handling data and other helper tasks during the setup process.
+- `ConstructionBase`: Provides a base type for constructing types, enabling the creation of custom types for SINDBAD experiments.
 - `CSV`: Provides tools for reading and writing CSV files, commonly used for input and output data in SINDBAD experiments.
-- `Dates`: Handles date and time operations, useful for managing temporal data in SINDBAD experiments.
 - `Infiltrator`: Enables interactive debugging during the setup process, improving development and troubleshooting.
 - `JSON`: Provides tools for parsing and generating JSON files, commonly used for configuration files.
 - `JLD2`: Facilitates saving and loading SINDBAD configurations and outputs in a binary format for efficient storage and retrieval.
-- `SindbadUtils`: Supplies utility functions for handling data and other helper tasks during the setup process.
-- `SindbadMetrics`: Provides metrics for evaluating model performance, which can be integrated into the setup process.
 
 # Included Files:
 
@@ -36,7 +33,10 @@ This package is designed to produce the SINDBAD `info` object, which contains al
 5. **`setupPools.jl`**:
    - Handles the initialization of SINDBAD land by creating model pools, including state variables.
 
-6. **`setupParameters.jl`**:
+6. **`updateParameters.jl`**:
+   - Implements logic for updating model parameters based on metric evaluations, enabling iterative model calibration.
+
+7. **`setupParameters.jl`**:
    - Manages the loading and setup of model parameters, including bounds, scaling, and initial values.
 
 7. **`setupModels.jl`**:
@@ -52,7 +52,7 @@ This package is designed to produce the SINDBAD `info` object, which contains al
    - Calls various functions to collect the `info` object by integrating all configurations, models, parameters, and outputs.
 
 # Notes:
-- The package re-exports several key packages (`Sindbad`, `Accessors`, `ForwardDiff`, `CSV`, `Dates`, `JLD2`, `SindbadUtils`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadSetup`.
+- The package re-exports several key packages (`Accessors`, `ForwardDiff`, `CSV`, `JLD2`) for convenience, allowing users to access their functionality directly through `SindbadSetup`.
 - Designed to be modular and extensible, enabling users to customize and expand the setup process for specific use cases.
 
 """
@@ -61,10 +61,7 @@ module SindbadSetup
    using Sindbad
    using SindbadUtils
    using ConstructionBase
-   @reexport using Accessors
-   @reexport using ForwardDiff
    @reexport using CSV: CSV
-   @reexport using Dates
    @reexport using Infiltrator
    using JSON: parsefile, json, print as json_print
    @reexport using JLD2: @save, load

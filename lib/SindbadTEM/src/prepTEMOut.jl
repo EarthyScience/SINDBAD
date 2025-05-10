@@ -421,10 +421,10 @@ setupOptiOutput
 function setupOptiOutput(info::NamedTuple, output::NamedTuple, ::DoRunOptimization)
     @debug "     setupOptiOutput: getting parameter output for optimization..."
     params = info.optimization.parameter_table.name_full    
-    paramaxis = Dim{:parameter}(params)
+    paramaxis = YAXArrays.Dim{:parameter}(params)
     outformat = info.output.format
     backend = outformat == "nc" ? :netcdf : :zarr
-    od = OutDims(paramaxis;
+    od = YAXArrays.OutDims(paramaxis;
         path=joinpath(info.output.dirs.optimization,
             "optimized_parameters.$(outformat)"),
         backend=backend,

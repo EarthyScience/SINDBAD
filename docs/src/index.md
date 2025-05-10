@@ -43,7 +43,7 @@ features:
     details: Understand the core concept of modularity and data-informed terrestrial ecosystem modeling.
 
   - icon: <img width="78" height="78" src="https://img.icons8.com/external-filled-color-icons-papa-vector/78/external-Adjustment-Problem-choosing-business-tools-filled-color-icons-papa-vector.png" alt="optim-icon"/>
-    title: User Guide
+    title: User Documentation
     link: /pages/develop/overview
     details: Start using and developing SINDBAD models and experiments.
 

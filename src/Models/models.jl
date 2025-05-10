@@ -57,10 +57,9 @@ module Models
 
     # Import & export necessary modules/functions
     using ..Sindbad
-    # import ..Sindbad.SindbadTypes: purpose, LandEcosystem, DoCatchModelErrors, DoNotCatchModelErrors
+    import ..Sindbad.SindbadTypes: purpose, LandEcosystem
     using FieldMetadata: @metadata
     using Parameters: @with_kw
-    using StatsBase: mean
     @metadata timescale "" String
     @metadata describe "" String
     @metadata bounds (-Inf, Inf) Tuple

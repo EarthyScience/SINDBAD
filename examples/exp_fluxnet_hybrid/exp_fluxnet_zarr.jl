@@ -181,7 +181,7 @@ for o_set in opti_set
 
             plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
             plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric))), $(forcing_set), $(o_set)")
-            plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
+            plot!(xdata, opt_var; color=:seagreen3, label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
             savefig(fig_prefix * "_$(v)_$(forcing_set).png")
         end
 
@@ -210,13 +210,13 @@ for o_set in opti_set
             xdata = [info.helpers.dates.range...]
             if size(opt_var, 2) == 1
                 plot(xdata, def_var[:, 1]; label="def ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
-                plot!(xdata, opt_var[:, 1]; label="opt ($(round(SindbadTEM.mean(opt_var[:, 1]), digits=2)))")
+                plot!(xdata, opt_var, color=:seagreen3[:, 1]; label="opt ($(round(SindbadTEM.mean(opt_var[:, 1]), digits=2)))")
                 ylabel!("$(vinfo["standard_name"])", font=(20, :green))
                 savefig(fig_prefix * "_$(v).png")
             else
                 foreach(axes(opt_var, 2)) do ll
                     plot(xdata, def_var[:, ll]; label="def ($(round(SindbadTEM.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
-                    plot!(xdata, opt_var[:, ll]; label="opt ($(round(SindbadTEM.mean(opt_var[:, ll]), digits=2)))")
+                    plot!(xdata, opt_var[:, ll]; color=:seagreen3, label="opt ($(round(SindbadTEM.mean(opt_var[:, ll]), digits=2)))")
                     ylabel!("$(vinfo["standard_name"])", font=(20, :green))
                     savefig(fig_prefix * "_$(v)_$(ll).png")
                 end

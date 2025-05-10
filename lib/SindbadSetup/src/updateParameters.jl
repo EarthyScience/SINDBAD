@@ -111,9 +111,13 @@ Check and display the parameter bounds information for given parameters.
 # Returns
 Displays a formatted output of parameter bounds information or returns an error when they are violated
 """
-function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::ParameterScaling; show_info=false, model_names=nothing)
+function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::ParameterScaling; p_units=nothing, show_info=false, model_names=nothing)
     if show_info
-        @info "  Checking Parameter Bounds: $(nameof(typeof(_sc))) scaling"
+        if nameof(typeof(_sc)) == :ScaleNone
+            @info "  Checking Parameter Bounds: No scaling applied. The values and bounds are original/input values, while their units, when provided, are scaled to match the model run time steps and may differ from the original units in the model when @timescale of the parameter is different from the model run time step."
+        else
+            @info "  Checking Parameter Bounds: $(nameof(typeof(_sc))) scaling applied. The values and bounds are scaled values, while their units, when provided, are scaled to match the model run time steps and may differ from the original units in the model when @timescale of the parameter is different from the model run time step. Check info.models.parameter_table for interpreting parameter values in original/input units."
+        end
     end
     for (i,n) in enumerate(p_names)
         in_range = checkInRange(n, parameter_values[i], lower_bounds[i], upper_bounds[i], show_info)
@@ -125,7 +129,12 @@ function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bou
             if !isnothing(model_names)
                 ps = String(model_names[i]) * " : " * String(n)
             end
-            @info "       $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
+            if !isnothing(p_units)
+                units_str = p_units[i] == "" ? "None" : " $(p_units[i])"
+                @info "       $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])] (units: $(units_str))"
+            else
+                @info "       $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
+            end
         end
     end
 end
@@ -154,7 +163,7 @@ function scaleParameters(parameter_table, _sc::ScaleNone)
     init = copy(parameter_table.initial)
     ub = copy(parameter_table.upper)  # upper bounds
     lb = copy(parameter_table.lower)   # lower bounds
-    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
+    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, p_units=parameter_table.units, show_info=true, model_names=parameter_table.model_approach)
     return (init, lb, ub)
 end
     
@@ -163,7 +172,7 @@ function scaleParameters(parameter_table, _sc::ScaleDefault)
     ub = copy(parameter_table.upper ./ init)   # upper bounds
     lb = copy(parameter_table.lower ./ init)   # lower bounds
     init = parameter_table.initial ./ init
-    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
+    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, p_units=parameter_table.units, show_info=true, model_names=parameter_table.model_approach)
     return (init, lb, ub)
 end
 
@@ -174,7 +183,7 @@ function scaleParameters(parameter_table, _sc::ScaleBounds)
     init = (init - lb)  ./ (ub - lb)
     lb = zero(lb)
     ub = one.(ub)
-    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, show_info=true, model_names=parameter_table.model_approach)
+    checkParameterBounds(parameter_table.name, init, lb, ub, _sc, p_units=parameter_table.units, show_info=true, model_names=parameter_table.model_approach)
     return (init, lb, ub)
 end
 

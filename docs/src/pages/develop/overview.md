@@ -23,7 +23,7 @@ This document provides an overview of the SINDBAD manual documentation, listing 
 
 1. Start with [Installation](./install.md) for setup instructions
 2. Review [Conventions](./conventions.md) for development standards
-3. Read [Model Approach](./model_approach.md) for understanding the core framework
+3. Read [Model Approach](./model_approach.md) and [Types](./sindbad_types.md) for understanding the core framework
 4. Learn about [Array Handling](./array_handling.md) and [Land Utils](./land_utils.md) for data management
 5. Use [Experiments](./experiments.md) for running simulations
 6. Check [Spinup](./spinup.md) for model initialization procedures
@@ -46,7 +46,7 @@ To contribute to the documentation:
 1. **Basic Usage**
    - Install SINDBAD and its dependencies
    - Set up your working environment
-   - Run your first simulation
+   - Run your first simulation from `examples/*` directories
 
 2. **Model Development**
    - Create new model approaches
@@ -63,8 +63,7 @@ To contribute to the documentation:
 
 1. **Model Development**
    - Follow SINDBAD's modeling conventions
-   - Use appropriate variable groups
-   - Document your code thoroughly
+   - Use appropriate variable groups and naming
 
 2. **Performance**
    - Optimize for zero allocations

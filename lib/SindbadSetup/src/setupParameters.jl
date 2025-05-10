@@ -1,7 +1,32 @@
 export getOptimizationParametersTable
+export filterParameterTable
 export getParameters
 export getParameterIndices
 export perturbParameters
+
+
+"""
+    filterParameterTable(parameter_table::Table; prop_name::Symbol=:model, prop_values::Tuple{Symbol}=(:all,))
+
+Filters a parameter table based on a specified property and values.
+
+# Arguments
+- `parameter_table::Table`: The parameter table to filter
+- `prop_name::Symbol`: The property to filter by (default: :model)
+- `prop_values::Tuple{Symbol}`: The values to filter by (default: :all)
+
+# Returns
+A filtered parameter table.
+"""
+function filterParameterTable(parameter_table::Table; prop_name::Symbol=:model, prop_values::Union{Vector{Symbol},Symbol}=:all)
+    if prop_values == :all
+        return parameter_table
+    elseif isa(prop_values, Symbol)
+        return filter(row -> getproperty(row, prop_name) == prop_values, parameter_table)
+    else
+        return filter(row -> getproperty(row, prop_name) in prop_values, parameter_table)
+    end
+end
 
 """
     getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
@@ -105,7 +130,7 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     timescale_run = map(timescale) do ts
         isempty(ts) ? ts : model_timestep
     end
-    checkParameterBounds(name, default, lower, upper, ScaleNone(),show_info=show_info, model_names=model_approach)
+    checkParameterBounds(name, default, lower, upper, ScaleNone(), p_units=unts, show_info=show_info, model_names=model_approach)
     is_ml = Array{Bool}(undef, length(default))
     dist = Array{String}(undef, length(default))
     p_dist = Array{Array{num_type,1}}(undef, length(default))

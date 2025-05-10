@@ -71,8 +71,8 @@ graph TD
 
 ### Core Packages
 - **Sindbad**: The main package that provides the core framework functionality and serves as the entry point for SINDBAD applications.
-- **Models**: Contains implementations of various ecosystem model components and approaches.
-- **Data**: Handles all data-related operations including input/output, data processing, and management.
+  - **Models**: Module that implements various ecosystem model components and approaches.
+  - **Types**: Module that defines various types for dispatching on methods ranging from setup to cost computation.
 - **TEM**: Provides the Terrestrial Ecosystem Model framework and its core functionality.
 
 ### Modeling Packages
@@ -82,9 +82,10 @@ graph TD
 - **Optimization**: Provides methods for parameter optimization and model calibration.
 
 ### Utility Packages
+- **Data**: Handles all data-related operations including input/output, data processing, and management.
 - **Setup**: Contains installation and configuration tools.
 - **Utils**: Provides helper functions and common utilities used across the framework.
-- **Visuals**: Offers tools for data visualization and plotting.
+- **Visuals**: Offers tools for data visualization and plotting (to be developed...).
 
 ::: tip Package Usage
 
