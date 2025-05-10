@@ -35,37 +35,111 @@ These remain accessible but require qualification with the module name (e.g., `M
 :::
 ## Sindbad Package Dependencies
 
+```sh
+graph TD
+    ## Main Sindbad package
+    Sindbad[Sindbad Core] --> SindbadTypes[SindbadTypes]
+    Sindbad[Sindbad Core] --> SindbadModels[Models]
+    
+    ## Core dependencies
+    Sindbad --> ModelTypes[ModelTypes]
+    Sindbad --> TimeTypes[TimeTypes]
+    Sindbad --> LandTypes[LandTypes]
+    Sindbad --> ArrayTypes[ArrayTypes]
+    
+    ## Lib packages
+    SindbadUtils[SindbadUtils] --> Sindbad
+
+    SindbadData[SindbadData] --> Sindbad
+    SindbadData --> SindbadUtils
+    
+    SindbadSetup[SindbadSetup] --> Sindbad
+    SindbadSetup --> SindbadUtils
+    SindbadSetup --> SindbadData
+    
+    SindbadMetrics[SindbadMetrics] --> Sindbad
+    SindbadMetrics --> SindbadUtils
+    
+    SindbadTEM[SindbadTEM] --> Sindbad
+    SindbadTEM --> SindbadUtils
+    SindbadTEM --> SindbadData
+    SindbadTEM --> SindbadSetup
+    SindbadTEM --> SindbadMetrics
+    
+    SindbadOptimization[SindbadOptimization] --> Sindbad
+    SindbadOptimization --> SindbadUtils
+    SindbadOptimization --> SindbadMetrics
+    SindbadOptimization --> SindbadSetup
+    SindbadOptimization --> SindbadTEM
+    
+    SindbadML[SindbadML] --> Sindbad
+    SindbadML --> SindbadUtils
+    SindbadML --> SindbadMetrics
+    
+    SindbadExperiment[SindbadExperiment] --> Sindbad
+    SindbadExperiment --> SindbadUtils
+    SindbadExperiment --> SindbadData
+    SindbadExperiment --> SindbadSetup
+    SindbadExperiment --> SindbadTEM
+    SindbadExperiment --> SindbadOptimization
+    SindbadExperiment --> SindbadMetrics    
+
+    SindbadVisuals[SindbadVisuals] --> Sindbad
+    SindbadVisuals --> SindbadUtils
+    
+```
+
 ```mermaid
 graph TD
-    A[Sindbad] --> B[Data]
-    A --> C[Experiment]
-    A --> D[Metrics]
-    A --> E[ML]
-    A --> F[Models]
-    A --> G[Optimization]
-    A --> H[Setup]
-    A --> I[TEM]
-    A --> J[Utils]
-    A --> K[Visuals]
-    F --> I
-    C --> F
-    C --> I
-    G --> F
-    G --> I
-    D --> G
-    E --> F
-    E --> I
-    J --> B
-    J --> C
-    J --> D
-    J --> E
-    J --> F
-    J --> G
-    J --> I
-    K --> B
-    K --> D
-    K --> I
+    %% Main Sindbad package
+    Sindbad[Sindbad Core] --> SindbadTypes[SindbadTypes]
+    
+    %% Core dependencies
+    Sindbad --> ModelTypes[ModelTypes]
+    Sindbad --> TimeTypes[TimeTypes]
+    Sindbad --> LandTypes[LandTypes]
+    Sindbad --> ArrayTypes[ArrayTypes]
+    
+    %% Lib packages
+    SindbadUtils[SindbadUtils] --> Sindbad
+    SindbadData[SindbadData] --> Sindbad
+    SindbadData --> SindbadUtils
+    
+    SindbadSetup[SindbadSetup] --> Sindbad
+    SindbadSetup --> SindbadUtils
+    SindbadSetup --> SindbadData
+    
+    SindbadMetrics[SindbadMetrics] --> Sindbad
+    SindbadMetrics --> SindbadUtils
+    
+    SindbadTEM[SindbadTEM] --> Sindbad
+    SindbadTEM --> SindbadUtils
+    SindbadTEM --> SindbadData
+    SindbadTEM --> SindbadSetup
+    SindbadTEM --> SindbadMetrics
+    
+    SindbadOptimization[SindbadOptimization] --> Sindbad
+    SindbadOptimization --> SindbadUtils
+    SindbadOptimization --> SindbadMetrics
+    SindbadOptimization --> SindbadSetup
+    SindbadOptimization --> SindbadTEM
+    
+    SindbadML[SindbadML] --> Sindbad
+    SindbadML --> SindbadUtils
+    SindbadML --> SindbadMetrics
+    
+    SindbadVisuals[SindbadVisuals] --> Sindbad
+    SindbadVisuals --> SindbadUtils
+    
+    SindbadExperiment[SindbadExperiment] --> Sindbad
+    SindbadExperiment --> SindbadUtils
+    SindbadExperiment --> SindbadData
+    SindbadExperiment --> SindbadSetup
+    SindbadExperiment --> SindbadTEM
+    SindbadExperiment --> SindbadOptimization
+    SindbadExperiment --> SindbadMetrics    
 ```
+
 
 ## Package Descriptions
 

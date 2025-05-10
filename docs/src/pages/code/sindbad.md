@@ -27,6 +27,7 @@ end
 ```
 
 ```@autodocs
+ignored_modules = [Sindbad.SindbadTypes]
 Modules = [Sindbad]
 Public = false
 ```

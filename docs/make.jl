@@ -10,7 +10,7 @@ using InteractiveUtils
 using DocumenterVitepress
 using Documenter
 using DocStringExtensions
-
+using DocumenterMermaid
 # dev ../ ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
 
 makedocs(; sitename="Sindbad",
