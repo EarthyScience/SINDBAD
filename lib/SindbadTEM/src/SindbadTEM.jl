@@ -10,7 +10,7 @@ This package integrates various components and utilities required to execute the
 - `ComponentArrays`: Used for managing complex, hierarchical data structures like land variables and model states.
 - `NLsolve`: Used for solving nonlinear equations, particularly in spinup processes (e.g., fixed-point solvers).
 - `ProgressMeter`: Displays progress bars for long-running simulations, improving user feedback.
-- `Sindbad`: Provides the core SINDBAD framework and its core functionality.
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadData`: Provides the SINDBAD data handling functions.
 - `SindbadUtils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
 - `SindbadSetup`: Provides the SINDBAD setup functions.

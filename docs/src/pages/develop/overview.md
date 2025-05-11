@@ -1,6 +1,6 @@
-# SINDBAD Manual Documentation Overview
+# SINDBAD User Documentation Overview
 
-This document provides an overview of the SINDBAD manual documentation, listing each document and its main purpose.
+This is an overview of the SINDBAD user documentation, which lists and links all user documentation pages and their main purposes.
 
 ## Documentation Overview
 

@@ -21,7 +21,7 @@ This package is designed to support optimization tasks in SINDBAD, such as calib
 - `QuasiMonteCarlo`: Provides quasi-Monte Carlo methods for optimization, useful for high-dimensional problems.
 - `StableRNGs`: Supplies stable random number generators for reproducible optimization results.
 - `GlobalSensitivity`: Provides tools for global sensitivity analysis, including Sobol indices and variance-based sensitivity analysis.
-- `Sindbad`: Provides the core SINDBAD framework and its core functionality.
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadUtils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
 - `SindbadSetup`: Provides the SINDBAD setup.
 - `SindbadTEM`: Provides the SINDBAD Terrestrial Ecosystem Model (TEM) as the target for optimization tasks.

@@ -7,7 +7,7 @@ The `SindbadData` package provides tools for handling and processing SINDBAD-rel
 This package is designed to streamline the ingestion and preprocessing of input data for SINDBAD experiments. 
 
 # Dependencies:
-- `Sindbad`: Provides the core SINDBAD framework and its core functionality.
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadUtils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
 - `AxisKeys`: Enables labeled multidimensional arrays (`KeyedArray`) for managing data with explicit axis labels.
 - `FillArrays`: Provides efficient representations of arrays filled with a single value, useful for initializing data structures.

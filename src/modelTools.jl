@@ -470,7 +470,7 @@ function modelParameter(models, model::Symbol)
         foreach(pnames) do fn
             p_dict[fn] = getproperty(mod, fn)
             p_unit = Sindbad.Models.units(mod, fn)
-            p_unit_info = p_unit == "" ? "unitless/fraction" : "($p_unit)"
+            p_unit_info = p_unit == "" ? "unitless" : "($p_unit)"
             println("   $fn => $(getproperty(mod, fn)) $p_unit_info")
         end
     end
@@ -500,11 +500,11 @@ function modelParameter(model::Sindbad.SindbadTypes.LandEcosystem, show=true)
             p_val = getproperty(model, fn)
             p_describe = Sindbad.Models.describe(model, fn)
             p_unit = Sindbad.Models.units(model, fn)
-            p_u = isempty(p_unit) ? "undefined" : "$(p_unit)"
+            p_u = isempty(p_unit) ? "`unitless`" : "units: `$(p_unit)`"
             p_timescale = Sindbad.Models.timescale(model, fn)
-            p_t = isempty(p_timescale) ? "timescale independent" : "$(p_timescale) timescale"
+            p_t = isempty(p_timescale) ? "`all` timescales" : "`$(p_timescale)` timescale"
             p_bounds = Sindbad.Models.bounds(model, fn)
-            p_w = "$(p_val) ∈ [$(p_bounds[1]), $(p_bounds[2])] => $(p_describe) in $(p_u) units; $(p_t)"
+            p_w = "$(p_val) ∈ [$(p_bounds[1]), $(p_bounds[2])] => $(p_describe) ($(p_u) @ $(p_t))"
             p_p = Pair(fn, p_w)
             if show
                 println("  - ", p_p)

@@ -58,7 +58,7 @@ Available when parameter estimation or model cost calculation is enabled:
 - Options for running optimization (`run_options`)
 
 Interactively [view an example info from a SINDBAD experiment](http://sindbad-mdi.org/pages/concept/sindbad_info/sindbad_info.html)
-![SINDBAD Conceptual Framework](../../assets/sindbad_info.png)
+![SINDBAD info](../../assets/sindbad_info.png)
 
 ## Usage Guidelines
 

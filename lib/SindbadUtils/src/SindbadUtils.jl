@@ -7,13 +7,12 @@ The `SindbadUtils` package provides a collection of utility functions and tools 
 This package is designed to provide reusable utilities for data manipulation, statistical operations, and spatial/temporal processing. 
     
 # Dependencies:
-- `Sindbad`: Provides the core SINDBAD framework and its core functionality.
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `Crayons`: Enables colored terminal output, improving the readability of logs and messages.
 - `StyledStrings`: Provides styled text for enhanced terminal output.
 - `Dates`: Facilitates date and time operations, useful for temporal data processing.
 - `FIGlet`: Generates ASCII art text, useful for creating visually appealing headers in logs or outputs.
 - `Logging`: Provides logging utilities for debugging and monitoring SINDBAD workflows.
-- `StaticArraysCore`: Supports efficient, fixed-size arrays for performance-critical operations.
 
 # Included Files:
 1. **`getArrayView.jl`**:

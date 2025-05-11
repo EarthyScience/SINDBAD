@@ -165,10 +165,10 @@ module Models
             doc_string = getModelDocStringForIO(doc_string, outputs)
         end
         if length(undefined_str) > 0
-            doc_string *= "\n`$(undefined_str[1:end-2]) methods are not defined`\n"        
+            doc_string *= "\n`$(undefined_str[1:end-2])` methods are not defined\n"        
         end
         appr_name = string(nameof(appr))
-        doc_string *= "\n*End of `getModelDocString-generated docstring` for `$(appr_name).jl`. Check the Extended help for user-defined information.*"
+        doc_string *= "\n*End of `getModelDocString`-generated docstring for `$(appr_name).jl`.\nCheck the Extended help for user-defined information.*"
         return doc_string
     end
 
@@ -184,7 +184,7 @@ module Models
             miss_doc = isempty(var_info["long_name"])
             v_d = miss_doc ? "No description available in ```src/sindbadVariableCatalog.jl``` catalog. Run ```whatIs(:$(first(io_item)), :$(last(io_item)))``` for information on how to add the variable to the catalog." : var_info["description"]
             v_units = var_info["units"]
-            v_units = miss_doc ? "" : isempty(v_units) ? "{unitless/fraction}" : "{$(v_units)}"
+            v_units = miss_doc ? "" : isempty(v_units) ? "{unitless}" : "{$(v_units)}"
             if !miss_doc
                 v_d = replace(v_d, "_" => "\\_")
             end

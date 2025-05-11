@@ -10,7 +10,7 @@ Abstract type for all array types in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -41,7 +41,7 @@ Abstract type for internal model array types in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -108,7 +108,7 @@ Abstract type for output array types in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -190,7 +190,7 @@ Abstract type for model run flags and experimental setup and simulations in SIND
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -241,7 +241,7 @@ Abstract type for model output strategies in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -323,7 +323,7 @@ Abstract type for using different parallelization packages in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -375,7 +375,7 @@ Abstract type for model run configuration flags in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -697,7 +697,7 @@ Abstract type for input data and processing related options in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -739,7 +739,7 @@ Abstract type for input data backends in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -819,7 +819,7 @@ Abstract type for input data array types in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -901,7 +901,7 @@ Abstract type for spatial subsetting methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -1043,7 +1043,7 @@ Abstract type for land related types that are typically used in preparing object
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -1076,7 +1076,7 @@ Abstract type for preallocated land helpers types in prepTEM of SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -1203,7 +1203,7 @@ Abstract type for types in machine learning related methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -1232,7 +1232,7 @@ Abstract type for automatic differentiation or finite differences for gradient c
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -1344,7 +1344,7 @@ Abstract type for performance metrics and cost calculation methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -1399,7 +1399,7 @@ Abstract type for data aggregation order in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -1451,7 +1451,7 @@ Abstract type for performance metrics in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -1832,7 +1832,7 @@ Abstract type for spatial metric aggregation methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -1914,7 +1914,7 @@ Abstract type for model types in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -2287,7 +2287,7 @@ Abstract type for optimization related functions and methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -2338,7 +2338,7 @@ Abstract type for cost calculation methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -2420,7 +2420,7 @@ Abstract type for global sensitivity analysis methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -2487,7 +2487,7 @@ Abstract type for optimization methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -2734,7 +2734,7 @@ Abstract type for parameter scaling methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -2801,7 +2801,7 @@ Abstract type for model spinup related functions and methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -2843,7 +2843,7 @@ Abstract type for model spinup modes in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -3148,7 +3148,7 @@ Abstract type for implementing time subset and aggregation types in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 
@@ -3197,7 +3197,7 @@ Abstract type for time aggregation methods in SINDBAD
 
 -----
 
-# Extended Help
+# Extended help
 
 ## Available methods/subtypes:
 

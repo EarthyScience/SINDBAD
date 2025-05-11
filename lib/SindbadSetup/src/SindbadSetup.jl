@@ -8,7 +8,7 @@ The `SindbadSetup` package provides tools for setting up and configuring SINDBAD
 This package is designed to produce the SINDBAD `info` object, which contains all the necessary configurations and metadata for running SINDBAD experiments. It facilitates reading configurations, building model structures, and preparing outputs.
 
 # Dependencies:
-- `Sindbad`: Provides the core SINDBAD framework and its core functionality.
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadUtils`: Supplies utility functions for handling data and other helper tasks during the setup process.
 - `ConstructionBase`: Provides a base type for constructing types, enabling the creation of custom types for SINDBAD experiments.
 - `CSV`: Provides tools for reading and writing CSV files, commonly used for input and output data in SINDBAD experiments.

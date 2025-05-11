@@ -1,9 +1,9 @@
 # SINDBAD Conceptual Framework
 
-SINDBAD provides a comprehensive framework for seamlessly integrating ecosystem models with multiple data streams through various optimization schemes and integration methods. The framework treats input data, initial conditions, parameters, model processes, observations, and integration methods as interconnected components of a unified system, as illustrated in the figure below.
+SINDBAD is a framework for seamlessly integrating ecosystem models with multiple data streams through various optimization schemes and integration methods. The framework treats input data, initial conditions, parameters, model processes, observations, and integration methods as interconnected components of a unified system, as illustrated in the figure below.
 
 ![SINDBAD Conceptual Framework](https://www.bgc-jena.mpg.de/~skoirala/ms_sindbad/latest/images/figures/others/conceptual_overview.png)
-*Fig. SINDBAD Conceptual Framework*
+Fig. SINDBAD Conceptual Framework
 
 ## Framework Flexibility
 

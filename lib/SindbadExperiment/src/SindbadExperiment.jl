@@ -7,7 +7,7 @@ The `SindbadExperiment` package provides tools for designing, running, and analy
 This package acts as a high-level interface for conducting experiments using the SINDBAD framework. It leverages the functionality of core SINDBAD packages and provides additional utilities for running experiments and managing outputs.
 
 # Dependencies:
-- `Sindbad`: The core SINDBAD package, providing foundational types and utilities for the SINDBAD framework.
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadUtils`: Provides utility functions for handling data, spatial operations, and other helper tasks.
 - `SindbadSetup`: Manages setup configurations, parameter handling, and shared types for SINDBAD experiments.
 - `SindbadData`: Handles data ingestion, preprocessing, and management for SINDBAD experiments.

@@ -65,7 +65,7 @@ function getTypeDocString(T::Type)
     sub_types = subtypes(T)
     if length(sub_types) > 0
         doc_string *= "-----\n\n"
-        doc_string *= "# Extended Help\n\n"
+        doc_string *= "# Extended help\n\n"
         doc_string *= "## Available methods/subtypes:\n"
         doc_string *= "$(methodsOf(T, is_subtype=true))\n\n"
     end
@@ -74,7 +74,7 @@ end
 
 
 """
-    methodsOf(T::Type; ds="\n", is_subtype=false, bullet=" - ")
+    methodsOf(T::Type; ds="", is_subtype=false, bullet=" - ")
     methodsOf(M::Module; the_type=Type, internal_only=true)
 
 Display subtypes and their purposes for a type or module in a formatted way.
@@ -112,7 +112,7 @@ methodsOf(Sindbad)
 methodsOf(Sindbad; the_type=Function)
 ```
 
-# Extended Help
+# Extended help
 The output format for types is:
 ```
 ## TypeName
@@ -190,7 +190,7 @@ showMethodsOf(LandEcosystem)
 showMethodsOf(ambientCO2)
 ```
 
-# Extended Help
+# Extended help
 The output format is the same as `methodsOf`, showing:
 ```
 ## TypeName

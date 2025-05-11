@@ -77,7 +77,7 @@ Retrieves forcing values for a specific time step or returns constant forcing va
 # Returns:
 - The forcing value for the specified time step (if time-dependent) or the constant forcing value.
 
-# Extended Help
+# Extended help
 # Examples:
 1. **Time-dependent forcing**:
 ```julia

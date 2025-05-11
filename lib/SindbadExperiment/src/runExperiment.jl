@@ -2,6 +2,7 @@ export prepExperiment
 export runExperiment
 export runExperimentCost
 export runExperimentForward
+export runExperimentForwardParams
 export runExperimentFullOutput
 export runExperimentOpti
 export runExperimentSensitivity
@@ -42,14 +43,14 @@ end
 
 
 """
-    runExperiment(info::NamedTuple, forcing::NamedTuple, mode)
+    runExperiment(info::NamedTuple, forcing::NamedTuple, mode::RunFlag)
 
 Run a SINDBAD experiment in different modes.
 
 # Arguments
 - `info::NamedTuple`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment
 - `forcing::NamedTuple`: A forcing NamedTuple containing the forcing time series set for ALL locations
-- `mode`: Type dispatch parameter determining the mode of experiment:
+- `mode::RunFlag`: Type dispatch parameter determining the mode of experiment:
   - `DoCalcCost`: Calculate cost between model output and observations
   - `DoRunForward`: Run forward simulation without optimization
   - `DoNotRunOptimization`: Run without optimization

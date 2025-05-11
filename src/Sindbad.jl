@@ -150,7 +150,7 @@ module Sindbad
 
    ---
 
-   # Extended Help
+   # Extended help
    $(methodsOf(SindbadTypes.LandEcosystem))
    """
    SindbadTypes.LandEcosystem
