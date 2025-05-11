@@ -4,22 +4,82 @@
     "use_in_spinup": true
   },
   "models": {
-
-    "cCycleBase": {
+    "ambientCO2": {
+      "approach": "forcing"
+    },
+    "cAllocation": {
       "approach": "GSI"
     },
-    "wCycleBase": {
-      "approach": "simple"
+    "capillaryFlow": {
+      "approach": "VanDijk2010"
     },
-    "WUE": {
-      "approach": "expVPDDayCo2"
+    "cCycle": {
+      "approach": "GSI"
+    },
+    "cCycleBase": {
+      "approach": "GSI_PlantForm_LargeKReserve"
+    },
+    "cFlow": {
+      "approach": "GSI"
+    },
+    "cTau": {
+      "approach": "mult"
+    },
+    "drainage": {
+      "approach": "dos"
+    },
+    "evaporation": {
+      "approach": "fAPAR"
+    },
+    "evapotranspiration": {
+      "approach": "sum"
+    },
+    "gpp": {
+      "approach": "coupled"
+    },
+    "rainSnow": {
+      "approach": "Tair"
+    },
+    "rootWaterUptake": {
+      "approach": "proportion"
+    },
+    "runoff": {
+      "approach": "sum"
+    },
+    "runoffBase": {
+      "approach": "Zhang2008"
+    },
+    "runoffSurface": {
+      "approach": "all"
+    },
+    "soilProperties": {
+      "approach": "Saxton2006"
+    },
+    "vegAvailableWater": {
+      "approach": "rootWaterEfficiency"
     }
   },
   "pools": {
     "carbon": {
-      "combine": "cPool",
-      "components": {},
+      "combine": "cEco",
+      "components": {
+        "cVeg": {
+          "Root": [1, 25.0],
+          "Leaf": [1, 25.0]
+        },
+        "cLit": [1, 100.0],
+        "cSoil": [1, 500.0]
+      },
       "state_variables": {}
+    },
+    "water": {
+      "combine": "TWS",
+      "components": {
+        "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
+        "groundW": [1, 0.01]
+      },
+      "state_variables": {
+      }
     }
   }
 }

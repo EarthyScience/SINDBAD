@@ -152,7 +152,9 @@
                 },
                 {
                   "name": "model_parameters_to_optimize",
-                  "children": [{ "name": "cCycleBase,c_τ_Wood", "value": 1 }]
+                  "children": [
+                    { "name": "cCycleBase,c_τ_Leaf_scalar", "value": 1 }
+                  ]
                 },
                 { "name": "multi_constraint_method", "value": 1 },
                 { "name": "subset_model_output", "value": 1 },
@@ -201,7 +203,7 @@
                       "name": "variables",
                       "children": [
                         {
-                          "name": "constraint_a",
+                          "name": "gpp",
                           "children": [
                             {
                               "name": "cost_options",
@@ -219,7 +221,65 @@
                                 { "name": "source_variable", "value": 1 }
                               ]
                             },
-                            { "name": "model_full_var", "value": 1 }
+                            { "name": "model_full_var", "value": 1 },
+                            {
+                              "name": "qflag",
+                              "children": [
+                                { "name": "bounds", "value": 1 },
+                                { "name": "data_path", "value": 1 },
+                                { "name": "source_variable", "value": 1 }
+                              ]
+                            },
+                            {
+                              "name": "unc",
+                              "children": [
+                                { "name": "bounds", "value": 1 },
+                                { "name": "data_path", "value": 1 },
+                                { "name": "source_variable", "value": 1 }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "name": "transpiration",
+                          "children": [
+                            {
+                              "name": "cost_options",
+                              "children": [
+                                { "name": "cost_metric", "value": 1 }
+                              ]
+                            },
+                            {
+                              "name": "data",
+                              "children": [
+                                { "name": "bounds", "value": 1 },
+                                { "name": "standard_name", "value": 1 },
+                                { "name": "sindbad_unit", "value": 1 },
+                                { "name": "source_unit", "value": 1 },
+                                { "name": "source_variable", "value": 1 }
+                              ]
+                            },
+                            { "name": "model_full_var", "value": 1 },
+                            {
+                              "name": "qflag",
+                              "children": [
+                                { "name": "bounds", "value": 1 },
+                                { "name": "data_path", "value": 1 },
+                                { "name": "source_variable", "value": 1 }
+                              ]
+                            },
+                            {
+                              "name": "unc",
+                              "children": [
+                                { "name": "bounds", "value": 1 },
+                                { "name": "data_path", "value": 1 },
+                                {
+                                  "name": "source_to_sindbad_unit",
+                                  "value": 1
+                                },
+                                { "name": "source_variable", "value": 1 }
+                              ]
+                            }
                           ]
                         }
                       ]
@@ -259,18 +319,80 @@
         {
           "name": "pools",
           "children": [
-            { "name": "layer_thickness", "children": [] },
-            { "name": "zix", "children": [{ "name": "cPool", "value": 1 }] },
+            {
+              "name": "layer_thickness",
+              "children": [
+                { "name": "cVegRoot", "value": 1 },
+                { "name": "cVegLeaf", "value": 1 },
+                { "name": "cLit", "value": 1 },
+                { "name": "cSoil", "value": 1 },
+                { "name": "soilW", "value": 1 },
+                { "name": "groundW", "value": 1 }
+              ]
+            },
+            {
+              "name": "zix",
+              "children": [
+                { "name": "cVeg", "value": 1 },
+                { "name": "cLit", "value": 1 },
+                { "name": "cSoil", "value": 1 },
+                { "name": "cVegRoot", "value": 1 },
+                { "name": "cVegLeaf", "value": 1 },
+                { "name": "cEco", "value": 1 },
+                { "name": "soilW", "value": 1 },
+                { "name": "groundW", "value": 1 },
+                { "name": "TWS", "value": 1 }
+              ]
+            },
             {
               "name": "components",
-              "children": [{ "name": "cPool", "value": 1 }]
+              "children": [
+                { "name": "cVeg", "value": 1 },
+                { "name": "cLit", "value": 1 },
+                { "name": "cSoil", "value": 1 },
+                { "name": "cVegRoot", "value": 1 },
+                { "name": "cVegLeaf", "value": 1 },
+                { "name": "cEco", "value": 1 },
+                { "name": "soilW", "value": 1 },
+                { "name": "groundW", "value": 1 },
+                { "name": "TWS", "value": 1 }
+              ]
             },
             {
               "name": "all_components",
-              "children": [{ "name": "cPool", "value": 1 }]
+              "children": [
+                { "name": "cEco", "value": 1 },
+                { "name": "TWS", "value": 1 }
+              ]
             },
-            { "name": "zeros", "children": [{ "name": "cPool", "value": 1 }] },
-            { "name": "ones", "children": [{ "name": "cPool", "value": 1 }] }
+            {
+              "name": "zeros",
+              "children": [
+                { "name": "cVeg", "value": 1 },
+                { "name": "cLit", "value": 1 },
+                { "name": "cSoil", "value": 1 },
+                { "name": "cVegRoot", "value": 1 },
+                { "name": "cVegLeaf", "value": 1 },
+                { "name": "cEco", "value": 1 },
+                { "name": "soilW", "value": 1 },
+                { "name": "groundW", "value": 1 },
+                { "name": "TWS", "value": 1 }
+              ]
+            },
+            {
+              "name": "ones",
+              "children": [
+                { "name": "cVeg", "value": 1 },
+                { "name": "cLit", "value": 1 },
+                { "name": "cSoil", "value": 1 },
+                { "name": "cVegRoot", "value": 1 },
+                { "name": "cVegLeaf", "value": 1 },
+                { "name": "cEco", "value": 1 },
+                { "name": "soilW", "value": 1 },
+                { "name": "groundW", "value": 1 },
+                { "name": "TWS", "value": 1 }
+              ]
+            }
           ]
         },
         {
@@ -310,15 +432,43 @@
           "name": "land_init",
           "children": [
             { "name": "fluxes", "children": [] },
-            { "name": "pools", "children": [{ "name": "cPool", "value": 1 }] },
+            {
+              "name": "pools",
+              "children": [
+                { "name": "cEco", "value": 1 },
+                { "name": "cVeg", "value": 1 },
+                { "name": "cLit", "value": 1 },
+                { "name": "cSoil", "value": 1 },
+                { "name": "cVegRoot", "value": 1 },
+                { "name": "cVegLeaf", "value": 1 },
+                { "name": "TWS", "value": 1 },
+                { "name": "soilW", "value": 1 },
+                { "name": "groundW", "value": 1 }
+              ]
+            },
             { "name": "states", "children": [] },
             { "name": "diagnostics", "children": [] },
             { "name": "properties", "children": [] },
             { "name": "models", "children": [] },
             { "name": "constants", "children": [] },
-            { "name": "WUE", "children": [] },
+            { "name": "ambientCO2", "children": [] },
+            { "name": "cAllocation", "children": [] },
+            { "name": "cCycle", "children": [] },
             { "name": "cCycleBase", "children": [] },
-            { "name": "wCycleBase", "children": [] }
+            { "name": "cFlow", "children": [] },
+            { "name": "cTau", "children": [] },
+            { "name": "capillaryFlow", "children": [] },
+            { "name": "drainage", "children": [] },
+            { "name": "evaporation", "children": [] },
+            { "name": "evapotranspiration", "children": [] },
+            { "name": "gpp", "children": [] },
+            { "name": "rainSnow", "children": [] },
+            { "name": "rootWaterUptake", "children": [] },
+            { "name": "runoff", "children": [] },
+            { "name": "runoffBase", "children": [] },
+            { "name": "runoffSurface", "children": [] },
+            { "name": "soilProperties", "children": [] },
+            { "name": "vegAvailableWater", "children": [] }
           ]
         }
       ]
