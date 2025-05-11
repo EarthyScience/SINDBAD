@@ -85,7 +85,7 @@ opti_sets = Dict(
 # forcing_set = "zarr";
 # forcing_config = "forcing_$(forcing_set).json";
 parallelization_lib = "threads"
-exp_main = "Insitu_v202505_RgPot_LargeK_Reserve_Scale"
+exp_main = "Insitu_v202505_RgPot_LargeK_Reserve_Scale_100K"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1, :set3, :set9)
