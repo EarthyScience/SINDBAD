@@ -170,11 +170,14 @@ function getOptimizationParametersTable(parameter_table_all::Table, model_parame
     parameter_list = []
     parameter_keys = []
     if isa(optimization_parameters, NamedTuple)
-        parameter_list = replaceCommaSeparatedParams(keys(optimization_parameters))
         parameter_keys = keys(optimization_parameters)
     else
-        parameter_list = replaceCommaSeparatedParams(optimization_parameters)
         parameter_keys = optimization_parameters
+    end
+    parameter_list = replaceCommaSeparatedParams(parameter_keys)
+    missing_parameters = filter(x -> !(x in parameter_table_all.name_full), parameter_list)
+    if !isempty(missing_parameters)
+        error("Model Inconsistency: $([missing_parameters...]) parameter(s) not found in the selected model structure. Check the model structure in model_structure.json to include the parameter(s) or change model_parameters_to_optimize in optimization.json to exclude the parameter(s).")
     end
     parameter_table_all_filtered = filter(row -> row.name_full in parameter_list, parameter_table_all)
     num_type = typeof(parameter_table_all_filtered.default[1])
