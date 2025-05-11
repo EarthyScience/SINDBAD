@@ -54,9 +54,21 @@ features:
 ---
 ```
 
-## 🚧🚧 UNDER CONSTRUCTION 🚧🚧
 
-::: warning ⏳ Content in active development
+## 
+
+
+## 🚧🚧 UNDER PREPARATION FOR RELEASE 🚧🚧
+
+SINDBAD is being prepared for release with a manuscript, for which a preprint is available at
+
+::: info
+Koirala, S., Alonso, L., Trautmann, T., Lee, H., Ahrens, B., Gans, F., Cremer, F., Reichstein, M., Jung, M., & Carvalhais, N. (2025). *SINDBAD model-data integration framework for terrestrial carbon-water processes*. ESS Open Archive. Retrieved from [ESSOAR PREPRINT](https://essopenarchive.org/users/551954/articles/1271244-sindbad-model-data-integration-framework-for-terrestrial-carbon-water-processes?commit=b11e9fd48300913206ff3185355ec1fa039b20e3)
+
+:::
+
+
+::: warning ⏳ active development
 
 `SINDBAD` is an ongoing scientific initiative with several projects running in parallel. Aligns with your interests? Thinking about using it? Please [get in touch](mailto:sindbad@bgc-jena.mpg.de) and get in the [news loop](https://mail.bgc-jena.mpg.de/mailman/listinfo/sindbad-news).
 
