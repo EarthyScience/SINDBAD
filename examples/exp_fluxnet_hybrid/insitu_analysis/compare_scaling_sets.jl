@@ -19,17 +19,20 @@ o_cost = "NNSE"
 k_sets = Dict(
     "SR_RSc" => "Insitu_v202505_RgPot_Slow_Reserve",
     "FR_NoRSc" => "Insitu_v202505_RgPot_LargeK_Reserve",
+    "FR_RSc" => "Insitu_v202505_RgPot_LargeK_Reserve_Scale",
 )
 k_names = collect(keys(k_sets))
-
+k_base = "FR_NoRSc"
 o_set = :set1
 # site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
 site_index = 2
+k_color = [:steelblue2, :seagreen3, :Goldenrod]
+
 for site_index in 1:205
     # site_index = Base.parse(Int, ARGS[1])
     domain = string(site_info[site_index][1])
 
-    exp_main = k_sets[k_names[1]]
+    exp_main = k_sets[k_base]
     path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)/$(forcing_set)/$(o_set)"
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)_$(o_cost)"
     path_site = joinpath(path_output, domain * "_" * exp_name)
@@ -52,7 +55,6 @@ for site_index in 1:205
         tmp_out = joinpath("tmp_comparison_reserve", string(o_set))
         mkpath(tmp_out)
         fig_prefix = joinpath(tmp_out, info.experiment.basics.domain * "_" * replace(info.experiment.basics.name, "_NSE" => ""))
-        k_color = [:steelblue2, :seagreen3]
 
         # var_row=costOpt[3]
         foreach(costOpt) do var_row
@@ -109,7 +111,7 @@ for site_index in 1:205
                 obs_dat_n, obs_σ_n, mod_dat_n = getDataWithoutNaN(obs_dat, obs_σ, mod_dat)
                 metr_mod = metric(obs_dat_n, obs_σ_n, mod_dat_n, lossMetric)
 
-                plot!(xdata, mod_dat, color=k_color[kn_i], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="$(kn) ($(nameof(typeof(lossMetric)))=$(round(metr_mod, digits=2)))", size=(2000, 1000), title="$(domain): $(vinfo["long_name"]) ($(vinfo["units"])) -> $(forcing_set), $(o_set)")
+                plot!(xdata, mod_dat, color=k_color[kn_i], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=length(k_names)+1, label="$(kn) ($(nameof(typeof(lossMetric)))=$(round(metr_mod, digits=2)))", size=(2000, 1000), title="$(domain): $(vinfo["long_name"]) ($(vinfo["units"])) -> $(forcing_set), $(o_set)")
                 kn_i += 1
             end
 
