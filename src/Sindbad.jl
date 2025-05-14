@@ -71,6 +71,7 @@ catalog = getVariableCatalog()
 module Sindbad
    using Reexport: @reexport
    @reexport using Reexport
+   @reexport using Pkg
    @reexport using CodeTracking
    @reexport using DataStructures: DataStructures
    @reexport using Dates

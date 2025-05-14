@@ -1,3 +1,4 @@
+export addPackage
 export booleanizeArray
 export doNothing
 export entertainMe
@@ -13,6 +14,55 @@ export toUpperCaseFirst
 export valToSymbol
 
 figlet_fonts = ("3D Diagonal", "3D-ASCII", "3d", "4max", "5 Line Oblique", "5x7", "6x9", "AMC AAA01", "AMC Razor", "AMC Razor2", "AMC Slash", "AMC Slider", "AMC Thin", "AMC Tubes", "AMC Untitled", "ANSI Regular", "ANSI Shadow", "Big Money-ne", "Big Money-nw", "Big Money-se", "Big Money-sw", "Bloody", "Caligraphy2", "DOS Rebel", "Dancing Font", "Def Leppard", "Delta Corps Priest 1", "Electronic", "Elite", "Fire Font-k", "Fun Face", "Georgia11", "Larry 3D", "Lil Devil", "Line Blocks", "NT Greek", "NV Script", "Red Phoenix", "Rowan Cap", "S Blood", "THIS", "Two Point", "USA Flag", "Wet Letter", "acrobatic", "alligator", "alligator2", "alligator3", "alphabet", "arrows", "asc_____", "avatar", "banner", "banner3", "banner3-D", "banner4", "barbwire", "bell", "big", "bolger", "braced", "bright", "bulbhead", "caligraphy", "charact2", "charset_", "clb6x10", "colossal", "computer", "cosmic", "crawford", "crazy", "diamond", "doom", "fender", "fraktur", "georgi16", "ghoulish", "graffiti", "hollywood", "jacky", "jazmine", "maxiwi", "merlin1", "nancyj", "nancyj-improved", "nscript", "o8", "ogre", "pebbles", "reverse", "roman", "rounded", "rozzo", "script", "slant", "small", "soft", "speed", "standard", "stop", "tanja", "thick", "train", "univers", "whimsy");
+
+"""
+    addPackage(where_to_add, the_package_to_add)
+
+Adds a specified Julia package to the environment of a given module or project.
+
+# Arguments:
+- `where_to_add`: The module or project where the package should be added.
+- `the_package_to_add`: The name of the package to add.
+
+# Behavior:
+- Activates the environment of the specified module or project.
+- Checks if the package is already installed in the environment.
+- If the package is not installed:
+  - Adds the package to the environment.
+  - Removes the `Manifest.toml` file and reinstantiates the environment to ensure consistency.
+  - Provides instructions for importing the package in the module.
+- Restores the original environment after the operation.
+
+# Notes:
+- This function assumes that the `where_to_add` module or project is structured with a standard Julia project layout.
+- It requires the `Pkg` module for package management, which is re-exported from core Sindbad.
+
+# Example:
+```julia
+addPackage(MyModule, "DataFrames")
+```
+"""
+function addPackage(where_to_add, the_package_to_add)
+
+    from_where = dirname(Base.active_project())
+    dir_where_to_add = joinpath(dirname(pathof(where_to_add)), "../")
+    cd(dir_where_to_add)
+    Pkg.activate(dir_where_to_add)
+    is_installed = any(dep.name == the_package_to_add for dep in values(Pkg.dependencies()))
+
+    if is_installed
+        @info "$the_package_to_add is already installed in $where_to_add. Nothing to do. Return to base environment at $from_where"
+    else
+
+        Pkg.add(the_package_to_add)
+        rm("Manifest.toml")
+        Pkg.instantiate()
+        @info "Added $(the_package_to_add) to $(where_to_add). Add the following to the imports in $(pathof(where_to_add)) with\n\nusing $(the_package_to_add)\n\n. You may need to restart the REPL/environment at $(from_where)."
+    end
+    cd(from_where)
+    Pkg.activate(from_where)
+    Pkg.resolve()
+end
 
 """
     booleanizeArray(_array)
