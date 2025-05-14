@@ -130,7 +130,7 @@ function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bou
                 ps = String(model_names[i]) * " : " * String(n)
             end
             if !isnothing(p_units)
-                units_str = p_units[i] == "" ? "None" : " $(p_units[i])"
+                units_str = p_units[i] == "" ? "unitless" : " $(p_units[i])"
                 @info "       $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])] (units: $(units_str))"
             else
                 @info "       $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
