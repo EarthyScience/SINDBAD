@@ -20,13 +20,14 @@ k_sets = Dict(
     "SR_RSc" => "Insitu_v202505_RgPot_Slow_Reserve",
     "FR_NoRSc" => "Insitu_v202505_RgPot_LargeK_Reserve",
     "FR_RSc" => "Insitu_v202505_RgPot_LargeK_Reserve_Scale",
+    "FR_RSc_100K" => "Insitu_v202505_RgPot_LargeK_Reserve_Scale_100K",
 )
 k_names = collect(keys(k_sets))
-k_base = "FR_NoRSc"
+k_base = "FR_RSc_100K"
 o_set = :set1
 # site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
 site_index = 2
-k_color = [:steelblue2, :seagreen3, :Goldenrod]
+k_color = [:steelblue2, :seagreen3, :Goldenrod, :gray69]
 
 for site_index in 1:205
     # site_index = Base.parse(Int, ARGS[1])
@@ -37,6 +38,7 @@ for site_index in 1:205
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)_$(o_cost)"
     path_site = joinpath(path_output, domain * "_" * exp_name)
     info_path = joinpath(path_site, "settings/info.jld2")
+    @show info_path
     if isfile(info_path)
 
         info = load(info_path, "info")
@@ -111,7 +113,7 @@ for site_index in 1:205
                 obs_dat_n, obs_σ_n, mod_dat_n = getDataWithoutNaN(obs_dat, obs_σ, mod_dat)
                 metr_mod = metric(obs_dat_n, obs_σ_n, mod_dat_n, lossMetric)
 
-                plot!(xdata, mod_dat, color=k_color[kn_i], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=length(k_names)+1, label="$(kn) ($(nameof(typeof(lossMetric)))=$(round(metr_mod, digits=2)))", size=(2000, 1000), title="$(domain): $(vinfo["long_name"]) ($(vinfo["units"])) -> $(forcing_set), $(o_set)")
+                plot!(xdata, mod_dat, color=k_color[kn_i], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=length(k_names)+1/2, label="$(kn)\n($(nameof(typeof(lossMetric)))=$(round(metr_mod, digits=2)))", size=(2000, 1000), title="$(domain): $(vinfo["long_name"]) ($(vinfo["units"])) -> $(forcing_set), $(o_set)")
                 kn_i += 1
             end
 
