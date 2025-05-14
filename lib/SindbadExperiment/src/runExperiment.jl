@@ -37,6 +37,10 @@ function prepExperiment(sindbad_experiment::String; replace_info=Dict())
     forcing = getForcing(info)
 
     @info "\n----------------------------------------------\n"
+    
+    for model_func in (:define, :precompute, :compute,)                 
+        plotIOModelStructure(info, model_func)
+    end
 
     return info, forcing
 end

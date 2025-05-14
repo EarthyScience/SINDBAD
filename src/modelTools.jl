@@ -90,6 +90,8 @@ function getInOutModel(model::Sindbad.Types.LandEcosystem, model_funcs::Tuple)
             else
                 mo_in_out[func] = io_func
             end
+        else
+            mo_in_out[func] = io_func
         end
     end
     return mo_in_out
@@ -294,7 +296,8 @@ function getInOutModels(models, model_funcs::Tuple)
     for (mi, _mod) in enumerate(models)
         mod_name = string(nameof(supertype(typeof(_mod))))
         mod_name_sym=Symbol(mod_name)
-        mod_vars[mod_name_sym] = getInOutModel(_mod, model_funcs)
+        mod_io = getInOutModel(_mod, model_funcs)
+        mod_vars[mod_name_sym] = mod_io
     end
     return mod_vars
 end

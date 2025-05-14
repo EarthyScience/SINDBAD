@@ -47,6 +47,7 @@ module SindbadExperiment
     @reexport using SindbadTEM
     @reexport using SindbadOptimization
     @reexport using SindbadMetrics
+    @reexport using SindbadVisuals
 
     include("runExperiment.jl")
     include("saveOutput.jl")

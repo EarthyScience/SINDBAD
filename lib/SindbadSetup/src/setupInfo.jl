@@ -395,6 +395,8 @@ function setExperimentBasics(info)
             end 
         end
     end
+    exp_name_domain = ex_basics.domain * "_" * ex_basics.name
+    ex_basics_sel = (; ex_basics_sel..., id=exp_name_domain)
     info = (; info..., temp=(; info.temp..., experiment=(; info.temp.experiment..., basics=ex_basics_sel)))
     return info
 end

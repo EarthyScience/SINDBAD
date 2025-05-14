@@ -15,7 +15,7 @@ This page provides an overview of all SINDBAD packages and their main functional
 | [Setup](setup.md) | Setup utilities | configuration of SINDBAD experiment and setup |
 | [TEM](tem.md) | Terrestrial Ecosystem Model | Core ecosystem modeling framework |
 | [Utils](utils.md) | Utility functions | Helper functions and common utilities for all packages|
-| [Visuals](visuals.md) | Visualization tools | Plotting and data visualization (to be developed..) |
+| [Visuals](visuals.md) | Visualization tools | Plotting and data visualization helpers |
 
 
 ::: tip `Exported` and `Internal` Sections
@@ -51,7 +51,7 @@ These remain accessible but require qualification with the module name (e.g., `M
 - **Data**: Handles all data-related operations including input/output, data processing, and management.
 - **Setup**: Contains configuration tools for SINDBAD info.
 - **Utils**: Provides helper functions and common utilities used across packages.
-- **Visuals**: Offers tools for data visualization and plotting (to be developed...).
+- **Visuals**: Offers tools and helpers for data visualization and plotting.
 
 
 ## Sindbad Package Dependencies

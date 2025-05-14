@@ -306,7 +306,7 @@ function setExperimentOutput(info)
             end
         end
     end
-    path_output_new = path_output_new * info.temp.experiment.basics.domain * "_" * info.temp.experiment.basics.name
+    path_output_new = path_output_new * info.temp.experiment.basics.id
 
     # create output and subdirectories
     sub_output = ["code", "data", "figure", "root", "settings"]
