@@ -29,12 +29,12 @@ using SindbadVisuals
 module SindbadVisuals
     using Sindbad
     using SindbadUtils
-    using GLMakie
-    @reexport using GLMakie.Makie
+    # using GLMakie
+    # @reexport using GLMakie.Makie
     using Colors
     @reexport using Plots: annotate! as plots_annotate!, default as plots_default, scatter as plots_scatter, scatter! as plots_scatter!, vline as plots_vline, vline! as plots_vline!, hline as plots_hline, hline! as plots_hline!, xlims! as plots_xlims!, ylims! as plots_ylims!, xlabel! as plots_xlabel!, ylabel! as plots_ylabel!, title! as plots_title!, plot as plots_plot, plot! as plots_plot!, savefig as plots_savefig, text as plots_text, mm as plots_mm
 
-    include("plotOutputData.jl")
+    # include("plotOutputData.jl")
     include("plotFromSindbadInfo.jl")
 
 end # module SindbadVisuals
