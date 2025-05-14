@@ -26,7 +26,7 @@ Calculates the size of the cost vector required for a specific optimization or s
 - For `GSASobol`, the size is determined by the number of parameters and the number of samples.
 - For `GSASobolDM`, the size is equivalent to that of `GSASobol`.
 """
-getCostVectorSize
+function getCostVectorSize end
 
 function getCostVectorSize(algo_options, parameter_vector, ::CMAEvolutionStrategyCMAES)
     cost_vector_size = Threads.nthreads()
@@ -101,7 +101,7 @@ $(methodsOf(CostMethod))
   - `is_valid`: A boolean flag indicating whether the variable meets the minimum data point requirement.
 - Unnecessary fields such as `min_data_points`, `temporal_data_aggr`, and `aggr_func` are removed from the final `cost_options`.
 """
-prepCostOptions
+function prepCostOptions end
 
 
 function prepCostOptions(observations, cost_options)
@@ -175,7 +175,7 @@ $(methodsOf(CostMethod))
 - It prepares model parameters, cost options, and helper functions required for the optimization process.
 - Depending on the `cost_method`, the cost function is customized to handle specific data types or computation methods.
 """
-prepOpti
+function prepOpti end
 
 function prepOpti(forcing, observations, info)
     return prepOpti(forcing, observations, info, CostModelObs())

@@ -32,7 +32,7 @@ Cost value representing the difference between model outputs and observations
 $(methodsOf(CostMethod))
 
 """
-cost
+function cost end
 
 function cost(parameter_vector, _, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, parameter_updater, cost_options, multi_constraint_method, parameter_scaling_type, ::CostModelObs)
     @debug parameter_vector
@@ -131,7 +131,7 @@ cost = costLand(parameter_vector, selected_models, forcing, spinup_forcing, loc_
     - Observations can include uncertainties and masks to refine the cost calculation, ensuring robust model evaluation.
 
 """
-costLand
+function costLand end
 
 function costLand(parameter_vector::AbstractArray, selected_models, forcing, spinup_forcing, loc_forcing_t, land_timeseries, land_init, tem_info, observations, parameter_updater, cost_options, multi_constraint_method, parameter_scaling_type)
     updated_models = updateModels(parameter_vector, parameter_updater, parameter_scaling_type, selected_models)

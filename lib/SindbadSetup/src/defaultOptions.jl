@@ -20,7 +20,7 @@ Retrieves the default configuration options for a given optimization or sensitiv
 - Each method type has its own set of default options, such as the number of trajectories, samples, or design matrix length.
 - For `GSASobolDM`, the defaults are inherited from `GSASobol`.
 """
-sindbadDefaultOptions
+function sindbadDefaultOptions end
 
 sindbadDefaultOptions(::OptimizationMethod) = (;)
 

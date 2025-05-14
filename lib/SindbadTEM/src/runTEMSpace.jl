@@ -77,7 +77,7 @@ parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcin
 parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, QbmapParallelization())
 ```
 """
-parallelizeTEM!
+function parallelizeTEM! end
 
 function parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::ThreadsParallelization)
     Threads.@threads for space_index ∈ eachindex(space_forcing)
@@ -150,7 +150,7 @@ output_array = runTEM!(forcing, info)
 runTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info)
 ```
 """
-runTEM!
+function runTEM! end
 
 function runTEM!(selected_models, forcing::NamedTuple, info::NamedTuple)
     run_helpers = prepTEM(selected_models, forcing, info)
@@ -212,7 +212,7 @@ timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land, forc
 timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land, forcing_types, model_helpers, output_vars, n_timesteps, DoDebugModel())
 ```
 """
-timeLoopTEM!
+function timeLoopTEM! end
 
 function timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land, forcing_types, model_helpers, output_vars, n_timesteps, ::DoNotDebugModel) # do not debug the models
     # n_timesteps=1

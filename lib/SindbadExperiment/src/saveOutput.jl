@@ -66,7 +66,7 @@ saves the output variables from the run as one file
 
 # note: this function is overloaded to handle different dispatch types and the version with fewer arguments is used as a shorthand for the single file output mode
 """
-saveOutCubes
+function saveOutCubes end
 
 function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pairs, out_format, t_step, ::DoSaveSingleFile)
     @info "saving one file for all variables"

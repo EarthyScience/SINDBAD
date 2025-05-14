@@ -341,7 +341,7 @@ config = BayesOptConfig(100, 1e-6)
 updated_config = mergeNamedTupleSetValue(config, :tol, 1e-8)
 ```
 """
-mergeNamedTupleSetValue
+function mergeNamedTupleSetValue end
 
 function mergeNamedTupleSetValue(o::NamedTuple, p, v)
     o = @set o[p] = v

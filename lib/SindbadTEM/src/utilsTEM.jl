@@ -95,7 +95,7 @@ value = getForcingV(forcing, ts, ForcingWithoutTime())
 # value = 5.0
 ```
 """
-getForcingV
+function getForcingV end
 
 function getForcingV(v, ts, ::ForcingWithTime)
     v[ts]
@@ -192,7 +192,7 @@ ts = 2            # Time step
 view_ar = getLocArrayView(ar, val, ts)
 ```
 """
-getLocArrayView
+function getLocArrayView end
 
 function getLocArrayView(ar::T, val::T1, ts::T2) where {T, T1<:AbstractVector, T2<:Int}
     return view(ar, ts, 1:size(val,1))

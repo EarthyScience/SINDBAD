@@ -72,7 +72,7 @@ a function to create a temporal aggregation struct for a given time step
 # t_step:
 $(methodsOf(TimeAggregation))
 """
-createTimeAggregator
+function createTimeAggregator end
 
 
 function createTimeAggregator(date_vector, t_step::Union{String, Symbol}, aggr_func=mean, skip_aggregation=false)
@@ -242,7 +242,7 @@ An instance of the corresponding time aggregator type.
 # Notes:
 - A similar approach `getTypeInstanceForNamedOptions` is used in `SindbadSetup` for creating types of other named option
 """
-getTimeAggregatorTypeInstance
+function getTimeAggregatorTypeInstance end
 
 function getTimeAggregatorTypeInstance(aggr::Symbol)
     return getTimeAggregatorTypeInstance(string(aggr))

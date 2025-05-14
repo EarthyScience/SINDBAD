@@ -147,7 +147,7 @@ Converts the provided input data into a specific input array type.
 # Returns
 Returns the input data converted to the specified input array type.
 """
-getInputArrayOfType
+function getInputArrayOfType end
 
 function getInputArrayOfType(input_data, ::InputArray)
     array_data = map(input_data) do c
@@ -267,7 +267,7 @@ Retrieve the data from a specified source.
 - Ensure that the `nc` object and paths provided are valid and accessible.
 - The functions are specific to the NetCDF and Zarr backend and may not work with other backends.
 """
-getYaxFromSource
+function getYaxFromSource end
 
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::BackendNetcdf)
     if endswith(data_path_v, ".zarr")

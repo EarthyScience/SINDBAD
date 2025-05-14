@@ -1,7 +1,5 @@
 export wCycleBase_simple, adjustPackPoolComponents
 
-struct WCycleBaseSimple end
-
 #! format: off
 struct wCycleBase_simple <: wCycleBase end
 #! format: on
@@ -44,7 +42,7 @@ function define(params::wCycleBase_simple, forcing, land, helpers)
         t_three = oftype(first(cEco), 3.0)
     end
 
-    w_model = WCycleBaseSimple()
+    w_model = params
     @pack_nt begin
         (z_zero, o_one, t_two, t_three) ⇒ land.constants
         w_model ⇒ land.models
@@ -53,7 +51,7 @@ function define(params::wCycleBase_simple, forcing, land, helpers)
 end
 
 
-function adjustPackPoolComponents(land, helpers, ::WCycleBaseSimple)
+function adjustPackPoolComponents(land, helpers, ::wCycleBase_simple)
     @unpack_nt TWS ⇐ land.pools
     zix = helpers.pools.zix
     if hasproperty(land.pools, :groundW)
@@ -91,7 +89,7 @@ function adjustPackPoolComponents(land, helpers, ::WCycleBaseSimple)
     return land
 end
 
-function adjustPackMainPool(land, helpers, ::WCycleBaseSimple)
+function adjustPackMainPool(land, helpers, ::wCycleBase_simple)
     @unpack_nt TWS ⇐ land.pools
     zix = helpers.pools.zix
 

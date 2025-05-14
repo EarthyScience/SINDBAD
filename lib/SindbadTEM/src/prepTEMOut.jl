@@ -77,7 +77,7 @@ array_type = getOutArrayType(num_type, DoNotUseForwardDiff())
 # array_type = Float64
 ```
 """
-getOutArrayType
+function getOutArrayType end
 
 function getOutArrayType(_, ::DoUseForwardDiff)
     return Real
@@ -123,7 +123,7 @@ outdims = getOutDims(info, forcing_helpers, OutputYAXArray())
 outdims = getOutDims(info, forcing_helpers)
 ```
 """
-getOutDims
+function getOutDims end
 
 function getOutDims(info, forcing_helpers)
     outdims = getOutDims(info, forcing_helpers, info.helpers.run.output_array_type)
@@ -222,7 +222,7 @@ outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputYAXArray())
 outdims, outarray = getOutDimsArrays(info, forcing_helpers)
 ```
 """
-getOutDimsArrays
+function getOutDimsArrays end
 
 function getOutDimsArrays(info, forcing_helpers)
     outdims, outarray = getOutDimsArrays(info, forcing_helpers, info.helpers.run.output_array_type)
@@ -416,7 +416,7 @@ output = setupOptiOutput(info, output, DoRunOptimization())
 output = setupOptiOutput(info, output, DoNotRunOptimization())
 ```
 """
-setupOptiOutput
+function setupOptiOutput end
 
 function setupOptiOutput(info::NamedTuple, output::NamedTuple, ::DoRunOptimization)
     @debug "     setupOptiOutput: getting parameter output for optimization..."

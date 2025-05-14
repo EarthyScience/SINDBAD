@@ -94,7 +94,7 @@ add Δv to each element of v when v is a StaticVector or a Vector.
 - `v`: a StaticVector or AbstractVector
 - `Δv`: the value to be added to each element
 """
-addToEachElem
+function addToEachElem end
 
 function addToEachElem(v::SVector, Δv::Real)
     v = v .+ Δv
@@ -274,7 +274,7 @@ end
 returns the indices of a view for a subArray
 
 """
-getZix
+function getZix end
 
 function getZix(dat::SubArray)
     return Tuple(first(parentindices(dat)))
@@ -531,6 +531,8 @@ end
 - `v_one`: a StaticVector of ones
 - `ind::Int`: the index of the element to be replaced
 """
+function repElem end
+
 function repElem(v::AbstractVector, v_elem, _, _, ind::Int)
     v[ind] = v_elem
     return v

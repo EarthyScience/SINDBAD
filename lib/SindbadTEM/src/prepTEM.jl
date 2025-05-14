@@ -36,7 +36,7 @@ loc_land = (temperature = 15.0, precipitation = 100.0)
 addErrorCatcher(loc_land, DoNotDebugModel())
 ```
 """
-addErrorCatcher
+function addErrorCatcher end
 
 
 function addErrorCatcher(loc_land, ::DoDebugModel) # print land when debug model is true/on
@@ -87,7 +87,7 @@ sequence = [(n_repeat = 3, n_timesteps = 10), (n_repeat = 2, n_timesteps = 5)]
 loc_land = addSpinupLog(loc_land, sequence, DoNotStoreSpinup())
 ```
 """
-addSpinupLog
+function addSpinupLog end
 
 function addSpinupLog(loc_land, sequence, ::DoStoreSpinup) # when history is true
     n_repeat = 1
@@ -140,7 +140,7 @@ loc_space_maps = [(1, 2), (3, 4), (5, 6)]
 filtered_maps = filterNanPixels(forcing, loc_space_maps, DoNotFilterNanPixels())
 ```
 """
-filterNanPixels
+function filterNanPixels end
 
 function filterNanPixels(_, loc_space_maps, ::DoNotFilterNanPixels)
     return loc_space_maps
@@ -205,7 +205,7 @@ get the information of the indices of the data to run the model for. The second 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 """
-getSpatialInfo
+function getSpatialInfo end
 
 function getSpatialInfo(forcing_helpers)
     @debug "     getting the space locations to run the model loop"
@@ -306,7 +306,7 @@ run_helpers = helpPrepTEM(selected_models, info, forcing, output, PreAllocTimese
 run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, PreAllocArrayFD())
 ```
 """
-helpPrepTEM
+function helpPrepTEM end
 
 function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocArray)
 
@@ -557,7 +557,7 @@ info = (helpers = ..., models = ..., spinup = ...)
 run_helpers = prepTEM(selected_models, forcing, info)
 ```
 """
-prepTEM
+function prepTEM end
 
 function prepTEM(forcing::NamedTuple, info::NamedTuple)
     selected_models = info.models.forward

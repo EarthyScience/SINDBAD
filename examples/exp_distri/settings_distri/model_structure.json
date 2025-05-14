@@ -77,7 +77,7 @@
     "cTauVegProperties": {
       "approach": "none"
     },
-    "deriveVariables": {
+    "cBiomass": {
       "approach": "simple"
     },
     "drainage": {

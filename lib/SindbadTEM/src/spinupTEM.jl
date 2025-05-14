@@ -212,7 +212,7 @@ land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_ti
 land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, SSPSSRootfind())
 ```
 """
-spinup
+function spinup end
 
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::SelSpinupModels)
     land = timeLoopTEMSpinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps)
@@ -508,7 +508,7 @@ log_index = 1
 land = setSpinupLog(land, log_index, DoNotStoreSpinup())
 ```
 """
-setSpinupLog
+function setSpinupLog end
 
 function setSpinupLog(land, log_index, ::DoStoreSpinup)
     land.states.spinuplog[log_index] = land.pools
@@ -605,7 +605,7 @@ The main spinup function that handles the spinup method based on inputs from spi
 - When `DoNotSpinupTEM` is used:
     - The function skips the spinup process returns the land as is`
 """
-spinupTEM
+function spinupTEM end
 
 function spinupTEM(selected_models, spinup_forcings, loc_forcing_t, land, tem_info, ::DoSpinupTEM)
     land = setSpinupLog(land, 1, tem_info.run.store_spinup)

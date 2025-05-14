@@ -16,7 +16,7 @@ calculate the performance/loss metric for given observation and model simulation
 
 $(methodsOf(PerfMetric))
 """
-metric
+function metric end
 
 function metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::MSE)
     return mean(abs2.(y .- ŷ))

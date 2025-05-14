@@ -252,7 +252,7 @@ Retrieves indices for model parameters from a parameter table.
 # Returns
 A Tuple of Pair of Name and Indices corresponding to the model parameters in the parameter table for  selected models.
 """
-getModelParameterIndices
+function getModelParameterIndices end
 
 function getParameterIndices(selected_models::LongTuple, parameter_table::Table)
     selected_models_tuple = getTupleFromLongTuple(selected_models)
@@ -343,7 +343,7 @@ Splits and renames a parameter based on a specified splitter.
 # Returns
 A tuple containing the split and renamed parameter components.
 """
-splitRenameParam
+function splitRenameParam end
 
 function splitRenameParam(_p::Symbol, _splitter)
     p_string = String(_p)

@@ -11,7 +11,7 @@ export optimizeTEMYax
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
-optimizeTEM
+function optimizeTEM end
 
 function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple)
     # get the subset of parameters table that consists of only optimized parameters

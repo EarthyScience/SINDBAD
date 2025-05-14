@@ -52,7 +52,7 @@ return model and obs data excluding for the common `NaN` or for the valid pixels
 - `ŷ`: model simulation data/estimate
 - `idxs`: indices of valid data points    
 """
-getDataWithoutNaN
+function getDataWithoutNaN end
 
 function getDataWithoutNaN(y, yσ, ŷ, idxs)
     y_view = @view y[idxs] 

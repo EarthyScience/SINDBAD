@@ -31,7 +31,7 @@ Performs global sensitivity analysis using the specified method.
 - The `method_options` argument allows fine-tuning of the sensitivity analysis process for each method.
 
 """
-globalSensitivity
+function globalSensitivity end
 
 function globalSensitivity(cost_function, method_options, p_bounds, ::GSAMorris; batch=true)
     results = gsa(cost_function, Morris(; method_options...), p_bounds, batch=batch)

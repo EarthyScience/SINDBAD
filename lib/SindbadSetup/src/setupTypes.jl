@@ -88,7 +88,7 @@ input_values = [1.0, 2.0, 3.0]
 static_array = createArrayofType(input_values, nothing, Float64, nothing, true, ModelArrayStaticArray())
 ```
 """
-createArrayofType
+function createArrayofType end
 
 function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayView)
     if ismain
@@ -125,7 +125,7 @@ Retrieves the numerical type based on the input, which can be a string or a data
 - If the input is a string, it is parsed and evaluated to return the corresponding type.
 - If the input is already a `DataType`, it is returned as-is.
 """
-getNumberType
+function getNumberType end
 
 function getNumberType(t::String)
     ttype = eval(Meta.parse(t))
@@ -213,7 +213,7 @@ Retrieves a type instance for a named option based on its string or symbol repre
     - "temporal_data_aggr": "month_anomaly" would be converted to MonthAnomaly
 
 """
-getTypeInstanceForNamedOptions
+function getTypeInstanceForNamedOptions end
 
 function getTypeInstanceForNamedOptions(option_name::String)
     opt_ss = toUpperCaseFirst(option_name)

@@ -71,7 +71,7 @@ subset = spatialSubset(data, 30:40, Spacelongitude())
 subset = spatialSubset(data, 1:5, Spaceid())
 ```
 """
-spatialSubset
+function spatialSubset end
 
 function spatialSubset(v, ss_range, ::Spacesite)
     return v[site=ss_range]
