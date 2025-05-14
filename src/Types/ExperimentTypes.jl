@@ -1,7 +1,7 @@
 
-export ExperimentType
-abstract type ExperimentType <: SindbadType end
-purpose(::Type{ExperimentType}) = "Abstract type for model run flags and experimental setup and simulations in SINDBAD"
+export ExperimentTypes
+abstract type ExperimentTypes <: SindbadTypes end
+purpose(::Type{ExperimentTypes}) = "Abstract type for model run flags and experimental setup and simulations in SINDBAD"
 
 # ------------------------- running flags -------------------------
 export RunFlag
@@ -27,7 +27,7 @@ export DoStoreSpinup
 export DoNotStoreSpinup
 
 
-abstract type RunFlag <: ExperimentType end
+abstract type RunFlag <: ExperimentTypes end
 purpose(::Type{RunFlag}) = "Abstract type for model run configuration flags in SINDBAD"
 
 struct DoCalcCost <: RunFlag end
@@ -96,7 +96,7 @@ export QbmapParallelization
 export ThreadsParallelization
 
 
-abstract type ParallelizationPackage <: ExperimentType end
+abstract type ParallelizationPackage <: ExperimentTypes end
 
 purpose(::Type{ParallelizationPackage}) = "Abstract type for using different parallelization packages in SINDBAD"
 
@@ -113,7 +113,7 @@ export DoNotOutputAll
 export DoSaveSingleFile
 export DoNotSaveSingleFile
 
-abstract type OutputStrategy <: ExperimentType end
+abstract type OutputStrategy <: ExperimentTypes end
 purpose(::Type{OutputStrategy}) = "Abstract type for model output strategies in SINDBAD"
 
 struct DoOutputAll <: OutputStrategy end

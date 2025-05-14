@@ -9,3 +9,6 @@ FIGlet = "3064a664-84fe-4d92-92c7-ed492f3d8fae"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 StyledStrings = "f489334b-da3d-4c2e-b8f0-e476e12c162b"
+
+[sources]
+Sindbad = {path = "../.."}

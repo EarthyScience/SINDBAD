@@ -227,7 +227,7 @@ This function writes a docstring for a type to a file.
 
 """
 function writeTypeDocString(o_file, T)
-    doc_string = Base.Docs.doc(T)
+    doc_string = base_doc(T)
     if startswith(string(doc_string), "No documentation found for public symbol")
        write(o_file, "@doc \"\"\"\n$(getTypeDocString(T))\n\"\"\"\n")
        # write(o_file, "$(nameof(T))\n\n")

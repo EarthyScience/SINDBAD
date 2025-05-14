@@ -1,7 +1,7 @@
 
-export TimeType
-abstract type TimeType <: SindbadType end
-purpose(::Type{TimeType}) = "Abstract type for implementing time subset and aggregation types in SINDBAD"
+export TimeTypes
+abstract type TimeTypes <: SindbadTypes end
+purpose(::Type{TimeTypes}) = "Abstract type for implementing time subset and aggregation types in SINDBAD"
 
 # ------------------------- time aggregator ------------------------------------------------------------
 export TimeAggregation
@@ -44,7 +44,7 @@ define a type for temporal aggregation of an array
 - `indices::I`: indices to be collected for aggregation
 - `aggr_func::aggr_func`: a function to use for aggregation, defaults to mean
 """
-struct TimeAggregator{I,aggr_func} <: TimeType
+struct TimeAggregator{I,aggr_func} <: TimeTypes
     indices::I
     aggr_func::aggr_func
 end
@@ -68,7 +68,7 @@ end
 purpose(::Type{TimeAggregatorViewInstance}) = "view of a TimeAggregator"
 
 
-abstract type TimeAggregation <: TimeType end
+abstract type TimeAggregation <: TimeTypes end
 purpose(::Type{TimeAggregation}) = "Abstract type for time aggregation methods in SINDBAD"
 
 struct TimeAllYears <: TimeAggregation end

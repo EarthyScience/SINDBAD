@@ -1,7 +1,7 @@
 
-export SpinupType
-abstract type SpinupType <: SindbadType end
-purpose(::Type{SpinupType}) = "Abstract type for model spinup related functions and methods in SINDBAD"
+export SpinupTypes
+abstract type SpinupTypes <: SindbadTypes end
+purpose(::Type{SpinupTypes}) = "Abstract type for model spinup related functions and methods in SINDBAD"
 
 # ------------------------- spinup mode ------------------------------------------------------------
 export SpinupMode
@@ -23,7 +23,7 @@ export Spinup_cEco
 export SSPDynamicSSTsit5
 export SSPSSRootfind
 
-abstract type SpinupMode <: SpinupType end
+abstract type SpinupMode <: SpinupTypes end
 purpose(::Type{SpinupMode}) = "Abstract type for model spinup modes in SINDBAD"
 
 struct AllForwardModels <: SpinupMode end
@@ -105,7 +105,7 @@ purpose(::Type{Spinup_cEco}) = "Spinup spinup_mode for cEco"
 export SpinupSequence
 export SpinupSequenceWithAggregator
 
-struct SpinupSequenceWithAggregator <: SpinupType
+struct SpinupSequenceWithAggregator <: SpinupTypes
     forcing::Symbol
     n_repeat::Int
     n_timesteps::Int
@@ -117,7 +117,7 @@ struct SpinupSequenceWithAggregator <: SpinupType
 end
 purpose(::Type{SpinupSequenceWithAggregator}) = "Spinup sequence with time aggregation for corresponding forcingtime series"
 
-struct SpinupSequence <: SpinupType
+struct SpinupSequence <: SpinupTypes
     forcing::Symbol
     n_repeat::Int
     n_timesteps::Int

@@ -1,12 +1,12 @@
 @doc """
 
-# ArrayType
+# ArrayTypes
 
 Abstract type for all array types in SINDBAD
 
 ## Type Hierarchy
 
-```ArrayType <: SindbadType <: Any```
+```ArrayTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -27,7 +27,7 @@ Abstract type for all array types in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.ArrayType
+Sindbad.Types.ArrayTypes
 
 @doc """
 
@@ -37,7 +37,7 @@ Abstract type for internal model array types in SINDBAD
 
 ## Type Hierarchy
 
-```ModelArrayType <: ArrayType <: SindbadType <: Any```
+```ModelArrayType <: ArrayTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -52,7 +52,7 @@ Abstract type for internal model array types in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.ModelArrayType
+Sindbad.Types.ModelArrayType
 
 @doc """
 
@@ -62,11 +62,11 @@ Use standard Julia arrays for model variables
 
 ## Type Hierarchy
 
-```ModelArrayArray <: ModelArrayType <: ArrayType <: SindbadType <: Any```
+```ModelArrayArray <: ModelArrayType <: ArrayTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ModelArrayArray
+Sindbad.Types.ModelArrayArray
 
 @doc """
 
@@ -76,11 +76,11 @@ Use StaticArrays for model variables
 
 ## Type Hierarchy
 
-```ModelArrayStaticArray <: ModelArrayType <: ArrayType <: SindbadType <: Any```
+```ModelArrayStaticArray <: ModelArrayType <: ArrayTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ModelArrayStaticArray
+Sindbad.Types.ModelArrayStaticArray
 
 @doc """
 
@@ -90,11 +90,11 @@ Use array views for model variables
 
 ## Type Hierarchy
 
-```ModelArrayView <: ModelArrayType <: ArrayType <: SindbadType <: Any```
+```ModelArrayView <: ModelArrayType <: ArrayTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ModelArrayView
+Sindbad.Types.ModelArrayView
 
 @doc """
 
@@ -104,7 +104,7 @@ Abstract type for output array types in SINDBAD
 
 ## Type Hierarchy
 
-```OutputArrayType <: ArrayType <: SindbadType <: Any```
+```OutputArrayType <: ArrayTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -120,7 +120,7 @@ Abstract type for output array types in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.OutputArrayType
+Sindbad.Types.OutputArrayType
 
 @doc """
 
@@ -130,11 +130,11 @@ Use standard Julia arrays for output
 
 ## Type Hierarchy
 
-```OutputArray <: OutputArrayType <: ArrayType <: SindbadType <: Any```
+```OutputArray <: OutputArrayType <: ArrayTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OutputArray
+Sindbad.Types.OutputArray
 
 @doc """
 
@@ -144,11 +144,11 @@ Use MArray for output
 
 ## Type Hierarchy
 
-```OutputMArray <: OutputArrayType <: ArrayType <: SindbadType <: Any```
+```OutputMArray <: OutputArrayType <: ArrayTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OutputMArray
+Sindbad.Types.OutputMArray
 
 @doc """
 
@@ -158,11 +158,11 @@ Use SizedArray for output
 
 ## Type Hierarchy
 
-```OutputSizedArray <: OutputArrayType <: ArrayType <: SindbadType <: Any```
+```OutputSizedArray <: OutputArrayType <: ArrayTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OutputSizedArray
+Sindbad.Types.OutputSizedArray
 
 @doc """
 
@@ -172,21 +172,21 @@ Use YAXArray for output
 
 ## Type Hierarchy
 
-```OutputYAXArray <: OutputArrayType <: ArrayType <: SindbadType <: Any```
+```OutputYAXArray <: OutputArrayType <: ArrayTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OutputYAXArray
+Sindbad.Types.OutputYAXArray
 
 @doc """
 
-# ExperimentType
+# ExperimentTypes
 
 Abstract type for model run flags and experimental setup and simulations in SINDBAD
 
 ## Type Hierarchy
 
-```ExperimentType <: SindbadType <: Any```
+```ExperimentTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -227,7 +227,7 @@ Abstract type for model run flags and experimental setup and simulations in SIND
 
 
 """
-Sindbad.SindbadTypes.ExperimentType
+Sindbad.Types.ExperimentTypes
 
 @doc """
 
@@ -237,7 +237,7 @@ Abstract type for model output strategies in SINDBAD
 
 ## Type Hierarchy
 
-```OutputStrategy <: ExperimentType <: SindbadType <: Any```
+```OutputStrategy <: ExperimentTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -253,7 +253,7 @@ Abstract type for model output strategies in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.OutputStrategy
+Sindbad.Types.OutputStrategy
 
 @doc """
 
@@ -263,11 +263,11 @@ Disable output of all model variables
 
 ## Type Hierarchy
 
-```DoNotOutputAll <: OutputStrategy <: ExperimentType <: SindbadType <: Any```
+```DoNotOutputAll <: OutputStrategy <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotOutputAll
+Sindbad.Types.DoNotOutputAll
 
 @doc """
 
@@ -277,11 +277,11 @@ Save output variables in separate files
 
 ## Type Hierarchy
 
-```DoNotSaveSingleFile <: OutputStrategy <: ExperimentType <: SindbadType <: Any```
+```DoNotSaveSingleFile <: OutputStrategy <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotSaveSingleFile
+Sindbad.Types.DoNotSaveSingleFile
 
 @doc """
 
@@ -291,11 +291,11 @@ Enable output of all model variables
 
 ## Type Hierarchy
 
-```DoOutputAll <: OutputStrategy <: ExperimentType <: SindbadType <: Any```
+```DoOutputAll <: OutputStrategy <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoOutputAll
+Sindbad.Types.DoOutputAll
 
 @doc """
 
@@ -305,11 +305,11 @@ Save all output variables in a single file
 
 ## Type Hierarchy
 
-```DoSaveSingleFile <: OutputStrategy <: ExperimentType <: SindbadType <: Any```
+```DoSaveSingleFile <: OutputStrategy <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoSaveSingleFile
+Sindbad.Types.DoSaveSingleFile
 
 @doc """
 
@@ -319,7 +319,7 @@ Abstract type for using different parallelization packages in SINDBAD
 
 ## Type Hierarchy
 
-```ParallelizationPackage <: ExperimentType <: SindbadType <: Any```
+```ParallelizationPackage <: ExperimentTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -333,7 +333,7 @@ Abstract type for using different parallelization packages in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.ParallelizationPackage
+Sindbad.Types.ParallelizationPackage
 
 @doc """
 
@@ -343,11 +343,11 @@ Use Qbmap for parallelization
 
 ## Type Hierarchy
 
-```QbmapParallelization <: ParallelizationPackage <: ExperimentType <: SindbadType <: Any```
+```QbmapParallelization <: ParallelizationPackage <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.QbmapParallelization
+Sindbad.Types.QbmapParallelization
 
 @doc """
 
@@ -357,11 +357,11 @@ Use Julia threads for parallelization
 
 ## Type Hierarchy
 
-```ThreadsParallelization <: ParallelizationPackage <: ExperimentType <: SindbadType <: Any```
+```ThreadsParallelization <: ParallelizationPackage <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ThreadsParallelization
+Sindbad.Types.ThreadsParallelization
 
 @doc """
 
@@ -371,7 +371,7 @@ Abstract type for model run configuration flags in SINDBAD
 
 ## Type Hierarchy
 
-```RunFlag <: ExperimentType <: SindbadType <: Any```
+```RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -403,7 +403,7 @@ Abstract type for model run configuration flags in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.RunFlag
+Sindbad.Types.RunFlag
 
 @doc """
 
@@ -413,11 +413,11 @@ Enable cost calculation between model output and observations
 
 ## Type Hierarchy
 
-```DoCalcCost <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoCalcCost <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoCalcCost
+Sindbad.Types.DoCalcCost
 
 @doc """
 
@@ -427,11 +427,11 @@ Enable model debugging mode
 
 ## Type Hierarchy
 
-```DoDebugModel <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoDebugModel <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoDebugModel
+Sindbad.Types.DoDebugModel
 
 @doc """
 
@@ -441,11 +441,11 @@ Enable filtering of NaN values in spatial data
 
 ## Type Hierarchy
 
-```DoFilterNanPixels <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoFilterNanPixels <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoFilterNanPixels
+Sindbad.Types.DoFilterNanPixels
 
 @doc """
 
@@ -455,11 +455,11 @@ Enable inline updates of model state
 
 ## Type Hierarchy
 
-```DoInlineUpdate <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoInlineUpdate <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoInlineUpdate
+Sindbad.Types.DoInlineUpdate
 
 @doc """
 
@@ -469,11 +469,11 @@ Disable cost calculation between model output and observations
 
 ## Type Hierarchy
 
-```DoNotCalcCost <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotCalcCost <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotCalcCost
+Sindbad.Types.DoNotCalcCost
 
 @doc """
 
@@ -483,11 +483,11 @@ Disable model debugging mode
 
 ## Type Hierarchy
 
-```DoNotDebugModel <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotDebugModel <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotDebugModel
+Sindbad.Types.DoNotDebugModel
 
 @doc """
 
@@ -497,11 +497,11 @@ Disable filtering of NaN values in spatial data
 
 ## Type Hierarchy
 
-```DoNotFilterNanPixels <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotFilterNanPixels <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotFilterNanPixels
+Sindbad.Types.DoNotFilterNanPixels
 
 @doc """
 
@@ -511,11 +511,11 @@ Disable inline updates of model state
 
 ## Type Hierarchy
 
-```DoNotInlineUpdate <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotInlineUpdate <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotInlineUpdate
+Sindbad.Types.DoNotInlineUpdate
 
 @doc """
 
@@ -525,11 +525,11 @@ Disable forward model run
 
 ## Type Hierarchy
 
-```DoNotRunForward <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotRunForward <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotRunForward
+Sindbad.Types.DoNotRunForward
 
 @doc """
 
@@ -539,11 +539,11 @@ Disable model parameter optimization
 
 ## Type Hierarchy
 
-```DoNotRunOptimization <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotRunOptimization <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotRunOptimization
+Sindbad.Types.DoNotRunOptimization
 
 @doc """
 
@@ -553,11 +553,11 @@ Disable saving of model information
 
 ## Type Hierarchy
 
-```DoNotSaveInfo <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotSaveInfo <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotSaveInfo
+Sindbad.Types.DoNotSaveInfo
 
 @doc """
 
@@ -567,11 +567,11 @@ Disable terrestrial ecosystem model spinup
 
 ## Type Hierarchy
 
-```DoNotSpinupTEM <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotSpinupTEM <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotSpinupTEM
+Sindbad.Types.DoNotSpinupTEM
 
 @doc """
 
@@ -581,11 +581,11 @@ Disable storing of spinup results
 
 ## Type Hierarchy
 
-```DoNotStoreSpinup <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotStoreSpinup <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotStoreSpinup
+Sindbad.Types.DoNotStoreSpinup
 
 @doc """
 
@@ -595,11 +595,11 @@ Disable forward mode automatic differentiation
 
 ## Type Hierarchy
 
-```DoNotUseForwardDiff <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoNotUseForwardDiff <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotUseForwardDiff
+Sindbad.Types.DoNotUseForwardDiff
 
 @doc """
 
@@ -609,11 +609,11 @@ Enable forward model run
 
 ## Type Hierarchy
 
-```DoRunForward <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoRunForward <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoRunForward
+Sindbad.Types.DoRunForward
 
 @doc """
 
@@ -623,11 +623,11 @@ Enable model parameter optimization
 
 ## Type Hierarchy
 
-```DoRunOptimization <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoRunOptimization <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoRunOptimization
+Sindbad.Types.DoRunOptimization
 
 @doc """
 
@@ -637,11 +637,11 @@ Enable saving of model information
 
 ## Type Hierarchy
 
-```DoSaveInfo <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoSaveInfo <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoSaveInfo
+Sindbad.Types.DoSaveInfo
 
 @doc """
 
@@ -651,11 +651,11 @@ Enable terrestrial ecosystem model spinup
 
 ## Type Hierarchy
 
-```DoSpinupTEM <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoSpinupTEM <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoSpinupTEM
+Sindbad.Types.DoSpinupTEM
 
 @doc """
 
@@ -665,11 +665,11 @@ Enable storing of spinup results
 
 ## Type Hierarchy
 
-```DoStoreSpinup <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoStoreSpinup <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoStoreSpinup
+Sindbad.Types.DoStoreSpinup
 
 @doc """
 
@@ -679,21 +679,21 @@ Enable forward mode automatic differentiation
 
 ## Type Hierarchy
 
-```DoUseForwardDiff <: RunFlag <: ExperimentType <: SindbadType <: Any```
+```DoUseForwardDiff <: RunFlag <: ExperimentTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoUseForwardDiff
+Sindbad.Types.DoUseForwardDiff
 
 @doc """
 
-# InputType
+# InputTypes
 
 Abstract type for input data and processing related options in SINDBAD
 
 ## Type Hierarchy
 
-```InputType <: SindbadType <: Any```
+```InputTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -725,7 +725,7 @@ Abstract type for input data and processing related options in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.InputType
+Sindbad.Types.InputTypes
 
 @doc """
 
@@ -735,7 +735,7 @@ Abstract type for input data backends in SINDBAD
 
 ## Type Hierarchy
 
-```DataFormatBackend <: InputType <: SindbadType <: Any```
+```DataFormatBackend <: InputTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -749,7 +749,7 @@ Abstract type for input data backends in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.DataFormatBackend
+Sindbad.Types.DataFormatBackend
 
 @doc """
 
@@ -759,11 +759,11 @@ Use NetCDF format for input data
 
 ## Type Hierarchy
 
-```BackendNetcdf <: DataFormatBackend <: InputType <: SindbadType <: Any```
+```BackendNetcdf <: DataFormatBackend <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.BackendNetcdf
+Sindbad.Types.BackendNetcdf
 
 @doc """
 
@@ -773,11 +773,11 @@ Use Zarr format for input data
 
 ## Type Hierarchy
 
-```BackendZarr <: DataFormatBackend <: InputType <: SindbadType <: Any```
+```BackendZarr <: DataFormatBackend <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.BackendZarr
+Sindbad.Types.BackendZarr
 
 @doc """
 
@@ -787,11 +787,11 @@ Forcing variable with time dimension
 
 ## Type Hierarchy
 
-```ForcingWithTime <: ForcingTime <: InputType <: SindbadType <: Any```
+```ForcingWithTime <: ForcingTime <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ForcingWithTime
+Sindbad.Types.ForcingWithTime
 
 @doc """
 
@@ -801,11 +801,11 @@ Forcing variable without time dimension
 
 ## Type Hierarchy
 
-```ForcingWithoutTime <: ForcingTime <: InputType <: SindbadType <: Any```
+```ForcingWithoutTime <: ForcingTime <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ForcingWithoutTime
+Sindbad.Types.ForcingWithoutTime
 
 @doc """
 
@@ -815,7 +815,7 @@ Abstract type for input data array types in SINDBAD
 
 ## Type Hierarchy
 
-```InputArrayBackend <: InputType <: SindbadType <: Any```
+```InputArrayBackend <: InputTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -831,7 +831,7 @@ Abstract type for input data array types in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.InputArrayBackend
+Sindbad.Types.InputArrayBackend
 
 @doc """
 
@@ -841,11 +841,11 @@ Use standard Julia arrays for input data
 
 ## Type Hierarchy
 
-```InputArray <: InputArrayBackend <: InputType <: SindbadType <: Any```
+```InputArray <: InputArrayBackend <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.InputArray
+Sindbad.Types.InputArray
 
 @doc """
 
@@ -855,11 +855,11 @@ Use keyed arrays for input data
 
 ## Type Hierarchy
 
-```InputKeyedArray <: InputArrayBackend <: InputType <: SindbadType <: Any```
+```InputKeyedArray <: InputArrayBackend <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.InputKeyedArray
+Sindbad.Types.InputKeyedArray
 
 @doc """
 
@@ -869,11 +869,11 @@ Use named dimension arrays for input data
 
 ## Type Hierarchy
 
-```InputNamedDimsArray <: InputArrayBackend <: InputType <: SindbadType <: Any```
+```InputNamedDimsArray <: InputArrayBackend <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.InputNamedDimsArray
+Sindbad.Types.InputNamedDimsArray
 
 @doc """
 
@@ -883,11 +883,11 @@ Use YAXArray for input data
 
 ## Type Hierarchy
 
-```InputYaxArray <: InputArrayBackend <: InputType <: SindbadType <: Any```
+```InputYaxArray <: InputArrayBackend <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.InputYaxArray
+Sindbad.Types.InputYaxArray
 
 @doc """
 
@@ -897,7 +897,7 @@ Abstract type for spatial subsetting methods in SINDBAD
 
 ## Type Hierarchy
 
-```SpatialSubsetter <: InputType <: SindbadType <: Any```
+```SpatialSubsetter <: InputTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -917,7 +917,7 @@ Abstract type for spatial subsetting methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.SpatialSubsetter
+Sindbad.Types.SpatialSubsetter
 
 @doc """
 
@@ -927,11 +927,11 @@ Use site ID (all caps) for spatial subsetting
 
 ## Type Hierarchy
 
-```SpaceID <: SpatialSubsetter <: InputType <: SindbadType <: Any```
+```SpaceID <: SpatialSubsetter <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.SpaceID
+Sindbad.Types.SpaceID
 
 @doc """
 
@@ -941,11 +941,11 @@ Use site ID (capitalized) for spatial subsetting
 
 ## Type Hierarchy
 
-```SpaceId <: SpatialSubsetter <: InputType <: SindbadType <: Any```
+```SpaceId <: SpatialSubsetter <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.SpaceId
+Sindbad.Types.SpaceId
 
 @doc """
 
@@ -955,11 +955,11 @@ Use site ID for spatial subsetting
 
 ## Type Hierarchy
 
-```Spaceid <: SpatialSubsetter <: InputType <: SindbadType <: Any```
+```Spaceid <: SpatialSubsetter <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Spaceid
+Sindbad.Types.Spaceid
 
 @doc """
 
@@ -969,11 +969,11 @@ Use latitude for spatial subsetting
 
 ## Type Hierarchy
 
-```Spacelat <: SpatialSubsetter <: InputType <: SindbadType <: Any```
+```Spacelat <: SpatialSubsetter <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Spacelat
+Sindbad.Types.Spacelat
 
 @doc """
 
@@ -983,11 +983,11 @@ Use full latitude for spatial subsetting
 
 ## Type Hierarchy
 
-```Spacelatitude <: SpatialSubsetter <: InputType <: SindbadType <: Any```
+```Spacelatitude <: SpatialSubsetter <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Spacelatitude
+Sindbad.Types.Spacelatitude
 
 @doc """
 
@@ -997,11 +997,11 @@ Use longitude for spatial subsetting
 
 ## Type Hierarchy
 
-```Spacelon <: SpatialSubsetter <: InputType <: SindbadType <: Any```
+```Spacelon <: SpatialSubsetter <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Spacelon
+Sindbad.Types.Spacelon
 
 @doc """
 
@@ -1011,11 +1011,11 @@ Use full longitude for spatial subsetting
 
 ## Type Hierarchy
 
-```Spacelongitude <: SpatialSubsetter <: InputType <: SindbadType <: Any```
+```Spacelongitude <: SpatialSubsetter <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Spacelongitude
+Sindbad.Types.Spacelongitude
 
 @doc """
 
@@ -1025,21 +1025,21 @@ Use site location for spatial subsetting
 
 ## Type Hierarchy
 
-```Spacesite <: SpatialSubsetter <: InputType <: SindbadType <: Any```
+```Spacesite <: SpatialSubsetter <: InputTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Spacesite
+Sindbad.Types.Spacesite
 
 @doc """
 
-# LandType
+# LandTypes
 
 Abstract type for land related types that are typically used in preparing objects for model runs in SINDBAD
 
 ## Type Hierarchy
 
-```LandType <: SindbadType <: Any```
+```LandTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -1062,7 +1062,7 @@ Abstract type for land related types that are typically used in preparing object
 
 
 """
-Sindbad.SindbadTypes.LandType
+Sindbad.Types.LandTypes
 
 @doc """
 
@@ -1072,7 +1072,7 @@ Abstract type for preallocated land helpers types in prepTEM of SINDBAD
 
 ## Type Hierarchy
 
-```PreAlloc <: LandType <: SindbadType <: Any```
+```PreAlloc <: LandTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -1091,7 +1091,7 @@ Abstract type for preallocated land helpers types in prepTEM of SINDBAD
 
 
 """
-Sindbad.SindbadTypes.PreAlloc
+Sindbad.Types.PreAlloc
 
 @doc """
 
@@ -1101,11 +1101,11 @@ use a preallocated array for model output
 
 ## Type Hierarchy
 
-```PreAllocArray <: PreAlloc <: LandType <: SindbadType <: Any```
+```PreAllocArray <: PreAlloc <: LandTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.PreAllocArray
+Sindbad.Types.PreAllocArray
 
 @doc """
 
@@ -1115,11 +1115,11 @@ use a preallocated array to output all land variables
 
 ## Type Hierarchy
 
-```PreAllocArrayAll <: PreAlloc <: LandType <: SindbadType <: Any```
+```PreAllocArrayAll <: PreAlloc <: LandTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.PreAllocArrayAll
+Sindbad.Types.PreAllocArrayAll
 
 @doc """
 
@@ -1129,11 +1129,11 @@ use a preallocated array for finite difference (FD) hybrid experiments
 
 ## Type Hierarchy
 
-```PreAllocArrayFD <: PreAlloc <: LandType <: SindbadType <: Any```
+```PreAllocArrayFD <: PreAlloc <: LandTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.PreAllocArrayFD
+Sindbad.Types.PreAllocArrayFD
 
 @doc """
 
@@ -1143,11 +1143,11 @@ use arrays of nThreads size for land model output for replicates of multiple thr
 
 ## Type Hierarchy
 
-```PreAllocArrayMT <: PreAlloc <: LandType <: SindbadType <: Any```
+```PreAllocArrayMT <: PreAlloc <: LandTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.PreAllocArrayMT
+Sindbad.Types.PreAllocArrayMT
 
 @doc """
 
@@ -1157,11 +1157,11 @@ save output as a stacked vector of land using map over temporal dimension
 
 ## Type Hierarchy
 
-```PreAllocStacked <: PreAlloc <: LandType <: SindbadType <: Any```
+```PreAllocStacked <: PreAlloc <: LandTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.PreAllocStacked
+Sindbad.Types.PreAllocStacked
 
 @doc """
 
@@ -1171,11 +1171,11 @@ save land output as a preallocated vector for time series of land
 
 ## Type Hierarchy
 
-```PreAllocTimeseries <: PreAlloc <: LandType <: SindbadType <: Any```
+```PreAllocTimeseries <: PreAlloc <: LandTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.PreAllocTimeseries
+Sindbad.Types.PreAllocTimeseries
 
 @doc """
 
@@ -1185,21 +1185,21 @@ use YAX arrays for model output
 
 ## Type Hierarchy
 
-```PreAllocYAXArray <: PreAlloc <: LandType <: SindbadType <: Any```
+```PreAllocYAXArray <: PreAlloc <: LandTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.PreAllocYAXArray
+Sindbad.Types.PreAllocYAXArray
 
 @doc """
 
-# MLType
+# MLTypes
 
 Abstract type for types in machine learning related methods in SINDBAD
 
 ## Type Hierarchy
 
-```MLType <: SindbadType <: Any```
+```MLTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -1218,7 +1218,7 @@ Abstract type for types in machine learning related methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.MLType
+Sindbad.Types.MLTypes
 
 @doc """
 
@@ -1228,7 +1228,7 @@ Abstract type for automatic differentiation or finite differences for gradient c
 
 ## Type Hierarchy
 
-```GradType <: MLType <: SindbadType <: Any```
+```GradType <: MLTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -1246,7 +1246,7 @@ Abstract type for automatic differentiation or finite differences for gradient c
 
 
 """
-Sindbad.SindbadTypes.GradType
+Sindbad.Types.GradType
 
 @doc """
 
@@ -1256,11 +1256,11 @@ Use Enzyme.jl for automatic differentiation
 
 ## Type Hierarchy
 
-```EnzymeGrad <: GradType <: MLType <: SindbadType <: Any```
+```EnzymeGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.EnzymeGrad
+Sindbad.Types.EnzymeGrad
 
 @doc """
 
@@ -1270,11 +1270,11 @@ Use FiniteDiff.jl for finite difference calculations
 
 ## Type Hierarchy
 
-```FiniteDiffGrad <: GradType <: MLType <: SindbadType <: Any```
+```FiniteDiffGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.FiniteDiffGrad
+Sindbad.Types.FiniteDiffGrad
 
 @doc """
 
@@ -1284,11 +1284,11 @@ Use FiniteDifferences.jl for finite difference calculations
 
 ## Type Hierarchy
 
-```FiniteDifferencesGrad <: GradType <: MLType <: SindbadType <: Any```
+```FiniteDifferencesGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.FiniteDifferencesGrad
+Sindbad.Types.FiniteDifferencesGrad
 
 @doc """
 
@@ -1298,11 +1298,11 @@ Use ForwardDiff.jl for automatic differentiation
 
 ## Type Hierarchy
 
-```ForwardDiffGrad <: GradType <: MLType <: SindbadType <: Any```
+```ForwardDiffGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ForwardDiffGrad
+Sindbad.Types.ForwardDiffGrad
 
 @doc """
 
@@ -1312,11 +1312,11 @@ Use PolyesterForwardDiff.jl for automatic differentiation
 
 ## Type Hierarchy
 
-```PolyesterForwardDiffGrad <: GradType <: MLType <: SindbadType <: Any```
+```PolyesterForwardDiffGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.PolyesterForwardDiffGrad
+Sindbad.Types.PolyesterForwardDiffGrad
 
 @doc """
 
@@ -1326,21 +1326,21 @@ Use Zygote.jl for automatic differentiation
 
 ## Type Hierarchy
 
-```ZygoteGrad <: GradType <: MLType <: SindbadType <: Any```
+```ZygoteGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ZygoteGrad
+Sindbad.Types.ZygoteGrad
 
 @doc """
 
-# MetricsType
+# MetricTypes
 
 Abstract type for performance metrics and cost calculation methods in SINDBAD
 
 ## Type Hierarchy
 
-```MetricsType <: SindbadType <: Any```
+```MetricTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -1385,7 +1385,7 @@ Abstract type for performance metrics and cost calculation methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.MetricsType
+Sindbad.Types.MetricTypes
 
 @doc """
 
@@ -1395,7 +1395,7 @@ Abstract type for data aggregation order in SINDBAD
 
 ## Type Hierarchy
 
-```DataAggrOrder <: MetricsType <: SindbadType <: Any```
+```DataAggrOrder <: MetricTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -1409,7 +1409,7 @@ Abstract type for data aggregation order in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.DataAggrOrder
+Sindbad.Types.DataAggrOrder
 
 @doc """
 
@@ -1419,11 +1419,11 @@ Aggregate data first over space, then over time
 
 ## Type Hierarchy
 
-```SpaceTime <: DataAggrOrder <: MetricsType <: SindbadType <: Any```
+```SpaceTime <: DataAggrOrder <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.SpaceTime
+Sindbad.Types.SpaceTime
 
 @doc """
 
@@ -1433,11 +1433,11 @@ Aggregate data first over time, then over space
 
 ## Type Hierarchy
 
-```TimeSpace <: DataAggrOrder <: MetricsType <: SindbadType <: Any```
+```TimeSpace <: DataAggrOrder <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeSpace
+Sindbad.Types.TimeSpace
 
 @doc """
 
@@ -1447,7 +1447,7 @@ Abstract type for performance metrics in SINDBAD
 
 ## Type Hierarchy
 
-```PerfMetric <: MetricsType <: SindbadType <: Any```
+```PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -1482,7 +1482,7 @@ Abstract type for performance metrics in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.PerfMetric
+Sindbad.Types.PerfMetric
 
 @doc """
 
@@ -1492,11 +1492,11 @@ Mean Squared Error: Measures the average squared difference between predicted an
 
 ## Type Hierarchy
 
-```MSE <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```MSE <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.MSE
+Sindbad.Types.MSE
 
 @doc """
 
@@ -1506,11 +1506,11 @@ Normalized Absolute Mean Error with 1/R scaling: Measures the absolute differenc
 
 ## Type Hierarchy
 
-```NAME1R <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NAME1R <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NAME1R
+Sindbad.Types.NAME1R
 
 @doc """
 
@@ -1520,11 +1520,11 @@ Normalized Mean Absolute Error with 1/R scaling: Measures the average absolute e
 
 ## Type Hierarchy
 
-```NMAE1R <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NMAE1R <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NMAE1R
+Sindbad.Types.NMAE1R
 
 @doc """
 
@@ -1534,11 +1534,11 @@ Normalized Nash-Sutcliffe Efficiency: Measures model performance relative to the
 
 ## Type Hierarchy
 
-```NNSE <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NNSE <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NNSE
+Sindbad.Types.NNSE
 
 @doc """
 
@@ -1548,11 +1548,11 @@ Inverse Normalized Nash-Sutcliffe Efficiency: Inverse of NNSE for minimization p
 
 ## Type Hierarchy
 
-```NNSEInv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NNSEInv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NNSEInv
+Sindbad.Types.NNSEInv
 
 @doc """
 
@@ -1562,11 +1562,11 @@ Normalized Nash-Sutcliffe Efficiency with uncertainty: Incorporates observation 
 
 ## Type Hierarchy
 
-```NNSEσ <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NNSEσ <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NNSEσ
+Sindbad.Types.NNSEσ
 
 @doc """
 
@@ -1576,11 +1576,11 @@ Inverse Normalized Nash-Sutcliffe Efficiency with uncertainty: Inverse of NNSEσ
 
 ## Type Hierarchy
 
-```NNSEσInv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NNSEσInv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NNSEσInv
+Sindbad.Types.NNSEσInv
 
 @doc """
 
@@ -1590,11 +1590,11 @@ Normalized Pearson Correlation: Measures linear correlation between predictions 
 
 ## Type Hierarchy
 
-```NPcor <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NPcor <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NPcor
+Sindbad.Types.NPcor
 
 @doc """
 
@@ -1604,11 +1604,11 @@ Inverse Normalized Pearson Correlation: Inverse of NPcor for minimization proble
 
 ## Type Hierarchy
 
-```NPcorInv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NPcorInv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NPcorInv
+Sindbad.Types.NPcorInv
 
 @doc """
 
@@ -1618,11 +1618,11 @@ Nash-Sutcliffe Efficiency: Measures model performance relative to the mean of ob
 
 ## Type Hierarchy
 
-```NSE <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NSE <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NSE
+Sindbad.Types.NSE
 
 @doc """
 
@@ -1632,11 +1632,11 @@ Inverse Nash-Sutcliffe Efficiency: Inverse of NSE for minimization problems
 
 ## Type Hierarchy
 
-```NSEInv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NSEInv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NSEInv
+Sindbad.Types.NSEInv
 
 @doc """
 
@@ -1646,11 +1646,11 @@ Nash-Sutcliffe Efficiency with uncertainty: Incorporates observation uncertainty
 
 ## Type Hierarchy
 
-```NSEσ <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NSEσ <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NSEσ
+Sindbad.Types.NSEσ
 
 @doc """
 
@@ -1660,11 +1660,11 @@ Inverse Nash-Sutcliffe Efficiency with uncertainty: Inverse of NSEσ for minimiz
 
 ## Type Hierarchy
 
-```NSEσInv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NSEσInv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NSEσInv
+Sindbad.Types.NSEσInv
 
 @doc """
 
@@ -1674,11 +1674,11 @@ Normalized Spearman Correlation: Measures monotonic relationship between predict
 
 ## Type Hierarchy
 
-```NScor <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NScor <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NScor
+Sindbad.Types.NScor
 
 @doc """
 
@@ -1688,11 +1688,11 @@ Inverse Normalized Spearman Correlation: Inverse of NScor for minimization probl
 
 ## Type Hierarchy
 
-```NScorInv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```NScorInv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NScorInv
+Sindbad.Types.NScorInv
 
 @doc """
 
@@ -1702,11 +1702,11 @@ Pearson Correlation: Measures linear correlation between predictions and observa
 
 ## Type Hierarchy
 
-```Pcor <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```Pcor <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Pcor
+Sindbad.Types.Pcor
 
 @doc """
 
@@ -1716,11 +1716,11 @@ Squared Pearson Correlation: Measures the strength of linear relationship betwee
 
 ## Type Hierarchy
 
-```Pcor2 <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```Pcor2 <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Pcor2
+Sindbad.Types.Pcor2
 
 @doc """
 
@@ -1730,11 +1730,11 @@ Inverse Squared Pearson Correlation: Inverse of Pcor2 for minimization problems
 
 ## Type Hierarchy
 
-```Pcor2Inv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```Pcor2Inv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Pcor2Inv
+Sindbad.Types.Pcor2Inv
 
 @doc """
 
@@ -1744,11 +1744,11 @@ Inverse Pearson Correlation: Inverse of Pcor for minimization problems
 
 ## Type Hierarchy
 
-```PcorInv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```PcorInv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.PcorInv
+Sindbad.Types.PcorInv
 
 @doc """
 
@@ -1758,11 +1758,11 @@ Spearman Correlation: Measures monotonic relationship between predictions and ob
 
 ## Type Hierarchy
 
-```Scor <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```Scor <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Scor
+Sindbad.Types.Scor
 
 @doc """
 
@@ -1772,11 +1772,11 @@ Squared Spearman Correlation: Measures the strength of monotonic relationship be
 
 ## Type Hierarchy
 
-```Scor2 <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```Scor2 <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Scor2
+Sindbad.Types.Scor2
 
 @doc """
 
@@ -1786,11 +1786,11 @@ Inverse Squared Spearman Correlation: Inverse of Scor2 for minimization problems
 
 ## Type Hierarchy
 
-```Scor2Inv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```Scor2Inv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Scor2Inv
+Sindbad.Types.Scor2Inv
 
 @doc """
 
@@ -1800,11 +1800,11 @@ Inverse Spearman Correlation: Inverse of Scor for minimization problems
 
 ## Type Hierarchy
 
-```ScorInv <: PerfMetric <: MetricsType <: SindbadType <: Any```
+```ScorInv <: PerfMetric <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ScorInv
+Sindbad.Types.ScorInv
 
 @doc """
 
@@ -1814,11 +1814,11 @@ Abstract type for spatial data aggregation methods in SINDBAD
 
 ## Type Hierarchy
 
-```SpatialDataAggr <: MetricsType <: SindbadType <: Any```
+```SpatialDataAggr <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.SpatialDataAggr
+Sindbad.Types.SpatialDataAggr
 
 @doc """
 
@@ -1828,7 +1828,7 @@ Abstract type for spatial metric aggregation methods in SINDBAD
 
 ## Type Hierarchy
 
-```SpatialMetricAggr <: MetricsType <: SindbadType <: Any```
+```SpatialMetricAggr <: MetricTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -1844,7 +1844,7 @@ Abstract type for spatial metric aggregation methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.SpatialMetricAggr
+Sindbad.Types.SpatialMetricAggr
 
 @doc """
 
@@ -1854,11 +1854,11 @@ Take maximum value across spatial dimensions
 
 ## Type Hierarchy
 
-```MetricMaximum <: SpatialMetricAggr <: MetricsType <: SindbadType <: Any```
+```MetricMaximum <: SpatialMetricAggr <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.MetricMaximum
+Sindbad.Types.MetricMaximum
 
 @doc """
 
@@ -1868,11 +1868,11 @@ Take minimum value across spatial dimensions
 
 ## Type Hierarchy
 
-```MetricMinimum <: SpatialMetricAggr <: MetricsType <: SindbadType <: Any```
+```MetricMinimum <: SpatialMetricAggr <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.MetricMinimum
+Sindbad.Types.MetricMinimum
 
 @doc """
 
@@ -1882,11 +1882,11 @@ Apply spatial aggregation to metrics
 
 ## Type Hierarchy
 
-```MetricSpatial <: SpatialMetricAggr <: MetricsType <: SindbadType <: Any```
+```MetricSpatial <: SpatialMetricAggr <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.MetricSpatial
+Sindbad.Types.MetricSpatial
 
 @doc """
 
@@ -1896,21 +1896,21 @@ Sum values across spatial dimensions
 
 ## Type Hierarchy
 
-```MetricSum <: SpatialMetricAggr <: MetricsType <: SindbadType <: Any```
+```MetricSum <: SpatialMetricAggr <: MetricTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.MetricSum
+Sindbad.Types.MetricSum
 
 @doc """
 
-# ModelType
+# ModelTypes
 
 Abstract type for model types in SINDBAD
 
 ## Type Hierarchy
 
-```ModelType <: SindbadType <: Any```
+```ModelTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -2003,6 +2003,7 @@ Root allocation is further divided into fine (cf2Root) and coarse roots (cf2Root
          -  `cCycleBase_CASA`: Compute carbon to nitrogen ratio & base turnover rates 
          -  `cCycleBase_GSI`: sets the basics for carbon cycle in the GSI approach 
          -  `cCycleBase_GSI_PlantForm`: sets the basics for carbon cycle  pools as in the GSI, but allows for scaling of turnover parameters based on plant forms 
+         -  `cCycleBase_GSI_PlantForm_LargeKReserve`: same as cCycleBase_GSI_PlantForm but with a larger turnover of reserve so that it respires and flows 
          -  `cCycleBase_simple`: Compute carbon to nitrogen ratio & annual turnover rates 
      -  `cCycleConsistency`: Consistency checks on the c allocation and transfers between pools 
          -  `cCycleConsistency_simple`: check consistency in cCycle vector: c_allocation; cFlow 
@@ -2245,7 +2246,7 @@ Root allocation is further divided into fine (cf2Root) and coarse roots (cf2Root
 
 
 """
-Sindbad.SindbadTypes.ModelType
+Sindbad.Types.ModelTypes
 
 @doc """
 
@@ -2255,11 +2256,11 @@ Enable error catching during model execution
 
 ## Type Hierarchy
 
-```DoCatchModelErrors <: ModelType <: SindbadType <: Any```
+```DoCatchModelErrors <: ModelTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoCatchModelErrors
+Sindbad.Types.DoCatchModelErrors
 
 @doc """
 
@@ -2269,21 +2270,21 @@ Disable error catching during model execution
 
 ## Type Hierarchy
 
-```DoNotCatchModelErrors <: ModelType <: SindbadType <: Any```
+```DoNotCatchModelErrors <: ModelTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.DoNotCatchModelErrors
+Sindbad.Types.DoNotCatchModelErrors
 
 @doc """
 
-# OptimizationType
+# OptimizationTypes
 
 Abstract type for optimization related functions and methods in SINDBAD
 
 ## Type Hierarchy
 
-```OptimizationType <: SindbadType <: Any```
+```OptimizationTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -2324,7 +2325,7 @@ Abstract type for optimization related functions and methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.OptimizationType
+Sindbad.Types.OptimizationTypes
 
 @doc """
 
@@ -2334,7 +2335,7 @@ Abstract type for cost calculation methods in SINDBAD
 
 ## Type Hierarchy
 
-```CostMethod <: OptimizationType <: SindbadType <: Any```
+```CostMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -2350,7 +2351,7 @@ Abstract type for cost calculation methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.CostMethod
+Sindbad.Types.CostMethod
 
 @doc """
 
@@ -2360,11 +2361,11 @@ cost calculation between model output and observations
 
 ## Type Hierarchy
 
-```CostModelObs <: CostMethod <: OptimizationType <: SindbadType <: Any```
+```CostModelObs <: CostMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.CostModelObs
+Sindbad.Types.CostModelObs
 
 @doc """
 
@@ -2374,11 +2375,11 @@ cost calculation between land model output and time series observations
 
 ## Type Hierarchy
 
-```CostModelObsLandTS <: CostMethod <: OptimizationType <: SindbadType <: Any```
+```CostModelObsLandTS <: CostMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.CostModelObsLandTS
+Sindbad.Types.CostModelObsLandTS
 
 @doc """
 
@@ -2388,11 +2389,11 @@ multi-threaded cost calculation between model output and observations
 
 ## Type Hierarchy
 
-```CostModelObsMT <: CostMethod <: OptimizationType <: SindbadType <: Any```
+```CostModelObsMT <: CostMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.CostModelObsMT
+Sindbad.Types.CostModelObsMT
 
 @doc """
 
@@ -2402,11 +2403,11 @@ cost calculation between model output, observations, and priors. NOTE THAT THIS 
 
 ## Type Hierarchy
 
-```CostModelObsPriors <: CostMethod <: OptimizationType <: SindbadType <: Any```
+```CostModelObsPriors <: CostMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.CostModelObsPriors
+Sindbad.Types.CostModelObsPriors
 
 @doc """
 
@@ -2416,7 +2417,7 @@ Abstract type for global sensitivity analysis methods in SINDBAD
 
 ## Type Hierarchy
 
-```GSAMethod <: OptimizationType <: SindbadType <: Any```
+```GSAMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -2431,7 +2432,7 @@ Abstract type for global sensitivity analysis methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.GSAMethod
+Sindbad.Types.GSAMethod
 
 @doc """
 
@@ -2441,11 +2442,11 @@ Morris method for global sensitivity analysis
 
 ## Type Hierarchy
 
-```GSAMorris <: GSAMethod <: OptimizationType <: SindbadType <: Any```
+```GSAMorris <: GSAMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.GSAMorris
+Sindbad.Types.GSAMorris
 
 @doc """
 
@@ -2455,11 +2456,11 @@ Sobol method for global sensitivity analysis
 
 ## Type Hierarchy
 
-```GSASobol <: GSAMethod <: OptimizationType <: SindbadType <: Any```
+```GSASobol <: GSAMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.GSASobol
+Sindbad.Types.GSASobol
 
 @doc """
 
@@ -2469,11 +2470,11 @@ Sobol method with derivative-based measures for global sensitivity analysis
 
 ## Type Hierarchy
 
-```GSASobolDM <: GSAMethod <: OptimizationType <: SindbadType <: Any```
+```GSASobolDM <: GSAMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.GSASobolDM
+Sindbad.Types.GSASobolDM
 
 @doc """
 
@@ -2483,7 +2484,7 @@ Abstract type for optimization methods in SINDBAD
 
 ## Type Hierarchy
 
-```OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -2510,7 +2511,7 @@ Abstract type for optimization methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.OptimizationMethod
+Sindbad.Types.OptimizationMethod
 
 @doc """
 
@@ -2520,11 +2521,11 @@ Bayesian Optimization using Matern 5/2 kernel with Automatic Relevance Determina
 
 ## Type Hierarchy
 
-```BayesOptKMaternARD5 <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```BayesOptKMaternARD5 <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.BayesOptKMaternARD5
+Sindbad.Types.BayesOptKMaternARD5
 
 @doc """
 
@@ -2534,11 +2535,11 @@ Covariance Matrix Adaptation Evolution Strategy (CMA-ES) from CMAEvolutionStrate
 
 ## Type Hierarchy
 
-```CMAEvolutionStrategyCMAES <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```CMAEvolutionStrategyCMAES <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.CMAEvolutionStrategyCMAES
+Sindbad.Types.CMAEvolutionStrategyCMAES
 
 @doc """
 
@@ -2548,11 +2549,11 @@ Evolutionary version of CMA-ES optimization from Evolutionary.jl
 
 ## Type Hierarchy
 
-```EvolutionaryCMAES <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```EvolutionaryCMAES <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.EvolutionaryCMAES
+Sindbad.Types.EvolutionaryCMAES
 
 @doc """
 
@@ -2562,11 +2563,11 @@ Broyden-Fletcher-Goldfarb-Shanno (BFGS) from Optim.jl
 
 ## Type Hierarchy
 
-```OptimBFGS <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimBFGS <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimBFGS
+Sindbad.Types.OptimBFGS
 
 @doc """
 
@@ -2576,11 +2577,11 @@ Limited-memory Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) from Optim.jl
 
 ## Type Hierarchy
 
-```OptimLBFGS <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimLBFGS <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimLBFGS
+Sindbad.Types.OptimLBFGS
 
 @doc """
 
@@ -2590,11 +2591,11 @@ Black Box Optimization with adaptive parameters from Optimization.jl
 
 ## Type Hierarchy
 
-```OptimizationBBOadaptive <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationBBOadaptive <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationBBOadaptive
+Sindbad.Types.OptimizationBBOadaptive
 
 @doc """
 
@@ -2604,11 +2605,11 @@ Black Box Optimization using Natural Evolution Strategy (xNES) from Optimization
 
 ## Type Hierarchy
 
-```OptimizationBBOxnes <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationBBOxnes <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationBBOxnes
+Sindbad.Types.OptimizationBBOxnes
 
 @doc """
 
@@ -2618,11 +2619,11 @@ BFGS optimization with box constraints from Optimization.jl
 
 ## Type Hierarchy
 
-```OptimizationBFGS <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationBFGS <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationBFGS
+Sindbad.Types.OptimizationBFGS
 
 @doc """
 
@@ -2632,11 +2633,11 @@ Gradient descent optimization with box constraints from Optimization.jl
 
 ## Type Hierarchy
 
-```OptimizationFminboxGradientDescent <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationFminboxGradientDescent <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationFminboxGradientDescent
+Sindbad.Types.OptimizationFminboxGradientDescent
 
 @doc """
 
@@ -2646,11 +2647,11 @@ Gradient descent optimization with box constraints using forward differentiation
 
 ## Type Hierarchy
 
-```OptimizationFminboxGradientDescentFD <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationFminboxGradientDescentFD <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationFminboxGradientDescentFD
+Sindbad.Types.OptimizationFminboxGradientDescentFD
 
 @doc """
 
@@ -2660,11 +2661,11 @@ Global CMA-ES optimization with default settings from Optimization.jl
 
 ## Type Hierarchy
 
-```OptimizationGCMAESDef <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationGCMAESDef <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationGCMAESDef
+Sindbad.Types.OptimizationGCMAESDef
 
 @doc """
 
@@ -2674,11 +2675,11 @@ Global CMA-ES optimization using forward differentiation from Optimization.jl
 
 ## Type Hierarchy
 
-```OptimizationGCMAESFD <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationGCMAESFD <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationGCMAESFD
+Sindbad.Types.OptimizationGCMAESFD
 
 @doc """
 
@@ -2688,11 +2689,11 @@ Multi-start optimization to find global optimum from Optimization.jl
 
 ## Type Hierarchy
 
-```OptimizationMultistartOptimization <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationMultistartOptimization <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationMultistartOptimization
+Sindbad.Types.OptimizationMultistartOptimization
 
 @doc """
 
@@ -2702,11 +2703,11 @@ Nelder-Mead simplex optimization method from Optimization.jl
 
 ## Type Hierarchy
 
-```OptimizationNelderMead <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationNelderMead <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationNelderMead
+Sindbad.Types.OptimizationNelderMead
 
 @doc """
 
@@ -2716,11 +2717,11 @@ Quadratic Direct optimization method from Optimization.jl
 
 ## Type Hierarchy
 
-```OptimizationQuadDirect <: OptimizationMethod <: OptimizationType <: SindbadType <: Any```
+```OptimizationQuadDirect <: OptimizationMethod <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.OptimizationQuadDirect
+Sindbad.Types.OptimizationQuadDirect
 
 @doc """
 
@@ -2730,7 +2731,7 @@ Abstract type for parameter scaling methods in SINDBAD
 
 ## Type Hierarchy
 
-```ParameterScaling <: OptimizationType <: SindbadType <: Any```
+```ParameterScaling <: OptimizationTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -2745,7 +2746,7 @@ Abstract type for parameter scaling methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.ParameterScaling
+Sindbad.Types.ParameterScaling
 
 @doc """
 
@@ -2755,11 +2756,11 @@ Scale parameters relative to their bounds
 
 ## Type Hierarchy
 
-```ScaleBounds <: ParameterScaling <: OptimizationType <: SindbadType <: Any```
+```ScaleBounds <: ParameterScaling <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ScaleBounds
+Sindbad.Types.ScaleBounds
 
 @doc """
 
@@ -2769,11 +2770,11 @@ Scale parameters relative to default values
 
 ## Type Hierarchy
 
-```ScaleDefault <: ParameterScaling <: OptimizationType <: SindbadType <: Any```
+```ScaleDefault <: ParameterScaling <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ScaleDefault
+Sindbad.Types.ScaleDefault
 
 @doc """
 
@@ -2783,21 +2784,21 @@ No parameter scaling applied
 
 ## Type Hierarchy
 
-```ScaleNone <: ParameterScaling <: OptimizationType <: SindbadType <: Any```
+```ScaleNone <: ParameterScaling <: OptimizationTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ScaleNone
+Sindbad.Types.ScaleNone
 
 @doc """
 
-# SpinupType
+# SpinupTypes
 
 Abstract type for model spinup related functions and methods in SINDBAD
 
 ## Type Hierarchy
 
-```SpinupType <: SindbadType <: Any```
+```SpinupTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -2829,7 +2830,7 @@ Abstract type for model spinup related functions and methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.SpinupType
+Sindbad.Types.SpinupTypes
 
 @doc """
 
@@ -2839,7 +2840,7 @@ Abstract type for model spinup modes in SINDBAD
 
 ## Type Hierarchy
 
-```SpinupMode <: SpinupType <: SindbadType <: Any```
+```SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -2868,7 +2869,7 @@ Abstract type for model spinup modes in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.SpinupMode
+Sindbad.Types.SpinupMode
 
 @doc """
 
@@ -2878,11 +2879,11 @@ Use all forward models for spinup
 
 ## Type Hierarchy
 
-```AllForwardModels <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```AllForwardModels <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.AllForwardModels
+Sindbad.Types.AllForwardModels
 
 @doc """
 
@@ -2892,11 +2893,11 @@ scale carbon pools using diagnostic scalars for ηH and c_remain
 
 ## Type Hierarchy
 
-```EtaScaleA0H <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```EtaScaleA0H <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.EtaScaleA0H
+Sindbad.Types.EtaScaleA0H
 
 @doc """
 
@@ -2906,11 +2907,11 @@ scale carbon pools of CWD (cLitSlow) using ηH and set vegetation pools to c_rem
 
 ## Type Hierarchy
 
-```EtaScaleA0HCWD <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```EtaScaleA0HCWD <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.EtaScaleA0HCWD
+Sindbad.Types.EtaScaleA0HCWD
 
 @doc """
 
@@ -2920,11 +2921,11 @@ scale carbon pools using diagnostic scalars for ηH and ηA
 
 ## Type Hierarchy
 
-```EtaScaleAH <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```EtaScaleAH <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.EtaScaleAH
+Sindbad.Types.EtaScaleAH
 
 @doc """
 
@@ -2934,11 +2935,11 @@ scale carbon pools of CWD (cLitSlow) using ηH and scale vegetation pools by ηA
 
 ## Type Hierarchy
 
-```EtaScaleAHCWD <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```EtaScaleAHCWD <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.EtaScaleAHCWD
+Sindbad.Types.EtaScaleAHCWD
 
 @doc """
 
@@ -2948,11 +2949,11 @@ use a fixed-point nonlinear solver with trust region for carbon pools (cEco)
 
 ## Type Hierarchy
 
-```NlsolveFixedpointTrustregionCEco <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```NlsolveFixedpointTrustregionCEco <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NlsolveFixedpointTrustregionCEco
+Sindbad.Types.NlsolveFixedpointTrustregionCEco
 
 @doc """
 
@@ -2962,11 +2963,11 @@ use a fixed-point nonlinear solver with trust region for both cEco and TWS
 
 ## Type Hierarchy
 
-```NlsolveFixedpointTrustregionCEcoTWS <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```NlsolveFixedpointTrustregionCEcoTWS <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NlsolveFixedpointTrustregionCEcoTWS
+Sindbad.Types.NlsolveFixedpointTrustregionCEcoTWS
 
 @doc """
 
@@ -2976,11 +2977,11 @@ use a fixed-point nonlinearsolver with trust region for Total Water Storage (TWS
 
 ## Type Hierarchy
 
-```NlsolveFixedpointTrustregionTWS <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```NlsolveFixedpointTrustregionTWS <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.NlsolveFixedpointTrustregionTWS
+Sindbad.Types.NlsolveFixedpointTrustregionTWS
 
 @doc """
 
@@ -2990,11 +2991,11 @@ use the AutoVern7(Rodas5) method from DifferentialEquations.jl for solving ODEs
 
 ## Type Hierarchy
 
-```ODEAutoTsit5Rodas5 <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```ODEAutoTsit5Rodas5 <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ODEAutoTsit5Rodas5
+Sindbad.Types.ODEAutoTsit5Rodas5
 
 @doc """
 
@@ -3004,11 +3005,11 @@ use the DP5 method from DifferentialEquations.jl for solving ODEs
 
 ## Type Hierarchy
 
-```ODEDP5 <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```ODEDP5 <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ODEDP5
+Sindbad.Types.ODEDP5
 
 @doc """
 
@@ -3018,11 +3019,11 @@ use the Tsit5 method from DifferentialEquations.jl for solving ODEs
 
 ## Type Hierarchy
 
-```ODETsit5 <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```ODETsit5 <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.ODETsit5
+Sindbad.Types.ODETsit5
 
 @doc """
 
@@ -3032,11 +3033,11 @@ use the SteadyState solver with DynamicSS and Tsit5 methods
 
 ## Type Hierarchy
 
-```SSPDynamicSSTsit5 <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```SSPDynamicSSTsit5 <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.SSPDynamicSSTsit5
+Sindbad.Types.SSPDynamicSSTsit5
 
 @doc """
 
@@ -3046,11 +3047,11 @@ use the SteadyState solver with SSRootfind method
 
 ## Type Hierarchy
 
-```SSPSSRootfind <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```SSPSSRootfind <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.SSPSSRootfind
+Sindbad.Types.SSPSSRootfind
 
 @doc """
 
@@ -3060,11 +3061,11 @@ run only the models selected for spinup in the model structure
 
 ## Type Hierarchy
 
-```SelSpinupModels <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```SelSpinupModels <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.SelSpinupModels
+Sindbad.Types.SelSpinupModels
 
 @doc """
 
@@ -3074,11 +3075,11 @@ Spinup spinup_mode for Total Water Storage (TWS)
 
 ## Type Hierarchy
 
-```Spinup_TWS <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```Spinup_TWS <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Spinup_TWS
+Sindbad.Types.Spinup_TWS
 
 @doc """
 
@@ -3088,11 +3089,11 @@ Spinup spinup_mode for cEco
 
 ## Type Hierarchy
 
-```Spinup_cEco <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```Spinup_cEco <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Spinup_cEco
+Sindbad.Types.Spinup_cEco
 
 @doc """
 
@@ -3102,11 +3103,11 @@ Spinup spinup_mode for cEco and TWS
 
 ## Type Hierarchy
 
-```Spinup_cEco_TWS <: SpinupMode <: SpinupType <: SindbadType <: Any```
+```Spinup_cEco_TWS <: SpinupMode <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.Spinup_cEco_TWS
+Sindbad.Types.Spinup_cEco_TWS
 
 @doc """
 
@@ -3116,11 +3117,11 @@ Basic Spinup sequence without time aggregation
 
 ## Type Hierarchy
 
-```SpinupSequence <: SpinupType <: SindbadType <: Any```
+```SpinupSequence <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.SpinupSequence
+Sindbad.Types.SpinupSequence
 
 @doc """
 
@@ -3130,21 +3131,21 @@ Spinup sequence with time aggregation for corresponding forcingtime series
 
 ## Type Hierarchy
 
-```SpinupSequenceWithAggregator <: SpinupType <: SindbadType <: Any```
+```SpinupSequenceWithAggregator <: SpinupTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.SpinupSequenceWithAggregator
+Sindbad.Types.SpinupSequenceWithAggregator
 
 @doc """
 
-# TimeType
+# TimeTypes
 
 Abstract type for implementing time subset and aggregation types in SINDBAD
 
 ## Type Hierarchy
 
-```TimeType <: SindbadType <: Any```
+```TimeTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -3183,7 +3184,7 @@ Abstract type for implementing time subset and aggregation types in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.TimeType
+Sindbad.Types.TimeTypes
 
 @doc """
 
@@ -3193,7 +3194,7 @@ Abstract type for time aggregation methods in SINDBAD
 
 ## Type Hierarchy
 
-```TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -3230,7 +3231,7 @@ Abstract type for time aggregation methods in SINDBAD
 
 
 """
-Sindbad.SindbadTypes.TimeAggregation
+Sindbad.Types.TimeAggregation
 
 @doc """
 
@@ -3240,11 +3241,11 @@ aggregation/slicing to include all years
 
 ## Type Hierarchy
 
-```TimeAllYears <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeAllYears <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeAllYears
+Sindbad.Types.TimeAllYears
 
 @doc """
 
@@ -3254,11 +3255,11 @@ use array-based time aggregation
 
 ## Type Hierarchy
 
-```TimeArray <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeArray <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeArray
+Sindbad.Types.TimeArray
 
 @doc """
 
@@ -3268,11 +3269,11 @@ aggregation to daily time steps
 
 ## Type Hierarchy
 
-```TimeDay <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeDay <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeDay
+Sindbad.Types.TimeDay
 
 @doc """
 
@@ -3282,11 +3283,11 @@ aggregation to daily anomalies
 
 ## Type Hierarchy
 
-```TimeDayAnomaly <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeDayAnomaly <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeDayAnomaly
+Sindbad.Types.TimeDayAnomaly
 
 @doc """
 
@@ -3296,11 +3297,11 @@ aggregation to daily IAV
 
 ## Type Hierarchy
 
-```TimeDayIAV <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeDayIAV <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeDayIAV
+Sindbad.Types.TimeDayIAV
 
 @doc """
 
@@ -3310,11 +3311,11 @@ aggregation to daily MSC
 
 ## Type Hierarchy
 
-```TimeDayMSC <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeDayMSC <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeDayMSC
+Sindbad.Types.TimeDayMSC
 
 @doc """
 
@@ -3324,11 +3325,11 @@ aggregation to daily MSC anomalies
 
 ## Type Hierarchy
 
-```TimeDayMSCAnomaly <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeDayMSCAnomaly <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeDayMSCAnomaly
+Sindbad.Types.TimeDayMSCAnomaly
 
 @doc """
 
@@ -3338,11 +3339,11 @@ aggregation to time differences, e.g. monthly anomalies
 
 ## Type Hierarchy
 
-```TimeDiff <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeDiff <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeDiff
+Sindbad.Types.TimeDiff
 
 @doc """
 
@@ -3352,11 +3353,11 @@ aggregation/slicing of the first year
 
 ## Type Hierarchy
 
-```TimeFirstYear <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeFirstYear <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeFirstYear
+Sindbad.Types.TimeFirstYear
 
 @doc """
 
@@ -3366,11 +3367,11 @@ aggregation to hourly time steps
 
 ## Type Hierarchy
 
-```TimeHour <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeHour <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeHour
+Sindbad.Types.TimeHour
 
 @doc """
 
@@ -3380,11 +3381,11 @@ aggregation to hourly anomalies
 
 ## Type Hierarchy
 
-```TimeHourAnomaly <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeHourAnomaly <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeHourAnomaly
+Sindbad.Types.TimeHourAnomaly
 
 @doc """
 
@@ -3394,11 +3395,11 @@ aggregation to mean of hourly data over days
 
 ## Type Hierarchy
 
-```TimeHourDayMean <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeHourDayMean <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeHourDayMean
+Sindbad.Types.TimeHourDayMean
 
 @doc """
 
@@ -3408,11 +3409,11 @@ aggregation using time indices, e.g., TimeFirstYear
 
 ## Type Hierarchy
 
-```TimeIndexed <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeIndexed <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeIndexed
+Sindbad.Types.TimeIndexed
 
 @doc """
 
@@ -3422,11 +3423,11 @@ aggregation to mean over all time steps
 
 ## Type Hierarchy
 
-```TimeMean <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeMean <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeMean
+Sindbad.Types.TimeMean
 
 @doc """
 
@@ -3436,11 +3437,11 @@ aggregation to monthly time steps
 
 ## Type Hierarchy
 
-```TimeMonth <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeMonth <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeMonth
+Sindbad.Types.TimeMonth
 
 @doc """
 
@@ -3450,11 +3451,11 @@ aggregation to monthly anomalies
 
 ## Type Hierarchy
 
-```TimeMonthAnomaly <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeMonthAnomaly <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeMonthAnomaly
+Sindbad.Types.TimeMonthAnomaly
 
 @doc """
 
@@ -3464,11 +3465,11 @@ aggregation to monthly IAV
 
 ## Type Hierarchy
 
-```TimeMonthIAV <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeMonthIAV <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeMonthIAV
+Sindbad.Types.TimeMonthIAV
 
 @doc """
 
@@ -3478,11 +3479,11 @@ aggregation to monthly MSC
 
 ## Type Hierarchy
 
-```TimeMonthMSC <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeMonthMSC <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeMonthMSC
+Sindbad.Types.TimeMonthMSC
 
 @doc """
 
@@ -3492,11 +3493,11 @@ aggregation to monthly MSC anomalies
 
 ## Type Hierarchy
 
-```TimeMonthMSCAnomaly <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeMonthMSCAnomaly <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeMonthMSCAnomaly
+Sindbad.Types.TimeMonthMSCAnomaly
 
 @doc """
 
@@ -3506,11 +3507,11 @@ aggregation without time differences
 
 ## Type Hierarchy
 
-```TimeNoDiff <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeNoDiff <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeNoDiff
+Sindbad.Types.TimeNoDiff
 
 @doc """
 
@@ -3520,11 +3521,11 @@ aggregation/slicing of a random year
 
 ## Type Hierarchy
 
-```TimeRandomYear <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeRandomYear <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeRandomYear
+Sindbad.Types.TimeRandomYear
 
 @doc """
 
@@ -3534,11 +3535,11 @@ aggregation/slicing/selection of shuffled years
 
 ## Type Hierarchy
 
-```TimeShuffleYears <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeShuffleYears <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeShuffleYears
+Sindbad.Types.TimeShuffleYears
 
 @doc """
 
@@ -3548,11 +3549,11 @@ aggregation to a sized array
 
 ## Type Hierarchy
 
-```TimeSizedArray <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeSizedArray <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeSizedArray
+Sindbad.Types.TimeSizedArray
 
 @doc """
 
@@ -3562,11 +3563,11 @@ aggregation to yearly time steps
 
 ## Type Hierarchy
 
-```TimeYear <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeYear <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeYear
+Sindbad.Types.TimeYear
 
 @doc """
 
@@ -3576,9 +3577,9 @@ aggregation to yearly anomalies
 
 ## Type Hierarchy
 
-```TimeYearAnomaly <: TimeAggregation <: TimeType <: SindbadType <: Any```
+```TimeYearAnomaly <: TimeAggregation <: TimeTypes <: SindbadTypes <: Any```
 
 
 """
-Sindbad.SindbadTypes.TimeYearAnomaly
+Sindbad.Types.TimeYearAnomaly
 

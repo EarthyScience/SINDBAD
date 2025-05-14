@@ -15,13 +15,13 @@ This will display a formatted list of all cost methods and their descriptions.
 ## Overview
 SINDBAD uses a type-based dispatch system for cost calculation methods. To add a new cost calculation method, you need to:
 
-1. Define a new type in `src/SindbadTypes/OptimizationTypes.jl`
+1. Define a new type in `src/Types/OptimizationTypes.jl`
 2. Implement the cost calculation function in `cost.jl`
 3. Update the cost preparation in `prepOpti.jl` if needed
 
 ## Step 1: Define the New Cost Method Type
 
-In `src/SindbadTypes/OptimizationTypes.jl`, add a new struct that subtypes `CostMethod`:
+In `src/Types/OptimizationTypes.jl`, add a new struct that subtypes `CostMethod`:
 
 ```julia
 struct YourNewCostMethod <: CostMethod end
@@ -92,7 +92,7 @@ end
 
 Here's a complete example of adding a new weighted cost method:
 
-1. In `src/SindbadTypes/OptimizationTypes.jl`:
+1. In `src/Types/OptimizationTypes.jl`:
 ```julia
 struct CostModelObsWeighted <: CostMethod end
 ```

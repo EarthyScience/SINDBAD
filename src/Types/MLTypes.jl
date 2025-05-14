@@ -1,7 +1,7 @@
 
-export MLType
-abstract type MLType <: SindbadType end
-purpose(::Type{MLType}) = "Abstract type for types in machine learning related methods in SINDBAD"
+export MLTypes
+abstract type MLTypes <: SindbadTypes end
+purpose(::Type{MLTypes}) = "Abstract type for types in machine learning related methods in SINDBAD"
 
 # ------------------------- gradient related types ------------------------------------------------------------
 export EnzymeGrad
@@ -12,7 +12,7 @@ export PolyesterForwardDiffGrad
 export GradType
 export ZygoteGrad
 
-abstract type GradType <: MLType end
+abstract type GradType <: MLTypes end
 purpose(::Type{GradType}) = "Abstract type for automatic differentiation or finite differences for gradient calculations"
 
 struct EnzymeGrad <: GradType  end

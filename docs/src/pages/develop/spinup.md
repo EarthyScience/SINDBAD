@@ -73,13 +73,13 @@ Current methods include:
 
 SINDBAD uses a type-based dispatch system for spinup methods. To add a new spinup method, you need to:
 
-1. Define a new type in `src/SindbadTypes/SpinupTypes.jl`
+1. Define a new type in `src/Types/SpinupTypes.jl`
 2. Implement the spinup function in `spinupTEM.jl`
 3. Update the spinup sequence handling if needed
 
 ### 1. Define the New Spinup Method Type
 
-In `src/SindbadTypes/SpinupTypes.jl`, add a new struct and its purpose function:
+In `src/Types/SpinupTypes.jl`, add a new struct and its purpose function:
 
 ```julia
 import SindbadUtils: purpose

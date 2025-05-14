@@ -71,7 +71,7 @@ Package Dependency
 ```mermaid
 graph TD
     %% Main Sindbad package
-    Sindbad[Sindbad Core] --> SindbadTypes[SindbadTypes]
+    Sindbad[Sindbad Core] --> Types[Types]
     
     %% Core dependencies
     Sindbad --> ModelTypes[ModelTypes]

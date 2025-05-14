@@ -1,7 +1,7 @@
 
-export MetricsType
-abstract type MetricsType <: SindbadType end
-purpose(::Type{MetricsType}) = "Abstract type for performance metrics and cost calculation methods in SINDBAD"
+export MetricTypes
+abstract type MetricTypes <: SindbadTypes end
+purpose(::Type{MetricTypes}) = "Abstract type for performance metrics and cost calculation methods in SINDBAD"
 
 # ------------------------- metric -------------------------
 export PerfMetric
@@ -30,7 +30,7 @@ export Scor2
 export Scor2Inv
 
 
-abstract type PerfMetric <: MetricsType end
+abstract type PerfMetric <: MetricTypes end
 purpose(::Type{PerfMetric}) = "Abstract type for performance metrics in SINDBAD"
 
 struct MSE <: PerfMetric end
@@ -108,7 +108,7 @@ export DataAggrOrder
 export SpaceTime
 export TimeSpace
 
-abstract type DataAggrOrder <: MetricsType end
+abstract type DataAggrOrder <: MetricTypes end
 purpose(::Type{DataAggrOrder}) = "Abstract type for data aggregation order in SINDBAD"
 
 struct SpaceTime <: DataAggrOrder end
@@ -138,7 +138,7 @@ purpose(::Type{DoNotSpatialWeight}) = "Do not apply spatial weighting to metrics
 export SpatialDataAggr
 export ConcatData
 
-abstract type SpatialDataAggr <: MetricsType end
+abstract type SpatialDataAggr <: MetricTypes end
 purpose(::Type{SpatialDataAggr}) = "Abstract type for spatial data aggregation methods in SINDBAD"
 
 struct ConcatData end
@@ -152,7 +152,7 @@ export MetricMinimum
 export MetricSum
 export MetricSpatial
 
-abstract type SpatialMetricAggr <: MetricsType end
+abstract type SpatialMetricAggr <: MetricTypes end
 purpose(::Type{SpatialMetricAggr}) = "Abstract type for spatial metric aggregation methods in SINDBAD"
 
 struct MetricMaximum <: SpatialMetricAggr end

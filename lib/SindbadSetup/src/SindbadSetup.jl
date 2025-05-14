@@ -52,7 +52,7 @@ This package is designed to produce the SINDBAD `info` object, which contains al
    - Calls various functions to collect the `info` object by integrating all configurations, models, parameters, and outputs.
 
 # Notes:
-- The package re-exports several key packages (`Accessors`, `ForwardDiff`, `CSV`, `JLD2`) for convenience, allowing users to access their functionality directly through `SindbadSetup`.
+- The package re-exports several key packages (`Infiltrator`, `CSV`, `JLD2`) for convenience, allowing users to access their functionality directly through `SindbadSetup`.
 - Designed to be modular and extensible, enabling users to customize and expand the setup process for specific use cases.
 
 """
@@ -78,11 +78,11 @@ module SindbadSetup
    include("setupOptimization.jl")
    include("setupInfo.jl")
 
-   #  include doc strings for all types in SindbadTypes
-   ds_file = joinpath(dirname(pathof(Sindbad)), "SindbadTypes/docStringForTypes.jl")
-   loc_types = subtypes(SindbadType)
+   #  include doc strings for all types in Types
+   ds_file = joinpath(dirname(pathof(Sindbad)), "Types/docStringForTypes.jl")
+   loc_types = subtypes(SindbadTypes)
    open(ds_file, "a") do o_file
-      writeTypeDocString(o_file, SindbadType)
+      writeTypeDocString(o_file, SindbadTypes)
       for T in loc_types
          o_file = loopWriteTypeDocString(o_file, T)
       end

@@ -1,14 +1,14 @@
 
-export InputType
-abstract type InputType <: SindbadType end
-purpose(::Type{InputType}) = "Abstract type for input data and processing related options in SINDBAD"
+export InputTypes
+abstract type InputTypes <: SindbadTypes end
+purpose(::Type{InputTypes}) = "Abstract type for input data and processing related options in SINDBAD"
 
 # -------------------------------- forcing backend --------------------------------
 export DataFormatBackend
 export BackendNetcdf
 export BackendZarr
 
-abstract type DataFormatBackend <: InputType end
+abstract type DataFormatBackend <: InputTypes end
 purpose(::Type{DataFormatBackend}) = "Abstract type for input data backends in SINDBAD"
 
 struct BackendNetcdf <: DataFormatBackend end
@@ -24,7 +24,7 @@ export InputKeyedArray
 export InputNamedDimsArray
 export InputYaxArray
 
-abstract type InputArrayBackend <: InputType end
+abstract type InputArrayBackend <: InputTypes end
 purpose(::Type{InputArrayBackend}) = "Abstract type for input data array types in SINDBAD"
 
 struct InputArray <: InputArrayBackend end
@@ -44,7 +44,7 @@ purpose(::Type{InputYaxArray}) = "Use YAXArray for input data"
 export ForcingWithTime
 export ForcingWithoutTime
 
-abstract type ForcingTime <: InputType end
+abstract type ForcingTime <: InputTypes end
 purpose(::Type{ForcingTime}) = "Abstract type for forcing variable types in SINDBAD"
 
 struct ForcingWithTime <: ForcingTime end
@@ -65,7 +65,7 @@ export Spacelon
 export Spacesite
 export SpatialSubsetter
 
-abstract type SpatialSubsetter <: InputType end
+abstract type SpatialSubsetter <: InputTypes end
 purpose(::Type{SpatialSubsetter}) = "Abstract type for spatial subsetting methods in SINDBAD"
 
 struct Spaceid <: SpatialSubsetter end

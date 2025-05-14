@@ -1,7 +1,7 @@
 
-export LandType
-abstract type LandType <: SindbadType end
-purpose(::Type{LandType}) = "Abstract type for land related types that are typically used in preparing objects for model runs in SINDBAD"
+export LandTypes
+abstract type LandTypes <: SindbadTypes end
+purpose(::Type{LandTypes}) = "Abstract type for land related types that are typically used in preparing objects for model runs in SINDBAD"
 
 # ------------------------- land related helper types ------------------------------------------------------------
 export PreAlloc
@@ -13,7 +13,7 @@ export PreAllocStacked
 export PreAllocTimeseries
 export PreAllocYAXArray
 
-abstract type PreAlloc <: LandType end
+abstract type PreAlloc <: LandTypes end
 purpose(::Type{PreAlloc}) = "Abstract type for preallocated land helpers types in prepTEM of SINDBAD"
 
 struct PreAllocArray <: PreAlloc end
@@ -41,7 +41,7 @@ purpose(::Type{PreAllocYAXArray}) = "use YAX arrays for model output"
 export LandWrapper
 export GroupView
 export ArrayView
-abstract type LandWrapperType <: LandType end
+abstract type LandWrapperType <: LandTypes end
 purpose(::Type{LandWrapperType}) = "Abstract type for land wrapper types in SINDBAD"
 
 """

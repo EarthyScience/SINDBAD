@@ -211,7 +211,7 @@ function adjustPackPoolComponents(land, helpers, ::cCycleBase_GSI_PlantForm_Larg
     return land
 end
 
-purpose(::Type{cCycleBase_GSI_PlantForm_LargeKReserve}) = "same as cCycleBase_GSI_PlantForm_LargeKReserves but with a larger turnover of reserve so that they respire and flow"
+purpose(::Type{cCycleBase_GSI_PlantForm_LargeKReserve}) = "same as cCycleBase_GSI_PlantForm but with a larger turnover of reserve so that it respires and flows"
 
 @doc """
 

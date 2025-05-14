@@ -2,9 +2,9 @@
 
 The `info` structure serves as the central information hub for SINDBAD experiments. During experiment initialization, the SINDBAD preprocessor parses configuration settings and consolidates them into a comprehensive `NamedTuple` named `info` that ensures consistency and type stability from input through model simulation to output.
 
-::: warning Reserved Variable
+::: danger Reserved Variable
 
-The `info` variable name is reserved within SINDBAD. Users should not overwrite or modify this variable directly.
+The `info` variable name is strictly reserved within SINDBAD and plays a critical role in the model execution and stability. Users **must not** overwrite or modify this variable.
 
 :::
 

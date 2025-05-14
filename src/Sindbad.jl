@@ -98,12 +98,12 @@ module Sindbad
       println("Created a blank file: $file_path to track precompilation of new models and approaches")
    end
    
-   include("SindbadTypes/SindbadTypes.jl")
-   @reexport using .SindbadTypes
+   include("Types/Types.jl")
+   @reexport using .Types
    include("utilsCore.jl")   
    include("sindbadVariableCatalog.jl")
    include("modelTools.jl")
-   include("Models/models.jl")
+   include("Models/Models.jl")
    include("generateCode.jl")
    @reexport using .Models
 
@@ -151,9 +151,9 @@ module Sindbad
    ---
 
    # Extended help
-   $(methodsOf(SindbadTypes.LandEcosystem))
+   $(methodsOf(Types.LandEcosystem))
    """
-   SindbadTypes.LandEcosystem
+   Types.LandEcosystem
    
-   include(joinpath(@__DIR__, "SindbadTypes/docStringForTypes.jl"))
+   include(joinpath(@__DIR__, "Types/docStringForTypes.jl"))
 end

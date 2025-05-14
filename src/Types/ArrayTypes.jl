@@ -1,7 +1,7 @@
 
-export ArrayType
-abstract type ArrayType <: SindbadType end
-purpose(::Type{ArrayType}) = "Abstract type for all array types in SINDBAD"
+export ArrayTypes
+abstract type ArrayTypes <: SindbadTypes end
+purpose(::Type{ArrayTypes}) = "Abstract type for all array types in SINDBAD"
 
 # ------------------------- model array types for internal model variables -------------------------
 export ModelArrayType
@@ -10,7 +10,7 @@ export ModelArrayStaticArray
 export ModelArrayView
 
 
-abstract type ModelArrayType <: ArrayType end
+abstract type ModelArrayType <: ArrayTypes end
 purpose(::Type{ModelArrayType}) = "Abstract type for internal model array types in SINDBAD"
 
 struct ModelArrayArray <: ModelArrayType end
@@ -29,7 +29,7 @@ export OutputMArray
 export OutputSizedArray
 export OutputYAXArray
 
-abstract type OutputArrayType <: ArrayType end
+abstract type OutputArrayType <: ArrayTypes end
 purpose(::Type{OutputArrayType}) = "Abstract type for output array types in SINDBAD"
 
 struct OutputArray <: OutputArrayType end

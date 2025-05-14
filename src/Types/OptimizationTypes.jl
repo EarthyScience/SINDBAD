@@ -1,7 +1,7 @@
 
-export OptimizationType
-abstract type OptimizationType <: SindbadType end
-purpose(::Type{OptimizationType}) = "Abstract type for optimization related functions and methods in SINDBAD"
+export OptimizationTypes
+abstract type OptimizationTypes <: SindbadTypes end
+purpose(::Type{OptimizationTypes}) = "Abstract type for optimization related functions and methods in SINDBAD"
 
 # ------------------------- optimization TEM and algorithm -------------------------
 export OptimizationMethod
@@ -21,7 +21,7 @@ export OptimizationMultistartOptimization
 export OptimizationNelderMead
 export OptimizationQuadDirect
 
-abstract type OptimizationMethod <: OptimizationType end
+abstract type OptimizationMethod <: OptimizationTypes end
 purpose(::Type{OptimizationMethod}) = "Abstract type for optimization methods in SINDBAD"
 
 struct BayesOptKMaternARD5 <: OptimizationMethod end
@@ -76,7 +76,7 @@ export GSAMorris
 export GSASobol
 export GSASobolDM
 
-abstract type GSAMethod <: OptimizationType end
+abstract type GSAMethod <: OptimizationTypes end
 purpose(::Type{GSAMethod}) = "Abstract type for global sensitivity analysis methods in SINDBAD"
 
 struct GSAMorris <: GSAMethod end
@@ -96,7 +96,7 @@ export CostModelObsLandTS
 export CostModelObsMT
 export CostModelObsPriors
 
-abstract type CostMethod <: OptimizationType end
+abstract type CostMethod <: OptimizationTypes end
 purpose(::Type{CostMethod}) = "Abstract type for cost calculation methods in SINDBAD"
 
 struct CostModelObs <: CostMethod end
@@ -118,7 +118,7 @@ export ScaleNone
 export ScaleDefault
 export ScaleBounds
 
-abstract type ParameterScaling <: OptimizationType end
+abstract type ParameterScaling <: OptimizationTypes end
 purpose(::Type{ParameterScaling}) = "Abstract type for parameter scaling methods in SINDBAD"
 
 struct ScaleNone <: ParameterScaling end
