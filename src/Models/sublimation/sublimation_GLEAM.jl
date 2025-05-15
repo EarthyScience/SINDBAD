@@ -34,7 +34,7 @@ function compute(params::sublimation_GLEAM, forcing, land, helpers)
         snowW ⇐ land.pools
         ΔsnowW ⇐ land.pools
         (z_zero, o_one, t_two) ⇐ land.constants
-        n_snowW ⇐ land.constants
+        n_snowW = snowW ⇐ helpers.pools.n_layers
     end
     # convert temperature to Kelvin
     T = f_airT_day + deg_to_k

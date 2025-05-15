@@ -208,6 +208,9 @@
     "wCycleBase": {
       "approach": "simple"
     },
+    "constants": {
+      "approach": "numbers"
+    },
     "WUE": {
       "approach": "expVPDDayCo2"
     }

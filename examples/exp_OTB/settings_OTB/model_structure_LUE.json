@@ -36,6 +36,9 @@
     },
     "wCycleBase": {
       "approach": "simple"
+    },
+    "constants": {
+      "approach": "numbers"
     }
   },
   "pools": {

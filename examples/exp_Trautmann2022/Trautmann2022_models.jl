@@ -1,4 +1,5 @@
-Trautmann2022_models = (:wCycleBase,
+Trautmann2022_models = (:constants,
+    :wCycleBase,
     :rainSnow,
     :rainIntensity,
     :PET,

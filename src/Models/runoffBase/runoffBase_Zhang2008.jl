@@ -15,7 +15,7 @@ function compute(params::runoffBase_Zhang2008, forcing, land, helpers)
     @unpack_nt begin
         groundW ⇐ land.pools
         ΔgroundW ⇐ land.pools
-        n_groundW ⇐ land.constants
+        n_groundW = groundW ⇐ helpers.pools.n_layers
     end
 
     ## calculate variables

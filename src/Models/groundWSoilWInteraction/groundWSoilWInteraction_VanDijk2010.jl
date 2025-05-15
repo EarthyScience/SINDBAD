@@ -25,7 +25,7 @@ function compute(params::groundWSoilWInteraction_VanDijk2010, forcing, land, hel
         (ΔsoilW, ΔgroundW, groundW, soilW) ⇐ land.pools
         unsat_k_model ⇐ land.models
         (z_zero, o_one) ⇐ land.constants
-        n_groundW ⇐ land.constants
+        n_groundW = groundW ⇐ helpers.pools.n_layers
         gw_recharge ⇐ land.fluxes
     end
 

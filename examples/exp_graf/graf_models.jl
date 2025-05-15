@@ -1,4 +1,5 @@
-graf_models = (:wCycleBase,
+graf_models = (:constants,
+    :wCycleBase,
     :rainSnow,
     :rainIntensity,
     :PET,

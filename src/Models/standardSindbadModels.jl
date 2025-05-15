@@ -14,7 +14,8 @@ export all_available_sindbad_models
 
 Default ordered list of SINDBAD models
 """
-standard_sindbad_models = (:wCycleBase,
+standard_sindbad_models = (:constants, 
+    :wCycleBase,
     :rainSnow,
     :rainIntensity,
     :PET,

@@ -46,7 +46,6 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
 
     c_model = cCycleBase_GSI()
 
-
     ## pack land variables
     @pack_nt begin
         c_flow_A_array ⇒ land.diagnostics
