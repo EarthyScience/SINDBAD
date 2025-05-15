@@ -30,7 +30,7 @@ function getAllVariables(in_out_models, which_field)
     unique_variables = map(which_field) do wf
         collect(sort(unique(vcat([[(in_out_models[model][wf])...] for model in keys(in_out_models)]...))))
     end
-    unique_variables = unique(vcat(unique_variables...))
+    unique_variables = sort(unique(vcat(unique_variables...)))
     return unique_variables
 end
 

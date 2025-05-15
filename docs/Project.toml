@@ -1,9 +1,7 @@
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-DocumenterMermaid = "a078cd44-4d9c-4618-b545-3ab9d77f9177"
 DocumenterVitepress = "4710194d-e776-4893-9690-8d956a29c365"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
