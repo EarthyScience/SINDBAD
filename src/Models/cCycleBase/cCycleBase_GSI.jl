@@ -1,6 +1,5 @@
 export cCycleBase_GSI, adjustPackPoolComponents
 
-struct CCycleBaseGSI end
 #! format: off
 @bounds @describe @units @timescale @with_kw struct cCycleBase_GSI{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13} <: cCycleBase
     c_τ_Root::T1 = 1.0 | (0.05, 3.3) | "turnover rate of root carbon pool" | "year-1" | "year"
@@ -11,17 +10,17 @@ struct CCycleBaseGSI end
     c_τ_LitSlow::T6 = 3.9 | (0.39, 39.0) | "turnover rate of slow litter carbon (wood litter) pool" | "year-1" | "year"
     c_τ_SoilSlow::T7 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "year-1" | "year"
     c_τ_SoilOld::T8 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "year-1" | "year"
-    c_flow_A_array::T9 = Float64[
+    c_flow_A_array::T9 = Float64.([
                      -1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0
-                     0.0 -1.0 0.0 0.0 0 0.0 0.0 0.0
-                     0.0 0.0 -1.0 1.0 0.0 0 0.0 0.0
+                     0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0
+                     0.0 0.0 -1.0 1.0 0.0 0.0 0.0 0.0
                      1.0 0.0 1.0 -1.0 0.0 0.0 0.0 0.0
                      1.0 0.0 1.0 0.0 -1.0 0.0 0.0 0.0
-                     0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
-                     0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
-                     0.0 0.0 0 0.0 0.0 0.0 1.0 -1.0
-                 ] | (-Inf, Inf) | "Transfer matrix for carbon at ecosystem level" | "" | ""
-    p_C_to_N_cVeg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | (-Inf, Inf) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN" | ""
+                     0.0 1.0 0.0 0.0 0.0 -1.0 0.0 0.0
+                     0.0 0.0 0.0 0.0 1.0 1.0 -1.0 0.0
+                     0.0 0.0 0.0 0.0 0.0 0.0 1.0 -1.0
+                 ]) | (-Inf, Inf) | "Transfer matrix for carbon at ecosystem level" | "" | ""
+    p_C_to_N_cVeg::T10 = Float64.([25.0, 260.0, 260.0, 10.0]) | (-Inf, Inf) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN" | ""
     ηH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | "" | ""
     ηA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | "" | ""
     c_remain::T13 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | "" | ""
@@ -45,8 +44,7 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
     c_taker = Tuple([ind[1] for ind ∈ findall(>(z_zero), c_flow_A_array)])
     c_giver = Tuple([ind[2] for ind ∈ findall(>(z_zero), c_flow_A_array)])
 
-    c_model = CCycleBaseGSI()
-
+    c_model = cCycleBase_GSI()
 
     ## pack land variables
     @pack_nt begin
@@ -92,7 +90,7 @@ function precompute(params::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
-function adjustPackPoolComponents(land, helpers, ::CCycleBaseGSI)
+function adjustPackPoolComponents(land, helpers, ::cCycleBase_GSI)
     @unpack_nt (cVeg,
         cLit,
         cSoil,
@@ -169,7 +167,7 @@ purpose(::Type{cCycleBase_GSI}) = "sets the basics for carbon cycle in the GSI a
 
 @doc """
 
-$(getBaseDocString(cCycleBase_GSI))
+$(getModelDocString(cCycleBase_GSI))
 
 ---
 

@@ -8,14 +8,14 @@ export modelParameters
 
 
 """
-    getInOutModel(model::LandEcosystem)
-    getInOutModel(model::LandEcosystem, model_func::Symbol)
-    getInOutModel(model::LandEcosystem, model_funcs::Tuple)
+    getInOutModel(model::Sindbad.Types.LandEcosystem)
+    getInOutModel(model::Sindbad.Types.LandEcosystem, model_func::Symbol)
+    getInOutModel(model::Sindbad.Types.LandEcosystem, model_funcs::Tuple)
 
 Parses and retrieves the inputs, outputs, and parameters (I/O/P) of SINDBAD models for specified functions or all functions.
 
 # Arguments:
-- `model::LandEcosystem`: A SINDBAD model instance. If no additional arguments are provided, parses all inputs, outputs, and parameters for all functions of the model.
+- `model::Sindbad.Types.LandEcosystem`: A SINDBAD model instance. If no additional arguments are provided, parses all inputs, outputs, and parameters for all functions of the model.
 - `model_func::Symbol`: (Optional) A single symbol representing a specific model function to parse (e.g., `:precompute`, `:parameters`, `:compute`).
 - `model_funcs::Tuple`: (Optional) A tuple of symbols representing multiple model functions to parse (e.g., `(:precompute, :parameters)`).
 
@@ -56,11 +56,11 @@ io_data = getInOutModel(my_model, (:precompute, :parameters))
 function getInOutModel end
 
 
-function getInOutModel(T::Type{<:LandEcosystem}; verbose=false)
+function getInOutModel(T::Type{<:Sindbad.Types.LandEcosystem}; verbose=false)
     return getInOutModel(T(), verbose=verbose)
 end
 
-function getInOutModel(model::LandEcosystem; verbose=true)
+function getInOutModel(model::Sindbad.Types.LandEcosystem; verbose=true)
     if verbose
         println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
     end
@@ -76,7 +76,7 @@ function getInOutModel(model::LandEcosystem; verbose=true)
 end
 
 
-function getInOutModel(model::LandEcosystem, model_funcs::Tuple)
+function getInOutModel(model::Sindbad.Types.LandEcosystem, model_funcs::Tuple)
     mo_in_out=Sindbad.DataStructures.OrderedDict()
     println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
     for func in model_funcs
@@ -90,6 +90,8 @@ function getInOutModel(model::LandEcosystem, model_funcs::Tuple)
             else
                 mo_in_out[func] = io_func
             end
+        else
+            mo_in_out[func] = io_func
         end
     end
     return mo_in_out
@@ -294,7 +296,8 @@ function getInOutModels(models, model_funcs::Tuple)
     for (mi, _mod) in enumerate(models)
         mod_name = string(nameof(supertype(typeof(_mod))))
         mod_name_sym=Symbol(mod_name)
-        mod_vars[mod_name_sym] = getInOutModel(_mod, model_funcs)
+        mod_io = getInOutModel(_mod, model_funcs)
+        mod_vars[mod_name_sym] = mod_io
     end
     return mod_vars
 end
@@ -403,7 +406,7 @@ function getUnitConversionForParameter(p_timescale, model_timestep)
     if p_timescale == "second"
         conversion = 60 * 60 * 24 * time_multiplier
     elseif p_timescale == "minute"
-            conversion = 60 * 24 * time_multiplier
+        conversion = 60 * 24 * time_multiplier
     elseif p_timescale == "halfhour"
         conversion = 48 * time_multiplier
     elseif p_timescale == "hour"
@@ -441,14 +444,14 @@ end
 
 """
     modelParameter(models, model::Symbol)
-    modelParameter(model::LandEcosystem, show=true)
+    modelParameter(model::Sindbad.Types.LandEcosystem, show=true)
 
 Return and optionally display the current parameters of a given SINDBAD model.
 
 # Arguments
 - `models`: A list/collection of SINDBAD models, required when `model` is a Symbol.
 - `model::Symbol`: A SINDBAD model name.
-- `model::LandEcosystem`: A SINDBAD model instance of type LandEcosystem.
+- `model::Sindbad.Types.LandEcosystem`: A SINDBAD model instance of type LandEcosystem.
 - `show::Bool`: A flag to print parameters to the screen (default: true).
 
 """
@@ -470,14 +473,14 @@ function modelParameter(models, model::Symbol)
         foreach(pnames) do fn
             p_dict[fn] = getproperty(mod, fn)
             p_unit = Sindbad.Models.units(mod, fn)
-            p_unit_info = p_unit == "" ? "unitless/fraction" : "($p_unit)"
+            p_unit_info = p_unit == "" ? "unitless" : "($p_unit)"
             println("   $fn => $(getproperty(mod, fn)) $p_unit_info")
         end
     end
     return p_dict
 end
 
-function modelParameter(model::LandEcosystem, show=true)
+function modelParameter(model::Sindbad.Types.LandEcosystem, show=true)
     model_name = Symbol(supertype(typeof(model)))
     approach_name = nameof(typeof(model))
     if show
@@ -500,11 +503,11 @@ function modelParameter(model::LandEcosystem, show=true)
             p_val = getproperty(model, fn)
             p_describe = Sindbad.Models.describe(model, fn)
             p_unit = Sindbad.Models.units(model, fn)
-            p_u = isempty(p_unit) ? "undefined" : "$(p_unit)"
+            p_u = isempty(p_unit) ? "`unitless`" : "units: `$(p_unit)`"
             p_timescale = Sindbad.Models.timescale(model, fn)
-            p_t = isempty(p_timescale) ? "timescale independent" : "$(p_timescale) timescale"
+            p_t = isempty(p_timescale) ? "`all` timescales" : "`$(p_timescale)` timescale"
             p_bounds = Sindbad.Models.bounds(model, fn)
-            p_w = "$(p_val) ∈ [$(p_bounds[1]), $(p_bounds[2])] => $(p_describe) in $(p_u) units; $(p_t)"
+            p_w = "$(p_val) ∈ [$(p_bounds[1]), $(p_bounds[2])] => $(p_describe) ($(p_u) @ $(p_t))"
             p_p = Pair(fn, p_w)
             if show
                 println("  - ", p_p)

@@ -7,7 +7,7 @@ purpose(::Type{percolation}) = "Calculate the soil percolation = wbp at this poi
 includeApproaches(percolation, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(percolation))
+	$(getModelDocString(percolation))
 """
 percolation
 

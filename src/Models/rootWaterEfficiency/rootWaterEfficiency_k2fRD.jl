@@ -51,7 +51,7 @@ purpose(::Type{rootWaterEfficiency_k2fRD}) = "sets the maximum fraction of water
 
 @doc """
 
-$(getBaseDocString(rootWaterEfficiency_k2fRD))
+$(getModelDocString(rootWaterEfficiency_k2fRD))
 
 ---
 

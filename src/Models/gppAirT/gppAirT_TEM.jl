@@ -32,7 +32,7 @@ purpose(::Type{gppAirT_TEM}) = "temperature stress for gpp_potential based on TE
 
 @doc """
 
-$(getBaseDocString(gppAirT_TEM))
+$(getModelDocString(gppAirT_TEM))
 
 ---
 

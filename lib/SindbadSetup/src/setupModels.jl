@@ -21,7 +21,7 @@ function checkSelectedModels(sindbad_models, selected_models::AbstractArray)
         if sm ∉ sindbad_models
             @show sindbad_models
             error(sm,
-                " is not a valid model from sindbad_models [Sindbad.standard_sindbad_models]. check model_structure settings in json")
+                " is not a valid model defined in either standard_sindbad_models || user-defined sindbad_models. Check model_structure settings in json or model_structure.sindbad_models in replace_info")
             return false
         end
     end
@@ -52,7 +52,7 @@ function getAllSindbadModels(info; sindbad_models=standard_sindbad_models)
         @info "  ....using standard model order and list from standard_sindbad_models: "
     end
         foreach((Pair.(eachindex(sindbad_models), sindbad_models))) do sm
-            @info "        $(sm)"
+            @info "        $(first(sm)) => $(last(sm)): $(purpose(getproperty(Sindbad, last(sm))))"
         end
     return sindbad_models
 end

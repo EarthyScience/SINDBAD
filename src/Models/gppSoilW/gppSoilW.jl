@@ -2,11 +2,11 @@ export gppSoilW
 
 abstract type gppSoilW <: LandEcosystem end
 
-purpose(::Type{gppSoilW}) = "Gpp as a function of soilW; should be set to none if coupled with transpiration"
+purpose(::Type{gppSoilW}) = "soil moisture stress on GPP"
 
 includeApproaches(gppSoilW, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(gppSoilW))
+	$(getModelDocString(gppSoilW))
 """
 gppSoilW

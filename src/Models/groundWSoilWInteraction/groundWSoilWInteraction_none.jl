@@ -17,7 +17,7 @@ purpose(::Type{groundWSoilWInteraction_none}) = "sets the groundwater capillary 
 
 @doc """
 
-$(getBaseDocString(groundWSoilWInteraction_none))
+$(getModelDocString(groundWSoilWInteraction_none))
 
 ---
 

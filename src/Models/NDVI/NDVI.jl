@@ -7,6 +7,6 @@ purpose(::Type{NDVI}) = "Normalized difference vegetation index"
 includeApproaches(NDVI, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(NDVI))
+	$(getModelDocString(NDVI))
 """
 NDVI

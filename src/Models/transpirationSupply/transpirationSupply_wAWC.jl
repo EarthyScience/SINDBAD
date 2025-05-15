@@ -25,7 +25,7 @@ purpose(::Type{transpirationSupply_wAWC}) = "calculate the supply limited transp
 
 @doc """
 
-$(getBaseDocString(transpirationSupply_wAWC))
+$(getModelDocString(transpirationSupply_wAWC))
 
 ---
 

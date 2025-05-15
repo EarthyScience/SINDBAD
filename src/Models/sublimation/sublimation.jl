@@ -7,7 +7,7 @@ purpose(::Type{sublimation}) = "Calculate sublimation and update snow water equi
 includeApproaches(sublimation, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(sublimation))
+	$(getModelDocString(sublimation))
 """
 sublimation
 

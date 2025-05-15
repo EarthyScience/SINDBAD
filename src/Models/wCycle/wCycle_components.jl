@@ -57,7 +57,7 @@ purpose(::Type{wCycle_components}) = "update the water cycle pools per component
 
 @doc """
 
-$(getBaseDocString(wCycle_components))
+$(getModelDocString(wCycle_components))
 
 ---
 

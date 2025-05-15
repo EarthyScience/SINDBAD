@@ -36,7 +36,7 @@ loc_land = (temperature = 15.0, precipitation = 100.0)
 addErrorCatcher(loc_land, DoNotDebugModel())
 ```
 """
-addErrorCatcher
+function addErrorCatcher end
 
 
 function addErrorCatcher(loc_land, ::DoDebugModel) # print land when debug model is true/on
@@ -87,7 +87,7 @@ sequence = [(n_repeat = 3, n_timesteps = 10), (n_repeat = 2, n_timesteps = 5)]
 loc_land = addSpinupLog(loc_land, sequence, DoNotStoreSpinup())
 ```
 """
-addSpinupLog
+function addSpinupLog end
 
 function addSpinupLog(loc_land, sequence, ::DoStoreSpinup) # when history is true
     n_repeat = 1
@@ -140,7 +140,7 @@ loc_space_maps = [(1, 2), (3, 4), (5, 6)]
 filtered_maps = filterNanPixels(forcing, loc_space_maps, DoNotFilterNanPixels())
 ```
 """
-filterNanPixels
+function filterNanPixels end
 
 function filterNanPixels(_, loc_space_maps, ::DoNotFilterNanPixels)
     return loc_space_maps
@@ -205,7 +205,7 @@ get the information of the indices of the data to run the model for. The second 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 """
-getSpatialInfo
+function getSpatialInfo end
 
 function getSpatialInfo(forcing_helpers)
     @debug "     getting the space locations to run the model loop"
@@ -253,7 +253,7 @@ function getSpinupTemLite(tem_spinup_sequence)
 end
 
 """
-    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::SindbadLandOutType)
+    helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAlloc)
 
 Prepares the necessary information and objects needed to run the SINDBAD Terrestrial Ecosystem Model (TEM).
 
@@ -265,7 +265,7 @@ Prepares the necessary information and objects needed to run the SINDBAD Terrest
     - Spinup settings.
 - `forcing::NamedTuple`: A forcing NamedTuple containing the time series of environmental drivers for all locations.
 - `output::NamedTuple`: An output NamedTuple containing data arrays, variable information, and dimensions.
-- `::LandOutputType`: A type dispatch that determines the output preparation strategy.
+- `::PreAllocputType`: A type dispatch that determines the output preparation strategy.
 
 # Returns:
 - A NamedTuple (`run_helpers`) containing preallocated data and configurations required to run the TEM, including:
@@ -279,36 +279,36 @@ Prepares the necessary information and objects needed to run the SINDBAD Terrest
     
 # sindbad land output type:
    
-    $(methodsOf(SindbadLandOutType))
+    $(methodsOf(PreAlloc))
 
 ---
 
 # Extended help
 
 # Notes:
-- The function dynamically prepares the required data structures based on the specified `LandOutputType`.
+- The function dynamically prepares the required data structures based on the specified `PreAllocputType`.
 - It handles spatial and temporal data preparation, including filtering NaN pixels, initializing land variables, and setting up forcing and output arrays.
 - This function is a key step in preparing the SINDBAD TEM for execution.
 
 # Examples:
-1. **Preparing TEM with `LandOutArray`**:
+1. **Preparing TEM with `PreAllocArray`**:
 ```julia
-run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutArray())
+run_helpers = helpPrepTEM(selected_models, info, forcing, output, PreAllocArray())
 ```
 
-2. **Preparing TEM with `LandOutTimeseries`**:
+2. **Preparing TEM with `PreAllocTimeseries`**:
 ```julia
-run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutTimeseries())
+run_helpers = helpPrepTEM(selected_models, info, forcing, output, PreAllocTimeseries())
 ```
 
-3. **Preparing TEM with `LandOutArrayFD` for FD experiments**:
+3. **Preparing TEM with `PreAllocArrayFD` for FD experiments**:
 ```julia
-run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, LandOutArrayFD())
+run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, PreAllocArrayFD())
 ```
 """
-helpPrepTEM
+function helpPrepTEM end
 
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArray)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocArray)
 
     @info "     preparing spatial and tem helpers"
     space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
@@ -351,7 +351,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     return run_helpers
 end
 
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArrayAll)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocArrayAll)
 
     @info "     preparing spatial and tem helpers"
     space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
@@ -394,7 +394,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 end
 
 
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, ::LandOutArrayFD)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, ::PreAllocArrayFD)
 
     @info "     preparing spatial and tem helpers"
     space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
@@ -441,11 +441,11 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
 end
 
 
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutArrayMT)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocArrayMT)
 
-    run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutArray())
+    run_helpers = helpPrepTEM(selected_models, info, forcing, output, PreAllocArray())
 
-    forcing_helpers_with_parameter_set = updateForcingHelpers(deepcopy(forcing.helpers), info.optimization.n_threads_cost);
+    forcing_helpers_with_parameter_set = updateForcingHelpers(deepcopy(forcing.helpers), info.optimization.run_options.n_threads_cost);
 
     output_mt = prepTEMOut(info, forcing_helpers_with_parameter_set)
     output_array_mt = output_mt.data
@@ -460,7 +460,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     return run_helpers
 end
 
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutStacked)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocStacked)
     
     # get the output things
     @info "     preparing spatial and tem helpers"
@@ -487,15 +487,15 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 end
 
 
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutTimeseries)
-    run_helpers = helpPrepTEM(selected_models, info, forcing, output, LandOutStacked())
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocTimeseries)
+    run_helpers = helpPrepTEM(selected_models, info, forcing, output, PreAllocStacked())
     land_timeseries = Vector{typeof(run_helpers.loc_land)}(undef, tem_helpers.dates.size)
     run_helpers = setTupleField(run_helpers, (:land_timeseries, land_timeseries))
     return run_helpers
 end
 
 
-function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::LandOutYAXArray)
+function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocYAXArray)
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTEMInfo(info, forcing);
@@ -535,7 +535,7 @@ Prepares the SINDBAD Terrestrial Ecosystem Model (TEM) for execution by setting 
     - Model and helper configurations.
 
 # Notes:
-- The function dynamically prepares the required data structures based on the specified `LandOutputType` in `info.helpers.run.land_output_type`.
+- The function dynamically prepares the required data structures based on the specified `PreAllocputType` in `info.helpers.run.land_output_type`.
 - It handles spatial and temporal data preparation, including filtering NaN pixels, initializing land variables, and setting up forcing and output arrays.
 - This function is a key step in preparing the SINDBAD TEM for execution.
 
@@ -557,7 +557,7 @@ info = (helpers = ..., models = ..., spinup = ...)
 run_helpers = prepTEM(selected_models, forcing, info)
 ```
 """
-prepTEM
+function prepTEM end
 
 function prepTEM(forcing::NamedTuple, info::NamedTuple)
     selected_models = info.models.forward

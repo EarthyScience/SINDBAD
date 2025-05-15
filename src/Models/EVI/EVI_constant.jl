@@ -18,11 +18,11 @@ function precompute(params::EVI_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{EVI_constant}) = "sets the value of EVI as a constant"
+purpose(::Type{EVI_constant}) = "sets EVI as a constant"
 
 @doc """
 
-$(getBaseDocString(EVI_constant))
+$(getModelDocString(EVI_constant))
 
 ---
 

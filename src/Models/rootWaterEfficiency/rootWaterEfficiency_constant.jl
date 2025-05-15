@@ -57,7 +57,7 @@ purpose(::Type{rootWaterEfficiency_constant}) = "sets the maximum fraction of wa
 
 @doc """
 
-$(getBaseDocString(rootWaterEfficiency_constant))
+$(getModelDocString(rootWaterEfficiency_constant))
 
 ---
 

@@ -57,7 +57,7 @@ purpose(::Type{cFlowVegProperties_CASA}) = "effects of vegetation that change th
 
 @doc """
 
-$(getBaseDocString(cFlowVegProperties_CASA))
+$(getModelDocString(cFlowVegProperties_CASA))
 
 ---
 

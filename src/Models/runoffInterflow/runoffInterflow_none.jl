@@ -17,7 +17,7 @@ purpose(::Type{runoffInterflow_none}) = "sets interflow runoff to zero"
 
 @doc """
 
-$(getBaseDocString(runoffInterflow_none))
+$(getModelDocString(runoffInterflow_none))
 
 ---
 

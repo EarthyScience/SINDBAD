@@ -25,7 +25,7 @@ purpose(::Type{cAllocationSoilT_Friedlingstein1999}) = "partial temperature effe
 
 @doc """
 
-$(getBaseDocString(cAllocationSoilT_Friedlingstein1999))
+$(getModelDocString(cAllocationSoilT_Friedlingstein1999))
 
 ---
 

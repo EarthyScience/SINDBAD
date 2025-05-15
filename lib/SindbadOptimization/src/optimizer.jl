@@ -1,7 +1,7 @@
 export optimizer
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, algorithm <:SindbadOptimizationMethod)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, algorithm <: OptimizationMethod)
 
 Optimize model parameters using various optimization algorithms.
 
@@ -18,7 +18,7 @@ Optimize model parameters using various optimization algorithms.
 
 # algorithm:
     
-    $(methodsOf(SindbadOptimizationMethod))
+    $(methodsOf(OptimizationMethod))
 
 ---
 
@@ -52,7 +52,7 @@ optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds
 - Each algorithm has its own implementation details, such as handling bounds, configuring options, and solving the optimization problem.
 - The results are processed to extract the optimized parameter vector (`optim_para`), which is returned to the user.
 """
-optimizer
+function optimizer end
 
 function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::BayesOptKMaternARD5)
     config = ConfigParameters()   # calls initialize_parameters_to_default of the C API

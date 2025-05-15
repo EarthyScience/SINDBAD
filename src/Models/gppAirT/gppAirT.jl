@@ -7,6 +7,6 @@ purpose(::Type{gppAirT}) = "Effect of temperature"
 includeApproaches(gppAirT, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(gppAirT))
+	$(getModelDocString(gppAirT))
 """
 gppAirT

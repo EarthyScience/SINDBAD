@@ -7,6 +7,6 @@ purpose(::Type{cTau}) = "Combine effects of different factors on decomposition r
 includeApproaches(cTau, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cTau))
+	$(getModelDocString(cTau))
 """
 cTau

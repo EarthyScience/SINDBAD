@@ -68,8 +68,8 @@ out_sensitivity = runExperimentSensitivity(experiment_json; replace_info=replace
 info = out_sensitivity.info;
 parameter_names=String.(out_sensitivity.parameter_table.name);
 
-sa_method = nameof(typeof(info.optimization.algorithm_sensitivity_analysis.method))
-if sa_method in (:GlobalSensitivitySobol, :GlobalSensitivitySobolDM)
+sa_method = nameof(typeof(info.optimization.sensitivity_analysis.method))
+if sa_method in (:GSASobol, :GSASobolDM)
     sobol_result = out_sensitivity.sensitivity;
     xt=1:length(parameter_names)
     pb = bar(xt, sobol_result.ST[:, :], label="Total",
@@ -82,7 +82,7 @@ if sa_method in (:GlobalSensitivitySobol, :GlobalSensitivitySobolDM)
     savefig(joinpath(info.output.dirs.figure, "GSA_$(sa_method)_S2_$(domain)_$(length(out_sensitivity.cost_vector))-cost_evals.png"))    
 end
 
-if sa_method in (:GlobalSensitivityMorris, )
+if sa_method in (:GSAMorris, )
     morris_result = out_sensitivity.sensitivity;
     xt=1:length(parameter_names)
     ps=scatter(morris_result.means[1, :], morris_result.variances[1, :], series_annotations = parameter_names, color = :gray, size=(2000, 1000))
@@ -100,11 +100,11 @@ observations = getObservation(info, forcing.helpers);
 
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
-opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method; algorithm_info_field=:algorithm_sensitivity_analysis);
+opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.run_options.cost_method; algorithm_info_field=:sensitivity_analysis);
 
 cost_function = opti_helpers.cost_function
 p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds));
-method_options = info.optimization.algorithm_sensitivity_analysis.options;
+method_options = info.optimization.sensitivity_analysis.options;
 
 sampler = getproperty(SindbadOptimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options..., method_options.method_options... )
 results = gsa(cost_function, sampler, p_bounds; method_options..., batch=true)

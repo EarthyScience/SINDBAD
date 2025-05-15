@@ -8,7 +8,8 @@ function compute(params::percolation_WBP, forcing, land, helpers)
     @unpack_nt begin
         (ΔgroundW, ΔsoilW, soilW, groundW) ⇐ land.pools
         WBP ⇐ land.states
-        (o_one, n_groundW) ⇐ land.constants
+        o_one ⇐ land.constants
+        n_groundW = groundW ⇐ helpers.pools.n_layers
         tolerance ⇐ helpers.numbers
         w_sat ⇐ land.properties
     end
@@ -41,7 +42,7 @@ purpose(::Type{percolation_WBP}) = "computes the percolation into the soil after
 
 @doc """
 
-$(getBaseDocString(percolation_WBP))
+$(getModelDocString(percolation_WBP))
 
 ---
 

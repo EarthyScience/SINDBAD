@@ -18,7 +18,7 @@ function compute(params::runoffSurface_directIndirectFroSoil, forcing, land, hel
         ΔsurfaceW ⇐ land.pools
         overland_runoff ⇐ land.fluxes
         (z_zero, o_one) ⇐ land.constants
-        n_surfaceW ⇐ land.constants
+        n_surfaceW = surfaceW ⇐ helpers.pools.n_layers
     end
     # fraction of overland runoff that flows out directly
     fracFastQ = (o_one - rf) * (o_one - frac_frozen) + frac_frozen
@@ -48,7 +48,7 @@ purpose(::Type{runoffSurface_directIndirectFroSoil}) = "assumes surface runoff i
 
 @doc """
 
-$(getBaseDocString(runoffSurface_directIndirectFroSoil))
+$(getModelDocString(runoffSurface_directIndirectFroSoil))
 
 ---
 

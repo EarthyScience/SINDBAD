@@ -97,7 +97,7 @@ Saves or skips saving the experiment configuration to a file.
 # Notes:
 - When saving, the experiment configuration is saved as a `.jld2` file in the `settings` directory.
 """
-saveInfo
+function saveInfo end
 
 function saveInfo(info, ::DoSaveInfo)
     @info "  saveInfo: saving info..."
@@ -124,7 +124,7 @@ Enables/Disables a debug error catcher for the SINDBAD framework. When enabled, 
 # Notes:
 - When enabled, sets up an empty error catcher using `Sindbad.eval`.
 """
-setDebugErrorCatcher
+function setDebugErrorCatcher end
 
 function setDebugErrorCatcher(::DoCatchModelErrors)
     @info "  setDebugErrorCatcher: setting error catcher..."

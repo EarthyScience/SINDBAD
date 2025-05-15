@@ -26,7 +26,7 @@ purpose(::Type{cTauSoilT_Q10}) = "Compute effect of temperature on psoil carbon 
 
 @doc """
 
-$(getBaseDocString(cTauSoilT_Q10))
+$(getModelDocString(cTauSoilT_Q10))
 
 ---
 

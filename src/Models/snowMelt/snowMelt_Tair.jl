@@ -17,7 +17,7 @@ function compute(params::snowMelt_Tair, forcing, land, helpers)
         snowW ⇐ land.pools
         ΔsnowW ⇐ land.pools
         z_zero ⇐ land.constants
-        n_snowW ⇐ land.constants
+        n_snowW = snowW ⇐ helpers.pools.n_layers
     end
     # effect of temperature on snow melt = snowMeltRate * f_airT
     pRate = rate
@@ -46,7 +46,7 @@ purpose(::Type{snowMelt_Tair}) = "computes the snow melt term as function of air
 
 @doc """
 
-$(getBaseDocString(snowMelt_Tair))
+$(getModelDocString(snowMelt_Tair))
 
 ---
 

@@ -43,7 +43,7 @@ purpose(::Type{gpp_mult}) = "compute the actual GPP with potential scaled by mul
 
 @doc """
 
-$(getBaseDocString(gpp_mult))
+$(getModelDocString(gpp_mult))
 
 ---
 

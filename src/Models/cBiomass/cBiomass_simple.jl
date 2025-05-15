@@ -20,7 +20,7 @@ purpose(::Type{cBiomass_simple}) = "calculates aboveground biomass as a sum of w
 
 @doc """
 
-$(getBaseDocString(cBiomass_simple))
+$(getModelDocString(cBiomass_simple))
 
 ---
 

@@ -1,5 +1,5 @@
-export gradientPolyester
-export gradientBatchPolyester!
+export gradientSite
+export gradientBatch!
 export mixedGradientTraining
 export gradsNaNCheck!
 export loadTrainedNN
@@ -51,7 +51,7 @@ function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, t
             _params_batch = getParamsAct(new_params, parameter_table)
 
             input_args = (_params_batch, forward_args..., indices_sites_batch, sites_batch)
-            gradientBatchPolyester!(grads_lib, grads_batch, chunk_size, lossSite, getInnerArgs, input_args...)
+            gradientBatch!(grads_lib, grads_batch, chunk_size, lossSite, getInnerArgs, input_args...)
             gradsNaNCheck!(grads_batch, _params_batch, sites_batch, parameter_table) #? checks for NaNs and if any replace them with 0.0f0
             # Jacobian-vector product
             ∇params = pullback_func(grads_batch)[1]
@@ -93,25 +93,32 @@ function batchShuffler(x_forcings, ids_forcings, batch_size; bs_seed=1456)
     return x_batches, ids_batches
 end
 
-"""
-    gradientPolyester(grads_lib::ForwardDiffGrad, x_vals, chunk_size::Int, loss::F, args...)
 
-Computes gradients using `PolyesterForwardDiff.jl` for multi-threaded chunk splits. The optimal speed is ideally achieved with `one thread` when `chunk_size=1` and `n-threads` for `n` parameters.
-However, a good compromise between memory allocations and speed could be to set `chunk_size=3` and use `n-threads` for `2n parameters`.
+# https://juliateachingctu.github.io/Scientific-Programming-in-Julia/dev/lecture_08/lecture/
+
+"""
+    gradientSite(grads_lib, x_vals, chunk_size::Int, loss::F, args...)
+
+Computes gradients using different libraries for a site
 
 # Arguments
-- `grads_lib`: uses ForwardDiff.jl for gradients computation.
+- `grads_lib`:
+    - PolyesterForwardDiffGrad: using `PolyesterForwardDiff.jl` for multi-threaded chunk splits. The optimal speed is ideally achieved with `one thread` when `chunk_size=1` and `n-threads` for `n` parameters. However, a good compromise between memory allocations and speed could be to set `chunk_size=3` and use `n-threads` for `2n parameters`. !!! warning
+    For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropriate `chunk_size`.
+
+    - ForwardDiffGrad: uses ForwardDiff.jl for gradients computation.
+    - FiniteDiffGrad: uses FiniteDiff.jl for gradients computation.
+    - FiniteDifferencesGrad: uses FiniteDifferences.jl for gradients computation.
 - `x_vals`: parameters values.
 - `chunk_size`: Int, chunk size for PolyesterForwardDiff's threads.
 - `loss_f`: loss function to be applied.
 - `args...`: additional arguments for the loss function.
 
-!!! warning
-    For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropriate `chunk_size`.
-
 Returns: a `∇x` array with all parameter's gradients.
 """
-function gradientPolyester(grads_lib::ForwardDiffGrad, x_vals, chunk_size::Int, loss_f::F, args...) where {F}
+function gradientSite end
+
+function gradientSite(grads_lib::PolyesterForwardDiffGrad, x_vals, chunk_size::Int, loss_f::F, args...) where {F}
     loss_tmp(x) = loss_f(x, grads_lib, args...)
     ∇x = similar(x_vals) # pre-allocate
     if occursin("arm64-apple-darwin", Sys.MACHINE) # fallback due to closure issues on M1 systems
@@ -123,13 +130,46 @@ function gradientPolyester(grads_lib::ForwardDiffGrad, x_vals, chunk_size::Int, 
     return ∇x
 end
 
+function gradientSite(grads_lib::ForwardDiffGrad, x_vals::AbstractArray, chunk_size::Int, loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    # cfg = ForwardDiff.GradientConfig(loss_tmp, x_vals, Chunk{chunk_size}());
+    return ForwardDiff.gradient(loss_tmp, x_vals)
+end
+
+function gradientSite(grads_lib::FiniteDiffGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    return FiniteDiff.finite_difference_gradient(loss_tmp, x_vals)
+end
+
+function gradientSite(grads_lib::FiniteDifferencesGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    gr_fds = FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1), loss_tmp, x_vals)
+    return gr_fds[1]
+end
+
+function gradientSite(grads_lib::ZygoteGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    return Zygote.gradient(loss_tmp, x_vals)
+end
+
+function gradientSite(grads_lib::EnzymeGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    # does not work with `Enzyme.gradient!` but is kept here as placeholder for future development
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    # Ensure x_vals is a mutable array (Vector)
+    x_vals = collect(copy(x_vals))  # Convert to a mutable array if necessary
+    # x_vals = copy(x_vals)
+    return Enzyme.gradient(Forward, loss_tmp, x_vals)
+end
+
 """
-    gradientBatchPolyester!(grads_lib::ForwardDiffGrad, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
+    gradientBatch!(grads_lib, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
 
 # Computes gradients for a batch of samples.
 
 # Arguments
-- `grads_lib`: uses ForwardDiff.jl for gradients computation.
+- `grads_lib`: 
+    - PolyesterForwardDiffGrad: uses PolyesterForwardDiff.jl for gradients computation.
+    - GradType: For all the other package based gradients.
 - `dx_batch`: pre-allocated array for batched gradients.
 - `chunk_size`: Int, chunk size for PolyesterForwardDiff's threads.
 - `loss_f`: loss function to be applied.
@@ -140,18 +180,39 @@ end
 A `n x m` matrix for `n parameters gradients` and `m` samples.
 
 """
-function gradientBatchPolyester!(grads_lib::ForwardDiffGrad, dx_batch, chunk_size::Int,
+function gradientBatch! end
+
+
+function gradientBatch!(grads_lib::PolyesterForwardDiffGrad, dx_batch, chunk_size::Int,
     loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
-    
     mapfun = showprog ? progress_pmap : pmap
     result = mapfun(CachingPool(workers()), axes(dx_batch, 2)) do idx
         x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)
-        gradientPolyester(grads_lib, x_vals, chunk_size, loss_f, inner_args...)
+        gradientSite(grads_lib, x_vals, chunk_size, loss_f, inner_args...)
     end
     for idx in axes(dx_batch, 2)
         dx_batch[:, idx] = result[idx]
     end
 end
+
+function gradientBatch!(grads_lib::GradType, dx_batch, chunk_size::Int, loss_f::F, get_inner_args::Function, input_args...; showprog=false) where {F}
+        # Threads.@spawn allows dynamic scheduling instead of static scheduling
+        # of Threads.@threads macro.
+        # See <https://github.com/JuliaLang/julia/issues/21017>
+
+        p = Progress(length(axes(dx_batch,2)); desc="Computing batch grads...", color=:cyan, enabled=showprog)
+        @sync begin
+            for idx ∈ axes(dx_batch, 2)
+                Threads.@spawn begin
+                    x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)
+                    gg = gradientSite(grads_lib, x_vals, chunk_size, loss_f, inner_args...)    
+                    dx_batch[:, idx] = gg
+                    next!(p)
+               end
+            end
+        end
+    end
+    
 
 """
     gradsNaNCheck!(grads_batch, _params_batch, sites_batch, parameter_table; show_params_for_nan=false)

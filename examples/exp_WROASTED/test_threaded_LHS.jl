@@ -81,8 +81,8 @@ cost_samples_t = Array{Float32}(undef, parameter_set_size) # threaded
 
 
 cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
-parameter_scaling_type = info.optimization.optimization_parameter_scaling
-multi_constraint_method = info.optimization.multi_constraint_method
+parameter_scaling_type = info.optimization.run_options.parameter_scaling
+multi_constraint_method = info.optimization.run_options.multi_constraint_method
 parameter_updater = parameter_table
 
 

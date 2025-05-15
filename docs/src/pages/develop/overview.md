@@ -1,28 +1,29 @@
-# SINDBAD Manual Documentation Overview
+# SINDBAD User Documentation Overview
 
-This document provides an overview of the SINDBAD manual documentation, listing each document and its main purpose.
+This is an overview of the SINDBAD user documentation, which lists and links all user documentation pages and their main purposes.
 
 ## Documentation Overview
 
 | File | Description | Key Topics |
 |------|-------------|------------|
-| [Installation](./install.md) | Setting up SINDBAD | - System requirements<br>- Installation steps<br>- Dependencies<br>- Configuration |
-| [Conventions](./conventions.md) | SINDBAD coding and documentation standards | - Naming conventions<br>- Code structure<br>- Documentation standards<br>- Best practices |
-| [Model Approach](./model_approach.md) | Creating and working with model approaches | - Model structure and components<br>- Required methods<br>- Performance considerations<br>- Example implementations |
-| [Array Handling](./array_handling.md) | Working with array data structures | - Array operations<br>- Performance considerations<br>- Best practices<br>- Memory management |
-| [Land Utils](./land_utils.md) | Working with land variables and time series data | - LandWrapper usage<br>- Data visualization<br>- Time series handling<br>- Performance optimization |
-| [Experiments](./experiments.md) | Designing and running experiments | - Experiment types<br>- Configuration<br>- Result analysis<br>- Best practices |
-| [Spinup](./spinup.md) | Configuring and running model spinup | - Spinup methods<br>- Sequence handling<br>- Performance optimization<br>- Best practices |
-| [Optimization Method](./optimization_method.md) | Configuring and implementing optimization | - Available algorithms<br>- Parameter optimization<br>- Multi-constraint handling<br>- Performance tuning |
-| [Cost Function](./cost_function.md) | Implementing and customizing cost calculations | - Cost calculation methods<br>- Parameter scaling<br>- Multi-threading<br>- Performance evaluation |
-| [Cost Metrics](./cost_metrics.md) | Defining and using model evaluation metrics | - Available metrics<br>- Adding new metrics<br>- Metric implementation<br>- Best practices |
-| [How to Document](./how_to_doc.md) | Documentation guidelines and standards | - Formatting rules<br>- Content requirements<br>- Style guidelines<br>- Examples |
+| [Installation](./install.md) | Setting up SINDBAD | - System requirements; Installation steps; Dependencies; Configuration |
+| [Conventions](./conventions.md) | SINDBAD coding and documentation standards | - Naming conventions; Code structure; Documentation standards; Best practices |
+| [Model Approach](./model_approach.md) | Creating and working with model approaches | - Model structure and components; Required methods; Performance considerations; Example implementations |
+| [Array Handling](./array_handling.md) | Working with array data structures | - Array operations; Performance considerations; Best practices; Memory management |
+| [Land Utils](./land_utils.md) | Working with land variables and time series data | - LandWrapper usage; Data visualization; Time series handling; Performance optimization |
+| [Experiments](./experiments.md) | Designing and running experiments | - Experiment types; Configuration; Result analysis; Best practices |
+| [Spinup](./spinup.md) | Configuring and running model spinup | - Spinup methods; Sequence handling; Performance optimization; Best practices |
+| [Optimization Method](./optimization_method.md) | Configuring and implementing optimization | - Available algorithms; Parameter optimization; Multi-constraint handling; Performance tuning |
+| [Cost Function](./cost_function.md) | Implementing and customizing cost calculations | - Cost calculation methods; Parameter scaling; Multi-threading; Performance evaluation |
+| [Cost Metrics](./cost_metrics.md) | Defining and using model evaluation metrics | - Available metrics; Adding new metrics; Metric implementation; Best practices |
+| [How to Document](./how_to_doc.md) | Documentation guidelines and standards | - Formatting rules; Content requirements; Style guidelines; Examples |
+| [Helpers](./helpers.md) | Utility functions and helper methods | - Common utilities; Helper functions; Code reuse patterns; Best practices |
 
 ## How to Use This Documentation
 
 1. Start with [Installation](./install.md) for setup instructions
 2. Review [Conventions](./conventions.md) for development standards
-3. Read [Model Approach](./model_approach.md) for understanding the core framework
+3. Read [Model Approach](./model_approach.md) and [Types](./sindbad_types.md) for understanding the core framework
 4. Learn about [Array Handling](./array_handling.md) and [Land Utils](./land_utils.md) for data management
 5. Use [Experiments](./experiments.md) for running simulations
 6. Check [Spinup](./spinup.md) for model initialization procedures
@@ -45,7 +46,7 @@ To contribute to the documentation:
 1. **Basic Usage**
    - Install SINDBAD and its dependencies
    - Set up your working environment
-   - Run your first simulation
+   - Run your first simulation from `examples/*` directories
 
 2. **Model Development**
    - Create new model approaches
@@ -62,8 +63,7 @@ To contribute to the documentation:
 
 1. **Model Development**
    - Follow SINDBAD's modeling conventions
-   - Use appropriate variable groups
-   - Document your code thoroughly
+   - Use appropriate variable groups and naming
 
 2. **Performance**
    - Optimize for zero allocations

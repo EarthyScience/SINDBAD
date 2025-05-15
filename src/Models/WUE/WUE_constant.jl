@@ -22,7 +22,7 @@ purpose(::Type{WUE_constant}) = "calculates the WUE/AOE as a constant in space &
 
 @doc """
 
-$(getBaseDocString(WUE_constant))
+$(getModelDocString(WUE_constant))
 
 ---
 

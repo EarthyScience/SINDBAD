@@ -47,11 +47,11 @@ run_helpers = prepTEM(forcing, info);
 # observations = getObservation(info, forcing.helpers);
 # obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because 
 
-# opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method);
+# opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.run_options.cost_method);
 
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 # @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
-@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
+@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info, log_level=:warn);
 
 observation = out_opti.observation
 
@@ -94,7 +94,7 @@ foreach(costOpt) do var_row
     metr_def = metric(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = metric(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
     plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
-    plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
+    plot!(xdata, def_var, color=:steelblue2, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
+    plot!(xdata, opt_var; color=:seagreen3, label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.dirs.figure, "wroasted_parallel_$(domain)_$(v_key).png"))
 end

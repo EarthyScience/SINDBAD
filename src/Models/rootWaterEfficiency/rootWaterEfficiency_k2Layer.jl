@@ -51,7 +51,7 @@ purpose(::Type{rootWaterEfficiency_k2Layer}) = "sets the maximum fraction of wat
 
 @doc """
 
-$(getBaseDocString(rootWaterEfficiency_k2Layer))
+$(getModelDocString(rootWaterEfficiency_k2Layer))
 
 ---
 

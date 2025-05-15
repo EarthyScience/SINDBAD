@@ -50,7 +50,7 @@ purpose(::Type{gppDemand_min}) = "compute the demand GPP as minimum of all stres
 
 @doc """
 
-$(getBaseDocString(gppDemand_min))
+$(getModelDocString(gppDemand_min))
 
 ---
 

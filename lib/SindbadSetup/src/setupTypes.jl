@@ -45,7 +45,7 @@ end
 
 
 """
-    createArrayofType(input_values, pool_array, num_type, indx, ismain, array_type::SindbadModelArrayType)
+    createArrayofType(input_values, pool_array, num_type, indx, ismain, array_type::ModelArrayType)
 
 Creates an array or view of the specified type `array_type` based on the input values and configuration.
 
@@ -88,7 +88,7 @@ input_values = [1.0, 2.0, 3.0]
 static_array = createArrayofType(input_values, nothing, Float64, nothing, true, ModelArrayStaticArray())
 ```
 """
-createArrayofType
+function createArrayofType end
 
 function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayView)
     if ismain
@@ -125,7 +125,7 @@ Retrieves the numerical type based on the input, which can be a string or a data
 - If the input is a string, it is parsed and evaluated to return the corresponding type.
 - If the input is already a `DataType`, it is returned as-is.
 """
-getNumberType
+function getNumberType end
 
 function getNumberType(t::String)
     ttype = eval(Meta.parse(t))
@@ -155,7 +155,7 @@ Retrieves the type instance for a given cost metric based on its name.
 """
 function getTypeInstanceForCostMetric(option_name::String)
     opt_ss = toUpperCaseFirst(option_name)
-    struct_instance = getfield(SindbadMetrics, opt_ss)()
+    struct_instance = getfield(Sindbad, opt_ss)()
     return struct_instance
 end
 
@@ -213,7 +213,7 @@ Retrieves a type instance for a named option based on its string or symbol repre
     - "temporal_data_aggr": "month_anomaly" would be converted to MonthAnomaly
 
 """
-getTypeInstanceForNamedOptions
+function getTypeInstanceForNamedOptions end
 
 function getTypeInstanceForNamedOptions(option_name::String)
     opt_ss = toUpperCaseFirst(option_name)

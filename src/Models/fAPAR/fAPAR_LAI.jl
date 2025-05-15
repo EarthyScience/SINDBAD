@@ -22,11 +22,11 @@ function compute(params::fAPAR_LAI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{fAPAR_LAI}) = "sets the value of fAPAR as a function of LAI"
+purpose(::Type{fAPAR_LAI}) = "sets fAPAR as a function of LAI"
 
 @doc """
 
-$(getBaseDocString(fAPAR_LAI))
+$(getModelDocString(fAPAR_LAI))
 
 ---
 

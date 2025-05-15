@@ -7,6 +7,6 @@ purpose(::Type{evapotranspiration}) = "Calculate the evapotranspiration as a sum
 includeApproaches(evapotranspiration, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(evapotranspiration))
+	$(getModelDocString(evapotranspiration))
 """
 evapotranspiration

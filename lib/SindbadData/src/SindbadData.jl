@@ -7,6 +7,7 @@ The `SindbadData` package provides tools for handling and processing SINDBAD-rel
 This package is designed to streamline the ingestion and preprocessing of input data for SINDBAD experiments. 
 
 # Dependencies:
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadUtils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
 - `AxisKeys`: Enables labeled multidimensional arrays (`KeyedArray`) for managing data with explicit axis labels.
 - `FillArrays`: Provides efficient representations of arrays filled with a single value, useful for initializing data structures.
@@ -18,11 +19,11 @@ This package is designed to streamline the ingestion and preprocessing of input 
 - `YAXArrayBase`: Provides base functionality for working with YAXArrays.
 
 # Included Files:
-1. **`inputTypes.jl`**:
-   - Defines types and structures for managing input data, ensuring consistency across SINDBAD experiments.
-
-2. **`utilsData.jl`**:
+1. **`utilsData.jl`**:
    - Contains utility functions for data preprocessing, including cleaning, masking, and checking bounds.
+
+2. **`spatialSubset.jl`**:
+   - Implements spatial operations, such as extracting subsets of data based on spatial dimensions.
 
 3. **`getForcing.jl`**:
    - Provides functions for extracting and processing forcing data, such as environmental drivers, for SINDBAD experiments.
@@ -35,41 +36,22 @@ This package is designed to streamline the ingestion and preprocessing of input 
 - Designed to handle large datasets efficiently, leveraging chunked and compressed data formats like NetCDF and Zarr.
 - Ensures compatibility with SINDBAD's experimental framework by integrating spatial and temporal data management tools.
 
-# Examples:
-1. **Reading forcing data**:
-```julia
-using SindbadData
-forcing_data = getForcing("forcing_file.nc")
-```
-
-2. **Processing observational data**:
-```julia
-using SindbadData
-observations = getObservation("observation_file.nc")
-```
-
-3. **Cleaning and masking data**:
-```julia
-using SindbadData
-cleaned_data = cleanData(raw_data, mask)
-```
 """
 module SindbadData
-    using Reexport: @reexport
-    using SindbadUtils
-    @reexport import SindbadUtils: purpose
-    using AxisKeys: KeyedArray, AxisKeys
-    using FillArrays
-    using DimensionalData
-    using NCDatasets
-    @reexport using NetCDF
-    @reexport using YAXArrays
-    @reexport using Zarr
-    using YAXArrayBase
+   using Sindbad
+   using SindbadUtils
+   using AxisKeys: KeyedArray, AxisKeys
+   using FillArrays
+   using DimensionalData
+   using NCDatasets
+   @reexport using NetCDF
+   @reexport using YAXArrays
+   @reexport using Zarr
+   using YAXArrayBase
 
-    include("inputTypes.jl")
-    include("utilsData.jl")
-    include("getForcing.jl")
-    include("getObservation.jl")
-    
+   include("utilsData.jl")
+   include("spatialSubset.jl")
+   include("getForcing.jl")
+   include("getObservation.jl")
+   
 end # module SindbadData

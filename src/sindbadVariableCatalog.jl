@@ -1531,7 +1531,7 @@ checkMissingVarInfo(ambientCO2_constant)
 checkMissingVarInfo(cCycle)
 ```
 """
-checkMissingVarInfo
+function checkMissingVarInfo end
 
 function checkMissingVarInfo(appr)
     if supertype(appr) == LandEcosystem

@@ -9,7 +9,7 @@ function compute(params::groundWRecharge_kUnsat, forcing, land, helpers)
         w_sat ⇐ land.properties
         unsat_k_model ⇐ land.models
         (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
-        n_groundW ⇐ land.constants
+        n_groundW = groundW ⇐ helpers.pools.n_layers
     end
 
     # calculate recharge
@@ -31,7 +31,7 @@ purpose(::Type{groundWRecharge_kUnsat}) = "GW recharge as the unsaturated hydrau
 
 @doc """
 
-$(getBaseDocString(groundWRecharge_kUnsat))
+$(getModelDocString(groundWRecharge_kUnsat))
 
 ---
 

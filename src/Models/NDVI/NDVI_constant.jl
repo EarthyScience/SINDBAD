@@ -18,11 +18,11 @@ function precompute(params::NDVI_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{NDVI_constant}) = "sets the value of NDVI as a constant"
+purpose(::Type{NDVI_constant}) = "sets NDVI as a constant"
 
 @doc """
 
-$(getBaseDocString(NDVI_constant))
+$(getModelDocString(NDVI_constant))
 
 ---
 

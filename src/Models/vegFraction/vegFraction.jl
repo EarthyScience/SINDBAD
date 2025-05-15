@@ -7,6 +7,6 @@ purpose(::Type{vegFraction}) = "Fractional coverage of vegetation"
 includeApproaches(vegFraction, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(vegFraction))
+	$(getModelDocString(vegFraction))
 """
 vegFraction

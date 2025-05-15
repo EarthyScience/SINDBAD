@@ -7,6 +7,6 @@ purpose(::Type{cFlowVegProperties}) = "Effect of vegetation properties on the c 
 includeApproaches(cFlowVegProperties, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cFlowVegProperties))
+	$(getModelDocString(cFlowVegProperties))
 """
 cFlowVegProperties

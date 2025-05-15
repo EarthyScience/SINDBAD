@@ -7,6 +7,6 @@ purpose(::Type{getPools}) = "Get the amount of water at the beginning of timeste
 includeApproaches(getPools, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(getPools))
+	$(getModelDocString(getPools))
 """
 getPools

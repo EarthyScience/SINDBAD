@@ -18,9 +18,9 @@ function precompute(params::ambientCO2_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{ambientCO2_constant}) = "sets the value of ambient_CO2 as a constant"
+purpose(::Type{ambientCO2_constant}) = "sets ambient_CO2 to a constant value"
 @doc """
-    $(getBaseDocString(ambientCO2_constant))
+    $(getModelDocString(ambientCO2_constant))
 
 ---
 

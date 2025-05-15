@@ -7,7 +7,7 @@ purpose(::Type{runoffBase}) = "Baseflow"
 includeApproaches(runoffBase, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(runoffBase))
+	$(getModelDocString(runoffBase))
 """
 runoffBase
 

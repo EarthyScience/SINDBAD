@@ -208,7 +208,7 @@ Splits a variable name into a pair of field and subfield.
 - If the variable name contains a comma (`,`), it is used as the separator instead of a dot (`.`).
 - This function is used to parse variable names into their hierarchical components for further processing.
 """
-getVariablePair
+function getVariablePair end
 
 function getVariablePair(out_var::String)
     sep = "."
@@ -306,7 +306,7 @@ function setExperimentOutput(info)
             end
         end
     end
-    path_output_new = path_output_new * info.temp.experiment.basics.domain * "_" * info.temp.experiment.basics.name
+    path_output_new = path_output_new * info.temp.experiment.basics.id
 
     # create output and subdirectories
     sub_output = ["code", "data", "figure", "root", "settings"]

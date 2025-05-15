@@ -1,4 +1,7 @@
-## Models
+```@docs
+Sindbad.Models
+```
+## Available Models
 
 ### EVI
 
@@ -367,6 +370,10 @@ cAllocationRadiation
 ```@docs
 cAllocationRadiation_GSI
 ```
+== cAllocationRadiation_RgPot
+```@docs
+cAllocationRadiation_RgPot
+```
 == cAllocationRadiation_gpp
 ```@docs
 cAllocationRadiation_gpp
@@ -479,6 +486,10 @@ cBiomass_simple
 ```@docs
 cBiomass_treeGrass
 ```
+== cBiomass_treeGrass_cVegReserveScaling
+```@docs
+cBiomass_treeGrass_cVegReserveScaling
+```
 
 :::
 
@@ -528,6 +539,14 @@ cCycleBase_CASA
 == cCycleBase_GSI
 ```@docs
 cCycleBase_GSI
+```
+== cCycleBase_GSI_PlantForm
+```@docs
+cCycleBase_GSI_PlantForm
+```
+== cCycleBase_GSI_PlantForm_LargeKReserve
+```@docs
+cCycleBase_GSI_PlantForm_LargeKReserve
 ```
 == cCycleBase_simple
 ```@docs
@@ -831,6 +850,25 @@ capillaryFlow
 == capillaryFlow_VanDijk2010
 ```@docs
 capillaryFlow_VanDijk2010
+```
+
+:::
+
+
+----
+
+### constants
+
+```@docs
+constants
+```
+:::details constants approaches
+
+:::tabs
+
+== constants_numbers
+```@docs
+constants_numbers
 ```
 
 :::
@@ -1380,6 +1418,29 @@ percolation
 == percolation_WBP
 ```@docs
 percolation_WBP
+```
+
+:::
+
+
+----
+
+### plantForm
+
+```@docs
+plantForm
+```
+:::details plantForm approaches
+
+:::tabs
+
+== plantForm_PFT
+```@docs
+plantForm_PFT
+```
+== plantForm_fixed
+```@docs
+plantForm_fixed
 ```
 
 :::

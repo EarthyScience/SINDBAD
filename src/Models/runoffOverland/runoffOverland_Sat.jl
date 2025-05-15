@@ -19,7 +19,7 @@ purpose(::Type{runoffOverland_Sat}) = "assumes overland flow to be saturation ex
 
 @doc """
 
-$(getBaseDocString(runoffOverland_Sat))
+$(getModelDocString(runoffOverland_Sat))
 
 ---
 
