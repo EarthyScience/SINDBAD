@@ -12,8 +12,10 @@ The `SindbadVisuals` module provides visualization tools and helpers for the SIN
 ## Dependencies
 - `Sindbad`: Core SINDBAD framework.
 - `SindbadUtils`: Utility functions for SINDBAD.
-- `GLMakie`: For interactive plotting.
 - `Plots`: For static plotting.
+
+### Expected but not currently installed due to compatilibity in BGC cluster
+- `GLMakie`: For interactive plotting.
 - `Colors`: For color management in plots.
 
 ## Included Files
@@ -31,7 +33,7 @@ module SindbadVisuals
     using SindbadUtils
     # using GLMakie
     # @reexport using GLMakie.Makie
-    using Colors
+    # using Colors
     @reexport using Plots: annotate! as plots_annotate!, default as plots_default, scatter as plots_scatter, scatter! as plots_scatter!, vline as plots_vline, vline! as plots_vline!, hline as plots_hline, hline! as plots_hline!, xlims! as plots_xlims!, ylims! as plots_ylims!, xlabel! as plots_xlabel!, ylabel! as plots_ylabel!, title! as plots_title!, plot as plots_plot, plot! as plots_plot!, savefig as plots_savefig, text as plots_text, mm as plots_mm
 
     # include("plotOutputData.jl")

@@ -55,9 +55,6 @@ features:
 ```
 
 
-## 
-
-
 ## 🚧🚧 UNDER PREPARATION FOR RELEASE 🚧🚧
 
 SINDBAD is being prepared for release with a manuscript, for which a preprint is available at
