@@ -1,5 +1,6 @@
 [deps]
 AbstractDifferentiation = "c29ec348-61ec-40c8-8164-b8c60e9d9f3d"
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 GCMAES = "4aa9d100-eb0f-11e8-15f1-25748831eb3b"

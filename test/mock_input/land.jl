@@ -39,8 +39,7 @@ tmp_land = (;
         frac_tree = 0.5f0,
         ),
     models = (;
-        # c_model = SM.CCycleBaseGSI(),
-        c_model = SM.CCycleBaseGSI(),
+        c_model = SM.cCycleBase_GSI(),
         ),
     diagnostics = (;
         gpp_f_soilW = 0.5f0, # 1.0f0
