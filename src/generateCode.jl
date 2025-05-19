@@ -26,7 +26,7 @@ The `generateApproachCode` function creates a code template for a SINDBAD approa
 # Example
 ```julia
 # Generate code for an approach with 2 parameters
-approach_code = generateApproachCode(:ambientCO2, :ambientCO2_constant, "sets the value of ambient_CO2 as a constant", 2)
+approach_code = generateApproachCode(:ambientCO2, :ambientCO2_constant, "sets ambient_CO2 as a constant", 2)
 
 println(approach_code)
 ```
@@ -66,7 +66,7 @@ function generateApproachCode(model_name, appr_name, appr_purpose, n_parameters;
     end
     m_string *= "\npurpose(::Type{$(appr_name)}) = \"$(appr_purpose)\"\n\n"
     m_string *= "@doc \"\"\" \n\n"
-    m_string *= "\t\$(getBaseDocString($(appr_name)))\n\n"
+    m_string *= "\t\$(getModelDocString($(appr_name)))\n\n"
 
     m_string *= "---\n\n"
 
@@ -107,7 +107,7 @@ The `generateModelCode` function creates a code template for a SINDBAD model. It
 - Defines the model as an abstract type that inherits from `LandEcosystem`.
 - Sets the purpose of the model using the `purpose` function.
 - Includes all approaches associated with the model using the `includeApproaches` function.
-- Generates a placeholder docstring for the model, including a reference to `\$(getBaseDocString)`.
+- Generates a placeholder docstring for the model, including a reference to `\$(getModelDocString)`.
 
 # Example
 ```julia
@@ -122,7 +122,7 @@ function generateModelCode(model_name, model_purpose)
     m_string *= "\nabstract type $(model_name) <: LandEcosystem end\n"
     m_string *= "\npurpose(::Type{$(model_name)}) = \"$(model_purpose)\"\n"
     m_string *= "\nincludeApproaches($(model_name), @__DIR__)\n\n"
-    m_string *= "@doc \"\"\" \n\t\$(getBaseDocString($(model_name)))\n\"\"\"\n"
+    m_string *= "@doc \"\"\" \n\t\$(getModelDocString($(model_name)))\n\"\"\"\n"
     m_string *= "$(model_name)\n\n"
     return m_string
 end
@@ -135,7 +135,9 @@ Generate a SINDBAD model and/or approach with code templates.
 **Due to risk of overwriting code, the function only succeeds if y|Y||Yes|Ya, etc., are given in the confirmation prompt. This function only works if the call is copy-pasted into the REPL and not evaluated from a file/line. See the example below for the syntax.**
 
 # Description
-The `generateSindbadApproach` function creates a SINDBAD model and/or approach by generating code templates for their structure, parameters, methods, and documentation. It ensures consistency with the SINDBAD framework and adheres to naming conventions. If the model or approach already exists, it avoids overwriting existing files unless explicitly permitted. The generated code includes placeholders for methods (`define`, `precompute`, `compute`, `update`) and automatically generates docstrings for the model and approach.
+The `generateSindbadApproach` function creates a SINDBAD model and/or approach by generating code templates for their structure, parameters, methods, and documentation. It ensures consistency with the SINDBAD framework and adheres to naming conventions. If the model or approach already exists, it avoids overwriting existing files unless explicitly permitted. The generated code includes placeholders for methods (`define`, `precompute`, `compute`, `update`) and automatically generates docstrings for the model and approach. 
+    
+*Note that the newly created approaches are tracked by changes in `tmp_precompile_placeholder.jl` in the Sindbad root. The new models/approaches are automatically included ONLY when REPL is restarted.*
 
 # Arguments
 - `model_name`: The name of the SINDBAD model to which the approach belongs.
@@ -164,7 +166,7 @@ The `generateSindbadApproach` function creates a SINDBAD model and/or approach b
 ```julia
 # Generate a new SINDBAD approach for an existing model
 
-generateSindbadApproach(:ambientCO2, "Represents ambient CO2 concentration", :constant, "Sets the value of ambient CO2 as a constant", 1)
+generateSindbadApproach(:ambientCO2, "Represents ambient CO2 concentration", :constant, "Sets ambient CO2 as a constant", 1)
 
 # Generate a new SINDBAD model and approach
 
@@ -182,6 +184,8 @@ generateSindbadApproach(:newModel, "Represents a new SINDBAD model", :newApproac
 - The function provides warnings and prompts to ensure safe file generation and minimize the risk of accidental overwrites.
 """
 function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr_name::Symbol, appr_purpose::String, n_parameters::Int; methods=(:define, :precompute, :compute, :update), force_over_write=:none)
+    was_model_created = false
+    was_approach_created = false
     over_write_model = false
     over_write_appr = false
     if force_over_write == :none
@@ -239,6 +243,7 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
                 write(model_file, m_string)
             end
             @info "success: $(model_path)"
+            was_model_created = true
         end
     end
 
@@ -277,9 +282,38 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
                 write(appr_file, appr_string)
             end
             @info "success: $(appr_path)"
+            was_approach_created = true
         else
             @info "Not generating approach file due to user input."
         end
+    end
+
+    ## append the tmp_precompile_placeholder file so that Sindbad is forced to precompile in the next run_helpers
+    if was_model_created || was_approach_created
+        # Specify the file path
+        file_path = joinpath(@__DIR__, "tmp_precompile_placeholder.jl")
+
+        # The line you want to add
+        date = strip(read(`date +%d.%m.%Y`, String));
+
+        new_lines = []
+        if was_model_created
+            new_line = "# - $(date): created a model $model_path.\n"
+            push!(new_lines, new_line)
+        end
+
+        if was_approach_created
+            new_line = "# - $(date): created an approach $appr_path.\n"
+            push!(new_lines, new_line)
+        end
+
+        # Open the file in append mode
+        open(file_path, "a") do file
+            foreach(new_lines) do new_line
+                write(file, new_line)
+            end
+        end  
+
     end
     return nothing
 end

@@ -12,11 +12,11 @@ function compute(params::vegFraction_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{vegFraction_forcing}) = "sets the value of land.states.frac_vegetation from the forcing in every time step"
+purpose(::Type{vegFraction_forcing}) = "sets land.states.frac_vegetation from forcing"
 
 @doc """
 
-$(getBaseDocString(vegFraction_forcing))
+$(getModelDocString(vegFraction_forcing))
 
 ---
 

@@ -7,6 +7,6 @@ purpose(::Type{gpp}) = "Combine effects as multiplicative or minimum; if coupled
 includeApproaches(gpp, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(gpp))
+	$(getModelDocString(gpp))
 """
 gpp

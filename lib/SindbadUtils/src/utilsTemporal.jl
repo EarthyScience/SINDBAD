@@ -1,39 +1,6 @@
 export createTimeAggregator
 export getTimeAggregatorTypeInstance
-export temporalAggregation
-export TimeAggregator
-export TimeAggregatorViewInstance
-
-"""
-    TimeAggregator{I, aggr_func}
-
-define a new type of temporal aggregation
-
-# Fields:
-- `indices::I`: indices to be collected for aggregation
-- `aggr_func::aggr_func`: a function to use for aggregation, defaults to mean
-"""
-struct TimeAggregator{I,aggr_func}
-    indices::I
-    aggr_func::aggr_func
-end
-
-
-"""
-    TimeAggregatorViewInstance{T, N, D, P, AV <: TimeAggregator}
-
-
-
-# Fields:
-- `parent::P`: the parent data
-- `agg::AV`: a view of the parent data
-- `dim::Val{D}`: a val instance of the type that stores the dimension to be aggregated on
-"""
-struct TimeAggregatorViewInstance{T,N,D,P,AV<:TimeAggregator} <: AbstractArray{T,N}
-    parent::P
-    agg::AV
-    dim::Val{D}
-end
+export doTemporalAggregation
 
 """
     getdim(a::TimeAggregatorViewInstance{<:Any, <:Any, D})
@@ -96,34 +63,16 @@ a function to create a temporal aggregation struct for a given time step
 - `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
 - `t_step`: a string/Symbol/Type defining the aggregation time target with different types as follows:
   - `::Union{String, Symbol}`: a string/Symbol defining the aggregation time target from the settings
-  - `::TimeAllYears`: aggregation/slicing to include all years
-  - `::TimeMean`: aggregation to mean over all time steps
-  - `::TimeDay`: aggregation to daily time steps
-  - `::TimeDayAnomaly`: aggregation to daily anomalies
-  - `::TimeDayIAV`: aggregation to daily IAV
-  - `::TimeDayMSC`: aggregation to daily MSC
-  - `::TimeDayMSCAnomaly`: aggregation to daily MSC anomalies
-  - `::TimeHour`: aggregation to daily time steps
-  - `::TimeHourAnomaly`: aggregation to daily anomalies
-  - `::TimeHourIAV`: aggregation to daily IAV
-  - `::TimeHourMSC`: aggregation to daily MSC
-  - `::TimeHourMSCAnomaly`: aggregation to daily MSC anomalies
-  - `::TimeFirstYear`: aggregation/slicing of the first year
-  - `::TimeMonth`: aggregation to monthly time steps
-  - `::TimeMonthAnomaly`: aggregation to monthly anomalies
-  - `::TimeMonthIAV`: aggregation to monthly IAV
-  - `::TimeMonthMSC`: aggregation to monthly MSC
-  - `::TimeMonthMSCAnomaly`: aggregation to monthly MSC anomalies
-  - `::TimeRandomYear`: aggregation/slicing of a random year
-  - `::TimeShuffleYears`: aggregation/slicing of shuffled years
-  - `::TimeSizedArray`: aggregation to a sized array
-  - `::TimeYear`: aggregation to yearly time steps
-  - `::TimeYearAnomaly`: aggregation to yearly anomalies
 - `aggr_func`: a function to use for aggregation, defaults to mean
 - `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
 
+# Returns:
+- `::Vector{TimeAggregator}`: a vector of TimeAggregator structs
+
+# t_step:
+$(methodsOf(TimeAggregation))
 """
-createTimeAggregator
+function createTimeAggregator end
 
 
 function createTimeAggregator(date_vector, t_step::Union{String, Symbol}, aggr_func=mean, skip_aggregation=false)
@@ -293,7 +242,7 @@ An instance of the corresponding time aggregator type.
 # Notes:
 - A similar approach `getTypeInstanceForNamedOptions` is used in `SindbadSetup` for creating types of other named option
 """
-getTimeAggregatorTypeInstance
+function getTimeAggregatorTypeInstance end
 
 function getTimeAggregatorTypeInstance(aggr::Symbol)
     return getTimeAggregatorTypeInstance(string(aggr))
@@ -378,7 +327,7 @@ end
 
 
 """
-    doTemporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim = 1)
+    temporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim = 1)
 
 a temporal aggregation function to aggregate the data using a given aggregator when the input data is an array
 
@@ -390,24 +339,24 @@ a temporal aggregation function to aggregate the data using a given aggregator w
 - `temporal_aggregator`: a time aggregator struct with indices and function to do aggregation
 - `dim`: the dimension along which the aggregation should be done
 """
-doTemporalAggregation
+function temporalAggregation end
 
-function doTemporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim=1)
+function temporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim=1)
     dat = view(dat, temporal_aggregator, dim=dim)
     return getTimeAggrArray(dat)
 end
 
-function doTemporalAggregation(dat::SubArray, temporal_aggregator::TimeAggregator, dim=1)
+function temporalAggregation(dat::SubArray, temporal_aggregator::TimeAggregator, dim=1)
     dat = view(dat, temporal_aggregator, dim=dim)
     return getTimeAggrArray(dat)
 end
 
-function doTemporalAggregation(dat, temporal_aggregator::Nothing, dim=1)
+function temporalAggregation(dat, temporal_aggregator::Nothing, dim=1)
     return dat
 end
 
 """
-    temporalAggregation(dat, temporal_aggregators, aggregation_type)
+    doTemporalAggregation(dat, temporal_aggregators, aggregation_type)
 
 a temporal aggregation function to aggregate the data using a vector of aggregators
 
@@ -419,18 +368,18 @@ a temporal aggregation function to aggregate the data using a vector of aggregat
     - `::TimeDiff`: a type defining that the aggregator requires removing/reducing values from original time series. First aggregator aggregates the main time series, second aggregator aggregates to the time series to be removed.
     - `::TimeIndexed`: a type defining that the aggregator requires indexing the original time series
 """
-temporalAggregation
+function doTemporalAggregation end
 
-function temporalAggregation(dat, temporal_aggregators, ::TimeIndexed)
+function doTemporalAggregation(dat, temporal_aggregators, ::TimeIndexed)
     return dat[first(temporal_aggregators).indices...]
 end
 
-function temporalAggregation(dat, temporal_aggregators, ::TimeNoDiff)
-    return doTemporalAggregation(dat, first(temporal_aggregators))
+function doTemporalAggregation(dat, temporal_aggregators, ::TimeNoDiff)
+    return temporalAggregation(dat, first(temporal_aggregators))
 end
 
-function temporalAggregation(dat, temporal_aggregators, ::TimeDiff)
-    dat_agg = doTemporalAggregation(dat, first(temporal_aggregators))
-    dat_agg_to_remove = doTemporalAggregation(dat, last(temporal_aggregators))
+function doTemporalAggregation(dat, temporal_aggregators, ::TimeDiff)
+    dat_agg = temporalAggregation(dat, first(temporal_aggregators))
+    dat_agg_to_remove = temporalAggregation(dat, last(temporal_aggregators))
     return dat_agg .- dat_agg_to_remove
 end

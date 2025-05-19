@@ -18,7 +18,7 @@ function compute(params::snowMelt_TairRn, forcing, land, helpers)
         snowW ⇐ land.pools
         ΔsnowW ⇐ land.pools
         (z_zero, o_one) ⇐ land.constants
-        n_snowW ⇐ land.constants
+        n_snowW = snowW ⇐ helpers.pools.n_layers
     end
 
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
@@ -50,7 +50,7 @@ purpose(::Type{snowMelt_TairRn}) = "instantiate the potential snow melt based on
 
 @doc """
 
-$(getBaseDocString(snowMelt_TairRn))
+$(getModelDocString(snowMelt_TairRn))
 
 ---
 

@@ -42,11 +42,11 @@ function compute(params::cAllocationRadiation_GSI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationRadiation_GSI}) = "radiation effect on decomposition/mineralization using GSI method"
+purpose(::Type{cAllocationRadiation_GSI}) = "radiation effect on allocation using GSI method"
 
 @doc """
 
-$(getBaseDocString(cAllocationRadiation_GSI))
+$(getModelDocString(cAllocationRadiation_GSI))
 
 ---
 

@@ -17,7 +17,7 @@ function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
         ΔsurfaceW ⇐ land.pools
         overland_runoff ⇐ land.fluxes
         (z_zero, o_one) ⇐ land.constants
-        n_surfaceW ⇐ land.constants
+        n_surfaceW = surfaceW ⇐ helpers.pools.n_layers
     end
     # fraction of overland runoff that recharges the surface water & the
     # fraction that flows out directly
@@ -46,7 +46,7 @@ purpose(::Type{runoffSurface_directIndirect}) = "assumes surface runoff is the s
 
 @doc """
 
-$(getBaseDocString(runoffSurface_directIndirect))
+$(getModelDocString(runoffSurface_directIndirect))
 
 ---
 

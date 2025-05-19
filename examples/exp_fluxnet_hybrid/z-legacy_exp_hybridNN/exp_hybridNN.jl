@@ -18,13 +18,13 @@ experiment_json = "../exp_hybridNN/settings_hybridNN/experiment.json"
 
 info = getExperimentInfo(experiment_json);
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
+parameter_table = info.optimization.parameter_table;
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 
 selected_models = info.models.forward;
-param_to_index = getParameterIndices(selected_models, tbl_params);
+parameter_to_index = getParameterIndices(selected_models, parameter_table);
 
 run_helpers = prepTEM(selected_models, forcing, observations, info);
 
@@ -56,14 +56,14 @@ loc_spinup_forcing = space_spinup_forcing[site_location];
 
 cost_options = [prepCostOptions(loc_obs, info.optimization.cost_options) for loc_obs in loc_observations];
 
-constraint_method = info.optimization.multi_constraint_method;
+constraint_method = info.optimization.run_options.multi_constraint_method;
 
 
 # ForwardDiff.gradient(f, x)
 # load available covariates
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 sites_forcing = forcing.data[1].site;
-c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
+c = Cube(joinpath(@__DIR__, "$(getSindbadDataDepot())/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
 xfeatures_o = yaxCubeToKeyedArray(c);
 to_rm = findall(x->x>0, occursin.("VIF", xfeatures_o.features));
 to_rm_names = xfeatures_o.features[to_rm];
@@ -110,7 +110,7 @@ indices_sites_training = siteNameToID.(sites_training, Ref(sites_forcing));
 # NN 
 n_epochs = 25;
 n_neurons = 32;
-n_params = sum(tbl_params.is_ml);
+n_params = sum(parameter_table.is_ml);
 shuffle_opt = true;
 ml_baseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=2, seed=batch_seed * 2);
 parameters_sites = ml_baseline(xfeatures);
@@ -120,16 +120,16 @@ grads_batch = zeros(Float32, n_params, length(sites_training));
 sites_batch = sites_training;#[1:n_sites_train];
 indices_sites_batch = indices_sites_training;
 params_batch = parameters_sites(; site=sites_batch);
-scaled_params_batch = getParamsAct(params_batch, tbl_params);
+scaled_params_batch = getParamsAct(params_batch, parameter_table);
 
 gradient_lib = ForwardDiffGrad();
 gradient_lib = FiniteDiffGrad();
 # gradient_lib = FiniteDifferencesGrad();
 
-@time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_sites_batch, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method)
+@time gradientBatch!(gradient_lib, lossSite, grads_batch, scaled_params_batch, selected_models, sites_batch, indices_sites_batch, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tem, parameter_to_index, cost_options, constraint_method)
 
 # machine learning parameters baseline
-@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tbl_params, tem, param_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.dirs.data,name="seq_training_output")
+@time sites_loss, re, flat = trainSindbadML(gradient_lib, ml_baseline, lossSite, xfeatures, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, parameter_table, tem, parameter_to_index, cost_options, constraint_method; n_epochs=n_epochs, optimizer=Optimisers.Adam(), batch_seed=batch_seed, batch_size=batch_size, shuffle=shuffle_opt, local_root=info.output.dirs.data,name="seq_training_output")
 
 f_suffix = "_epoch-$(n_epochs)_batch-size-$(batch_size)-seed-$(batch_seed)_$(nameof(typeof(gradient_lib)))"
 using CairoMakie
@@ -152,4 +152,4 @@ save(joinpath(info.output.dirs.figure, "epoch_lines$(f_suffix).png"), fig)
 
 loss_array_sites = fill(zero(Float32), length(sites_training), n_epochs);
 
-@time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tem, param_to_index, cost_options, constraint_method; logging=false)
+@time getLossForSites(gradient_lib, lossSite, loss_array_sites, 2, parameters_sites, selected_models, sites_training, indices_sites_training, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, land_init, loc_observations, tem, parameter_to_index, cost_options, constraint_method; logging=false)

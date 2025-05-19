@@ -40,7 +40,7 @@ purpose(::Type{cTau_mult}) = "multiply all effects that change the turnover rate
 
 @doc """
 
-$(getBaseDocString(cTau_mult))
+$(getModelDocString(cTau_mult))
 
 ---
 

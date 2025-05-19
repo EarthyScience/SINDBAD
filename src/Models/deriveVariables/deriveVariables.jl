@@ -7,6 +7,6 @@ purpose(::Type{deriveVariables}) = "Derive extra variables"
 includeApproaches(deriveVariables, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(deriveVariables))
+	$(getModelDocString(deriveVariables))
 """
 deriveVariables

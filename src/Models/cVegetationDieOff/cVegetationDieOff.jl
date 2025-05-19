@@ -2,12 +2,11 @@ export cVegetationDieOff
 
 abstract type cVegetationDieOff <: LandEcosystem end
 
-include("cVegetationDieOff_forcing.jl")
+purpose(::Type{cVegetationDieOff}) = "Disturb the carbon cycle pools"
 
-@doc """
-Disturb the carbon cycle pools
+includeApproaches(cVegetationDieOff, @__DIR__)
 
-# Approaches:
- - forcing: reads and packs the fraction of vegetation that dies off (c transferred to litter pools)
- """
+@doc """ 
+	$(getModelDocString(cVegetationDieOff))
+"""
 cVegetationDieOff

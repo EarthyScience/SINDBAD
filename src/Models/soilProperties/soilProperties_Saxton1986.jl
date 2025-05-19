@@ -1,4 +1,4 @@
-export soilProperties_Saxton1986, unsatK, soilParamsSaxton1986
+export soilProperties_Saxton1986, unsatK
 
 struct kSaxton1986 end
 
@@ -176,7 +176,7 @@ purpose(::Type{soilProperties_Saxton1986}) = "assigns the soil hydraulic propert
 
 @doc """
 
-$(getBaseDocString(soilProperties_Saxton1986))
+$(getModelDocString(soilProperties_Saxton1986))
 
 ---
 

@@ -13,11 +13,11 @@ function compute(params::NIRv_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{NIRv_forcing}) = "sets the value of land.states.NIRv from the forcing in every time step"
+purpose(::Type{NIRv_forcing}) = "sets land.states.NIRv from forcing"
 
 @doc """
 
-$(getBaseDocString(NIRv_forcing))
+$(getModelDocString(NIRv_forcing))
 
 ---
 

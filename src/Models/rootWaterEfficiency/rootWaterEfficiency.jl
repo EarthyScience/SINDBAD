@@ -7,6 +7,6 @@ purpose(::Type{rootWaterEfficiency}) = "Distribution of water uptake fraction/ef
 includeApproaches(rootWaterEfficiency, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(rootWaterEfficiency))
+	$(getModelDocString(rootWaterEfficiency))
 """
 rootWaterEfficiency

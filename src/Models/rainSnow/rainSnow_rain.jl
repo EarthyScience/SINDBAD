@@ -37,7 +37,7 @@ purpose(::Type{rainSnow_rain}) = "set all precip to rain"
 
 @doc """
 
-$(getBaseDocString(rainSnow_rain))
+$(getModelDocString(rainSnow_rain))
 
 ---
 

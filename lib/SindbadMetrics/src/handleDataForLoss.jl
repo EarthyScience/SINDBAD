@@ -1,7 +1,6 @@
 export getDataWithoutNaN
 export getData
 export getModelOutputView
-export getData
 
 """
     aggregateData(dat, cost_option, ::TimeSpace)
@@ -15,18 +14,18 @@ aggregate the data based on the order of aggregation.
 - `::TimeSpace`: appropriate type dispatch for the order of aggregation
 - `::SpaceTime`: appropriate type dispatch for the order of aggregation
 """
-aggregateData
+function aggregateData end
 
 function aggregateData(dat, cost_option, ::TimeSpace)
     @debug "aggregating data", size(dat)
-    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
-    dat = spatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
+    dat = doTemporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
+    dat = doSpatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
     return dat
 end
 
 function aggregateData(dat, cost_option, ::SpaceTime)
-    dat = spatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
-    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
+    dat = doSpatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
+    dat = doTemporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     return dat
 end
 
@@ -42,7 +41,7 @@ end
 - `::DoAggrObs`: appropriate type dispatch for aggregation of observation data
 - `::DoNotAggrObs`: appropriate type dispatch for not aggregating observation data
 """
-aggregateObsData
+function aggregateObsData end
 
 function aggregateObsData(y, cost_option, ::DoAggrObs)
     y = aggregateData(y, cost_option, cost_option.aggr_order)
@@ -67,7 +66,7 @@ return model and obs data after applying the area weight.
 - `::DoSpatialWeight`: type dispatch for doing area weight
 - `::DoNotSpatialWeight`: type dispatch for not doing area weight
 """
-applySpatialWeight
+function applySpatialWeight end
 
 function applySpatialWeight(y, yσ, ŷ, cost_option, ::DoSpatialWeight)
     yweight = observations[cost_option.obs_ind+3]
@@ -101,7 +100,7 @@ end
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `cost_option`: information for a observation constraint on how it should be used to calculate the loss/metric of model performance
 """
-getData
+function getData end
 
 function getData(model_output::LandWrapper, observations, cost_option)
     obs_ind = cost_option.obs_ind
@@ -173,13 +172,13 @@ end
 
 
 """
-    spatialAggregation(dat, _, ::ConcatData)
+    doSpatialAggregation(dat, _, ::ConcatData)
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
 - `_`: unused argument
 - `::ConcatData`: A type indicating that the data should not be aggregated spatially
 """
-function spatialAggregation(dat, _, ::ConcatData)
+function doSpatialAggregation(dat, _, ::ConcatData)
     return dat
 end

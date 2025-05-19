@@ -4,7 +4,7 @@ using YAXArrays, Zarr
 # using GLMakie
 # GLMakie.activate!()
 
-ds_veg = open_dataset(joinpath(@__DIR__, "../data/VegetatedLand_0d25.zarr/"))["VegLand"]
+ds_veg = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/VegetatedLand_0d25.zarr/"))["VegLand"]
 
 using CairoMakie
 CairoMakie.activate!()

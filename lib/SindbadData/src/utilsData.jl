@@ -1,22 +1,19 @@
-export AllNaN
 export getNumberOfTimeSteps
 export mapCleanData
 export subsetAndProcessYax
 export yaxCubeToKeyedArray
 export toDimStackArray
-
+export AllNaN
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
 
-Add skipping filter for pixels with all `NaN` or `missing` in YAXArrays
+Specialized filter for YAXArrays to skip pixels with all `NaN` or `missing` values.
 
-A filter type that inherits from `YAXArrays.DAT.ProcFilter`.
-
+# Description
 This struct is used as a specialized filter in data processing pipelines to identify or handle cases where all values in a data segment are NaN (Not a Number).
 """
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(ismissing, x) || all(isnan, x)
-
 
 """
     applyQCBound(_data, data_qc, bounds_qc, _data_fill)
@@ -135,13 +132,13 @@ function getDimPermutation(datDims, permDims)
 end
 
 """
-    getInputArrayOfType(input_data, <:SindbadInputDataType)
+    getInputArrayOfType(input_data, <: SindbadInputDataType)
 
 Converts the provided input data into a specific input array type.
 
 # Arguments
 - `input_data`: The data to be converted into an input array
-- <:SindbadInputDataType: The specific input array type to convert the data into
+- <: SindbadInputDataType: The specific input array type to convert the data into
     - `::InputArray`: Specifies the input array type as a simple array
     - `::InputKeyedArray`: Specifies the input array type as a keyed array
     - `::InputNamedDimsArray`: Specifies the input array type as a named dims array
@@ -150,7 +147,7 @@ Converts the provided input data into a specific input array type.
 # Returns
 Returns the input data converted to the specified input array type.
 """
-getInputArrayOfType
+function getInputArrayOfType end
 
 function getInputArrayOfType(input_data, ::InputArray)
     array_data = map(input_data) do c
@@ -237,9 +234,10 @@ The ordered sequence of dimensions for the target.
 """
 function getTargetDimensionOrder(info)
     tar_dims = nothing
-    if !isnothing(info.settings.forcing.data_dimension.permute)
+    permute_dims = info.experiment.data_settings.forcing.data_dimension.permute
+    if !isnothing(permute_dims)
         tar_dims = Symbol[]
-        for pd ∈ info.settings.forcing.data_dimension.permute
+        for pd ∈ permute_dims
             tdn = Symbol(pd)
             push!(tar_dims, tdn)
         end
@@ -248,7 +246,7 @@ function getTargetDimensionOrder(info)
 end
 
 """
-    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, <:SindbadInputBackend)
+    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, <: DataFormatBackend)
 
 Retrieve the data from a specified source.
 
@@ -258,7 +256,7 @@ Retrieve the data from a specified source.
 - `data_path_v`: The path to the variable within the NetCDF file.
 - `source_variable`: The name of the source variable to extract data for.
 - `info`: Additional information or metadata required for processing.
-- `<:SindbadInputBackend`: Specifies the SINDBAD backend being used.
+- `<: DataFormatBackend`: Specifies the SINDBAD backend being used.
     - `::BackendNetcdf`: Specifies that the function operates on a NetCDF backend.
     - `::BackendZarr`: Specifies that the backend being used is Zarr.
 
@@ -269,7 +267,7 @@ Retrieve the data from a specified source.
 - Ensure that the `nc` object and paths provided are valid and accessible.
 - The functions are specific to the NetCDF and Zarr backend and may not work with other backends.
 """
-getYaxFromSource
+function getYaxFromSource end
 
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::BackendNetcdf)
     if endswith(data_path_v, ".zarr")
@@ -277,17 +275,19 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::B
     end
     nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     v = nc[source_variable]
+    forcing_data_settings = info.experiment.data_settings.forcing
     ax = map(NCDatasets.dimnames(v)) do dn
         rax = nothing
-        if dn == info.settings.forcing.data_dimension.time
-            t = nc[info.settings.forcing.data_dimension.time]
+        if dn == forcing_data_settings.data_dimension.time
+            t = nc[forcing_data_settings.data_dimension.time]
             t = [_t for _t in t]
             rax = Dim{Symbol(dn)}(t)
         else
             if dn in keys(nc)
                 dv = info.helpers.numbers.num_type.(nc[dn][:])
             else
-                error("To avoid possible issues with dimensions, Sindbad does not run when the dimension variable $(dn) is not available in input data file $(data_path). Add the variable to the data, and try again.")
+                data_path_tmp = isnothing(data_path) ? data_path_v : data_path
+                error("To avoid possible issues with dimensions, Sindbad does not run when the dimension variable $(dn) is not available in input data file $(data_path_tmp). Add the variable to the data, and try again.")
             end
             rax = Dim{Symbol(dn)}(dv)
         end
@@ -409,7 +409,7 @@ Processed and subset YAX data according to specified parameters and quality cont
 - `num_type`: Numerical type specification for the processed data
 """
 function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Val{num_type}; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing) where {num_type}
-
+    forcing_data_settings = info.experiment.data_settings.forcing
     if !isnothing(forcing_mask)
         yax = yax #todo: mask the forcing variables here depending on the mask of 1 and 0
     end
@@ -419,14 +419,14 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Va
         @debug "         -> permuting dimensions to $(tar_dims)..."
         yax = permutedims(yax, permutes)
     end
-    if hasproperty(yax, Symbol(info.settings.forcing.data_dimension.time))
+    if hasproperty(yax, Symbol(forcing_data_settings.data_dimension.time))
         init_date = DateTime(info.helpers.dates.date_begin)
         last_date = DateTime(info.helpers.dates.date_end)
         yax = yax[time=(init_date .. last_date)]
     end
 
-    if hasproperty(info.settings.forcing, :subset)
-        yax = getSpatialSubset(info.settings.forcing.subset, yax)
+    if hasproperty(forcing_data_settings, :subset)
+        yax = getSpatialSubset(forcing_data_settings.subset, yax)
     end
 
     #todo mean of the data instead of zero or nan
@@ -482,3 +482,4 @@ arrays with metadata, particularly for time series data with multiple pools or v
 function toDimStackArray(stackArr, time_interval, p_names; name=:pools)
     return DimArray(stackArr,  (p_names=p_names, Ti=time_interval,); name=name,)
 end
+

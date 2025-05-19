@@ -7,6 +7,6 @@ purpose(::Type{soilWBase}) = "Distribution of soil hydraulic properties over dep
 includeApproaches(soilWBase, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(soilWBase))
+	$(getModelDocString(soilWBase))
 """
 soilWBase

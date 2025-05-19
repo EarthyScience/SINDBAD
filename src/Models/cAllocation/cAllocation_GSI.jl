@@ -73,7 +73,7 @@ purpose(::Type{cAllocation_GSI}) = "Compute the fraction of fixated C that is al
 
 @doc """
 
-$(getBaseDocString(cAllocation_GSI))
+$(getModelDocString(cAllocation_GSI))
 
 ---
 

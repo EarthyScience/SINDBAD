@@ -8,7 +8,7 @@ end_year = "2017"
 
 domain = "MY-PSO"
 # domain = "MY-PSO"
-path_input = "../data/fn/$(domain).1979.2017.daily.nc"
+path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
 
 path_observation = path_input

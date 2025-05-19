@@ -111,7 +111,7 @@ purpose(::Type{cCycle_GSI}) = "Calculate decay rates for the ecosystem C pools a
 
 @doc """
 
-$(getBaseDocString(cCycle_GSI))
+$(getModelDocString(cCycle_GSI))
 
 ---
 

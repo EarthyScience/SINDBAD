@@ -63,7 +63,7 @@ purpose(::Type{cCycleDisturbance_WROASTED}) = "move all vegetation carbon pools 
 
 @doc """
 
-$(getBaseDocString(cCycleDisturbance_WROASTED))
+$(getModelDocString(cCycleDisturbance_WROASTED))
 
 ---
 

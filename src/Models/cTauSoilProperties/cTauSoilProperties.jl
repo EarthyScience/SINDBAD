@@ -7,6 +7,6 @@ purpose(::Type{cTauSoilProperties}) = "Effect of soil texture on soil decomposit
 includeApproaches(cTauSoilProperties, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cTauSoilProperties))
+	$(getModelDocString(cTauSoilProperties))
 """
 cTauSoilProperties

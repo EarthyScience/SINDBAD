@@ -118,10 +118,10 @@ pre, code {
   );
 
   --vp-home-hero-image-background-image: linear-gradient(
-    -165deg,
-    #c4c2bb 30%,
-    #dadd33 30%,
-    #e23131
+    -145deg,
+    #c4c2bb 60%,
+    #dadd33 60%,
+    #3782b9 80%
   );
   --vp-home-hero-image-filter: blur(40px);
 }
@@ -175,16 +175,20 @@ mjx-container > svg {
  * -------------------------------------------------------------------------- */
 
  :root {
-  --vp-c-brand-1: #3d8abe;;
-  --vp-c-brand-2: #5499c7;
+  --vp-c-brand-1-old: #3d8abe;
+  --vp-c-brand-1: #006c67e9;
+  --vp-c-brand-2: #006c67e9;
+  /* --vp-c-brand-2: #5499c7; */
   --vp-c-brand-3: #487da0;
   --vp-c-sponsor: #ca2971;
   --vitest-c-sponsor-hover: #c13071;
 }
 
 .dark {
-  --vp-c-brand-1: #DEA958ff;
-  --vp-c-brand-2: rgb(233, 184, 112);
+  /* --vp-c-brand-1: #DEA958ff;
+  --vp-c-brand-2: rgb(233, 184, 112); */
+  --vp-c-brand-1: #049790c3;
+  --vp-c-brand-2: #049790c3;
   --vp-c-brand-3: #d8c980;
   --vp-c-sponsor: #ee4e95;
   --vp-button-brand-hover-bg: var(--vp-c-brand-2);

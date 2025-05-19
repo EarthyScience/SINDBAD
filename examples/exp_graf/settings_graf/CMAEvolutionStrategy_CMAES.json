@@ -1,6 +1,8 @@
 {
   "method": "CMAES",
   "options": {
+    "maxiter": 1000,
+    "popsize": 20,
     "maxfevals": 5000,
     "multi_threading": false,
     "parallel_evaluation": false

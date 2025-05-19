@@ -7,6 +7,6 @@ purpose(::Type{cFlow}) = "Actual transfers of c between pools (of diagonal compo
 includeApproaches(cFlow, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cFlow))
+	$(getModelDocString(cFlow))
 """
 cFlow

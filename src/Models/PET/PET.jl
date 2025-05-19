@@ -2,10 +2,10 @@ export PET
 
 abstract type PET <: LandEcosystem end
 
-purpose(::Type{PET}) = "Set potential evapotranspiration"
+purpose(::Type{PET}) = "Set/get potential evapotranspiration"
 
 includeApproaches(PET, @__DIR__)
 @doc """ 
-	$(getBaseDocString(PET))
+	$(getModelDocString(PET))
 """
 PET

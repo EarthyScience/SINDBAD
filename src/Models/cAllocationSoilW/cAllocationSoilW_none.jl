@@ -18,7 +18,7 @@ purpose(::Type{cAllocationSoilW_none}) = "sets the moisture effect on allocation
 
 @doc """
 
-$(getBaseDocString(cAllocationSoilW_none))
+$(getModelDocString(cAllocationSoilW_none))
 
 ---
 

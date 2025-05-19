@@ -7,6 +7,6 @@ purpose(::Type{transpirationSupply}) = "Supply-limited transpiration"
 includeApproaches(transpirationSupply, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(transpirationSupply))
+	$(getModelDocString(transpirationSupply))
 """
 transpirationSupply

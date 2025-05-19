@@ -36,7 +36,7 @@ purpose(::Type{cFlow_simple}) = "combine all the effects that change the transfe
 
 @doc """
 
-$(getBaseDocString(cFlow_simple))
+$(getModelDocString(cFlow_simple))
 
 ---
 

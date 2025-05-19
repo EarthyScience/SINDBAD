@@ -18,7 +18,7 @@ Runs the SINDBAD Terrestrial Ecosystem Model (TEM) for a single location, with o
 # Returns:
 - `land_time_series`: A vector of SINDBAD land states for each time step after the model simulation.
 """
-coreTEM
+function coreTEM end
 
 function coreTEM(selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_land, tem_info, spinup_mode)
 
@@ -79,7 +79,7 @@ land_time_series = runTEM(selected_models, forcing, loc_spinup_forcing, loc_forc
 land_time_series = runTEM(selected_models, forcing, nothing, loc_forcing_t, loc_land, tem_info)
 ```
 """
-runTEM
+function runTEM end
 
 function runTEM(forcing::NamedTuple, info::NamedTuple)
     run_helpers = prepTEM(forcing, info)
@@ -140,7 +140,7 @@ timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land_time_series, land,
 timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land_time_series, land, tem_info, DoDebugModel())
 ```
 """
-timeLoopTEM
+function timeLoopTEM end
 
 function timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land_time_series, land, tem_info, ::DoNotDebugModel) # do not debug the models
     for ts ∈ 1:tem_info.n_timesteps

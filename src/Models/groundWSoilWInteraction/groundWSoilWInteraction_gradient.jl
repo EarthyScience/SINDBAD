@@ -62,7 +62,7 @@ purpose(::Type{groundWSoilWInteraction_gradient}) = "calculates a buffer storage
 
 @doc """
 
-$(getBaseDocString(groundWSoilWInteraction_gradient))
+$(getModelDocString(groundWSoilWInteraction_gradient))
 
 ---
 

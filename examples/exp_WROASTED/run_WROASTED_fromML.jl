@@ -44,7 +44,7 @@ for site_index in sites
         end_year = "2019"
         ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
     end
-    ml_param_file = joinpath(ml_main_dir, "sindbad_raw_set1/fluxnetBGI2021.BRK15.DD", dataset, domain, "optimization", "optimized_Params_FLUXNET_pcmaes_FLUXNET2015_daily_$(domain).json")
+    ml_parameter_file = joinpath(ml_main_dir, "sindbad_raw_set1/fluxnetBGI2021.BRK15.DD", dataset, domain, "optimization", "optimized_Params_FLUXNET_pcmaes_FLUXNET2015_daily_$(domain).json")
     ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(begin_year).$(end_year).daily.nc")
 
     ml_data_path = joinpath(ml_main_dir, "sindbad_raw_set1/fluxnetBGI2021.BRK15.DD", dataset, domain, "modelOutput")
@@ -133,21 +133,17 @@ for site_index in sites
     forcing = getForcing(info)
 
     ### update the model parameters with values from matlab optimization
-    tbl_params = getParameters(info.models.forward,
-        info.optimization.model_parameter_default,
-        info.optimization.model_parameters_to_optimize,
-        info.helpers.numbers.num_type,
-        info.helpers.dates.temporal_resolution)
-    opt_params = tbl_params.optim
-    param_names = tbl_params.name_full
-    param_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
+parameter_table = info.optimization.parameter_table;
+    opt_params = parameter_table.optimized
+    parameter_names = parameter_table.name_full
+    parameter_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
 
-    if isfile(ml_param_file)
-        ml_params = Sindbad.parsefile(ml_param_file; dicttype=Sindbad.DataStructures.OrderedDict)["parameter"]
+    if isfile(ml_parameter_file)
+        ml_params = Sindbad.parsefile(ml_parameter_file; dicttype=Sindbad.DataStructures.OrderedDict)["parameter"]
 
         for opi in eachindex(opt_params)
-            jl_name = param_names[opi]
-            ml_name = param_maps[jl_name]
+            jl_name = parameter_names[opi]
+            ml_name = parameter_maps[jl_name]
             println(jl_name, "=>", ml_name)
             ml_model = split(ml_name, ".")[1]
             ml_p = split(ml_name, ".")[2]
@@ -157,14 +153,10 @@ for site_index in sites
             @show opt_params[opi], "new"
             @info "\n------------------------------------------------\n"
         end
-        models_with_matlab_params = updateModelParameters(tbl_params, info.models.forward, opt_params)
+        models_with_matlab_params = updateModelParameters(parameter_table, info.models.forward, opt_params)
 
 
-        tbl_params_2 = getParameters(models_with_matlab_params,
-            info.optimization.model_parameter_default,
-            info.optimization.model_parameters_to_optimize,
-            info.helpers.numbers.num_type,
-            info.helpers.dates.temporal_resolution)
+        parameter_table_2 = info.optimization.parameter_table;
 
         ## run the model
 

@@ -22,17 +22,34 @@ const settingsItems = [
 ]
 
 const codeItems = [
-  { text: 'Sindbad', link: '/pages/code/sindbad' },
+  { text: 'Sindbad', link: '/pages/code/overview' },
+  { text: ' + Core', link: '/pages/code/sindbad' },
+  { text: ' \u00A0\u00A0++ Models', link: '/pages/code/models' },
+  { text: ' \u00A0\u00A0++ Types', link: '/pages/code/types' },
   { text: ' + Data', link: '/pages/code/data' },
   { text: ' + Experiment', link: '/pages/code/experiment' },
   { text: ' + Metrics', link: '/pages/code/metrics' },
   { text: ' + ML', link: '/pages/code/ml' },
-  { text: ' + Models', link: '/pages/code/models' },
   { text: ' + Optimization', link: '/pages/code/optimization' },
   { text: ' + Setup', link: '/pages/code/setup' },
   { text: ' + TEM', link: '/pages/code/tem' },
   { text: ' + Utils', link: '/pages/code/utils' },
   { text: ' + Visuals', link: '/pages/code/visuals' }
+]
+
+const codeGenItems = [
+  { text: 'Sindbad', link: '/pages/code_gen/Sindbad' },
+  { text: ' + Core', link: '/pages/code_gen/Sindbad' },
+  { text: ' + Data', link: '/pages/code_gen/SindbadData' },
+  { text: ' + Experiment', link: '/pages/code_gen/SindbadExperiment' },
+  { text: ' + Metrics', link: '/pages/code_gen/SindbadMetrics' },
+  { text: ' + ML', link: '/pages/code_gen/SindbadML' },
+  { text: ' + Models', link: '/pages/code_gen/SindbadModels' },
+  { text: ' + Optimization', link: '/pages/code_gen/SindbadOptimization' },
+  { text: ' + Setup', link: '/pages/code_gen/SindbadSetup' },
+  { text: ' + TEM', link: '/pages/code_gen/SindbadTEM' },
+  { text: ' + Utils', link: '/pages/code_gen/SindbadUtils' },
+  // { text: ' + Visuals', link: '/pages/code_gen/SindbadVisuals' }
 ]
 const aboutItems = [
   { text: 'Contact', link: '/pages/about/contact' },
@@ -43,24 +60,35 @@ const aboutItems = [
 ]
 
 const manualItems = [
-  { text: 'Array Handling', link: '/pages/manual/array_handling' },
-  { text: 'Experiments', link: '/pages/manual/experiments' },
-  { text: 'Modeling Convention', link: '/pages/manual/conventions' },
-  { text: 'Spinup', link: '/pages/manual/spinup' },
-  { text: 'Toy Model', link: '/pages/manual/toy_model' },
-  { text: 'Install', link: '/pages/manual/install' },
+  { text: 'Overview', link: '/pages/develop/overview' },
+  { text: 'Install', link: '/pages/develop/install' },
+  { text: 'Modeling Convention', link: '/pages/develop/conventions' },
+  { text: 'Model/Approach', link: '/pages/develop/model_approach' },
+  { text: 'Sindbad Types', link: '/pages/develop/sindbad_types' },
+  { text: 'Array Handling', link: '/pages/develop/array_handling' },
+  { text: 'Land Utils', link: '/pages/develop/land_utils' },
+  { text: 'Experiments', link: '/pages/develop/experiments' },
+  { text: 'Spinup', link: '/pages/develop/spinup' },
+  { text: 'Optimization Methods', link: '/pages/develop/optimization_method' },
+  { text: 'Cost Metrics', link: '/pages/develop/cost_metrics' },
+  { text: 'Cost Function', link: '/pages/develop/cost_function' },
+  { text: 'Documentation', link: '/pages/develop/how_to_doc' },
+  { text: 'Useful Helpers', link: '/pages/develop/helpers' },
 ]
 
 const navTemp = {
   nav: [
     { text: 'Concept', items: conceptItems,
     },
-    { text: 'Manual', items: manualItems,
-    },
     { text: 'Settings',  items: settingsItems, 
     },
-   { text: 'Code', 
+    { text: 'Code', 
       items: codeItems,
+    },
+    // { text: 'CodeGen',
+    //   items: codeGenItems,
+    // },
+    { text: 'Develop', items: manualItems,
     },
     { text: 'About', 
       items: aboutItems
@@ -78,7 +106,7 @@ const nav = [
 const sidebar = [
   { text: 'Concept', items: conceptItems,
   },
-    { text: 'Manual', items: manualItems,
+    { text: 'Develop', items: manualItems,
   },
   { text: 'Settings',  items: settingsItems,
   },
@@ -86,17 +114,21 @@ const sidebar = [
     collapsed: true,
     items: codeItems
   },
+  // { text: 'CodeGen',
+  //   collapsed: true,
+  //   items: codeGenItems
+  // },
   { text: 'About',
     items: aboutItems
   },
 ]
 
 export default defineConfig({
-  base: '/Sindbad/',
+  base: '/',
   title: "SINDBAD",
-  description: "A model data integration framework",
+  description: "A model-data integration framework for terrestrial ecosystem processes",
   lastUpdated: true,
-  cleanUrls: true,
+  cleanUrls: false,
   ignoreDeadLinks: true,
   outDir: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
   
@@ -140,7 +172,7 @@ export default defineConfig({
 
   themeConfig: {
     outline: 'deep',
-    logo: { src: '/logo.png', width: 24, height: 24 },
+    logo: { src: '/sindbad_logo.png', width: 24, height: 24 },
     search: {
           provider: 'local',
           options: {
@@ -159,8 +191,8 @@ export default defineConfig({
       },
     ],
     footer: {
-      message: '<a href="https://www.bgc-jena.mpg.de/en" target="_blank"><img src="logo_mpi_grey.png" class="footer-logo" alt="MPI Logo"/></a>',
-      copyright: '<span>Powered by the <a href="https://julialang.org" target="_blank">Julia Programming Language</a></span><span>© Copyright 2023 <strong>SINDBAD Development Team</strong></span>'
+      message: '<a href="https://www.bgc-jena.mpg.de/en" target="_blank"><img src="/logo_mpi_grey.png" class="footer-logo" alt="MPI Logo"/></a>',
+      copyright: '© Copyright 2025 <strong> SINDBAD Development Team</strong></span>'
     }
   }
 })

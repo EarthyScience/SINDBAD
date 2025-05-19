@@ -1,35 +1,26 @@
 export optimizer
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, algorithm <:SindbadOptimizationMethod)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, algorithm <: OptimizationMethod)
 
 Optimize model parameters using various optimization algorithms.
 
 # Arguments:
-- `cost_function`: A function handle that takes a parameter vector as input and calculates a cost/loss (scalar or vector).
-- `default_values`: A vector of default parameter values to initialize the optimization.
-- `lower_bounds`: A vector of lower bounds for the parameters.
-- `upper_bounds`: A vector of upper bounds for the parameters.
-- `algo_options`: A set of options specific to the chosen optimization algorithm.
-- `algorithm <:SindbadOptimizationMethod`: The optimization algorithm to be used. Supported algorithms include:
-    - `BayesOptKMaternARD5`: Uses the kMaternARD5 method from the BayesOpt.jl package.
-    - `CMAEvolutionStrategyCMAES`: Uses the CMAES method from the CMAEvolutionStrategy.jl package.
-    - `EvolutionaryCMAES`: Uses the CMAES method from the Evolutionary.jl package.
-    - `OptimLBFGS`: Uses the LBFGS method from the Optim.jl package.
-    - `OptimBFGS`: Uses the BFGS method from the Optim.jl package.
-    - `OptimizationBBOxnes`: Uses the Black Box Optimization (xNES) method from the Optimization.jl package.
-    - `OptimizationBBOadaptive`: Uses the Black Box Optimization (adaptive) method from the Optimization.jl package.
-    - `OptimizationBFGS`: Uses the BFGS method from the Optimization.jl package.
-    - `OptimizationFminboxGradientDescent`: Uses the Fminbox Gradient Descent method from the Optimization.jl package.
-    - `OptimizationFminboxGradientDescentFD`: Uses the Fminbox Gradient Descent method with forward differentiation from the Optimization.jl package.
-    - `OptimizationGCMAESDef`: Uses the GCMAES method from the Optimization.jl package.
-    - `OptimizationGCMAESFD`: Uses the GCMAES method with forward differentiation from the Optimization.jl package.
-    - `OptimizationMultistartOptimization`: Uses the Multistart Optimization method from the Optimization.jl package.
-    - `OptimizationNelderMead`: Uses the Nelder-Mead method from the Optimization.jl package.
-    - `OptimizationQuadDirect`: Uses the QuadDIRECT method from the Optimization.jl package.
+  - `cost_function`: A function handle that takes a parameter vector as input and calculates a cost/loss (scalar or vector).
+  - `default_values`: A vector of default parameter values to initialize the optimization.
+  - `lower_bounds`: A vector of lower bounds for the parameters.
+  - `upper_bounds`: A vector of upper bounds for the parameters.
+  - `algo_options`: A set of options specific to the chosen optimization algorithm.
+  - `algorithm`: The optimization algorithm to be used.
 
 # Returns:
 - `optim_para`: A vector of optimized parameter values.
+
+# algorithm:
+    
+    $(methodsOf(OptimizationMethod))
+
+---
 
 # Extended help
 
@@ -61,7 +52,7 @@ optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds
 - Each algorithm has its own implementation details, such as handling bounds, configuring options, and solving the optimization problem.
 - The results are processed to extract the optimized parameter vector (`optim_para`), which is returned to the user.
 """
-optimizer
+function optimizer end
 
 function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::BayesOptKMaternARD5)
     config = ConfigParameters()   # calls initialize_parameters_to_default of the C API

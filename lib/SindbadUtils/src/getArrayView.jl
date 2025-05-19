@@ -23,7 +23,7 @@ Creates a view of the input array `_dat` based on the provided indices tuple `in
 # Error Handling:
 - Throws an error if the dimensionality of `_dat` is less than the size of `inds`.
 """
-getArrayView
+function getArrayView end
 
 function getArrayView(_dat::AbstractArray{<:Any,N}, inds::Tuple{Int}) where N
     if N == 1

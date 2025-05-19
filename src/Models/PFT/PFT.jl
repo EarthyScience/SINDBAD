@@ -7,6 +7,6 @@ purpose(::Type{PFT}) = "Vegetation PFT"
 includeApproaches(PFT, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(PFT))
+	$(getModelDocString(PFT))
 """
 PFT

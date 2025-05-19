@@ -14,14 +14,14 @@ re_structure, flat_weights = load("./output_FLUXNET_Hybrid/train_sujan/seq_train
 
 nn_model = re_structure(flat_weights)
 
-c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
+c = Cube(joinpath(@__DIR__, "$(getSindbadDataDepot())/fluxnet_cube/fluxnet_covariates.zarr")); #"/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr"
 xfeatures = yaxCubeToKeyedArray(c)
 
 new_nn_parameters = nn_model(xfeatures)
 new_params = new_nn_parameters(; site = domain) # unbounded, see later the scaling
 
 # domain = "MY-PSO"
-path_input = "../data/fn/$(domain).1979.2017.daily.nc"
+path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
 
 path_observation = path_input
@@ -58,15 +58,15 @@ run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
+parameter_table = info.optimization.parameter_table;
 
-# new_params = tbl_params.default;
-new_params = getParamsAct(new_params, tbl_params)
+# new_params = parameter_table.initial;
+new_params = getParamsAct(new_params, parameter_table)
 
 models = info.models.forward;
-param_to_index = getParameterIndices(models, tbl_params);
+parameter_to_index = getParameterIndices(models, parameter_table);
 
-new_models = updateModelParameters(param_to_index, models, new_params)
+new_models = updateModelParameters(parameter_to_index, models, new_params)
 
 @time runTEM!(new_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 

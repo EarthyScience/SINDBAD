@@ -7,6 +7,6 @@ purpose(::Type{gppVPD}) = "Vpd effect"
 includeApproaches(gppVPD, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(gppVPD))
+	$(getModelDocString(gppVPD))
 """
 gppVPD

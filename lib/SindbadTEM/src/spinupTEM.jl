@@ -4,37 +4,6 @@ export spinup
 export spinupTEM
 export timeLoopTEMSpinup
 
-struct Spinup_TWS{M,F,T,I,O,N}
-    models::M
-    forcing::F
-    tem_info::T
-    land::I
-    loc_forcing_t::O
-    n_timesteps::N
-end
-
-struct Spinup_cEco_TWS{M,F,T,I,O,N,TWS}
-    models::M
-    forcing::F
-    tem_info::T
-    land::I
-    loc_forcing_t::O
-    n_timesteps::N
-    TWS::TWS
-end
-
-
-struct Spinup_cEco{M,F,T,I,O,N}
-    models::M
-    forcing::F
-    tem_info::T
-    land::I
-    loc_forcing_t::O
-    n_timesteps::N
-end
-
-
-
 """
     (cEco_spin::Spinup_cEco)(pout, p)
 
@@ -194,7 +163,7 @@ end
 
 
 """
-    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, spinup_mode::SindbadSpinupMethod)
+    spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, spinup_mode::SpinupMode)
 
 Runs the spinup process for the SINDBAD Terrestrial Ecosystem Model (TEM) to initialize the model to a steady state. The spinup process updates the state variables (e.g., pools) using various spinup methods.
 
@@ -205,22 +174,16 @@ Runs the spinup process for the SINDBAD Terrestrial Ecosystem Model (TEM) to ini
 - `land`: A SINDBAD NamedTuple containing all variables for a given time step, which is overwritten at every timestep.
 - `tem_info`: A helper NamedTuple containing necessary objects for model execution and type consistencies.
 - `n_timesteps`: The number of timesteps for the spinup process.
-- `spinup_mode::SindbadSpinupMethod`: A type dispatch that determines the spinup method to be used. Supported modes include:
-    - `SelSpinupModels`: Runs only the models selected for spinup in the model structure. This excludes models that are not used in the spinup process by setting use_in_spinup as `false` in model_structure.json.
-    - `AllForwardModels`: Runs all models in the forward mode.
-    - `NlsolveFixedpointTrustregionTWS`: Uses a fixed-point solver with trust region for Total Water Storage (TWS).
-    - `NlsolveFixedpointTrustregionCEco`: Uses a fixed-point solver with trust region for carbon pools (cEco).
-    - `NlsolveFixedpointTrustregionCEcoTWS`: Uses a fixed-point solver with trust region for both cEco and TWS.
-    - `ODETsit5`: Uses the Tsit5 method from DifferentialEquations.jl for solving ODEs.
-    - `ODEDP5`: Uses the DP5 method from DifferentialEquations.jl for solving ODEs.
-    - `ODEAutoTsit5Rodas5`: Uses the AutoVern7(Rodas5) method from DifferentialEquations.jl for solving ODEs.
-    - `SSPDynamicSSTsit5`: Uses the SteadyState solver with DynamicSS and Tsit5 methods.
-    - `SSPSSRootfind`: Uses the SteadyState solver with SSRootfind method.
-    - `EtaScaleAH`: Scales carbon pools using diagnostic scalars for ηH and ηA.
-    - `EtaScaleA0H`: Scales carbon pools using diagnostic scalars for ηH and c_remain.
+- `spinup_mode::SpinupMode`: A type dispatch that determines the spinup method to be used. 
 
 # Returns:
 - `land`: The updated SINDBAD NamedTuple containing the final state of the model after the spinup process.
+
+$(methodsOf(SpinupMode))
+
+---
+
+# Extended help
 
 # Notes:
 - The spinup process can use different methods depending on the `spinup_mode`, including fixed-point solvers, ODE solvers, and steady-state solvers.
@@ -249,7 +212,7 @@ land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_ti
 land = spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, SSPSSRootfind())
 ```
 """
-spinup
+function spinup end
 
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::SelSpinupModels)
     land = timeLoopTEMSpinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps)
@@ -336,6 +299,33 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleAH)
 end
 
 
+function spinup(_, _, _, land, helpers, _, ::EtaScaleAHCWD)
+    @unpack_nt cEco ⇐ land.pools
+    helpers = helpers.model_helpers
+    cEco_prev = copy(cEco)
+    ηH = one(eltype(cEco))
+    if :ηH ∈ propertynames(land.diagnostics)
+        ηH = land.diagnostics.ηH
+    end
+    ηA = one(eltype(cEco))
+    if :ηA ∈ propertynames(land.diagnostics)
+        ηA = land.diagnostics.ηA
+    end
+    for cLitZix ∈ helpers.pools.zix.cLitSlow
+        cLitNew = cEco[cLitZix] * ηH
+        @rep_elem cLitNew ⇒ (cEco, cLitZix, :cEco)
+    end
+    for cVegZix ∈ helpers.pools.zix.cVeg
+        cVegNew = cEco[cVegZix] * ηA
+        @rep_elem cVegNew ⇒ (cEco, cVegZix, :cEco)
+    end
+    @pack_nt cEco ⇒ land.pools
+    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    @pack_nt cEco_prev ⇒ land.states
+    return land
+end
+
+
 function spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     @unpack_nt cEco ⇐ land.pools
     helpers = helpers.model_helpers
@@ -368,6 +358,34 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     return land
 end
 
+
+function spinup(_, _, _, land, helpers, _, ::EtaScaleA0HCWD)
+    @unpack_nt cEco ⇐ land.pools
+    helpers = helpers.model_helpers
+    cEco_prev = copy(cEco)
+    ηH = one(eltype(cEco))
+    c_remain = one(eltype(cEco))
+    if :ηH ∈ propertynames(land.diagnostics)
+        ηH = land.diagnostics.ηH
+        c_remain = land.states.c_remain
+    end
+
+    for cLitZix ∈ helpers.pools.zix.cLitSlow
+        cLitNew = cEco[cLitZix] * ηH
+        @rep_elem cLitNew ⇒ (cEco, cLitZix, :cEco)
+    end
+
+    for cVegZix ∈ helpers.pools.zix.cVeg
+        cLoss = maxZero(cEco[cVegZix] - c_remain)
+        cVegNew = cEco[cVegZix] - cLoss
+        @rep_elem cVegNew ⇒ (cEco, cVegZix, :cEco)
+    end
+
+    @pack_nt cEco ⇒ land.pools
+    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    @pack_nt cEco_prev ⇒ land.states
+    return land
+end
 
 function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_timesteps, ::ODEAutoTsit5Rodas5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
@@ -490,7 +508,7 @@ log_index = 1
 land = setSpinupLog(land, log_index, DoNotStoreSpinup())
 ```
 """
-setSpinupLog
+function setSpinupLog end
 
 function setSpinupLog(land, log_index, ::DoStoreSpinup)
     land.states.spinuplog[log_index] = land.pools
@@ -558,7 +576,7 @@ function spinupSequenceLoop(spinup_models, sel_forcing, loc_forcing_t, land, tem
             tem_info,
             n_timesteps,
             spinup_mode)
-        # land = setSpinupLog(land, log_loop, tem_info.run.store_spinup)
+        land = setSpinupLog(land, log_loop, tem_info.run.store_spinup)
         log_loop += 1
     end
     return land
@@ -587,10 +605,11 @@ The main spinup function that handles the spinup method based on inputs from spi
 - When `DoNotSpinupTEM` is used:
     - The function skips the spinup process returns the land as is`
 """
-spinupTEM
+function spinupTEM end
 
 function spinupTEM(selected_models, spinup_forcings, loc_forcing_t, land, tem_info, ::DoSpinupTEM)
-    log_index = 1
+    land = setSpinupLog(land, 1, tem_info.run.store_spinup)
+    log_index = 2
     for spin_seq ∈ tem_info.spinup_sequence
         forc_name = spin_seq.forcing
         n_timesteps = spin_seq.n_timesteps

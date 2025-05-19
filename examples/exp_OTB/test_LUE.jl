@@ -10,7 +10,7 @@ end_year = "2017"
 
 domain = "US-SRM"
 # domain = "MY-PSO"
-path_input = "../data/fn/$(domain).1979.2017.daily.nc"
+path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
 
 path_observation = path_input
@@ -46,7 +46,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
-# tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
+# parameter_table = info.optimization.parameter_table;
 
 
 
@@ -77,7 +77,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 # param = lb + (ub - lb) * scalar
 
 
-# tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution)
+# parameter_table = info.optimization.parameter_table;
 
 
 # @time output_cost = runExperimentCost(experiment_json; replace_info=replace_info);
@@ -127,7 +127,7 @@ foreach(costOpt) do var_row
     metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
     plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
-    plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
+    plot!(xdata, def_var, color=:steelblue2, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
+    plot!(xdata, opt_var; color=:seagreen3, label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.dirs.figure, "OTB_$(domain)_$(v).png"))
 end

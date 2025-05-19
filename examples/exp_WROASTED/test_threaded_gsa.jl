@@ -18,12 +18,12 @@ mod_step = "day"
 # mod_step = "hour"
 # foreach(["day", "hour"]) do mod_step
 if mod_step == "day"
-    path_input = "../data/fn/$(domain).1979.2017.daily.nc"
+    path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
     forcing_config = "forcing_erai.json"
     optimization_config = "optimization.json"
 else
     mod_step
-    path_input = "../data/fn/$(domain).1999.2010.hourly_for_Sindbad.nc"
+    path_input = "$(getSindbadDataDepot())/fn/$(domain).1999.2010.hourly_for_Sindbad.nc"
     forcing_config = "forcing_hourly.json"
     optimization_config = "optimization_hourly.json"
 end
@@ -66,31 +66,31 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 
 out_sensitivity = runExperimentSensitivity(experiment_json; replace_info=replace_info, log_level=:info);
 info = out_sensitivity.info;
-param_names=String.(out_sensitivity.tbl_params.name);
+parameter_names=String.(out_sensitivity.parameter_table.name);
 
-sa_method = nameof(typeof(info.optimization.algorithm_sensitivity_analysis.method))
-if sa_method in (:GlobalSensitivitySobol, :GlobalSensitivitySobolDM)
+sa_method = nameof(typeof(info.optimization.sensitivity_analysis.method))
+if sa_method in (:GSASobol, :GSASobolDM)
     sobol_result = out_sensitivity.sensitivity;
-    xt=1:length(param_names)
+    xt=1:length(parameter_names)
     pb = bar(xt, sobol_result.ST[:, :], label="Total",
-        title = "Sobol Indices", legend = true, size=(2000, 1000), xticks=(xt, param_names), xrotation=90,fontsize=18,layout=(2,1))
-    bar!(xt, sobol_result.S1[:, :], label="First", legend = true, size=(2000, 1000), xticks=(xt, param_names), xrotation=90,fontsize=18, subplot=2)
+        title = "Sobol Indices", legend = true, size=(2000, 1000), xticks=(xt, parameter_names), xrotation=90,fontsize=18,layout=(2,1))
+    bar!(xt, sobol_result.S1[:, :], label="First", legend = true, size=(2000, 1000), xticks=(xt, parameter_names), xrotation=90,fontsize=18, subplot=2)
     savefig(joinpath(info.output.dirs.figure, "GSA_$(sa_method)_S1-ST_$(domain)_$(length(out_sensitivity.cost_vector))-cost_evals.png"))
     s2=deepcopy(sobol_result.S2)
     s2[s2.==0] .= NaN
-    ph=heatmap(s2; title="S2" , size=(1500, 1500), xticks=(xt, param_names), xrotation=90,fontsize=18, yticks=(xt, param_names))
+    ph=heatmap(s2; title="S2" , size=(1500, 1500), xticks=(xt, parameter_names), xrotation=90,fontsize=18, yticks=(xt, parameter_names))
     savefig(joinpath(info.output.dirs.figure, "GSA_$(sa_method)_S2_$(domain)_$(length(out_sensitivity.cost_vector))-cost_evals.png"))    
 end
 
-if sa_method in (:GlobalSensitivityMorris, )
+if sa_method in (:GSAMorris, )
     morris_result = out_sensitivity.sensitivity;
-    xt=1:length(param_names)
-    ps=scatter(morris_result.means[1, :], morris_result.variances[1, :], series_annotations = param_names, color = :gray, size=(2000, 1000))
+    xt=1:length(parameter_names)
+    ps=scatter(morris_result.means[1, :], morris_result.variances[1, :], series_annotations = parameter_names, color = :gray, size=(2000, 1000))
     savefig(joinpath(info.output.dirs.figure, "GSA_$(sa_method)_scatter_$(domain)_$(length(out_sensitivity.cost_vector))-cost_evals.png"))    
     pb = bar(xt, morris_result.means[1, :], label="Means",
-        title = "Morris Means", legend = true, size=(2000, 1000), xticks=(xt, param_names), xrotation=90,fontsize=18,layout=(2,1))
+        title = "Morris Means", legend = true, size=(2000, 1000), xticks=(xt, parameter_names), xrotation=90,fontsize=18,layout=(2,1))
     bar!(xt, morris_result.variances[1, :], label="Variances",
-        title = "Morris Variances", legend = true, size=(2000, 1000), xticks=(xt, param_names), xrotation=90,fontsize=18,subplot=2)
+        title = "Morris Variances", legend = true, size=(2000, 1000), xticks=(xt, parameter_names), xrotation=90,fontsize=18,subplot=2)
     savefig(joinpath(info.output.dirs.figure, "GSA_$(sa_method)_bar_$(domain)_$(length(out_sensitivity.cost_vector))-cost_evals.png"))
 end
 
@@ -100,11 +100,11 @@ observations = getObservation(info, forcing.helpers);
 
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
-opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method; algorithm_info_field=:algorithm_sensitivity_analysis);
+opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.run_options.cost_method; algorithm_info_field=:sensitivity_analysis);
 
 cost_function = opti_helpers.cost_function
 p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds));
-method_options = info.optimization.algorithm_sensitivity_analysis.options;
+method_options = info.optimization.sensitivity_analysis.options;
 
 sampler = getproperty(SindbadOptimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options..., method_options.method_options... )
 results = gsa(cost_function, sampler, p_bounds; method_options..., batch=true)

@@ -13,11 +13,11 @@ function compute(params::NDVI_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{NDVI_forcing}) = "sets the value of land.states.NDVI from the forcing in every time step"
+purpose(::Type{NDVI_forcing}) = "sets land.states.NDVI from forcing"
 
 @doc """
 
-$(getBaseDocString(NDVI_forcing))
+$(getModelDocString(NDVI_forcing))
 
 ---
 

@@ -18,25 +18,11 @@ function compute(params::cVegetationDieOff_forcing, forcing, land, helpers)
     return land
 end
 
+purpose(::Type{cVegetationDieOff_forcing}) = "reads and passes along to the land diagnostics the fraction of vegetation pools that die off "
+
 @doc """
-reads and passes along to the land diagnostics the fraction of vegetation pools that die off 
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-nothing
-
-*Inputs*
- - f_dist_intensity -> bad name... f_veg_dieoff
-
-*Outputs*
-
-# update
-
-- c_fVegDieOff ⇒ land.diagnostics
+$(getModelDocString(cVegetationDieOff_forcing))
 
 ---
 

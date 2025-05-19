@@ -1,5 +1,5 @@
-export gradientPolyester
-export gradientBatchPolyester!
+export gradientSite
+export gradientBatch!
 export mixedGradientTraining
 export gradsNaNCheck!
 export loadTrainedNN
@@ -22,7 +22,7 @@ Training function that computes model parameters using a neural network, which a
 function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, total_constraints, loss_fargs, forward_args;
     n_epochs=3, optimizer=Optimisers.Adam(), path_experiment="/")
     
-    sites_training, indices_sites_training, xfeatures, tbl_params, batch_size, chunk_size, metadata_global = train_refs
+    sites_training, indices_sites_training, xfeatures, parameter_table, batch_size, chunk_size, metadata_global = train_refs
     sites_validation, indices_sites_validation, sites_testing, indices_sites_testing = test_val_refs
 
     lossSite, getInnerArgs = loss_fargs
@@ -48,18 +48,18 @@ function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, t
             grads_batch = zeros(Float32, n_params, length(sites_batch))
             x_feat_batch = xfeatures(; site=sites_batch)
             new_params, pullback_func = getPullback(flat, re, x_feat_batch)
-            _params_batch = getParamsAct(new_params, tbl_params)
+            _params_batch = getParamsAct(new_params, parameter_table)
 
             input_args = (_params_batch, forward_args..., indices_sites_batch, sites_batch)
-            gradientBatchPolyester!(grads_lib, grads_batch, chunk_size, lossSite, getInnerArgs, input_args...)
-            gradsNaNCheck!(grads_batch, _params_batch, sites_batch, tbl_params) #? checks for NaNs and if any replace them with 0.0f0
+            gradientBatch!(grads_lib, grads_batch, chunk_size, lossSite, getInnerArgs, input_args...)
+            gradsNaNCheck!(grads_batch, _params_batch, sites_batch, parameter_table) #? checks for NaNs and if any replace them with 0.0f0
             # Jacobian-vector product
             ∇params = pullback_func(grads_batch)[1]
             opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
         end
         # calculate losses for all sites!
         _params_epoch = re(flat)(xfeatures)
-        params_epoch = getParamsAct(_params_epoch, tbl_params)
+        params_epoch = getParamsAct(_params_epoch, parameter_table)
         getLossForSites(grads_lib, lossSite, loss_training, loss_split_training, epoch, params_epoch, sites_training, indices_sites_training, forward_args...)
         # ? validation
         getLossForSites(grads_lib, lossSite, loss_validation, loss_split_validation, epoch, params_epoch, sites_validation, indices_sites_validation, forward_args...)
@@ -67,8 +67,8 @@ function mixedGradientTraining(grads_lib, nn_model, train_refs, test_val_refs, t
         getLossForSites(grads_lib, lossSite, loss_testing, loss_split_testing, epoch, params_epoch, sites_testing, indices_sites_testing, forward_args...)
 
         jldsave(joinpath(f_path, "checkpoint_epoch_$(epoch).jld2");
-            lower_bound=tbl_params.lower, upper_bound=tbl_params.upper, ps_names=tbl_params.name,
-            tbl_params=tbl_params,
+            lower_bound=parameter_table.lower, upper_bound=parameter_table.upper, ps_names=parameter_table.name,
+            parameter_table=parameter_table,
             metadata_global=metadata_global,
             loss_training=loss_training[:, epoch],
             loss_validation=loss_validation[:, epoch],
@@ -93,25 +93,32 @@ function batchShuffler(x_forcings, ids_forcings, batch_size; bs_seed=1456)
     return x_batches, ids_batches
 end
 
-"""
-    gradientPolyester(grads_lib::ForwardDiffGrad, x_vals, chunk_size::Int, loss::F, args...)
 
-Computes gradients using `PolyesterForwardDiff.jl` for multi-threaded chunk splits. The optimal speed is ideally achieved with `one thread` when `chunk_size=1` and `n-threads` for `n` parameters.
-However, a good compromise between memory allocations and speed could be to set `chunk_size=3` and use `n-threads` for `2n parameters`.
+# https://juliateachingctu.github.io/Scientific-Programming-in-Julia/dev/lecture_08/lecture/
+
+"""
+    gradientSite(grads_lib, x_vals, chunk_size::Int, loss::F, args...)
+
+Computes gradients using different libraries for a site
 
 # Arguments
-- `grads_lib`: uses ForwardDiff.jl for gradients computation.
+- `grads_lib`:
+    - PolyesterForwardDiffGrad: using `PolyesterForwardDiff.jl` for multi-threaded chunk splits. The optimal speed is ideally achieved with `one thread` when `chunk_size=1` and `n-threads` for `n` parameters. However, a good compromise between memory allocations and speed could be to set `chunk_size=3` and use `n-threads` for `2n parameters`. !!! warning
+    For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropriate `chunk_size`.
+
+    - ForwardDiffGrad: uses ForwardDiff.jl for gradients computation.
+    - FiniteDiffGrad: uses FiniteDiff.jl for gradients computation.
+    - FiniteDifferencesGrad: uses FiniteDifferences.jl for gradients computation.
 - `x_vals`: parameters values.
 - `chunk_size`: Int, chunk size for PolyesterForwardDiff's threads.
 - `loss_f`: loss function to be applied.
 - `args...`: additional arguments for the loss function.
 
-!!! warning
-    For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropriate `chunk_size`.
-
 Returns: a `∇x` array with all parameter's gradients.
 """
-function gradientPolyester(grads_lib::ForwardDiffGrad, x_vals, chunk_size::Int, loss_f::F, args...) where {F}
+function gradientSite end
+
+function gradientSite(grads_lib::PolyesterForwardDiffGrad, x_vals, chunk_size::Int, loss_f::F, args...) where {F}
     loss_tmp(x) = loss_f(x, grads_lib, args...)
     ∇x = similar(x_vals) # pre-allocate
     if occursin("arm64-apple-darwin", Sys.MACHINE) # fallback due to closure issues on M1 systems
@@ -123,13 +130,46 @@ function gradientPolyester(grads_lib::ForwardDiffGrad, x_vals, chunk_size::Int, 
     return ∇x
 end
 
+function gradientSite(grads_lib::ForwardDiffGrad, x_vals::AbstractArray, chunk_size::Int, loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    # cfg = ForwardDiff.GradientConfig(loss_tmp, x_vals, Chunk{chunk_size}());
+    return ForwardDiff.gradient(loss_tmp, x_vals)
+end
+
+function gradientSite(grads_lib::FiniteDiffGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    return FiniteDiff.finite_difference_gradient(loss_tmp, x_vals)
+end
+
+function gradientSite(grads_lib::FiniteDifferencesGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    gr_fds = FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1), loss_tmp, x_vals)
+    return gr_fds[1]
+end
+
+function gradientSite(grads_lib::ZygoteGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    return Zygote.gradient(loss_tmp, x_vals)
+end
+
+function gradientSite(grads_lib::EnzymeGrad, x_vals::AbstractArray, _,loss_f::F, args...) where {F}
+    # does not work with `Enzyme.gradient!` but is kept here as placeholder for future development
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    # Ensure x_vals is a mutable array (Vector)
+    x_vals = collect(copy(x_vals))  # Convert to a mutable array if necessary
+    # x_vals = copy(x_vals)
+    return Enzyme.gradient(Forward, loss_tmp, x_vals)
+end
+
 """
-    gradientBatchPolyester!(grads_lib::ForwardDiffGrad, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
+    gradientBatch!(grads_lib, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
 
 # Computes gradients for a batch of samples.
 
 # Arguments
-- `grads_lib`: uses ForwardDiff.jl for gradients computation.
+- `grads_lib`: 
+    - PolyesterForwardDiffGrad: uses PolyesterForwardDiff.jl for gradients computation.
+    - GradType: For all the other package based gradients.
 - `dx_batch`: pre-allocated array for batched gradients.
 - `chunk_size`: Int, chunk size for PolyesterForwardDiff's threads.
 - `loss_f`: loss function to be applied.
@@ -140,21 +180,42 @@ end
 A `n x m` matrix for `n parameters gradients` and `m` samples.
 
 """
-function gradientBatchPolyester!(grads_lib::ForwardDiffGrad, dx_batch, chunk_size::Int,
+function gradientBatch! end
+
+
+function gradientBatch!(grads_lib::PolyesterForwardDiffGrad, dx_batch, chunk_size::Int,
     loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
-    
     mapfun = showprog ? progress_pmap : pmap
     result = mapfun(CachingPool(workers()), axes(dx_batch, 2)) do idx
         x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)
-        gradientPolyester(grads_lib, x_vals, chunk_size, loss_f, inner_args...)
+        gradientSite(grads_lib, x_vals, chunk_size, loss_f, inner_args...)
     end
     for idx in axes(dx_batch, 2)
         dx_batch[:, idx] = result[idx]
     end
 end
 
+function gradientBatch!(grads_lib::GradType, dx_batch, chunk_size::Int, loss_f::F, get_inner_args::Function, input_args...; showprog=false) where {F}
+        # Threads.@spawn allows dynamic scheduling instead of static scheduling
+        # of Threads.@threads macro.
+        # See <https://github.com/JuliaLang/julia/issues/21017>
+
+        p = Progress(length(axes(dx_batch,2)); desc="Computing batch grads...", color=:cyan, enabled=showprog)
+        @sync begin
+            for idx ∈ axes(dx_batch, 2)
+                Threads.@spawn begin
+                    x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)
+                    gg = gradientSite(grads_lib, x_vals, chunk_size, loss_f, inner_args...)    
+                    dx_batch[:, idx] = gg
+                    next!(p)
+               end
+            end
+        end
+    end
+    
+
 """
-    gradsNaNCheck!(grads_batch, _params_batch, sites_batch, tbl_params; show_params_for_nan=false)
+    gradsNaNCheck!(grads_batch, _params_batch, sites_batch, parameter_table; show_params_for_nan=false)
 
 Utility function to check if some calculated gradients were NaN (if found please double check your approach).
 This function will replace those NaNs with 0.0f0.
@@ -163,18 +224,18 @@ This function will replace those NaNs with 0.0f0.
 - `grads_batch`: gradients array.
 - `_params_batch`: parameters values.
 - `sites_batch`: sites names.
-- `tbl_params`: parameters table.
+- `parameter_table`: parameters table.
 - `show_params_for_nan=false`: if true, it will show the parameters that caused the NaNs.
 """
-function gradsNaNCheck!(grads_batch, _params_batch, sites_batch, tbl_params; show_params_for_nan=false)
+function gradsNaNCheck!(grads_batch, _params_batch, sites_batch, parameter_table; show_params_for_nan=false)
     if sum(isnan.(grads_batch))>0
         if show_params_for_nan
             foreach(findall(x->isnan(x), grads_batch)) do ci
                 p_index_tmp, si = Tuple(ci)
                 site_name_tmp = sites_batch[si]
                 p_vec_tmp = _params_batch(site=site_name_tmp)
-                param_values =  Pair(tbl_params.name[p_index_tmp], (p_vec_tmp[p_index_tmp], tbl_params.lower[p_index_tmp], tbl_params.upper[p_index_tmp]))
-                @info "site: $site_name_tmp, parameter: $param_values"
+                parameter_values =  Pair(parameter_table.name[p_index_tmp], (p_vec_tmp[p_index_tmp], parameter_table.lower[p_index_tmp], parameter_table.upper[p_index_tmp]))
+                @info "site: $site_name_tmp, parameter: $parameter_values"
             end
         end
         @warn "NaNs in grads, replacing all by 0.0f0"

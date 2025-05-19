@@ -1,41 +1,22 @@
 export metric
 
-"""
-    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, <:SindbadMetric)
+@doc """
 
+    metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, <: PerfMetric)
 
-Calculate the metric from a given method.
+calculate the performance/loss metric for given observation and model simulation data stream
 
 # Arguments:
-- `y`: observation data
-- `yσ`: observational uncertainty data
-- `ŷ`: model simulation data/estimate
-- `::SindbadMetric`: a type that represents a metric to calculate the performance of a model. The following metrics are supported:
-    - `::MSE`: mean squared error. ``MSE = {|y - ŷ|}^2``
-    - `::NAME1R`: relatively normalized absolute mean error. ``NAME1R = \\frac{(|μ_ŷ - μ_y|)}{1 + μ_y}``
-    - `::NMAE1R`: relatively normalized mean absolute error. ``NMAE1R = \\frac{(mean(|y - ŷ|))}{1 + μ_y}``
-    - `::NNSE`: normalized Nash-Sutcliffe efficiency
-    - `::NNSEInv`: inverse of normalized Nash-Sutcliffe efficiency
-    - `::NNSEσ`: normalized Nash-Sutcliffe efficiency with uncertainty
-    - `::NNSEσInv`: inverse of normalized Nash-Sutcliffe efficiency with uncertainty
-    - `::NPcor`: normalized Pearson's correlation
-    - `::NPcorInv`: inverse of normalized Pearson's correlation
-    - `::NScor`: normalized Spearman's correlation
-    - `::NScorInv`: inverse of normalized Spearman's correlation
-    - `::NSE`: Nash-Sutcliffe efficiency
-    - `::NSEInv`: inverse of Nash-Sutcliffe efficiency
-    - `::NSEσ`: Nash-Sutcliffe efficiency with uncertainty
-    - `::NSEσInv`: inverse of Nash-Sutcliffe efficiency with uncertainty
-    - `::Pcor`: Pearson's correlation
-    - `::PcorInv`: inverse of Pearson's correlation
-    - `::Pcor2`: square of Pearson's correlation
-    - `::Pcor2Inv`: inverse of square of Pearson's correlation
-    - `::Scor`: Spearman's correlation
-    - `::ScorInv`: inverse of Spearman's correlation
-    - `::Scor2`: square of Spearman's correlation
-    - `::Scor2Inv`: inverse of square of Spearman's correlation
+  - `y`: observation data
+  - `yσ`: observational uncertainty data
+  - `ŷ`: model simulation data
+    
+# Returns:
+- `metric`: The calculated metric value
+
+$(methodsOf(PerfMetric))
 """
-metric
+function metric end
 
 function metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::MSE)
     return mean(abs2.(y .- ŷ))
@@ -66,7 +47,7 @@ function metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSE
 end
 
 function metric(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσ)
-    NSE_v = metric(y, yσ, ŷ, :NSEσ())
+    NSE_v = metric(y, yσ, ŷ, NSEσ())
     NNSE = one(eltype(ŷ)) / (one(eltype(ŷ)) + one(eltype(ŷ)) - NSE_v)
     return NNSE
 end

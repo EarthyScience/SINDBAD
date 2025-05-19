@@ -7,7 +7,7 @@ purpose(::Type{groundWRecharge}) = "Recharge to the groundwater storage"
 includeApproaches(groundWRecharge, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(groundWRecharge))
+	$(getModelDocString(groundWRecharge))
 """
 groundWRecharge
 

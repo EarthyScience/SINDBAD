@@ -16,12 +16,12 @@ mod_step = "day"
 # mod_step = "hour"
 # foreach(["day", "hour"]) do mod_step
 if mod_step == "day"
-    path_input = "../data/fn/$(domain).1979.2017.daily.nc"
+    path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
     forcing_config = "forcing_erai.json"
     optimization_config = "optimization.json"
 else
     mod_step
-    path_input = "../data/fn/$(domain).1999.2010.hourly_for_Sindbad.nc"
+    path_input = "$(getSindbadDataDepot())/fn/$(domain).1999.2010.hourly_for_Sindbad.nc"
     forcing_config = "forcing_hourly.json"
     optimization_config = "optimization_hourly.json"
 end
@@ -32,7 +32,7 @@ optimize_it = true
 path_output = nothing
 
 setLogLevel(:info)
-param_set_size = 2000
+parameter_set_size = 2000
 
 parallelization_lib = "threads"
 model_array_type = "static_array"
@@ -57,7 +57,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.exe_rules.parallelization" => parallelization_lib,
     "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.subset_model_output" => false,
-    "optimization.optimization_cost_threaded" => param_set_size,
+    "optimization.optimization_cost_threaded" => parameter_set_size,
     "optimization.observations.default_observation.data_path" => path_observation)
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
@@ -70,67 +70,67 @@ run_helpers = prepTEM(forcing, info);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because 
 
-tbl_params = getParameters(info.models.forward, info.optimization.model_parameter_default, info.optimization.model_parameters_to_optimize, info.helpers.numbers.num_type, info.helpers.dates.temporal_resolution);
-defaults = tbl_params.default;
+parameter_table = info.optimization.parameter_table;
+defaults = parameter_table.initial;
 
-param_samples = QuasiMonteCarlo.sample(param_set_size, tbl_params.lower, tbl_params.upper, LatinHypercubeSample());
-cost_samples_c = Array{Float32}(undef, param_set_size) # cost_func
-cost_samples_b = Array{Float32}(undef, param_set_size) # brute/serial
-cost_samples_s = Array{Float32}(undef, param_set_size) # spawn
-cost_samples_t = Array{Float32}(undef, param_set_size) # threaded
+parameter_samples = QuasiMonteCarlo.sample(parameter_set_size, parameter_table.lower, parameter_table.upper, LatinHypercubeSample());
+cost_samples_c = Array{Float32}(undef, parameter_set_size) # cost_func
+cost_samples_b = Array{Float32}(undef, parameter_set_size) # brute/serial
+cost_samples_s = Array{Float32}(undef, parameter_set_size) # spawn
+cost_samples_t = Array{Float32}(undef, parameter_set_size) # threaded
 
 
 cost_options = prepCostOptions(obs_array, info.optimization.cost_options);
-parameter_scaling_type = info.optimization.optimization_parameter_scaling
-multi_constraint_method = info.optimization.multi_constraint_method
-param_updater = tbl_params
+parameter_scaling_type = info.optimization.run_options.parameter_scaling
+multi_constraint_method = info.optimization.run_options.multi_constraint_method
+parameter_updater = parameter_table
 
 
 space_index = 1
 
-p_indices = eachindex(1:param_set_size)
-@time cost_samples_q = qbmap(p_indices) do param_index 
+p_indices = eachindex(1:parameter_set_size)
+@time cost_samples_q = qbmap(p_indices) do parameter_index 
     idx = Threads.threadid()
-    param_vector = param_samples[:, param_index]
-    updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
+    parameter_vector = parameter_samples[:, parameter_index]
+    updated_models = updateModels(parameter_vector, parameter_updater, parameter_scaling_type, info.models.forward)
     coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output_mt[idx], run_helpers.space_land[space_index], run_helpers.tem_info)
     cost_vector = metricVector(run_helpers.space_output_mt[idx], obs_array, cost_options)
     cost_metric = combineMetric(cost_vector, multi_constraint_method)
-    # cost_samples_t[param_index] = cost_metric
-    @info "qbmap: idx: $(idx), param_index: $(param_index), cost: $(cost_metric)"
+    # cost_samples_t[parameter_index] = cost_metric
+    @info "qbmap: idx: $(idx), parameter_index: $(parameter_index), cost: $(cost_metric)"
     cost_metric
 end
 
-@time Threads.@threads for param_index in eachindex(1:param_set_size)
+@time Threads.@threads for parameter_index in eachindex(1:parameter_set_size)
     idx = Threads.threadid()
-    param_vector = param_samples[:, param_index]
-    updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
+    parameter_vector = parameter_samples[:, parameter_index]
+    updated_models = updateModels(parameter_vector, parameter_updater, parameter_scaling_type, info.models.forward)
     coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output_mt[idx], run_helpers.space_land[space_index], run_helpers.tem_info)
     cost_vector = metricVector(run_helpers.space_output_mt[idx], obs_array, cost_options)
     cost_metric = combineMetric(cost_vector, multi_constraint_method)
-    cost_samples_t[param_index] = cost_metric
-    @info "@threads: idx: $(idx), param_index: $(param_index), cost: $(cost_metric)"
+    cost_samples_t[parameter_index] = cost_metric
+    @info "@threads: idx: $(idx), parameter_index: $(parameter_index), cost: $(cost_metric)"
 end
 
-param_indices = 1:param_set_size
+parameter_indices = 1:parameter_set_size
 
 @sync begin
-    for idx in eachindex(param_indices)
+    for idx in eachindex(parameter_indices)
         Threads.@spawn begin
-            param_index = param_indices[idx]
-            param_vector = param_samples[:, param_index]
-            updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
-            coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output_mt[param_index], run_helpers.space_land[space_index], run_helpers.tem_info)
-            cost_vector = metricVector(run_helpers.space_output_mt[param_index], obs_array, cost_options)
+            parameter_index = parameter_indices[idx]
+            parameter_vector = parameter_samples[:, parameter_index]
+            updated_models = updateModels(parameter_vector, parameter_updater, parameter_scaling_type, info.models.forward)
+            coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output_mt[parameter_index], run_helpers.space_land[space_index], run_helpers.tem_info)
+            cost_vector = metricVector(run_helpers.space_output_mt[parameter_index], obs_array, cost_options)
             cost_metric = combineMetric(cost_vector, multi_constraint_method)
-            @info "@spawn: idx: $(idx), param_index: $(param_index), cost: $(cost_metric)"
-            cost_samples_s[param_index] = cost_metric
+            @info "@spawn: idx: $(idx), parameter_index: $(parameter_index), cost: $(cost_metric)"
+            cost_samples_s[parameter_index] = cost_metric
         end
     end
 end
 
 
-@time cost(param_samples, defaults, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, run_helpers.space_land[space_index], run_helpers.tem_info, obs_array, param_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_samples_c,  CostModelObsMT())
+@time cost(parameter_samples, defaults, info.models.forward, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.output_array, run_helpers.space_output_mt, run_helpers.space_land[space_index], run_helpers.tem_info, obs_array, parameter_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_samples_c,  CostModelObsMT())
 for idx in eachindex(cost_samples_c) 
     cost_metric = cost_samples_c[idx]
     @info "@costfunction: idx: $(idx), cost: $(cost_metric)"
@@ -149,18 +149,18 @@ cost_samples_t - cost_samples_c |> sum
 do_serial = true
 # do_serial = false
 if do_serial
-    @time for param_index in param_indices
-        idx = param_index
-        param_vector = param_samples[:, param_index]
-        updated_models = updateModels(param_vector, param_updater, parameter_scaling_type, info.models.forward)
+    @time for parameter_index in parameter_indices
+        idx = parameter_index
+        parameter_vector = parameter_samples[:, parameter_index]
+        updated_models = updateModels(parameter_vector, parameter_updater, parameter_scaling_type, info.models.forward)
         coreTEM!(updated_models, run_helpers.space_forcing[space_index], run_helpers.space_spinup_forcing[space_index], run_helpers.loc_forcing_t, run_helpers.space_output_mt[idx], run_helpers.space_land[space_index], run_helpers.tem_info)
         cost_vector = metricVector(run_helpers.space_output_mt[idx], obs_array, cost_options)
         cost_metric = combineMetric(cost_vector, multi_constraint_method)
-        cost_samples_b[param_index] = cost_metric
-        @info "serial: idx: $(idx), param_index: $(param_index), cost: $(cost_metric)"
+        cost_samples_b[parameter_index] = cost_metric
+        @info "serial: idx: $(idx), parameter_index: $(parameter_index), cost: $(cost_metric)"
     end
     plot!(cost_samples_b, label="serial cost : diff-threads = $(sum(cost_samples_t - cost_samples_b))")
 end
-savefig(joinpath(info.output.dirs.figure, "comparison_threads_$(param_set_size).png"))
+savefig(joinpath(info.output.dirs.figure, "comparison_threads_$(parameter_set_size).png"))
 
 fig

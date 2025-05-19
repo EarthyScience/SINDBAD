@@ -59,6 +59,7 @@ tmp_helpers = (; pools = (;
         surfaceW = Float32[1.0],
         TWS = Float32[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         ),
+        n_layers = (;cVeg = 4.0f0, cLit = 2.0f0, cSoil = 2.0f0, cVegRoot = 1.0f0, cVegWood = 1.0f0, cVegLeaf = 1.0f0, cVegReserve = 1.0f0, cLitFast = 1.0f0, cLitSlow = 1.0f0, cSoilSlow = 1.0f0, cSoilOld = 1.0f0, cEco = 8.0f0, soilW = 4.0f0, groundW = 1.0f0, snowW = 1.0f0, surfaceW = 1.0f0, TWS = 7.0f0),
     components = (;
         cEco = (:cVegRoot, :cVegWood, :cVegLeaf, :cVegReserve, :cLitFast, :cLitSlow, :cSoilSlow, :cSoilOld),
         

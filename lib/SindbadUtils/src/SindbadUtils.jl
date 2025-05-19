@@ -7,78 +7,37 @@ The `SindbadUtils` package provides a collection of utility functions and tools 
 This package is designed to provide reusable utilities for data manipulation, statistical operations, and spatial/temporal processing. 
     
 # Dependencies:
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `Crayons`: Enables colored terminal output, improving the readability of logs and messages.
 - `StyledStrings`: Provides styled text for enhanced terminal output.
-- `DataStructures`: Supplies advanced data structures (e.g., `OrderedDict`, `Deque`) for efficient data handling.
 - `Dates`: Facilitates date and time operations, useful for temporal data processing.
 - `FIGlet`: Generates ASCII art text, useful for creating visually appealing headers in logs or outputs.
 - `Logging`: Provides logging utilities for debugging and monitoring SINDBAD workflows.
-- `NaNStatistics`: Extends statistical operations to handle missing values (`NaN`), ensuring robust data analysis.
-- `StaticArraysCore`: Supports efficient, fixed-size arrays for performance-critical operations.
-- `StatsBase`: Supplies basic statistical functions (e.g., `mean`, `sum`, `sample`) for data analysis.
-- `TypedTables`: Provides lightweight, type-stable tables for structured data manipulation.
 
 # Included Files:
-1. **`utilsTypes.jl`**:
-   - Defines custom types and structures used across SINDBAD utilities.
-
-2. **`getArrayView.jl`**:
+1. **`getArrayView.jl`**:
    - Implements functions for creating views of arrays, enabling efficient data slicing and subsetting.
 
-3. **`utils.jl`**:
+2. **`utils.jl`**:
    - Contains general-purpose utility functions for data manipulation and processing.
 
-4. **`utilsNT.jl`**:
+3. **`utilsNT.jl`**:
    - Provides utilities for working with NamedTuples, including transformations and access operations.
 
-5. **`utilsSpatial.jl`**:
-   - Implements spatial operations, such as extracting subsets of data based on spatial dimensions.
-
-6. **`utilsTemporal.jl`**:
+4. **`utilsTemporal.jl`**:
    - Handles temporal operations, including time-based filtering and aggregation.
 
-# Notes:
-- The package re-exports key packages (`NaNStatistics`, `StatsBase`, `TypedTables`) for convenience, allowing users to access their functionality directly through `SindbadUtils`.
-- Designed to be lightweight and modular, enabling seamless integration with other SINDBAD packages.
-
-# Examples:
-1. **Performing spatial subsetting**:
-```julia
-using SindbadUtils
-spatial_subset = getSpatialSubset(spatial_data, region_of_interest)
-```
-
-2. **Handling NamedTuples**:
-```julia
-using SindbadUtils
-transformed_nt = transformNamedTuple(input_nt, transformation_function)
-```
-
-3. **Calculating statistics with missing values**:
-```julia
-using SindbadUtils
-mean_value = mean(data_with_nans, skipmissing=true)
-```
 """
 module SindbadUtils
-    using Accessors: @set
-    using Crayons
-    using StyledStrings
-    using DataStructures
-    using Dates
-    using FIGlet
-    using Logging
-    using Reexport: @reexport
-    @reexport using NaNStatistics
-    using StaticArraysCore
-    @reexport using StatsBase: mean, rle, sample, sum
-    @reexport using TypedTables: Table
+   using Sindbad
+   using Crayons
+   using StyledStrings
+   using FIGlet
+   using Logging
 
-    include("utilsTypes.jl")
-    include("getArrayView.jl")
-    include("utils.jl")
-    include("utilsNT.jl")
-    include("utilsSpatial.jl")
-    include("utilsTemporal.jl")
-    
+   include("getArrayView.jl")
+   include("utils.jl")
+   include("utilsNT.jl")
+   include("utilsTemporal.jl")
+   
 end # module SindbadUtils

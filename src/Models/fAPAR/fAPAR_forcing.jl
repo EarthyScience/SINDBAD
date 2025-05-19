@@ -13,11 +13,11 @@ function compute(params::fAPAR_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{fAPAR_forcing}) = "sets the value of land.states.fAPAR from the forcing in every time step"
+purpose(::Type{fAPAR_forcing}) = "sets land.states.fAPAR from forcing"
 
 @doc """
 
-$(getBaseDocString(fAPAR_forcing))
+$(getModelDocString(fAPAR_forcing))
 
 ---
 

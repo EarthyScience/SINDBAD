@@ -4,7 +4,7 @@ using Dates
 using DimensionalData
 using GeoMakie
 
-ds_nee = open_dataset(joinpath(@__DIR__, "../data/nee_maps_fluxcom.zarr/"))
+ds_nee = open_dataset(joinpath(@__DIR__, "$(getSindbadDataDepot())/nee_maps_fluxcom.zarr/"))
 
 tempo = ds_nee["NEE"].time
 mkpath("Fluxcom_X/NEE")

@@ -7,7 +7,7 @@ purpose(::Type{drainage}) = "Recharge the soil"
 includeApproaches(drainage, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(drainage))
+	$(getModelDocString(drainage))
 """
 drainage
 

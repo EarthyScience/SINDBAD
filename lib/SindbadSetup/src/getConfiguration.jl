@@ -87,7 +87,7 @@ Recursively merges multiple dictionaries, giving priority to the last dictionary
 # Returns:
 - A single dictionary with merged fields, where the last dictionary's values take precedence.
 """
-deepMerge
+function deepMerge end
 
 deepMerge(d::AbstractDict...) = merge(deepMerge, d...)
 deepMerge(d...) = d[end]

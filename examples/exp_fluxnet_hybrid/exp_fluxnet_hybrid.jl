@@ -33,18 +33,13 @@ end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 selected_models = info.models.forward;
-parameter_scaling_type = info.optimization.optimization_parameter_scaling
+parameter_scaling_type = info.optimization.run_options.parameter_scaling
 
 
 
-tbl_params = getParameters(
-    selected_models,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution)
+parameter_table = info.optimization.parameter_table;
 
-param_to_index = getParameterIndices(selected_models, tbl_params);
+parameter_to_index = getParameterIndices(selected_models, parameter_table);
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
@@ -77,7 +72,7 @@ loc_spinup_forcing = space_spinup_forcing[site_location];
 # ? optimization
 # costs related
 cost_options = [prepCostOptions(loc_obs, info.optimization.cost_options) for loc_obs in space_observations];
-constraint_method = info.optimization.multi_constraint_method;
+constraint_method = info.optimization.run_options.multi_constraint_method;
 
 # ? load available covariates
 xfeatures = loadCovariates(sites_forcing; kind="all")
@@ -86,7 +81,7 @@ n_features = length(nor_names_order)
 
 # ? initial neural network
 n_neurons = 32;
-n_params = sum(tbl_params.is_ml);
+n_params = sum(parameter_table.is_ml);
 batch_seed = 123;
 
 # encode-decode architecture!
@@ -115,7 +110,7 @@ sites_testing = sites_forcing[xtest];
 indices_sites_testing = siteNameToID.(sites_testing, Ref(sites_forcing));
 
 # NN 
-n_params = sum(tbl_params.is_ml);
+n_params = sum(parameter_table.is_ml);
 shuffle_opt = true;
 mlBaseline = denseNN(n_features, n_neurons, n_params; extra_hlayers=nlayers, seed=batch_seed * 2);
 parameters_sites = mlBaseline(xfeatures);
@@ -126,7 +121,7 @@ sites_batch = sites_training;#[1:n_sites_train];
 indices_sites_batch = indices_sites_training;
 params_batch = parameters_sites(; site=sites_batch);
 # scaled_params_batch = params_batch;
-scaled_params_batch = getParamsAct(params_batch, tbl_params);
+scaled_params_batch = getParamsAct(params_batch, parameter_table);
 
 input_args = (
     scaled_params_batch,
@@ -137,7 +132,7 @@ input_args = (
     space_output,
     land_init,
     tem_info,
-    param_to_index,
+    parameter_to_index,
     parameter_scaling_type,
     space_observations,
     cost_options,
@@ -149,17 +144,16 @@ input_args = (
 grads_lib = ForwardDiffGrad();
 loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
 
-@time gg = gradientPolyester(grads_lib, loc_params, 2, lossSite, inner_args...)
+@time gg = gradientSite(grads_lib, loc_params, 2, lossSite, inner_args...)
 
-gradientBatchPolyester!(grads_lib, grads_batch, 2, lossSite, getInnerArgs,
-    input_args...; showprog=true)
+gradientBatch!(grads_lib, grads_batch, 2, lossSite, getInnerArgs, input_args...; showprog=true)
 
 # ? training arguments
 chunk_size = 2
 metadata_global = info.output.file_info.global_metadata
 
 in_gargs=(;
-    train_refs = (; sites_training, indices_sites_training, xfeatures, tbl_params, batch_size, chunk_size, metadata_global),
+    train_refs = (; sites_training, indices_sites_training, xfeatures, parameter_table, batch_size, chunk_size, metadata_global),
     test_val_refs = (; sites_validation, indices_sites_validation, sites_testing, indices_sites_testing),
     total_constraints = length(info.optimization.observational_constraints),
     forward_args = (selected_models,
@@ -169,7 +163,7 @@ in_gargs=(;
         space_output,
         land_init,
         tem_info,
-        param_to_index,
+        parameter_to_index,
         parameter_scaling_type,
         space_observations,
         cost_options,

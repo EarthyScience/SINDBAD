@@ -15,12 +15,12 @@ mod_step = "day"
 # mod_step = "hour"
 # foreach(["day", "hour"]) do mod_step
 if mod_step == "day"
-    path_input = "../data/fn/$(domain).1979.2017.daily.nc"
+    path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
     forcing_config = "forcing_erai.json"
     optimization_config = "optimization.json"
 else
     mod_step
-    path_input = "../data/fn/$(domain).1999.2010.hourly_for_Sindbad.nc"
+    path_input = "$(getSindbadDataDepot())/fn/$(domain).1999.2010.hourly_for_Sindbad.nc"
     forcing_config = "forcing_hourly.json"
     optimization_config = "optimization_hourly.json"
 end
@@ -52,7 +52,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
     "experiment.model_output.format" => "nc",
     "experiment.model_output.save_single_file" => true,
     "experiment.exe_rules.parallelization" => parallelization_lib,
-    "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES_mt.json",
+    "optimization.algorithm_optimization" => "opti_algorithms/CMAEvolutionStrategy_CMAES_mt_test.json",
     "optimization.optimization_cost_method" => "CostModelObsMT",
     "optimization.optimization_cost_threaded"  => true,
     "optimization.subset_model_output" => false,
@@ -60,11 +60,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-tbl_params = getParameters(info.models.forward,
-    info.optimization.model_parameter_default,
-    info.optimization.model_parameters_to_optimize,
-    info.helpers.numbers.num_type,
-    info.helpers.dates.temporal_resolution)
+parameter_table = info.optimization.parameter_table;
 
 forcing = getForcing(info);
 
@@ -127,8 +123,8 @@ foreach(costOpt) do var_row
     metr_def = metric(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = metric(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
     plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
-    plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
+    plot!(xdata, def_var, color=:steelblue2, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
+    plot!(xdata, opt_var; color=:seagreen3, label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.dirs.figure, "wroasted_$(domain)_$(v_key).png"))
 end
 # end

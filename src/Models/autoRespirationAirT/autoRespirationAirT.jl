@@ -2,11 +2,11 @@ export autoRespirationAirT
 
 abstract type autoRespirationAirT <: LandEcosystem end
 
-purpose(::Type{autoRespirationAirT}) = "Temperature effect on autotrophic maintenance respiration."
+purpose(::Type{autoRespirationAirT}) = "temperature effect on autotrophic respiration"
 
 includeApproaches(autoRespirationAirT, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(autoRespirationAirT))
+	$(getModelDocString(autoRespirationAirT))
 """
 autoRespirationAirT

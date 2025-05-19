@@ -20,7 +20,7 @@ purpose(::Type{runoffSurface_all}) = "assumes all overland runoff is lost as sur
 
 @doc """
 
-$(getBaseDocString(runoffSurface_all))
+$(getModelDocString(runoffSurface_all))
 
 ---
 

@@ -30,7 +30,8 @@ function compute(params::groundWRecharge_dos, forcing, land, helpers)
         (w_sat, soil_β) ⇐ land.properties
         (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
         (z_zero, o_one) ⇐ land.constants
-        n_groundW ⇐ land.constants
+        # n_groundW ⇐ land.constants
+        n_groundW = groundW ⇐ helpers.pools.n_layers
     end
     # calculate recharge
     dos_soil_end = clampZeroOne((soilW[end] + ΔsoilW[end]) / w_sat[end])
@@ -53,7 +54,7 @@ purpose(::Type{groundWRecharge_dos}) = "GW recharge as a exponential functions o
 
 @doc """
 
-$(getBaseDocString(groundWRecharge_dos))
+$(getModelDocString(groundWRecharge_dos))
 
 ---
 

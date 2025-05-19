@@ -208,7 +208,7 @@ Splits a variable name into a pair of field and subfield.
 - If the variable name contains a comma (`,`), it is used as the separator instead of a dot (`.`).
 - This function is used to parse variable names into their hierarchical components for further processing.
 """
-getVariablePair
+function getVariablePair end
 
 function getVariablePair(out_var::String)
     sep = "."
@@ -280,6 +280,7 @@ Sets up and creates the output directory for the experiment.
 - Validates the output path and ensures it is not within the SINDBAD root directory.
 """
 function setExperimentOutput(info)
+    @info "  setExperimentOutput: setting Output Basics..."
     path_output = info[:settings][:experiment][:model_output][:path]
     if isnothing(path_output)
         path_output_new = "output_"
@@ -305,7 +306,7 @@ function setExperimentOutput(info)
             end
         end
     end
-    path_output_new = path_output_new * info.temp.experiment.basics.domain * "_" * info.temp.experiment.basics.name
+    path_output_new = path_output_new * info.temp.experiment.basics.id
 
     # create output and subdirectories
     sub_output = ["code", "data", "figure", "root", "settings"]
@@ -344,6 +345,7 @@ Sets the output variables to be written and stored based on the experiment confi
 - The updated `info` NamedTuple with output variables and depth information added.
 """
 function setModelOutput(info::NamedTuple)
+    @info "  setModelOutput: setting Model Output Info..."
     output_vars = collect(propertynames(info.settings.experiment.model_output.variables))
     info = (; info..., temp=(; info.temp..., output=getDepthInfoAndVariables(info, output_vars)))
     return info
