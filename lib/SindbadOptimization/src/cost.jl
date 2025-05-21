@@ -46,7 +46,7 @@ end
 
 
 function cost(parameter_matrix, _, selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, tem_info, observations, parameter_updater, cost_options, multi_constraint_method, parameter_scaling_type, cost_out::Vector, ::CostModelObsMT)
-    @info size(parameter_matrix)
+    @debug "parameter_matrix:: ", size(parameter_matrix)
     parameter_set_size = size(parameter_matrix, 2)
     done_params=1
     Threads.@threads for parameter_index in eachindex(1:parameter_set_size)
@@ -58,8 +58,7 @@ function cost(parameter_matrix, _, selected_models, space_forcing, space_spinup_
         cost_vector = metricVector(space_output[idx], observations, cost_options)
         cost_metric = combineMetric(cost_vector, multi_constraint_method)
         cost_out[parameter_index] = cost_metric
-        @info idx, round(100 * done_params/parameter_set_size,digits=2), parameter_set_size, cost_metric
-        @debug idx, round(100 * done_params/parameter_set_size,digits=2), parameter_set_size, cost_metric, cost_vector
+        @debug "Parameter column:: ", idx, round(100 * done_params/parameter_set_size,digits=2), parameter_set_size, cost_metric, cost_vector
         done_params += 1
     end
     return cost_out
