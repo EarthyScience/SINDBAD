@@ -62,7 +62,7 @@ purpose(::Type{drainage_dos}) = "downward flow of moisture [drainage] in soil la
 
 @doc """
 
-$(getBaseDocString(drainage_dos))
+$(getModelDocString(drainage_dos))
 
 ---
 

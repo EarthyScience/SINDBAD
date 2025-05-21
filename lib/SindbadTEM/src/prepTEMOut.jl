@@ -77,7 +77,7 @@ array_type = getOutArrayType(num_type, DoNotUseForwardDiff())
 # array_type = Float64
 ```
 """
-getOutArrayType
+function getOutArrayType end
 
 function getOutArrayType(_, ::DoUseForwardDiff)
     return Real
@@ -123,7 +123,7 @@ outdims = getOutDims(info, forcing_helpers, OutputYAXArray())
 outdims = getOutDims(info, forcing_helpers)
 ```
 """
-getOutDims
+function getOutDims end
 
 function getOutDims(info, forcing_helpers)
     outdims = getOutDims(info, forcing_helpers, info.helpers.run.output_array_type)
@@ -136,7 +136,7 @@ function getOutDims(info, forcing_helpers, ::Union{OutputArray, OutputMArray, Ou
     outdims = map(outdims_pairs) do dim_pairs
         od = []
         for _dim in dim_pairs
-            push!(od, Dim{first(_dim)}(last(_dim)))
+            push!(od, YAXArrays.Dim{first(_dim)}(last(_dim)))
         end
         Tuple(od)
     end
@@ -150,7 +150,7 @@ function getOutDims(info, forcing_helpers, ::OutputYAXArray)
         od = []
         for _dim in dim_pairs
             if first(_dim) ∉ space_dims
-                push!(od, Dim{first(_dim)}(last(_dim)))
+                push!(od, YAXArrays.Dim{first(_dim)}(last(_dim)))
             end
         end
         Tuple(od)
@@ -162,7 +162,7 @@ function getOutDims(info, forcing_helpers, ::OutputYAXArray)
         vdims = var_dims[v_index]
         outformat = info.settings.experiment.model_output.format
         backend = outformat == "nc" ? :netcdf : :zarr
-        out_dim = OutDims(vdims...;
+        out_dim = YAXArrays.OutDims(vdims...;
         properties = _properties,
         path=info.output.file_info.file_prefix * "_$(vname).$(outformat)",
         backend=backend,
@@ -222,7 +222,7 @@ outdims, outarray = getOutDimsArrays(info, forcing_helpers, OutputYAXArray())
 outdims, outarray = getOutDimsArrays(info, forcing_helpers)
 ```
 """
-getOutDimsArrays
+function getOutDimsArrays end
 
 function getOutDimsArrays(info, forcing_helpers)
     outdims, outarray = getOutDimsArrays(info, forcing_helpers, info.helpers.run.output_array_type)
@@ -416,15 +416,15 @@ output = setupOptiOutput(info, output, DoRunOptimization())
 output = setupOptiOutput(info, output, DoNotRunOptimization())
 ```
 """
-setupOptiOutput
+function setupOptiOutput end
 
 function setupOptiOutput(info::NamedTuple, output::NamedTuple, ::DoRunOptimization)
-    @debug "     prepTEMOut: getting parameter output for optimization..."
-    params = info.optimization.model_parameters_to_optimize
-    paramaxis = Dim{:parameter}(params)
+    @debug "     setupOptiOutput: getting parameter output for optimization..."
+    params = info.optimization.parameter_table.name_full    
+    paramaxis = YAXArrays.Dim{:parameter}(params)
     outformat = info.output.format
     backend = outformat == "nc" ? :netcdf : :zarr
-    od = OutDims(paramaxis;
+    od = YAXArrays.OutDims(paramaxis;
         path=joinpath(info.output.dirs.optimization,
             "optimized_parameters.$(outformat)"),
         backend=backend,

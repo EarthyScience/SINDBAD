@@ -63,21 +63,21 @@ function getForcingForTimeStep(forcing, loc_forcing_t, ts, ::Val{forc_with_type}
 end
 
 """
-    getForcingV(v, ts, <:SindbadForcingType)
+    getForcingV(v, ts, <: ForcingTime)
 
 Retrieves forcing values for a specific time step or returns constant forcing values, depending on the forcing type.
 
 # Arguments:
 - `v`: The input forcing data. Can be time-dependent or constant.
 - `ts`: The time step (integer) for which the forcing value is retrieved. Ignored for constant forcing types.
-- `<:SindbadForcingType`: The type of forcing, which determines how the value is retrieved:
+- `<: ForcingTime`: The type of forcing, which determines how the value is retrieved:
     - `ForcingWithTime`: Retrieves the forcing value for the specified time step `ts`.
     - `ForcingWithoutTime`: Returns the constant forcing value, ignoring `ts`.
 
 # Returns:
 - The forcing value for the specified time step (if time-dependent) or the constant forcing value.
 
-# Extended Help
+# Extended help
 # Examples:
 1. **Time-dependent forcing**:
 ```julia
@@ -95,7 +95,7 @@ value = getForcingV(forcing, ts, ForcingWithoutTime())
 # value = 5.0
 ```
 """
-getForcingV
+function getForcingV end
 
 function getForcingV(v, ts, ::ForcingWithTime)
     v[ts]
@@ -192,7 +192,7 @@ ts = 2            # Time step
 view_ar = getLocArrayView(ar, val, ts)
 ```
 """
-getLocArrayView
+function getLocArrayView end
 
 function getLocArrayView(ar::T, val::T1, ts::T2) where {T, T1<:AbstractVector, T2<:Int}
     return view(ar, ts, 1:size(val,1))

@@ -1,7 +1,32 @@
 export getOptimizationParametersTable
+export filterParameterTable
 export getParameters
 export getParameterIndices
 export perturbParameters
+
+
+"""
+    filterParameterTable(parameter_table::Table; prop_name::Symbol=:model, prop_values::Tuple{Symbol}=(:all,))
+
+Filters a parameter table based on a specified property and values.
+
+# Arguments
+- `parameter_table::Table`: The parameter table to filter
+- `prop_name::Symbol`: The property to filter by (default: :model)
+- `prop_values::Tuple{Symbol}`: The values to filter by (default: :all)
+
+# Returns
+A filtered parameter table.
+"""
+function filterParameterTable(parameter_table::Table; prop_name::Symbol=:model, prop_values::Union{Vector{Symbol},Symbol}=:all)
+    if prop_values == :all
+        return parameter_table
+    elseif isa(prop_values, Symbol)
+        return filter(row -> getproperty(row, prop_name) == prop_values, parameter_table)
+    else
+        return filter(row -> getproperty(row, prop_name) in prop_values, parameter_table)
+    end
+end
 
 """
     getParameters(selected_models::Tuple, num_type, model_timestep; return_table=true)
@@ -19,7 +44,7 @@ Retrieves parameters for the specified models with given numerical type and time
 # Returns
 Parameters information for the selected models based on the specified settings.
 """
-getParameters
+function getParameters end
 
 function getParameters(selected_models::LongTuple, num_type, model_timestep; return_table=true, show_info=false)
     selected_models = getTupleFromLongTuple(selected_models)
@@ -84,12 +109,28 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     end
 
     # default = num_type.(default)
-    lower = num_type.(lower)
-    upper = num_type.(upper)
+    lower = map(lower) do low
+        if isa(low, Number)
+            low = num_type(low)
+        else
+            low = num_type.(low)
+        end
+        low
+    end
+    upper = map(upper) do upp
+        if isa(upp, Number)
+            upp = num_type(upp)
+        else
+            upp = num_type.(upp)
+        end
+        upp
+    end
+    # lower = num_type.(lower)
+    # upper = num_type.(upper)
     timescale_run = map(timescale) do ts
         isempty(ts) ? ts : model_timestep
     end
-    checkParameterBounds(name, default, lower, upper, ScaleNone(),show_info=show_info, model_names=model_approach)
+    checkParameterBounds(name, default, lower, upper, ScaleNone(), p_units=unts, show_info=show_info, model_names=model_approach)
     is_ml = Array{Bool}(undef, length(default))
     dist = Array{String}(undef, length(default))
     p_dist = Array{Array{num_type,1}}(undef, length(default))
@@ -129,11 +170,14 @@ function getOptimizationParametersTable(parameter_table_all::Table, model_parame
     parameter_list = []
     parameter_keys = []
     if isa(optimization_parameters, NamedTuple)
-        parameter_list = replaceCommaSeparatedParams(keys(optimization_parameters))
         parameter_keys = keys(optimization_parameters)
     else
-        parameter_list = replaceCommaSeparatedParams(optimization_parameters)
         parameter_keys = optimization_parameters
+    end
+    parameter_list = replaceCommaSeparatedParams(parameter_keys)
+    missing_parameters = filter(x -> !(x in parameter_table_all.name_full), parameter_list)
+    if !isempty(missing_parameters)
+        error("Model Inconsistency: $([missing_parameters...]) parameter(s) not found in the selected model structure. Check the model structure in model_structure.json to include the parameter(s) or change model_parameters_to_optimize in optimization.json to exclude the parameter(s).")
     end
     parameter_table_all_filtered = filter(row -> row.name_full in parameter_list, parameter_table_all)
     num_type = typeof(parameter_table_all_filtered.default[1])
@@ -208,7 +252,7 @@ Retrieves indices for model parameters from a parameter table.
 # Returns
 A Tuple of Pair of Name and Indices corresponding to the model parameters in the parameter table for  selected models.
 """
-getModelParameterIndices
+function getModelParameterIndices end
 
 function getParameterIndices(selected_models::LongTuple, parameter_table::Table)
     selected_models_tuple = getTupleFromLongTuple(selected_models)
@@ -299,7 +343,7 @@ Splits and renames a parameter based on a specified splitter.
 # Returns
 A tuple containing the split and renamed parameter components.
 """
-splitRenameParam
+function splitRenameParam end
 
 function splitRenameParam(_p::Symbol, _splitter)
     p_string = String(_p)

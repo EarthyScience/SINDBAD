@@ -7,7 +7,7 @@ purpose(::Type{capillaryFlow}) = "Flux of water from lower to upper soil layers 
 includeApproaches(capillaryFlow, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(capillaryFlow))
+	$(getModelDocString(capillaryFlow))
 """
 capillaryFlow
 

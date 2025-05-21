@@ -21,7 +21,7 @@ purpose(::Type{transpiration_demandSupply}) = "calculate the actual transpiratio
 
 @doc """
 
-$(getBaseDocString(transpiration_demandSupply))
+$(getModelDocString(transpiration_demandSupply))
 
 ---
 

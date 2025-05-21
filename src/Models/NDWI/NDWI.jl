@@ -7,6 +7,6 @@ purpose(::Type{NDWI}) = "Normalized difference water index"
 includeApproaches(NDWI, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(NDWI))
+	$(getModelDocString(NDWI))
 """
 NDWI

@@ -15,8 +15,8 @@ To view the list of available metrics:
 :::tip
 To list all available cost metrics and their purposes, use:
 ```julia
-using SindbadUtils
-showMethodsOf(SindbadMetric)
+using Sindbad
+showMethodsOf(PerfMetric)
 ```
 This will display a formatted list of all cost metrics and their descriptions, including:
 - The metric's purpose
@@ -71,12 +71,12 @@ Create a new metric type in `lib/SindbadMetrics/src/metricTypes.jl`:
 
 ```julia
 export NewMetric
-struct NewMetric <: SindbadMetric end
+struct NewMetric <: PerfMetric end
 ```
 
 Requirements:
 - Use PascalCase for the type name
-- Make it a subtype of `SindbadMetric`
+- Make it a subtype of `PerfMetric`
 - Export the type
 - Add a purpose function describing the metric's role
 

@@ -7,6 +7,6 @@ purpose(::Type{gppDemand}) = "Combine effects as multiplicative or minimum"
 includeApproaches(gppDemand, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(gppDemand))
+	$(getModelDocString(gppDemand))
 """
 gppDemand

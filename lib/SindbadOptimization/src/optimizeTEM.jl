@@ -11,16 +11,16 @@ export optimizeTEMYax
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
-optimizeTEM
+function optimizeTEM end
 
 function optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple)
     # get the subset of parameters table that consists of only optimized parameters
-    opti_helpers = prepOpti(forcing, observations, info, info.optimization.optimization_cost_method)
+    opti_helpers = prepOpti(forcing, observations, info, info.optimization.run_options.cost_method)
 
     # run the optimizer
-    optim_para = optimizer(opti_helpers.cost_function, opti_helpers.default_values, opti_helpers.lower_bounds, opti_helpers.upper_bounds, info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
+    optim_para = optimizer(opti_helpers.cost_function, opti_helpers.default_values, opti_helpers.lower_bounds, opti_helpers.upper_bounds, info.optimization.optimizer.options, info.optimization.optimizer.method)
 
-    optim_para = backScaleParameters(optim_para, opti_helpers.parameter_table, info.optimization.optimization_parameter_scaling)
+    optim_para = backScaleParameters(optim_para, opti_helpers.parameter_table, info.optimization.run_options.parameter_scaling)
 
     # update the parameter table with the optimized values
     opti_helpers.parameter_table.optimized .= optim_para
@@ -77,7 +77,7 @@ function optimizeYax(map_cubes...; out::NamedTuple, tem::NamedTuple, optim::Name
     output, forcing, observation = unpackYaxOpti(map_cubes; forcing_vars)
     forcing = (; Pair.(forcing_vars, forcing)...)
     observation = (; Pair.(obs_vars, observation)...)
-    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "LandOut"))()
+    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "PreAlloc"))()
     params = optimizeTEM(forcing, observation, info)
     return output[:] = params.optimized
 end

@@ -47,7 +47,7 @@ end
 
 
 """
-    saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, <:SindbadOutputStrategyType)
+    saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, <: OutputStrategy)
     saveOutCubes(info, out_cubes, output_dims, output_vars)
 
 saves the output variables from the run as one file
@@ -60,13 +60,13 @@ saves the output variables from the run as one file
 - `var_pairs`: a tuple of pairs of sindbad variables to write including the field and subfield of land as the first and last element
 - `out_format`: format of the output file
 - `t_step`: a string for time step of the model run to be used in the units attribute of variables
-- `<:SindbadOutputStrategyType`: Dispatch type indicating file output mode with the following options:
+- `<: OutputStrategy`: Dispatch type indicating file output mode with the following options:
     - `::DoSaveSingleFile`: single file with all the variables
     - `::DoNotSaveSingleFile`: single file per variable
 
 # note: this function is overloaded to handle different dispatch types and the version with fewer arguments is used as a shorthand for the single file output mode
 """
-saveOutCubes
+function saveOutCubes end
 
 function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pairs, out_format, t_step, ::DoSaveSingleFile)
     @info "saving one file for all variables"

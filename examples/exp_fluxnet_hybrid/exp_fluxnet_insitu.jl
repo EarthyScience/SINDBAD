@@ -8,19 +8,6 @@ using SindbadML.JLD2
 using SindbadOptimization
 using ProgressMeter
 
-include("load_covariates.jl")
-
-# load folds # $nfold $nlayer $neuron $batchsize
-_nfold = 5 #B ase.parse(Int, ARGS[1])
-nlayers = 3 # Base.parse(Int, ARGS[2])
-n_neurons = 32 # Base.parse(Int, ARGS[3])
-batch_size = 32 # Base.parse(Int, ARGS[4])
-
-batch_seed = 123 * batch_size
-
-file_folds = load(joinpath(@__DIR__, "nfolds_sites_indices.jld2"))
-xtrain, xval, xtest = file_folds["unfold_training"][_nfold], file_folds["unfold_validation"][_nfold], file_folds["unfold_tests"][_nfold]
-
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
 # for remote node
 replace_info = Dict()
@@ -69,7 +56,7 @@ loc_spinup_forcing = space_spinup_forcing[site_location];
 # ? optimization
 # costs related
 cost_options = [prepCostOptions(loc_obs, info.optimization.cost_options) for loc_obs in space_observations];
-constraint_method = info.optimization.multi_constraint_method;
+constraint_method = info.optimization.run_options.multi_constraint_method;
 
 #! yes?
 loc_cost_options = cost_options[site_location]
@@ -127,7 +114,7 @@ lower_bounds = parameter_table.lower
 upper_bounds = parameter_table.upper
 
 optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds,
-    info.optimization.algorithm_optimization.options, info.optimization.algorithm_optimization.method)
+    info.optimization.optimizer.options, info.optimization.optimizer.method)
 
 
 # ? https://github.com/jbrea/CMAEvolutionStrategy.jl

@@ -2,12 +2,12 @@ export rainSnow
 
 abstract type rainSnow <: LandEcosystem end
 
-purpose(::Type{rainSnow}) = "Set rain and snow to fe.rainsnow."
+purpose(::Type{rainSnow}) = "Set/get rain and snow"
 
 includeApproaches(rainSnow, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(rainSnow))
+	$(getModelDocString(rainSnow))
 """
 rainSnow
 

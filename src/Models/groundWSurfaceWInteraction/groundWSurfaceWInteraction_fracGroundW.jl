@@ -37,7 +37,7 @@ purpose(::Type{groundWSurfaceWInteraction_fracGroundW}) = "calculates the deplet
 
 @doc """
 
-$(getBaseDocString(groundWSurfaceWInteraction_fracGroundW))
+$(getModelDocString(groundWSurfaceWInteraction_fracGroundW))
 
 ---
 

@@ -1,5 +1,5 @@
 {
-  "algorithm_optimization": "CMAEvolutionStrategy_CMAES",
+  "algorithm_optimization": "CMAEvolutionStrategy_CMAES_fn_insitu.json",
   "algorithm_sensitivity_analysis": null,
   "model_parameter_default": {
     "distribution": ["normal", [0.0, 1.0]],
@@ -149,12 +149,10 @@
       },
       "ndvi": {
         "cost_options": {
-          "cost_metric": "NNSE_inv",
-          "temporal_data_aggr": "day_anomaly",
-          "aggr_obs": true
+          "cost_metric": "NNSE_inv"
         },
         "data": {
-          "bounds": [0.0, 1.0],
+          "bounds": [-1.0, 1.0],
           "standard_name": "NDVI_MCD43A",
           "sindbad_unit": "adimensional",
           "source_unit": "adimensional",

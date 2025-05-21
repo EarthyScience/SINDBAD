@@ -193,7 +193,7 @@ for o_set in opti_set
         metr_opt = metric(obs_var[valids], obs_σ[valids], opt_var[valids], lossMetric)
 
         plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-        plot!(xdata, opt_var; label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, size=(2000, 1000), title="$(domain):: $(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric))), $(forcing_set), $(o_set)" )
+        plot!(xdata, opt_var; color=:seagreen3, label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, size=(2000, 1000), title="$(domain):: $(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric))), $(forcing_set), $(o_set)" )
         plot!(xdata, ml_var; label="matlab ($(round(metr_ml, digits=2)))", lw=1.5, ls=:dash)
         savefig(fig_prefix * "_$(v)_$(forcing_set).png")
     end

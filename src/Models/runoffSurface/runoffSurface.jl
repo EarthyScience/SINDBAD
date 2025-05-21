@@ -7,7 +7,7 @@ purpose(::Type{runoffSurface}) = "Surface runoff generation process"
 includeApproaches(runoffSurface, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(runoffSurface))
+	$(getModelDocString(runoffSurface))
 """
 runoffSurface
 

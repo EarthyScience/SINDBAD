@@ -19,11 +19,11 @@ function precompute(params::treeFraction_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{treeFraction_constant}) = "sets the value of frac_tree as a constant"
+purpose(::Type{treeFraction_constant}) = "sets frac_tree as a constant"
 
 @doc """
 
-$(getBaseDocString(treeFraction_constant))
+$(getModelDocString(treeFraction_constant))
 
 ---
 

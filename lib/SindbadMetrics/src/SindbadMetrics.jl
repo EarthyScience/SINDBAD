@@ -10,24 +10,20 @@ This package is designed to define and compute metrics that assess the accuracy 
 It has heavy usage in `SindbadOptimization` but the package is separated to reduce to import burdens of optimization schemes. This allows for import into independent workflows for model evaluation and parameter estimation, e.g., in hybrid modeling.
 
 # Dependencies:
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadUtils`: Provides utility functions for handling data and NamedTuples, which are essential for metric calculations.
-- `StatsBase`: Supplies statistical functions such as `mean`, `percentile`, `cor`, and `corspearman` for computing metrics like correlation and distribution-based statistics.
 
 # Included Files:
-1. **`metricTypes.jl`**:
-   - Defines types and structures for organizing and managing metrics in SINDBAD experiments.
 
-2. **`handleDataForLoss.jl`**:
+1. **`handleDataForLoss.jl`**:
    - Implements functions for preprocessing and handling data before calculating loss functions or metrics.
 
-3. **`getMetrics.jl`**:
+2. **`getMetrics.jl`**:
    - Provides functions for retrieving and organizing metrics based on model outputs and observations.
 
-4. **`metrics.jl`**:
+3. **`metrics.jl`**:
    - Contains the core metric definitions, including statistical measures (e.g., RMSE, correlation) and custom metrics for SINDBAD experiments.
 
-5. **`updateParameters.jl`**:
-   - Implements logic for updating model parameters based on metric evaluations, enabling iterative model calibration.
 
 !!! note
     - The package is designed to be extensible, allowing users to define custom metrics for specific use cases.
@@ -38,32 +34,23 @@ It has heavy usage in `SindbadOptimization` but the package is separated to redu
 1. **Calculating RMSE**:
 ```julia
 using SindbadMetrics
-rmse = calculateRMSE(model_output, observations)
+rmse = metric(model_output, observations, RMSE())
 ```
 
 2. **Computing correlation**:
 ```julia
 using SindbadMetrics
-correlation = calculateCorrelation(model_output, observations)
+correlation = metric(model_output, observations, Pcor())
 ```
 
-3. **Updating parameters based on metrics**:
-```julia
-using SindbadMetrics
-updated_params = updateParameters(current_params, metrics)
-```
 """
 module SindbadMetrics
 
-    using SindbadUtils
-    import SindbadUtils: purpose
-    using StatsBase: mean, percentile, cor, corspearman
-    using ConstructionBase
+   using Sindbad
+   using SindbadUtils
 
-    include("metricTypes.jl")
-    include("handleDataForLoss.jl")
-    include("getMetrics.jl")
-    include("metrics.jl")
-    include("updateParameters.jl")
+   include("handleDataForLoss.jl")
+   include("getMetrics.jl")
+   include("metrics.jl")
 
 end # module SindbadMetrics

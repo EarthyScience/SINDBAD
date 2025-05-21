@@ -7,6 +7,6 @@ purpose(::Type{NIRv}) = "Near-infrared reflectance of terrestrial vegetation"
 includeApproaches(NIRv, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(NIRv))
+	$(getModelDocString(NIRv))
 """
 NIRv

@@ -2,6 +2,7 @@ export prepExperiment
 export runExperiment
 export runExperimentCost
 export runExperimentForward
+export runExperimentForwardParams
 export runExperimentFullOutput
 export runExperimentOpti
 export runExperimentSensitivity
@@ -36,20 +37,24 @@ function prepExperiment(sindbad_experiment::String; replace_info=Dict())
     forcing = getForcing(info)
 
     @info "\n----------------------------------------------\n"
+    
+    for model_func in (:define, :precompute, :compute,)                 
+        plotIOModelStructure(info, model_func)
+    end
 
     return info, forcing
 end
 
 
 """
-    runExperiment(info::NamedTuple, forcing::NamedTuple, mode)
+    runExperiment(info::NamedTuple, forcing::NamedTuple, mode::RunFlag)
 
 Run a SINDBAD experiment in different modes.
 
 # Arguments
 - `info::NamedTuple`: A SINDBAD NamedTuple containing all information needed for setup and execution of an experiment
 - `forcing::NamedTuple`: A forcing NamedTuple containing the forcing time series set for ALL locations
-- `mode`: Type dispatch parameter determining the mode of experiment:
+- `mode::RunFlag`: Type dispatch parameter determining the mode of experiment:
   - `DoCalcCost`: Calculate cost between model output and observations
   - `DoRunForward`: Run forward simulation without optimization
   - `DoNotRunOptimization`: Run without optimization
@@ -89,6 +94,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     for _cp in Pair.(Pair.(cost_options.variable, nameof.(typeof.(cost_options.cost_metric))),  loss_vector)
         println(_cp)
     end
+    setLogLevel()
     return (; forcing, info, loss=loss_vector, observation=obs_array, output=forward_output)
 end
 
@@ -105,13 +111,13 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForwa
         run_output = runTEM!(forcing, info)
         run_output = (; Pair.(getUniqueVarNames(info.output.variables), run_output)...)
     end
+    setLogLevel()
     return (; forcing, info, output=run_output)
 end
 
 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimization)
     println("-------------------Optimization Mode---------------------------\n")
-    # setLogLevel(:warn)
     observations = getObservation(info, forcing.helpers)
     additionaldims = setdiff(keys(forcing.helpers.sizes), info.experiment.data_settings.forcing.data_dimension.time)
     run_output = nothing
@@ -151,6 +157,7 @@ function runExperimentCost(sindbad_experiment::String; replace_info=Dict(), log_
     replace_info["experiment.flags.run_forward"] = true
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     cost_output = runExperiment(info, forcing, info.helpers.run.calc_cost)
+    setLogLevel()
     return cost_output
 end
 
@@ -177,6 +184,7 @@ function runExperimentForward(sindbad_experiment::String; replace_info=Dict(), l
     run_output = runExperiment(info, forcing, info.helpers.run.run_forward)
     output_dims = getOutDims(info, forcing.helpers)
     saveOutCubes(info, values(run_output.output), output_dims, info.output.variables)
+    setLogLevel()
     return run_output
 end
 
@@ -199,7 +207,6 @@ Run forward simulation of the model with default as well as modified settings wi
 function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=Dict(), log_level=:info)
     setLogLevel(log_level)
     @info "runExperimentForwardParams: forward run of the model with default/settings and input/optimized parameters..."
-    # setLogLevel(:error)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = true
@@ -243,13 +250,14 @@ function runExperimentFullOutput(sindbad_experiment::String; replace_info=Dict()
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
-    info = @set info.helpers.run.land_output_type = LandOutArrayAll()
+    info = @set info.helpers.run.land_output_type = PreAllocArrayAll()
     run_helpers = prepTEM(info.models.forward, forcing, info)
     info = @set info.output.variables = run_helpers.output_vars
     runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
     output_dims = run_helpers.output_dims
     run_output = run_helpers.output_array
     saveOutCubes(info, run_output, output_dims, run_helpers.output_vars)
+    setLogLevel()
     return (; forcing, info, output=(; Pair.(getUniqueVarNames(run_helpers.output_vars), run_output)...))
 end
 
@@ -310,21 +318,21 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
 
     obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
-    opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.optimization_cost_method; algorithm_info_field=:algorithm_sensitivity_analysis);
+    opti_helpers = prepOpti(forcing, obs_array, info, info.optimization.run_options.cost_method; algorithm_info_field=:sensitivity_analysis);
 
     # parameter_table = opti_helpers.parameter_table
     p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds))
     
     cost_function = opti_helpers.cost_function
 
-    # d_opt = getproperty(SindbadSetup, :GlobalSensitivityMorris)()
-    method_options =info.optimization.algorithm_sensitivity_analysis.options
+    # d_opt = getproperty(SindbadSetup, :GSAMorris)()
+    method_options =info.optimization.sensitivity_analysis.options
     setLogLevel(log_level)
 
-    sensitivity = globalSensitivity(cost_function, method_options, p_bounds, info.optimization.algorithm_sensitivity_analysis.method, batch=batch)
+    sensitivity = globalSensitivity(cost_function, method_options, p_bounds, info.optimization.sensitivity_analysis.method, batch=batch)
     sensitivity_output = (; opti_helpers..., info=info, forcing=forcing, obs_array=obs_array, observations=observations,sensitivity=sensitivity, p_bounds=p_bounds)
     setLogLevel(:info)
-    sensitivity_output_file = joinpath(info.output.dirs.data, "sensitivity_analysis_$(nameof(typeof(info.optimization.algorithm_sensitivity_analysis.method)))_$(length(opti_helpers.cost_vector))-cost_evals.jld2")
+    sensitivity_output_file = joinpath(info.output.dirs.data, "sensitivity_analysis_$(nameof(typeof(info.optimization.sensitivity_analysis.method)))_$(length(opti_helpers.cost_vector))-cost_evals.jld2")
     @info "saving output for sensitivity: "
     @save  sensitivity_output_file sensitivity_output
     return sensitivity_output

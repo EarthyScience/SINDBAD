@@ -7,6 +7,6 @@ purpose(::Type{cCycleConsistency}) = "Consistency checks on the c allocation and
 includeApproaches(cCycleConsistency, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cCycleConsistency))
+	$(getModelDocString(cCycleConsistency))
 """
 cCycleConsistency

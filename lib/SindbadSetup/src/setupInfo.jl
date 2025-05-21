@@ -148,7 +148,7 @@ function parseSaveCode(info)
             mod_string = "# Call order: $mi\n\n"
             write(o_file, mod_string)
 
-            write(o_file, "abstract type $mod_name <: LandEcosystem end\n")
+            write(o_file, "abstract type $mod_name <: LandEcosystem end\n\n")
 
             mod_string = string(@code_expr typeof(_mod)())
             for xx = 1:100
@@ -168,6 +168,7 @@ function parseSaveCode(info)
             mod_string = replace(mod_string, "                                                " => "    ")
             mod_string = replace(mod_string, " = (((" => " = ")
             mod_string = replace(mod_string, ") |" => " |")
+            mod_string = replace(mod_string, "] |" => "]) |")
             write(o_file, mod_string * "\n\n")
             mod_string = "# --------------------------------------\n"
             if mi == lastindex(models)
@@ -240,8 +241,8 @@ function setModelRunInfo(info::NamedTuple)
     run_info = setTupleField(run_info, (:input_array_type, info.settings.experiment.exe_rules.input_array_type))
 
     parallelization = titlecase(info.settings.experiment.exe_rules.parallelization)
-    run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol("Use"*parallelization*"Parallelization"))()))
-    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "LandOut"))()
+    run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol(parallelization*"Parallelization"))()))
+    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "PreAlloc"))()
     run_info = setTupleField(run_info, (:land_output_type, land_output_type))
     info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., run=run_info)))
     return info
@@ -340,7 +341,7 @@ function getSpinupSequenceWithTypes(seqq, helpers_dates)
             end
         end
         optns = in(seq, "options") ? seqp["options"] : (;)
-        sst = SpinSequenceWithAggregator(seq["forcing"], seq["n_repeat"], seq["n_timesteps"], seq["spinup_mode"], optns, seq["aggregator_indices"], seq["aggregator"], seq["aggregator_type"]);
+        sst = SpinupSequenceWithAggregator(seq["forcing"], seq["n_repeat"], seq["n_timesteps"], seq["spinup_mode"], optns, seq["aggregator_indices"], seq["aggregator"], seq["aggregator_type"]);
         push!(seqq_typed, sst)
     end
     return seqq_typed
@@ -394,6 +395,8 @@ function setExperimentBasics(info)
             end 
         end
     end
+    exp_name_domain = ex_basics.domain * "_" * ex_basics.name
+    ex_basics_sel = (; ex_basics_sel..., id=exp_name_domain)
     info = (; info..., temp=(; info.temp..., experiment=(; info.temp.experiment..., basics=ex_basics_sel)))
     return info
 end
@@ -447,7 +450,7 @@ function setupInfo(info::NamedTuple)
         info = setOptimization(info)
     else
         parameter_table = info.temp.models.parameter_table
-        checkParameterBounds(parameter_table.name, parameter_table.initial, parameter_table.lower, parameter_table.upper, ScaleNone(), show_info=true, model_names=parameter_table.model_approach)
+        checkParameterBounds(parameter_table.name, parameter_table.initial, parameter_table.lower, parameter_table.upper, ScaleNone(), p_units=parameter_table.units, show_info=true, model_names=parameter_table.model_approach)
      end
 
     if !isnothing(info.settings.experiment.exe_rules.longtuple_size)

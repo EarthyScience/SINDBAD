@@ -7,6 +7,6 @@ purpose(::Type{runoffSaturationExcess}) = "Saturation runoff"
 includeApproaches(runoffSaturationExcess, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(runoffSaturationExcess))
+	$(getModelDocString(runoffSaturationExcess))
 """
 runoffSaturationExcess

@@ -7,6 +7,6 @@ purpose(::Type{cCycle}) = "Allocate carbon to vegetation components"
 includeApproaches(cCycle, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cCycle))
+	$(getModelDocString(cCycle))
 """
 cCycle

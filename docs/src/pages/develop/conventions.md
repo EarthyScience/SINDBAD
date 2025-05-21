@@ -166,7 +166,7 @@ Include version history and references in the documentation for traceability.
 
 ```julia
 @doc """
-$(getBaseDocString(ApproachName))
+$(getModelDocString(ApproachName))
 
 *References*
 - Author, Year. Title. Journal.
@@ -182,7 +182,7 @@ ApproachName
 
 :::info
 
-It is not recommended to build a model and approach from scratch by typing things. SINDBAD has a builtin function ```generateSindbadApproach``` to create the model and approach files that has all the components described. This ensures following the modeling conventions around which the performance and modularity are built.
+When working with SINDBAD, it is highly recommended to utilize the built-in function `generateSindbadApproach` to create your model and approach files. This function automates the process of setting up the necessary structs and functions of the model, ensuring that your model adheres to the established conventions for code structure, performance tips, modularity, and documentation.
 
 Check the documentation of the function for further details as:
 ```julia

@@ -7,7 +7,7 @@ purpose(::Type{evaporation}) = "Soil evaporation"
 includeApproaches(evaporation, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(evaporation))
+	$(getModelDocString(evaporation))
 """
 evaporation
 

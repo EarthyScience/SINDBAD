@@ -7,6 +7,6 @@ purpose(::Type{saturatedFraction}) = "Saturated fraction of a grid cell"
 includeApproaches(saturatedFraction, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(saturatedFraction))
+	$(getModelDocString(saturatedFraction))
 """
 saturatedFraction

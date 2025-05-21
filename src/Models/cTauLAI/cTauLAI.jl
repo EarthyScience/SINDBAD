@@ -7,6 +7,6 @@ purpose(::Type{cTauLAI}) = "Calculate litterfall scalars (that affect the change
 includeApproaches(cTauLAI, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cTauLAI))
+	$(getModelDocString(cTauLAI))
 """
 cTauLAI

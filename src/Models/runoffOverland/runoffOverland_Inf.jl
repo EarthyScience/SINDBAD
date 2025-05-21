@@ -19,7 +19,7 @@ purpose(::Type{runoffOverland_Inf}) = "## assumes overland flow to be infiltrati
 
 @doc """
 
-$(getBaseDocString(runoffOverland_Inf))
+$(getModelDocString(runoffOverland_Inf))
 
 ---
 

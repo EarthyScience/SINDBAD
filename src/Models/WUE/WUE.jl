@@ -7,6 +7,6 @@ purpose(::Type{WUE}) = "Estimate wue"
 includeApproaches(WUE, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(WUE))
+	$(getModelDocString(WUE))
 """
 WUE

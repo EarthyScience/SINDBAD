@@ -68,7 +68,7 @@ g_cost(parameter_table.initial,
     obs_array,
     parameter_table,
     cost_options,
-    info.optimization.multi_constraint_method)
+    info.optimization.run_options.multi_constraint_method)
 
 function l1(p)
     return g_cost(p,
@@ -83,7 +83,7 @@ function l1(p)
         obs_array,
         parameter_table,
         cost_options,
-        info.optimization.multi_constraint_method)
+        info.optimization.run_options.multi_constraint_method)
 end
 l1(parameter_table.initial)
 rand_m = rand()
@@ -103,7 +103,7 @@ function l2(p)
         obs_array,
         parameter_table,
         cost_options,
-        info.optimization.multi_constraint_method)
+        info.optimization.run_options.multi_constraint_method)
 
 end
 

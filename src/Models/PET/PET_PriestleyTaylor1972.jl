@@ -33,11 +33,11 @@ function compute(params::PET_PriestleyTaylor1972, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{PET_PriestleyTaylor1972}) = "Calculates the value of land.fluxes.PET from the forcing variables"
+purpose(::Type{PET_PriestleyTaylor1972}) = "Calculates land.fluxes.PET from the forcing variables"
 
 @doc """
 
-$(getBaseDocString(PET_PriestleyTaylor1972))
+$(getModelDocString(PET_PriestleyTaylor1972))
 
 ---
 

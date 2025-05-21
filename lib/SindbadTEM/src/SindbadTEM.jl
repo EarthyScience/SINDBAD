@@ -8,13 +8,13 @@ This package integrates various components and utilities required to execute the
 
 # Dependencies:
 - `ComponentArrays`: Used for managing complex, hierarchical data structures like land variables and model states.
-- `ConstructionBase`: Provides utilities for constructing and initializing custom data structures.
-- `InteractiveUtils`: Enables interactive exploration and debugging during development.
 - `NLsolve`: Used for solving nonlinear equations, particularly in spinup processes (e.g., fixed-point solvers).
 - `ProgressMeter`: Displays progress bars for long-running simulations, improving user feedback.
-- `SindbadSetup`: Provides setup utilities and shared types for SINDBAD models. Re-exported for convenience.
+- `Sindbad`: Provides the core SINDBAD models and types.
+- `SindbadData`: Provides the SINDBAD data handling functions.
+- `SindbadUtils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
+- `SindbadSetup`: Provides the SINDBAD setup functions.
 - `ThreadPools`: Enables efficient thread-based parallelization for running simulations across multiple locations.
-- `YAXArrays`: Facilitates handling of multidimensional arrays, particularly for managing spatial and temporal data.
 
 # Included Files:
 1. **`utilsTEM.jl`**:
@@ -39,7 +39,7 @@ This package integrates various components and utilities required to execute the
    - Extends the functionality to handle spatial grids, enabling simulations across multiple locations with parallel execution.
 
 8. **`runTEMCube.jl`**:
-   - Adds support for running the TEM on 3D data cubes, useful for large-scale simulations with spatial dimensions.
+   - Adds support for running the TEM on 3D data YAXArrayscubes, useful for large-scale simulations with spatial dimensions.
 
 9. **`spinupTEM.jl`**:
    - Manages the spinup process, initializing the model to a steady state using various methods (e.g., ODE solvers, fixed-point solvers).
@@ -52,25 +52,25 @@ This package integrates various components and utilities required to execute the
 - It integrates tightly with the SINDBAD framework, leveraging shared types and utilities from `SindbadSetup`.
 """
 module SindbadTEM
-    using ComponentArrays
-    using InteractiveUtils
-    using NLsolve
-    using ProgressMeter
-    using SindbadSetup
-    @reexport using SindbadSetup
+   using ComponentArrays
+   using NLsolve
+   using ProgressMeter
+   using Sindbad
+   using SindbadUtils
+   using SindbadSetup
+   using SindbadData: YAXArrays
 
-    @reexport using ThreadPools
-    using YAXArrays
+   using ThreadPools
 
-    include("utilsTEM.jl")
-    include("deriveSpinupForcing.jl")
-    include("prepTEMOut.jl")
-    include("runModels.jl")
-    include("prepTEM.jl")
-    include("runTEMLoc.jl")
-    include("runTEMSpace.jl")
-    include("runTEMCube.jl")
-    include("spinupTEM.jl")
-    include("spinupSequence.jl")
+   include("utilsTEM.jl")
+   include("deriveSpinupForcing.jl")
+   include("prepTEMOut.jl")
+   include("runModels.jl")
+   include("prepTEM.jl")
+   include("runTEMLoc.jl")
+   include("runTEMSpace.jl")
+   include("runTEMCube.jl")
+   include("spinupTEM.jl")
+   include("spinupSequence.jl")
 
 end # module SindbadTEM

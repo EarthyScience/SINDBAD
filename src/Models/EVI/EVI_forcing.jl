@@ -12,11 +12,11 @@ function compute(params::EVI_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{EVI_forcing}) = "sets the value of land.states.EVI from the forcing in every time step"
+purpose(::Type{EVI_forcing}) = "sets land.states.EVI from forcing"
 
 @doc """
 
-$(getBaseDocString(EVI_forcing))
+$(getModelDocString(EVI_forcing))
 
 ---
 

@@ -1,13 +1,13 @@
 """
     SindbadExperiment
 
-The `SindbadExperiment` package provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates core SINDBAD packages and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
+The `SindbadExperiment` package provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates SINDBAD packages and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
 
 # Purpose:
 This package acts as a high-level interface for conducting experiments using the SINDBAD framework. It leverages the functionality of core SINDBAD packages and provides additional utilities for running experiments and managing outputs.
 
 # Dependencies:
-- `Sindbad`: The core SINDBAD package, providing foundational types and utilities for the SINDBAD framework.
+- `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadUtils`: Provides utility functions for handling data, spatial operations, and other helper tasks.
 - `SindbadSetup`: Manages setup configurations, parameter handling, and shared types for SINDBAD experiments.
 - `SindbadData`: Handles data ingestion, preprocessing, and management for SINDBAD experiments.
@@ -35,14 +35,7 @@ using SindbadExperiment
 experiment_config = ...
 
 # Run the experiment
-runExperiment(experiment_config)
-```
-
-2. **Saving experiment outputs**:
-```julia
-using SindbadExperiment
-# Save outputs to a file
-saveOutput(output_data, "results.nc")
+runExperimentForward(experiment_config)
 ```
 """
 module SindbadExperiment
@@ -54,6 +47,7 @@ module SindbadExperiment
     @reexport using SindbadTEM
     @reexport using SindbadOptimization
     @reexport using SindbadMetrics
+    @reexport using SindbadVisuals
 
     include("runExperiment.jl")
     include("saveOutput.jl")

@@ -7,6 +7,6 @@ purpose(::Type{cAllocationTreeFraction}) = "Adjustment of carbon allocation acco
 includeApproaches(cAllocationTreeFraction, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(cAllocationTreeFraction))
+	$(getModelDocString(cAllocationTreeFraction))
 """
 cAllocationTreeFraction

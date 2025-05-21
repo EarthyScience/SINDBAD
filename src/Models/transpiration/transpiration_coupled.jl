@@ -21,7 +21,7 @@ purpose(::Type{transpiration_coupled}) = "calculate the actual transpiration as 
 
 @doc """
 
-$(getBaseDocString(transpiration_coupled))
+$(getModelDocString(transpiration_coupled))
 
 ---
 

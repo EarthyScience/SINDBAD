@@ -33,7 +33,7 @@ end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 selected_models = info.models.forward;
-parameter_scaling_type = info.optimization.optimization_parameter_scaling
+parameter_scaling_type = info.optimization.run_options.parameter_scaling
 
 
 
@@ -72,7 +72,7 @@ loc_spinup_forcing = space_spinup_forcing[site_location];
 # ? optimization
 # costs related
 cost_options = [prepCostOptions(loc_obs, info.optimization.cost_options) for loc_obs in space_observations];
-constraint_method = info.optimization.multi_constraint_method;
+constraint_method = info.optimization.run_options.multi_constraint_method;
 
 # ? load available covariates
 xfeatures = loadCovariates(sites_forcing; kind="all")
@@ -144,10 +144,9 @@ input_args = (
 grads_lib = ForwardDiffGrad();
 loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
 
-@time gg = gradientPolyester(grads_lib, loc_params, 2, lossSite, inner_args...)
+@time gg = gradientSite(grads_lib, loc_params, 2, lossSite, inner_args...)
 
-gradientBatchPolyester!(grads_lib, grads_batch, 2, lossSite, getInnerArgs,
-    input_args...; showprog=true)
+gradientBatch!(grads_lib, grads_batch, 2, lossSite, getInnerArgs, input_args...; showprog=true)
 
 # ? training arguments
 chunk_size = 2

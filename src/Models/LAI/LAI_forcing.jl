@@ -12,11 +12,11 @@ function compute(params::LAI_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{LAI_forcing}) = "sets the value of land.states.LAI from the forcing in every time step"
+purpose(::Type{LAI_forcing}) = "sets land.states.LAI from forcing"
 
 @doc """
 
-$(getBaseDocString(LAI_forcing))
+$(getModelDocString(LAI_forcing))
 
 ---
 

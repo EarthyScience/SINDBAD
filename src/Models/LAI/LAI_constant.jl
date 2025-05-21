@@ -18,11 +18,11 @@ function precompute(params::LAI_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{LAI_constant}) = "sets the value of LAI as a constant"
+purpose(::Type{LAI_constant}) = "sets LAI as a constant"
 
 @doc """
 
-$(getBaseDocString(LAI_constant))
+$(getModelDocString(LAI_constant))
 
 ---
 

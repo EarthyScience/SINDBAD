@@ -1,3 +1,5 @@
+*.doc
+*.docx
 *.jl.*.cov
 *.jl.cov
 *.jl.mem
@@ -27,7 +29,12 @@
 *.jpg
 *.svg
 *.pdf
+*.pkl
 *.PDF
+*.ppt
+*.pptx
+*.xls
+*.xlsx
 .*
 ~*
 *_tmp
@@ -50,6 +57,7 @@ GettingStarted.md
 examples/data/
 docs/build/
 build/
+__pycache__
 
 .vscode
 .gitlab-ci.yml
@@ -59,6 +67,8 @@ package-lock.json
 !docs/src/assets/logo.png
 !docs/src/assets/logo-RnD.png
 !docs/src/assets/sindbad_logo.png
+!docs/src/assets/sindbad_info.png
+!docs/src/assets/sindbad_package_dependency.png
 !.vitepress
 !logo_mpi_grey.png
 !.github

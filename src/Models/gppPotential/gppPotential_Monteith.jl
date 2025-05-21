@@ -24,7 +24,7 @@ purpose(::Type{gppPotential_Monteith}) = "set the potential GPP based on radiati
 
 @doc """
 
-$(getBaseDocString(gppPotential_Monteith))
+$(getModelDocString(gppPotential_Monteith))
 
 ---
 

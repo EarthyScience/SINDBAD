@@ -7,6 +7,6 @@ purpose(::Type{gppPotential}) = "Maximum instantaneous radiation use efficiency"
 includeApproaches(gppPotential, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(gppPotential))
+	$(getModelDocString(gppPotential))
 """
 gppPotential

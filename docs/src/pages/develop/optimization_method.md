@@ -66,25 +66,29 @@ The `algorithm_optimization` field can be specified in two ways:
    When specified as a string, it uses default parameters for the algorithm.
 
 :::info
+
 Using a JSON file for `algorithm_optimization` allows for:
 - Custom parameter tuning
 - Different configurations for different experiments
 - Easy switching between algorithm settings
+
 :::
 
 ## Available Optimization Methods
 
 :::tip
+
 To list all available optimization methods and their purposes, use:
 ```julia
-using SindbadUtils
-showMethodsOf(SindbadOptimizationMethod)
+using Sindbad
+showMethodsOf(OptimizationMethod)
 ```
 This will display a formatted list of all optimization methods and their descriptions.
 
 :::
 
 :::tip
+
 To get default options for any optimization method, use `sindbadDefaultOptions`:
 
 ```julia
@@ -93,15 +97,16 @@ opts = sindbadDefaultOptions(CMAEvolutionStrategyCMAES())
 # Returns: (maxfevals = 50,)
 
 # Get default options for Morris method
-opts = sindbadDefaultOptions(GlobalSensitivityMorris())
+opts = sindbadDefaultOptions(GSAMorris())
 # Returns: (total_num_trajectory = 200, num_trajectory = 15, len_design_mat = 10)
 
 # Get default options for Sobol method
-opts = sindbadDefaultOptions(GlobalSensitivitySobol())
+opts = sindbadDefaultOptions(GSASobol())
 # Returns: (samples = 5, method_options = (order = [0, 1],), sampler = "Sobol", sampler_options = ())
 ```
 
 These default options can be used as a starting point for customizing optimization parameters in your configuration files.
+
 :::
 
 Current methods include:
@@ -135,19 +140,20 @@ Current methods include:
 
 ### 1. Define the New Optimization Method Type
 
-In `runtimeDispatchTypes.jl`, add a new struct that subtypes `SindbadOptimizationMethod`:
+In `src/Types/OptimizationTypes.jl`, add a new struct that subtypes `OptimizationMethod`:
 
 ```julia
 import SindbadUtils: purpose
 
 # Define the new optimization type
-struct YourNewOptimizationMethod <: SindbadOptimizationMethod end
+struct YourNewOptimizationMethod <: OptimizationMethod end
 
 # Define its purpose
 purpose(::Type{YourNewOptimizationMethod}) = "Description of what YourNewOptimizationMethod does"
 ```
 
 :::info
+
 When naming new optimization types that use external packages, follow the convention `PackageNameMethodName`. For example:
 - `CMAEvolutionStrategyCMAES` for the CMA-ES method from CMAEvolutionStrategy.jl
 - `OptimizationBFGS` for the BFGS method from Optimization.jl
@@ -172,6 +178,7 @@ sindbadDefaultOptions(::YourNewOptimizationMethod) = (
 ```
 
 :::tip
+
 When setting default options:
 1. Choose reasonable default values that work well for most cases
 2. Include all essential parameters needed by the optimization method
@@ -181,6 +188,7 @@ When setting default options:
    - Population/ensemble settings (e.g., `population_size`)
    - Algorithm-specific parameters
    - Performance tuning options
+
 :::
 
 :::warning Make sure:

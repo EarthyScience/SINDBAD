@@ -23,7 +23,7 @@ function setPoolsInfo(info::NamedTuple)
     tmp_states = (;)
     hlp_states = (;)
     model_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.settings.experiment.exe_rules.model_array_type, "ModelArray"))()
-
+    num_type = info.temp.helpers.numbers.num_type
     for element ∈ elements
         vals_tuple = (;)
         vals_tuple = setTupleField(vals_tuple, (:zix, (;)))
@@ -36,25 +36,13 @@ function setPoolsInfo(info::NamedTuple)
         hlp_states = setTupleField(hlp_states, (elSymbol, (;)))
         pool_info = getfield(getfield(info.settings.model_structure.pools, element), :components)
         nlayers = Int64[]
-        # layer_thicknesses = []
-        layer_thicknesses = info.temp.helpers.numbers.num_type[]
+        layer_thicknesses = num_type[]
         layer = Int64[]
         inits = []
-        # inits = info.temp.helpers.numbers.num_type[]
         sub_pool_name = Symbol[]
         main_pool_name = Symbol[]
-        main_pools =
-            Symbol.(keys(getfield(getfield(info.settings.model_structure.pools, element),
-                :components)))
-        layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name =
-            getPoolInformation(main_pools,
-                pool_info,
-                layer_thicknesses,
-                nlayers,
-                layer,
-                inits,
-                sub_pool_name,
-                main_pool_name)
+        main_pools = Symbol.(keys(getfield(getfield(info.settings.model_structure.pools, element), :components)))
+        layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name = getPoolInformation(main_pools, pool_info, layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name)
 
         # set empty tuple fields
         tpl_fields = (:components, :zix, :initial_values, :layer_thickness)
@@ -62,18 +50,18 @@ function setPoolsInfo(info::NamedTuple)
             tmp_elem = setTupleField(tmp_elem, (_tpl, (;)))
         end
         hlp_elem = setTupleField(hlp_elem, (:layer_thickness, (;)))
+        # hlp_elem = setTupleField(hlp_elem, (:n_layers, (;)))
         hlp_elem = setTupleField(hlp_elem, (:zix, (;)))
         hlp_elem = setTupleField(hlp_elem, (:components, (;)))
         hlp_elem = setTupleField(hlp_elem, (:all_components, (;)))
         hlp_elem = setTupleField(hlp_elem, (:zeros, (;)))
         hlp_elem = setTupleField(hlp_elem, (:ones, (;)))
-        # hlp_elem = setTupleField(hlp_elem, (:vals, (;)))
 
         # main pools
         for main_pool ∈ main_pool_name
             zix = Int[]
             initial_values = []
-            # initial_values = info.temp.helpers.numbers.num_type[]
+            # initial_values = num_type[]
             components = Symbol[]
             for (ind, par) ∈ enumerate(sub_pool_name)
                 if startswith(String(par), String(main_pool))
@@ -82,32 +70,19 @@ function setPoolsInfo(info::NamedTuple)
                     push!(initial_values, inits[ind])
                 end
             end
-            initial_values = createArrayofType(initial_values,
-                Nothing[],
-                info.temp.helpers.numbers.num_type,
-                nothing,
-                true,
-                model_array_type)
+            initial_values = createArrayofType(initial_values, Nothing[], num_type, nothing, true, model_array_type)
 
             zix = Tuple(zix)
 
             tmp_elem = setTupleSubfield(tmp_elem, :components, (main_pool, Tuple(components)))
             tmp_elem = setTupleSubfield(tmp_elem, :zix, (main_pool, zix))
             tmp_elem = setTupleSubfield(tmp_elem, :initial_values, (main_pool, initial_values))
+            # hlp_elem = setTupleSubfield(hlp_elem, :n_layers, (main_pool, length(zix)))
             hlp_elem = setTupleSubfield(hlp_elem, :zix, (main_pool, zix))
             hlp_elem = setTupleSubfield(hlp_elem, :components, (main_pool, Tuple(components)))
-            onetyped = createArrayofType(ones(size(initial_values)),
-                Nothing[],
-                info.temp.helpers.numbers.num_type,
-                nothing,
-                true,
-                model_array_type)
-            # onetyped = ones(length(initial_values))
-            hlp_elem = setTupleSubfield(hlp_elem,
-                :zeros,
-                (main_pool, zero(onetyped)))
+            onetyped = createArrayofType(ones(size(initial_values)), Nothing[], num_type, nothing, true, model_array_type)
+            hlp_elem = setTupleSubfield(hlp_elem, :zeros, (main_pool, zero(onetyped)))
             hlp_elem = setTupleSubfield(hlp_elem, :ones, (main_pool, onetyped))
-            # hlp_elem = setTupleSubfield(hlp_elem, :zeros, (main_pool, zeros(initial_values)))
         end
 
         # subpools
@@ -120,9 +95,8 @@ function setPoolsInfo(info::NamedTuple)
         for sub_pool ∈ unique_sub_pools
             zix = Int[]
             initial_values = []
-            # initial_values = info.temp.helpers.numbers.num_type[]
             components = Symbol[]
-            ltck = info.temp.helpers.numbers.num_type[]
+            ltck = num_type[]
             # ltck = []
             for (ind, par) ∈ enumerate(sub_pool_name)
                 if par == sub_pool
@@ -133,28 +107,18 @@ function setPoolsInfo(info::NamedTuple)
                 end
             end
             zix = Tuple(zix)
-            initial_values = createArrayofType(initial_values,
-                Nothing[],
-                info.temp.helpers.numbers.num_type,
-                nothing,
-                true,
-                model_array_type)
+            initial_values = createArrayofType(initial_values, Nothing[], num_type, nothing, true, model_array_type)
             tmp_elem = setTupleSubfield(tmp_elem, :components, (sub_pool, Tuple(components)))
             tmp_elem = setTupleSubfield(tmp_elem, :zix, (sub_pool, zix))
             tmp_elem = setTupleSubfield(tmp_elem, :initial_values, (sub_pool, initial_values))
             tmp_elem = setTupleSubfield(tmp_elem, :layer_thickness, (sub_pool, Tuple(ltck)))
             hlp_elem = setTupleSubfield(hlp_elem, :layer_thickness, (sub_pool, Tuple(ltck)))
             hlp_elem = setTupleSubfield(hlp_elem, :zix, (sub_pool, zix))
+            # hlp_elem = setTupleSubfield(hlp_elem, :n_layers, (sub_pool, length(zix)))
             hlp_elem = setTupleSubfield(hlp_elem, :components, (sub_pool, Tuple(components)))
-            onetyped = createArrayofType(ones(size(initial_values)),
-                Nothing[],
-                info.temp.helpers.numbers.num_type,
-                nothing,
-                true,
-                model_array_type)
+            onetyped = createArrayofType(ones(size(initial_values)), Nothing[], num_type, nothing, true, model_array_type)
             # onetyped = ones(length(initial_values))
-            hlp_elem = setTupleSubfield(hlp_elem, :zeros,
-                (sub_pool, zero(onetyped)))
+            hlp_elem = setTupleSubfield(hlp_elem, :zeros, (sub_pool, zero(onetyped)))
             hlp_elem = setTupleSubfield(hlp_elem, :ones, (sub_pool, onetyped))
         end
 
@@ -171,38 +135,24 @@ function setPoolsInfo(info::NamedTuple)
                     push!(components, _sp)
                 end
             end
-            # components = Set(Symbol.(sub_pool_name))
             initial_values = inits
-            initial_values = createArrayofType(initial_values,
-                Nothing[],
-                info.temp.helpers.numbers.num_type,
-                nothing,
-                true,
-                model_array_type)
+            initial_values = createArrayofType(initial_values, Nothing[], num_type, nothing, true, model_array_type)
             zix = collect(1:1:length(main_pool_name))
             zix = Tuple(zix)
 
             tmp_elem = setTupleSubfield(tmp_elem, :components, (combined_pool_name, Tuple(components)))
             tmp_elem = setTupleSubfield(tmp_elem, :zix, (combined_pool_name, zix))
             tmp_elem = setTupleSubfield(tmp_elem, :initial_values, (combined_pool_name, initial_values))
+            # hlp_elem = setTupleSubfield(hlp_elem, :n_layers, (combined_pool_name, length(zix)))
             hlp_elem = setTupleSubfield(hlp_elem, :zix, (combined_pool_name, zix))
-            onetyped = createArrayofType(ones(size(initial_values)),
-                Nothing[],
-                info.temp.helpers.numbers.num_type,
-                nothing,
-                true,
-                model_array_type)
+            onetyped = createArrayofType(ones(size(initial_values)), Nothing[], num_type, nothing, true, model_array_type)
             all_components = Tuple([_k for _k in keys(tmp_elem.zix) if _k !== combined_pool_name])
             hlp_elem = setTupleSubfield(hlp_elem, :all_components, (combined_pool_name, all_components))
             vals_tuple = setTupleSubfield(vals_tuple, :zix, (combined_pool_name, Val(hlp_elem.zix)))
             vals_tuple = setTupleSubfield(vals_tuple, :self, (combined_pool_name, Val(combined_pool_name)))
             vals_tuple = setTupleSubfield(vals_tuple, :all_components, (combined_pool_name, Val(all_components)))
-            # hlp_elem = setTupleField(hlp_elem, (:vals, vals_tuple))
             hlp_elem = setTupleSubfield(hlp_elem, :components, (combined_pool_name, Tuple(components)))
-            # onetyped = ones(length(initial_values))
-            hlp_elem = setTupleSubfield(hlp_elem,
-                :zeros,
-                (combined_pool_name, zero(onetyped)))
+            hlp_elem = setTupleSubfield(hlp_elem, :zeros, (combined_pool_name, zero(onetyped)))
             hlp_elem = setTupleSubfield(hlp_elem, :ones, (combined_pool_name, onetyped))
         else
             create = Symbol.(unique_sub_pools)
@@ -238,8 +188,6 @@ function setPoolsInfo(info::NamedTuple)
                     cwfield = setTupleField(cwfield, (subprop, (; csub..., wsub...)))
                 end
             end
-            # @show prop, cfield, wfield
-            # tcPrint(cwfield)
             hlp_new = setTupleField(hlp_new, (prop, cwfield))
         end
     elseif :carbon in eleprops && :water ∉ eleprops
@@ -249,6 +197,15 @@ function setPoolsInfo(info::NamedTuple)
     else
         hlp_new = hlp_states
     end
+
+    # get the number of layers per pool 
+    n_layers = NamedTuple(map(propertynames(hlp_new.ones)) do one_pool
+        n_pool = num_type(length(getproperty(hlp_new.ones, one_pool)))
+        Pair(one_pool, n_pool)
+    end
+    )
+    hlp_new = (hlp_new..., n_layers=n_layers)
+
     info = (; info..., pools=tmp_states, temp=(; info.temp..., helpers=(; info.temp.helpers..., pools=hlp_new)))
     return info
 end
@@ -274,14 +231,7 @@ function createInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
         initial_values = getfield(props, :initial_values)
         for tocr ∈ var_to_create
             input_values = deepcopy(getfield(initial_values, tocr))
-            init_pools = setTupleField(init_pools,
-                (tocr,
-                    createArrayofType(input_values,
-                        Nothing[],
-                        tem_helpers.numbers.num_type,
-                        nothing,
-                        true,
-                        model_array_type)))
+            init_pools = setTupleField(init_pools, (tocr, createArrayofType(input_values, Nothing[], tem_helpers.numbers.num_type, nothing, true, model_array_type)))
         end
         to_combine = getfield(getfield(info_pools, element), :combine)
         if to_combine.docombine
@@ -293,15 +243,8 @@ function createInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                 if component != combined_pool_name
                     indx = getfield(zix_pool, component)
                     input_values = deepcopy(getfield(initial_values, component))
-                    compdat = createArrayofType(input_values,
-                        pool_array,
-                        tem_helpers.numbers.num_type,
-                        indx,
-                        false,
-                        model_array_type)
-                    # Δcomponent = Symbol("Δ" * string(component))
+                    compdat = createArrayofType(input_values, pool_array, tem_helpers.numbers.num_type, indx, false, model_array_type)
                     init_pools = setTupleField(init_pools, (component, compdat))
-                    # init_pools = setTupleField(init_pools, (Δcomponent, zero(compdat)))
                 end
             end
         end
@@ -337,15 +280,8 @@ function createInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
             for avk ∈ keys(additional_state_vars)
                 avv = getproperty(additional_state_vars, avk)
                 Δtocr = Symbol(string(avk) * string(tocr))
-                vals =
-                    one.(getfield(initial_values, tocr)) *
-                                                      tem_helpers.numbers.num_type(avv)
-                newvals = createArrayofType(vals,
-                    Nothing[],
-                    tem_helpers.numbers.num_type,
-                    nothing,
-                    true,
-                    model_array_type)
+                vals = one.(getfield(initial_values, tocr)) *                                 tem_helpers.numbers.num_type(avv)
+                newvals = createArrayofType(vals, Nothing[], tem_helpers.numbers.num_type, nothing, true, model_array_type)
                 initial_states = setTupleField(initial_states, (Δtocr, newvals))
             end
         end
@@ -362,13 +298,7 @@ function createInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                     if component != combined_pool_name
                         Δ_component = Symbol(string(avk) * string(component))
                         indx = getfield(zix_pool, component)
-                        Δ_compdat = createArrayofType((one.(getfield(initial_values, component))) .*
-                                                     tem_helpers.numbers.num_type(avv),
-                            Δ_pool_array,
-                            tem_helpers.numbers.num_type,
-                            indx,
-                            false,
-                            model_array_type)
+                        Δ_compdat = createArrayofType((one.(getfield(initial_values, component))) .* tem_helpers.numbers.num_type(avv), Δ_pool_array, tem_helpers.numbers.num_type, indx, false, model_array_type)
                         initial_states = setTupleField(initial_states, (Δ_component, Δ_compdat))
                     end
                 end
@@ -431,15 +361,7 @@ function getPoolInformation(main_pools, pool_info, layer_thicknesses, nlayers, l
             prefix = prename * String(main_pool)
             sub_pools = propertynames(main_pool_info)
             layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name =
-                getPoolInformation(sub_pools,
-                    main_pool_info,
-                    layer_thicknesses,
-                    nlayers,
-                    layer,
-                    inits,
-                    sub_pool_name,
-                    main_pool_name;
-                    prename=prefix)
+                getPoolInformation(sub_pools, main_pool_info, layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name; prename=prefix)
         end
     end
     return layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name

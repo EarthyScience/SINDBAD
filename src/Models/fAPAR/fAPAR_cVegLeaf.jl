@@ -28,7 +28,7 @@ purpose(::Type{fAPAR_cVegLeaf}) = "Compute FAPAR based on carbon pool of the lea
 
 @doc """
 
-$(getBaseDocString(fAPAR_cVegLeaf))
+$(getModelDocString(fAPAR_cVegLeaf))
 
 ---
 

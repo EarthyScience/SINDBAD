@@ -13,7 +13,7 @@ function compute(params::groundWRecharge_fraction, forcing, land, helpers)
     ## unpack land variables
     @unpack_nt begin
         (ΔsoilW, soilW, ΔgroundW, groundW) ⇐ land.pools
-        n_groundW ⇐ land.constants
+        n_groundW = groundW ⇐ helpers.pools.n_layers
     end
 
     ## calculate variables
@@ -35,7 +35,7 @@ purpose(::Type{groundWRecharge_fraction}) = "GW recharge as a fraction of moistu
 
 @doc """
 
-$(getBaseDocString(groundWRecharge_fraction))
+$(getModelDocString(groundWRecharge_fraction))
 
 ---
 

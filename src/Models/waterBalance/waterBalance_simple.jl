@@ -3,16 +3,6 @@ export waterBalance_simple
 struct waterBalance_simple <: waterBalance end
 
 
-"""
-    isInvalid(num)
-
-check if a data is an invalid number
-"""
-function isInvalid(_data)
-    return isnothing(_data) || ismissing(_data) || isnan(_data) || isinf(_data)
-end
-
-
 function throwError(forcing, land, msg, water_balance, total_water, total_water_prev, WBP, precip, runoff, evapotranspiration)
     msg = "water balance error: $msg :: water_balance: $(water_balance), total_water: $(total_water), total_water_prev: $(total_water_prev), WBP: $(WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
     @show land
@@ -62,7 +52,7 @@ purpose(::Type{waterBalance_simple}) = "check the water balance in every time st
 
 @doc """
 
-$(getBaseDocString(waterBalance_simple))
+$(getModelDocString(waterBalance_simple))
 
 ---
 

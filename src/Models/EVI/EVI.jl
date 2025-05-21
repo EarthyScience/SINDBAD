@@ -7,6 +7,6 @@ purpose(::Type{EVI}) = "Enhanced vegetation index"
 includeApproaches(EVI, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(EVI))
+	$(getModelDocString(EVI))
 """
 EVI

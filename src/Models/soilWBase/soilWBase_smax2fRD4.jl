@@ -16,7 +16,7 @@ function define(params::soilWBase_smax2fRD4, forcing, land, helpers)
 
     @unpack_nt begin
         soilW ⇐ land.pools
-        n_soilW ⇐ land.constants
+        n_soilW = soilW ⇐ helpers.pools.n_layers
     end
     rootwater_capacities = ones(typeof(smax1), 4)
     if soilW isa SVector
@@ -88,7 +88,7 @@ purpose(::Type{soilWBase_smax2fRD4}) = "defines the maximum soil water content o
 
 @doc """
 
-$(getBaseDocString(soilWBase_smax2fRD4))
+$(getModelDocString(soilWBase_smax2fRD4))
 
 ---
 

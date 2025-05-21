@@ -11,7 +11,7 @@ function define(params::soilWBase_smax1Layer, forcing, land, helpers)
 
     @unpack_nt begin
         soilW ⇐ land.pools
-        n_soilW ⇐ land.constants
+        n_soilW = soilW ⇐ helpers.pools.n_layers
     end
     ## precomputations/check
     # get the soil thickness & root distribution information from input
@@ -57,7 +57,7 @@ purpose(::Type{soilWBase_smax1Layer}) = "defines the maximum soil water content 
 
 @doc """
 
-$(getBaseDocString(soilWBase_smax1Layer))
+$(getModelDocString(soilWBase_smax1Layer))
 
 ---
 

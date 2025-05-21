@@ -39,7 +39,7 @@ purpose(::Type{rainSnow_Tair}) = "separates the rain & snow based on temperature
 
 @doc """
 
-$(getBaseDocString(rainSnow_Tair))
+$(getModelDocString(rainSnow_Tair))
 
 ---
 

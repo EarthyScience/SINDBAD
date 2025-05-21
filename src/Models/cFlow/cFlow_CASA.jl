@@ -50,7 +50,7 @@ purpose(::Type{cFlow_CASA}) = "combine all the effects that change the transfers
 
 @doc """
 
-$(getBaseDocString(cFlow_CASA))
+$(getModelDocString(cFlow_CASA))
 
 ---
 

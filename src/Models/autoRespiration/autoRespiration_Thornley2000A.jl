@@ -55,11 +55,13 @@ function compute(params::autoRespiration_Thornley2000A, forcing, land, helpers)
         RA_M_ix = k_respiration_maintain_ix * cEco[ix]
         # no negative maintenance respiration
         RA_M_ix = maxZero(RA_M_ix)
-        if helpers.pools.components.cEco[ix] == :cVegReserve
-            if (cEco[ix] - RA_M_ix) < land.states.c_remain
-                RA_M_ix = zero(RA_M_ix)
-            end
-        end
+
+        #TODO: check if this is correct
+        # if helpers.pools.components.cEco[ix] == :cVegReserve
+        #     if (cEco[ix] - RA_M_ix) < land.states.c_remain
+        #         RA_M_ix = zero(RA_M_ix)
+        #     end
+        # end
 
 
         # growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
@@ -84,11 +86,11 @@ function compute(params::autoRespiration_Thornley2000A, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{autoRespiration_Thornley2000A}) = "Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper]."
+purpose(::Type{autoRespiration_Thornley2000A}) = "estimates autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority."
 
 @doc """
 
-$(getBaseDocString(autoRespiration_Thornley2000A))
+$(getModelDocString(autoRespiration_Thornley2000A))
 
 ---
 

@@ -24,7 +24,7 @@ purpose(::Type{cBiomass_treeGrass}) = "This serves the in situ optimization of e
 
 @doc """
 
-$(getBaseDocString(cBiomass_treeGrass))
+$(getModelDocString(cBiomass_treeGrass))
 
 ---
 

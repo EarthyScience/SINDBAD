@@ -7,6 +7,6 @@ purpose(::Type{vegAvailableWater}) = "Plant available water"
 includeApproaches(vegAvailableWater, @__DIR__)
 
 @doc """ 
-	$(getBaseDocString(vegAvailableWater))
+	$(getModelDocString(vegAvailableWater))
 """
 vegAvailableWater
