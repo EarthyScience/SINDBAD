@@ -281,6 +281,7 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=Dict(), log_
     replace_info["experiment.flags.calc_cost"] = false
     replace_info["experiment.flags.run_forward"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+    run_helpers = prepTEM(info.models.forward, forcing, info)
     opti_output = runExperiment(info, forcing, info.helpers.run.run_optimization)
     setLogLevel(:info)
     fp_output = runExperimentForwardParams(opti_output.parameters.optimized, sindbad_experiment; replace_info=replace_info)
@@ -289,7 +290,7 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=Dict(), log_
     loss_vector_def = metricVector(fp_output.output.default, opti_output.observation, cost_options)
     loss_table = Table((; variable=cost_options.variable, metric=cost_options.cost_metric, loss_opt=loss_vector, loss_def=loss_vector_def))
     display(loss_table)
-    return (; forcing, info=fp_output.info, loss=loss_table, observation=opti_output.observation, output=fp_output.output, parameters=opti_output.parameters)
+    return (; forcing, cost_options, run_helpers, info=fp_output.info, loss=loss_table, observation=opti_output.observation, output=fp_output.output, parameters=opti_output.parameters)
 end
 
 

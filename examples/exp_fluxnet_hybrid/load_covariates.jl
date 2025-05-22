@@ -1,7 +1,7 @@
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
+# using SindbadData
+# using SindbadData.DimensionalData
+# using SindbadData.AxisKeys
+# using SindbadData.YAXArrays
 
 """
     loadCovariates(sites_forcing; kind="all")
@@ -24,12 +24,8 @@ Other options
 - `KG_veg`
 - `veg_ABCNOPSWB`
 """
-function loadCovariates(sites_forcing; kind="all")
-    c_read = if Sys.islinux()
-        Cube("/Net/Groups/BGI/work_5/scratch/lalonso/CovariatesFLUXNET_3.zarr") # remote
-    else
-        Cube("examples/data/CovariatesFLUXNET_3.zarr") # local
-    end
+function loadCovariates(sites_forcing; kind="all", cube_path = "/Net/Groups/BGI/work_5/scratch/lalonso/CovariatesFLUXNET_3.zarr")
+    c_read = Cube(cube_path)
     # select features, do only nor
     only_nor = occursin.(r"nor", c_read.features)
     nor_sel = c_read.features[only_nor].val

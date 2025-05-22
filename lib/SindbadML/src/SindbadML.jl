@@ -21,10 +21,12 @@ module SindbadML
 
     using Sindbad
     using SindbadTEM
+    using SindbadSetup
     using SindbadData.YAXArrays
     using SindbadData.Zarr
     using SindbadData.AxisKeys
     using SindbadData: AllNaN
+    using SindbadMetrics
     using Enzyme
 
     using Flux
