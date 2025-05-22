@@ -149,6 +149,76 @@ plotIOModelStructure(info, :compute, [:input, :output])
 
 </details>
 
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadVisuals.plotPerformanceHistograms-Tuple{Any}' href='#SindbadVisuals.plotPerformanceHistograms-Tuple{Any}'><span class="jlbinding">SindbadVisuals.plotPerformanceHistograms</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+plotPerformanceHistograms(out_opti)
+```
+
+
+Generate performance histograms based on optimization output data.
+
+**Arguments**
+- `out_opti`: Optimization output data structure containing model outputs and information
+  
+
+**Description**
+
+Creates histogram plots to visualize the distribution of  performance metrics from optimization results.
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadVisuals.plotTimeSeriesDebug-Tuple{Any, Any, Any}' href='#SindbadVisuals.plotTimeSeriesDebug-Tuple{Any, Any, Any}'><span class="jlbinding">SindbadVisuals.plotTimeSeriesDebug</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+plotTimeSeriesDebug(info, opt_dat, def_dat)
+```
+
+
+Plot debugging figures for model outputs.
+
+**Arguments**
+- `info`: Information structure containing experiment details
+  
+- `opt_dat`: Optimized model output data
+  
+- `def_dat`: Default model output data
+  
+
+**Description**
+
+This function generates debugging figures by plotting the optimized and default model outputs for each variable specified in the experiment&#39;s output variables list. It calculates the mean of the model outputs across layers and then plots them against time using Plots.jl. Debugging figures are saved in a directory specified by `info.output.dirs.figure`.
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadVisuals.plotTimeSeriesWithObs-Tuple{Any}' href='#SindbadVisuals.plotTimeSeriesWithObs-Tuple{Any}'><span class="jlbinding">SindbadVisuals.plotTimeSeriesWithObs</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+plotTimeSeriesWithObs(out_opti)
+```
+
+
+Generate time series plots comparing optimized and default model outputs with observations.
+
+**Arguments**
+- `out_opti`: Optimization output data structure containing model outputs and information
+  
+
+**Description**
+
+Generates time series plots that compare the optimized and default model outputs with observations. The function iterates over each variable specified in the cost options and creates a separate plot for each one. Each plot displays the observed data as scatter points, along with the default and optimized model outputs as line graphs. Additionally, it includes vertical lines indicating the calculated loss metric values for both the default and optimized models.
+
+</details>
+
 
 ## Internal {#Internal}
 
