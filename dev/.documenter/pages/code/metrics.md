@@ -249,7 +249,7 @@ metricVector(model_output, observations, cost_options)
 ```
 
 
-returns a vector of metrics for variables in info.cost_options.observational_constraints   
+returns a vector of metrics for variables in cost_options.variable.   
 
 **Arguments:**
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss

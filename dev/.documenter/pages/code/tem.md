@@ -2337,14 +2337,14 @@ nrepeat_age(year_disturbance; year_start = 1979)
 
 
 ```julia
-parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, parallelization_mode::SindbadParallelizationMethod)
+parallelizeTEM!(space_selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, parallelization_mode::SindbadParallelizationMethod)
 ```
 
 
 Parallelizes the SINDBAD Terrestrial Ecosystem Model (TEM) across multiple locations using the specified parallelization backend.
 
 **Arguments:**
-- `selected_models`: A tuple of all models selected in the given model structure.
+- `space_selected_models`: A vector of tuple of all models selected in the given model structure that vary per location.
   
 - `space_forcing`: A collection of forcing NamedTuples for multiple locations, replicated to avoid data races during parallel execution.
   

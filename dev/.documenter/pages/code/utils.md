@@ -549,16 +549,10 @@ makeLongTuple(normal_tuple; longtuple_size=5)
 ```
 
 
-Create a LongTuple from a normal tuple.
-
-**Arguments**
-- `normal_tuple`: The input tuple to convert
+**Arguments:**
+- `normal_tuple`: a normal tuple
   
-- `longtuple_size`: Size to break down the tuple into (default: 5)
-  
-
-**Returns**
-- A LongTuple containing the elements of the input tuple
+- `longtuple_size`: size to break down the tuple into
   
 
 </details>
@@ -573,10 +567,16 @@ makeLongTuple(normal_tuple; longtuple_size=5)
 ```
 
 
-**Arguments:**
-- `normal_tuple`: a normal tuple
+Create a LongTuple from a normal tuple.
+
+**Arguments**
+- `normal_tuple`: The input tuple to convert
   
-- `longtuple_size`: size to break down the tuple into
+- `longtuple_size`: Size to break down the tuple into (default: 5)
+  
+
+**Returns**
+- A LongTuple containing the elements of the input tuple
   
 
 </details>
