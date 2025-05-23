@@ -1,85 +1,43 @@
+using SindbadUtils
+using SindbadTEM
+using SindbadSetup
 using SindbadData
 using SindbadData.DimensionalData
 using SindbadData.AxisKeys
 using SindbadData.YAXArrays
-using SindbadTEM
+# using SindbadTEM
 using SindbadML
 using SindbadML.JLD2
 using ProgressMeter
-using SindbadOptimization
+# using SindbadOptimization
 using SindbadML.Zygote
-import AbstractDifferentiation as AD, Zygote
+# import AbstractDifferentiation as AD, Zygote
 
 
 # extra includes for covariate and activation functions
-include("load_covariates.jl")
-include("test_activation_functions.jl")
+# extra includes for covariate and activation functions
+include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/load_covariates.jl"))
+include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/test_activation_functions.jl"))
+
 
 ## paths
 file_folds = load(joinpath(@__DIR__, "nfolds_sites_indices.jld2"))
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
 
 # for remote node
+path_input = "$(getSindbadDataDepot())/FLUXNET_v2023_12_1D.zarr"
+
+path_covariates = "$(getSindbadDataDepot())/CovariatesFLUXNET_3.zarr"
 replace_info = Dict()
-if Sys.islinux()
-    replace_info = Dict(
-        "forcing.default_forcing.data_path" => "/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr",
-        "optimization.observations.default_observation.data_path" =>"/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr"
-        );
-end
+
+replace_info = Dict(
+      "forcing.default_forcing.data_path" => path_input,
+      "optimization.observations.default_observation.data_path" => path_input,
+      "optimization.optimization_cost_threaded" => false,
+      );
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 
-
-
-
-"""
-    namedTupleToFlareJSON(info::NamedTuple)
-
-Convert a nested NamedTuple into a flare.json format suitable for d3.js visualization.
-
-# Arguments
-- `info::NamedTuple`: The input NamedTuple to convert
-
-# Returns
-- A dictionary in flare.json format with the following structure:
-  ```json
-  {
-    "name": "root",
-    "children": [
-      {
-        "name": "field1",
-        "children": [...]
-      },
-      {
-        "name": "field2",
-        "value": 42
-      }
-    ]
-  }
-  ```
-
-# Notes
-- The function recursively traverses the NamedTuple structure
-- Fields with no children are treated as leaf nodes with a value of 1
-- The structure is flattened to show the full path to each field
-"""
-function namedTupleToFlareJSON(info::NamedTuple)
-    function _convert_to_flare(nt::NamedTuple, name="root")
-        children = []
-        for field in propertynames(nt)
-            value = getfield(nt, field)
-            if value isa NamedTuple
-                push!(children, _convert_to_flare(value, string(field)))
-            else
-                push!(children, Dict("name" => string(field), "value" => 1))
-            end
-        end
-        return Dict("name" => name, "children" => children)
-    end
-    
-    return _convert_to_flare(info)
-end
 
 selected_models = info.models.forward;
 parameter_scaling_type = info.optimization.run_options.parameter_scaling
@@ -135,7 +93,7 @@ indices_sites_testing = siteNameToID.(sites_testing, Ref(sites_forcing));
 
 indices_sites_batch = indices_sites_training;
 
-xfeatures = loadCovariates(sites_forcing; kind="all");
+xfeatures = loadCovariates(sites_forcing; kind="all", cube_path=path_covariates);
 @info "xfeatures: [$(minimum(xfeatures)), $(maximum(xfeatures))]"
 
 nor_names_order = xfeatures.features;
@@ -213,7 +171,7 @@ metadata_global = info.output.file_info.global_metadata
 in_gargs=(;
     train_refs = (; sites_training, indices_sites_training, xfeatures, tbl_params, batch_size, chunk_size, metadata_global),
     test_val_refs = (; sites_validation, indices_sites_validation, sites_testing, indices_sites_testing),
-    total_constraints = length(info.optimization.observational_constraints),
+    total_constraints = length(info.optimization.cost_options.variable),
     forward_args,
     loss_fargs = (lossSite, getInnerArgs)
 );

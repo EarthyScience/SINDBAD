@@ -29,7 +29,7 @@ for sb in keys(subsets)
     GC.gc()
     info = dropFields(info, (:settings,));
     run_helpers = prepTEM(forcing, info);
-    @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
+    @time runTEM!(run_helpers.space_selected_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
     rhc[sb] = (; deepcopy(run_helpers)...)
 end
 

@@ -196,22 +196,22 @@ function gradientBatch!(grads_lib::PolyesterForwardDiffGrad, dx_batch, chunk_siz
 end
 
 function gradientBatch!(grads_lib::GradType, dx_batch, chunk_size::Int, loss_f::F, get_inner_args::Function, input_args...; showprog=false) where {F}
-        # Threads.@spawn allows dynamic scheduling instead of static scheduling
-        # of Threads.@threads macro.
-        # See <https://github.com/JuliaLang/julia/issues/21017>
+    # Threads.@spawn allows dynamic scheduling instead of static scheduling
+    # of Threads.@threads macro.
+    # See <https://github.com/JuliaLang/julia/issues/21017>
 
-        p = Progress(length(axes(dx_batch,2)); desc="Computing batch grads...", color=:cyan, enabled=showprog)
-        @sync begin
-            for idx ∈ axes(dx_batch, 2)
-                Threads.@spawn begin
-                    x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)
-                    gg = gradientSite(grads_lib, x_vals, chunk_size, loss_f, inner_args...)    
-                    dx_batch[:, idx] = gg
-                    next!(p)
-               end
+    p = Progress(length(axes(dx_batch,2)); desc="Computing batch grads...", color=:cyan, enabled=showprog)
+    @sync begin
+        for idx ∈ axes(dx_batch, 2)
+            Threads.@spawn begin
+                x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)
+                gg = gradientSite(grads_lib, x_vals, chunk_size, loss_f, inner_args...)    
+                dx_batch[:, idx] = gg
+                next!(p)
             end
         end
     end
+end
     
 
 """

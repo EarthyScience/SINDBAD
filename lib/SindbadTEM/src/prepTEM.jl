@@ -345,9 +345,11 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
 
+    space_selected_models = [[selected_models for _ ∈ 1:length(space_ind)]...]
+
     forcing_nt_array = nothing
 
-    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_info)
+    run_helpers = (; space_selected_models, space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_info)
     return run_helpers
 end
 
@@ -387,9 +389,11 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
 
+    space_selected_models = [[selected_models for _ ∈ 1:length(space_ind)]...]
+
     forcing_nt_array = nothing
 
-    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars=info.output.variables, tem_info)
+    run_helpers = (; space_selected_models, space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars=info.output.variables, tem_info)
     return run_helpers
 end
 
@@ -433,9 +437,11 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
         getLocData(output_array, lsi)
     end
 
+    space_selected_models = [[selected_models for _ ∈ 1:length(space_ind)]...]
+
     forcing_nt_array = nothing
 
-    run_helpers = (; space_forcing, space_observation, space_ind, space_spinup_forcing, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_info)
+    run_helpers = (; space_selected_models, space_forcing, space_observation, space_ind, space_spinup_forcing, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_info)
 
     return run_helpers
 end
@@ -481,8 +487,10 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     output_vars = output.variables
     output_dims = output.dims
 
+    space_selected_models = [[selected_models for _ ∈ 1:length(space_ind)]...]
+
     land_time_series = nothing
-    run_helpers = (; loc_forcing, loc_forcing_t, loc_spinup_forcing, loc_land, land_time_series, space_ind, output_dims, output_vars, tem_info)
+    run_helpers = (; loc_forcing, loc_forcing_t, loc_spinup_forcing, loc_land, land_time_series, space_selected_models, space_ind, output_dims, output_vars, tem_info)
     return run_helpers
 end
 
