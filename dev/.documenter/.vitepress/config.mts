@@ -69,6 +69,7 @@ const manualItems = [
   { text: 'Land Utils', link: '/pages/develop/land_utils' },
   { text: 'Experiments', link: '/pages/develop/experiments' },
   { text: 'Spinup', link: '/pages/develop/spinup' },
+  { text: 'Hybrid ML', link: '/pages/develop/hybrid_modeling' },
   { text: 'Optimization Methods', link: '/pages/develop/optimization_method' },
   { text: 'Cost Metrics', link: '/pages/develop/cost_metrics' },
   { text: 'Cost Function', link: '/pages/develop/cost_function' },

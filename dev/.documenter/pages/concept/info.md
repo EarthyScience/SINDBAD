@@ -87,6 +87,42 @@ Available when parameter estimation or model cost calculation is enabled:
 - Options for running optimization (`run_options`)
   
 
+### 7. Hybrid Modeling (`hybrid`) {#7.-Hybrid-Modeling-hybrid}
+
+The `hybrid` field in the `info` structure contains all configuration and runtime information related to hybrid (process-based + machine learning) modeling in SINDBAD. This field is present when hybrid or machine learning components are enabled in the experiment configuration through the passing of `hybrid` configuration file in `experiment.basics.config_files`.
+
+`info.hybrid` is a NamedTuple that holds various subfields, each representing different aspects of the hybrid modeling setup. It includes:
+- `ml_model`: Settings for the machine learning model (e.g., architecture, activation functions, number of layers/neurons, random seed).
+  
+- `ml_training`: Training configuration, such as method, batch size, number of epochs, loss function, data split ratios, and fold information for cross-validation.
+  
+- `ml_gradient`: Gradient computation method and options (e.g., which AD or finite difference library to use, chunk size).
+  
+- `ml_optimizer`: Optimizer settings for training the ML model (e.g., optimizer type, learning rate, momentum parameters).
+  
+- `covariates`: Information about covariate data used as ML features (e.g., file path, variables to use).
+  
+- `replace_value_for_gradient`: Value to use for missing or masked data during gradient computation.
+  
+- `save_checkpoint`: Boolean flag indicating whether to save model checkpoints during training.
+  
+- `random_seed`: Seed for reproducibility of ML training and data splits.
+  
+
+This field is automatically populated by the SINDBAD preprocessor based on the relevant sections of your experiment&#39;s JSON configuration files (such as `parameter_learning.json` in example for hybrid modeling).
+
+Example usage:
+- Access ML model settings: `info.hybrid.ml_model`
+  
+- Get training options: `info.hybrid.ml_training.options`
+  
+- Retrieve optimizer configuration: `info.hybrid.ml_optimizer.options`
+  
+- Access covariate file path: `info.hybrid.covariates.path`
+  
+
+## Interactive Exploration of `SINDBAD info` {#Interactive-Exploration-of-SINDBAD-info}
+
 Interactively [view an example info from a SINDBAD experiment](http://sindbad-mdi.org/pages/concept/sindbad_info/sindbad_info.html) 
 ![](../../assets/sindbad_info.png)
 

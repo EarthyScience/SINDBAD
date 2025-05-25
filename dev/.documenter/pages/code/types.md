@@ -364,7 +364,17 @@ Abstract type for all Julia types in SINDBAD
     
   
 - `MLTypes`: Abstract type for types in machine learning related methods in SINDBAD 
-  - `GradType`: Abstract type for automatic differentiation or finite differences for gradient calculations 
+  - `ActivationType`: Abstract type for activation functions used in ML models 
+    - `CustomSigmoid`: Use a custom sigmoid activation function. In this case, the `k_σ` parameter in ml_model sections of the settings is used to control the steepness of the sigmoid function. 
+      
+    - `FluxRelu`: Use Flux.jl ReLU activation function 
+      
+    - `FluxSigmoid`: Use Flux.jl Sigmoid activation function 
+      
+    - `FluxTanh`: Use Flux.jl Tanh activation function 
+      
+    
+  - `MLGradType`: Abstract type for automatic differentiation or finite differences for gradient calculations 
     - `EnzymeGrad`: Use Enzyme.jl for automatic differentiation 
       
     - `FiniteDiffGrad`: Use FiniteDiff.jl for finite difference calculations 
@@ -376,6 +386,26 @@ Abstract type for all Julia types in SINDBAD
     - `PolyesterForwardDiffGrad`: Use PolyesterForwardDiff.jl for automatic differentiation 
       
     - `ZygoteGrad`: Use Zygote.jl for automatic differentiation 
+      
+    
+  - `MLModelType`: Abstract type for machine learning models used in SINDBAD 
+    - `FluxDenseNN`: simple dense neural network model implemented in Flux.jl 
+      
+    
+  - `MLOptimizerType`: Abstract type for optimizers used for training ML models in SINDBAD 
+    - `OptimisersAdam`: Use Optimisers.jl Adam optimizer for training ML models in SINDBAD 
+      
+    - `OptimisersDescent`: Use Optimisers.jl Descent optimizer for training ML models in SINDBAD 
+      
+    
+  - `MLTrainingType`: Abstract type for training a hybrid algorithm in SINDBAD 
+    - `CalcFoldFromSplit`: Use a split of the data to calculate the folds for cross-validation. The default wat to calculate the folds is by splitting the data into k-folds. In this case, the split is done on the go based on the values given in ml_training.split_ratios and n_folds. 
+      
+    - `LoadFoldFromFile`: Use precalculated data to load the folds for cross-validation. In this case, the data path has to be set under ml_training.fold_path and ml_training.which_fold. The data has to be in the format of a jld2 file with the following structure: /folds/0, /folds/1, /folds/2, ... /folds/n_folds. Each fold has to be a tuple of the form (train_indices, test_indices). 
+      
+    - `LossModelObsML`: Loss function using metrics between the predicted model and observation as defined in optimization.json 
+      
+    - `MixedGradient`: Use a mixed gradient approach for training using gradient from multiple methods and combining them with pullback from zygote 
       
     
   

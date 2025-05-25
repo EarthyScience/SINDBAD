@@ -543,68 +543,6 @@ optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds
 </details>
 
 <details class='jldocstring custom-block' open>
-<summary><a id='SindbadOptimization.prepCostOptions' href='#SindbadOptimization.prepCostOptions'><span class="jlbinding">SindbadOptimization.prepCostOptions</span></a> <Badge type="info" class="jlObjectType jlFunction" text="Function" /></summary>
-
-
-
-```julia
-prepCostOptions(observations, cost_options, ::CostMethod)
-```
-
-
-Prepares cost options for optimization by filtering variables with insufficient data points and setting up the required configurations.
-
-**Arguments:**
-- `observations`: A NamedTuple or a vector of arrays containing observation data, uncertainties, and masks used for calculating performance metrics or loss.
-  
-- `cost_options`: A table listing each observation constraint and its configuration for calculating the loss or performance metric.
-  
-- `::CostMethod`: A type indicating the cost function method. 
-  
-
-**Returns:**
-- A filtered table of `cost_options` containing only valid variables with sufficient data points.
-  
-
-**cost methods:**
-
-**CostMethod**
-
-Abstract type for cost calculation methods in SINDBAD
-
-**Available methods/subtypes:**
-- `CostModelObs`: cost calculation between model output and observations 
-  
-- `CostModelObsLandTS`: cost calculation between land model output and time series observations 
-  
-- `CostModelObsMT`: multi-threaded cost calculation between model output and observations 
-  
-- `CostModelObsPriors`: cost calculation between model output, observations, and priors. NOTE THAT THIS METHOD IS JUST A PLACEHOLDER AND DOES NOT CALCULATE PRIOR COST PROPERLY YET 
-  
-
-
----
-
-
-**Extended help**
-
-**Notes:**
-- The function iterates through the observation variables and checks if the number of valid data points meets the minimum threshold specified in `cost_options.min_data_points`.
-  
-- Variables with insufficient data points are excluded from the returned `cost_options`.
-  
-- The function modifies the `cost_options` table by adding:
-  - `valids`: Indices of valid data points for each variable.
-    
-  - `is_valid`: A boolean flag indicating whether the variable meets the minimum data point requirement.
-    
-  
-- Unnecessary fields such as `min_data_points`, `temporal_data_aggr`, and `aggr_func` are removed from the final `cost_options`.
-  
-
-</details>
-
-<details class='jldocstring custom-block' open>
 <summary><a id='SindbadOptimization.prepOpti' href='#SindbadOptimization.prepOpti'><span class="jlbinding">SindbadOptimization.prepOpti</span></a> <Badge type="info" class="jlObjectType jlFunction" text="Function" /></summary>
 
 

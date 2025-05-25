@@ -8,13 +8,73 @@ SindbadML
 ```
 
 
-This package provides the tools to train neural networks to predict model parameters from `process-based models (PBMs)` using automatic differentiation and finite differences. It also includes functions to train PBMs using a mixed gradient approach to optimize the neural network weights and the PBM parameters simultaneously.
+The `SindbadML` package provides the core functionality for integrating machine learning (ML) and hybrid modeling capabilities into the SINDBAD framework. It enables the use of neural networks and other ML models alongside process-based models for parameter learning, and potentially hybrid modeling, and advanced optimization.
 
-::: danger
+**Purpose**
 
-This package is still under development and is not yet ready for production use.
+This package brings together all components required for hybrid (process-based + ML) modeling in SINDBAD, including data preparation, model construction, training routines, gradient computation, and optimizer management. It supports flexible configuration, cross-validation, and seamless integration with SINDBAD&#39;s process-based modeling workflows.
 
-:::
+**Dependencies**
+- `Distributed`: Parallel and distributed computing utilities (`nworkers`, `pmap`, `workers`, `nprocs`, `CachingPool`).
+  
+- `Sindbad`, `SindbadTEM`, `SindbadSetup`: Core SINDBAD modules for process-based modeling and setup.
+  
+- `SindbadData.YAXArrays`, `SindbadData.Zarr`, `SindbadData.AxisKeys`, `SindbadData`: Data handling, array, and cube utilities.
+  
+- `SindbadMetrics`: Metrics for model performance/loss evaluation.
+  
+- `Enzyme`, `Zygote`, `ForwardDiff`, `FiniteDiff`, `FiniteDifferences`, `PolyesterForwardDiff`: Automatic and numerical differentiation libraries for gradient-based learning.
+  
+- `Flux`: Neural network layers and training utilities for ML models.
+  
+- `Optimisers`: Optimizers for training neural networks.
+  
+- `Statistics`: Statistical utilities.
+  
+- `ProgressMeter`: Progress bars for ML training and evaluation (`@showprogress`, `Progress`, `next!`, `progress_pmap`, `progress_map`).
+  
+- `PreallocationTools`: Tools for efficient memory allocation.
+  
+- `Base.Iterators`: Iterators for batching and repetition (`repeated`, `partition`).
+  
+- `Random`: Random number utilities.
+  
+- `JLD2`: For saving and loading model checkpoints and fold indices.
+  
+
+**Included Files**
+- `utilsML.jl`: Utility functions for ML workflows.
+  
+- `diffCaches.jl`: Caching utilities for differentiation.
+  
+- `activationFunctions.jl`: Implements various activation functions, including custom and Flux-provided activations.
+  
+- `mlModels.jl`: Constructors and utilities for building neural network models and other ML architectures.
+  
+- `mlOptimizers.jl`: Functions for creating and configuring optimizers for ML training.
+  
+- `loss.jl`: Loss functions and utilities for evaluating model performance and computing gradients.
+  
+- `prepHybrid.jl`: Prepares all data structures, loss functions, and ML components required for hybrid modeling, including data splits and feature extraction.
+  
+- `mlGradient.jl`: Routines for computing gradients using different libraries and methods, supporting both automatic and finite difference differentiation.
+  
+- `mlTrain.jl`: Training routines for ML and hybrid models, including batching, checkpointing, and evaluation.
+  
+- `neuralNetwork.jl`: Neural network utilities and architectures.
+  
+- `siteLosses.jl`: Site-specific loss calculation utilities.
+  
+- `oneHots.jl`: One-hot encoding utilities.
+  
+- `loadCovariates.jl`: Functions for loading and handling covariate data.
+  
+
+**Notes**
+- The package is modular and extensible, allowing users to add new ML models, optimizers, activation functions, and training methods.
+  
+- It is tightly integrated with the SINDBAD ecosystem, ensuring consistent data handling and reproducibility across hybrid and process-based modeling workflows.
+  
 
 </details>
 
@@ -57,6 +117,48 @@ x_small_a2 = rand(Float32, 1, 10)
 
 model = JoinDenseNN((m_big, m_eta))
 model((x_big_a, x_small_a2))
+```
+
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.activationFunction' href='#SindbadML.activationFunction'><span class="jlbinding">SindbadML.activationFunction</span></a> <Badge type="info" class="jlObjectType jlFunction" text="Function" /></summary>
+
+
+
+```julia
+activationFunction(model_options, act::AbstractActivation)
+```
+
+
+Return the activation function corresponding to the specified activation type and model options.
+
+This function dispatches on the activation type to provide the appropriate activation function for use in neural network layers. For custom activation types, relevant parameters can be passed via `model_options`.
+
+**Arguments**
+- `model_options`: A struct or NamedTuple containing model options, including parameters for custom activation functions (e.g., `k_σ` for `CustomSigmoid`).
+  
+- `act`: An activation type specifying the desired activation function. Supported types include:
+  - `FluxRelu`: Rectified Linear Unit (ReLU) activation.
+    
+  - `FluxTanh`: Hyperbolic Tangent (tanh) activation.
+    
+  - `FluxSigmoid`: Sigmoid activation.
+    
+  - `CustomSigmoid`: Custom sigmoid activation with steepness parameter `k_σ`.
+    
+  
+
+**Returns**
+- A callable activation function suitable for use in neural network layers.
+  
+
+**Example**
+
+```julia
+act_fn = activationFunction(model_options, FluxRelu())
+y = act_fn(x)
 ```
 
 
@@ -121,12 +223,57 @@ Returns:
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.epochLossComponents-Union{Tuple{F}, Tuple{F, Vararg{Any, 5}}} where F' href='#SindbadML.epochLossComponents-Union{Tuple{F}, Tuple{F, Vararg{Any, 5}}} where F'><span class="jlbinding">SindbadML.epochLossComponents</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+epochLossComponents(loss_functions::F, loss_array_sites, loss_array_components, epoch_number, scaled_params, sites_list) where {F}
+```
+
+
+Compute and store the loss metrics and loss components for each site in parallel for a given training epoch.
+
+This function evaluates the provided loss functions for each site using the current scaled parameters, and stores the resulting scalar loss metrics and loss component vectors in the corresponding arrays for the specified epoch. Parallel execution is used to accelerate computation across sites.
+
+**Arguments**
+- `loss_functions::F`: An array or KeyedArray of loss functions, one per site (where `F` is a subtype of `AbstractArray{<:Function}`).
+  
+- `loss_array_sites`: A matrix to store the scalar loss metric for each site and epoch (dimensions: site × epoch).
+  
+- `loss_array_components`: A 3D tensor to store the loss components for each site, component, and epoch (dimensions: site × component × epoch).
+  
+- `epoch_number`: The current epoch number (integer).
+  
+- `scaled_params`: A callable or array providing the scaled parameters for each site (e.g., `scaled_params(site=site_name)`).
+  
+- `sites_list`: List or array of site identifiers to process.
+  
+
+**Notes**
+- The function uses Julia&#39;s threading (`Threads.@spawn`) to compute losses for multiple sites in parallel.
+  
+- Each site&#39;s loss metric and components are stored at the corresponding index for the current epoch.
+  
+- Designed for use within training loops to track loss evolution over epochs.
+  
+
+**Example**
+
+```julia
+epochLossComponents(loss_functions, loss_array_sites, loss_array_components, epoch, scaled_params, sites)
+```
+
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='SindbadML.getCacheFromOutput' href='#SindbadML.getCacheFromOutput'><span class="jlbinding">SindbadML.getCacheFromOutput</span></a> <Badge type="info" class="jlObjectType jlFunction" text="Function" /></summary>
 
 
 
 ```julia
-getCacheFromOutput(loc_output, ::GradType)
+getCacheFromOutput(loc_output, ::MLGradType)
 getCacheFromOutput(loc_output, ::ForwardDiffGrad)
 getCacheFromOutput(loc_output, ::PolyesterForwardDiffGrad)
 ```
@@ -140,11 +287,58 @@ Returns the appropriate Cache type based on the automatic differentiation or fin
 - Second argument specifies the differentiation method:
   - `ForwardDiffGrad`: Uses ForwardDiff.jl for automatic differentiation
     
-  - `GradType`: All other libraries, e.g., FiniteDiff.jl,FiniteDifferences.jl, etc.  for gradient calculations
+  - `MLGradType`: All other libraries, e.g., FiniteDiff.jl,FiniteDifferences.jl, etc.  for gradient calculations
     
   - `PolyesterForwardDiffGrad`: Uses PolyesterForwardDiff.jl for automatic differentiation
     
   
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.getIndicesSplit' href='#SindbadML.getIndicesSplit'><span class="jlbinding">SindbadML.getIndicesSplit</span></a> <Badge type="info" class="jlObjectType jlFunction" text="Function" /></summary>
+
+
+
+```julia
+getIndicesSplit(info, sites, fold_type)
+```
+
+
+Determine the indices for training, validation, and testing site splits for hybrid (ML) modeling in SINDBAD.
+
+This function dispatches on the `fold_type` argument to either load precomputed folds from file or to compute the splits on-the-fly based on the provided split ratios and number of folds.
+
+**Arguments**
+- `info`: The SINDBAD experiment info structure, containing hybrid modeling configuration.
+  
+- `sites`: Array of site identifiers (e.g., site names or indices).
+  
+- `fold_type`: Determines the splitting strategy. Use `LoadFoldFromFile()` to load folds from file, or `CalcFoldFromSplit()` to compute splits dynamically.
+  
+
+**Returns**
+- `indices_training`: Indices of sites assigned to the training set.
+  
+- `indices_validation`: Indices of sites assigned to the validation set.
+  
+- `indices_testing`: Indices of sites assigned to the testing set.
+  
+
+**Notes**
+- When using `LoadFoldFromFile`, the function loads fold indices from the file specified in `info.hybrid.fold.fold_path`.
+  
+- When using `CalcFoldFromSplit`, the function splits the sites according to the ratios and number of folds specified in `info.hybrid.ml_training.options`.
+  
+- Ensures reproducibility by using the random seed from `info.hybrid.random_seed` when shuffling sites.
+  
+
+**Example**
+
+```julia
+indices_train, indices_val, indices_test = getIndicesSplit(info, sites, info.hybrid.fold.fold_type)
+```
+
 
 </details>
 
@@ -253,12 +447,57 @@ Calculates the loss for all sites. The loss is calculated using the `loss_functi
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.getLossFunctionHandles-Tuple{Any, Any, Any}' href='#SindbadML.getLossFunctionHandles-Tuple{Any, Any, Any}'><span class="jlbinding">SindbadML.getLossFunctionHandles</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+getLossFunctionHandles(info, run_helpers, sites)
+```
+
+
+Construct loss function handles for each site for use in hybrid (ML) modeling in SINDBAD.
+
+This function generates callable loss functions and loss component functions for each site, encapsulating all necessary arguments and configuration from the experiment `info` and runtime helpers. These handles are used during training and evaluation to compute the loss and its components for each site efficiently.
+
+**Arguments**
+- `info`: The SINDBAD experiment info structure, containing model, optimization, and hybrid configuration.
+  
+- `run_helpers`: Helper object returned by `prepTEM`, containing prepared model, forcing, observation, and output structures.
+  
+- `sites`: Array of site indices or identifiers for which to build loss functions.
+  
+
+**Returns**
+- `loss_functions`: A `KeyedArray` of callable loss functions, one per site. Each function takes model parameters as input and returns the scalar loss for that site.
+  
+- `loss_component_functions`: A `KeyedArray` of callable functions, one per site, that return the vector of loss components (e.g., for multi-objective or constraint-based loss).
+  
+
+**Notes**
+- Each loss function is closed over all required data and options for its site, including model structure, parameter indices, scaling, forcing, observations, output cache, cost options, and hybrid/optimization settings.
+  
+- The returned arrays are keyed by site for convenient lookup and iteration.
+  
+
+**Example**
+
+```julia
+loss_functions, loss_component_functions = getLossFunctionHandles(info, run_helpers, sites)
+site_loss = loss_functions[site_index](params)
+site_loss_components = loss_component_functions[site_index](params)
+```
+
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='SindbadML.getOutputFromCache' href='#SindbadML.getOutputFromCache'><span class="jlbinding">SindbadML.getOutputFromCache</span></a> <Badge type="info" class="jlObjectType jlFunction" text="Function" /></summary>
 
 
 
 ```julia
-getOutputFromCache(loc_output, _, ::GradType)
+getOutputFromCache(loc_output, _, ::MLGradType)
 getOutputFromCache(loc_output, new_params, ::ForwardDiffGrad)
 getOutputFromCache(loc_output, new_params, ::PolyesterForwardDiffGrad)
 ```
@@ -272,7 +511,7 @@ Retrieves output values from `Cache` based on the differentiation method being u
 - `_` or `new_params`: Additional parameters (only used with ForwardDiff)
   
 - Third argument specifies the differentiation method:
-  - `GradType`: Returns cached output directly when using other libraries, e.g., FiniteDiff.jl, FiniteDifferences.jl, etc.
+  - `MLGradType`: Returns cached output directly when using other libraries, e.g., FiniteDiff.jl, FiniteDifferences.jl, etc.
     
   - `ForwardDiffGrad`: Processes cached output with new parameters when using ForwardDiff.jl, returns `get_tmp.(loc_output, (new_params,))`
     
@@ -389,33 +628,59 @@ new_params, pullback_func = getPullback(flat, re, (_feat1_ns, _feat2_ns))
 
 
 ```julia
-gradientBatch!(grads_lib, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
+gradientBatch!(grads_lib, grads_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
+gradientBatch!(grads_lib, grads_batch, gradient_options::NamedTuple, loss_functions, scaled_params_batch, sites_batch; showprog=false)
 ```
 
 
-**Computes gradients for a batch of samples.**
+Compute gradients for a batch of samples in hybrid (ML) modeling in SINDBAD.
+
+This function computes the gradients of the loss function with respect to model parameters for a batch of sites or samples, using the specified gradient library. It supports both distributed and multi-threaded execution, and can handle different gradient computation backends (e.g., `PolyesterForwardDiff`, `ForwardDiff`, `FiniteDiff`, etc.).
 
 **Arguments**
-- `grads_lib`: 
-  - PolyesterForwardDiffGrad: uses PolyesterForwardDiff.jl for gradients computation.
+- `grads_lib`: Gradient computation library or method. Supported types include:
+  - `PolyesterForwardDiffGrad`: Uses `PolyesterForwardDiff.jl` for multi-threaded chunked gradients.
     
-  - GradType: For all the other package based gradients.
+  - Other `MLGradType` subtypes: Use their respective backend.
     
   
-- `dx_batch`: pre-allocated array for batched gradients.
+- `grads_batch`: Pre-allocated array for storing batched gradients (size: n_parameters × n_samples).
   
-- `chunk_size`: Int, chunk size for PolyesterForwardDiff&#39;s threads.
+- `chunk_size`: (Optional) Chunk size for threaded gradient computation (used by `PolyesterForwardDiffGrad`).
   
-- `loss_f`: loss function to be applied.
+- `gradient_options`: (Optional) NamedTuple of gradient options (e.g., chunk size).
   
-- `get_inner_args`: function to obtain inner values of loss function.
+- `loss_f`: Loss function to be applied (for all samples).
   
-- `input_args`: global input arguments.
+- `get_inner_args`: Function to obtain inner arguments for the loss function.
+  
+- `input_args`: Global input arguments for the batch.
+  
+- `loss_functions`: Array or KeyedArray of loss functions, one per site.
+  
+- `scaled_params_batch`: Callable or array providing scaled parameters for each site.
+  
+- `sites_batch`: List or array of site identifiers for the batch.
+  
+- `showprog`: (Optional) If `true`, display a progress bar during computation (default: `false`).
   
 
-**Returns:**
+**Returns**
+- Updates `grads_batch` in-place with computed gradients for each sample in the batch.
+  
 
-A `n x m` matrix for `n parameters gradients` and `m` samples.
+**Notes**
+- The function automatically selects between distributed (`pmap`) and multi-threaded (`Threads.@spawn`) execution depending on the backend and arguments.
+  
+- Designed for use within training loops for efficient batch gradient computation.
+  
+
+**Example**
+
+```julia
+gradientBatch!(grads_lib, grads_batch, (chunk_size=4,), loss_functions, scaled_params_batch, sites_batch; showprog=true)
+```
+
 
 </details>
 
@@ -425,34 +690,58 @@ A `n x m` matrix for `n parameters gradients` and `m` samples.
 
 
 ```julia
-gradientSite(grads_lib, x_vals, chunk_size::Int, loss::F, args...)
+gradientSite(grads_lib, x_vals, chunk_size::Int, loss_f::Function, args...)
+gradientSite(grads_lib, x_vals, gradient_options::NamedTuple, loss_f::Function)
+gradientSite(grads_lib, x_vals::AbstractArray, gradient_options::NamedTuple, loss_f::Function)
 ```
 
 
-Computes gradients using different libraries for a site
+Compute gradients of the loss function with respect to model parameters for a single site using the specified gradient library.
+
+This function dispatches on the type of `grads_lib` to select the appropriate differentiation backend (e.g., `PolyesterForwardDiff`, `ForwardDiff`, `FiniteDiff`, `FiniteDifferences`, `Zygote`, or `Enzyme`). It supports both threaded and single-threaded computation, as well as chunked evaluation for memory and speed trade-offs.
 
 **Arguments**
-- `grads_lib`:
-  - PolyesterForwardDiffGrad: using `PolyesterForwardDiff.jl` for multi-threaded chunk splits. The optimal speed is ideally achieved with `one thread` when `chunk_size=1` and `n-threads` for `n` parameters. However, a good compromise between memory allocations and speed could be to set `chunk_size=3` and use `n-threads` for `2n parameters`. !!! warning
+- `grads_lib`: Gradient computation library or method. Supported types include:
+  - `PolyesterForwardDiffGrad`: Uses `PolyesterForwardDiff.jl` for multi-threaded chunked gradients.
     
-  For M1 systems we default to ForwardDiff.gradient! single-threaded. And we let the `GradientConfig` constructor to automatically select the appropriate `chunk_size`.
-  - ForwardDiffGrad: uses ForwardDiff.jl for gradients computation.
+  - `ForwardDiffGrad`: Uses `ForwardDiff.jl` for automatic differentiation.
     
-  - FiniteDiffGrad: uses FiniteDiff.jl for gradients computation.
+  - `FiniteDiffGrad`: Uses `FiniteDiff.jl` for finite difference gradients.
     
-  - FiniteDifferencesGrad: uses FiniteDifferences.jl for gradients computation.
+  - `FiniteDifferencesGrad`: Uses `FiniteDifferences.jl` for finite difference gradients.
+    
+  - `ZygoteGrad`: Uses `Zygote.jl` for reverse-mode automatic differentiation.
+    
+  - `EnzymeGrad`: Uses `Enzyme.jl` for AD (experimental).
     
   
-- `x_vals`: parameters values.
+- `x_vals`: Parameter values for which to compute gradients.
   
-- `chunk_size`: Int, chunk size for PolyesterForwardDiff&#39;s threads.
+- `chunk_size`: (Optional) Chunk size for threaded gradient computation (used by `PolyesterForwardDiffGrad`).
   
-- `loss_f`: loss function to be applied.
+- `gradient_options`: (Optional) NamedTuple of gradient options (e.g., chunk size).
   
-- `args...`: additional arguments for the loss function.
+- `loss_f`: Loss function to be differentiated.
+  
+- `args...`: Additional arguments to be passed to the loss function.
   
 
-Returns: a `∇x` array with all parameter&#39;s gradients.
+**Returns**
+- `∇x`: Array of gradients of the loss function with respect to `x_vals`.
+  
+
+**Notes**
+- On Apple M1 systems, `PolyesterForwardDiffGrad` falls back to single-threaded `ForwardDiff` due to closure issues.
+  
+- The function is used internally for both site-level and batch-level gradient computation in hybrid ML training.
+  
+
+**Example**
+
+```julia
+grads = gradientSite(ForwardDiffGrad(), x_vals, (chunk_size=4,), loss_f)
+```
+
 
 </details>
 
@@ -505,6 +794,48 @@ lcKAoneHotbatch(lc_data, up_bound, lc_name, ka_labels)
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.loadCovariates-Tuple{Any}' href='#SindbadML.loadCovariates-Tuple{Any}'><span class="jlbinding">SindbadML.loadCovariates</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+loadCovariates(sites_forcing; kind="all")
+```
+
+
+use the `kind` argument to select different sets of covariates
+
+**Arguments**
+- sites_forcing: names of forcing sites
+  
+- kind: defaults to &quot;all&quot;
+  
+
+Other options
+- `PFT`
+  
+- `KG`
+  
+- `KG_PFT`
+  
+- `PFT_ABCNOPSWB`
+  
+- `KG_ABCNOPSWB`
+  
+- `ABCNOPSWB`
+  
+- `veg_all`
+  
+- `veg`
+  
+- `KG_veg`
+  
+- `veg_ABCNOPSWB`
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='SindbadML.loadTrainedNN-Tuple{Any}' href='#SindbadML.loadTrainedNN-Tuple{Any}'><span class="jlbinding">SindbadML.loadTrainedNN</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
 
 
@@ -517,6 +848,71 @@ loadTrainedNN(path_model)
 **Arguments**
 - `path_model`: path to the model.
   
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.loss-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}' href='#SindbadML.loss-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}'><span class="jlbinding">SindbadML.loss</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+loss(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, ::LossModelObsML)
+```
+
+
+Calculates the scalar loss for a given site in hybrid (ML) modeling in SINDBAD.
+
+This function computes the loss value for a given site by first calling `lossVector` to obtain the vector of loss components, and then combining them into a scalar loss using the `combineMetric` function and the specified constraint method.
+
+**Arguments**
+- `params`: Model parameters (typically output from an ML model).
+  
+- `models`: List of process-based models.
+  
+- `parameter_to_index`: Mapping from parameter names to indices.
+  
+- `parameter_scaling_type`: Parameter scaling configuration.
+  
+- `loc_forcing`: Forcing data for the site.
+  
+- `loc_spinup_forcing`: Spinup forcing data for the site.
+  
+- `loc_forcing_t`: Forcing data for a single time step.
+  
+- `loc_output`: Output data structure for the site.
+  
+- `land_init`: Initial land state.
+  
+- `tem_info`: Model information and configuration.
+  
+- `loc_obs`: Observation data for the site.
+  
+- `cost_options`: Cost function and metric configuration.
+  
+- `constraint_method`: Constraint method for combining metrics.
+  
+- `gradient_lib`: Gradient computation library or method.
+  
+- `::LossModelObsML`: Type dispatch for loss model with observations and machine learning.
+  
+
+**Returns**
+- `t_loss`: Scalar loss value for the site.
+  
+
+**Notes**
+- This function is used internally by higher-level training and evaluation routines.
+  
+- The loss is computed by aggregating the loss vector using the specified constraint method.
+  
+
+**Example**
+
+```julia
+t_loss = loss(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, LossModelObsML())
+```
+
 
 </details>
 
@@ -563,6 +959,73 @@ Function to calculate the loss for a given site. This is used for optimization, 
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.lossVector-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}' href='#SindbadML.lossVector-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}'><span class="jlbinding">SindbadML.lossVector</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+lossVector(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, ::LossModelObsML)
+```
+
+
+Calculate the loss vector for a given site in hybrid (ML) modeling in SINDBAD.
+
+This function runs the core TEM model with the provided parameters, forcing data, initial land state, and model information, then computes the loss vector using the specified cost options and metrics. It is typically used for site-level loss evaluation during training and validation.
+
+**Arguments**
+- `params`: Model parameters (in this case, output from an ML model).
+  
+- `models`: List of process-based models.
+  
+- `parameter_to_index`: Mapping from parameter names to indices.
+  
+- `parameter_scaling_type`: Parameter scaling configuration.
+  
+- `loc_forcing`: Forcing data for the site.
+  
+- `loc_spinup_forcing`: Spinup forcing data for the site.
+  
+- `loc_forcing_t`: Forcing data for a single time step.
+  
+- `loc_output`: Output data structure for the site.
+  
+- `land_init`: Initial land state.
+  
+- `tem_info`: Model information and configuration.
+  
+- `loc_obs`: Observation data for the site.
+  
+- `cost_options`: Cost function and metric configuration.
+  
+- `constraint_method`: Constraint method for combining metrics.
+  
+- `gradient_lib`: Gradient computation library or method.
+  
+- `::LossModelObsML`: Type dispatch for loss model with observations and machine learning.
+  
+
+**Returns**
+- `loss_vector`: Vector of loss components for the site.
+  
+- `loss_indices`: Indices corresponding to each loss component.
+  
+
+**Notes**
+- This function is used internally by higher-level loss and training routines.
+  
+- The loss vector is typically combined into a scalar loss using `combineMetric`.
+  
+
+**Example**
+
+```julia
+loss_vec, loss_idx = lossVector(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, LossModelObsML())
+```
+
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='SindbadML.mixedGradientTraining-NTuple{7, Any}' href='#SindbadML.mixedGradientTraining-NTuple{7, Any}'><span class="jlbinding">SindbadML.mixedGradientTraining</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
 
 
@@ -588,6 +1051,66 @@ Training function that computes model parameters using a neural network, which a
 - `forward_args`: arguments to evaluate the PBMs.
   
 - `path_experiment="/"`: save model to path.
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.mlModel' href='#SindbadML.mlModel'><span class="jlbinding">SindbadML.mlModel</span></a> <Badge type="info" class="jlObjectType jlFunction" text="Function" /></summary>
+
+
+
+```julia
+mlModel(info, n_features, ::MLModelType)
+```
+
+
+Builds a Flux dense neural network model. This function initializes a neural network model based on the provided `info` and `n_features`.
+
+**Arguments**
+- `info`: The experiment information containing model options and parameters.
+  
+- `n_features`: The number of features in the input data.
+  
+- `::MLModelType`: Type dispatch for the machine learning model type.
+  
+
+**Supported MLModelType:**
+- `::FluxDenseNN`: A simple dense neural network model implemented in Flux.jl.
+  
+
+**Returns**
+
+The initialized machine learning model.
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.mlOptimizer' href='#SindbadML.mlOptimizer'><span class="jlbinding">SindbadML.mlOptimizer</span></a> <Badge type="info" class="jlObjectType jlFunction" text="Function" /></summary>
+
+
+
+```julia
+mlOptimizer(optimizer_options, ::MLOptimizerType)
+```
+
+
+Create a ML optimizer from the given options and type. The optimizer is created using the given options and type. The options are passed to the constructor of the optimizer.
+
+**Arguments:**
+- `optimizer_options`: A dictionary or NamedTuple containing options for the optimizer.
+  
+- `::MLOptimizerType`: The type used to determine which optimizer to create. Supported types include:
+  - `OptimisersAdam`: For Adam optimizer.
+    
+  - `OptimisersDescent`: For Descent optimizer.
+    
+  
+
+.
+
+**Returns:**
+- A ML optimizer object that can be used to optimize machine learning models.
   
 
 </details>
@@ -631,6 +1154,96 @@ Return an Iterator partitioning a dataset into batches.
   
 - `batch_size`: batch size
   
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.prepHybrid-Tuple{Any, Any, Any, MLTrainingType}' href='#SindbadML.prepHybrid-Tuple{Any, Any, Any, MLTrainingType}'><span class="jlbinding">SindbadML.prepHybrid</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+prepHybrid(forcing, observations, info, ::MLTrainingType)
+```
+
+
+Prepare all data structures, loss functions, and machine learning components required for hybrid (process-based + machine learning) modeling in SINDBAD.
+
+This function orchestrates the setup for hybrid modeling by:
+- Initializing model helpers and runtime structures.
+  
+- Building loss function handles for each site.
+  
+- Splitting sites into training, validation, and testing sets according to the hybrid configuration.
+  
+- Loading covariate features for all sites.
+  
+- Building the machine learning model as specified in the configuration.
+  
+- Preparing arrays for storing losses and loss components during training and evaluation.
+  
+- Initializing the optimizer for ML training.
+  
+- Collecting all relevant metadata and configuration into a single `hybrid_helpers` NamedTuple for downstream training routines.
+  
+
+**Arguments**
+- `forcing`: Forcing data structure as required by the process-based model.
+  
+- `observations`: Observational data structure.
+  
+- `info`: The SINDBAD experiment info structure, containing all configuration and runtime options.
+  
+- `::MLTrainingType`: Type specifying the ML training method to use (e.g., `MixedGradient`).
+  
+
+**Returns**
+- `hybrid_helpers`: A NamedTuple containing all prepared data, models, loss functions, indices, features, optimizers, and arrays needed for hybrid ML training and evaluation.
+  
+
+**Fields of `hybrid_helpers`**
+- `run_helpers`: Output of `prepTEM`, containing prepared model, forcing, observation, and output structures.
+  
+- `sites`: NamedTuple with `training`, `validation`, and `testing` site arrays.
+  
+- `indices`: NamedTuple with indices for `training`, `validation`, and `testing` sites.
+  
+- `features`: NamedTuple with `n_features` and `data` (covariate features for all sites).
+  
+- `ml_model`: The machine learning model instance (e.g., a Flux neural network).
+  
+- `options`: The `info.hybrid` configuration NamedTuple.
+  
+- `checkpoint_path`: Path for saving checkpoints during training.
+  
+- `parameter_table`: Parameter table from `info.optimization`.
+  
+- `loss_functions`: KeyedArray of callable loss functions, one per site.
+  
+- `loss_component_functions`: KeyedArray of callable loss component functions, one per site.
+  
+- `training_optimizer`: The optimizer object for ML training.
+  
+- `loss_array`: NamedTuple of arrays to store scalar losses for training, validation, and testing.
+  
+- `loss_array_components`: NamedTuple of arrays to store loss components for training, validation, and testing.
+  
+- `metadata_global`: Global metadata from the output configuration.
+  
+
+**Notes**
+- This function is typically called once at the start of a hybrid modeling experiment to set up all necessary components.
+  
+- The returned `hybrid_helpers` is designed to be passed directly to training routines such as `trainML`.
+  
+
+**Example**
+
+```julia
+hybrid_helpers = prepHybrid(forcing, observations, info, MixedGradient())
+trainML(hybrid_helpers, MixedGradient())
+```
+
 
 </details>
 
@@ -709,6 +1322,64 @@ toClass(x::Number; vegetation_rules)
   
 - `vegetation_rules`
   
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.trainML-Tuple{Any, MixedGradient}' href='#SindbadML.trainML-Tuple{Any, MixedGradient}'><span class="jlbinding">SindbadML.trainML</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+trainML(hybrid_helpers, ::MLTrainingType)
+```
+
+
+Train a machine learning (ML) or hybrid model in SINDBAD using the specified training method.
+
+This function performs the training loop for the ML model, handling batching, gradient computation, optimizer updates, loss calculation, and checkpointing. It supports hybrid modeling workflows where ML-derived parameters are used in process-based models, and is designed to work with the data structures prepared by `prepHybrid`.
+
+**Arguments**
+- `hybrid_helpers`: NamedTuple containing all prepared data, models, loss functions, indices, features, optimizers, and arrays needed for ML training and evaluation (as returned by `prepHybrid`).
+  
+- `::MLTrainingType`: Type specifying the ML training method to use (e.g., `MixedGradient`).
+  
+
+**Workflow**
+- Iterates over epochs and batches of training sites.
+  
+- For each batch:
+  - Extracts features and computes model parameters.
+    
+  - Computes gradients using the specified gradient method.
+    
+  - Checks for NaNs in gradients and replaces them if needed.
+    
+  - Updates model parameters using the optimizer.
+    
+  
+- After each epoch:
+  - Computes and stores losses and loss components for training, validation, and testing sets.
+    
+  - Saves model checkpoints and loss arrays to disk if a checkpoint path is specified.
+    
+  
+
+**Notes**
+- The function is extensible to support different training strategies via dispatch on `MLTrainingType`.
+  
+- Designed for use with hybrid modeling, where ML models provide parameters to process-based models.
+  
+- Checkpointing enables resuming or analyzing training progress.
+  
+
+**Example**
+
+```julia
+hybrid_helpers = prepHybrid(forcing, observations, info, MixedGradient())
+trainML(hybrid_helpers, MixedGradient())
+```
+
 
 </details>
 
@@ -819,6 +1490,61 @@ Calculates the loss for a given site. At this stage model parameters should had 
   
 
 The optional argument `optim_mode` is used to return the loss value only when set to `true`. Otherwise, it returns the loss value, the loss vector, and the loss indices.
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadML.getNFolds-NTuple{6, Any}' href='#SindbadML.getNFolds-NTuple{6, Any}'><span class="jlbinding">SindbadML.getNFolds</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+getNFolds(sites, train_ratio, val_ratio, test_ratio, n_folds, batch_size; seed=1234)
+```
+
+
+Partition a list of sites into training, validation, and testing sets for k-fold cross-validation in hybrid (ML) modeling.
+
+This function shuffles the input `sites` array using the provided random `seed` for reproducibility, then splits the sites into `n_folds` folds. It computes the number of sites for each partition based on the provided ratios, ensuring the training set size is a multiple of `batch_size`. The function returns the indices for training, validation, and testing sets, as well as the full list of folds.
+
+**Arguments**
+- `sites`: Array of site identifiers (e.g., site names or indices).
+  
+- `train_ratio`: Fraction of sites to assign to the training set.
+  
+- `val_ratio`: Fraction of sites to assign to the validation set.
+  
+- `test_ratio`: Fraction of sites to assign to the testing set.
+  
+- `n_folds`: Number of folds for cross-validation.
+  
+- `batch_size`: Batch size for training; training set size will be rounded down to a multiple of this value.
+  
+- `seed`: (Optional) Random seed for reproducibility (default: 1234).
+  
+
+**Returns**
+- `train_indices`: Array of sites assigned to the training set.
+  
+- `val_indices`: Array of sites assigned to the validation set.
+  
+- `test_indices`: Array of sites assigned to the testing set.
+  
+- `folds`: Vector of arrays, each containing the sites for one fold.
+  
+
+**Notes**
+- The sum of `train_ratio`, `val_ratio`, and `test_ratio` must be approximately 1.0.
+  
+- The returned `folds` can be used for further cross-validation or analysis.
+  
+
+**Example**
+
+```julia
+train_indices, val_indices, test_indices, folds = getNFolds(sites, 0.7, 0.15, 0.15, 5, 32; seed=42)
+```
+
 
 </details>
 

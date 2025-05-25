@@ -941,6 +941,68 @@ modify_within_bounds!(x, lower, upper, (0.0, 0.1))  # Modify by 0-10%
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='SindbadSetup.prepCostOptions' href='#SindbadSetup.prepCostOptions'><span class="jlbinding">SindbadSetup.prepCostOptions</span></a> <Badge type="info" class="jlObjectType jlFunction" text="Function" /></summary>
+
+
+
+```julia
+prepCostOptions(observations, cost_options, ::CostMethod)
+```
+
+
+Prepares cost options for optimization by filtering variables with insufficient data points and setting up the required configurations.
+
+**Arguments:**
+- `observations`: A NamedTuple or a vector of arrays containing observation data, uncertainties, and masks used for calculating performance metrics or loss.
+  
+- `cost_options`: A table listing each observation constraint and its configuration for calculating the loss or performance metric.
+  
+- `::CostMethod`: A type indicating the cost function method. 
+  
+
+**Returns:**
+- A filtered table of `cost_options` containing only valid variables with sufficient data points.
+  
+
+**cost methods:**
+
+**CostMethod**
+
+Abstract type for cost calculation methods in SINDBAD
+
+**Available methods/subtypes:**
+- `CostModelObs`: cost calculation between model output and observations 
+  
+- `CostModelObsLandTS`: cost calculation between land model output and time series observations 
+  
+- `CostModelObsMT`: multi-threaded cost calculation between model output and observations 
+  
+- `CostModelObsPriors`: cost calculation between model output, observations, and priors. NOTE THAT THIS METHOD IS JUST A PLACEHOLDER AND DOES NOT CALCULATE PRIOR COST PROPERLY YET 
+  
+
+
+---
+
+
+**Extended help**
+
+**Notes:**
+- The function iterates through the observation variables and checks if the number of valid data points meets the minimum threshold specified in `cost_options.min_data_points`.
+  
+- Variables with insufficient data points are excluded from the returned `cost_options`.
+  
+- The function modifies the `cost_options` table by adding:
+  - `valids`: Indices of valid data points for each variable.
+    
+  - `is_valid`: A boolean flag indicating whether the variable meets the minimum data point requirement.
+    
+  
+- Unnecessary fields such as `min_data_points`, `temporal_data_aggr`, and `aggr_func` are removed from the final `cost_options`.
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='SindbadSetup.readConfiguration-Tuple{AbstractDict, String}' href='#SindbadSetup.readConfiguration-Tuple{AbstractDict, String}'><span class="jlbinding">SindbadSetup.readConfiguration</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
 
 
@@ -991,6 +1053,28 @@ Scale parameters from the input table using default scaling factors.
 **Returns**
 
 Scaled parameters and their bounds according to default scaling factors
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadSetup.setHybridInfo-Tuple{NamedTuple}' href='#SindbadSetup.setHybridInfo-Tuple{NamedTuple}'><span class="jlbinding">SindbadSetup.setHybridInfo</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+setHybridInfo(info::NamedTuple)
+```
+
+
+Processes and sets up the hybrid experiment information in the experiment configuration.
+
+**Arguments:**
+- `info`: A NamedTuple containing the experiment configuration.
+  
+
+**Returns:**
+- The updated `info` NamedTuple with hybrid experiment information added.
+  
 
 </details>
 
@@ -1337,6 +1421,35 @@ Updates the output variables to store based on optimization or cost run settings
 
 
 <details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.ActivationType' href='#Sindbad.Types.ActivationType'><span class="jlbinding">Sindbad.Types.ActivationType</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**ActivationType**
+
+Abstract type for activation functions used in ML models
+
+**Type Hierarchy**
+
+`ActivationType <: MLTypes <: SindbadTypes <: Any`
+
+
+---
+
+
+**Extended help**
+
+**Available methods/subtypes:**
+- `FluxRelu`: Use Flux.jl ReLU activation function 
+  
+- `FluxSigmoid`: Use Flux.jl Sigmoid activation function 
+  
+- `FluxTanh`: Use Flux.jl Tanh activation function 
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='Sindbad.Types.AllForwardModels' href='#Sindbad.Types.AllForwardModels'><span class="jlbinding">Sindbad.Types.AllForwardModels</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
 
 
@@ -1453,6 +1566,21 @@ Covariance Matrix Adaptation Evolution Strategy (CMA-ES) from CMAEvolutionStrate
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.CalcFoldFromSplit' href='#Sindbad.Types.CalcFoldFromSplit'><span class="jlbinding">Sindbad.Types.CalcFoldFromSplit</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**CalcFoldFromSplit**
+
+Use a split of the data to calculate the folds for cross-validation. The default wat to calculate the folds is by splitting the data into k-folds. In this case, the split is done on the go based on the values given in ml_training.split_ratios and n_folds.
+
+**Type Hierarchy**
+
+`CalcFoldFromSplit <: MLTrainingType <: MLTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='Sindbad.Types.CostMethod' href='#Sindbad.Types.CostMethod'><span class="jlbinding">Sindbad.Types.CostMethod</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
 
 
@@ -1540,6 +1668,21 @@ cost calculation between model output, observations, and priors. NOTE THAT THIS 
 **Type Hierarchy**
 
 `CostModelObsPriors <: CostMethod <: OptimizationTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.CustomSigmoid' href='#Sindbad.Types.CustomSigmoid'><span class="jlbinding">Sindbad.Types.CustomSigmoid</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**CustomSigmoid**
+
+Use a custom sigmoid activation function. In this case, the `k_σ` parameter in ml_model sections of the settings is used to control the steepness of the sigmoid function.
+
+**Type Hierarchy**
+
+`CustomSigmoid <: ActivationType <: MLTypes <: SindbadTypes <: Any`
 
 </details>
 
@@ -1998,7 +2141,7 @@ Use Enzyme.jl for automatic differentiation
 
 **Type Hierarchy**
 
-`EnzymeGrad <: GradType <: MLTypes <: SindbadTypes <: Any`
+`EnzymeGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any`
 
 </details>
 
@@ -2169,7 +2312,7 @@ Use FiniteDiff.jl for finite difference calculations
 
 **Type Hierarchy**
 
-`FiniteDiffGrad <: GradType <: MLTypes <: SindbadTypes <: Any`
+`FiniteDiffGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any`
 
 </details>
 
@@ -2184,7 +2327,67 @@ Use FiniteDifferences.jl for finite difference calculations
 
 **Type Hierarchy**
 
-`FiniteDifferencesGrad <: GradType <: MLTypes <: SindbadTypes <: Any`
+`FiniteDifferencesGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.FluxDenseNN' href='#Sindbad.Types.FluxDenseNN'><span class="jlbinding">Sindbad.Types.FluxDenseNN</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**FluxDenseNN**
+
+simple dense neural network model implemented in Flux.jl
+
+**Type Hierarchy**
+
+`FluxDenseNN <: MLModelType <: MLTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.FluxRelu' href='#Sindbad.Types.FluxRelu'><span class="jlbinding">Sindbad.Types.FluxRelu</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**FluxRelu**
+
+Use Flux.jl ReLU activation function
+
+**Type Hierarchy**
+
+`FluxRelu <: ActivationType <: MLTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.FluxSigmoid' href='#Sindbad.Types.FluxSigmoid'><span class="jlbinding">Sindbad.Types.FluxSigmoid</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**FluxSigmoid**
+
+Use Flux.jl Sigmoid activation function
+
+**Type Hierarchy**
+
+`FluxSigmoid <: ActivationType <: MLTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.FluxTanh' href='#Sindbad.Types.FluxTanh'><span class="jlbinding">Sindbad.Types.FluxTanh</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**FluxTanh**
+
+Use Flux.jl Tanh activation function
+
+**Type Hierarchy**
+
+`FluxTanh <: ActivationType <: MLTypes <: SindbadTypes <: Any`
 
 </details>
 
@@ -2229,7 +2432,7 @@ Use ForwardDiff.jl for automatic differentiation
 
 **Type Hierarchy**
 
-`ForwardDiffGrad <: GradType <: MLTypes <: SindbadTypes <: Any`
+`ForwardDiffGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any`
 
 </details>
 
@@ -2304,41 +2507,6 @@ Sobol method with derivative-based measures for global sensitivity analysis
 **Type Hierarchy**
 
 `GSASobolDM <: GSAMethod <: OptimizationTypes <: SindbadTypes <: Any`
-
-</details>
-
-<details class='jldocstring custom-block' open>
-<summary><a id='Sindbad.Types.GradType' href='#Sindbad.Types.GradType'><span class="jlbinding">Sindbad.Types.GradType</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
-
-
-
-**GradType**
-
-Abstract type for automatic differentiation or finite differences for gradient calculations
-
-**Type Hierarchy**
-
-`GradType <: MLTypes <: SindbadTypes <: Any`
-
-
----
-
-
-**Extended help**
-
-**Available methods/subtypes:**
-- `EnzymeGrad`: Use Enzyme.jl for automatic differentiation 
-  
-- `FiniteDiffGrad`: Use FiniteDiff.jl for finite difference calculations 
-  
-- `FiniteDifferencesGrad`: Use FiniteDifferences.jl for finite difference calculations 
-  
-- `ForwardDiffGrad`: Use ForwardDiff.jl for automatic differentiation 
-  
-- `PolyesterForwardDiffGrad`: Use PolyesterForwardDiff.jl for automatic differentiation 
-  
-- `ZygoteGrad`: Use Zygote.jl for automatic differentiation 
-  
 
 </details>
 
@@ -2542,6 +2710,146 @@ Abstract type for land related types that are typically used in preparing object
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.LoadFoldFromFile' href='#Sindbad.Types.LoadFoldFromFile'><span class="jlbinding">Sindbad.Types.LoadFoldFromFile</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**LoadFoldFromFile**
+
+Use precalculated data to load the folds for cross-validation. In this case, the data path has to be set under ml_training.fold_path and ml_training.which_fold. The data has to be in the format of a jld2 file with the following structure: /folds/0, /folds/1, /folds/2, ... /folds/n_folds. Each fold has to be a tuple of the form (train_indices, test_indices).
+
+**Type Hierarchy**
+
+`LoadFoldFromFile <: MLTrainingType <: MLTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.LossModelObsML' href='#Sindbad.Types.LossModelObsML'><span class="jlbinding">Sindbad.Types.LossModelObsML</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**LossModelObsML**
+
+Loss function using metrics between the predicted model and observation as defined in optimization.json
+
+**Type Hierarchy**
+
+`LossModelObsML <: MLTrainingType <: MLTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.MLGradType' href='#Sindbad.Types.MLGradType'><span class="jlbinding">Sindbad.Types.MLGradType</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**MLGradType**
+
+Abstract type for automatic differentiation or finite differences for gradient calculations
+
+**Type Hierarchy**
+
+`MLGradType <: MLTypes <: SindbadTypes <: Any`
+
+
+---
+
+
+**Extended help**
+
+**Available methods/subtypes:**
+- `EnzymeGrad`: Use Enzyme.jl for automatic differentiation 
+  
+- `FiniteDiffGrad`: Use FiniteDiff.jl for finite difference calculations 
+  
+- `FiniteDifferencesGrad`: Use FiniteDifferences.jl for finite difference calculations 
+  
+- `ForwardDiffGrad`: Use ForwardDiff.jl for automatic differentiation 
+  
+- `PolyesterForwardDiffGrad`: Use PolyesterForwardDiff.jl for automatic differentiation 
+  
+- `ZygoteGrad`: Use Zygote.jl for automatic differentiation 
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.MLModelType' href='#Sindbad.Types.MLModelType'><span class="jlbinding">Sindbad.Types.MLModelType</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**MLModelType**
+
+Abstract type for machine learning models used in SINDBAD
+
+**Type Hierarchy**
+
+`MLModelType <: MLTypes <: SindbadTypes <: Any`
+
+
+---
+
+
+**Extended help**
+
+**Available methods/subtypes:**
+- `FluxDenseNN`: simple dense neural network model implemented in Flux.jl 
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.MLOptimizerType' href='#Sindbad.Types.MLOptimizerType'><span class="jlbinding">Sindbad.Types.MLOptimizerType</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**MLOptimizerType**
+
+Abstract type for optimizers used for training ML models in SINDBAD
+
+**Type Hierarchy**
+
+`MLOptimizerType <: MLTypes <: SindbadTypes <: Any`
+
+
+---
+
+
+**Extended help**
+
+**Available methods/subtypes:**
+- `OptimisersAdam`: Use Optimisers.jl Adam optimizer for training ML models in SINDBAD 
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.MLTrainingType' href='#Sindbad.Types.MLTrainingType'><span class="jlbinding">Sindbad.Types.MLTrainingType</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**MLTrainingType**
+
+Abstract type for training a hybrid algorithm in SINDBAD
+
+**Type Hierarchy**
+
+`MLTrainingType <: MLTypes <: SindbadTypes <: Any`
+
+
+---
+
+
+**Extended help**
+
+**Available methods/subtypes:**
+- `MixedGradient`: Use a mixed gradient approach for training using gradient from multiple methods and combining them with pullback from zygote 
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='Sindbad.Types.MLTypes' href='#Sindbad.Types.MLTypes'><span class="jlbinding">Sindbad.Types.MLTypes</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
 
 
@@ -2561,7 +2869,7 @@ Abstract type for types in machine learning related methods in SINDBAD
 **Extended help**
 
 **Available methods/subtypes:**
-- `GradType`: Abstract type for automatic differentiation or finite differences for gradient calculations 
+- `MLGradType`: Abstract type for automatic differentiation or finite differences for gradient calculations 
   - `EnzymeGrad`: Use Enzyme.jl for automatic differentiation 
     
   - `FiniteDiffGrad`: Use FiniteDiff.jl for finite difference calculations 
@@ -2739,6 +3047,21 @@ Abstract type for performance metrics and cost calculation methods in SINDBAD
   - `MetricSum`: Sum values across spatial dimensions 
     
   
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.MixedGradient' href='#Sindbad.Types.MixedGradient'><span class="jlbinding">Sindbad.Types.MixedGradient</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**MixedGradient**
+
+Use a mixed gradient approach for training using gradient from multiple methods and combining them with pullback from zygote
+
+**Type Hierarchy**
+
+`MixedGradient <: MLTrainingType <: MLTypes <: SindbadTypes <: Any`
 
 </details>
 
@@ -3543,6 +3866,36 @@ Limited-memory Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) from Optim.jl
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.OptimisersAdam' href='#Sindbad.Types.OptimisersAdam'><span class="jlbinding">Sindbad.Types.OptimisersAdam</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**OptimisersAdam**
+
+Use Optimisers.jl Adam optimizer for training ML models in SINDBAD
+
+**Type Hierarchy**
+
+`OptimisersAdam <: MLOptimizerType <: MLTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.Types.OptimisersDescent' href='#Sindbad.Types.OptimisersDescent'><span class="jlbinding">Sindbad.Types.OptimisersDescent</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
+
+
+
+**OptimisersDescent**
+
+Use Optimisers.jl Descent optimizer for training ML models in SINDBAD
+
+**Type Hierarchy**
+
+`OptimisersDescent <: MLOptimizerType <: MLTypes <: SindbadTypes <: Any`
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='Sindbad.Types.OptimizationBBOadaptive' href='#Sindbad.Types.OptimizationBBOadaptive'><span class="jlbinding">Sindbad.Types.OptimizationBBOadaptive</span></a> <Badge type="info" class="jlObjectType jlType" text="Type" /></summary>
 
 
@@ -4144,7 +4497,7 @@ Use PolyesterForwardDiff.jl for automatic differentiation
 
 **Type Hierarchy**
 
-`PolyesterForwardDiffGrad <: GradType <: MLTypes <: SindbadTypes <: Any`
+`PolyesterForwardDiffGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any`
 
 </details>
 
@@ -5499,7 +5852,7 @@ Use Zygote.jl for automatic differentiation
 
 **Type Hierarchy**
 
-`ZygoteGrad <: GradType <: MLTypes <: SindbadTypes <: Any`
+`ZygoteGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any`
 
 </details>
 
@@ -6115,6 +6468,54 @@ Replaces fields in the `info` dictionary with values from the `replace_dict`.
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='SindbadSetup.replaceNumbersWithTypedValues-Tuple{Any, Any}' href='#SindbadSetup.replaceNumbersWithTypedValues-Tuple{Any, Any}'><span class="jlbinding">SindbadSetup.replaceNumbersWithTypedValues</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+replaceNumbersWithTypedValues(merged_options, num_type)
+```
+
+
+Replaces non-integer numeric values in a NamedTuple with their corresponding typed values.
+
+**Arguments:**
+- `merged_options`: A NamedTuple containing merged options.
+  
+- `num_type`: The numeric type to use for conversion.
+  
+
+**Returns:**
+- The updated NamedTuple with numeric values converted to the specified numeric type.
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadSetup.replaceOptionsWithType-Tuple{Any, Any}' href='#SindbadSetup.replaceOptionsWithType-Tuple{Any, Any}'><span class="jlbinding">SindbadSetup.replaceOptionsWithType</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+replaceOptionsWithType(merged_options, field_name)
+```
+
+
+Replaces the options in a NamedTuple with their corresponding type instances based on the field name.
+
+**Arguments:**
+- `merged_options`: A NamedTuple containing merged options.
+  
+- `field_name`: The name of the field to be replaced.
+  
+
+**Returns:**
+- The updated NamedTuple with the specified field replaced by its corresponding type instance.
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='SindbadSetup.saveExperimentSettings-Tuple{Any}' href='#SindbadSetup.saveExperimentSettings-Tuple{Any}'><span class="jlbinding">SindbadSetup.saveExperimentSettings</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
 
 
@@ -6162,6 +6563,36 @@ Saves or skips saving the experiment configuration to a file.
 
 **Notes:**
 - When saving, the experiment configuration is saved as a `.jld2` file in the `settings` directory.
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadSetup.setAlgorithmOptions-Tuple{Any, Any}' href='#SindbadSetup.setAlgorithmOptions-Tuple{Any, Any}'><span class="jlbinding">SindbadSetup.setAlgorithmOptions</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+setAlgorithmOptions(info::NamedTuple, which_algorithm)
+```
+
+
+Set up algorithm-specific options for optimization.
+
+**Arguments:**
+- `info`: A NamedTuple containing the experiment configuration.
+  
+- `which_algorithm`: A symbol indicating which algorithm to set up (e.g., `:algorithm_optimization`, `:algorithm_sensitivity_analysis`).
+  
+
+**Returns:**
+- The updated `info` NamedTuple with algorithm options set.
+  
+
+**Notes:**
+- Reads algorithm settings from the experiment configuration.
+  
+- If the algorithm is specified as a JSON file, it parses the file and merges the options with default settings.
   
 
 </details>
@@ -6262,6 +6693,30 @@ Sets up and creates the output directory for the experiment.
 - Creates subdirectories for code, data, figures, and settings.
   
 - Validates the output path and ensures it is not within the SINDBAD root directory.
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='SindbadSetup.setHybridOptions-Tuple{Any, Any}' href='#SindbadSetup.setHybridOptions-Tuple{Any, Any}'><span class="jlbinding">SindbadSetup.setHybridOptions</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+setHybridOptions(info::NamedTuple, which_option)
+```
+
+
+Processes and sets the machine learning options for hybrid experiments.
+
+**Arguments:**
+- `info`: A NamedTuple containing the experiment configuration.
+  
+- `which_option`: The name of the option to process (&quot;ml_model&quot;, &quot;ml_training&quot;, etc.).
+  
+
+**Returns:**
+- The updated `info` NamedTuple with the specified machine learning option added.
   
 
 </details>
