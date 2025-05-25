@@ -1,5 +1,4 @@
 export getCostVectorSize
-export prepCostOptions
 export prepOpti
 export prepParameters
 
@@ -74,71 +73,6 @@ function getCostVectorSize(algo_options, parameter_vector, ::GSASobolDM)
     return getCostVectorSize(algo_options, parameter_vector, GSASobol())
 end
 
-"""
-    prepCostOptions(observations, cost_options, ::CostMethod)
-
-Prepares cost options for optimization by filtering variables with insufficient data points and setting up the required configurations.
-
-# Arguments:
-- `observations`: A NamedTuple or a vector of arrays containing observation data, uncertainties, and masks used for calculating performance metrics or loss.
-- `cost_options`: A table listing each observation constraint and its configuration for calculating the loss or performance metric.
-- `::CostMethod`: A type indicating the cost function method. 
-
-# Returns:
-- A filtered table of `cost_options` containing only valid variables with sufficient data points.
-
-# cost methods:
-$(methodsOf(CostMethod))
-
----
-# Extended help
-
-# Notes:
-- The function iterates through the observation variables and checks if the number of valid data points meets the minimum threshold specified in `cost_options.min_data_points`.
-- Variables with insufficient data points are excluded from the returned `cost_options`.
-- The function modifies the `cost_options` table by adding:
-  - `valids`: Indices of valid data points for each variable.
-  - `is_valid`: A boolean flag indicating whether the variable meets the minimum data point requirement.
-- Unnecessary fields such as `min_data_points`, `temporal_data_aggr`, and `aggr_func` are removed from the final `cost_options`.
-"""
-function prepCostOptions end
-
-
-function prepCostOptions(observations, cost_options)
-    return prepCostOptions(observations, cost_options, CostModelObs())
-end
-
-function prepCostOptions(observations, cost_options, ::CostModelObsPriors)
-    return prepCostOptions(observations, cost_options, CostModelObs())
-end
-
-function prepCostOptions(observations, cost_options, ::CostModelObs)
-    valids=[]
-    is_valid = []
-    vars = cost_options.variable
-    obs_inds = cost_options.obs_ind
-    min_data_points = cost_options.min_data_points
-    for vi in eachindex(vars)
-        obs_ind_start = obs_inds[vi]
-        min_point = min_data_points[vi]
-        y = observations[obs_ind_start]
-        yσ = observations[obs_ind_start+1]
-        idxs = Array(.!isInvalid.(y .* yσ))
-        total_point = sum(idxs)
-        if total_point < min_point
-            push!(is_valid, false)
-        else
-            push!(is_valid, true)
-        end
-        push!(valids, idxs)
-    end
-    cost_options = setTupleField(cost_options, (:valids, valids))
-    cost_options = setTupleField(cost_options, (:is_valid, is_valid))
-    cost_options = dropFields(cost_options, (:min_data_points, :temporal_data_aggr, :aggr_func,))
-    cost_option_table = Table(cost_options)
-    cost_options_table_filtered = filter(row -> row.is_valid === true , cost_option_table)
-    return cost_options_table_filtered
-end
 
 
 """

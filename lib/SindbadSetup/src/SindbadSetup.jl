@@ -76,6 +76,7 @@ module SindbadSetup
    include("setupModels.jl")
    include("setupOutput.jl")
    include("setupOptimization.jl")
+   include("setupHybridML.jl")
    include("setupInfo.jl")
 
    #  include doc strings for all types in Types

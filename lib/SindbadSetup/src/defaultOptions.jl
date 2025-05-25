@@ -21,6 +21,8 @@ Retrieves the default configuration options for a given optimization or sensitiv
 - For `GSASobolDM`, the defaults are inherited from `GSASobol`.
 """
 function sindbadDefaultOptions end
+# A basic empty options for all SindbadTypes
+sindbadDefaultOptions(::SindbadTypes) = (;)
 
 sindbadDefaultOptions(::OptimizationMethod) = (;)
 

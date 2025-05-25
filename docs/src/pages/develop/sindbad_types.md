@@ -105,7 +105,7 @@ These types control how model performance is evaluated.
 **Defines types for machine learning and gradient calculations.**
 
 This file defines `MLTypes` abstract type and its subtypes, which focuses on gradient calculation methods:
-- `GradType`: Abstract type for gradient calculation methods
+- `MLGradType`: Abstract type for gradient calculation methods
 - Various automatic differentiation methods: `ForwardDiffGrad`, `ZygoteGrad`, `EnzymeGrad`
 - Finite difference methods: `FiniteDiffGrad`, `FiniteDifferencesGrad`
 
