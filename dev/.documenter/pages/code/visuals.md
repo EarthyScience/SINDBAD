@@ -198,6 +198,28 @@ This function generates debugging figures by plotting the optimized and default 
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='SindbadVisuals.plotTimeSeriesWithObs-Tuple{Any, Any, Any}' href='#SindbadVisuals.plotTimeSeriesWithObs-Tuple{Any, Any, Any}'><span class="jlbinding">SindbadVisuals.plotTimeSeriesWithObs</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+plotTimeSeriesWithObs(out,obs_array,cost_options,info)
+```
+
+
+Generate time series plots comparing optimized and default model outputs with observations.
+
+**Arguments**
+- `out_opti`: Optimization output data structure containing model outputs and information
+  
+
+**Description**
+
+Generates time series plots that compare the optimized and default model outputs with observations. The function iterates over each variable specified in the cost options and creates a separate plot for each one. Each plot displays the observed data as scatter points, along with the default and optimized model outputs as line graphs. Additionally, it includes vertical lines indicating the calculated loss metric values for both the default and optimized models.
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='SindbadVisuals.plotTimeSeriesWithObs-Tuple{Any}' href='#SindbadVisuals.plotTimeSeriesWithObs-Tuple{Any}'><span class="jlbinding">SindbadVisuals.plotTimeSeriesWithObs</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
 
 
