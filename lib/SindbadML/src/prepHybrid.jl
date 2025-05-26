@@ -41,6 +41,7 @@ function getIndicesSplit(info, _, ::LoadFoldFromFile)
 end
 
 function getIndicesSplit(info, site_indices, ::CalcFoldFromSplit)
+    site_indices = collect(eachindex(site_indices))  # Ensure site_indices is an array of indices
     # split the sites into training, validation and testing
     n_fold = info.hybrid.ml_training.options.n_folds
     split_ratio = info.hybrid.ml_training.options.split_ratio
