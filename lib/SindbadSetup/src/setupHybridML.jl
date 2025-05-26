@@ -132,10 +132,10 @@ function setHybridInfo(info::NamedTuple)
     ml_training = info.settings.hybrid.ml_training
     if hasproperty(ml_training, :fold_path)
         fold_path = ml_training.fold_path
-        if !isabspath(fold_path)
+        if !isnothing(fold_path) && (!isabspath(fold_path) && !isempty(fold_path)) 
             fold_path = getAbsDataPath(info, fold_path)
+            fold_type = LoadFoldFromFile()
         end
-        fold_type = LoadFoldFromFile()
     end
     if hasproperty(ml_training, :which_fold)
         which_fold = ml_training.which_fold
