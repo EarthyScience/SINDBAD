@@ -62,8 +62,8 @@ function trainML(hybrid_helpers, ::MixedGradient)
             x_feat_batch = xfeatures(; site=sites_batch)
             new_params, pullback_func = getPullback(flat, re, x_feat_batch)
             scaled_params_batch = getParamsAct(new_params, parameter_table)
-            @info"    Epoch $(epoch): training on batch $(batch_index) with $(length(sites_batch)) sites, unscaled_params: minimum=$(minimum(new_params)), maximum=$(maximum(new_params)), scaled_params: minimum=$(minimum(scaled_params_batch)), maximum=$(maximum(scaled_params_batch))"
-
+            @info "    Epoch $(epoch): training on batch $(batch_index) with $(length(sites_batch)) sites, unscaled_params: minimum=$(minimum(new_params)), maximum=$(maximum(new_params)), scaled_params: minimum=$(minimum(scaled_params_batch)), maximum=$(maximum(scaled_params_batch)) | $(now()) "
+            
             gradientBatch!(gradient_options.method, grads_batch, gradient_options.options, loss_functions, scaled_params_batch, sites_batch; showprog=false)
 
             gradsNaNCheck!(grads_batch, scaled_params_batch, sites_batch, parameter_table, replace_value=options.replace_value_for_gradient) #? checks for NaNs and if any replace them with replace_value_for_gradient
@@ -97,8 +97,14 @@ function trainML(hybrid_helpers, ::MixedGradient)
                 array_loss_components_testing=array_loss_components.testing[:,:, epoch],
                 re=re,
                 flat=flat)
-        end
+            
+            # lets check it
+            mean_loss_train = mean(array_loss_components.training[:,:,epoch])
+            mean_loss_valid = mean(array_loss_components.validation[:,:,epoch])
+            mean_loss_test = mean(array_loss_components.testing[:,:,epoch])
 
+            @info "    Epoch $(epoch): mean_loss_train = $(mean_loss_train) | mean_loss_valid = $(mean_loss_valid) | mean_loss_test = $(mean_loss_test) ;"
+        end
     end
 
 end
