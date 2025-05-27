@@ -41,8 +41,8 @@ function trainML(hybrid_helpers, ::MixedGradient)
     parameter_table = hybrid_helpers.parameter_table
     metadata_global = hybrid_helpers.metadata_global
     loss_functions = hybrid_helpers.loss_functions
-    loss_array = hybrid_helpers.loss_array
-    loss_array_components = hybrid_helpers.loss_array_components
+    array_loss = hybrid_helpers.array_loss
+    array_loss_components = hybrid_helpers.array_loss_components
     loss_component_functions = hybrid_helpers.loss_component_functions
     ml_optimizer = hybrid_helpers.training_optimizer
     flat, re, opt_state = destructureNN(ml_model; nn_opt=ml_optimizer)
@@ -56,13 +56,13 @@ function trainML(hybrid_helpers, ::MixedGradient)
     @showprogress desc="training..." for epoch ∈ 1:n_epochs
         x_batches = shuffleBatches(sites_training, batch_size; seed=epoch)
 
-        for sites_batch in x_batches
+        for (batch_index, sites_batch) in enumerate(x_batches)
             
             grads_batch = zeros(Float32, n_params, length(sites_batch))
             x_feat_batch = xfeatures(; site=sites_batch)
             new_params, pullback_func = getPullback(flat, re, x_feat_batch)
             scaled_params_batch = getParamsAct(new_params, parameter_table)
-            @debug "  Epoch $(epoch): training on batch with $(length(sites_batch)) sites, scaled_params: minimum=$(minimum(scaled_params_batch)), maximum=$(maximum(scaled_params_batch))"
+            @info"    Epoch $(epoch): training on batch $(batch_index) with $(length(sites_batch)) sites, unscaled_params: minimum=$(minimum(new_params)), maximum=$(maximum(new_params)), scaled_params: minimum=$(minimum(scaled_params_batch)), maximum=$(maximum(scaled_params_batch))"
 
             gradientBatch!(gradient_options.method, grads_batch, gradient_options.options, loss_functions, scaled_params_batch, sites_batch; showprog=false)
 
@@ -80,21 +80,21 @@ function trainML(hybrid_helpers, ::MixedGradient)
         
             for comps in (:training, :validation, :testing)
                 sites_comp = getproperty(all_sites, comps)
-                loss_array_epoch = getproperty(loss_array, comps)
-                loss_array_components_epoch = getproperty(loss_array_components, comps)
-                epochLossComponents(loss_component_functions, loss_array_epoch, loss_array_components_epoch, epoch, scaled_params_epoch, sites_comp)
+                array_loss_epoch = getproperty(array_loss, comps)
+                array_loss_components_epoch = getproperty(array_loss_components, comps)
+                epochLossComponents(loss_component_functions, array_loss_epoch, array_loss_components_epoch, epoch, scaled_params_epoch, sites_comp)
             end
 
             jldsave(f_path;
                 lower_bound=parameter_table.lower, upper_bound=parameter_table.upper, parameter_names=parameter_table.name,
                 parameter_table=parameter_table,
                 metadata_global=metadata_global,
-                loss_array_training=loss_array.training[:, epoch],
-                loss_array_validation=loss_array.validation[:, epoch],
-                loss_array_testing=loss_array.testing[:, epoch],
-                loss_array_components_training=loss_array_components.training[:,:, epoch],
-                loss_array_components_validation=loss_array_components.validation[:,:, epoch],
-                loss_array_components_testing=loss_array_components.testing[:,:, epoch],
+                array_loss_training=array_loss.training[:, epoch],
+                array_loss_validation=array_loss.validation[:, epoch],
+                array_loss_testing=array_loss.testing[:, epoch],
+                array_loss_components_training=array_loss_components.training[:,:, epoch],
+                array_loss_components_validation=array_loss_components.validation[:,:, epoch],
+                array_loss_components_testing=array_loss_components.testing[:,:, epoch],
                 re=re,
                 flat=flat)
         end

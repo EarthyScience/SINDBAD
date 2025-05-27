@@ -86,8 +86,6 @@ train_indices, val_indices, test_indices, folds = getNFolds(sites, 0.7, 0.15, 0.
 ```
 """
 function getNFolds(sites, train_ratio, val_ratio, test_ratio, n_folds, batch_size; seed=1234)
-    @assert train_ratio + val_ratio + test_ratio ≈ 1.0 "Ratios must sum to 1.0"
-
     num_indices = length(sites)
     fold_size = div(num_indices, n_folds)
 
@@ -96,7 +94,6 @@ function getNFolds(sites, train_ratio, val_ratio, test_ratio, n_folds, batch_siz
 
     # Shuffle sites for random partitioning
     shuffled_indices = shuffle(sites)
-
     folds = []
     for i in 1:n_folds
         push!(folds, shuffled_indices[(i-1)*fold_size+1:min(i * fold_size, num_indices)])
@@ -104,10 +101,11 @@ function getNFolds(sites, train_ratio, val_ratio, test_ratio, n_folds, batch_siz
 
     # Compute sizes for each partition
     train_size = round(Int, num_indices * train_ratio)
-    train_size -= train_size % batch_size  # Ensure train_size is a multiple of batch_size
+    # ...existing code...
+    # train_size = ceil(Int, num_indices * train_ratio)
+    # train_size += (batch_size - train_size % batch_size) % batch_size  # Ensure train_size is a multiple of batch_size (ceil)
     val_size = round(Int, num_indices * val_ratio)
     test_size = num_indices - train_size - val_size
-
     # Split sites into partitions
     train_indices = shuffled_indices[1:train_size]
     val_indices = shuffled_indices[train_size+1:train_size+val_size]
@@ -202,8 +200,8 @@ This function orchestrates the setup for hybrid modeling by:
 - `loss_functions`: KeyedArray of callable loss functions, one per site.
 - `loss_component_functions`: KeyedArray of callable loss component functions, one per site.
 - `training_optimizer`: The optimizer object for ML training.
-- `loss_array`: NamedTuple of arrays to store scalar losses for training, validation, and testing.
-- `loss_array_components`: NamedTuple of arrays to store loss components for training, validation, and testing.
+- `array_loss`: NamedTuple of arrays to store scalar losses for training, validation, and testing.
+- `array_loss_components`: NamedTuple of arrays to store loss components for training, validation, and testing.
 - `metadata_global`: Global metadata from the output configuration.
 
 # Notes
@@ -256,31 +254,31 @@ function prepHybrid(forcing, observations, info, ::MLTrainingType)
 
     n_epochs = info.hybrid.ml_training.options.n_epochs
     @info "  Preparing arrays to store losses for training, validation and testing"
-    loss_array_training = fill(zero(Float32), length(sites.training), n_epochs)
-    loss_array_validation = fill(zero(Float32), length(sites.validation), n_epochs)
-    loss_array_testing = fill(zero(Float32), length(sites.testing), n_epochs)
+    array_loss_training = fill(zero(Float32), length(sites.training), n_epochs)
+    array_loss_validation = fill(zero(Float32), length(sites.validation), n_epochs)
+    array_loss_testing = fill(zero(Float32), length(sites.testing), n_epochs)
 
     # ? save also the individual losses
     num_constraints = length(info.optimization.cost_options.variable)
 
-    loss_array_components_training = fill(NaN32, length(sites.training), num_constraints, n_epochs)
-    loss_array_components_validation = fill(NaN32, length(sites.validation), num_constraints, n_epochs)
-    loss_array_components_testing = fill(NaN32, length(sites.testing), num_constraints, n_epochs)
+    array_loss_components_training = fill(-9999.f0, length(sites.training), num_constraints, n_epochs) # use -9999 to distinguish missing variable from possible NaN loss for the ones with data
+    array_loss_components_validation = fill(-9999.f0, length(sites.validation), num_constraints, n_epochs)
+    array_loss_components_testing = fill(-9999.f0, length(sites.testing), num_constraints, n_epochs)
 
-    loss_array_components = (; 
-        training=loss_array_components_training, 
-        validation=loss_array_components_validation, 
-        testing=loss_array_components_testing
+    array_loss_components = (; 
+        training=array_loss_components_training, 
+        validation=array_loss_components_validation, 
+        testing=array_loss_components_testing
     )
 
-    loss_array = (; 
-        training=loss_array_training, 
-        validation=loss_array_validation, 
-        testing=loss_array_testing
+    array_loss = (; 
+        training=array_loss_training, 
+        validation=array_loss_validation, 
+        testing=array_loss_testing
     )
     @info "    Number of epochs: $n_epochs"
-    @info "    Loss array shape (training | validation | testing): $(size(loss_array.training)) | $(size(loss_array.validation)) | $(size(loss_array.testing))"
-    @info "    Loss array components shape (training | validation | testing): $(size(loss_array_components.training)) | $(size(loss_array_components.validation)) | $(size(loss_array_components.testing))"
+    @info "    Loss array shape (training | validation | testing): $(size(array_loss.training)) | $(size(array_loss.validation)) | $(size(array_loss.testing))"
+    @info "    Loss array components shape (training | validation | testing): $(size(array_loss_components.training)) | $(size(array_loss_components.validation)) | $(size(array_loss_components.testing))"
     @info "    Number of constraints: $num_constraints"
 
     @info "  Preparing training optimizer"
@@ -301,8 +299,8 @@ function prepHybrid(forcing, observations, info, ::MLTrainingType)
         loss_functions=loss_functions, 
         loss_component_functions=loss_component_functions,
         training_optimizer=training_optimizer,
-        loss_array=loss_array,
-        loss_array_components=loss_array_components,
+        array_loss=array_loss,
+        array_loss_components=array_loss_components,
         metadata_global=metadata_global
     )
     return hybrid_helpers
