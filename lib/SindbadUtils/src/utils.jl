@@ -129,8 +129,9 @@ An absolute data path.
 function getAbsDataPath(info, data_path)
     if !isabspath(data_path)
         d_data_path = getSindbadDataDepot(local_data_depot=data_path)
+        dir_path = hasproperty(info, :temp) ? info.temp.experiment.dirs : info.experiment.dirs
         if data_path == d_data_path
-            data_path = joinpath(info.experiment.dirs.experiment, data_path)
+            data_path = joinpath(dir_path.experiment, data_path)
         else
             data_path = joinpath(d_data_path, data_path)
         end
