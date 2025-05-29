@@ -87,7 +87,7 @@ Creates a NamedTuple containing forcing data and metadata.
 - Helper information is generated using `collectForcingHelpers`.
 """
 function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
-    @info "getForcing: processing forcing helpers..."
+    showInfo(getForcing, @__FILE__, @__LINE__, "processing forcing helpers...")
     @debug "     ::dimensions::"
     indims = getDataDims.(incubes, Ref(Symbol.(info.experiment.data_settings.forcing.data_dimension.space)))
     @debug "     ::variable names::"
@@ -144,7 +144,7 @@ function getForcing(info::NamedTuple)
     data_path = forcing_data_settings.default_forcing.data_path
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
-        @info "getForcing: default_data_path: $(data_path)"
+        showInfo(getForcing, @__FILE__, @__LINE__, "default_data_path: $(data_path)")
         nc_default = loadDataFile(data_path)
     end
     data_backend = getfield(SindbadData, toUpperCaseFirst(info.helpers.run.input_data_backend, "Backend"))()
@@ -161,7 +161,7 @@ function getForcing(info::NamedTuple)
     default_info = info.experiment.data_settings.forcing.default_forcing
     forcing_vars = keys(forcing_data_settings.variables)
     tar_dims = getTargetDimensionOrder(info)
-    @info "getForcing: getting forcing variables..."
+    showInfo(getForcing, @__FILE__, @__LINE__, "getting forcing variables...", n_m=1)
     vinfo = nothing
     f_sizes = nothing
     f_dimension = nothing
@@ -172,7 +172,7 @@ function getForcing(info::NamedTuple)
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)
-        @info "      $(k): $(vinfo.source_variable)"
+        showInfo(nothing, @__FILE__, @__LINE__, "$(k): $(vinfo.source_variable)", n_m=4)
         if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
             f_sizes = collectForcingSizes(info, incube)
             f_dimension = getSindbadDims(incube)

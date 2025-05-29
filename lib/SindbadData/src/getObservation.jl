@@ -46,7 +46,7 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
         data_path_sub = getAbsDataPath(info, v_info_sub.data_path)
         nc_sub = nc
         nc_sub, yax_sub = getYaxFromSource(nc_sub, data_path, data_path_sub, v_info_sub.source_variable, info, data_backend)
-        @info "     $(data_sub_field): $(v_info_sub.source_variable)"
+        showInfo(nothing, @__FILE__, @__LINE__, "$(data_sub_field): $(v_info_sub.source_variable)", n_m=6)
         bounds_sub = v_info_sub.bounds
     else
         if data_sub_field == :qflag
@@ -59,7 +59,7 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
             @debug "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
         end
         if !isnothing(yax)
-            @info "     $(data_sub_field): ones(data)"
+            showInfo(nothing, @__FILE__, @__LINE__, "$(data_sub_field): ones(data)", n_m=6)
             nc_sub = nc
             yax_sub = map(x -> one(x), yax)
             v_info_sub = default_info
@@ -105,7 +105,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
 
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
-        @info "getObservation:  default_observation_data_path: $(data_path)"
+        showInfo(getObservation, @__FILE__, @__LINE__, "default_observation_data_path: $(data_path)")
         nc_default = loadDataFile(data_path)
     end
 
@@ -123,9 +123,9 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     num_type = Val{info.helpers.numbers.num_type}()
     num_type_bool = Val{Bool}()
 
-    @info "getObservation: getting observation variables..."
+    showInfo(getObservation, @__FILE__, @__LINE__, "getting observation variables...")
     map(varnames) do k
-        @info " constraint: $k"
+        showInfo(nothing, @__FILE__, @__LINE__, "constraint: $k", n_m=4)
 
         vinfo = getproperty(observation_data_settings.observations.variables, k)
 
@@ -146,7 +146,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         if !isnothing(yax_mask)
             yax_mask_v .= yax_mask .* yax_mask_v
         end
-        @info "     harmonize/subset..."
+        showInfo(nothing, @__FILE__, @__LINE__, "harmonize/subset...", n_m=6)
         @debug "      qflag"
         cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info, num_type; clean_data=false)
         @debug "      data"
@@ -164,7 +164,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(obscubes, cyax_wgt)
         @info " \n"
     end
-    @info "getObservation: getting observation helpers..."
+    showInfo(getObservation, @__FILE__, @__LINE__, "getting observation helpers...", n_m=2)
     @debug "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(forcing_data_settings.data_dimension.space))
     @debug "getObservation: getting number of time steps..."

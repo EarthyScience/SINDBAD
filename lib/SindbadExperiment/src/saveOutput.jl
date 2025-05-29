@@ -69,19 +69,19 @@ saves the output variables from the run as one file
 function saveOutCubes end
 
 function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pairs, out_format, t_step, ::DoSaveSingleFile)
-    @info "saving one file for all variables"
+    showInfo(saveOutCubes, @__FILE__, @__LINE__, "saving one file for all variables")
     catalog_names = getVarFull.(var_pairs)
     variable_names = getUniqueVarNames(var_pairs)
     all_yax = Tuple(getYaxForVariable.(data, data_dims, variable_names, catalog_names, Ref(t_step)))
     data_path = data_path_base * "_all_variables.$(out_format)"
-    @info data_path
+    showInfo(nothing, @__FILE__, @__LINE__, "$(data_path)", n_m=4)
     ds_new = YAXArrays.Dataset(; (; zip(variable_names, all_yax)...)..., properties=global_metadata)
     savedataset(ds_new, path=data_path, append=true, overwrite=true)
     return nothing
 end
 
 function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pairs, out_format, t_step, ::DoNotSaveSingleFile)
-    @info "saving one file per variable"
+    showInfo(saveOutCubes, @__FILE__, @__LINE__, "saving one file per variable")
     catalog_names = getVarFull.(var_pairs)
     variable_names = getUniqueVarNames(var_pairs)
     for vn ∈ eachindex(var_pairs)
@@ -89,7 +89,7 @@ function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pair
         variable_name = variable_names[vn]
         data_yax = getYaxForVariable(data[vn], data_dims[vn], variable_name, catalog_name, t_step)
         data_path = data_path_base * "_$(variable_name).$(out_format)"
-        @info "saving $(data_path)"
+        showInfo(nothing, @__FILE__, @__LINE__, "$(data_path)", n_m=4)
         ds_new = YAXArrays.Dataset(; (variable_name => data_yax,)..., properties=global_metadata)
         savedataset(ds_new, path=data_path, overwrite=true)
     end

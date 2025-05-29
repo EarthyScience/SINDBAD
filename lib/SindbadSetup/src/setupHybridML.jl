@@ -107,7 +107,7 @@ Processes and sets up the hybrid experiment information in the experiment config
 - The updated `info` NamedTuple with hybrid experiment information added.
 """
 function setHybridInfo(info::NamedTuple)
-    @info "  setHybridInfo: setting info for hybrid experiment..."
+    showInfo(setHybridInfo, @__FILE__, @__LINE__, "setting info for hybrid machine-learning + TEM experiment...", n_m=1)
     # hybrid_options = info.settings.hybrid
     # set
     info = setHybridOptions(info, :ml_model)

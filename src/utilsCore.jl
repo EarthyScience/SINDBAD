@@ -14,6 +14,7 @@ export @pack_nt, @unpack_nt
 export repElem, @rep_elem, repVec, @rep_vec
 export setComponents
 export setComponentFromMainPool, setMainFromComponentPool
+export showInfo
 export totalS
 
 
@@ -756,6 +757,37 @@ end
                         Expr(:kw, s_main, s_main))))))))
     return gen_output
 end
+
+
+"""
+    showInfo(func, file_name, line_number, info_message; spacer=" ", n_f=1, n_m=1)
+
+Logs an informational message with optional function, file, and line number context.
+
+# Arguments
+- `func`: The function object or `nothing` if not applicable.
+- `file_name`: The name of the file where the message originates.
+- `line_number`: The line number in the file.
+- `info_message`: The message to log.
+- `spacer`: (Optional) String used for spacing in the log output (default: `" "`).
+- `n_f`: (Optional) Number of times to repeat `spacer` before the function/file info (default: `1`).
+- `n_m`: (Optional) Number of times to repeat `spacer` before the message (default: `1`).
+
+# Example
+```julia
+showInfo(myfunc, "myfile.jl", 42, "Computation finished")
+```
+"""
+function showInfo(func, file_name, line_number, info_message; spacer=" ", n_f= 1, n_m=1)
+    func_space = spacer ^ n_f
+    info_space = spacer ^ n_m
+    file_link = ""
+    if !isnothing(func)
+        file_link = " $(nameof(func)) ($(basename(file_name)):$(line_number)) => "
+    end
+    @info "$(func_space)$(file_link)$(info_space)$(info_message)"
+end
+
 
 """
     totalS(s, sΔ)

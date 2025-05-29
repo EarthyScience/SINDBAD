@@ -369,7 +369,7 @@ variables = output_tuple.variables
 ```
 """
 function prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
-    @info "  prepTEMOut: preparing output and helpers..."
+    showInfo(prepTEMOut, @__FILE__, @__LINE__, "preparing output helpers for Terrestrial Ecosystem Model (TEM)", n_f=4)
     land = info.helpers.land_init
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land))

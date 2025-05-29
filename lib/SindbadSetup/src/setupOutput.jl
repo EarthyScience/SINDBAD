@@ -254,7 +254,7 @@ Saves a copy of the experiment settings to the output folder.
 """
 function saveExperimentSettings(info)
     sindbad_experiment = info.temp.experiment.dirs.sindbad_experiment
-    @info "         ...saving a copy of json settings to: $(info.output.dirs.settings)"
+    showInfo(saveExperimentSettings, @__FILE__, @__LINE__, "saving Experiment JSON Settings to : $(info.output.dirs.settings)")
     cp(sindbad_experiment,
         joinpath(info.output.dirs.settings, split(sindbad_experiment, path_separator)[end]);
         force=true)
@@ -280,7 +280,7 @@ Sets up and creates the output directory for the experiment.
 - Validates the output path and ensures it is not within the SINDBAD root directory.
 """
 function setExperimentOutput(info)
-    @info "  setExperimentOutput: setting Output Basics..."
+    showInfo(setExperimentOutput, @__FILE__, @__LINE__, "setting Experiment Output Paths...")
     path_output = info[:settings][:experiment][:model_output][:path]
     if isnothing(path_output)
         path_output_new = "output_"
@@ -328,7 +328,7 @@ function setExperimentOutput(info)
     out_file_info = (; global_metadata=global_metadata, file_prefix=file_prefix)
     out_info = (; out_info..., file_info=out_file_info)  
     info = setTupleField(info, (:output, out_info))
-    @info "         ...output directories set in: $(info.output.dirs.root)"
+    showInfo(nothing, @__FILE__, @__LINE__, "...output directory set to: $(info.output.dirs.root)")
     saveExperimentSettings(info)
     return info
 end
@@ -345,7 +345,7 @@ Sets the output variables to be written and stored based on the experiment confi
 - The updated `info` NamedTuple with output variables and depth information added.
 """
 function setModelOutput(info::NamedTuple)
-    @info "  setModelOutput: setting Model Output Info..."
+    showInfo(setModelOutput, @__FILE__, @__LINE__, "setting Model Output Info...")
     output_vars = collect(propertynames(info.settings.experiment.model_output.variables))
     info = (; info..., temp=(; info.temp..., output=getDepthInfoAndVariables(info, output_vars)))
     return info

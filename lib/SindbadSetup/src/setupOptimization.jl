@@ -339,7 +339,7 @@ Sets up optimization-related fields in the experiment configuration.
 - Validates the parameters to be optimized against the model structure.
 """
 function setOptimization(info::NamedTuple)
-    @info "  setOptimization: setting Optimization and Observation info..."
+    showInfo(setOptimization, @__FILE__, @__LINE__, "setting Optimization and Observation Info...")
     info = setTupleField(info, (:optimization, (;)))
 
     # set information related to cost metrics for each variable

@@ -113,10 +113,11 @@ Displays a formatted output of parameter bounds information or returns an error 
 """
 function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bounds, _sc::ParameterScaling; p_units=nothing, show_info=false, model_names=nothing)
     if show_info
+        showInfo(checkParameterBounds, @__FILE__, @__LINE__, "checking Parameter Bounds")
         if nameof(typeof(_sc)) == :ScaleNone
-            @info "  Checking Parameter Bounds: No scaling applied. The values and bounds are original/input values, while their units, when provided, are scaled to match the model run time steps and may differ from the original units in the model when @timescale of the parameter is different from the model run time step."
+            showInfo(nothing, @__FILE__, @__LINE__, "...no scaling applied. The values and bounds are original/input values, while their units, when provided, are scaled to match the model run time steps and may differ from the original units in the model when @timescale of the parameter is different from the model run time step.")
         else
-            @info "  Checking Parameter Bounds: $(nameof(typeof(_sc))) scaling applied. The values and bounds are scaled values, while their units, when provided, are scaled to match the model run time steps and may differ from the original units in the model when @timescale of the parameter is different from the model run time step. Check info.models.parameter_table for interpreting parameter values in original/input units."
+            showInfo(nothing, @__FILE__, @__LINE__, "...$(nameof(typeof(_sc))) scaling applied. The values and bounds are scaled values, while their units, when provided, are scaled to match the model run time steps and may differ from the original units in the model when @timescale of the parameter is different from the model run time step. Check info.models.parameter_table for interpreting parameter values in original/input units.")
         end
     end
     for (i,n) in enumerate(p_names)
@@ -127,14 +128,15 @@ function checkParameterBounds(p_names, parameter_values, lower_bounds, upper_bou
         if show_info
             ps = String(n)
             if !isnothing(model_names)
-                ps = String(model_names[i]) * " : " * String(n)
+                ps = String(model_names[i]) * ".jl : " * String(n)
             end
+            units_str = ""
             if !isnothing(p_units)
-                units_str = p_units[i] == "" ? "unitless" : " $(p_units[i])"
-                @info "       $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])] (units: $(units_str))"
-            else
-                @info "       $(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])]"
+                units_str = p_units[i] == "" ? "unitless" : "$(p_units[i])"
+                units_str = "(units: $(units_str))"
             end
+            showInfo(nothing, @__FILE__, @__LINE__, "$(ps) => $(parameter_values[i]) [$(lower_bounds[i]), $(upper_bounds[i])] $units_str", n_f=6)
+
         end
     end
 end
