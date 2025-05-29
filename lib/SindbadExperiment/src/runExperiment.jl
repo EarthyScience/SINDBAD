@@ -37,7 +37,7 @@ function prepExperiment(sindbad_experiment::String; replace_info=Dict())
     forcing = getForcing(info)
 
     @info "\n----------------------------------------------\n"
-    @info "plotting IO signatures in the selected model structure ..."
+    showInfo(prepExperiment, @__FILE__, @__LINE__, "plotting IO signatures in the selected model structure...", n_m=1)
 
     for model_func in (:define, :precompute, :compute,)                 
         plotIOModelStructure(info, model_func)
@@ -84,10 +84,10 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     observations = getObservation(info, forcing.helpers)
     obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
     println("-------------------Cost Calculation Mode---------------------------\n")
-    @info "runExperiment: do forward run..."
+    showInfo(runExperiment, @__FILE__, @__LINE__, "do forward run...")
     println("----------------------------------------------\n")
     output_array = runTEM!(forcing, info)
-    @info "runExperiment: calculate cost..."
+    showInfo(runExperiment, @__FILE__, @__LINE__, "calculate cost...")
     println("----------------------------------------------\n")
     forward_output = (; Pair.(getUniqueVarNames(info.output.variables), output_array)...)
     cost_options = prepCostOptions(obs_array, info.optimization.cost_options)
@@ -123,13 +123,14 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimizatio
     additionaldims = setdiff(keys(forcing.helpers.sizes), info.experiment.data_settings.forcing.data_dimension.time)
     run_output = nothing
     if isempty(additionaldims)
-        @info "runExperiment: do optimization per pixel..."
+        showInfo(runExperiment, @__FILE__, @__LINE__, "run optimization per pixel...")
         run_output = optimizeTEMYax(forcing, info.tem, info.optimization, observations; max_cache=info.settings.experiment.exe_rules.yax_max_cache)
     else
-        @info "runExperiment: do spatial optimization..."
+        showInfo(runExperiment, @__FILE__, @__LINE__, "run optimization for spatial domain...")
         obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
         optim_params = optimizeTEM(forcing, obs_array, info)
         optim_file_prefix = joinpath(info.output.dirs.optimization, info.experiment.basics.name * "_" * info.experiment.basics.domain)
+        showInfo(runExperiment, @__FILE__, @__LINE__, "saving optimized parameters to file: $(optim_file_prefix)_model_parameters_optimized.csv")
         CSV.write(optim_file_prefix * "_model_parameters_optimized.csv", optim_params)
         run_output = optim_params
     end
@@ -207,7 +208,7 @@ Run forward simulation of the model with default as well as modified settings wi
 """
 function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=Dict(), log_level=:info)
     setLogLevel(log_level)
-    @info "runExperimentForwardParams: forward run of the model with default/settings and input/optimized parameters..."
+    showInfo(runExperimentForwardParams, @__FILE__, @__LINE__, "running forward simulation with input/optimized parameters...", n_m=1)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_optimization"] = false
     replace_info["experiment.flags.calc_cost"] = true
@@ -335,7 +336,7 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
     sensitivity_output = (; opti_helpers..., info=info, forcing=forcing, obs_array=obs_array, observations=observations,sensitivity=sensitivity, p_bounds=p_bounds)
     setLogLevel(:info)
     sensitivity_output_file = joinpath(info.output.dirs.data, "sensitivity_analysis_$(nameof(typeof(info.optimization.sensitivity_analysis.method)))_$(length(opti_helpers.cost_vector))-cost_evals.jld2")
-    @info "saving output for sensitivity: "
+    showInfo(runExperimentSensitivity, @__FILE__, @__LINE__, "saving sensitivity output to file: $(sensitivity_output_file)", n_m=1)
     @save  sensitivity_output_file sensitivity_output
     return sensitivity_output
 end

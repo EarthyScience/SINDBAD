@@ -18,7 +18,7 @@ Generates `info.temp.helpers.pools` and `info.pools`.
 - `info.pools` is used for instantiating the pools for the initial output tuple.
 """
 function setPoolsInfo(info::NamedTuple)
-    @info "  setPoolsInfo: setting Pools Info..."
+    showInfo(setPoolsInfo, @__FILE__, @__LINE__, "setting Pools Info...")
     elements = keys(info.settings.model_structure.pools)
     tmp_states = (;)
     hlp_states = (;)

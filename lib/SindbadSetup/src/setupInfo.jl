@@ -15,7 +15,7 @@ Initializes the land state by creating a NamedTuple with pools, states, and sele
 - A NamedTuple containing initialized pools, states, fluxes, diagnostics, properties, models, and constants.
 """
 function createInitLand(pool_info, tem)
-    @info "  createInitLand: creating Initial Land..."
+    showInfo(createInitLand, @__FILE__, @__LINE__, "creating Initial Land...")
     init_pools = createInitPools(pool_info, tem.helpers)
     initial_states = createInitStates(pool_info, tem.helpers)
     out = (; fluxes=(;), pools=(; init_pools..., initial_states...), states=(;), diagnostics=(;), properties=(;), models=(;), constants=(;))
@@ -39,7 +39,7 @@ Parses and saves the code and structs of the selected model structure for the gi
 - Also writes the parameter structs for the models.
 """
 function parseSaveCode(info)
-    @info "  parseSaveCode: saving Selected Models Code..."
+    showInfo(parseSaveCode, @__FILE__, @__LINE__, "saving Selected Models Code...")
     models = info.temp.models.forward
     outfile_define = joinpath(info.output.dirs.code, info.temp.experiment.basics.name * "_" * info.temp.experiment.basics.domain * "_model_definitions.jl")
     outfile_code = joinpath(info.output.dirs.code, info.temp.experiment.basics.name * "_" * info.temp.experiment.basics.domain * "_model_functions.jl")
@@ -194,7 +194,7 @@ Fills `info.temp.helpers.dates` with date and time-related fields needed in the 
 - The updated `info` NamedTuple with date-related fields added.
 """
 function setDatesInfo(info::NamedTuple)
-    @info "  setDatesInfo: setting Dates Helpers..."
+    showInfo(setDatesInfo, @__FILE__, @__LINE__, "setting Dates Helpers...")
     tmp_dates = (;)
     time_info = getfield(info.settings.experiment.basics, :time)
     time_props = propertynames(time_info)
@@ -228,7 +228,7 @@ Sets up model run flags and output array types for the experiment.
 - The updated `info` NamedTuple with model run flags and output array types added.
 """
 function setModelRunInfo(info::NamedTuple)
-    @info "  setModelRunInfo: setting Model Run Flags..."
+    showInfo(setModelRunInfo, @__FILE__, @__LINE__, "setting Model Run Flags...")
     if info.settings.experiment.flags.run_optimization
         info = @set info.settings.experiment.flags.catch_model_errors = false
     end
@@ -261,9 +261,8 @@ Prepares numeric helpers for maintaining consistent data types across models.
 - The updated `info` NamedTuple with numeric helpers added.
 """
 function setNumericHelpers(info::NamedTuple, ttype=info.settings.experiment.exe_rules.model_number_type)
-    @info "  setNumericHelpers: setting Numeric Helpers..."
+    showInfo(setNumericHelpers, @__FILE__, @__LINE__, "setting Numeric Helpers...")
     num_type = getNumberType(ttype)
-
     tolerance = num_type(info.settings.experiment.exe_rules.tolerance)
     num_helpers = (; tolerance=tolerance, num_type=num_type)
     info = (; info..., temp=(; info.temp..., helpers=(; numbers=num_helpers)))
@@ -359,7 +358,7 @@ Processes the spinup configuration and prepares the spinup sequence.
 - The updated `info` NamedTuple with spinup-related fields added.
 """
 function setSpinupInfo(info)
-    @info "  setSpinupInfo: setting Spinup Info..."
+    showInfo(setSpinupInfo, @__FILE__, @__LINE__, "setting Spinup Info...")
     info = setRestartFilePath(info)
     infospin = info.settings.experiment.model_spinup
     # change spinup sequence dispatch variables to Val, get the temporal aggregators
@@ -383,7 +382,7 @@ Copies basic experiment information into the temporary experiment configuration.
 - The updated `info` NamedTuple with basic experiment information added.
 """
 function setExperimentBasics(info)
-    @info "  setExperimentBasics: setting Basic Experiment Info..."
+    showInfo(setExperimentBasics, @__FILE__, @__LINE__, "setting Basic Experiment Info...")
     ex_basics = info.settings.experiment.basics
     ex_basics_sel = (;)
     for k in propertynames(ex_basics)
@@ -413,7 +412,7 @@ Processes the experiment configuration and sets up all necessary fields for mode
 - The updated `info` NamedTuple with all necessary fields for model simulation.
 """
 function setupInfo(info::NamedTuple)
-    @info "setupInfo: Setting and consolidating Experiment Info..."
+    showInfo(setupInfo, @__FILE__, @__LINE__, "Setting and consolidating Experiment Info...")
     # @show info.settings.model_structure.parameter_table.optimized
     info = setExperimentBasics(info)
     # @info "  setupInfo: setting Output Basics..."
@@ -462,7 +461,7 @@ function setupInfo(info::NamedTuple)
         info = @set info.temp.models.forward = selected_approach_forward
     end
 
-    @info "  setupInfo: Cleaning Info Fields..."
+    showInfo(setupInfo, @__FILE__, @__LINE__, "Cleaning Info Fields...")
     data_settings = (; forcing = info.settings.forcing, optimization = info.settings.optimization)
     exe_rules = info.settings.experiment.exe_rules
     info = dropFields(info, (:model_structure, :experiment, :output, :pools))

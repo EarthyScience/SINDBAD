@@ -105,7 +105,7 @@ function lossComponents(params, models, parameter_to_index, parameter_scaling_ty
 end
 
 """
-    epochLossComponents(loss_functions::F, array_loss_sites, array_loss_components, epoch_number, scaled_params, sites_list) where {F}
+    epochLossComponents(loss_functions::F, loss_array_sites, loss_array_components, epoch_number, scaled_params, sites_list) where {F}
 
 Compute and store the loss metrics and loss components for each site in parallel for a given training epoch.
 
@@ -113,8 +113,8 @@ This function evaluates the provided loss functions for each site using the curr
 
 # Arguments
 - `loss_functions::F`: An array or KeyedArray of loss functions, one per site (where `F` is a subtype of `AbstractArray{<:Function}`).
-- `array_loss_sites`: A matrix to store the scalar loss metric for each site and epoch (dimensions: site × epoch).
-- `array_loss_components`: A 3D tensor to store the loss components for each site, component, and epoch (dimensions: site × component × epoch).
+- `loss_array_sites`: A matrix to store the scalar loss metric for each site and epoch (dimensions: site × epoch).
+- `loss_array_components`: A 3D tensor to store the loss components for each site, component, and epoch (dimensions: site × component × epoch).
 - `epoch_number`: The current epoch number (integer).
 - `scaled_params`: A callable or array providing the scaled parameters for each site (e.g., `scaled_params(site=site_name)`).
 - `sites_list`: List or array of site identifiers to process.
@@ -126,10 +126,10 @@ This function evaluates the provided loss functions for each site using the curr
 
 # Example
 ```julia
-epochLossComponents(loss_functions, array_loss_sites, array_loss_components, epoch, scaled_params, sites)
+epochLossComponents(loss_functions, loss_array_sites, loss_array_components, epoch, scaled_params, sites)
 ```
 """
-function epochLossComponents(loss_functions::F, array_loss_sites, array_loss_components, epoch_number, scaled_params, sites_list) where {F}
+function epochLossComponents(loss_functions::F, loss_array_sites, loss_array_components, epoch_number, scaled_params, sites_list) where {F}
     @sync begin
         for idx ∈ eachindex(sites_list)
            Threads.@spawn begin
@@ -137,8 +137,8 @@ function epochLossComponents(loss_functions::F, array_loss_sites, array_loss_com
                 loc_params = scaled_params(site=site_name)
                 loss_f = loss_functions(site=site_name)
                 loss_metric, loss_components, loss_indices = loss_f(loc_params)
-                array_loss_sites[idx, epoch_number] = loss_metric
-                array_loss_components[idx, loss_indices, epoch_number] = loss_components
+                loss_array_sites[idx, epoch_number] = loss_metric
+                loss_array_components[idx, loss_indices, epoch_number] = loss_components
            end
        end
     end

@@ -150,7 +150,7 @@ function gradientSite(::PolyesterForwardDiffGrad, x_vals, gradient_options::Name
         # cfg = ForwardDiff.GradientConfig(loss_tmp, x_vals, Chunk{chunk_size}());
         ForwardDiff.gradient!(∇x, loss_f, x_vals) # ?, add `cfg` at the end if further control is needed.
     else
-        PolyesterForwardDiff.threaded_gradient!(loss_f, ∇x, x_vals, ForwardDiff.Chunk(gradient_options.chunk_size));
+        PolyesterForwardDiff.threaded_gradient!(loss_f, ∇x, x_vals, ForwardDiff.Chunk(chunk_size));
     end
     return ∇x
 end

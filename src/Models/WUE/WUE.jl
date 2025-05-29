@@ -2,7 +2,7 @@ export WUE
 
 abstract type WUE <: LandEcosystem end
 
-purpose(::Type{WUE}) = "Estimate wue"
+purpose(::Type{WUE}) = "Quantify Water Use Efficiency (WUE)."
 
 includeApproaches(WUE, @__DIR__)
 

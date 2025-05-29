@@ -375,7 +375,7 @@ Updates input parameters by comparing an original table with an updated table fr
 a merged table with updated parameters
 """
 function setInputParameters(original_table::Table, input_table::Table, model_timestep)
-    @info "        ...setInputParameters: override the default parameters and merge tables."
+    showInfo(setInputParameters, @__FILE__, @__LINE__, "...override the default parameters and merge tables.")
     merged_table = copy(original_table)
     done_parameter_input = []
     skip_property = (:model_id, :initial, :default, :optimized, :approach_func, :lower, :upper)

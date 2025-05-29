@@ -44,16 +44,20 @@ Retrieves the list of all SINDBAD models, either from the provided `info` object
 - If the `info` object has a property `sindbad_models`, it overrides the default list.
 - This function ensures flexibility by allowing custom model lists to be specified in the experiment configuration.
 """
-function getAllSindbadModels(info; sindbad_models=standard_sindbad_models)
+function getAllSindbadModels(info; sindbad_models=standard_sindbad_models,  selected_models=standard_sindbad_models)
     if hasproperty(info.settings.model_structure, :sindbad_models)
         sindbad_models = info.settings.model_structure.sindbad_models
-        @info "  ....using non-standard model order and list from model_structure.sindbad_models: "
+        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "...using user-defined orders/models from model_structure.sindbad_models with model_structure including:", n_m=1)
     else
-        @info "  ....using standard model order and list from standard_sindbad_models: "
+        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "...using standard orders/models from standard_sindbad_models with model_structure including:", n_m=1)
     end
-        foreach((Pair.(eachindex(sindbad_models), sindbad_models))) do sm
-            @info "        $(first(sm)) => $(last(sm)): $(purpose(getproperty(Sindbad, last(sm))))"
+    mod_ind = 1
+    foreach(sindbad_models) do sm
+        if sm in selected_models
+            showInfo(nothing, @__FILE__, @__LINE__, "$(mod_ind): $(sm).jl => $(purpose(getproperty(Sindbad, sm)))", n_m=6)
+            mod_ind += 1
         end
+    end
     return sindbad_models
 end
 
@@ -103,12 +107,13 @@ Retrieves and orders the list of selected models based on the configuration in `
 - Orders the models as specified in `standard_sindbad_models`.
 """
 function setOrderedSelectedModels(info::NamedTuple)
-    @info "  setOrderedSelectedModels: setting Ordered Selected Models..."
+    showInfo(setOrderedSelectedModels, @__FILE__, @__LINE__, "setting Ordered Selected Models...")
+    # @info "  setOrderedSelectedModels ($(basename(@__FILE__))):\n             setting Ordered Selected Models..."
     selected_models = collect(propertynames(info.settings.model_structure.models))
-    sindbad_models = getAllSindbadModels(info)
+    sindbad_models = getAllSindbadModels(info, selected_models=selected_models)
     checkSelectedModels(sindbad_models, selected_models)
     t_repeat_models = getModelImplicitTRepeat(info, selected_models)
-    checkSelectedModels(sindbad_models, selected_models)
+    # checkSelectedModels(sindbad_models, selected_models)
     order_selected_models = []
     for msm ∈ sindbad_models
         if msm in selected_models
@@ -138,7 +143,7 @@ Configures the spinup and forward models for the experiment.
 - Updates model parameters if additional parameter values are provided in the experiment configuration.
 """
 function setSpinupAndForwardModels(info::NamedTuple)
-    @info "  setSpinupAndForwardModels: setting Spinup and Forward Models..."
+    showInfo(setSpinupAndForwardModels, @__FILE__, @__LINE__, "setting Spinup and Forward Models...")
     selected_approach_forward = ()
     is_spinup = Int64[]
     order_selected_models = info.temp.models.selected_models.model
@@ -168,10 +173,11 @@ function setSpinupAndForwardModels(info::NamedTuple)
 
     input_parameter_table = nothing
     if hasproperty(info.settings.model_structure, :parameter_table) && !isempty(info.settings.model_structure.parameter_table)
-        @info "     ---using input parameters from model_structure.parameter_table in replace_info"
+        showInfo(setSpinupAndForwardModels, @__FILE__, @__LINE__, "---using input parameters from model_structure.parameter_table in replace_info", n_m=20)
+
         input_parameter_table = info.settings.model_structure.parameter_table
     elseif hasproperty(info[:settings], :parameters) && !isempty(info.settings.parameters)
-        @info "     ---using input parameters from settings.parameters passed from CSV input file"
+        showInfo(setSpinupAndForwardModels, @__FILE__, @__LINE__, "     ---using input parameters from settings.parameters passed from CSV input file", n_m=20)
         input_parameter_table = info.settings.parameters
     end
     updated_parameter_table = copy(default_parameter_table)

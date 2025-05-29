@@ -24,11 +24,7 @@ function sindbadDefaultOptions end
 # A basic empty options for all SindbadTypes
 sindbadDefaultOptions(::SindbadTypes) = (;)
 
-sindbadDefaultOptions(::OptimizationMethod) = (;)
-
-sindbadDefaultOptions(::GSAMethod) = (;)
-
-sindbadDefaultOptions(::CMAEvolutionStrategyCMAES) = (;maxfevals = 50)
+sindbadDefaultOptions(::CMAEvolutionStrategyCMAES) = (; maxfevals = 50)
 
 sindbadDefaultOptions(::GSAMorris) = (; total_num_trajectory = 200, num_trajectory = 15, len_design_mat=10)
 

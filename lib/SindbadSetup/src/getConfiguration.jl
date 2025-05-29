@@ -220,9 +220,10 @@ Reads the experiment configuration files (JSON or CSV) and returns a dictionary.
 """
 function readConfiguration(info_exp::AbstractDict, base_path::String)
     info = DataStructures.OrderedDict()
+    showInfo(readConfiguration, @__FILE__, @__LINE__, "reading configuration files")
     for (k, v) ∈ info_exp["experiment"]["basics"]["config_files"]
         config_path = joinpath(base_path, v)
-        @info "  readConfiguration:: $(k) ::: $(config_path)"
+        showInfo(nothing, @__FILE__, @__LINE__, "...$(k) ::: $(config_path)")
         info_exp["experiment"]["basics"]["config_files"][k] = config_path
         if endswith(v, ".json")
             tmp = parsefile(config_path; dicttype=DataStructures.OrderedDict)
