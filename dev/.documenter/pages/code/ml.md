@@ -228,7 +228,7 @@ Returns:
 
 
 ```julia
-epochLossComponents(loss_functions::F, array_loss_sites, array_loss_components, epoch_number, scaled_params, sites_list) where {F}
+epochLossComponents(loss_functions::F, loss_array_sites, loss_array_components, epoch_number, scaled_params, sites_list) where {F}
 ```
 
 
@@ -239,9 +239,9 @@ This function evaluates the provided loss functions for each site using the curr
 **Arguments**
 - `loss_functions::F`: An array or KeyedArray of loss functions, one per site (where `F` is a subtype of `AbstractArray{<:Function}`).
   
-- `array_loss_sites`: A matrix to store the scalar loss metric for each site and epoch (dimensions: site × epoch).
+- `loss_array_sites`: A matrix to store the scalar loss metric for each site and epoch (dimensions: site × epoch).
   
-- `array_loss_components`: A 3D tensor to store the loss components for each site, component, and epoch (dimensions: site × component × epoch).
+- `loss_array_components`: A 3D tensor to store the loss components for each site, component, and epoch (dimensions: site × component × epoch).
   
 - `epoch_number`: The current epoch number (integer).
   
@@ -261,7 +261,7 @@ This function evaluates the provided loss functions for each site using the curr
 **Example**
 
 ```julia
-epochLossComponents(loss_functions, array_loss_sites, array_loss_components, epoch, scaled_params, sites)
+epochLossComponents(loss_functions, loss_array_sites, loss_array_components, epoch, scaled_params, sites)
 ```
 
 
@@ -1224,9 +1224,9 @@ This function orchestrates the setup for hybrid modeling by:
   
 - `training_optimizer`: The optimizer object for ML training.
   
-- `array_loss`: NamedTuple of arrays to store scalar losses for training, validation, and testing.
+- `loss_array`: NamedTuple of arrays to store scalar losses for training, validation, and testing.
   
-- `array_loss_components`: NamedTuple of arrays to store loss components for training, validation, and testing.
+- `loss_array_components`: NamedTuple of arrays to store loss components for training, validation, and testing.
   
 - `metadata_global`: Global metadata from the output configuration.
   

@@ -1127,7 +1127,7 @@ _Created by_
 
 
 ```julia
-Estimate wue
+Quantify Water Use Efficiency (WUE).
 ```
 
 
@@ -8719,7 +8719,7 @@ _Notes_
 
 
 ```julia
-Effect of temperature
+Quantifies the effect of temperature on GPP: 1 indicates no temperature stress, while 0 indicates complete stress.
 ```
 
 
@@ -9222,7 +9222,7 @@ _Created by_
 
 
 ```julia
-Combine effects as multiplicative or minimum
+Quantifies the combined effect of environmental demand on GPP.
 ```
 
 
@@ -9461,7 +9461,7 @@ _Created by_
 
 
 ```julia
-Effect of diffuse radiation
+Quantifies the effect of diffuse radiation on GPP: 1 indicates no diffuse radiation effect, while 0 indicates complete effect.
 ```
 
 
@@ -9801,7 +9801,7 @@ _Created by_
 
 
 ```julia
-Effect of direct radiation
+Quantifies the effect of direct radiation on GPP: 1 indicates no direct radiation effect, while 0 indicates complete effect.
 ```
 
 
@@ -10034,7 +10034,7 @@ _Notes_
 
 
 ```julia
-soil moisture stress on GPP
+Quantifies the effect of soil water on GPP: 1 indicates no soil water stress, while 0 indicates complete stress.
 ```
 
 
@@ -10409,7 +10409,7 @@ _Created by_
 
 
 ```julia
-Vpd effect
+Quantifies the effect of vapor pressure deficit (VPD) on GPP: 1 indicates no VPD stress, while 0 indicates complete stress.
 ```
 
 

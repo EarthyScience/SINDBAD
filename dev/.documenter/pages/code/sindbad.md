@@ -236,7 +236,7 @@ Abstract type for all SINDBAD land ecosystem models/approaches
   - `PFT_constant`: sets a uniform PFT class 
     
   
-- `WUE`: Estimate wue 
+- `WUE`: Quantify Water Use Efficiency (WUE). 
   - `WUE_Medlyn2011`: calculates the WUE/AOE ci/ca as a function of daytime mean VPD. calculates the WUE/AOE ci/ca as a function of daytime mean VPD &amp; ambient co2 
     
   - `WUE_VPDDay`: calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD 
@@ -503,7 +503,7 @@ The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree
   - `gpp_transpirationWUE`: calculate GPP based on transpiration &amp; water use efficiency 
     
   
-- `gppAirT`: Effect of temperature 
+- `gppAirT`: Quantifies the effect of temperature on GPP: 1 indicates no temperature stress, while 0 indicates complete stress. 
   - `gppAirT_CASA`: temperature stress for gpp_potential based on CASA &amp; Potter 
     
   - `gppAirT_GSI`: temperature stress on gpp_potential based on GSI implementation of LPJ 
@@ -519,7 +519,7 @@ The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree
   - `gppAirT_none`: sets the temperature stress on gpp_potential to one (no stress) 
     
   
-- `gppDemand`: Combine effects as multiplicative or minimum 
+- `gppDemand`: Quantifies the combined effect of environmental demand on GPP. 
   - `gppDemand_min`: compute the demand GPP as minimum of all stress scalars [most limited] 
     
   - `gppDemand_mult`: compute the demand GPP as multipicative stress scalars 
@@ -527,7 +527,7 @@ The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree
   - `gppDemand_none`: sets the scalar for demand GPP to ones &amp; demand GPP to zero 
     
   
-- `gppDiffRadiation`: Effect of diffuse radiation 
+- `gppDiffRadiation`: Quantifies the effect of diffuse radiation on GPP: 1 indicates no diffuse radiation effect, while 0 indicates complete effect. 
   - `gppDiffRadiation_GSI`: cloudiness scalar [radiation diffusion] on gpp_potential based on GSI implementation of LPJ 
     
   - `gppDiffRadiation_Turner2006`: cloudiness scalar [radiation diffusion] on gpp_potential based on Turner2006 
@@ -537,7 +537,7 @@ The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree
   - `gppDiffRadiation_none`: sets the cloudiness scalar [radiation diffusion] for gpp_potential to one 
     
   
-- `gppDirRadiation`: Effect of direct radiation 
+- `gppDirRadiation`: Quantifies the effect of direct radiation on GPP: 1 indicates no direct radiation effect, while 0 indicates complete effect. 
   - `gppDirRadiation_Maekelae2008`: light saturation scalar [light effect] on gpp_potential based on Maekelae2008 
     
   - `gppDirRadiation_none`: sets the light saturation scalar [light effect] on gpp_potential to one 
@@ -547,7 +547,7 @@ The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree
   - `gppPotential_Monteith`: set the potential GPP based on radiation use efficiency 
     
   
-- `gppSoilW`: soil moisture stress on GPP 
+- `gppSoilW`: Quantifies the effect of soil water on GPP: 1 indicates no soil water stress, while 0 indicates complete stress. 
   - `gppSoilW_CASA`: soil moisture stress on gpp_potential based on base stress and relative ratio of PET and PAW (CASA) 
     
   - `gppSoilW_GSI`: soil moisture stress on gpp_potential based on GSI implementation of LPJ 
@@ -559,7 +559,7 @@ The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree
   - `gppSoilW_none`: sets the soil moisture stress on gpp_potential to one (no stress) 
     
   
-- `gppVPD`: Vpd effect 
+- `gppVPD`: Quantifies the effect of vapor pressure deficit (VPD) on GPP: 1 indicates no VPD stress, while 0 indicates complete stress. 
   - `gppVPD_MOD17`: VPD stress on gpp_potential based on MOD17 model 
     
   - `gppVPD_Maekelae2008`: calculate the VPD stress on gpp_potential based on Maekelae2008 [eqn 5] 
@@ -1774,6 +1774,43 @@ setMainFromComponentPool(land, helpers, Val{s_main}, Val{s_comps}, Val{zix})
   
 - `::Val{zix}`: a NT with zix of each pool
   
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.showInfo-NTuple{4, Any}' href='#Sindbad.showInfo-NTuple{4, Any}'><span class="jlbinding">Sindbad.showInfo</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+showInfo(func, file_name, line_number, info_message; spacer=" ", n_f=1, n_m=1)
+```
+
+
+Logs an informational message with optional function, file, and line number context.
+
+**Arguments**
+- `func`: The function object or `nothing` if not applicable.
+  
+- `file_name`: The name of the file where the message originates.
+  
+- `line_number`: The line number in the file.
+  
+- `info_message`: The message to log.
+  
+- `spacer`: (Optional) String used for spacing in the log output (default: `" "`).
+  
+- `n_f`: (Optional) Number of times to repeat `spacer` before the function/file info (default: `1`).
+  
+- `n_m`: (Optional) Number of times to repeat `spacer` before the message (default: `1`).
+  
+
+**Example**
+
+```julia
+showInfo(myfunc, "myfile.jl", 42, "Computation finished")
+```
+
 
 </details>
 
