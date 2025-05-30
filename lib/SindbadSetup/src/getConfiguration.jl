@@ -171,7 +171,8 @@ function getConfiguration(sindbad_experiment::String; replace_info=Dict())
     end
     infoTuple = (; infoTuple..., temp=(; experiment=(; dirs=roots)))
 
-    @info "\n----------------------------------------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+
     return infoTuple
     # return info
 end
@@ -223,7 +224,7 @@ function readConfiguration(info_exp::AbstractDict, base_path::String)
     showInfo(readConfiguration, @__FILE__, @__LINE__, "reading configuration files")
     for (k, v) ∈ info_exp["experiment"]["basics"]["config_files"]
         config_path = joinpath(base_path, v)
-        showInfo(nothing, @__FILE__, @__LINE__, "...$(k) ::: $(config_path)")
+        showInfo(nothing, @__FILE__, @__LINE__, "→→→    `$(k)` ::: `$(config_path)`")
         info_exp["experiment"]["basics"]["config_files"][k] = config_path
         if endswith(v, ".json")
             tmp = parsefile(config_path; dicttype=DataStructures.OrderedDict)

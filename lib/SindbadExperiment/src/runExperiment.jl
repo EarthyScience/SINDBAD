@@ -27,16 +27,21 @@ This function initializes an experiment by:
 3. Preparing output settings
 """
 function prepExperiment(sindbad_experiment::String; replace_info=Dict())
-    @info "\n----------------------------------------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+
     sindbadBanner()
-    @info "\n----------------------------------------------\n"
-    @info "\n----------------------------------------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+
     info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
 
-    @info "\n----------------------------------------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+
     forcing = getForcing(info)
 
-    @info "\n----------------------------------------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+
     showInfo(prepExperiment, @__FILE__, @__LINE__, "plotting IO signatures in the selected model structure...", n_m=1)
 
     for model_func in (:define, :precompute, :compute,)                 

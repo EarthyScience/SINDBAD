@@ -47,14 +47,14 @@ Retrieves the list of all SINDBAD models, either from the provided `info` object
 function getAllSindbadModels(info; sindbad_models=standard_sindbad_models,  selected_models=standard_sindbad_models)
     if hasproperty(info.settings.model_structure, :sindbad_models)
         sindbad_models = info.settings.model_structure.sindbad_models
-        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "...using user-defined orders/models from model_structure.sindbad_models with model_structure including:", n_m=1)
+        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "⟹using user-defined orders/models from model_structure.sindbad_models with model_structure including:", n_m=1)
     else
-        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "...using standard orders/models from standard_sindbad_models with model_structure including:", n_m=1)
+        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "⟹using standard orders/models from standard_sindbad_models with model_structure including:", n_m=1)
     end
     mod_ind = 1
     foreach(sindbad_models) do sm
         if sm in selected_models
-            showInfo(nothing, @__FILE__, @__LINE__, "$(mod_ind): $(sm).jl => $(purpose(getproperty(Sindbad, sm)))", n_m=6)
+            showInfo(nothing, @__FILE__, @__LINE__, "$(mod_ind): `$(sm)`.jl => $(purpose(getproperty(Sindbad, sm)))", n_m=6)
             mod_ind += 1
         end
     end

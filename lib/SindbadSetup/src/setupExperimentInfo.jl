@@ -23,15 +23,15 @@ Loads and sets up the experiment configuration, saving the information and enabl
 function getExperimentInfo(sindbad_experiment::String; replace_info=Dict())
     replace_info_text = isempty(replace_info) ? "none" : " $(Tuple(keys(replace_info)))"
     showInfo(getExperimentInfo, @__FILE__, @__LINE__, "loading experiment configurations", n_m=1)
-    showInfo(nothing, @__FILE__, @__LINE__, "...experiment_path: $(sindbad_experiment)", n_m=1)
+    showInfo(nothing, @__FILE__, @__LINE__, "→→→    experiment_path: `$(sindbad_experiment)`", n_m=1)
 
-    showInfo(nothing, @__FILE__, @__LINE__, "...replace_info_fields: $(replace_info_text)", n_m=1)
+    showInfo(nothing, @__FILE__, @__LINE__, "→→→    replace_info_fields: `$(replace_info_text)`", n_m=1)
     info = getConfiguration(sindbad_experiment; replace_info=deepcopy(replace_info))
 
     info = setupInfo(info)
     saveInfo(info, info.helpers.run.save_info)
     setDebugErrorCatcher(info.helpers.run.catch_model_errors)
-    @info "\n------------------------------------------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-", 100))`\n", display_color=(192,164,72))
     return info
 end
 
@@ -103,8 +103,9 @@ Saves or skips saving the experiment configuration to a file.
 function saveInfo end
 
 function saveInfo(info, ::DoSaveInfo)
-    info_path = joinpath(info.output.dirs.settings, "info.jld2")
-    showInfo(saveInfo, @__FILE__, @__LINE__, "saving info to $(info_path)")
+    info_path = joinpath(info.output.dirs.settings, "info.jld
+    2")
+    showInfo(saveInfo, @__FILE__, @__LINE__, "saving info to `$(info_path)`")
     @save info_path info
     return nothing
 end

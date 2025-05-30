@@ -241,18 +241,18 @@ end
 
 
 function timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land, forcing_types, model_helpers, output_vars, _, ::DoDebugModel) # debug the models
-    @info "\nforc\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------forcing--------------------------------------------------------------`\n", display_color=(192,164,72))
     @time f_ts = getForcingForTimeStep(loc_forcing, loc_forcing_t, 1, forcing_types)
-    @info "\n-------------\n"
-    @info "\neach model\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------each model--------------------------------------------------------------`\n", display_color=(192,164,72))
     @time land = computeTEM(selected_models, f_ts, land, model_helpers, DoDebugModel())
-    @info "\n-------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------all models--------------------------------------------------------------`\n", display_color=(192,164,72))
     @info "\nall models\n"
     @time land = computeTEM(selected_models, f_ts, land, model_helpers)
-    @info "\n-------------\n"
-    @info "\nset output\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------set output--------------------------------------------------------------`\n", display_color=(192,164,72))
+    @info "\n\n"
     @time setOutputForTimeStep!(loc_output, land, 1, output_vars)
-    @info "\n-------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------each model--------------------------------------------------------------`\n", display_color=(192,164,72))
     return nothing
 end
 

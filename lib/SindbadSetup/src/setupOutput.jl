@@ -328,7 +328,7 @@ function setExperimentOutput(info)
     out_file_info = (; global_metadata=global_metadata, file_prefix=file_prefix)
     out_info = (; out_info..., file_info=out_file_info)  
     info = setTupleField(info, (:output, out_info))
-    showInfo(nothing, @__FILE__, @__LINE__, "...output directory set to: $(info.output.dirs.root)")
+    showInfo(nothing, @__FILE__, @__LINE__, "→→→    output directory set to: `$(info.output.dirs.root)`")
     saveExperimentSettings(info)
     return info
 end
