@@ -161,7 +161,7 @@ function getForcing(info::NamedTuple)
     default_info = info.experiment.data_settings.forcing.default_forcing
     forcing_vars = keys(forcing_data_settings.variables)
     tar_dims = getTargetDimensionOrder(info)
-    showInfo(getForcing, @__FILE__, @__LINE__, "getting forcing variables...", n_m=1)
+    showInfo(getForcing, @__FILE__, @__LINE__, "getting forcing variables. Units given in forcing settings are not enforced but used as reference. Bounds are applied after unit conversion...", n_m=1)
     vinfo = nothing
     f_sizes = nothing
     f_dimension = nothing
@@ -172,7 +172,10 @@ function getForcing(info::NamedTuple)
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)
-        showInfo(nothing, @__FILE__, @__LINE__, "$(k): $(vinfo.source_variable)", n_m=4)
+        v_op = vinfo.additive_unit_conversion ? " + " : " * "
+        v_op = v_op * "$(vinfo.source_to_sindbad_unit)"
+        v_string = "$(k) ($(vinfo.sindbad_unit), $(vinfo.bounds)) = <$(vinfo.space_time_type)> $(vinfo.source_variable) ($(vinfo.source_unit)) $(v_op)"
+        showInfo(nothing, @__FILE__, @__LINE__, v_string, n_m=4)
         if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
             f_sizes = collectForcingSizes(info, incube)
             f_dimension = getSindbadDims(incube)

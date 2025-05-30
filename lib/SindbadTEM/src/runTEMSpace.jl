@@ -79,14 +79,30 @@ parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcin
 """
 function parallelizeTEM! end
 
-function parallelizeTEM!(space_selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::ThreadsParallelization)
+function parallelizeTEM!(space_selected_models::Tuple, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::ThreadsParallelization)
+    Threads.@threads for space_index ∈ eachindex(space_forcing)
+        coreTEM!(space_selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
+    end
+    return nothing
+end
+
+function parallelizeTEM!(space_selected_models::Vector, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::ThreadsParallelization)
     Threads.@threads for space_index ∈ eachindex(space_forcing)
         coreTEM!(space_selected_models[space_index], space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
     end
     return nothing
 end
 
-function parallelizeTEM!(space_selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::QbmapParallelization)
+function parallelizeTEM!(space_selected_models::Tuple, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::QbmapParallelization)
+    space_index = 1
+    qbmap(space_forcing) do _
+        coreTEM!(space_selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
+        space_index += 1
+    end
+    return nothing
+end
+
+function parallelizeTEM!(space_selected_models::Vector, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::QbmapParallelization)
     space_index = 1
     qbmap(space_forcing) do _
         coreTEM!(space_selected_models[space_index], space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
