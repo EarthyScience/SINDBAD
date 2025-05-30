@@ -786,12 +786,13 @@ function showInfo(func, file_name, line_number, info_message; spacer=" ", n_f= 1
     mpi_color = (17, 102, 86)  # Default color for info messages
     if !isnothing(func)
         file_link = " $(nameof(func)) (`$(first(splitext(basename(file_name))))`.jl:$(line_number)) => "
-        display_color = (74, 192, 60)
+        display_color = (79, 255, 55)
+        # display_color = :red
+        # display_color = (74, 192, 60)
     end
     show_str = "$(func_space)$(file_link)$(info_space)$(info_message)"
 
     println(showInfoColored(show_str, display_color))
-    # println(showInfoColored(show_str, mpi_color))
     # @info show_str
 end
 
@@ -840,14 +841,34 @@ function showInfoColored(s::String, color)
     return output
 end
 
-function showInfoSeparator(; sep_text="", sep_width=100)
+"""
+    showInfoSeparator(; sep_text="", sep_width=100, display_color=(223,184,21))
+
+Prints a visually distinct separator line to the console, optionally with centered text.
+
+# Arguments
+- `sep_text`: (Optional) A string to display centered within the separator. If empty, a line of dashes is printed. Default is `""`.
+- `sep_width`: (Optional) The total width of the separator line. Default is `100`.
+- `display_color`: (Optional) An RGB tuple specifying the color of the separator line. Default is `(223,184,21)`.
+
+# Example
+```julia
+showInfoSeparator()
+showInfoSeparator(sep_text=" SECTION START ", sep_width=80)
+```
+
+# Notes
+- The separator line is colored for emphasis.
+- Useful for visually dividing output sections in logs or the console.
+"""
+function showInfoSeparator(; sep_text="", sep_width=100, display_color=(223,184,21))
     if isempty(sep_text) 
         sep_text=repeat("-", sep_width)
     else
         sep_remain = (sep_width - length(sep_text))%2
         sep_text = repeat("-", div(sep_width - length(sep_text) + sep_remain, 2)) * sep_text * repeat("-", div(sep_width - length(sep_text) + sep_remain, 2))
     end
-    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(sep_text)`\n", display_color=(214,39,82))
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(sep_text)`\n", display_color=display_color, n_f=0, n_m=0)
 end    
 """
     totalS(s, sΔ)
