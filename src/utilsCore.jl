@@ -15,6 +15,7 @@ export repElem, @rep_elem, repVec, @rep_vec
 export setComponents
 export setComponentFromMainPool, setMainFromComponentPool
 export showInfo
+export showInfoSeparator
 export totalS
 
 
@@ -839,6 +840,15 @@ function showInfoColored(s::String, color)
     return output
 end
 
+function showInfoSeparator(; sep_text="", sep_width=100)
+    if isempty(sep_text) 
+        sep_text=repeat("-", sep_width)
+    else
+        sep_remain = (sep_width - length(sep_text))%2
+        sep_text = repeat("-", div(sep_width - length(sep_text) + sep_remain, 2)) * sep_text * repeat("-", div(sep_width - length(sep_text) + sep_remain, 2))
+    end
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(sep_text)`\n", display_color=(214,39,82))
+end    
 """
     totalS(s, sΔ)
 

@@ -182,7 +182,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(varnames_all, Symbol(string(v) * "_weight"))
     end
     input_array_type = getfield(SindbadData, toUpperCaseFirst(exe_rules_settings.input_array_type, "Input"))()
-    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+    showInfoSeparator()
 
     return (; data=getInputArrayOfType(obscubes, input_array_type), dims=indims, variables=Tuple(varnames_all))
 end

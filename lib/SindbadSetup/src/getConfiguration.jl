@@ -171,7 +171,7 @@ function getConfiguration(sindbad_experiment::String; replace_info=Dict())
     end
     infoTuple = (; infoTuple..., temp=(; experiment=(; dirs=roots)))
 
-    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+    showInfoSeparator()
 
     return infoTuple
     # return info

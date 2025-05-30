@@ -105,7 +105,7 @@ function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     end
     data_ts_type = [_dt for _dt in data_ts_type]
     f_types =  Tuple(Tuple.(Pair.(forcing_vars, data_ts_type)))
-    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(repeat("-",100))`\n", display_color=(192,164,72))
+    showInfoSeparator()
     forcing = (;
         data=typed_cubes,
         dims=indims,
