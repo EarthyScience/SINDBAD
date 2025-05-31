@@ -13,7 +13,7 @@ function define(params::cAllocationRadiation_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationRadiation_none}) = "sets the radiation effect on allocation to one (no effect)"
+purpose(::Type{cAllocationRadiation_none}) = "Sets the radiation effect on allocation to 1 (no effect)."
 
 @doc """
 

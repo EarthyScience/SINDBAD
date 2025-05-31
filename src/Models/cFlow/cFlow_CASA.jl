@@ -46,7 +46,7 @@ function compute(params::cFlow_CASA, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cFlow_CASA}) = "combine all the effects that change the transfers between carbon pools"
+purpose(::Type{cFlow_CASA}) = "Carbon transfer rates between pools as modeled in CASA."
 
 @doc """
 

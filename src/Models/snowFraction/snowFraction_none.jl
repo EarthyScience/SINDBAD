@@ -13,7 +13,7 @@ function define(params::snowFraction_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{snowFraction_none}) = "sets the snow fraction to zero"
+purpose(::Type{snowFraction_none}) = "Sets the snow cover fraction to 0."
 
 @doc """
 

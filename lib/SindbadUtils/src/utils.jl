@@ -238,7 +238,7 @@ Displays the given text as a banner using Figlets.
 - `disp_text`: The text to display (default: "SINDBAD").
 - `c_olor`: Whether to display the text in random colors (default: `false`).
 """
-function sindbadBanner(disp_text="SINDBAD", c_olor=false)
+function sindbadBanner(disp_text="SINDBAD", c_olor=true)
     if c_olor
         print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
     end

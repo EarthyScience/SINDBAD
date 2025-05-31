@@ -19,7 +19,7 @@ function compute(params::rainIntensity_simple, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{rainIntensity_simple}) = "stores the time series of rainfall intensity"
+purpose(::Type{rainIntensity_simple}) = "Rainfall intensity as a linear function of rainfall amount."
 
 @doc """
 

@@ -12,7 +12,7 @@ function compute(params::NDWI_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{NDWI_forcing}) = "sets land.states.NDWI from forcing"
+purpose(::Type{NDWI_forcing}) = "Gets NDWI from forcing data."
 
 @doc """
 

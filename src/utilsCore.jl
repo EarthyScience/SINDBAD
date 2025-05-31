@@ -15,6 +15,7 @@ export repElem, @rep_elem, repVec, @rep_vec
 export setComponents
 export setComponentFromMainPool, setMainFromComponentPool
 export showInfo
+export showInfoSeparator
 export totalS
 
 
@@ -778,17 +779,97 @@ Logs an informational message with optional function, file, and line number cont
 showInfo(myfunc, "myfile.jl", 42, "Computation finished")
 ```
 """
-function showInfo(func, file_name, line_number, info_message; spacer=" ", n_f= 1, n_m=1)
+function showInfo(func, file_name, line_number, info_message; spacer=" ", n_f= 1, n_m=1, display_color=(0, 152, 221))
     func_space = spacer ^ n_f
     info_space = spacer ^ n_m
     file_link = ""
+    mpi_color = (17, 102, 86)  # Default color for info messages
     if !isnothing(func)
-        file_link = " $(nameof(func)) ($(basename(file_name)):$(line_number)) => "
+        file_link = " $(nameof(func)) (`$(first(splitext(basename(file_name))))`.jl:$(line_number)) => "
+        display_color = (79, 255, 55)
+        # display_color = :red
+        # display_color = (74, 192, 60)
     end
-    @info "$(func_space)$(file_link)$(info_space)$(info_message)"
+    show_str = "$(func_space)$(file_link)$(info_space)$(info_message)"
+
+    println(showInfoColored(show_str, display_color))
+    # @info show_str
 end
 
 
+"""
+    showInfoColored(s::String, color)
+
+Returns a string with segments enclosed in backticks (`) colored using the specified RGB color.
+
+# Arguments
+- `s::String`: The input string. Segments to be colored should be enclosed in backticks (e.g., `"This is `colored` text"`).
+- `color`: An RGB tuple (e.g., `(0, 152, 221)`) specifying the foreground color to use.
+
+# Returns
+- A string with the specified segments colored, suitable for display in terminals that support ANSI color codes.
+
+# Example
+```julia
+println(showInfoColored("This is `colored` text", (0, 152, 221)))
+```
+This will print "This is colored text" with "colored" in the specified color.
+
+# Notes
+- Only the segments between backticks are colored; other text remains uncolored.
+- The function uses Crayons.jl for coloring, so output is best viewed in compatible terminals.
+"""
+function showInfoColored(s::String, color)
+    # Create a Crayon object with the specified color
+    crayon = Crayon(foreground = color)
+
+    # Split the string by backticks
+    parts = split(s, "`")
+
+    # Initialize an empty string for the output
+    output = ""
+
+    # Iterate through the parts and color the segments
+    for (i, part) in enumerate(parts)
+        if i % 2 == 0  # Even indices are segments to color
+            output *= string(crayon(part))  # Convert CrayonWrapper to string
+        else
+            output *= part  # Odd indices are regular text
+        end
+    end
+
+    return output
+end
+
+"""
+    showInfoSeparator(; sep_text="", sep_width=100, display_color=(223,184,21))
+
+Prints a visually distinct separator line to the console, optionally with centered text.
+
+# Arguments
+- `sep_text`: (Optional) A string to display centered within the separator. If empty, a line of dashes is printed. Default is `""`.
+- `sep_width`: (Optional) The total width of the separator line. Default is `100`.
+- `display_color`: (Optional) An RGB tuple specifying the color of the separator line. Default is `(223,184,21)`.
+
+# Example
+```julia
+showInfoSeparator()
+showInfoSeparator(sep_text=" SECTION START ", sep_width=80)
+```
+
+# Notes
+- The separator line is colored for emphasis.
+- Useful for visually dividing output sections in logs or the console.
+"""
+function showInfoSeparator(; sep_text="", sep_width=100, display_color=(223,184,21))
+    if isempty(sep_text) 
+        sep_text=repeat("-", sep_width)
+    else
+        sep_remain = (sep_width - length(sep_text))%2
+        sep_text = repeat("-", div(sep_width - length(sep_text) + sep_remain, 2)) * sep_text * repeat("-", div(sep_width - length(sep_text) + sep_remain, 2))
+    end
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`$(sep_text)`\n", display_color=display_color, n_f=0, n_m=0)
+end    
 """
     totalS(s, sΔ)
 

@@ -74,7 +74,7 @@ function compute(params::interception_Miralles2010, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{interception_Miralles2010}) = "computes canopy interception evaporation according to the Gash model"
+purpose(::Type{interception_Miralles2010}) = "Interception loss according to the Gash model of Miralles, 2010."
 
 @doc """
 

@@ -2,7 +2,7 @@ export groundWSoilWInteraction
 
 abstract type groundWSoilWInteraction <: LandEcosystem end
 
-purpose(::Type{groundWSoilWInteraction}) = "Groundwater soil moisture interactions (e.g. capilary flux, water"
+purpose(::Type{groundWSoilWInteraction}) = "Groundwater-soil moisture interactions (e.g., capillary flux, water exchange)."
 
 includeApproaches(groundWSoilWInteraction, @__DIR__)
 

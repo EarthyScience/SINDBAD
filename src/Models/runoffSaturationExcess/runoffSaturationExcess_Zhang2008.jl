@@ -37,7 +37,7 @@ function compute(params::runoffSaturationExcess_Zhang2008, forcing, land, helper
     return land
 end
 
-purpose(::Type{runoffSaturationExcess_Zhang2008}) = "saturation excess runoff as a function of incoming water and PET"
+purpose(::Type{runoffSaturationExcess_Zhang2008}) = "Saturation excess runoff as a function of incoming water and PET following Zhang (2008)."
 
 @doc """
 

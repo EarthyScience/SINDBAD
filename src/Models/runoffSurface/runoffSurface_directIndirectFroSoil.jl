@@ -44,7 +44,7 @@ function compute(params::runoffSurface_directIndirectFroSoil, forcing, land, hel
     return land
 end
 
-purpose(::Type{runoffSurface_directIndirectFroSoil}) = "assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid"
+purpose(::Type{runoffSurface_directIndirectFroSoil}) = "Surface runoff as the sum of the direct fraction of overland runoff and the indirect fraction of surface water storage, with the direct fraction additionally dependent on the frozen fraction of the grid."
 
 @doc """
 

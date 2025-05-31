@@ -39,7 +39,7 @@ function compute(params::gpp_mult, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gpp_mult}) = "compute the actual GPP with potential scaled by multiplicative stress scalar of demand & supply for uncoupled model structure [no coupling with transpiration]"
+purpose(::Type{gpp_mult}) = "GPP with potential scaled by the product of stress scalars of demand and supply for uncoupled model structures."
 
 @doc """
 

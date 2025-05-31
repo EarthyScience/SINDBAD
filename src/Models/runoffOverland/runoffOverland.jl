@@ -2,7 +2,7 @@ export runoffOverland
 
 abstract type runoffOverland <: LandEcosystem end
 
-purpose(::Type{runoffOverland}) = "calculates total overland runoff that passes to the surface storage"
+purpose(::Type{runoffOverland}) = "Total overland runoff that passes to surface storage."
 
 includeApproaches(runoffOverland, @__DIR__)
 

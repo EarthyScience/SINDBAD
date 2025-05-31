@@ -13,7 +13,7 @@ function define(params::groundWRecharge_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{groundWRecharge_none}) = "sets the GW recharge to zero"
+purpose(::Type{groundWRecharge_none}) = "Sets groundwater recharge to 0."
 
 @doc """
 

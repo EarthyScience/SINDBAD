@@ -41,7 +41,7 @@ function precompute(params::soilTexture_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{soilTexture_constant}) = "sets the soil texture properties as constant"
+purpose(::Type{soilTexture_constant}) = "Sets soil texture properties as constant values."
 
 @doc """
 

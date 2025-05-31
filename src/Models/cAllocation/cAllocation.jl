@@ -2,7 +2,7 @@ export cAllocation
 
 abstract type cAllocation <: LandEcosystem end
 
-purpose(::Type{cAllocation}) = "Compute the allocation of C fixed by photosynthesis to the different vegetation pools (fraction of the net carbon fixation received by each vegetation carbon pool on every times step)."
+purpose(::Type{cAllocation}) = "Allocation fraction of NPP to different vegetation pools."
 
 includeApproaches(cAllocation, @__DIR__)
 

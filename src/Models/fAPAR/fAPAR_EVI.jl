@@ -23,7 +23,7 @@ function compute(params::fAPAR_EVI, forcing, land, helpers)
 end
 
 
-purpose(::Type{fAPAR_EVI}) = "calculates fAPAR as a linear function of EVI"
+purpose(::Type{fAPAR_EVI}) = "fAPAR as a linear function of EVI."
 
 @doc """
 

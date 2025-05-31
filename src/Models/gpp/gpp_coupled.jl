@@ -20,7 +20,7 @@ function compute(params::gpp_coupled, forcing, land, helpers)
 end
 
 
-purpose(::Type{gpp_coupled}) = "calculate GPP based on transpiration supply & water use efficiency [coupled]"
+purpose(::Type{gpp_coupled}) = "GPP based on transpiration supply and water use efficiency (coupled)."
 
 @doc """
 

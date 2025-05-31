@@ -46,7 +46,12 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
         data_path_sub = getAbsDataPath(info, v_info_sub.data_path)
         nc_sub = nc
         nc_sub, yax_sub = getYaxFromSource(nc_sub, data_path, data_path_sub, v_info_sub.source_variable, info, data_backend)
-        showInfo(nothing, @__FILE__, @__LINE__, "$(data_sub_field): $(v_info_sub.source_variable)", n_m=6)
+        # @show v_info_sub
+        v_op = v_info_sub.additive_unit_conversion ? " + " : " * "
+        v_op = v_op * "$(v_info_sub.source_to_sindbad_unit)"
+        v_string = "$(data_sub_field) ($(v_info_sub.sindbad_unit), $(v_info_sub.bounds)) = <$(v_info_sub.space_time_type)> `$(v_info_sub.source_variable)` ($(v_info_sub.source_unit)) $(v_op)"
+
+        showInfo(nothing, @__FILE__, @__LINE__, v_string, n_m=6)
         bounds_sub = v_info_sub.bounds
     else
         if data_sub_field == :qflag
@@ -105,7 +110,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
 
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
-        showInfo(getObservation, @__FILE__, @__LINE__, "default_observation_data_path: $(data_path)")
+        showInfo(getObservation, @__FILE__, @__LINE__, "default_observation_data_path: `$(data_path)`")
         nc_default = loadDataFile(data_path)
     end
 
@@ -123,11 +128,11 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     num_type = Val{info.helpers.numbers.num_type}()
     num_type_bool = Val{Bool}()
 
-    showInfo(getObservation, @__FILE__, @__LINE__, "getting observation variables...")
+    showInfo(getObservation, @__FILE__, @__LINE__, "getting observation variables. Units given in optimization settings are not strictly enforced but shown for reference. Bounds are applied after unit conversion...")
     map(varnames) do k
-        showInfo(nothing, @__FILE__, @__LINE__, "constraint: $k", n_m=4)
 
         vinfo = getproperty(observation_data_settings.observations.variables, k)
+        showInfo(nothing, @__FILE__, @__LINE__, "constraint: `$k`", n_m=4)
 
         src_var = vinfo.data.source_variable
         nc = nc_default
@@ -162,7 +167,6 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(obscubes, cyax_unc)
         push!(obscubes, yax_mask_v)
         push!(obscubes, cyax_wgt)
-        @info " \n"
     end
     showInfo(getObservation, @__FILE__, @__LINE__, "getting observation helpers...", n_m=2)
     @debug "getObservation: getting observation dimensions..."
@@ -178,6 +182,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(varnames_all, Symbol(string(v) * "_weight"))
     end
     input_array_type = getfield(SindbadData, toUpperCaseFirst(exe_rules_settings.input_array_type, "Input"))()
-    @info "\n----------------------------------------------\n"
+    showInfoSeparator()
+
     return (; data=getInputArrayOfType(obscubes, input_array_type), dims=indims, variables=Tuple(varnames_all))
 end

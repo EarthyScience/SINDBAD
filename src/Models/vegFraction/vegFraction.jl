@@ -2,7 +2,7 @@ export vegFraction
 
 abstract type vegFraction <: LandEcosystem end
 
-purpose(::Type{vegFraction}) = "Fractional coverage of vegetation"
+purpose(::Type{vegFraction}) = "Vegetation cover fraction."
 
 includeApproaches(vegFraction, @__DIR__)
 

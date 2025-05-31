@@ -59,7 +59,7 @@ function compute(params::cCycleDisturbance_WROASTED, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cCycleDisturbance_WROASTED}) = "move all vegetation carbon pools except reserve to respective flow target when there is disturbance"
+purpose(::Type{cCycleDisturbance_WROASTED}) = "Moves carbon in reserve pool to slow litter pool, and all other carbon pools except reserve pool to their respective carbon flow target pools during disturbance events."
 
 @doc """
 

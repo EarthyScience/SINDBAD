@@ -2,7 +2,7 @@ export soilProperties
 
 abstract type soilProperties <: LandEcosystem end
 
-purpose(::Type{soilProperties}) = "Soil properties (hydraulic properties)"
+purpose(::Type{soilProperties}) = "Soil hydraulic properties."
 
 includeApproaches(soilProperties, @__DIR__)
 

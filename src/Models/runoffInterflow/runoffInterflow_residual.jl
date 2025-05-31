@@ -27,7 +27,7 @@ function compute(params::runoffInterflow_residual, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffInterflow_residual}) = "interflow as a fraction of the available water balance pool"
+purpose(::Type{runoffInterflow_residual}) = "Interflow as a fraction of the available water balance pool."
 
 @doc """
 

@@ -33,7 +33,7 @@ function compute(params::WUE_VPDDayCo2, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{WUE_VPDDayCo2}) = "calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD"
+purpose(::Type{WUE_VPDDayCo2}) = "Calculates WUE as a function of WUE at 1 hPa daily mean VPD and linear CO₂ relationship."
 
 @doc """
 

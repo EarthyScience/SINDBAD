@@ -2,7 +2,7 @@ export gpp
 
 abstract type gpp <: LandEcosystem end
 
-purpose(::Type{gpp}) = "Combine effects as multiplicative or minimum; if coupled, uses transup"
+purpose(::Type{gpp}) = "Gross Primary Productivity (GPP)."
 
 includeApproaches(gpp, @__DIR__)
 

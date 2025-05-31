@@ -74,7 +74,7 @@ function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pair
     variable_names = getUniqueVarNames(var_pairs)
     all_yax = Tuple(getYaxForVariable.(data, data_dims, variable_names, catalog_names, Ref(t_step)))
     data_path = data_path_base * "_all_variables.$(out_format)"
-    showInfo(nothing, @__FILE__, @__LINE__, "$(data_path)", n_m=4)
+    showInfo(nothing, @__FILE__, @__LINE__, "saved all variables to `$(data_path)`", n_m=4)
     ds_new = YAXArrays.Dataset(; (; zip(variable_names, all_yax)...)..., properties=global_metadata)
     savedataset(ds_new, path=data_path, append=true, overwrite=true)
     return nothing
@@ -89,7 +89,7 @@ function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pair
         variable_name = variable_names[vn]
         data_yax = getYaxForVariable(data[vn], data_dims[vn], variable_name, catalog_name, t_step)
         data_path = data_path_base * "_$(variable_name).$(out_format)"
-        showInfo(nothing, @__FILE__, @__LINE__, "$(data_path)", n_m=4)
+        showInfo(nothing, @__FILE__, @__LINE__, "saved `$(variable_name)` to `$(data_path)`", n_m=4)
         ds_new = YAXArrays.Dataset(; (variable_name => data_yax,)..., properties=global_metadata)
         savedataset(ds_new, path=data_path, overwrite=true)
     end

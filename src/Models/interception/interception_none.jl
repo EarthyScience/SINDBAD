@@ -13,7 +13,7 @@ function define(params::interception_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{interception_none}) = "sets the interception evaporation to zero"
+purpose(::Type{interception_none}) = "Sets interception loss to 0."
 
 @doc """
 

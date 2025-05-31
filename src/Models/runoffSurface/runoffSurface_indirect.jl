@@ -35,7 +35,7 @@ function compute(params::runoffSurface_indirect, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffSurface_indirect}) = "assumes all overland runoff is recharged to surface water first, which then generates surface runoff"
+purpose(::Type{runoffSurface_indirect}) = "All overland runoff is collected in surface water storage first, which in turn generates indirect surface runoff."
 
 @doc """
 

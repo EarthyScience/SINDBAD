@@ -12,7 +12,7 @@ function define(params::transpiration_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{transpiration_none}) = "sets the actual transpiration to zero"
+purpose(::Type{transpiration_none}) = "Sets transpiration to 0."
 
 @doc """
 

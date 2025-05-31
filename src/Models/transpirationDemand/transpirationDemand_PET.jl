@@ -21,7 +21,7 @@ function compute(params::transpirationDemand_PET, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{transpirationDemand_PET}) = "calculate the climate driven demand for transpiration as a function of PET & α for vegetation"
+purpose(::Type{transpirationDemand_PET}) = "Demand-limited transpiration as a function of PET and a vegetation parameter."
 
 @doc """
 

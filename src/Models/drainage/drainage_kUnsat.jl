@@ -44,7 +44,7 @@ function compute(params::drainage_kUnsat, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{drainage_kUnsat}) = "downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity"
+purpose(::Type{drainage_kUnsat}) = "Drainage flux based on unsaturated hydraulic conductivity."
 
 @doc """
 

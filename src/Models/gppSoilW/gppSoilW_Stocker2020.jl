@@ -40,7 +40,7 @@ function compute(params::gppSoilW_Stocker2020, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppSoilW_Stocker2020}) = "soil moisture stress on gpp_potential based on Stocker2020"
+purpose(::Type{gppSoilW_Stocker2020}) = "Soil moisture stress on GPP potential based on Stocker (2020)."
 
 @doc """
 

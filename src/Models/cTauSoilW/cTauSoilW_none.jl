@@ -13,7 +13,7 @@ function define(params::cTauSoilW_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cTauSoilW_none}) = "set the moisture stress for all carbon pools to ones"
+purpose(::Type{cTauSoilW_none}) = "Sets the effect of soil moisture on decomposition rates to 1 (no moisture effect)."
 
 @doc """
 

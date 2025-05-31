@@ -2,7 +2,7 @@ export NDWI
 
 abstract type NDWI <: LandEcosystem end
 
-purpose(::Type{NDWI}) = "Normalized difference water index"
+purpose(::Type{NDWI}) = "Normalized Difference Water Index."
 
 includeApproaches(NDWI, @__DIR__)
 

@@ -2,7 +2,7 @@ export transpirationSupply
 
 abstract type transpirationSupply <: LandEcosystem end
 
-purpose(::Type{transpirationSupply}) = "Supply-limited transpiration"
+purpose(::Type{transpirationSupply}) = "Supply-limited transpiration."
 
 includeApproaches(transpirationSupply, @__DIR__)
 

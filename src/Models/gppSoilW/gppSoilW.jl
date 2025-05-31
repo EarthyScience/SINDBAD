@@ -2,7 +2,7 @@ export gppSoilW
 
 abstract type gppSoilW <: LandEcosystem end
 
-purpose(::Type{gppSoilW}) = "Quantifies the effect of soil water on GPP: 1 indicates no soil water stress, while 0 indicates complete stress."
+purpose(::Type{gppSoilW}) = "Effect of soil moisture on GPP: 1 indicates no soil water stress, 0 indicates complete stress."
 
 includeApproaches(gppSoilW, @__DIR__)
 

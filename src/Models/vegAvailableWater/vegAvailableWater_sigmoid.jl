@@ -54,7 +54,7 @@ function compute(params::vegAvailableWater_sigmoid, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{vegAvailableWater_sigmoid}) = "calculate the actual amount of water that is available for plants"
+purpose(::Type{vegAvailableWater_sigmoid}) = "PAW using a sigmoid function of soil moisture."
 
 @doc """
 

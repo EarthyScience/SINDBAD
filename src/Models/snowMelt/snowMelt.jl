@@ -2,7 +2,7 @@ export snowMelt
 
 abstract type snowMelt <: LandEcosystem end
 
-purpose(::Type{snowMelt}) = "Calculate snowmelt and update s.w.wsnow"
+purpose(::Type{snowMelt}) = "Snowmelt."
 
 includeApproaches(snowMelt, @__DIR__)
 

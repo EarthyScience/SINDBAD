@@ -56,7 +56,7 @@ function compute(params::groundWSoilWInteraction_VanDijk2010, forcing, land, hel
     return land
 end
 
-purpose(::Type{groundWSoilWInteraction_VanDijk2010}) = "calculates the upward flow of water from groundwater to lowermost soil layer using VanDijk method"
+purpose(::Type{groundWSoilWInteraction_VanDijk2010}) = "Upward flow of water from groundwater to the lowermost soil layer using the Van Dijk (2010) method."
 
 @doc """
 

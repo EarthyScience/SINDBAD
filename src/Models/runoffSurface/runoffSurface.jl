@@ -2,7 +2,7 @@ export runoffSurface
 
 abstract type runoffSurface <: LandEcosystem end
 
-purpose(::Type{runoffSurface}) = "Surface runoff generation process"
+purpose(::Type{runoffSurface}) = "Surface runoff generation."
 
 includeApproaches(runoffSurface, @__DIR__)
 

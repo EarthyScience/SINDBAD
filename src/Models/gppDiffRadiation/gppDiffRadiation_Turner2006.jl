@@ -47,7 +47,7 @@ function compute(params::gppDiffRadiation_Turner2006, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppDiffRadiation_Turner2006}) = "cloudiness scalar [radiation diffusion] on gpp_potential based on Turner2006"
+purpose(::Type{gppDiffRadiation_Turner2006}) = "Cloudiness scalar (radiation diffusion) on GPP potential based on Turner (2006)."
 
 @doc """
 

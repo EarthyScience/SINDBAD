@@ -86,7 +86,7 @@ function compute(params::cTauVegProperties_CASA, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cTauVegProperties_CASA}) = "Compute effect of vegetation type on turnover rates [k]"
+purpose(::Type{cTauVegProperties_CASA}) = "Effect of vegetation type on decomposition rates as modeled in CASA."
 
 @doc """
 

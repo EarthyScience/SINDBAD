@@ -27,7 +27,7 @@ function compute(params::snowFraction_HTESSEL, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{snowFraction_HTESSEL}) = "computes the snow pack & fraction of snow cover following the HTESSEL approach"
+purpose(::Type{snowFraction_HTESSEL}) = "Snow cover fraction following the HTESSEL approach."
 
 @doc """
 

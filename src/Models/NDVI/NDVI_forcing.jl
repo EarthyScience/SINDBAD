@@ -13,7 +13,7 @@ function compute(params::NDVI_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{NDVI_forcing}) = "sets land.states.NDVI from forcing"
+purpose(::Type{NDVI_forcing}) = "Gets NDVI from forcing data."
 
 @doc """
 

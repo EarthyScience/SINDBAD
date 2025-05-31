@@ -24,7 +24,7 @@ function compute(params::cBiomass_treeGrass_cVegReserveScaling, forcing, land, h
 	return land
 end
 
-purpose(::Type{cBiomass_treeGrass_cVegReserveScaling}) = "same as treeGrass, but includes scaling for relative fraction of cVegReserve pool"
+purpose(::Type{cBiomass_treeGrass_cVegReserveScaling}) = "Same as `cBiomass_treeGrass`.jl, but includes scaling for the relative fraction of the reserve carbon to not allow for large reserve compared to the rest of the vegetation carbol pool."
 
 @doc """ 
 

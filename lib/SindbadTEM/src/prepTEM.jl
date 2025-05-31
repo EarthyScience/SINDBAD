@@ -577,7 +577,8 @@ function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
     output = prepTEMOut(info, forcing.helpers)
     showInfo(prepTEM, @__FILE__, @__LINE__, "  preparing helpers for running model experiment", n_f=4)
     run_helpers = helpPrepTEM(selected_models, info, forcing, output, info.helpers.run.land_output_type)
-    @info "\n----------------------------------------------\n"
+    showInfoSeparator()
+
     return run_helpers
 end
 
@@ -585,7 +586,8 @@ function prepTEM(selected_models, forcing::NamedTuple, observations::NamedTuple,
     showInfo(prepTEM, @__FILE__, @__LINE__, "preparing to run terrestrial ecosystem model (TEM)", n_f=1)
     output = prepTEMOut(info, forcing.helpers)
     run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, info.helpers.run.land_output_type)
-    @info "\n----------------------------------------------\n"
+    showInfoSeparator()
+
     return run_helpers
 end
 

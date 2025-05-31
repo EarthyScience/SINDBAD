@@ -27,7 +27,7 @@ function compute(params::cAllocationRadiation_RgPot, forcing, land, helpers)
 	return land
 end
 
-purpose(::Type{cAllocationRadiation_RgPot}) = "radiation effect on allocation using potential radiation instead of actual one"
+purpose(::Type{cAllocationRadiation_RgPot}) = "Calculates the radiation effect on allocation using potential radiation instead of actual radiation."
 
 @doc """ 
 

@@ -2,7 +2,7 @@ export groundWRecharge
 
 abstract type groundWRecharge <: LandEcosystem end
 
-purpose(::Type{groundWRecharge}) = "Recharge to the groundwater storage"
+purpose(::Type{groundWRecharge}) = "Groundwater recharge."
 
 includeApproaches(groundWRecharge, @__DIR__)
 

@@ -31,7 +31,7 @@ function compute(params::gppSoilW_Keenan2009, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppSoilW_Keenan2009}) = "soil moisture stress on gpp_potential based on Keenan2009"
+purpose(::Type{gppSoilW_Keenan2009}) = "Soil moisture stress on GPP potential based on Keenan (2009)."
 
 @doc """
 

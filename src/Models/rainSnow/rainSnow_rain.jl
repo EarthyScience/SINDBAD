@@ -33,7 +33,7 @@ function compute(params::rainSnow_rain, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{rainSnow_rain}) = "set all precip to rain"
+purpose(::Type{rainSnow_rain}) = "All precipitation is assumed to be liquid rain with 0 snowfall."
 
 @doc """
 

@@ -27,16 +27,15 @@ This function initializes an experiment by:
 3. Preparing output settings
 """
 function prepExperiment(sindbad_experiment::String; replace_info=Dict())
-    @info "\n----------------------------------------------\n"
     sindbadBanner()
-    @info "\n----------------------------------------------\n"
-    @info "\n----------------------------------------------\n"
+
     info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
 
-    @info "\n----------------------------------------------\n"
+    showInfoSeparator()
+
     forcing = getForcing(info)
 
-    @info "\n----------------------------------------------\n"
+
     showInfo(prepExperiment, @__FILE__, @__LINE__, "plotting IO signatures in the selected model structure...", n_m=1)
 
     for model_func in (:define, :precompute, :compute,)                 
@@ -80,15 +79,13 @@ The function handles different spatial configurations and can operate on both si
 function runExperiment end
 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
+    showInfoSeparator(sep_text="Forward Simulation + Cost Calculation")
     setLogLevel()
     observations = getObservation(info, forcing.helpers)
     obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
-    println("-------------------Cost Calculation Mode---------------------------\n")
     showInfo(runExperiment, @__FILE__, @__LINE__, "do forward run...")
-    println("----------------------------------------------\n")
     output_array = runTEM!(forcing, info)
     showInfo(runExperiment, @__FILE__, @__LINE__, "calculate cost...")
-    println("----------------------------------------------\n")
     forward_output = (; Pair.(getUniqueVarNames(info.output.variables), output_array)...)
     cost_options = prepCostOptions(obs_array, info.optimization.cost_options)
     loss_vector = metricVector(forward_output, obs_array, cost_options)
@@ -101,7 +98,6 @@ end
 
 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForward, DoNotRunOptimization})
-    println("-------------------Forward Run Mode---------------------------\n")
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
     if isempty(additionaldims)
         run_output = runTEMYax(
@@ -118,7 +114,6 @@ end
 
 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimization)
-    println("-------------------Optimization Mode---------------------------\n")
     observations = getObservation(info, forcing.helpers)
     additionaldims = setdiff(keys(forcing.helpers.sizes), info.experiment.data_settings.forcing.data_dimension.time)
     run_output = nothing
@@ -178,6 +173,7 @@ Run forward simulation for a given experiment through the `runExperiment` functi
 - A NamedTuple containing the experiment results including model outputs
 """
 function runExperimentForward(sindbad_experiment::String; replace_info=Dict(), log_level=:info)
+    showInfoSeparator(sep_text="Forward Simulation")
     setLogLevel(log_level)
     replace_info["experiment.flags.run_forward"] = true
     replace_info["experiment.flags.run_optimization"] = false
@@ -207,6 +203,7 @@ Run forward simulation of the model with default as well as modified settings wi
 - A NamedTuple containing both default and optimized model outputs
 """
 function runExperimentForwardParams(params_vector::Vector, sindbad_experiment::String; replace_info=Dict(), log_level=:info)
+    showInfoSeparator(sep_text="Forward Simulation with Input/Optimized Parameters")
     setLogLevel(log_level)
     showInfo(runExperimentForwardParams, @__FILE__, @__LINE__, "running forward simulation with input/optimized parameters...", n_m=1)
     replace_info = deepcopy(replace_info)
@@ -246,6 +243,7 @@ Run forward simulation of the model through `runExperiment` function in `DoRunFo
 - A NamedTuple containing the complete model outputs
 """
 function runExperimentFullOutput(sindbad_experiment::String; replace_info=Dict(), log_level=:info)
+    showInfoSeparator(sep_text="Forward Simulation + Output of All Variables")
     setLogLevel(log_level)
     replace_info = deepcopy(replace_info)
     replace_info["experiment.flags.run_forward"] = true
@@ -278,6 +276,7 @@ Run optimization experiment through `runExperiment` function in `DoRunOptimizati
 - A NamedTuple containing optimization results, model outputs, and cost metrics
 """
 function runExperimentOpti(sindbad_experiment::String; replace_info=Dict(), log_level=:warn)
+    showInfoSeparator(sep_text="Optimization Experiment")
     setLogLevel(log_level)
     replace_info["experiment.flags.run_optimization"] = true
     replace_info["experiment.flags.calc_cost"] = false
@@ -312,7 +311,7 @@ Run sensitivity analysis for a given experiment.
 - A NamedTuple containing sensitivity analysis results and related data
 """
 function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(), batch=true, log_level=:warn)
-    println("-------------------Sensitivity Analysis Mode---------------------------\n")
+    showInfoSeparator(sep_text="Sensitivity Analysis Experiment")
     replace_info["experiment.flags.run_optimization"] = true
     replace_info["experiment.flags.calc_cost"] = false
     replace_info["experiment.flags.run_forward"] = false
@@ -336,7 +335,7 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
     sensitivity_output = (; opti_helpers..., info=info, forcing=forcing, obs_array=obs_array, observations=observations,sensitivity=sensitivity, p_bounds=p_bounds)
     setLogLevel(:info)
     sensitivity_output_file = joinpath(info.output.dirs.data, "sensitivity_analysis_$(nameof(typeof(info.optimization.sensitivity_analysis.method)))_$(length(opti_helpers.cost_vector))-cost_evals.jld2")
-    showInfo(runExperimentSensitivity, @__FILE__, @__LINE__, "saving sensitivity output to file: $(sensitivity_output_file)", n_m=1)
+    showInfo(runExperimentSensitivity, @__FILE__, @__LINE__, "saving sensitivity output to file: `$(sensitivity_output_file)`", n_m=1)
     @save  sensitivity_output_file sensitivity_output
     return sensitivity_output
 end

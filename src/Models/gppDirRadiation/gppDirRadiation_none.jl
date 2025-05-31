@@ -12,7 +12,7 @@ function define(params::gppDirRadiation_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppDirRadiation_none}) = "sets the light saturation scalar [light effect] on gpp_potential to one"
+purpose(::Type{gppDirRadiation_none}) = "Sets the light saturation scalar (light effect) on GPP potential to 1."
 
 @doc """
 

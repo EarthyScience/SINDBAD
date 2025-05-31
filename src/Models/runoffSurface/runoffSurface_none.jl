@@ -13,7 +13,7 @@ function define(params::runoffSurface_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffSurface_none}) = "sets surface runoff [surface_runoff] from the storage to zero"
+purpose(::Type{runoffSurface_none}) = "Sets surface runoff to 0."
 
 @doc """
 

@@ -84,7 +84,7 @@ function compute(params::soilWBase_smax2fRD4, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{soilWBase_smax2fRD4}) = "defines the maximum soil water content of 2 soil layers the first layer is a fraction [i.e. 1] of the soil depth the second layer is a linear combination of scaled rooting depth data from forcing"
+purpose(::Type{soilWBase_smax2fRD4}) = "Maximum soil water content of two soil layers: the first layer as a fraction of soil depth, the second as a linear combination of scaled rooting depth data from forcing."
 
 @doc """
 

@@ -42,7 +42,7 @@ function compute(params::runoffSurface_directIndirect, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffSurface_directIndirect}) = "assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage"
+purpose(::Type{runoffSurface_directIndirect}) = "Surface runoff as the sum of the direct fraction of overland runoff and the indirect fraction of surface water storage."
 
 @doc """
 

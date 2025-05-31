@@ -12,7 +12,7 @@ function compute(params::EVI_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{EVI_forcing}) = "sets land.states.EVI from forcing"
+purpose(::Type{EVI_forcing}) = "Gets EVI from forcing data."
 
 @doc """
 

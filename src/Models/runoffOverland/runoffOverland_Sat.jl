@@ -15,7 +15,7 @@ function compute(params::runoffOverland_Sat, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffOverland_Sat}) = "assumes overland flow to be saturation excess runoff"
+purpose(::Type{runoffOverland_Sat}) = "Overland flow due to saturation excess runoff."
 
 @doc """
 

@@ -16,7 +16,7 @@ function compute(params::cAllocationSoilW_gpp, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationSoilW_gpp}) = "moisture effect on allocation = the same as gpp"
+purpose(::Type{cAllocationSoilW_gpp}) = "Sets the moisture effect on allocation equal to that for GPP."
 
 @doc """
 

@@ -21,7 +21,7 @@ function compute(params::transpirationSupply_wAWCvegFraction, forcing, land, hel
     return land
 end
 
-purpose(::Type{transpirationSupply_wAWCvegFraction}) = "calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture; scaled by vegetated fractions"
+purpose(::Type{transpirationSupply_wAWCvegFraction}) = "Supply-limited transpiration as the minimum of the fraction of total available water capacity and available moisture, scaled by vegetated fractions."
 
 @doc """
 

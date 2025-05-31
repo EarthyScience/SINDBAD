@@ -44,7 +44,7 @@ function compute(params::gppAirT_Maekelae2008, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppAirT_Maekelae2008}) = "temperature stress on gpp_potential based on Maekelae2008 [eqn 3 & 4]"
+purpose(::Type{gppAirT_Maekelae2008}) = "Temperature effect on GPP based on Maekelae (2008)."
 
 @doc """
 

@@ -28,7 +28,7 @@ function compute(params::gppAirT_TEM, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppAirT_TEM}) = "temperature stress for gpp_potential based on TEM"
+purpose(::Type{gppAirT_TEM}) = "Temperature effect on GPP based on the TEM model."
 
 @doc """
 

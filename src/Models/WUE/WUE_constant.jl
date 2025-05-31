@@ -18,7 +18,7 @@ function precompute(params::WUE_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{WUE_constant}) = "calculates the WUE/AOE as a constant in space & time"
+purpose(::Type{WUE_constant}) = "Sets WUE as a constant value."
 
 @doc """
 

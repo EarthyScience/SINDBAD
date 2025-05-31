@@ -163,7 +163,7 @@ function adjustPackPoolComponents(land, helpers, ::cCycleBase_GSI)
     return land
 end
 
-purpose(::Type{cCycleBase_GSI}) = "sets the basics for carbon cycle in the GSI approach"
+purpose(::Type{cCycleBase_GSI}) = "Structure and properties of the carbon cycle components as needed for a dynamic phenology-based carbon cycle in the GSI approach."
 
 @doc """
 

@@ -60,7 +60,7 @@ function compute(params::groundWSoilWInteraction_gradientNeg, forcing, land, hel
     return land
 end
 
-purpose(::Type{groundWSoilWInteraction_gradientNeg}) = "calculates a buffer storage that doesn't give water to the soil when the soil dries up; while the soil gives water to the groundW when the soil is wet but the groundW low; the groundW is only recharged by soil moisture"
+purpose(::Type{groundWSoilWInteraction_gradientNeg}) = "Delayed/Buffer storage that does not give water to the soil when the soil is dry, but receives water from the soil when the soil is wet and the buffer is low."
 
 @doc """
 

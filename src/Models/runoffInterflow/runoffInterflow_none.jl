@@ -13,7 +13,7 @@ function define(params::runoffInterflow_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffInterflow_none}) = "sets interflow runoff to zero"
+purpose(::Type{runoffInterflow_none}) = "Sets interflow runoff to 0."
 
 @doc """
 

@@ -14,7 +14,7 @@ function define(params::gppDiffRadiation_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppDiffRadiation_none}) = "sets the cloudiness scalar [radiation diffusion] for gpp_potential to one"
+purpose(::Type{gppDiffRadiation_none}) = "Sets the cloudiness scalar (radiation diffusion) for GPP potential to 1."
 
 @doc """
 

@@ -212,7 +212,7 @@ function adjustPackPoolComponents(land, helpers, ::cCycleBase_GSI_PlantForm)
     return land
 end
 
-purpose(::Type{cCycleBase_GSI_PlantForm}) = "sets the basics for carbon cycle  pools as in the GSI, but allows for scaling of turnover parameters based on plant forms"
+purpose(::Type{cCycleBase_GSI_PlantForm}) = "Same as GSI, additionally allowing for scaling of turnover parameters based on plant forms."
 
 @doc """
 

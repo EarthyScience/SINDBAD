@@ -19,7 +19,7 @@ function precompute(params::treeFraction_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{treeFraction_constant}) = "sets frac_tree as a constant"
+purpose(::Type{treeFraction_constant}) = "Sets tree cover fraction as a constant value."
 
 @doc """
 
