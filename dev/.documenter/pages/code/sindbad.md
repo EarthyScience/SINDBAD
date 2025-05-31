@@ -192,215 +192,210 @@ end
 Abstract type for all SINDBAD land ecosystem models/approaches
 
 **Available methods/subtypes:**
-- `EVI`: Enhanced vegetation index 
-  - `EVI_constant`: sets EVI as a constant 
+- `EVI`: Enhanced Vegetation Index 
+  - `EVI_constant`: Sets EVI as a constant value. 
     
-  - `EVI_forcing`: sets land.states.EVI from forcing 
-    
-  
-- `LAI`: Leaf area index 
-  - `LAI_cVegLeaf`: sets land.states.LAI from the carbon in the leaves of the previous time step 
-    
-  - `LAI_constant`: sets LAI as a constant 
-    
-  - `LAI_forcing`: sets land.states.LAI from forcing 
+  - `EVI_forcing`: Gets EVI from forcing data. 
     
   
-- `NDVI`: Normalized difference vegetation index 
-  - `NDVI_constant`: sets NDVI as a constant 
+- `LAI`: Leaf Area Index 
+  - `LAI_cVegLeaf`: LAI as a function of cVegLeaf and SLA. 
     
-  - `NDVI_forcing`: sets land.states.NDVI from forcing 
+  - `LAI_constant`: sets LAI as a constant value. 
     
-  
-- `NDWI`: Normalized difference water index 
-  - `NDWI_constant`: sets NDWI as a constant 
-    
-  - `NDWI_forcing`: sets land.states.NDWI from forcing 
+  - `LAI_forcing`: Gets LAI from forcing data. 
     
   
-- `NIRv`: Near-infrared reflectance of terrestrial vegetation 
-  - `NIRv_constant`: sets NIRv as a constant 
+- `NDVI`: Normalized Difference Vegetation Index. 
+  - `NDVI_constant`: Sets NDVI as a constant value. 
     
-  - `NIRv_forcing`: sets land.states.NIRv from forcing 
-    
-  
-- `PET`: Set/get potential evapotranspiration 
-  - `PET_Lu2005`: Calculates land.fluxes.PET from the forcing variables 
-    
-  - `PET_PriestleyTaylor1972`: Calculates land.fluxes.PET from the forcing variables 
-    
-  - `PET_forcing`: sets land.fluxes.PET from the forcing 
+  - `NDVI_forcing`: Gets NDVI from forcing data. 
     
   
-- `PFT`: Vegetation PFT 
-  - `PFT_constant`: sets a uniform PFT class 
+- `NDWI`: Normalized Difference Water Index. 
+  - `NDWI_constant`: Sets NDWI as a constant value. 
+    
+  - `NDWI_forcing`: Gets NDWI from forcing data. 
     
   
-- `WUE`: Quantify Water Use Efficiency (WUE). 
-  - `WUE_Medlyn2011`: calculates the WUE/AOE ci/ca as a function of daytime mean VPD. calculates the WUE/AOE ci/ca as a function of daytime mean VPD &amp; ambient co2 
+- `NIRv`: Near-infrared reflectance of terrestrial vegetation. 
+  - `NIRv_constant`: Sets NIRv as a constant value. 
     
-  - `WUE_VPDDay`: calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD 
-    
-  - `WUE_VPDDayCo2`: calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD 
-    
-  - `WUE_constant`: calculates the WUE/AOE as a constant in space &amp; time 
-    
-  - `WUE_expVPDDayCo2`: calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD 
+  - `NIRv_forcing`: Gets NIRv from forcing data. 
     
   
-- `ambientCO2`: sets/gets ambient CO2 concentration 
-  - `ambientCO2_constant`: sets ambient_CO2 to a constant value 
+- `PET`: Potential evapotranspiration. 
+  - `PET_Lu2005`: Calculates PET using Lu et al. (2005) method. 
     
-  - `ambientCO2_forcing`: sets ambient_CO2 from forcing 
+  - `PET_PriestleyTaylor1972`: Calculates PET using Priestley-Taylor (1972) method. 
     
-  
-- `autoRespiration`: estimates autotrophic respiration for growth and maintenance 
-  - `autoRespiration_Thornley2000A`: estimates autotrophic respiration as maintenance + growth respiration according to Thornley &amp; Cannell [2000]: MODEL A - maintenance respiration is given priority. 
-    
-  - `autoRespiration_Thornley2000B`: estimates autotrophic respiration as maintenance + growth respiration according to Thornley &amp; Cannell [2000]: MODEL B - growth respiration is given priority. 
-    
-  - `autoRespiration_Thornley2000C`: estimates autotrophic respiration as maintenance + growth respiration according to Thornley &amp; Cannell [2000]: MODEL C - growth, degradation &amp; resynthesis view of respiration. Computes the km [maintenance [respiration] coefficient]. 
-    
-  - `autoRespiration_none`: sets the autotrophic respiration flux from all vegetation pools to zero. 
+  - `PET_forcing`: Gets PET from forcing data. 
     
   
-- `autoRespirationAirT`: temperature effect on autotrophic respiration 
-  - `autoRespirationAirT_Q10`: temperature effect on autotrophic maintenance respiration following a Q10 response model 
-    
-  - `autoRespirationAirT_none`: sets the temperature effect on autotrophic respiration to one (i.e. no effect) 
+- `PFT`: Plant Functional Type (PFT) classification. 
+  - `PFT_constant`: Sets a uniform PFT class. 
     
   
-- `cAllocation`: Compute the allocation of C fixed by photosynthesis to the different vegetation pools (fraction of the net carbon fixation received by each vegetation carbon pool on every times step). 
-  - `cAllocation_Friedlingstein1999`: Compute the fraction of fixed C that is allocated to the different plant organs following the scheme of Friedlingstein et al., 1999 (section `Allocation response to multiple stresses``). 
+- `WUE`: Water Use Efficiency (WUE). 
+  - `WUE_Medlyn2011`: Calculates WUE as a function of daytime mean VPD and ambient CO₂, following Medlyn et al. (2011). 
     
-  - `cAllocation_GSI`: Compute the fraction of fixated C that is allocated to the different plant organs. The allocation is dynamic in time according to temperature, water &amp; radiation stressors estimated following the GSI approach. Inspired by the work of Friedlingstein et al., 1999, based on Sharpe and Rykiel 1991, but here following the growing season index (GSI) as stress diagnostics, following Forkel et al 2014 and 2015, based on Jolly et al., 2005. 
+  - `WUE_VPDDay`: Calculates WUE as a function of WUE at 1 hPa and daily mean VPD. 
     
-  - `cAllocation_fixed`: Compute the fraction of net primary production (NPP) allocated to different plant organs with fixed allocation parameters. 
+  - `WUE_VPDDayCo2`: Calculates WUE as a function of WUE at 1 hPa daily mean VPD and linear CO₂ relationship. 
     
-  
-
-The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree).  Root allocation is further divided into fine (cf2Root) and coarse roots (cf2RootCoarse) according to the frac_fine_to_coarse parameter.
-
-```
- -  `cAllocation_none`: sets the carbon allocation to zero (nothing to allocated)
-```
-
-- `cAllocationLAI`: Estimates allocation to the leaf pool given light limitation constraints to photosynthesis. Estimation via dynamics in leaf area index (LAI). Dynamic allocation approach. 
-  - `cAllocationLAI_Friedlingstein1999`: Estimate the effect of light limitation on carbon allocation via leaf area index (LAI) based on Friedlingstein et al., 1999. 
+  - `WUE_constant`: Sets WUE as a constant value. 
     
-  - `cAllocationLAI_none`: sets the LAI effect on allocation to one (no effect) 
+  - `WUE_expVPDDayCo2`: Calculates WUE as a function of WUE at 1 hPa, daily mean VPD, and an exponential CO₂ relationship. 
     
   
-- `cAllocationNutrients`: (pseudo)effect of nutrients on carbon allocation 
-  - `cAllocationNutrients_Friedlingstein1999`: pseudo-nutrient limitation calculation based on Friedlingstein1999 
+- `ambientCO2`: Ambient CO₂ concentration. 
+  - `ambientCO2_constant`: Sets ambient CO₂ to a constant value. 
     
-  - `cAllocationNutrients_none`: sets the pseudo-nutrient limitation to one (no effect) 
-    
-  
-- `cAllocationRadiation`: Effect of radiation on carbon allocation 
-  - `cAllocationRadiation_GSI`: radiation effect on allocation using GSI method 
-    
-  - `cAllocationRadiation_RgPot`: radiation effect on allocation using potential radiation instead of actual one 
-    
-  - `cAllocationRadiation_gpp`: radiation effect on allocation = the same for GPP 
-    
-  - `cAllocationRadiation_none`: sets the radiation effect on allocation to one (no effect) 
+  - `ambientCO2_forcing`: Gets ambient CO₂ from forcing data. 
     
   
-- `cAllocationSoilT`: Effect of soil temperature on carbon allocation 
-  - `cAllocationSoilT_Friedlingstein1999`: partial temperature effect on decomposition/mineralization based on Friedlingstein1999 
+- `autoRespiration`: Autotrophic respiration for growth and maintenance. 
+  - `autoRespiration_Thornley2000A`: Calculates autotrophic maintenance and growth respiration using Thornley and Cannell (2000) Model A, where maintenance respiration is prioritized. 
     
-  - `cAllocationSoilT_gpp`: temperature effect on allocation = the same as gpp 
+  - `autoRespiration_Thornley2000B`: Calculates autotrophic maintenance and growth respiration using Thornley and Cannell (2000) Model B, where growth respiration is prioritized. 
     
-  - `cAllocationSoilT_gppGSI`: temperature effect on allocation from same for GPP based on GSI approach 
+  - `autoRespiration_Thornley2000C`: Calculates autotrophic maintenance and growth respiration using Thornley and Cannell (2000) Model C, which includes growth, degradation, and resynthesis. 
     
-  - `cAllocationSoilT_none`: sets the temperature effect on allocation to one (no effect) 
-    
-  
-- `cAllocationSoilW`: Effect of soil moisture on carbon allocation 
-  - `cAllocationSoilW_Friedlingstein1999`: partial moisture effect on decomposition/mineralization based on Friedlingstein1999 
-    
-  - `cAllocationSoilW_gpp`: moisture effect on allocation = the same as gpp 
-    
-  - `cAllocationSoilW_gppGSI`: moisture effect on allocation from same for GPP based on GSI approach 
-    
-  - `cAllocationSoilW_none`: sets the moisture effect on allocation to one (no effect) 
+  - `autoRespiration_none`: Sets autotrophic respiration fluxes to 0. 
     
   
-- `cAllocationTreeFraction`: Adjustment of carbon allocation according to tree cover 
-  - `cAllocationTreeFraction_Friedlingstein1999`: adjust the allocation coefficients according to the fraction of trees to herbaceous &amp; fine to coarse root partitioning 
+- `autoRespirationAirT`: Effect of air temperature on autotrophic respiration. 
+  - `autoRespirationAirT_Q10`: Calculates the effect of air temperature on maintenance respiration using a Q10 function. 
+    
+  - `autoRespirationAirT_none`: No air temperature effect on autotrophic respiration. 
     
   
-- `cBiomass`: Compute aboveground_biomass 
-  - `cBiomass_simple`: calculates aboveground biomass as a sum of wood and leaf carbon pools. 
+- `cAllocation`: Allocation fraction of NPP to different vegetation pools. 
+  - `cAllocation_Friedlingstein1999`: Dynamically allocates carbon based on LAI, moisture, and nutrient availability, following Friedlingstein et al. (1999). 
     
-  - `cBiomass_treeGrass`: This serves the in situ optimization of eddy covariance sites when using AGB as a constraint. In locations where tree cover is not zero, AGB = leaf + wood. In locations where is only grass, there are no observational constraints for AGB. AGB from EO mostly refers to forested locations. To ensure that the parameter set that emerges from optimization does not generate wood, while not assuming any prior on mass of leafs, the aboveground biomass of grasses is set to the wood value, that will be constrained against a pseudo-observational value close to 0. One expects that after optimization, cVegWood_sum will be close to 0 in locations where frac_tree = 0. 
+  - `cAllocation_GSI`: Dynamically allocates carbon based on temperature, water, and radiation stressors following the GSI approach. 
     
-  - `cBiomass_treeGrass_cVegReserveScaling`: same as treeGrass, but includes scaling for relative fraction of cVegReserve pool 
+  - `cAllocation_fixed`: Sets carbon allocation to each pool using fixed allocation parameters. 
     
-  
-- `cCycle`: Allocate carbon to vegetation components 
-  - `cCycle_CASA`: Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools 
-    
-  - `cCycle_GSI`: Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools 
-    
-  - `cCycle_simple`: Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools 
+  - `cAllocation_none`: Sets carbon allocation to 0. 
     
   
-- `cCycleBase`: Pool structure of the carbon cycle 
-  - `cCycleBase_CASA`: Compute carbon to nitrogen ratio &amp; base turnover rates 
+- `cAllocationLAI`: Estimates allocation to the leaf pool given light limitation constraints to photosynthesis, using LAI dynamics. 
+  - `cAllocationLAI_Friedlingstein1999`: Estimates the effect of light limitation on carbon allocation via LAI, based on Friedlingstein et al. (1999). 
     
-  - `cCycleBase_GSI`: sets the basics for carbon cycle in the GSI approach 
-    
-  - `cCycleBase_GSI_PlantForm`: sets the basics for carbon cycle  pools as in the GSI, but allows for scaling of turnover parameters based on plant forms 
-    
-  - `cCycleBase_GSI_PlantForm_LargeKReserve`: same as cCycleBase_GSI_PlantForm but with a larger turnover of reserve so that it respires and flows 
-    
-  - `cCycleBase_simple`: Compute carbon to nitrogen ratio &amp; annual turnover rates 
+  - `cAllocationLAI_none`: Sets the LAI effect on allocation to 1 (no effect). 
     
   
-- `cCycleConsistency`: Consistency checks on the c allocation and transfers between pools 
-  - `cCycleConsistency_simple`: check consistency in cCycle vector: c_allocation; cFlow 
+- `cAllocationNutrients`: Pseudo-effect of nutrients on carbon allocation. 
+  - `cAllocationNutrients_Friedlingstein1999`: Calculates pseudo-nutrient limitation based on Friedlingstein et al. (1999). 
+    
+  - `cAllocationNutrients_none`: Sets the pseudo-nutrient limitation to 1 (no effect). 
     
   
-- `cCycleDisturbance`: Disturb the carbon cycle pools 
-  - `cCycleDisturbance_WROASTED`: move all vegetation carbon pools except reserve to respective flow target when there is disturbance 
+- `cAllocationRadiation`: Effect of radiation on carbon allocation. 
+  - `cAllocationRadiation_GSI`: Calculates the radiation effect on allocation using the GSI method. 
     
-  - `cCycleDisturbance_cFlow`: move all vegetation carbon pools except reserve to respective flow target when there is disturbance 
+  - `cAllocationRadiation_RgPot`: Calculates the radiation effect on allocation using potential radiation instead of actual radiation. 
     
-  
-- `cFlow`: Actual transfers of c between pools (of diagonal components) 
-  - `cFlow_CASA`: combine all the effects that change the transfers between carbon pools 
+  - `cAllocationRadiation_gpp`: Sets the radiation effect on allocation equal to that for GPP. 
     
-  - `cFlow_GSI`: compute the flow rates between the different pools. The flow rates are based on the GSI approach. The flow rates are computed based on the stressors (soil moisture, temperature, and light) and the slope of the stressors. The flow rates are computed for the following pools: leaf, root, reserve, and litter. The flow rates are computed for the following processes: leaf to reserve, root to reserve, reserve to leaf, reserve to root, shedding from leaf, and shedding from root. 
-    
-  - `cFlow_none`: set transfer between pools to 0 [i.e. nothing is transfered] set c_giver &amp; c_taker matrices to [] get the transfer matrix transfers 
-    
-  - `cFlow_simple`: combine all the effects that change the transfers between carbon pools 
+  - `cAllocationRadiation_none`: Sets the radiation effect on allocation to 1 (no effect). 
     
   
-- `cFlowSoilProperties`: Effect of soil properties on the c transfers between pools 
-  - `cFlowSoilProperties_CASA`: effects of soil that change the transfers between carbon pools 
+- `cAllocationSoilT`: Effect of soil temperature on carbon allocation. 
+  - `cAllocationSoilT_Friedlingstein1999`: Calculates the partial temperature effect on decomposition and mineralization based on Friedlingstein et al. (1999). 
     
-  - `cFlowSoilProperties_none`: set transfer between pools to 0 [i.e. nothing is transfered] 
+  - `cAllocationSoilT_gpp`: Sets the temperature effect on allocation equal to that for GPP. 
     
-  
-- `cFlowVegProperties`: Effect of vegetation properties on the c transfers between pools 
-  - `cFlowVegProperties_CASA`: effects of vegetation that change the transfers between carbon pools 
+  - `cAllocationSoilT_gppGSI`: Calculates the temperature effect on allocation as for GPP using the GSI approach. 
     
-  - `cFlowVegProperties_none`: set transfer between pools to 0 [i.e. nothing is transfered] 
+  - `cAllocationSoilT_none`: Sets the temperature effect on allocation to 1 (no effect). 
     
   
-- `cTau`: Combine effects of different factors on decomposition rates 
-  - `cTau_mult`: multiply all effects that change the turnover rates [k] 
+- `cAllocationSoilW`: Effect of soil moisture on carbon allocation. 
+  - `cAllocationSoilW_Friedlingstein1999`: Calculates the partial moisture effect on decomposition and mineralization based on Friedlingstein et al. (1999). 
     
-  - `cTau_none`: set the actual τ to ones 
+  - `cAllocationSoilW_gpp`: Sets the moisture effect on allocation equal to that for GPP. 
+    
+  - `cAllocationSoilW_gppGSI`: Calculates the moisture effect on allocation as for GPP using the GSI approach. 
+    
+  - `cAllocationSoilW_none`: Sets the moisture effect on allocation to 1 (no effect). 
     
   
-- `cTauLAI`: Calculate litterfall scalars (that affect the changes in the vegetation k) 
-  - `cTauLAI_CASA`: calc LAI stressor on τ. Compute the seasonal cycle of litter fall &amp; root litterfall based on LAI variations. Necessarily in precomputation mode 
+- `cAllocationTreeFraction`: Adjusts carbon allocation according to tree cover. 
+  - `cAllocationTreeFraction_Friedlingstein1999`: Adjusts allocation coefficients according to the fraction of trees to herbaceous plants and fine to coarse root partitioning. 
     
-  - `cTauLAI_none`: set values to ones 
+  
+- `cBiomass`: Computes aboveground biomass (AGB). 
+  - `cBiomass_simple`: Calculates AGB `simply` as the sum of wood and leaf carbon pools. 
+    
+  - `cBiomass_treeGrass`: Considers the tree-grass fraction to include different vegetation pools while calculating AGB. For Eddy Covariance sites with tree cover, AGB = leaf + wood biomass. For grass-only sites, AGB is set to the wood biomass, which is constrained to be near 0 after optimization. 
+    
+  - `cBiomass_treeGrass_cVegReserveScaling`: Same as `cBiomass_treeGrass`.jl, but includes scaling for the relative fraction of the reserve carbon to not allow for large reserve compared to the rest of the vegetation carbol pool. 
+    
+  
+- `cCycle`: Compute fluxes and changes (cycling) of carbon pools. 
+  - `cCycle_CASA`: Carbon cycle wtih components based on the CASA approach. 
+    
+  - `cCycle_GSI`: Carbon cycle with components based on the GSI approach, including carbon allocation, transfers, and turnover rates. 
+    
+  - `cCycle_simple`: Carbon cycle with components based on the simplified version of the CASA approach. 
+    
+  
+- `cCycleBase`: Defines the base properties of the carbon cycle components. For example, components of carbon pools, their turnover rates, and flow matrix. 
+  - `cCycleBase_CASA`: Structure and properties of the carbon cycle components used in the CASA approach. 
+    
+  - `cCycleBase_GSI`: Structure and properties of the carbon cycle components as needed for a dynamic phenology-based carbon cycle in the GSI approach. 
+    
+  - `cCycleBase_GSI_PlantForm`: Same as GSI, additionally allowing for scaling of turnover parameters based on plant forms. 
+    
+  - `cCycleBase_GSI_PlantForm_LargeKReserve`: Same as cCycleBase_GSI_PlantForm, but with a default of larger turnover of reserve pool so that it respires and flows. 
+    
+  - `cCycleBase_simple`: Structure and properties of the carbon cycle components as needed for a simplified version of the CASA approach. 
+    
+  
+- `cCycleConsistency`: Consistency and sanity checks in carbon allocation and transfers. 
+  - `cCycleConsistency_simple`: Checks consistency in the cCycle vector, including c_allocation and cFlow. 
+    
+  
+- `cCycleDisturbance`: Disturbance of the carbon cycle pools. 
+  - `cCycleDisturbance_WROASTED`: Moves carbon in reserve pool to slow litter pool, and all other carbon pools except reserve pool to their respective carbon flow target pools during disturbance events. 
+    
+  - `cCycleDisturbance_cFlow`: Moves carbon in all pools except reserve to their respective carbon flow target pools during disturbance events. 
+    
+  
+- `cFlow`: Transfer rates for carbon flow between different pools. 
+  - `cFlow_CASA`: Carbon transfer rates between pools as modeled in CASA. 
+    
+  - `cFlow_GSI`: Carbon transfer rates between pools based on the GSI approach, using stressors such as soil moisture, temperature, and light. 
+    
+  - `cFlow_none`: Sets carbon transfers between pools to 0 (no transfer); sets c_giver and c_taker matrices to empty; retrieves the transfer matrix. 
+    
+  - `cFlow_simple`: Carbon transfer rates between pools modeled a simplified version of CASA. 
+    
+  
+- `cFlowSoilProperties`: Effect of soil properties on carbon transfers between pools. 
+  - `cFlowSoilProperties_CASA`: Effect of soil properties on carbon transfers between pools as modeled in CASA. 
+    
+  - `cFlowSoilProperties_none`: Sets carbon transfers between pools to 0 (no transfer). 
+    
+  
+- `cFlowVegProperties`: Effect of vegetation properties on carbon transfers between pools. 
+  - `cFlowVegProperties_CASA`: Effect of vegetation properties on carbon transfers between pools as modeled in CASA. 
+    
+  - `cFlowVegProperties_none`: Sets carbon transfers between pools to 0 (no transfer). 
+    
+  
+- `cTau`: Actual decomposition/turnover rates of all carbon pools considering the effect of stressors. 
+  - `cTau_mult`: Combines all effects that change the turnover rates by multiplication. 
+    
+  - `cTau_none`: Sets the decomposition/turnover rates of all carbon pools to 0, i.e., no carbon decomposition and flow. 
+    
+  
+- `cTauLAI`: Effect of LAI on turnover rates of carbon pools. 
+  - `cTauLAI_CASA`: Effect of LAI on turnover rates and computes the seasonal cycle of litterfall and root litterfall based on LAI variations, as modeled in CASA. 
+    
+  - `cTauLAI_none`: Sets the litterfall scalar values to 1 (no LAI effect). 
     
   
 - `cTauSoilProperties`: Effect of soil texture on soil decomposition rates 
@@ -409,418 +404,418 @@ The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree
   - `cTauSoilProperties_none`: Set soil texture effects to ones (ineficient, should be pix zix_mic) 
     
   
-- `cTauSoilT`: Effect of soil temperature on decomposition rates 
-  - `cTauSoilT_Q10`: Compute effect of temperature on psoil carbon fluxes 
+- `cTauSoilT`: Effect of soil temperature on decomposition rates. 
+  - `cTauSoilT_Q10`: Effect of soil temperature on decomposition rates using a Q10 function. 
     
-  - `cTauSoilT_none`: set the outputs to ones 
-    
-  
-- `cTauSoilW`: Effect of soil moisture on decomposition rates 
-  - `cTauSoilW_CASA`: Compute effect of soil moisture on soil decomposition as modelled in CASA [BGME - below grounf moisture effect]. The below ground moisture effect; taken directly from the century model; uses soil moisture from the previous month to determine a scalar that is then used to determine the moisture effect on below ground carbon fluxes. BGME is dependent on PET; Rainfall. This approach is designed to work for Rainfall &amp; PET values at the monthly time step &amp; it is necessary to scale it to meet that criterion. 
-    
-  - `cTauSoilW_GSI`: calculate the moisture stress for cTau based on temperature stressor function of CASA &amp; Potter 
-    
-  - `cTauSoilW_none`: set the moisture stress for all carbon pools to ones 
+  - `cTauSoilT_none`: Sets the effect of soil temperature on decomposition rates to 1 (no temperature effect). 
     
   
-- `cTauVegProperties`: Effect of vegetation properties on soil decomposition rates 
-  - `cTauVegProperties_CASA`: Compute effect of vegetation type on turnover rates [k] 
+- `cTauSoilW`: Effect of soil moisture on decomposition rates. 
+  - `cTauSoilW_CASA`: Effect of soil moisture on decomposition rates as modeled in CASA, using the belowground moisture effect (BGME) from the Century model. 
     
-  - `cTauVegProperties_none`: set the outputs to ones 
+  - `cTauSoilW_GSI`: Effect of soil moisture on decomposition rates based on the GSI approach. 
     
-  
-- `cVegetationDieOff`: Disturb the carbon cycle pools 
-  - `cVegetationDieOff_forcing`: reads and passes along to the land diagnostics the fraction of vegetation pools that die off  
+  - `cTauSoilW_none`: Sets the effect of soil moisture on decomposition rates to 1 (no moisture effect). 
     
   
-- `capillaryFlow`: Flux of water from lower to upper soil layers (upward soil moisture movement) 
-  - `capillaryFlow_VanDijk2010`: computes the upward water flow in the soil layers 
+- `cTauVegProperties`: Effect of vegetation properties on soil decomposition rates. 
+  - `cTauVegProperties_CASA`: Effect of vegetation type on decomposition rates as modeled in CASA. 
+    
+  - `cTauVegProperties_none`: Sets the effect of vegetation properties on decomposition rates to 1 (no vegetation effect). 
     
   
-- `constants`: define the constants/variables that are independent of model structure 
-  - `constants_numbers`: constants of numbers such as 1 to 10 
+- `cVegetationDieOff`: Fraction of vegetation pools that die off. 
+  - `cVegetationDieOff_forcing`: Get the fraction of vegetation that die off from forcing data. 
     
   
-- `deriveVariables`: Derive extra variables 
-  - `deriveVariables_simple`: derives variables from other sindbad models and saves them into land.deriveVariables 
+- `capillaryFlow`: Capillary flux of water from lower to upper soil layers (upward soil moisture movement). 
+  - `capillaryFlow_VanDijk2010`: Computes the upward capillary flux of water through soil layers using the Van Dijk (2010) method. 
     
   
-- `drainage`: Recharge the soil 
-  - `drainage_dos`: downward flow of moisture [drainage] in soil layers based on exponential function of soil moisture degree of saturation 
-    
-  - `drainage_kUnsat`: downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity 
-    
-  - `drainage_wFC`: downward flow of moisture [drainage] in soil layers based on overflow over field capacity 
+- `constants`: Defines constants and variables that are independent of model structure. 
+  - `constants_numbers`: Includes constants for numbers such as 1 to 10. 
     
   
-- `evaporation`: Soil evaporation 
-  - `evaporation_Snyder2000`: calculates the bare soil evaporation using relative drying rate of soil 
-    
-  - `evaporation_bareFraction`: calculates the bare soil evaporation from 1-frac_vegetation of the grid &amp; PET_evaporation 
-    
-  - `evaporation_demandSupply`: calculates the bare soil evaporation from demand-supply limited approach.  
-    
-  - `evaporation_fAPAR`: calculates the bare soil evaporation from 1-fAPAR &amp; PET soil 
-    
-  - `evaporation_none`: sets the soil evaporation to zero 
-    
-  - `evaporation_vegFraction`: calculates the bare soil evaporation from 1-frac_vegetation &amp; PET soil 
+- `deriveVariables`: Derives additional variables based on other SINDBAD models and saves them into land.deriveVariables. 
+  - `deriveVariables_simple`: Incudes derivation of few variables that may be commonly needed for optimization against some datasets. 
     
   
-- `evapotranspiration`: Calculate the evapotranspiration as a sum of components 
-  - `evapotranspiration_sum`: calculates evapotranspiration as a sum of all potential components 
+- `drainage`: Drainage flux of water from upper to lower soil layers. 
+  - `drainage_dos`: Drainage flux based on an exponential function of soil moisture degree of saturation. 
+    
+  - `drainage_kUnsat`: Drainage flux based on unsaturated hydraulic conductivity. 
+    
+  - `drainage_wFC`: Drainage flux based on overflow above field capacity. 
     
   
-- `fAPAR`: Fraction of absorbed photosynthetically active radiation 
-  - `fAPAR_EVI`: calculates fAPAR as a linear function of EVI 
+- `evaporation`: Bare soil evaporation. 
+  - `evaporation_Snyder2000`: Bare soil evaporation using the relative drying rate of soil following Snyder (2000). 
     
-  - `fAPAR_LAI`: sets fAPAR as a function of LAI 
+  - `evaporation_bareFraction`: Bare soil evaporation from the non-vegetated fraction of the grid as a linear function of soil moisture and potential evaporation. 
     
-  - `fAPAR_cVegLeaf`: Compute FAPAR based on carbon pool of the leave; SLA; kLAI 
+  - `evaporation_demandSupply`: Bare soil evaporation using a demand-supply limited approach. 
     
-  - `fAPAR_cVegLeafBareFrac`: Compute FAPAR based on carbon pool of the leaf, but only for the vegetation fraction 
+  - `evaporation_fAPAR`: Bare soil evaporation from the non-absorbed fAPAR (as a proxy for vegetation fraction) and potential evaporation. 
     
-  - `fAPAR_constant`: sets fAPAR as a constant 
+  - `evaporation_none`: Bare soil evaporation set to 0. 
     
-  - `fAPAR_forcing`: sets land.states.fAPAR from forcing 
-    
-  - `fAPAR_vegFraction`: sets fAPAR as a linear function of vegetation fraction 
+  - `evaporation_vegFraction`: Bare soil evaporation from the non-vegetated fraction and potential evaporation. 
     
   
-- `getPools`: Get the amount of water at the beginning of timestep 
-  - `getPools_simple`: gets the amount of water available for the current time step 
+- `evapotranspiration`: Evapotranspiration. 
+  - `evapotranspiration_sum`: Evapotranspiration as a sum of all potential components 
     
   
-- `gpp`: Combine effects as multiplicative or minimum; if coupled, uses transup 
-  - `gpp_coupled`: calculate GPP based on transpiration supply &amp; water use efficiency [coupled] 
+- `fAPAR`: Fraction of absorbed photosynthetically active radiation. 
+  - `fAPAR_EVI`: fAPAR as a linear function of EVI. 
     
-  - `gpp_min`: compute the actual GPP with potential scaled by minimum stress scalar of demand &amp; supply for uncoupled model structure [no coupling with transpiration] 
+  - `fAPAR_LAI`: fAPAR as a function of LAI. 
     
-  - `gpp_mult`: compute the actual GPP with potential scaled by multiplicative stress scalar of demand &amp; supply for uncoupled model structure [no coupling with transpiration] 
+  - `fAPAR_cVegLeaf`: fAPAR based on the carbon pool of leaves, specific leaf area (SLA), and kLAI. 
     
-  - `gpp_none`: sets the actual GPP to zero 
+  - `fAPAR_cVegLeafBareFrac`: fAPAR based on the carbon pool of leaves, but only for the vegetated fraction. 
     
-  - `gpp_transpirationWUE`: calculate GPP based on transpiration &amp; water use efficiency 
+  - `fAPAR_constant`: Sets fAPAR as a constant value. 
     
-  
-- `gppAirT`: Quantifies the effect of temperature on GPP: 1 indicates no temperature stress, while 0 indicates complete stress. 
-  - `gppAirT_CASA`: temperature stress for gpp_potential based on CASA &amp; Potter 
+  - `fAPAR_forcing`: Gets fAPAR from forcing data. 
     
-  - `gppAirT_GSI`: temperature stress on gpp_potential based on GSI implementation of LPJ 
-    
-  - `gppAirT_MOD17`: temperature stress on gpp_potential based on GPP - MOD17 model 
-    
-  - `gppAirT_Maekelae2008`: temperature stress on gpp_potential based on Maekelae2008 [eqn 3 &amp; 4] 
-    
-  - `gppAirT_TEM`: temperature stress for gpp_potential based on TEM 
-    
-  - `gppAirT_Wang2014`: temperature stress on gpp_potential based on Wang2014 
-    
-  - `gppAirT_none`: sets the temperature stress on gpp_potential to one (no stress) 
+  - `fAPAR_vegFraction`: fAPAR as a linear function of vegetation fraction. 
     
   
-- `gppDemand`: Quantifies the combined effect of environmental demand on GPP. 
-  - `gppDemand_min`: compute the demand GPP as minimum of all stress scalars [most limited] 
-    
-  - `gppDemand_mult`: compute the demand GPP as multipicative stress scalars 
-    
-  - `gppDemand_none`: sets the scalar for demand GPP to ones &amp; demand GPP to zero 
+- `getPools`: Retrieves the amount of water at the beginning of the time step. 
+  - `getPools_simple`: Simply take throughfall as the maximum available water. 
     
   
-- `gppDiffRadiation`: Quantifies the effect of diffuse radiation on GPP: 1 indicates no diffuse radiation effect, while 0 indicates complete effect. 
-  - `gppDiffRadiation_GSI`: cloudiness scalar [radiation diffusion] on gpp_potential based on GSI implementation of LPJ 
+- `gpp`: Gross Primary Productivity (GPP). 
+  - `gpp_coupled`: GPP based on transpiration supply and water use efficiency (coupled). 
     
-  - `gppDiffRadiation_Turner2006`: cloudiness scalar [radiation diffusion] on gpp_potential based on Turner2006 
+  - `gpp_min`: GPP with potential scaled by the minimum stress scalar of demand and supply for uncoupled model structures. 
     
-  - `gppDiffRadiation_Wang2015`: cloudiness scalar [radiation diffusion] on gpp_potential based on Wang2015 
+  - `gpp_mult`: GPP with potential scaled by the product of stress scalars of demand and supply for uncoupled model structures. 
     
-  - `gppDiffRadiation_none`: sets the cloudiness scalar [radiation diffusion] for gpp_potential to one 
+  - `gpp_none`: Sets GPP to 0. 
     
-  
-- `gppDirRadiation`: Quantifies the effect of direct radiation on GPP: 1 indicates no direct radiation effect, while 0 indicates complete effect. 
-  - `gppDirRadiation_Maekelae2008`: light saturation scalar [light effect] on gpp_potential based on Maekelae2008 
-    
-  - `gppDirRadiation_none`: sets the light saturation scalar [light effect] on gpp_potential to one 
+  - `gpp_transpirationWUE`: GPP based on transpiration and water use efficiency. 
     
   
-- `gppPotential`: Maximum instantaneous radiation use efficiency 
-  - `gppPotential_Monteith`: set the potential GPP based on radiation use efficiency 
+- `gppAirT`: Effect of temperature on GPP: 1 indicates no temperature stress, 0 indicates complete stress. 
+  - `gppAirT_CASA`: Temperature effect on GPP based as implemented in CASA. 
+    
+  - `gppAirT_GSI`: Temperature effect on GPP based on the GSI implementation of LPJ. 
+    
+  - `gppAirT_MOD17`: Temperature effect on GPP based on the MOD17 model. 
+    
+  - `gppAirT_Maekelae2008`: Temperature effect on GPP based on Maekelae (2008). 
+    
+  - `gppAirT_TEM`: Temperature effect on GPP based on the TEM model. 
+    
+  - `gppAirT_Wang2014`: Temperature effect on GPP based on Wang (2014). 
+    
+  - `gppAirT_none`: Sets temperature stress on GPP to 1 (no stress). 
     
   
-- `gppSoilW`: Quantifies the effect of soil water on GPP: 1 indicates no soil water stress, while 0 indicates complete stress. 
-  - `gppSoilW_CASA`: soil moisture stress on gpp_potential based on base stress and relative ratio of PET and PAW (CASA) 
+- `gppDemand`: Combined effect of environmental demand on GPP. 
+  - `gppDemand_min`: Demand GPP as the minimum of all stress scalars (most limiting factor). 
     
-  - `gppSoilW_GSI`: soil moisture stress on gpp_potential based on GSI implementation of LPJ 
+  - `gppDemand_mult`: Demand GPP as the product of all stress scalars. 
     
-  - `gppSoilW_Keenan2009`: soil moisture stress on gpp_potential based on Keenan2009 
-    
-  - `gppSoilW_Stocker2020`: soil moisture stress on gpp_potential based on Stocker2020 
-    
-  - `gppSoilW_none`: sets the soil moisture stress on gpp_potential to one (no stress) 
+  - `gppDemand_none`: Sets the scalar for demand GPP to 1 and demand GPP to 0. 
     
   
-- `gppVPD`: Quantifies the effect of vapor pressure deficit (VPD) on GPP: 1 indicates no VPD stress, while 0 indicates complete stress. 
-  - `gppVPD_MOD17`: VPD stress on gpp_potential based on MOD17 model 
+- `gppDiffRadiation`: Effect of diffuse radiation (Cloudiness scalar) on GPP: 1 indicates no diffuse radiation effect, 0 indicates complete effect. 
+  - `gppDiffRadiation_GSI`: Cloudiness scalar (radiation diffusion) on GPP potential based on the GSI implementation of LPJ. 
     
-  - `gppVPD_Maekelae2008`: calculate the VPD stress on gpp_potential based on Maekelae2008 [eqn 5] 
+  - `gppDiffRadiation_Turner2006`: Cloudiness scalar (radiation diffusion) on GPP potential based on Turner (2006). 
     
-  - `gppVPD_PRELES`: VPD stress on gpp_potential based on Maekelae2008 and with co2 effect based on PRELES model 
+  - `gppDiffRadiation_Wang2015`: Cloudiness scalar (radiation diffusion) on GPP potential based on Wang (2015). 
     
-  - `gppVPD_expco2`: VPD stress on gpp_potential based on Maekelae2008 and with co2 effect 
-    
-  - `gppVPD_none`: sets the VPD stress on gpp_potential to one (no stress) 
+  - `gppDiffRadiation_none`: Sets the cloudiness scalar (radiation diffusion) for GPP potential to 1. 
     
   
-- `groundWRecharge`: Recharge to the groundwater storage 
-  - `groundWRecharge_dos`: GW recharge as a exponential functions of the degree of saturation of the lowermost soil layer 
+- `gppDirRadiation`: Effect of direct radiation (light effect) on GPP: 1 indicates no direct radiation effect, 0 indicates complete effect. 
+  - `gppDirRadiation_Maekelae2008`: Light saturation scalar (light effect) on GPP potential based on Maekelae (2008). 
     
-  - `groundWRecharge_fraction`: GW recharge as a fraction of moisture of the lowermost soil layer 
-    
-  - `groundWRecharge_kUnsat`: GW recharge as the unsaturated hydraulic conductivity of the lowermost soil layer 
-    
-  - `groundWRecharge_none`: sets the GW recharge to zero 
+  - `gppDirRadiation_none`: Sets the light saturation scalar (light effect) on GPP potential to 1. 
     
   
-- `groundWSoilWInteraction`: Groundwater soil moisture interactions (e.g. capilary flux, water 
-  - `groundWSoilWInteraction_VanDijk2010`: calculates the upward flow of water from groundwater to lowermost soil layer using VanDijk method 
-    
-  - `groundWSoilWInteraction_gradient`: calculates a buffer storage that gives water to the soil when the soil dries up; while the soil gives water to the buffer when the soil is wet but the buffer low 
-    
-  - `groundWSoilWInteraction_gradientNeg`: calculates a buffer storage that doesn&#39;t give water to the soil when the soil dries up; while the soil gives water to the groundW when the soil is wet but the groundW low; the groundW is only recharged by soil moisture 
-    
-  - `groundWSoilWInteraction_none`: sets the groundwater capillary flux to zero 
+- `gppPotential`: Potential GPP based on maximum instantaneous radiation use efficiency. 
+  - `gppPotential_Monteith`: Potential GPP based on radiation use efficiency model/concept of Monteith. 
     
   
-- `groundWSurfaceWInteraction`: Water exchange between surface and groundwater 
-  - `groundWSurfaceWInteraction_fracGradient`: calculates the moisture exchange between groundwater &amp; surface water as a fraction of difference between the storages 
+- `gppSoilW`: Effect of soil moisture on GPP: 1 indicates no soil water stress, 0 indicates complete stress. 
+  - `gppSoilW_CASA`: Soil moisture stress on GPP potential based on base stress and the relative ratio of PET and PAW (CASA). 
     
-  - `groundWSurfaceWInteraction_fracGroundW`: calculates the depletion of groundwater to the surface water as a fraction of groundwater storage 
+  - `gppSoilW_GSI`: Soil moisture stress on GPP potential based on the GSI implementation of LPJ. 
     
-  
-- `interception`: Interception evaporation 
-  - `interception_Miralles2010`: computes canopy interception evaporation according to the Gash model 
+  - `gppSoilW_Keenan2009`: Soil moisture stress on GPP potential based on Keenan (2009). 
     
-  - `interception_fAPAR`: computes canopy interception evaporation as a fraction of fAPAR 
+  - `gppSoilW_Stocker2020`: Soil moisture stress on GPP potential based on Stocker (2020). 
     
-  - `interception_none`: sets the interception evaporation to zero 
-    
-  - `interception_vegFraction`: computes canopy interception evaporation as a fraction of vegetation cover 
+  - `gppSoilW_none`: Sets soil moisture stress on GPP potential to 1 (no stress). 
     
   
-- `percolation`: Calculate the soil percolation = wbp at this point 
-  - `percolation_WBP`: computes the percolation into the soil after the surface runoff process 
+- `gppVPD`: Effect of vapor pressure deficit (VPD) on GPP: 1 indicates no VPD stress, 0 indicates complete stress. 
+  - `gppVPD_MOD17`: VPD stress on GPP potential based on the MOD17 model. 
+    
+  - `gppVPD_Maekelae2008`: VPD stress on GPP potential based on Maekelae (2008). 
+    
+  - `gppVPD_PRELES`: VPD stress on GPP potential based on Maekelae (2008) and includes the CO₂ effect based on the PRELES model. 
+    
+  - `gppVPD_expco2`: VPD stress on GPP potential based on Maekelae (2008) and includes the CO₂ effect. 
+    
+  - `gppVPD_none`: Sets VPD stress on GPP potential to 1 (no stress). 
     
   
-- `plantForm`: define the plant form of the ecosystem 
-  - `plantForm_PFT`: get the plant form based on PFT 
+- `groundWRecharge`: Groundwater recharge. 
+  - `groundWRecharge_dos`: Groundwater recharge as an exponential function of the degree of saturation of the lowermost soil layer. 
     
-  - `plantForm_fixed`: use a fixed plant form with 1: tree, 2: shrub, 3:herb 
+  - `groundWRecharge_fraction`: Groundwater recharge as a fraction of the moisture in the lowermost soil layer. 
     
-  
-- `rainIntensity`: Set rainfall intensity 
-  - `rainIntensity_forcing`: stores the time series of rainfall &amp; snowfall from forcing 
+  - `groundWRecharge_kUnsat`: Groundwater recharge as the unsaturated hydraulic conductivity of the lowermost soil layer. 
     
-  - `rainIntensity_simple`: stores the time series of rainfall intensity 
+  - `groundWRecharge_none`: Sets groundwater recharge to 0. 
     
   
-- `rainSnow`: Set/get rain and snow 
-  - `rainSnow_Tair`: separates the rain &amp; snow based on temperature threshold 
+- `groundWSoilWInteraction`: Groundwater-soil moisture interactions (e.g., capillary flux, water exchange). 
+  - `groundWSoilWInteraction_VanDijk2010`: Upward flow of water from groundwater to the lowermost soil layer using the Van Dijk (2010) method. 
     
-  - `rainSnow_forcing`: stores the time series of rainfall and snowfall from forcing &amp; scale snowfall if snowfall_scalar parameter is optimized 
+  - `groundWSoilWInteraction_gradient`: Delayed/Buffer storage that gives water to the soil when the soil is dry and receives water from the soil when the buffer is low. 
     
-  - `rainSnow_rain`: set all precip to rain 
+  - `groundWSoilWInteraction_gradientNeg`: Delayed/Buffer storage that does not give water to the soil when the soil is dry, but receives water from the soil when the soil is wet and the buffer is low. 
     
-  
-- `rootMaximumDepth`: Maximum rooting depth 
-  - `rootMaximumDepth_fracSoilD`: sets the maximum rooting depth as a fraction of total soil depth. rootMaximumDepth_fracSoilD 
+  - `groundWSoilWInteraction_none`: Sets groundwater capillary flux to 0 for no interaction between soil moisture and groundwater. 
     
   
-- `rootWaterEfficiency`: Distribution of water uptake fraction/efficiency by root per soil layer 
-  - `rootWaterEfficiency_constant`: sets the maximum fraction of water that root can uptake from soil layers as constant 
+- `groundWSurfaceWInteraction`: Water exchange between surface and groundwater. 
+  - `groundWSurfaceWInteraction_fracGradient`: Moisture exchange between groundwater and surface water as a fraction of the difference between their storages. 
     
-  - `rootWaterEfficiency_expCvegRoot`: maximum root water fraction that plants can uptake from soil layers according to total carbon in root [cVegRoot]. sets the maximum fraction of water that root can uptake from soil layers according to total carbon in root [cVegRoot] 
-    
-  - `rootWaterEfficiency_k2Layer`: sets the maximum fraction of water that root can uptake from soil layers as calibration parameter; hard coded for 2 soil layers 
-    
-  - `rootWaterEfficiency_k2fRD`: sets the maximum fraction of water that root can uptake from soil layers as function of vegetation fraction; &amp; for the second soil layer additional as function of RD 
-    
-  - `rootWaterEfficiency_k2fvegFraction`: sets the maximum fraction of water that root can uptake from soil layers as function of vegetation fraction 
+  - `groundWSurfaceWInteraction_fracGroundW`: Depletion of groundwater to surface water as a fraction of groundwater storage. 
     
   
-- `rootWaterUptake`: Root water uptake (extract water from soil) 
-  - `rootWaterUptake_proportion`: rootUptake from each soil layer proportional to the relative plant water availability in the layer 
+- `interception`: Interception loss. 
+  - `interception_Miralles2010`: Interception loss according to the Gash model of Miralles, 2010. 
     
-  - `rootWaterUptake_topBottom`: rootUptake from each of the soil layer from top to bottom using all water in each layer 
+  - `interception_fAPAR`: Interception loss as a fraction of fAPAR. 
     
-  
-- `runoff`: Calculate the total runoff as a sum of components 
-  - `runoff_sum`: calculates runoff as a sum of all potential components 
+  - `interception_none`: Sets interception loss to 0. 
     
-  
-- `runoffBase`: Baseflow 
-  - `runoffBase_Zhang2008`: computes baseflow from a linear ground water storage 
-    
-  - `runoffBase_none`: sets the base runoff to zero 
+  - `interception_vegFraction`: Interception loss as a fraction of vegetation cover. 
     
   
-- `runoffInfiltrationExcess`: Infiltration excess runoff 
-  - `runoffInfiltrationExcess_Jung`: infiltration excess runoff as a function of rainintensity and vegetated fraction 
-    
-  - `runoffInfiltrationExcess_kUnsat`: infiltration excess runoff based on unsaτurated hydraulic conductivity 
-    
-  - `runoffInfiltrationExcess_none`: sets infiltration excess runoff to zero 
+- `percolation`: Percolation through the top of soil 
+  - `percolation_WBP`: Percolation as a difference of throughfall and surface runoff loss. 
     
   
-- `runoffInterflow`: Interflow 
-  - `runoffInterflow_none`: sets interflow runoff to zero 
+- `plantForm`: Plant form of the ecosystem. 
+  - `plantForm_PFT`: Differentiate plant form based on PFT. 
     
-  - `runoffInterflow_residual`: interflow as a fraction of the available water balance pool 
-    
-  
-- `runoffOverland`: calculates total overland runoff that passes to the surface storage 
-  - `runoffOverland_Inf`: ## assumes overland flow to be infiltration excess runoff 
-    
-  - `runoffOverland_InfIntSat`: assumes overland flow to be sum of infiltration excess, interflow, and saturation excess runoffs 
-    
-  - `runoffOverland_Sat`: assumes overland flow to be saturation excess runoff 
-    
-  - `runoffOverland_none`: sets overland runoff to zero 
+  - `plantForm_fixed`: Sets plant form to a fixed form with 1: tree, 2: shrub, 3:herb. Assumes tree as default. 
     
   
-- `runoffSaturationExcess`: Saturation runoff 
-  - `runoffSaturationExcess_Bergstroem1992`: saturation excess runoff using original Bergström method 
+- `rainIntensity`: Rainfall intensity. 
+  - `rainIntensity_forcing`: Gets rainfall intensity from forcing data. 
     
-  - `runoffSaturationExcess_Bergstroem1992MixedVegFraction`: saturation excess runoff using Bergström method with separate berg parameters for vegetated and non-vegetated fractions 
-    
-  - `runoffSaturationExcess_Bergstroem1992VegFraction`: saturation excess runoff using Bergström method with parameter scaled by vegetation fraction 
-    
-  - `runoffSaturationExcess_Bergstroem1992VegFractionFroSoil`: saturation excess runoff using Bergström method with parameter scaled by vegetation fraction and frozen soil fraction 
-    
-  - `runoffSaturationExcess_Bergstroem1992VegFractionPFT`: saturation excess runoff using Bergström method with parameter scaled by vegetation fraction and PFT 
-    
-  - `runoffSaturationExcess_Zhang2008`: saturation excess runoff as a function of incoming water and PET 
-    
-  - `runoffSaturationExcess_none`: set the saturation excess runoff to zero 
-    
-  - `runoffSaturationExcess_satFraction`: saturation excess runoff as a fraction of saturated fraction of land 
+  - `rainIntensity_simple`: Rainfall intensity as a linear function of rainfall amount. 
     
   
-- `runoffSurface`: Surface runoff generation process 
-  - `runoffSurface_Orth2013`: calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff 
+- `rainSnow`: Rain and snow partitioning. 
+  - `rainSnow_Tair`: Rain and snow partitioning based on a temperature threshold. 
     
-  - `runoffSurface_Trautmann2018`: calculates the delay coefficient of first 60 days as a precomputation based on Orth et al. 2013 &amp; as it is used in Trautmannet al. 2018. calculates the base runoff based on Orth et al. 2013 &amp; as it is used in Trautmannet al. 2018 
+  - `rainSnow_forcing`: Sets rainfall and snowfall from forcing data, with snowfall scaled if the snowfall_scalar parameter is optimized. 
     
-  - `runoffSurface_all`: assumes all overland runoff is lost as surface runoff 
-    
-  - `runoffSurface_directIndirect`: assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage 
-    
-  - `runoffSurface_directIndirectFroSoil`: assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid 
-    
-  - `runoffSurface_indirect`: assumes all overland runoff is recharged to surface water first, which then generates surface runoff 
-    
-  - `runoffSurface_none`: sets surface runoff [surface_runoff] from the storage to zero 
+  - `rainSnow_rain`: All precipitation is assumed to be liquid rain with 0 snowfall. 
     
   
-- `saturatedFraction`: Saturated fraction of a grid cell 
-  - `saturatedFraction_none`: sets the land.states.soilWSatFrac [saturated soil fraction] to zero 
+- `rootMaximumDepth`: Maximum rooting depth. 
+  - `rootMaximumDepth_fracSoilD`: Maximum rooting depth as a fraction of total soil depth. 
     
   
-- `snowFraction`: Calculate snow cover fraction 
-  - `snowFraction_HTESSEL`: computes the snow pack &amp; fraction of snow cover following the HTESSEL approach 
+- `rootWaterEfficiency`: Water uptake efficiency by roots for each soil layer. 
+  - `rootWaterEfficiency_constant`: Water uptake efficiency by roots set as a constant for each soil layer. 
     
-  - `snowFraction_binary`: compute the fraction of snow cover. 
+  - `rootWaterEfficiency_expCvegRoot`: Water uptake efficiency by roots set according to total root carbon. 
     
-  - `snowFraction_none`: sets the snow fraction to zero 
+  - `rootWaterEfficiency_k2Layer`: Water uptake efficiency by roots set as a calibration parameter for each soil layer (for two soil layers). 
     
-  
-- `snowMelt`: Calculate snowmelt and update s.w.wsnow 
-  - `snowMelt_Tair`: computes the snow melt term as function of air temperature 
+  - `rootWaterEfficiency_k2fRD`: Water uptake efficiency by roots set as a function of vegetation fraction, and for the second soil layer, as a function of rooting depth from different datasets. 
     
-  - `snowMelt_TairRn`: instantiate the potential snow melt based on temperature &amp; net radiation on days with f_airT &gt; 0.0°C. instantiate the potential snow melt based on temperature &amp; net radiation on days with f_airT &gt; 0.0 °C 
+  - `rootWaterEfficiency_k2fvegFraction`: Water uptake efficiency by roots set as a function of vegetation fraction, and for the second soil layer, as a function of rooting depth from different datasets, which is further scaled by the vegetation fraction. 
     
   
-- `soilProperties`: Soil properties (hydraulic properties) 
-  - `soilProperties_Saxton1986`: assigns the soil hydraulic properties based on Saxton; 1986 
+- `rootWaterUptake`: Root water uptake from soil. 
+  - `rootWaterUptake_proportion`: Root uptake from each soil layer proportional to the relative plant water availability in the layer. 
     
-  - `soilProperties_Saxton2006`: assigns the soil hydraulic properties based on Saxton; 2006 to land.soilProperties.sp_ 
-    
-  
-- `soilTexture`: Soil texture (sand,silt,clay, and organic matter fraction) 
-  - `soilTexture_constant`: sets the soil texture properties as constant 
-    
-  - `soilTexture_forcing`: sets the soil texture properties from input 
+  - `rootWaterUptake_topBottom`: Root uptake from each soil layer from top to bottom, using maximul available water in each layer. 
     
   
-- `soilWBase`: Distribution of soil hydraulic properties over depth 
-  - `soilWBase_smax1Layer`: defines the maximum soil water content of 1 soil layer as fraction of the soil depth defined in the model_structure.json based on the TWS model for the Northern Hemisphere 
-    
-  - `soilWBase_smax2Layer`: defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the model_structure.json based on the older version of the Pre-Tokyo Model 
-    
-  - `soilWBase_smax2fRD4`: defines the maximum soil water content of 2 soil layers the first layer is a fraction [i.e. 1] of the soil depth the second layer is a linear combination of scaled rooting depth data from forcing 
-    
-  - `soilWBase_uniform`: distributes the soil hydraulic properties for different soil layers assuming an uniform vertical distribution of all soil properties 
+- `runoff`: Total runoff. 
+  - `runoff_sum`: Runoff as a sum of all potential components. 
     
   
-- `sublimation`: Calculate sublimation and update snow water equivalent 
-  - `sublimation_GLEAM`: instantiates the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM 
+- `runoffBase`: Baseflow. 
+  - `runoffBase_Zhang2008`: Baseflow from a linear groundwater storage following Zhang (2008). 
     
-  - `sublimation_none`: sets the snow sublimation to zero 
-    
-  
-- `transpiration`: calclulate the actual transpiration 
-  - `transpiration_coupled`: calculate the actual transpiration as function of gpp &amp; WUE 
-    
-  - `transpiration_demandSupply`: calculate the actual transpiration as the minimum of the supply &amp; demand 
-    
-  - `transpiration_none`: sets the actual transpiration to zero 
+  - `runoffBase_none`: Sets base runoff to 0. 
     
   
-- `transpirationDemand`: Demand-driven transpiration 
-  - `transpirationDemand_CASA`: calculate the supply limited transpiration as function of volumetric soil content &amp; soil properties; as in the CASA model 
+- `runoffInfiltrationExcess`: Infiltration excess runoff. 
+  - `runoffInfiltrationExcess_Jung`: Infiltration excess runoff as a function of rain intensity and vegetated fraction. 
     
-  - `transpirationDemand_PET`: calculate the climate driven demand for transpiration as a function of PET &amp; α for vegetation 
+  - `runoffInfiltrationExcess_kUnsat`: Infiltration excess runoff based on unsaturated hydraulic conductivity. 
     
-  - `transpirationDemand_PETfAPAR`: calculate the climate driven demand for transpiration as a function of PET &amp; fAPAR 
-    
-  - `transpirationDemand_PETvegFraction`: calculate the climate driven demand for transpiration as a function of PET &amp; α for vegetation; &amp; vegetation fraction 
+  - `runoffInfiltrationExcess_none`: Sets infiltration excess runoff to 0. 
     
   
-- `transpirationSupply`: Supply-limited transpiration 
-  - `transpirationSupply_CASA`: calculate the supply limited transpiration as function of volumetric soil content &amp; soil properties; as in the CASA model 
+- `runoffInterflow`: Interflow runoff. 
+  - `runoffInterflow_none`: Sets interflow runoff to 0. 
     
-  - `transpirationSupply_Federer1982`: calculate the supply limited transpiration as a function of max rate parameter &amp; avaialable water 
-    
-  - `transpirationSupply_wAWC`: calculate the supply limited transpiration as the minimum of fraction of total AWC &amp; the actual available moisture 
-    
-  - `transpirationSupply_wAWCvegFraction`: calculate the supply limited transpiration as the minimum of fraction of total AWC &amp; the actual available moisture; scaled by vegetated fractions 
+  - `runoffInterflow_residual`: Interflow as a fraction of the available water balance pool. 
     
   
-- `treeFraction`: Fractional coverage of trees 
-  - `treeFraction_constant`: sets frac_tree as a constant 
+- `runoffOverland`: Total overland runoff that passes to surface storage. 
+  - `runoffOverland_Inf`: Overland flow due to infiltration excess runoff. 
     
-  - `treeFraction_forcing`: sets land.states.frac_tree from forcing 
+  - `runoffOverland_InfIntSat`: Overland flow as the sum of infiltration excess, interflow, and saturation excess runoffs. 
     
-  
-- `vegAvailableWater`: Plant available water 
-  - `vegAvailableWater_rootWaterEfficiency`: sets the maximum fraction of water that root can uptake from soil layers as constant. calculate the actual amount of water that is available for plants 
+  - `runoffOverland_Sat`: Overland flow due to saturation excess runoff. 
     
-  - `vegAvailableWater_sigmoid`: calculate the actual amount of water that is available for plants 
+  - `runoffOverland_none`: Sets overland runoff to 0. 
     
   
-- `vegFraction`: Fractional coverage of vegetation 
-  - `vegFraction_constant`: sets frac_vegetation as a constant 
+- `runoffSaturationExcess`: Saturation excess runoff. 
+  - `runoffSaturationExcess_Bergstroem1992`: Saturation excess runoff using the original Bergström method. 
     
-  - `vegFraction_forcing`: sets land.states.frac_vegetation from forcing 
+  - `runoffSaturationExcess_Bergstroem1992MixedVegFraction`: Saturation excess runoff using the Bergström method with separate parameters for vegetated and non-vegetated fractions. 
     
-  - `vegFraction_scaledEVI`: sets frac_vegetation by scaling the EVI value 
+  - `runoffSaturationExcess_Bergstroem1992VegFraction`: Saturation excess runoff using the Bergström method with parameters scaled by vegetation fraction. 
     
-  - `vegFraction_scaledLAI`: sets frac_vegetation by scaling the LAI value 
+  - `runoffSaturationExcess_Bergstroem1992VegFractionFroSoil`: Saturation excess runoff using the Bergström method with parameters scaled by vegetation fraction and frozen soil fraction. 
     
-  - `vegFraction_scaledNDVI`: sets frac_vegetation by scaling the NDVI value 
+  - `runoffSaturationExcess_Bergstroem1992VegFractionPFT`: Saturation excess runoff using the Bergström method with parameters scaled by vegetation fraction separated by different PFTs. 
     
-  - `vegFraction_scaledNIRv`: sets frac_vegetation by scaling the NIRv value 
+  - `runoffSaturationExcess_Zhang2008`: Saturation excess runoff as a function of incoming water and PET following Zhang (2008). 
     
-  - `vegFraction_scaledfAPAR`: sets frac_vegetation by scaling the fAPAR value 
+  - `runoffSaturationExcess_none`: Sets saturation excess runoff to 0. 
+    
+  - `runoffSaturationExcess_satFraction`: Saturation excess runoff as a fraction of the saturated fraction of a grid-cell. 
+    
+  
+- `runoffSurface`: Surface runoff generation. 
+  - `runoffSurface_Orth2013`: Surface runoff directly calculated using delay coefficient for the last 60 days based on the Orth et al. (2013) method. 
+    
+  - `runoffSurface_Trautmann2018`: Surface runoff directly calculated using delay coefficient for the last 60 days based on the Orth et al. (2013) method, but with a different delay coefficient as implemented in Trautmann et al. (2018). 
+    
+  - `runoffSurface_all`: All overland runoff generates surface runoff. 
+    
+  - `runoffSurface_directIndirect`: Surface runoff as the sum of the direct fraction of overland runoff and the indirect fraction of surface water storage. 
+    
+  - `runoffSurface_directIndirectFroSoil`: Surface runoff as the sum of the direct fraction of overland runoff and the indirect fraction of surface water storage, with the direct fraction additionally dependent on the frozen fraction of the grid. 
+    
+  - `runoffSurface_indirect`: All overland runoff is collected in surface water storage first, which in turn generates indirect surface runoff. 
+    
+  - `runoffSurface_none`: Sets surface runoff to 0. 
+    
+  
+- `saturatedFraction`: Saturated fraction of a grid-cell. 
+  - `saturatedFraction_none`: Sets the saturated soil fraction to 0. 
+    
+  
+- `snowFraction`: Snow cover fraction. 
+  - `snowFraction_HTESSEL`: Snow cover fraction following the HTESSEL approach. 
+    
+  - `snowFraction_binary`: Snow cover fraction using a binary approach. 
+    
+  - `snowFraction_none`: Sets the snow cover fraction to 0. 
+    
+  
+- `snowMelt`: Snowmelt. 
+  - `snowMelt_Tair`: Snowmelt as a function of air temperature. 
+    
+  - `snowMelt_TairRn`: Snowmelt based on temperature and net radiation when air temperature exceeds 0°C. 
+    
+  
+- `soilProperties`: Soil hydraulic properties. 
+  - `soilProperties_Saxton1986`: Soil hydraulic properties based on Saxton (1986). 
+    
+  - `soilProperties_Saxton2006`: Soil hydraulic properties based on Saxton (2006). 
+    
+  
+- `soilTexture`: Soil texture (sand, silt, clay, and organic matter fraction). 
+  - `soilTexture_constant`: Sets soil texture properties as constant values. 
+    
+  - `soilTexture_forcing`: Gets Soil texture properties from forcing data. 
+    
+  
+- `soilWBase`: Base soil hydraulic properties over soil layers. 
+  - `soilWBase_smax1Layer`: Maximum soil water content of one soil layer as a fraction of total soil depth, based on the Trautmann et al. (2018) model. 
+    
+  - `soilWBase_smax2Layer`: Maximum soil water content of two soil layers as fractions of total soil depth, based on the older version of the Pre-Tokyo Model. 
+    
+  - `soilWBase_smax2fRD4`: Maximum soil water content of two soil layers: the first layer as a fraction of soil depth, the second as a linear combination of scaled rooting depth data from forcing. 
+    
+  - `soilWBase_uniform`: Soil hydraulic properties distributed for different soil layers assuming a uniform vertical distribution. 
+    
+  
+- `sublimation`: Snow sublimation. 
+  - `sublimation_GLEAM`: Sublimation using the Priestley-Taylor term following the GLEAM approach. 
+    
+  - `sublimation_none`: Sets snow sublimation to 0. 
+    
+  
+- `transpiration`: Transpiration. 
+  - `transpiration_coupled`: Transpiration as a function of GPP and WUE. 
+    
+  - `transpiration_demandSupply`: Transpiration as the minimum of supply and demand. 
+    
+  - `transpiration_none`: Sets transpiration to 0. 
+    
+  
+- `transpirationDemand`: Demand-limited transpiration. 
+  - `transpirationDemand_CASA`: Demand-limited transpiration as a function of volumetric soil content and soil properties, as in the CASA model. 
+    
+  - `transpirationDemand_PET`: Demand-limited transpiration as a function of PET and a vegetation parameter. 
+    
+  - `transpirationDemand_PETfAPAR`: Demand-limited transpiration as a function of PET and fAPAR. 
+    
+  - `transpirationDemand_PETvegFraction`: Demand-limited transpiration as a function of PET, a vegetation parameter, and vegetation fraction. 
+    
+  
+- `transpirationSupply`: Supply-limited transpiration. 
+  - `transpirationSupply_CASA`: Supply-limited transpiration as a function of volumetric soil content and soil properties, as in the CASA model. 
+    
+  - `transpirationSupply_Federer1982`: Supply-limited transpiration as a function of a maximum rate parameter and available water, following Federer (1982). 
+    
+  - `transpirationSupply_wAWC`: Supply-limited transpiration as the minimum of the fraction of total available water capacity and available moisture. 
+    
+  - `transpirationSupply_wAWCvegFraction`: Supply-limited transpiration as the minimum of the fraction of total available water capacity and available moisture, scaled by vegetated fractions. 
+    
+  
+- `treeFraction`: Tree cover fraction. 
+  - `treeFraction_constant`: Sets tree cover fraction as a constant value. 
+    
+  - `treeFraction_forcing`: Gets tree cover fraction from forcing data. 
+    
+  
+- `vegAvailableWater`: Plant available water (PAW), i.e., the amount of water available for transpiration. 
+  - `vegAvailableWater_rootWaterEfficiency`: PAW as a function of soil moisture and root water extraction efficiency. 
+    
+  - `vegAvailableWater_sigmoid`: PAW using a sigmoid function of soil moisture. 
+    
+  
+- `vegFraction`: Vegetation cover fraction. 
+  - `vegFraction_constant`: Sets vegetation fraction as a constant value. 
+    
+  - `vegFraction_forcing`: Gets vegetation fraction from forcing data. 
+    
+  - `vegFraction_scaledEVI`: Vegetation fraction as a linear function of EVI. 
+    
+  - `vegFraction_scaledLAI`: Vegetation fraction as a linear function of LAI. 
+    
+  - `vegFraction_scaledNDVI`: Vegetation fraction as a linear function of NDVI. 
+    
+  - `vegFraction_scaledNIRv`: Vegetation fraction as a linear function of NIRv. 
+    
+  - `vegFraction_scaledfAPAR`: Vegetation fraction as a linear function of fAPAR. 
     
   
 - `wCycle`: Apply the delta storage changes to storage variables 
@@ -829,12 +824,12 @@ The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree
   - `wCycle_components`: update the water cycle pools per component 
     
   
-- `wCycleBase`: set the basics of the water cycle pools 
-  - `wCycleBase_simple`: counts the number of layers in each water storage pools 
+- `wCycleBase`: Sets the basic structure of the water cycle storages. 
+  - `wCycleBase_simple`: Through `wCycle`.jl, adjust/update the variables for each storage separately and for TWS. 
     
   
-- `waterBalance`: Calculate the water balance 
-  - `waterBalance_simple`: check the water balance in every time step 
+- `waterBalance`: Water balance 
+  - `waterBalance_simple`: Simply checks the water balance as P-ET-R-ds/dt. 
     
   
 
@@ -1815,6 +1810,42 @@ showInfo(myfunc, "myfile.jl", 42, "Computation finished")
 </details>
 
 <details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.showInfoSeparator-Tuple{}' href='#Sindbad.showInfoSeparator-Tuple{}'><span class="jlbinding">Sindbad.showInfoSeparator</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+showInfoSeparator(; sep_text="", sep_width=100, display_color=(223,184,21))
+```
+
+
+Prints a visually distinct separator line to the console, optionally with centered text.
+
+**Arguments**
+- `sep_text`: (Optional) A string to display centered within the separator. If empty, a line of dashes is printed. Default is `""`.
+  
+- `sep_width`: (Optional) The total width of the separator line. Default is `100`.
+  
+- `display_color`: (Optional) An RGB tuple specifying the color of the separator line. Default is `(223,184,21)`.
+  
+
+**Example**
+
+```julia
+showInfoSeparator()
+showInfoSeparator(sep_text=" SECTION START ", sep_width=80)
+```
+
+
+**Notes**
+- The separator line is colored for emphasis.
+  
+- Useful for visually dividing output sections in logs or the console.
+  
+
+</details>
+
+<details class='jldocstring custom-block' open>
 <summary><a id='Sindbad.totalS-Tuple{Any, Any}' href='#Sindbad.totalS-Tuple{Any, Any}'><span class="jlbinding">Sindbad.totalS</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
 
 
@@ -2258,6 +2289,45 @@ processPackNT(ex)
 processUnpackNT(ex)
 ```
 
+
+</details>
+
+<details class='jldocstring custom-block' open>
+<summary><a id='Sindbad.showInfoColored-Tuple{String, Any}' href='#Sindbad.showInfoColored-Tuple{String, Any}'><span class="jlbinding">Sindbad.showInfoColored</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+
+
+
+```julia
+showInfoColored(s::String, color)
+```
+
+
+Returns a string with segments enclosed in backticks (`) colored using the specified RGB color.
+
+**Arguments**
+- `s::String`: The input string. Segments to be colored should be enclosed in backticks (e.g., `"This is`colored`text"`).
+  
+- `color`: An RGB tuple (e.g., `(0, 152, 221)`) specifying the foreground color to use.
+  
+
+**Returns**
+- A string with the specified segments colored, suitable for display in terminals that support ANSI color codes.
+  
+
+**Example**
+
+```julia
+println(showInfoColored("This is `colored` text", (0, 152, 221)))
+```
+
+
+This will print &quot;This is colored text&quot; with &quot;colored&quot; in the specified color.
+
+**Notes**
+- Only the segments between backticks are colored; other text remains uncolored.
+  
+- The function uses Crayons.jl for coloring, so output is best viewed in compatible terminals.
+  
 
 </details>
 
