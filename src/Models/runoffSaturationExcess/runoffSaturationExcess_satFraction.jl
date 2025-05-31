@@ -21,7 +21,7 @@ function compute(params::runoffSaturationExcess_satFraction, forcing, land, help
     return land
 end
 
-purpose(::Type{runoffSaturationExcess_satFraction}) = "saturation excess runoff as a fraction of saturated fraction of land"
+purpose(::Type{runoffSaturationExcess_satFraction}) = "Saturation excess runoff as a fraction of the saturated fraction of a grid-cell."
 
 @doc """
 

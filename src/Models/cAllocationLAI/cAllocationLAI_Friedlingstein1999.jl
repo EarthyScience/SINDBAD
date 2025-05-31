@@ -24,7 +24,7 @@ function compute(params::cAllocationLAI_Friedlingstein1999, forcing, land, helpe
     return land
 end
 
-purpose(::Type{cAllocationLAI_Friedlingstein1999}) = "Estimate the effect of light limitation on carbon allocation via leaf area index (LAI) based on Friedlingstein et al., 1999."
+purpose(::Type{cAllocationLAI_Friedlingstein1999}) = "Estimates the effect of light limitation on carbon allocation via LAI, based on Friedlingstein et al. (1999)."
 
 @doc """
 

@@ -46,7 +46,7 @@ function compute(params::gppSoilW_CASA, forcing, land, helpers)
 end
 
 
-purpose(::Type{gppSoilW_CASA}) = "soil moisture stress on gpp_potential based on base stress and relative ratio of PET and PAW (CASA)"
+purpose(::Type{gppSoilW_CASA}) = "Soil moisture stress on GPP potential based on base stress and the relative ratio of PET and PAW (CASA)."
 
 @doc """
 

@@ -29,7 +29,7 @@ function compute(params::interception_vegFraction, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{interception_vegFraction}) = "computes canopy interception evaporation as a fraction of vegetation cover"
+purpose(::Type{interception_vegFraction}) = "Interception loss as a fraction of vegetation cover."
 
 @doc """
 

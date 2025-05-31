@@ -44,17 +44,18 @@ Retrieves the list of all SINDBAD models, either from the provided `info` object
 - If the `info` object has a property `sindbad_models`, it overrides the default list.
 - This function ensures flexibility by allowing custom model lists to be specified in the experiment configuration.
 """
-function getAllSindbadModels(info; sindbad_models=standard_sindbad_models,  selected_models=standard_sindbad_models)
+function getAllSindbadModels(info; sindbad_models=standard_sindbad_models,  selected_models=standard_sindbad_models, selected_models_info=nothing)
     if hasproperty(info.settings.model_structure, :sindbad_models)
         sindbad_models = info.settings.model_structure.sindbad_models
-        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "⟹using user-defined orders/models from model_structure.sindbad_models with model_structure including:", n_m=1)
+        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "using user-defined orders/models from model_structure.sindbad_models with model_structure including:", n_m=1)
     else
-        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "⟹using standard orders/models from standard_sindbad_models with model_structure including:", n_m=1)
+        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "using standard orders/models from standard_sindbad_models with model_structure including:", n_m=1)
     end
     mod_ind = 1
     foreach(sindbad_models) do sm
         if sm in selected_models
-            showInfo(nothing, @__FILE__, @__LINE__, "$(mod_ind): `$(sm)`.jl => $(purpose(getproperty(Sindbad, sm)))", n_m=6)
+            selected_approach = selected_models_info === nothing ? "none" : Symbol("$(sm)_$(getfield(selected_models_info, sm).approach)")
+            showInfo(nothing, @__FILE__, @__LINE__, "$(mod_ind): `$(selected_approach)`.jl => $(purpose(getproperty(Sindbad, selected_approach)))", n_m=6)
             mod_ind += 1
         end
     end
@@ -108,9 +109,8 @@ Retrieves and orders the list of selected models based on the configuration in `
 """
 function setOrderedSelectedModels(info::NamedTuple)
     showInfo(setOrderedSelectedModels, @__FILE__, @__LINE__, "setting Ordered Selected Models...")
-    # @info "  setOrderedSelectedModels ($(basename(@__FILE__))):\n             setting Ordered Selected Models..."
     selected_models = collect(propertynames(info.settings.model_structure.models))
-    sindbad_models = getAllSindbadModels(info, selected_models=selected_models)
+    sindbad_models = getAllSindbadModels(info, selected_models=selected_models, selected_models_info=info.settings.model_structure.models)
     checkSelectedModels(sindbad_models, selected_models)
     t_repeat_models = getModelImplicitTRepeat(info, selected_models)
     # checkSelectedModels(sindbad_models, selected_models)

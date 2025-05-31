@@ -20,7 +20,7 @@ function compute(params::gppAirT_Wang2014, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppAirT_Wang2014}) = "temperature stress on gpp_potential based on Wang2014"
+purpose(::Type{gppAirT_Wang2014}) = "Temperature effect on GPP based on Wang (2014)."
 
 @doc """
 

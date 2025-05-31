@@ -2,7 +2,7 @@ export gppPotential
 
 abstract type gppPotential <: LandEcosystem end
 
-purpose(::Type{gppPotential}) = "Maximum instantaneous radiation use efficiency"
+purpose(::Type{gppPotential}) = "Potential GPP based on maximum instantaneous radiation use efficiency."
 
 includeApproaches(gppPotential, @__DIR__)
 

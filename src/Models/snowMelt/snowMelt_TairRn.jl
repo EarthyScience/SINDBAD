@@ -46,7 +46,7 @@ function compute(params::snowMelt_TairRn, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{snowMelt_TairRn}) = "instantiate the potential snow melt based on temperature & net radiation on days with f*airT > 0.0°C. instantiate the potential snow melt based on temperature & net radiation on days with f*airT > 0.0 °C"
+purpose(::Type{snowMelt_TairRn}) = "Snowmelt based on temperature and net radiation when air temperature exceeds 0°C."
 
 @doc """
 

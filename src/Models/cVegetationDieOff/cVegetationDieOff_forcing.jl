@@ -18,7 +18,7 @@ function compute(params::cVegetationDieOff_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cVegetationDieOff_forcing}) = "reads and passes along to the land diagnostics the fraction of vegetation pools that die off "
+purpose(::Type{cVegetationDieOff_forcing}) = "Get the fraction of vegetation that die off from forcing data."
 
 @doc """
 

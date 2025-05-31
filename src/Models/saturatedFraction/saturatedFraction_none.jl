@@ -13,7 +13,7 @@ function define(params::saturatedFraction_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{saturatedFraction_none}) = "sets the land.states.soilWSatFrac [saturated soil fraction] to zero"
+purpose(::Type{saturatedFraction_none}) = "Sets the saturated soil fraction to 0."
 
 @doc """
 

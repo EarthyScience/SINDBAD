@@ -15,7 +15,7 @@ function define(params::gppDemand_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppDemand_none}) = "sets the scalar for demand GPP to ones & demand GPP to zero"
+purpose(::Type{gppDemand_none}) = "Sets the scalar for demand GPP to 1 and demand GPP to 0."
 
 @doc """
 

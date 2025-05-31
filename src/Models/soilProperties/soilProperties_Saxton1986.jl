@@ -172,7 +172,7 @@ function calcPropsSaxton1986(params::soilProperties_Saxton1986, land, helpers, s
 end
 
 
-purpose(::Type{soilProperties_Saxton1986}) = "assigns the soil hydraulic properties based on Saxton; 1986"
+purpose(::Type{soilProperties_Saxton1986}) = "Soil hydraulic properties based on Saxton (1986)."
 
 @doc """
 

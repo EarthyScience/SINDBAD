@@ -51,7 +51,7 @@ function compute(params::rootWaterEfficiency_k2fvegFraction, forcing, land, help
     return land
 end
 
-purpose(::Type{rootWaterEfficiency_k2fvegFraction}) = "sets the maximum fraction of water that root can uptake from soil layers as function of vegetation fraction"
+purpose(::Type{rootWaterEfficiency_k2fvegFraction}) = "Water uptake efficiency by roots set as a function of vegetation fraction, and for the second soil layer, as a function of rooting depth from different datasets, which is further scaled by the vegetation fraction."
 
 @doc """
 

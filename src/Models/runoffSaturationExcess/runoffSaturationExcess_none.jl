@@ -13,7 +13,7 @@ function define(params::runoffSaturationExcess_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffSaturationExcess_none}) = "set the saturation excess runoff to zero"
+purpose(::Type{runoffSaturationExcess_none}) = "Sets saturation excess runoff to 0."
 
 @doc """
 

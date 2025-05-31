@@ -47,7 +47,7 @@ function compute(params::rootWaterEfficiency_k2Layer, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{rootWaterEfficiency_k2Layer}) = "sets the maximum fraction of water that root can uptake from soil layers as calibration parameter; hard coded for 2 soil layers"
+purpose(::Type{rootWaterEfficiency_k2Layer}) = "Water uptake efficiency by roots set as a calibration parameter for each soil layer (for two soil layers)."
 
 @doc """
 

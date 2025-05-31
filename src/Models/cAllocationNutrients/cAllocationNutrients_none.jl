@@ -13,7 +13,7 @@ function define(params::cAllocationNutrients_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationNutrients_none}) = "sets the pseudo-nutrient limitation to one (no effect)"
+purpose(::Type{cAllocationNutrients_none}) = "Sets the pseudo-nutrient limitation to 1 (no effect)."
 
 @doc """
 

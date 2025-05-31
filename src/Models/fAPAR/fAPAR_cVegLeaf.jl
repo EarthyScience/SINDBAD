@@ -24,7 +24,7 @@ function compute(params::fAPAR_cVegLeaf, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{fAPAR_cVegLeaf}) = "Compute FAPAR based on carbon pool of the leave; SLA; kLAI"
+purpose(::Type{fAPAR_cVegLeaf}) = "fAPAR based on the carbon pool of leaves, specific leaf area (SLA), and kLAI."
 
 @doc """
 

@@ -41,7 +41,7 @@ function compute(params::gppAirT_CASA, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppAirT_CASA}) = "temperature stress for gpp_potential based on CASA & Potter"
+purpose(::Type{gppAirT_CASA}) = "Temperature effect on GPP based as implemented in CASA."
 
 @doc """
 

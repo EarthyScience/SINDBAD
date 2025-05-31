@@ -69,7 +69,7 @@ function compute(params::cFlowSoilProperties_CASA, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cFlowSoilProperties_CASA}) = "effects of soil that change the transfers between carbon pools"
+purpose(::Type{cFlowSoilProperties_CASA}) = "Effect of soil properties on carbon transfers between pools as modeled in CASA."
 
 @doc """
 

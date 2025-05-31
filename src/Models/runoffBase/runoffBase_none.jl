@@ -13,7 +13,7 @@ function define(params::runoffBase_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffBase_none}) = "sets the base runoff to zero"
+purpose(::Type{runoffBase_none}) = "Sets base runoff to 0."
 
 @doc """
 

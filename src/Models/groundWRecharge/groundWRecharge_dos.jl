@@ -50,7 +50,7 @@ function compute(params::groundWRecharge_dos, forcing, land, helpers)
 end
 
 
-purpose(::Type{groundWRecharge_dos}) = "GW recharge as a exponential functions of the degree of saturation of the lowermost soil layer"
+purpose(::Type{groundWRecharge_dos}) = "Groundwater recharge as an exponential function of the degree of saturation of the lowermost soil layer."
 
 @doc """
 

@@ -32,7 +32,7 @@ function compute(params::groundWSurfaceWInteraction_fracGradient, forcing, land,
     return land
 end
 
-purpose(::Type{groundWSurfaceWInteraction_fracGradient}) = "calculates the moisture exchange between groundwater & surface water as a fraction of difference between the storages"
+purpose(::Type{groundWSurfaceWInteraction_fracGradient}) = "Moisture exchange between groundwater and surface water as a fraction of the difference between their storages."
 
 @doc """
 

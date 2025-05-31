@@ -37,7 +37,7 @@ function compute(params::runoffSaturationExcess_Bergstroem1992VegFraction, forci
     return land
 end
 
-purpose(::Type{runoffSaturationExcess_Bergstroem1992VegFraction}) = "saturation excess runoff using Bergström method with parameter scaled by vegetation fraction"
+purpose(::Type{runoffSaturationExcess_Bergstroem1992VegFraction}) = "Saturation excess runoff using the Bergström method with parameters scaled by vegetation fraction."
 
 @doc """
 

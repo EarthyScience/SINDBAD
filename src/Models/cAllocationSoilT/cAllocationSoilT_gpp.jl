@@ -16,7 +16,7 @@ function compute(params::cAllocationSoilT_gpp, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationSoilT_gpp}) = "temperature effect on allocation = the same as gpp"
+purpose(::Type{cAllocationSoilT_gpp}) = "Sets the temperature effect on allocation equal to that for GPP."
 
 @doc """
 

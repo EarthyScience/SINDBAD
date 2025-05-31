@@ -2,7 +2,7 @@ export cTauSoilW
 
 abstract type cTauSoilW <: LandEcosystem end
 
-purpose(::Type{cTauSoilW}) = "Effect of soil moisture on decomposition rates"
+purpose(::Type{cTauSoilW}) = "Effect of soil moisture on decomposition rates."
 
 includeApproaches(cTauSoilW, @__DIR__)
 

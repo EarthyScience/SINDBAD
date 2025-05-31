@@ -98,7 +98,7 @@ function compute(params::cTauLAI_CASA, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cTauLAI_CASA}) = "calc LAI stressor on τ. Compute the seasonal cycle of litter fall & root litterfall based on LAI variations. Necessarily in precomputation mode"
+purpose(::Type{cTauLAI_CASA}) = "Effect of LAI on turnover rates and computes the seasonal cycle of litterfall and root litterfall based on LAI variations, as modeled in CASA."
 
 @doc """
 

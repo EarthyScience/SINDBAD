@@ -13,7 +13,7 @@ function define(params::autoRespiration_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{autoRespiration_none}) = "sets the autotrophic respiration flux from all vegetation pools to zero."
+purpose(::Type{autoRespiration_none}) = "Sets autotrophic respiration fluxes to 0."
 @doc """
     $(getModelDocString(autoRespiration_none))
 

@@ -2,7 +2,7 @@ export cAllocationRadiation
 
 abstract type cAllocationRadiation <: LandEcosystem end
 
-purpose(::Type{cAllocationRadiation}) = "Effect of radiation on carbon allocation"
+purpose(::Type{cAllocationRadiation}) = "Effect of radiation on carbon allocation."
 
 includeApproaches(cAllocationRadiation, @__DIR__)
 

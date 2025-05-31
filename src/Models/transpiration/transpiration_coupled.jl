@@ -17,7 +17,7 @@ function compute(params::transpiration_coupled, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{transpiration_coupled}) = "calculate the actual transpiration as function of gpp & WUE"
+purpose(::Type{transpiration_coupled}) = "Transpiration as a function of GPP and WUE."
 
 @doc """
 

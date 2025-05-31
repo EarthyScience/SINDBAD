@@ -2,7 +2,7 @@ export constants
 
 abstract type constants <: LandEcosystem end
 
-purpose(::Type{constants}) = "define the constants/variables that are independent of model structure"
+purpose(::Type{constants}) = "Defines constants and variables that are independent of model structure."
 
 includeApproaches(constants, @__DIR__)
 

@@ -12,7 +12,7 @@ function compute(params::treeFraction_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{treeFraction_forcing}) = "sets land.states.frac_tree from forcing"
+purpose(::Type{treeFraction_forcing}) = "Gets tree cover fraction from forcing data."
 
 @doc """
 

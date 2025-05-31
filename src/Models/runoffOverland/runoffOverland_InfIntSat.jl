@@ -15,7 +15,7 @@ function compute(params::runoffOverland_InfIntSat, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffOverland_InfIntSat}) = "assumes overland flow to be sum of infiltration excess, interflow, and saturation excess runoffs"
+purpose(::Type{runoffOverland_InfIntSat}) = "Overland flow as the sum of infiltration excess, interflow, and saturation excess runoffs."
 
 @doc """
 

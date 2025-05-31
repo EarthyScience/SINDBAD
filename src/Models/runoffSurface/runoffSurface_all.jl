@@ -16,7 +16,7 @@ function compute(params::runoffSurface_all, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffSurface_all}) = "assumes all overland runoff is lost as surface runoff"
+purpose(::Type{runoffSurface_all}) = "All overland runoff generates surface runoff."
 
 @doc """
 

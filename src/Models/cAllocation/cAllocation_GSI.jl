@@ -69,7 +69,7 @@ function compute(params::cAllocation_GSI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocation_GSI}) = "Compute the fraction of fixated C that is allocated to the different plant organs. The allocation is dynamic in time according to temperature, water & radiation stressors estimated following the GSI approach. Inspired by the work of Friedlingstein et al., 1999, based on Sharpe and Rykiel 1991, but here following the growing season index (GSI) as stress diagnostics, following Forkel et al 2014 and 2015, based on Jolly et al., 2005."
+purpose(::Type{cAllocation_GSI}) = "Dynamically allocates carbon based on temperature, water, and radiation stressors following the GSI approach."
 
 @doc """
 

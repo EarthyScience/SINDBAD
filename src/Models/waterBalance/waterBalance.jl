@@ -2,7 +2,7 @@ export waterBalance
 
 abstract type waterBalance <: LandEcosystem end
 
-purpose(::Type{waterBalance}) = "Calculate the water balance"
+purpose(::Type{waterBalance}) = "Water balance"
 
 includeApproaches(waterBalance, @__DIR__)
 

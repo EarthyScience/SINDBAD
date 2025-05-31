@@ -31,7 +31,7 @@ function compute(params::runoff_sum, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoff_sum}) = "calculates runoff as a sum of all potential components"
+purpose(::Type{runoff_sum}) = "Runoff as a sum of all potential components."
 
 @doc """
 

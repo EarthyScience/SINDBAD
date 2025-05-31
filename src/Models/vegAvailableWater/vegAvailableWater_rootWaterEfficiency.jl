@@ -35,7 +35,7 @@ function compute(params::vegAvailableWater_rootWaterEfficiency, forcing, land, h
     return land
 end
 
-purpose(::Type{vegAvailableWater_rootWaterEfficiency}) = "sets the maximum fraction of water that root can uptake from soil layers as constant. calculate the actual amount of water that is available for plants"
+purpose(::Type{vegAvailableWater_rootWaterEfficiency}) = "PAW as a function of soil moisture and root water extraction efficiency."
 
 @doc """
 

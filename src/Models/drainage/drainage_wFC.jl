@@ -40,7 +40,7 @@ function compute(params::drainage_wFC, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{drainage_wFC}) = "downward flow of moisture [drainage] in soil layers based on overflow over field capacity"
+purpose(::Type{drainage_wFC}) = "Drainage flux based on overflow above field capacity."
 
 @doc """
 

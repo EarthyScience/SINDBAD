@@ -121,7 +121,7 @@ function compute(params::cCycleConsistency_simple, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cCycleConsistency_simple}) = "check consistency in cCycle vector: c_allocation; cFlow"
+purpose(::Type{cCycleConsistency_simple}) = "Checks consistency in the cCycle vector, including c_allocation and cFlow."
 
 @doc """
 

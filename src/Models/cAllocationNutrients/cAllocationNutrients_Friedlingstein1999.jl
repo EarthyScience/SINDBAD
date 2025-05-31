@@ -36,7 +36,7 @@ function compute(params::cAllocationNutrients_Friedlingstein1999, forcing, land,
     return land
 end
 
-purpose(::Type{cAllocationNutrients_Friedlingstein1999}) = "pseudo-nutrient limitation calculation based on Friedlingstein1999"
+purpose(::Type{cAllocationNutrients_Friedlingstein1999}) = "Calculates pseudo-nutrient limitation based on Friedlingstein et al. (1999)."
 
 @doc """
 

@@ -2,7 +2,7 @@ export percolation
 
 abstract type percolation <: LandEcosystem end
 
-purpose(::Type{percolation}) = "Calculate the soil percolation = wbp at this point"
+purpose(::Type{percolation}) = "Percolation through the top of soil"
 
 includeApproaches(percolation, @__DIR__)
 

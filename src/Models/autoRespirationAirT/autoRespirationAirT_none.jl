@@ -13,7 +13,7 @@ function define(params::autoRespirationAirT_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{autoRespirationAirT_none}) = "sets the temperature effect on autotrophic respiration to one (i.e. no effect)"
+purpose(::Type{autoRespirationAirT_none}) = "No air temperature effect on autotrophic respiration."
 
 @doc """
 

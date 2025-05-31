@@ -88,7 +88,7 @@ function adjustPackMainPool(land, helpers, ::wCycleBase_simple)
     return land
 end
 
-purpose(::Type{wCycleBase_simple}) = "counts the number of layers in each water storage pools"
+purpose(::Type{wCycleBase_simple}) = "Through `wCycle`.jl, adjust/update the variables for each storage separately and for TWS."
 
 @doc """
 

@@ -46,7 +46,7 @@ function compute(params::gppDemand_min, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppDemand_min}) = "compute the demand GPP as minimum of all stress scalars [most limited]"
+purpose(::Type{gppDemand_min}) = "Demand GPP as the minimum of all stress scalars (most limiting factor)."
 
 @doc """
 

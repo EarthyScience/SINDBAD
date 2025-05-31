@@ -2,7 +2,7 @@ export cVegetationDieOff
 
 abstract type cVegetationDieOff <: LandEcosystem end
 
-purpose(::Type{cVegetationDieOff}) = "Disturb the carbon cycle pools"
+purpose(::Type{cVegetationDieOff}) = "Fraction of vegetation pools that die off."
 
 includeApproaches(cVegetationDieOff, @__DIR__)
 

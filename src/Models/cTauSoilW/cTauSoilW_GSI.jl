@@ -73,7 +73,7 @@ function fSoilW_cTau(the_one, A, B, wExp, wOpt, wSoil)
     return soilW_sc
 end
 
-purpose(::Type{cTauSoilW_GSI}) = "calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter"
+purpose(::Type{cTauSoilW_GSI}) = "Effect of soil moisture on decomposition rates based on the GSI approach."
 
 @doc """
 

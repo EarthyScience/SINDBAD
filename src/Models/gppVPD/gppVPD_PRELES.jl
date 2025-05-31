@@ -34,7 +34,7 @@ function compute(params::gppVPD_PRELES, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppVPD_PRELES}) = "VPD stress on gpp_potential based on Maekelae2008 and with co2 effect based on PRELES model"
+purpose(::Type{gppVPD_PRELES}) = "VPD stress on GPP potential based on Maekelae (2008) and includes the CO₂ effect based on the PRELES model."
 
 @doc """
 

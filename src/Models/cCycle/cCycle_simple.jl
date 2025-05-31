@@ -106,7 +106,7 @@ function compute(params::cCycle_simple, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cCycle_simple}) = "Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools"
+purpose(::Type{cCycle_simple}) = "Carbon cycle with components based on the simplified version of the CASA approach."
 
 @doc """
 

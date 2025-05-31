@@ -115,7 +115,7 @@ function precompute(params::soilProperties_Saxton2006, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{soilProperties_Saxton2006}) = "assigns the soil hydraulic properties based on Saxton; 2006 to land.soilProperties.sp_"
+purpose(::Type{soilProperties_Saxton2006}) = "Soil hydraulic properties based on Saxton (2006)."
 
 @doc """
 

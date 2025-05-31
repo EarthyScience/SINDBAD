@@ -16,7 +16,7 @@ function compute(params::cBiomass_simple, forcing, land, helpers)
 end
 
 
-purpose(::Type{cBiomass_simple}) = "calculates aboveground biomass as a sum of wood and leaf carbon pools."
+purpose(::Type{cBiomass_simple}) = "Calculates AGB `simply` as the sum of wood and leaf carbon pools."
 
 @doc """
 

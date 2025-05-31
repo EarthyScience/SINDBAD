@@ -2,7 +2,7 @@ export runoffInterflow
 
 abstract type runoffInterflow <: LandEcosystem end
 
-purpose(::Type{runoffInterflow}) = "Interflow"
+purpose(::Type{runoffInterflow}) = "Interflow runoff."
 
 includeApproaches(runoffInterflow, @__DIR__)
 

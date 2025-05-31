@@ -35,7 +35,7 @@ function compute(params::evaporation_bareFraction, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{evaporation_bareFraction}) = "calculates the bare soil evaporation from 1-frac*vegetation of the grid & PET*evaporation"
+purpose(::Type{evaporation_bareFraction}) = "Bare soil evaporation from the non-vegetated fraction of the grid as a linear function of soil moisture and potential evaporation."
 
 @doc """
 

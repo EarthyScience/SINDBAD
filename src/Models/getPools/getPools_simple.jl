@@ -28,7 +28,7 @@ function compute(params::getPools_simple, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{getPools_simple}) = "gets the amount of water available for the current time step"
+purpose(::Type{getPools_simple}) = "Simply take throughfall as the maximum available water."
 
 @doc """
 

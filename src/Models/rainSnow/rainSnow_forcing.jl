@@ -33,7 +33,7 @@ function compute(params::rainSnow_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{rainSnow_forcing}) = "stores the time series of rainfall and snowfall from forcing & scale snowfall if snowfall_scalar parameter is optimized"
+purpose(::Type{rainSnow_forcing}) = "Sets rainfall and snowfall from forcing data, with snowfall scaled if the snowfall_scalar parameter is optimized."
 
 @doc """
 

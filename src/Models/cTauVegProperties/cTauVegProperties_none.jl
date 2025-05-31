@@ -24,7 +24,7 @@ function define(params::cTauVegProperties_none, forcing, land, helpers)
 
 end
 
-purpose(::Type{cTauVegProperties_none}) = "set the outputs to ones"
+purpose(::Type{cTauVegProperties_none}) = "Sets the effect of vegetation properties on decomposition rates to 1 (no vegetation effect)."
 
 @doc """
 

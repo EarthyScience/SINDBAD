@@ -28,7 +28,7 @@ function compute(params::gppVPD_expco2, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppVPD_expco2}) = "VPD stress on gpp_potential based on Maekelae2008 and with co2 effect"
+purpose(::Type{gppVPD_expco2}) = "VPD stress on GPP potential based on Maekelae (2008) and includes the CO₂ effect."
 
 @doc """
 

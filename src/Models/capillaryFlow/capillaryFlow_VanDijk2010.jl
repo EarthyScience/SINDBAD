@@ -54,7 +54,7 @@ function compute(params::capillaryFlow_VanDijk2010, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{capillaryFlow_VanDijk2010}) = "computes the upward water flow in the soil layers"
+purpose(::Type{capillaryFlow_VanDijk2010}) = "Computes the upward capillary flux of water through soil layers using the Van Dijk (2010) method."
 
 @doc """
 

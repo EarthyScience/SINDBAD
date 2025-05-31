@@ -13,7 +13,7 @@ function define(params::cTauLAI_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cTauLAI_none}) = "set values to ones"
+purpose(::Type{cTauLAI_none}) = "Sets the litterfall scalar values to 1 (no LAI effect)."
 
 @doc """
 

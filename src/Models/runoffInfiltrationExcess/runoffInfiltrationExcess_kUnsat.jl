@@ -25,7 +25,7 @@ function compute(params::runoffInfiltrationExcess_kUnsat, forcing, land, helpers
     return land
 end
 
-purpose(::Type{runoffInfiltrationExcess_kUnsat}) = "infiltration excess runoff based on unsaτurated hydraulic conductivity"
+purpose(::Type{runoffInfiltrationExcess_kUnsat}) = "Infiltration excess runoff based on unsaturated hydraulic conductivity."
 
 @doc """
 

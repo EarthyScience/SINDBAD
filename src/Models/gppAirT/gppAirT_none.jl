@@ -14,7 +14,7 @@ function define(params::gppAirT_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppAirT_none}) = "sets the temperature stress on gpp_potential to one (no stress)"
+purpose(::Type{gppAirT_none}) = "Sets temperature stress on GPP to 1 (no stress)."
 
 @doc """
 

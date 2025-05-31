@@ -20,7 +20,7 @@ function compute(params::fAPAR_vegFraction, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{fAPAR_vegFraction}) = "sets fAPAR as a linear function of vegetation fraction"
+purpose(::Type{fAPAR_vegFraction}) = "fAPAR as a linear function of vegetation fraction."
 
 @doc """
 

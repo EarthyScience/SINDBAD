@@ -22,7 +22,7 @@ function compute(params::gppAirT_MOD17, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppAirT_MOD17}) = "temperature stress on gpp_potential based on GPP - MOD17 model"
+purpose(::Type{gppAirT_MOD17}) = "Temperature effect on GPP based on the MOD17 model."
 
 @doc """
 

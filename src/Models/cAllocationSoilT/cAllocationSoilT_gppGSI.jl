@@ -40,7 +40,7 @@ function compute(params::cAllocationSoilT_gppGSI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationSoilT_gppGSI}) = "temperature effect on allocation from same for GPP based on GSI approach"
+purpose(::Type{cAllocationSoilT_gppGSI}) = "Calculates the temperature effect on allocation as for GPP using the GSI approach."
 
 @doc """
 

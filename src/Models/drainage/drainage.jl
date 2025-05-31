@@ -2,7 +2,7 @@ export drainage
 
 abstract type drainage <: LandEcosystem end
 
-purpose(::Type{drainage}) = "Recharge the soil"
+purpose(::Type{drainage}) = "Drainage flux of water from upper to lower soil layers."
 
 includeApproaches(drainage, @__DIR__)
 

@@ -76,7 +76,7 @@ function compute(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocation_Friedlingstein1999}) = "Compute the fraction of fixed C that is allocated to the different plant organs following the scheme of Friedlingstein et al., 1999 (section ```Allocation response to multiple stresses````)."
+purpose(::Type{cAllocation_Friedlingstein1999}) = "Dynamically allocates carbon based on LAI, moisture, and nutrient availability, following Friedlingstein et al. (1999)."
 
 @doc """
 

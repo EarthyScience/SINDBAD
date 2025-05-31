@@ -13,7 +13,7 @@ function define(params::cAllocation_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocation_none}) = "sets the carbon allocation to zero (nothing to allocated)"
+purpose(::Type{cAllocation_none}) = "Sets carbon allocation to 0."
 
 @doc """
 

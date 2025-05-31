@@ -36,7 +36,7 @@ function compute(params::runoffSaturationExcess_Bergstroem1992, forcing, land, h
     return land
 end
 
-purpose(::Type{runoffSaturationExcess_Bergstroem1992}) = "saturation excess runoff using original Bergström method"
+purpose(::Type{runoffSaturationExcess_Bergstroem1992}) = "Saturation excess runoff using the original Bergström method."
 
 @doc """
 

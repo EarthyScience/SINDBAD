@@ -33,7 +33,7 @@ function precompute(params::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{rootMaximumDepth_fracSoilD}) = "sets the maximum rooting depth as a fraction of total soil depth. rootMaximumDepth_fracSoilD"
+purpose(::Type{rootMaximumDepth_fracSoilD}) = "Maximum rooting depth as a fraction of total soil depth."
 
 @doc """
 

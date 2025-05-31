@@ -23,7 +23,7 @@ function compute(params::cAllocationSoilW_Friedlingstein1999, forcing, land, hel
     return land
 end
 
-purpose(::Type{cAllocationSoilW_Friedlingstein1999}) = "partial moisture effect on decomposition/mineralization based on Friedlingstein1999"
+purpose(::Type{cAllocationSoilW_Friedlingstein1999}) = "Calculates the partial moisture effect on decomposition and mineralization based on Friedlingstein et al. (1999)."
 
 @doc """
 

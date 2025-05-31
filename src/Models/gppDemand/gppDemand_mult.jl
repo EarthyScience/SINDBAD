@@ -48,7 +48,7 @@ function compute(params::gppDemand_mult, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppDemand_mult}) = "compute the demand GPP as multipicative stress scalars"
+purpose(::Type{gppDemand_mult}) = "Demand GPP as the product of all stress scalars."
 
 @doc """
 

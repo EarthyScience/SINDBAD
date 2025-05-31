@@ -107,7 +107,7 @@ function compute(params::cCycle_GSI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cCycle_GSI}) = "Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools"
+purpose(::Type{cCycle_GSI}) = "Carbon cycle with components based on the GSI approach, including carbon allocation, transfers, and turnover rates."
 
 @doc """
 

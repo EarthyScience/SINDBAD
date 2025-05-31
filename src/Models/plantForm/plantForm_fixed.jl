@@ -2,43 +2,21 @@ export plantForm_fixed
 
 #! format: off
 @bounds @describe @units @timescale @with_kw struct plantForm_fixed{T1} <: plantForm
-	P1::T1 = Inf | (-Inf, Inf) | "parameter 1" | "parameter 1 unit" | "parameter 1 timescale"
+	plant_form_type::T1 = 1 | (1, 2) | "plant form type" | "categorical" | ""
 end
 #! format: on
 
-function define(params::plantForm_fixed, forcing, land, helpers)
-	return land
-end
-
 function precompute(params::plantForm_fixed, forcing, land, helpers)
-	return land
-end
-
-function compute(params::plantForm_fixed, forcing, land, helpers)
-	## Automatically generated sample code for basis. Modify, correct, and use. define, precompute, and update methods can use similar coding when needed. When not, they can simply be deleted. 
 	@unpack_plantForm_fixed params # unpack the model parameters
-	## unpack NT forcing
-	# @unpack_nt f_variable ⇐ forcing
 
-	## unpack NT land
-	# @unpack_nt begin
-		# flux_variable ⇐ land.fluxes
-		# state_variable ⇐ land.states
-	# end
+	plant_form = params.plant_form_type
 
-	## Do calculations
-
-	## pack land variables
-	# @pack_nt new_diagnostic_variable ⇒ land.diagnostics
+	@pack_nt plant_form ⇒ land.states
 
 	return land
 end
 
-function update(params::plantForm_fixed, forcing, land, helpers)
-	return land
-end
-
-purpose(::Type{plantForm_fixed}) = "use a fixed plant form with 1: tree, 2: shrub, 3:herb"
+purpose(::Type{plantForm_fixed}) = "Sets plant form to a fixed form with 1: tree, 2: shrub, 3:herb. Assumes tree as default."
 
 @doc """ 
 

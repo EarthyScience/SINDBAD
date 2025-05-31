@@ -33,7 +33,7 @@ using Sindbad.Models
 
 # Define a new model
 abstract type MyModel <: LandEcosystem end
-purpose(::Type{MyModel}) = "Description of my model"
+purpose(::Type{MyModel}) = "Description of my model."
 
 # Define an approach
 @bounds @describe @units @timescale @with_kw struct MyModel_v1{T} <: MyModel
