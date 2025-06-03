@@ -68,6 +68,7 @@ const manualItems = [
   { text: 'Array Handling', link: '/pages/develop/array_handling' },
   { text: 'Land Utils', link: '/pages/develop/land_utils' },
   { text: 'Experiments', link: '/pages/develop/experiments' },
+  { text: 'Experiment Outputs', link: '/pages/develop/sindbad_outputs' },
   { text: 'Spinup', link: '/pages/develop/spinup' },
   { text: 'Hybrid ML', link: '/pages/develop/hybrid_modeling' },
   { text: 'Optimization Methods', link: '/pages/develop/optimization_method' },
