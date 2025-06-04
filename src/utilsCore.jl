@@ -786,9 +786,9 @@ function showInfo(func, file_name, line_number, info_message; spacer=" ", n_f= 1
     mpi_color = (17, 102, 86)  # Default color for info messages
     if !isnothing(func)
         file_link = " $(nameof(func)) (`$(first(splitext(basename(file_name))))`.jl:$(line_number)) => "
-        display_color = (79, 255, 55)
+        # display_color = (79, 255, 55)
         # display_color = :red
-        # display_color = (74, 192, 60)
+        display_color = (74, 192, 60)
     end
     show_str = "$(func_space)$(file_link)$(info_space)$(info_message)"
 
