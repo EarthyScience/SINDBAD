@@ -1,11 +1,18 @@
 using MLUtils
 using SindbadData.YAXArrays
 using SindbadData.Zarr
+using SindbadML.JLD2
+using GLMakie
+
+# create a new folder for plots
+mkpath(joinpath(@__DIR__, "../../../fluxnet_hybrid_plots/"))
 
 c_read = Cube("examples/data/CovariatesFLUXNET_3.zarr");
 
 ds = open_dataset(joinpath(@__DIR__, "../data/FLUXNET_v2023_12_1D.zarr"))
-ds.properties["PFT"][[98, 99, 100, 137, 138]] .= ["WET", "WET", "GRA", "WET", "SNO"]
+ds.properties["SITE_ID"][[98, 99, 100, 137, 138]]
+# ! update PFTs categories, original ones are not up to date!
+ds.properties["PFT"][[98, 99, 100, 137, 138]] .= ["WET", "WET", "GRA", "WET", "SNO"] 
 updatePFTs = ds.properties["PFT"]
 
 # ? kfolds
@@ -42,8 +49,8 @@ to_remove = [
     # "US-GLE",
     "US-Tw1",
     # "US-Tw2"
-    ]
-not_these = ["RU-Tks", "US-Atq", "US-UMd"]
+    ] # duplicates !
+not_these = ["RU-Tks", "US-Atq", "US-UMd"] # with NaNs
 not_these = vcat(not_these, to_remove)
 new_sites = setdiff(c_read.site, not_these)
 
@@ -88,21 +95,30 @@ end
 
 all_counts, all_keys, all_vals = countmapPFTs(setPFT)
 
-with_theme(theme_light()) do 
+using CairoMakie
+CairoMakie.activate!()
+# GLMakie.activate!()
+
+with_theme(theme_latexfonts()) do 
     px = sortperm(all_keys)
-    fig = Figure(; size=(600, 600))
-    ax = Axis(fig[1,1]; title = "all")
-    barplot!(ax, all_vals[px]; color = 1:13, colormap = :Hiroshige)
-    hlines!(ax, 5)
+    fig = Figure(; size=(1200, 400), fontsize= 24)
+    ax = Axis(fig[1,1]; title = "Total number of sites ($(sum(all_vals))) per Plant Functional Type (PFT)", titlefont=:regular)
+    barplot!(ax, all_vals[px]; color = 1:13, colormap = (:mk_12, 0.35), strokewidth=0.65, width=0.85)
+    # hlines!(ax, 5; color =:black, linewidth=0.85)
     ax.xticks = (1:length(all_keys), all_keys[px])
-    # ax.yticks = 1:10
+    ylims!(ax, 0, 50)
+    ax.yticks = (0:15:50, ["", "", "", ""])
+    text!(ax, Point2f.(1:length(all_keys), all_vals[px]), text=string.(all_vals[px]), align = (:center, :bottom), fontsize=24)
+    hidespines!(ax)
+    hideydecorations!(ax, grid=false)
     fig 
+    save(joinpath(@__DIR__, "../../../fluxnet_hybrid_plots/PFTs_sites_counts.pdf"), fig)
 end
 
 
 # custom rules
 # validation samples (get them from the training split), the validation split coming from kfolds goes to test!
-
+# some times we have additional training samples and depending on the PFT we can use them for validation or not
 function split_to_validation(k)
     if k == "GRA" || k == "ENF"
         return 3
@@ -161,8 +177,8 @@ unfold_training = [vcat(_fold_t_i[:, f]...) for f in 1:5]
 _fold_v_i = [validation_folds[i][f] for i in 1:10, f in 1:5]
 unfold_validation = [vcat(_fold_v_i[:, f]...) for f in 1:5]
 
-using JLD2
-jldsave("nfolds_sites_indices.jld2"; unfold_training=unfold_training, unfold_validation=unfold_validation, unfold_tests=unfold_tests)
+jldsave(joinpath(@__DIR__, "nfolds_sites_indices.jld2");
+    unfold_training=unfold_training, unfold_validation=unfold_validation, unfold_tests=unfold_tests)
 
 _nfold = 1
 xtrain, xval, xtest = unfold_training[_nfold], unfold_validation[_nfold], unfold_tests[_nfold]
