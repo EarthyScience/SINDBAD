@@ -1,15 +1,27 @@
+# activate project's environment and develop the package
+using Pkg
+Pkg.activate("examples/exp_fluxnet_hybrid/sampling")
+Pkg.add(["MLUtils", "YAXArrays", "StatsBase", "Zarr", "JLD2", "GLMakie", "CairoMakie"])
+Pkg.instantiate()
+
+# start using packages
 using MLUtils
-using SindbadData.YAXArrays
-using SindbadData.Zarr
-using SindbadML.JLD2
+using StatsBase
+using YAXArrays
+using Zarr
+using JLD2
 using GLMakie
 
+# get data
+# $examples/data> scp -r lalonso@ruthenia:/Net/Groups/BGI/work_5/scratch/lalonso/CovariatesFLUXNET_3.zarr .
+# @examples/data> scp -r lalonso@ruthenia:/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr .
+
 # create a new folder for plots
-mkpath(joinpath(@__DIR__, "../../../fluxnet_hybrid_plots/"))
+mkpath(joinpath(@__DIR__, "../../../../fluxnet_hybrid_plots/"))
 
-c_read = Cube("examples/data/CovariatesFLUXNET_3.zarr");
+c_read = Cube(joinpath(@__DIR__, "../../data/CovariatesFLUXNET_3.zarr"));
 
-ds = open_dataset(joinpath(@__DIR__, "../data/FLUXNET_v2023_12_1D.zarr"))
+ds = open_dataset(joinpath(@__DIR__, "../../data/FLUXNET_v2023_12_1D.zarr"))
 ds.properties["SITE_ID"][[98, 99, 100, 137, 138]]
 # ! update PFTs categories, original ones are not up to date!
 ds.properties["PFT"][[98, 99, 100, 137, 138]] .= ["WET", "WET", "GRA", "WET", "SNO"] 
@@ -61,7 +73,7 @@ setPFT = updatePFTs[new_sites_index]
 
 x, y, z = splitobs_stratified(at=(0.1,0.82),  y=setPFT)
 # map back to original site names and indices
-using StatsBase
+
 function countmapPFTs(x)
     x_counts = countmap(x)
     x_keys = collect(keys(x_counts))
@@ -103,7 +115,9 @@ with_theme(theme_latexfonts()) do
     px = sortperm(all_keys)
     fig = Figure(; size=(1200, 400), fontsize= 24)
     ax = Axis(fig[1,1]; title = "Total number of sites ($(sum(all_vals))) per Plant Functional Type (PFT)", titlefont=:regular)
-    barplot!(ax, all_vals[px]; color = 1:13, colormap = (:mk_12, 0.35), strokewidth=0.65, width=0.85)
+    # barplot!(ax, all_vals[px]; color = 1:13, colormap = (:mk_12, 0.35), strokewidth=0.65, width=0.85)
+    barplot!(ax, all_vals[px]; color = (:grey25, 0.05), strokewidth=0.65, width=0.85)
+
     # hlines!(ax, 5; color =:black, linewidth=0.85)
     ax.xticks = (1:length(all_keys), all_keys[px])
     ylims!(ax, 0, 50)
@@ -112,7 +126,7 @@ with_theme(theme_latexfonts()) do
     hidespines!(ax)
     hideydecorations!(ax, grid=false)
     fig 
-    save(joinpath(@__DIR__, "../../../fluxnet_hybrid_plots/PFTs_sites_counts.pdf"), fig)
+    save(joinpath(@__DIR__, "../../../../fluxnet_hybrid_plots/PFTs_sites_counts_bw.pdf"), fig)
 end
 
 
