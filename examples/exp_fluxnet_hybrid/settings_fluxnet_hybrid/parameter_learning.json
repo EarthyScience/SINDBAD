@@ -20,7 +20,7 @@
       "n_folds": 10
     },
     "package": "",
-    "fold_path": "./nfolds_sites_indices.jld2",
+    "fold_path": "./sampling/nfolds_sites_indices.jld2",
     "which_fold": 5
   },
   "ml_gradient": {

@@ -73,9 +73,11 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     nbounds = length(constrains)
     lower = [constrains[i][1] for i in 1:nbounds]
     upper = [constrains[i][2] for i in 1:nbounds]
-    
+
     model = [Symbol(supertype(getproperty(Models, m))) for m in model_approach]
-    name_full = [join((model[i], name[i]), ".") for i in 1:nbounds]
+    model_str = string.(model)
+    # name_full = [join((model[i], name[i]), ".") for i in 1:nbounds]
+    name_full = [join((last(split(model_str[i], ".")), name[i]), ".") for i in 1:nbounds]
     approach_func = [getfield(Models, m) for m in model_approach]
     model_prev = model_approach[1]
     m_id = findall(x-> x==model_prev, model_names_list)[1]
@@ -175,7 +177,8 @@ function getOptimizationParametersTable(parameter_table_all::Table, model_parame
         parameter_keys = optimization_parameters
     end
     parameter_list = replaceCommaSeparatedParams(parameter_keys)
-    missing_parameters = filter(x -> !(x in parameter_table_all.name_full), parameter_list)
+    # [print("$p"*"\n") for p in parameter_table_all.name]
+    missing_parameters = filter(x -> !(x in parameter_table_all.name_full), parameter_list) # doing `occursin` here could also work, so that we don't update the funtion getParameters
     if !isempty(missing_parameters)
         error("Model Inconsistency: $([missing_parameters...]) parameter(s) not found in the selected model structure. Check the model structure in model_structure.json to include the parameter(s) or change model_parameters_to_optimize in optimization.json to exclude the parameter(s).")
     end

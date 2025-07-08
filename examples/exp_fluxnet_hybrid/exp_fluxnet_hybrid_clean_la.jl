@@ -28,7 +28,7 @@ using SindbadML.Zygote
 
 ## paths
 file_folds = load(joinpath(@__DIR__, "./sampling/nfolds_sites_indices.jld2"))
-experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
+path_experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment_hybrid.json"
 
 # for remote node
 path_input = "$(getSindbadDataDepot())/FLUXNET_v2023_12_1D.zarr"
@@ -41,7 +41,7 @@ replace_info = Dict(
       "optimization.observations.default_observation.data_path" => path_input,
       );
 
-info = getExperimentInfo(experiment_json; replace_info=replace_info);
+info = getExperimentInfo(path_experiment_json; replace_info=replace_info);
 
 
 selected_models = info.models.forward;

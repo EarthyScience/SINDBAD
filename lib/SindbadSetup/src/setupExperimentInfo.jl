@@ -104,8 +104,7 @@ Saves or skips saving the experiment configuration to a file.
 function saveInfo end
 
 function saveInfo(info, ::DoSaveInfo)
-    info_path = joinpath(info.output.dirs.settings, "info.jld
-    2")
+    info_path = joinpath(info.output.dirs.settings, "info.jld2")
     showInfo(saveInfo, @__FILE__, @__LINE__, "saving info to `$(info_path)`")
     @save info_path info
     return nothing
