@@ -98,7 +98,7 @@ indices_sites_testing = siteNameToID.(sites_testing, Ref(sites_forcing));
 
 indices_sites_batch = indices_sites_training;
 
-xfeatures = loadCovariates(sites_forcing; kind="all", cube_path=path_covariates);
+xfeatures = loadCovariates(sites_forcing; kind="all", cube_path=joinpath(@__DIR__, path_covariates));
 @info "xfeatures: [$(minimum(xfeatures)), $(maximum(xfeatures))]"
 
 nor_names_order = xfeatures.features;
@@ -150,6 +150,7 @@ input_args = (
         sites_batch
 );
 
+using SindbadML.Sindbad
 grads_lib = ForwardDiffGrad();
 grads_lib = FiniteDifferencesGrad();
 grads_lib = FiniteDiffGrad();
