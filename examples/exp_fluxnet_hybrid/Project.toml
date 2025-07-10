@@ -17,7 +17,7 @@ SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [sources]
-Sindbad = {path = "C:\\Users\\lalonso\\Documents\\SINDBAD"}
+Sindbad = {path =  "../../"}
 SindbadData = {path = "../../lib/SindbadData"}
 SindbadML = {path = "../../lib/SindbadML"}
 SindbadMetrics = {path = "../../lib/SindbadMetrics"}
