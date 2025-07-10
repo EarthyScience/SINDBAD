@@ -1,7 +1,8 @@
 # activate project's environment and develop the package
+ENV["JULIA_NUM_PRECOMPILE_TASKS"] = "1" # ! due to raven's threads restrictions, this should NOT be used in production!
 using Pkg
 Pkg.activate("examples/exp_fluxnet_hybrid")
-Pkg.develop(path=pwd())
+# Pkg.develop(path=pwd())
 Pkg.instantiate()
 # start using the package
 using SindbadUtils
@@ -11,16 +12,12 @@ using SindbadData
 using SindbadData.DimensionalData
 using SindbadData.AxisKeys
 using SindbadData.YAXArrays
-# using SindbadTEM
 using SindbadML
 using SindbadML.JLD2
 using ProgressMeter
-# using SindbadOptimization
 using SindbadML.Zygote
 # import AbstractDifferentiation as AD, Zygote
 
-
-# extra includes for covariate and activation functions
 # extra includes for covariate and activation functions
 # include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/load_covariates.jl"))
 # include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/test_activation_functions.jl"))
