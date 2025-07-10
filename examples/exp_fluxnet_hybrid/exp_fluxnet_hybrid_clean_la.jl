@@ -66,12 +66,13 @@ _nfold = Base.parse(Int, ARGS[1]) # 5
 nlayers = Base.parse(Int, ARGS[2]) # 3
 n_neurons = Base.parse(Int, ARGS[3]) # 32
 batch_size = Base.parse(Int, ARGS[4]) # 32
+id_fold = Base.parse(Int, ARGS[5]) # 1
 
 batch_seed = 123 * batch_size * 2
 n_epochs = 500
 
 ## paths
-file_folds = load(joinpath(@__DIR__, "./sampling/nfolds_sites_indices.jld2"))
+file_folds = load(joinpath(@__DIR__, "./sampling/nfolds_sites_indices_$(id_fold).jld2"))
 path_experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment_hybrid.json"
 
 # for remote node

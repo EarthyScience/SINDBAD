@@ -1,7 +1,9 @@
+ENV["JULIA_NUM_PRECOMPILE_TASKS"] = "1" # ! due to raven's threads restrictions, this should NOT be used in production!
 # activate project's environment and develop the package
 using Pkg
 Pkg.activate("examples/exp_fluxnet_hybrid/sampling")
-Pkg.add(["MLUtils", "YAXArrays", "StatsBase", "Zarr", "JLD2", "GLMakie", "CairoMakie"])
+Pkg.add(["MLUtils", "YAXArrays", "StatsBase", "Zarr", "JLD2"])
+# Pkg.add(["MLUtils", "YAXArrays", "StatsBase", "Zarr", "JLD2", "GLMakie", "CairoMakie"])
 Pkg.instantiate()
 
 # start using packages
@@ -10,18 +12,22 @@ using StatsBase
 using YAXArrays
 using Zarr
 using JLD2
-using GLMakie
+# using GLMakie
 
 # get data
 # $examples/data> scp -r lalonso@ruthenia:/Net/Groups/BGI/work_5/scratch/lalonso/CovariatesFLUXNET_3.zarr .
 # @examples/data> scp -r lalonso@ruthenia:/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr .
 
 # create a new folder for plots
-mkpath(joinpath(@__DIR__, "../../../../fluxnet_hybrid_plots/"))
 
-c_read = Cube(joinpath(@__DIR__, "../../data/CovariatesFLUXNET_3.zarr"));
+# mkpath(joinpath(@__DIR__, "../../../../fluxnet_hybrid_plots/"))
 
-ds = open_dataset(joinpath(@__DIR__, "../../data/FLUXNET_v2023_12_1D.zarr"))
+# c_read = Cube(joinpath(@__DIR__, "../../data/CovariatesFLUXNET_3.zarr"));
+c_read = Cube("/raven/u/lalonso/sindbad.jl/examples/data/CovariatesFLUXNET_3.zarr")
+
+# ds = open_dataset(joinpath(@__DIR__, "../../data/FLUXNET_v2023_12_1D.zarr"))
+ds = open_dataset("/raven/u/lalonso/sindbad.jl/examples/data/FLUXNET_v2023_12_1D.zarr")
+
 ds.properties["SITE_ID"][[98, 99, 100, 137, 138]]
 # ! update PFTs categories, original ones are not up to date!
 ds.properties["PFT"][[98, 99, 100, 137, 138]] .= ["WET", "WET", "GRA", "WET", "SNO"] 
@@ -89,45 +95,45 @@ px = sortperm(x_keys)
 pz = sortperm(z_keys)
 py = sortperm(y_keys)
 
-with_theme(theme_light()) do 
-    fig = Figure(; size=(600, 600))
-    ax1 = Axis(fig[1,1]; title = "training")
-    ax2 = Axis(fig[3,1]; title = "test")
-    ax3 = Axis(fig[2,1]; title = "validation")
+# with_theme(theme_light()) do 
+#     fig = Figure(; size=(600, 600))
+#     ax1 = Axis(fig[1,1]; title = "training")
+#     ax2 = Axis(fig[3,1]; title = "test")
+#     ax3 = Axis(fig[2,1]; title = "validation")
 
-    barplot!(ax1, x_vals[px]; color = 1:13, colormap = :Hiroshige)
-    barplot!(ax2, z_vals[pz]; color = 1:length(z_vals), colorrange=(1,13), colormap = :Hiroshige)
-    barplot!(ax3, y_vals[py]; color = 1:length(y_vals), colorrange=(1,13), colormap = :Hiroshige)
+#     barplot!(ax1, x_vals[px]; color = 1:13, colormap = :Hiroshige)
+#     barplot!(ax2, z_vals[pz]; color = 1:length(z_vals), colorrange=(1,13), colormap = :Hiroshige)
+#     barplot!(ax3, y_vals[py]; color = 1:length(y_vals), colorrange=(1,13), colormap = :Hiroshige)
 
-    ax1.xticks = (1:length(x_keys), x_keys[px])
-    ax2.xticks = (1:length(z_keys), z_keys[pz])
-    ax3.xticks = (1:length(y_keys), y_keys[py])
-    fig 
-end
+#     ax1.xticks = (1:length(x_keys), x_keys[px])
+#     ax2.xticks = (1:length(z_keys), z_keys[pz])
+#     ax3.xticks = (1:length(y_keys), y_keys[py])
+#     fig 
+# end
 
 all_counts, all_keys, all_vals = countmapPFTs(setPFT)
 
-using CairoMakie
-CairoMakie.activate!()
-# GLMakie.activate!()
+# using CairoMakie
+# CairoMakie.activate!()
+# # GLMakie.activate!()
 
-with_theme(theme_latexfonts()) do 
-    px = sortperm(all_keys)
-    fig = Figure(; size=(1200, 400), fontsize= 24)
-    ax = Axis(fig[1,1]; title = "Total number of sites ($(sum(all_vals))) per Plant Functional Type (PFT)", titlefont=:regular)
-    # barplot!(ax, all_vals[px]; color = 1:13, colormap = (:mk_12, 0.35), strokewidth=0.65, width=0.85)
-    barplot!(ax, all_vals[px]; color = (:grey25, 0.05), strokewidth=0.65, width=0.85)
+# with_theme(theme_latexfonts()) do 
+#     px = sortperm(all_keys)
+#     fig = Figure(; size=(1200, 400), fontsize= 24)
+#     ax = Axis(fig[1,1]; title = "Total number of sites ($(sum(all_vals))) per Plant Functional Type (PFT)", titlefont=:regular)
+#     # barplot!(ax, all_vals[px]; color = 1:13, colormap = (:mk_12, 0.35), strokewidth=0.65, width=0.85)
+#     barplot!(ax, all_vals[px]; color = (:grey25, 0.05), strokewidth=0.65, width=0.85)
 
-    # hlines!(ax, 5; color =:black, linewidth=0.85)
-    ax.xticks = (1:length(all_keys), all_keys[px])
-    ylims!(ax, 0, 50)
-    ax.yticks = (0:15:50, ["", "", "", ""])
-    text!(ax, Point2f.(1:length(all_keys), all_vals[px]), text=string.(all_vals[px]), align = (:center, :bottom), fontsize=24)
-    hidespines!(ax)
-    hideydecorations!(ax, grid=false)
-    fig 
-    save(joinpath(@__DIR__, "../../../../fluxnet_hybrid_plots/PFTs_sites_counts_bw.pdf"), fig)
-end
+#     # hlines!(ax, 5; color =:black, linewidth=0.85)
+#     ax.xticks = (1:length(all_keys), all_keys[px])
+#     ylims!(ax, 0, 50)
+#     ax.yticks = (0:15:50, ["", "", "", ""])
+#     text!(ax, Point2f.(1:length(all_keys), all_vals[px]), text=string.(all_vals[px]), align = (:center, :bottom), fontsize=24)
+#     hidespines!(ax)
+#     hideydecorations!(ax, grid=false)
+#     fig 
+#     save(joinpath(@__DIR__, "../../../../fluxnet_hybrid_plots/PFTs_sites_counts_bw.pdf"), fig)
+# end
 
 
 # custom rules
@@ -191,8 +197,10 @@ unfold_training = [vcat(_fold_t_i[:, f]...) for f in 1:5]
 _fold_v_i = [validation_folds[i][f] for i in 1:10, f in 1:5]
 unfold_validation = [vcat(_fold_v_i[:, f]...) for f in 1:5]
 
-jldsave(joinpath(@__DIR__, "nfolds_sites_indices.jld2");
-    unfold_training=unfold_training, unfold_validation=unfold_validation, unfold_tests=unfold_tests)
+for id in 0:10
+    jldsave(joinpath(@__DIR__, "nfolds_sites_indices_$(id).jld2");
+        unfold_training=unfold_training, unfold_validation=unfold_validation, unfold_tests=unfold_tests)
+end
 
 _nfold = 1
 xtrain, xval, xtest = unfold_training[_nfold], unfold_validation[_nfold], unfold_tests[_nfold]

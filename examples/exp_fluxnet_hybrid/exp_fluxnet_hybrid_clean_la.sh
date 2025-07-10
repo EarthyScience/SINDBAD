@@ -2,7 +2,7 @@
 #SBATCH --job-name=HyALL_ALL_la
 #SBATCH --ntasks=8
 #SBATCH --cpus-per-task=17
-#SBATCH --mem-per-cpu=500
+#SBATCH --mem-per-cpu=2GB
 #SBATCH --time=14:50:00
 #SBATCH --array=0-9  # 10 jobs
 #SBATCH -o /ptmp/lalonso/slurmOutput/HyALL_ALL_la-%A_%a.out
@@ -33,6 +33,6 @@ nlayer=${nlayers[$n_layer]}
 neuron=${neurons[$n_neuron]}
 batchsize=${batchsizes[$n_batch]}
 
-echo "Running with: nfold=$nfold nlayer=$nlayer neuron=$neuron batchsize=$batchsize"
+echo "Running with: id=$id nfold=$nfold nlayer=$nlayer neuron=$neuron batchsize=$batchsize"
 # Run the program with calculated parameters
-julia --project --heap-size-hint=16G exp_fluxnet_hybrid_clean_la.jl $nfold $nlayer $neuron $batchsize
+julia --project --heap-size-hint=16G exp_fluxnet_hybrid_clean_la.jl $nfold $nlayer $neuron $batchsize $id

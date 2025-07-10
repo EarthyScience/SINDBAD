@@ -33,7 +33,7 @@
     "inline_update": false,
     "run_forward": true,
     "run_optimization": true,
-    "save_info": true,
+    "save_info": false,
     "spinup_TEM": true,
     "store_spinup": false,
     "use_forward_diff": false
