@@ -224,7 +224,8 @@ in_gargs=(;
 );
 
 # checkpoint_path = "$(info.output.dirs.data)/HyALL_ALL_kσ_$(k_σ)_fold_$(_nfold)_nlayers_$(nlayers)_n_neurons_$(n_neurons)_$(n_epochs)epochs_batch_size_$(batch_size)/"
-remote_raven = "/ptmp/lalonso/HybridOutput/HyALL_ALL_kσ_$(k_σ)_fold_$(_nfold)_nlayers_$(nlayers)_n_neurons_$(n_neurons)_$(n_epochs)epochs_batch_size_$(batch_size)/"
+remote_raven = "/ptmp/lalonso/HybridOutputALL/HyALL_ALL_fold_$(_nfold)_nlayers_$(nlayers)_n_neurons_$(n_neurons)_batch_size_$(batch_size)/"
+# remote_raven = "/ptmp/lalonso/HybridOutput/HyALL_ALL_kσ_$(k_σ)_fold_$(_nfold)_nlayers_$(nlayers)_n_neurons_$(n_neurons)_$(n_epochs)epochs_batch_size_$(batch_size)/"
 mkpath(remote_raven)
 checkpoint_path = remote_raven
 

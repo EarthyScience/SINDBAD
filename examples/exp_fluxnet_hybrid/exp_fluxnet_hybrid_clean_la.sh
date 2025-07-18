@@ -3,7 +3,7 @@
 #SBATCH --ntasks=8
 #SBATCH --cpus-per-task=17
 #SBATCH --mem-per-cpu=2GB
-#SBATCH --time=14:50:00
+#SBATCH --time=23:50:00
 #SBATCH --array=0-9  # 10 jobs
 #SBATCH -o /ptmp/lalonso/slurmOutput/HyALL_ALL_la-%A_%a.out
 
