@@ -10,8 +10,7 @@ using TypedTables
 using Flux
 
 # ? load trained neural network
-# path_model = "/Net/Groups/BGI/work_4/scratch/lalonso/analysis/covs_all_fixed_rates/checkpoint/checkpoint_epoch_135.jld2"
-path_model = joinpath(@__DIR__, "../analysis/modelFixK_ALL/checkpoint_epoch_500.jld2")
+path_model = joinpath("/Net/Groups/BGI/work_5/scratch/lalonso/checkpoint_epoch_208.jld2")
 
 trainedNN, lower_bound, upper_bound, ps_names, metadata_global = 
     loadTrainedNN(path_model)
@@ -31,7 +30,7 @@ ds_cubes_in = ds_skip_cube[Variables = At(c_keys)]
 ds_cubes_in = readcubedata(ds_cubes_in)
 
 # ? compute and save new parameters
-ps_path = "/Net/Groups/BGI/work_5/scratch/lalonso/parameters_ALL_0d25.zarr"
+ps_path = "/Net/Groups/BGI/work_5/scratch/lalonso/parameters_ALL_new_0d25.zarr"
 
 out_params = mapParamsAll([cube_PFTs, cube_KG, ds_cubes_in], trainedNN, lower_bound, upper_bound, ps_names, ps_path;
     metadata_global= metadata_global
