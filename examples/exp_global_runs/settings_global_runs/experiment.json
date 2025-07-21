@@ -1,0 +1,89 @@
+{
+  "basics": {
+    "config_files": {
+      "forcing": "forcing.json",
+      "model_structure": "model_structure.json"
+    },
+    "domain": "Global",
+    "name": "Fix_ALL_ALL",
+    "time": {
+      "date_begin": "2002-01-01",
+      "date_end": "2022-12-30",
+      "temporal_resolution": "day",
+      "timesteps_in_day": 1,
+      "timesteps_in_year": 365
+    }
+  },
+  "exe_rules": {
+    "input_array_type": "yax_array",
+    "input_data_backend": "zarr",
+    "land_output_type": "YAXArray",
+    "longtuple_size": 10,
+    "model_array_type": "static_array",
+    "model_number_type": "Float32",
+    "parallelization": "threads",
+    "tolerance": 1.0e-2,
+    "yax_max_cache": 2e9
+  },
+  "flags": {
+    "calc_cost": false,
+    "catch_model_errors": false,
+    "debug_model": false,
+    "filter_nan_pixels": false,
+    "inline_update": false,
+    "run_forward": true,
+    "run_optimization": false,
+    "save_info": true,
+    "spinup_TEM": true,
+    "store_spinup": false,
+    "use_forward_diff": false
+  },
+  "model_output": {
+    "depth_dimensions": {
+      "d_cEco": 8,
+      "d_snow": "snowW",
+      "d_soil": "soilW",
+      "d_tws": "TWS"
+    },
+    "format": "zarr",
+    "output_array_type": "YAXArray",
+    "path": null,
+    "save_single_file": true,
+      "variables": {
+        "diagnostics.c_eco_k_f_soilT": null,
+        "diagnostics.c_eco_k_f_soilW": "d_cEco",
+        "fluxes.auto_respiration": null,
+        "fluxes.evapotranspiration": null,
+        "fluxes.gpp": null,
+        "fluxes.nee": null,
+        "fluxes.transpiration": null,
+        "pools.cEco": "d_cEco",
+        "diagnostics.c_Fire_k": "d_cEco",
+        "diagnostics.c_Fire_cci": "d_cEco",
+        "diagnostics.c_Veg_Mortality": "d_cEco",
+        "diagnostics.c_Fire_Flux": "d_cEco",
+        "states.fAPAR_bare": null
+      }
+    },
+    "model_spinup": {
+      "restart_file": null,
+      "sequence": [
+        {
+          "forcing": "all_years",
+          "n_repeat": 1,
+          "spinup_mode": "all_forward_models"
+        },
+        {
+          "forcing": "day_MSC",
+          "n_repeat": 1,
+          "spinup_mode": "all_forward_models"
+        },
+        {
+          "forcing": "first_year",
+          "n_repeat": 200,
+          "spinup_mode": "all_forward_models"
+        }
+      ]
+    }
+  }
+  
