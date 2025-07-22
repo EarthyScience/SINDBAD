@@ -1,10 +1,8 @@
 export cFireMortality
 
 abstract type cFireMortality <: LandEcosystem end
-
-include("cFireMortality_none.jl")
-include("cFireMortality_vanDerWerf2004.jl")
-
+purpose(::Type{cFireMortality}) = "Disturbance of the carbon cycle pools due to fire."
+includeApproaches(cFireMortality, @__DIR__)
 
 @doc """
 Accounts for carbon emissions due to fire

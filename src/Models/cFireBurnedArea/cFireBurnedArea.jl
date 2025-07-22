@@ -1,9 +1,8 @@
 export cFireBurnedArea
 
 abstract type cFireBurnedArea <: LandEcosystem end
-
-include("cFireBurnedArea_none.jl")
-include("cFireBurnedArea_forcing.jl")
+purpose(::Type{cFireBurnedArea}) = "Disturbance of the carbon cycle pools due to fire."
+includeApproaches(cFireBurnedArea, @__DIR__)
 
 @doc """
 Accounts for carbon emissions due to fire

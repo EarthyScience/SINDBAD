@@ -1,10 +1,8 @@
 export cFireCombustionCompleteness
 
 abstract type cFireCombustionCompleteness <: LandEcosystem end
-
-include("cFireCombustionCompleteness_vanDerWerf2006.jl")
-include("cFireCombustionCompleteness_none.jl")
-
+purpose(::Type{cFireCombustionCompleteness}) = "Disturbance of the carbon cycle pools due to fire, combustion completeness."
+includeApproaches(cFireCombustionCompleteness, @__DIR__)
 
 @doc """
 Accounts for carbon emissions due to fire, combustion completeness.
