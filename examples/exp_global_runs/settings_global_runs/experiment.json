@@ -2,7 +2,8 @@
   "basics": {
     "config_files": {
       "forcing": "forcing.json",
-      "model_structure": "model_structure.json"
+      "model_structure": "model_structure.json",
+      "optimization": "optimization.json"
     },
     "domain": "Global",
     "name": "Fix_ALL_ALL",

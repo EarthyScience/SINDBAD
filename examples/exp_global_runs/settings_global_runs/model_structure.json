@@ -1,6 +1,6 @@
 {
     "default_model": {
-      "order": 0,
+      "implicit_t_repeat": 1,
       "use_in_spinup": true
     },
     "models": {
@@ -41,7 +41,7 @@
         "approach": "GSI"
       },
       "cCycleBase": {
-        "approach": "GSITOOPFT"
+        "approach": "GSI_PlantForm"
       },
       "cCycleConsistency": {
         "approach": "simple"
@@ -63,7 +63,7 @@
         "use_in_spinup": false
       },
       "cCycleDisturbance": {
-        "approach": "WROASTEDTOO",
+        "approach": "WROASTED",
         "use_in_spinup": false
       },
       "cFlow": {
