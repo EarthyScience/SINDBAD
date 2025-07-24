@@ -190,7 +190,9 @@ function getRunTEMInfo(info, forcing)
     upd_tem_helpers = setTupleField(upd_tem_helpers, (:vals, vals))
     upd_tem_helpers = setTupleField(upd_tem_helpers, (:model_helpers, model_helpers))
     upd_tem_helpers = setTupleField(upd_tem_helpers, (:run, tem_helpers.run))
-    upd_tem_helpers = setTupleField(upd_tem_helpers, (:spinup_sequence, getSpinupTemLite(info.spinup.sequence)))
+    # upd_tem_helpers = setTupleField(upd_tem_helpers, (:spinup_sequence, getSpinupTemLite(info.spinup.sequence)))
+    # don't do `getSpinupTemLite` here, but rather later on more inner functions!
+    upd_tem_helpers = setTupleField(upd_tem_helpers, (:spinup_sequence, info.spinup.sequence))
 
     return upd_tem_helpers
 end

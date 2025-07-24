@@ -1,5 +1,8 @@
 export getNumberOfTimeSteps
 export mapCleanData
+export cleanData
+export applyUnitConversion
+export applyQCBound
 export subsetAndProcessYax
 export yaxCubeToKeyedArray
 export toDimStackArray

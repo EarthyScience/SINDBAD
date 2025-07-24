@@ -1,4 +1,6 @@
 # ENV["JULIA_NUM_PRECOMPILE_TASKS"] = "1"
+using Sindbad
+using SindbadUtils
 using SindbadTEM
 using SindbadData
 using SindbadSetup
@@ -32,3 +34,21 @@ tbl_params = model_props["parameter_table"]
 forcing = getForcing(info);
 # ds = open_dataset("/Net/Groups/BGI/work_4/scratch/lalonso/GlobalForcingSet.zarr");
 run_helpers = prepTEM(forcing, info);
+
+tuple_models = getTupleFromLongTuple(info.models.forward);
+
+# newly generated parameters
+ps_path = "/Net/Groups/BGI/work_5/scratch/lalonso/parameters_ALL_new_0d25.zarr"
+
+in_cube_params = Cube(ps_path)
+in_cube_ps = permutedims(in_cube_params, (2,3,1))
+in_cube_ps = readcubedata(in_cube_ps)
+
+yax_max_cache = info.experiment.exe_rules.yax_max_cache
+
+outcubes = SindbadTEM.runTEMYaxParameters(
+    tuple_models,
+    forcing,
+    in_cube_ps,
+    tbl_params,
+    info);
