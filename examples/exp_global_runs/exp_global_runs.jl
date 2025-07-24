@@ -30,6 +30,5 @@ model_props = JLD2.load(path_model)
 tbl_params = model_props["parameter_table"]
 
 forcing = getForcing(info);
-ds = open_dataset("/Net/Groups/BGI/work_4/scratch/lalonso/GlobalForcingSet.zarr");
-
+# ds = open_dataset("/Net/Groups/BGI/work_4/scratch/lalonso/GlobalForcingSet.zarr");
 run_helpers = prepTEM(forcing, info);

@@ -21,11 +21,7 @@ function collectForcingSizes(info, in_yax)
     dnames = Symbol[]
     dsizes = []
     push!(dnames, time_dim_name)
-    if time_dim_name in in_yax
-        push!(dsizes, length(getproperty(in_yax, time_dim_name)))
-    else
-        push!(dsizes, length(DimensionalData.lookup(in_yax, time_dim_name)))
-    end
+    collectTimeSizes!(in_yax, dsizes, time_dim_name)
     for space ∈ info.experiment.data_settings.forcing.data_dimension.space
         push!(dnames, Symbol(space))
         push!(dsizes, length(getproperty(in_yax, Symbol(space))))
@@ -33,6 +29,27 @@ function collectForcingSizes(info, in_yax)
     f_sizes = (; Pair.(dnames, dsizes)...)
     return f_sizes
 end
+
+
+function collectTimeSizes!(incube::YAXArrays.YAXArray, dsizes, time_dim_name)
+    new_size = length(DimensionalData.lookup(incube, time_dim_name))
+    push!(dsizes, new_size)
+    return nothing
+end
+
+function collectTimeSizes!(incube::AxisKeys.KeyedArray, dsizes, time_dim_name)
+    new_size = length(getproperty(incube, time_dim_name))
+    push!(dsizes, new_size)
+    return nothing
+end
+
+"""
+    collectTimeSizes!(incube::YAXArrays.YAXArray, dsizes, time_dim_name)
+    collectTimeSizes!(incube::AxisKeys.KeyedArray, dsizes, time_dim_name)
+
+Collects the size of the time dimension from the input cube and appends it to `dsizes`.
+"""
+function collectTimeSizes! end
 
 """
     collectForcingHelpers(info, f_sizes, f_dimensions)
