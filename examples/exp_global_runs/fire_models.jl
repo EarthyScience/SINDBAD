@@ -1,4 +1,5 @@
-fire_models = (:constants,
+fire_models = (
+    :constants,
     :wCycleBase,
     :rainSnow,
     :rainIntensity,

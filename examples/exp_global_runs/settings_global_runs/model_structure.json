@@ -153,6 +153,9 @@
       "PET": {
         "approach": "Lu2005"
       },
+      "plantForm": {
+        "approach": "PFT"
+      },
       "rainSnow": {
         "approach": "Tair"
       },
@@ -216,6 +219,9 @@
       },
       "wCycleBase": {
         "approach": "simple"
+      },
+      "constants": {
+        "approach": "numbers"
       },
       "WUE": {
         "approach": "expVPDDayCo2"
