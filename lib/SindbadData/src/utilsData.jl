@@ -430,7 +430,7 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Va
     end
 
     #todo mean of the data instead of zero or nan
-    if info.settings.experiment.model_output.output_array_type == "array"
+    if info.experiment.exe_rules.land_output_type == "array"
         vfill = 0.0
         if fill_nan
             vfill = NaN

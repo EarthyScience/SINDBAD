@@ -97,11 +97,7 @@ function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     typed_cubes = getInputArrayOfType(incubes, input_array_type)
     data_ts_type=[]
     for incube in typed_cubes
-        if in(:time, AxisKeys.dimnames(incube))
-            push!(data_ts_type, ForcingWithTime())
-        else
-            push!(data_ts_type, ForcingWithoutTime())
-        end 
+        push!(data_ts_type, collectTypesTiDim(incube))
     end
     data_ts_type = [_dt for _dt in data_ts_type]
     f_types =  Tuple(Tuple.(Pair.(forcing_vars, data_ts_type)))
@@ -113,6 +109,30 @@ function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
         f_types = f_types,
         helpers=f_helpers)
     return forcing
+end
+
+# Fixes bug. Collecting forcing variables `WithTime` was not working for YAXArrays
+# These two functions now dispatch on KeyedArray and YAXArray
+"""
+ collectTypesTiDim(incube::AxisKeys.KeyedArray)
+"""
+function collectTypesTiDim(incube::AxisKeys.KeyedArray)
+    if in(:time, AxisKeys.dimnames(incube))
+        return ForcingWithTime()
+    else
+        return ForcingWithoutTime()
+    end
+end
+
+"""
+ collectTypesTiDim(incube::YAXArrays.YAXArray)
+"""
+function collectTypesTiDim(incube::YAXArrays.YAXArray)
+    if hasdim(incube, Ti) || hasdim(incube, DD.Dim{:Time}) || hasdim(incube, DD.Dim{:time})
+        return ForcingWithTime()
+    else
+        return ForcingWithoutTime()
+    end
 end
 
 
@@ -160,6 +180,7 @@ function getForcing(info::NamedTuple)
 
     default_info = info.experiment.data_settings.forcing.default_forcing
     forcing_vars = keys(forcing_data_settings.variables)
+    @show forcing_vars
     tar_dims = getTargetDimensionOrder(info)
     showInfo(getForcing, @__FILE__, @__LINE__, "getting forcing variables. Units given in forcing settings are not strictly enforced but shown for reference. Bounds are applied after unit conversion...", n_m=1)
     vinfo = nothing
