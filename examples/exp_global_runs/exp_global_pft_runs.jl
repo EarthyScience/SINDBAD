@@ -1,7 +1,4 @@
 # ENV["JULIA_NUM_PRECOMPILE_TASKS"] = "1"
-import Pkg
-Pkg.activate(@__DIR__)
-
 using Distributed
 using SlurmClusterManager # pkg> add https://github.com/lazarusA/SlurmClusterManager.jl.git#la/asynclaunch
 addprocs(SlurmManager())
@@ -28,7 +25,7 @@ end
 
 include("fire_models.jl");
 
-experiment_output = "ALL_025"
+experiment_output = "PFT_025"
 remote_local = "/Net/Groups/BGI/tscratch/lalonso/"
 remote_root = joinpath(remote_local, experiment_output)
 mkpath(remote_root)
@@ -47,7 +44,7 @@ experiment_json = "../exp_global_runs/settings_global_runs/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial);
 
-path_model = joinpath("/Net/Groups/BGI/work_5/scratch/lalonso/checkpoint_epoch_208.jld2")
+path_model = joinpath("/Net/Groups/BGI/work_5/scratch/lalonso/checkpoint_epoch_208.jld2") #! update path!
 model_props = JLD2.load(path_model)
 tbl_params = model_props["parameter_table"]
 
@@ -57,8 +54,8 @@ run_helpers = prepTEM(forcing, info);
 
 tuple_models = getTupleFromLongTuple(info.models.forward);
 
-# ? newly generated parameters
-ps_path = "/Net/Groups/BGI/work_5/scratch/lalonso/parameters_ALL_new_0d25.zarr"
+# ? newly generated parameters with PFTs only as covariates
+ps_path = "/Net/Groups/BGI/work_5/scratch/lalonso/parameters_PFT_new_0d25.zarr"
 
 in_cube_params = Cube(ps_path)
 in_cube_ps = permutedims(in_cube_params, (2,3,1))
