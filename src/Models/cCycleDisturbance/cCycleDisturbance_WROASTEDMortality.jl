@@ -120,27 +120,11 @@ function compute(params::cCycleDisturbance_WROASTEDMortality, forcing, land, hel
     return land
 end
 
+purpose(::Type{cCycleDisturbance_WROASTEDMortality}) = "This is used for vegetation die-off and fire disturbance events. Moves carbon in reserve pool to slow litter pool, and all other carbon pools except reserve pool to their respective carbon flow target pools during disturbance events."
+
 @doc """
-move all vegetation carbon pools except reserve to respective flow target when there is disturbance
 
-# Parameters
-$(SindbadParameters)
-
----
-
-# compute:
-Disturb the carbon cycle pools using cCycleDisturbance_WROASTEDMortality
-
-*Inputs*
- - land.pools.cEco: carbon pool at the end of spinup
-
-*Outputs*
-
-# update
-
-update pools and states in cCycleDisturbance_WROASTEDMortality
-
- - land.pools.cEco
+$(getModelDocString(cCycleDisturbance_WROASTEDMortality))
 
 ---
 

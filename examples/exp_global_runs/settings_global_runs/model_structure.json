@@ -63,7 +63,7 @@
         "use_in_spinup": false
       },
       "cCycleDisturbance": {
-        "approach": "WROASTED",
+        "approach": "WROASTEDMortality",
         "use_in_spinup": false
       },
       "cFlow": {
