@@ -86,5 +86,5 @@ module SindbadML
     include("siteLosses.jl")
     include("oneHots.jl")
     include("loadCovariates.jl")
-
+    include("mapParams.jl")
 end

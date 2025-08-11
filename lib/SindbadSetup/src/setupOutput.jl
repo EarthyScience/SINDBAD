@@ -255,8 +255,9 @@ Saves a copy of the experiment settings to the output folder.
 function saveExperimentSettings(info)
     sindbad_experiment = info.temp.experiment.dirs.sindbad_experiment
     showInfo(saveExperimentSettings, @__FILE__, @__LINE__, "saving Experiment JSON Settings to : $(info.output.dirs.settings)")
+    destination_experiment_file = last(split(last(split(sindbad_experiment, path_separator)), "/"))
     cp(sindbad_experiment,
-        joinpath(info.output.dirs.settings, split(sindbad_experiment, path_separator)[end]);
+        joinpath(info.output.dirs.settings, destination_experiment_file);
         force=true)
     for k ∈ keys(info.settings.experiment.basics.config_files)
         v = getfield(info.settings.experiment.basics.config_files, k)

@@ -43,6 +43,7 @@ module SindbadData
    using AxisKeys: KeyedArray, AxisKeys
    using FillArrays
    using DimensionalData
+   using DimensionalData: DimensionalData as DD
    using NCDatasets
    @reexport using NetCDF
    @reexport using YAXArrays
