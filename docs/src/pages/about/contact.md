@@ -13,7 +13,7 @@ Germany
 ```
 
 
-SINDBAD Development Team <sindbad@bgc-jena.mpg.de>
+[SINDBAD Development Team](mailto:sindbad@bgc-jena.mpg.de)
 
 
-Get updates and news by subscribing to the [SINDBAD mailing list](https://mail.bgc-jena.mpg.de/mailman/listinfo/sindbad-news)
+Get updates and news by subscribing to the [SINDBAD mailing list](mailto:sindbad-news-join@bgc-jena.mpg.de)
