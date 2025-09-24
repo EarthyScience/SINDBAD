@@ -76,7 +76,6 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
 
     model = [Symbol(supertype(getproperty(Models, m))) for m in model_approach]
     model_str = string.(model)
-    # name_full = [join((model[i], name[i]), ".") for i in 1:nbounds]
     name_full = [join((last(split(model_str[i], ".")), name[i]), ".") for i in 1:nbounds]
     approach_func = [getfield(Models, m) for m in model_approach]
     model_prev = model_approach[1]
