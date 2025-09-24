@@ -81,7 +81,7 @@ module SindbadML
     include("loss.jl")
     include("prepHybrid.jl")
     include("mlGradient.jl")
-    include("mlTraining.jl")
+    include("trainML.jl")
     include("neuralNetwork.jl")
     include("siteLosses.jl")
     include("oneHots.jl")
