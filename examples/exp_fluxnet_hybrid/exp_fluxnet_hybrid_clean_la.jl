@@ -86,6 +86,8 @@ replace_info = Dict()
 replace_info = Dict(
       "forcing.default_forcing.data_path" => path_input,
       "optimization.observations.default_observation.data_path" => path_input,
+      # TODO:
+
       );
 
 info = getExperimentInfo(path_experiment_json; replace_info=replace_info);

@@ -1,10 +1,10 @@
-ENV["JULIA_NUM_PRECOMPILE_TASKS"] = "1" # ! due to raven's threads restrictions, this should NOT be used in production!
-# activate project's environment and develop the package
-using Pkg
-Pkg.activate("examples/exp_fluxnet_hybrid/sampling")
-Pkg.add(["MLUtils", "YAXArrays", "StatsBase", "Zarr", "JLD2"])
-# Pkg.add(["MLUtils", "YAXArrays", "StatsBase", "Zarr", "JLD2", "GLMakie", "CairoMakie"])
-Pkg.instantiate()
+# ENV["JULIA_NUM_PRECOMPILE_TASKS"] = "1" # ! due to raven's threads restrictions, this should NOT be used in production!
+# # activate project's environment and develop the package
+# using Pkg
+# Pkg.activate("examples/exp_fluxnet_hybrid/sampling")
+# Pkg.add(["MLUtils", "YAXArrays", "StatsBase", "Zarr", "JLD2"])
+# # Pkg.add(["MLUtils", "YAXArrays", "StatsBase", "Zarr", "JLD2", "GLMakie", "CairoMakie"])
+# Pkg.instantiate()
 
 # start using packages
 using MLUtils
@@ -23,10 +23,11 @@ using JLD2
 # mkpath(joinpath(@__DIR__, "../../../../fluxnet_hybrid_plots/"))
 
 # c_read = Cube(joinpath(@__DIR__, "../../data/CovariatesFLUXNET_3.zarr"));
-c_read = Cube("/raven/u/lalonso/sindbad.jl/examples/data/CovariatesFLUXNET_3.zarr")
-
+# c_read = Cube("/raven/u/lalonso/sindbad.jl/examples/data/CovariatesFLUXNET_3.zarr")
+c_read = Cube("/Net/Groups/BGI/work_5/scratch/lalonso/CovariatesFLUXNET_3.zarr")
 # ds = open_dataset(joinpath(@__DIR__, "../../data/FLUXNET_v2023_12_1D.zarr"))
-ds = open_dataset("/raven/u/lalonso/sindbad.jl/examples/data/FLUXNET_v2023_12_1D.zarr")
+# ds = open_dataset("/raven/u/lalonso/sindbad.jl/examples/data/FLUXNET_v2023_12_1D.zarr")
+ds = open_dataset("/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr")
 
 ds.properties["SITE_ID"][[98, 99, 100, 137, 138]]
 # ! update PFTs categories, original ones are not up to date!
