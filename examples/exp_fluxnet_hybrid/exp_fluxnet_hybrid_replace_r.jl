@@ -8,6 +8,7 @@ using SindbadML.Flux
 using ProgressMeter
 
 # TODO: update these in replace_info!
+# TODO: proper attribution of trainML file!
 # load folds # $nfold $nlayer $neuron $batchsize
 # _nfold = Base.parse(Int, ARGS[1]) # 5
 # nlayers = Base.parse(Int, ARGS[2]) # 3
