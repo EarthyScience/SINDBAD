@@ -1,9 +1,11 @@
 [deps]
 CMAEvolutionStrategy = "8d3b24bd-414e-49e0-94fb-163cc3a3e411"
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 GCMAES = "4aa9d100-eb0f-11e8-15f1-25748831eb3b"
-GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
+MLUtils = "f1d291b0-491e-4a28-83b9-f70985020b54"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 SindbadData = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
 SindbadML = "eb1d8004-2d42-4eef-b369-ed0645c101e8"
@@ -12,14 +14,26 @@ SindbadOptimization = "64fff8bd-0c13-402c-aa96-b97d0bc3655c"
 SindbadSetup = "2b7f2987-8a1e-48b4-8a02-cc9e7c4eeb1c"
 SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
 SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
+SlurmClusterManager = "c82cd089-7bf7-41d7-976b-6b5d413cbe0a"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
-[sources]
-Sindbad = {path = "../.."}
-SindbadData = {path = "../../lib/SindbadData"}
-SindbadML = {path = "../../lib/SindbadML"}
-SindbadMetrics = {path = "../../lib/SindbadMetrics"}
-SindbadOptimization = {path = "../../lib/SindbadOptimization"}
-SindbadSetup = {path = "../../lib/SindbadSetup"}
-SindbadTEM = {path = "../../lib/SindbadTEM"}
-SindbadUtils = {path = "../../lib/SindbadUtils"}
+[sources.Sindbad]
+path = "../../"
+
+[sources.SindbadData]
+path = "../../lib/SindbadData"
+
+[sources.SindbadML]
+path = "../../lib/SindbadML"
+
+[sources.SindbadMetrics]
+path = "../../lib/SindbadMetrics"
+
+[sources.SindbadSetup]
+path = "../../lib/SindbadSetup"
+
+[sources.SindbadTEM]
+path = "../../lib/SindbadTEM"
+
+[sources.SindbadUtils]
+path = "../../lib/SindbadUtils"

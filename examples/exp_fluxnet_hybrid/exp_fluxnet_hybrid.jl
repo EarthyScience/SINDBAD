@@ -1,3 +1,14 @@
+# activate project's environment and develop the package
+using Pkg
+Pkg.activate("examples/exp_fluxnet_hybrid")
+Pkg.develop(path=pwd())
+Pkg.instantiate()
+
+# get data
+# $examples/data> scp -r lalonso@ruthenia:/Net/Groups/BGI/work_5/scratch/lalonso/CovariatesFLUXNET_3.zarr .
+# @examples/data> scp -r lalonso@ruthenia:/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr .
+
+# start using the package
 using SindbadData
 using SindbadData.DimensionalData
 using SindbadData.AxisKeys
@@ -7,7 +18,7 @@ using SindbadML
 using SindbadML.JLD2
 using ProgressMeter
 using SindbadOptimization
-include("load_covariates.jl")
+# include("load_covariates.jl")
 
 # load folds # $nfold $nlayer $neuron $batchsize
 _nfold = 5 #Base.parse(Int, ARGS[1])

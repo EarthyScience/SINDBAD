@@ -255,6 +255,7 @@ Saves a copy of the experiment settings to the output folder.
 function saveExperimentSettings(info)
     sindbad_experiment = info.temp.experiment.dirs.sindbad_experiment
     showInfo(saveExperimentSettings, @__FILE__, @__LINE__, "saving Experiment JSON Settings to : $(info.output.dirs.settings)")
+    mkpath(dirname(joinpath(info.output.dirs.settings, split(sindbad_experiment, path_separator)[end]))) # create output directory if it does not exist
     cp(sindbad_experiment,
         joinpath(info.output.dirs.settings, split(sindbad_experiment, path_separator)[end]);
         force=true)

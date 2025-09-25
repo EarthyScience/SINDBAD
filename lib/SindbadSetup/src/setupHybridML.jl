@@ -151,7 +151,6 @@ function setHybridInfo(info::NamedTuple)
 
     info = setTupleSubfield(info, :hybrid, (:replace_value_for_gradient, info.temp.helpers.numbers.num_type(replace_value_for_gradient)))
 
-
     covariates_path = getAbsDataPath(info.temp, info.settings.hybrid.covariates.path)
     covariates = (; path=covariates_path, variables=info.settings.hybrid.covariates.variables)
     info = setTupleSubfield(info, :hybrid, (:covariates, covariates))
