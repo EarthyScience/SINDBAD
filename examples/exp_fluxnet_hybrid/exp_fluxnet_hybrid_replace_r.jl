@@ -10,11 +10,11 @@ using ProgressMeter
 # TODO: update these in replace_info!
 # TODO: proper attribution of trainML file!
 # load folds # $nfold $nlayer $neuron $batchsize
-# _nfold = Base.parse(Int, ARGS[1]) # 5
-# nlayers = Base.parse(Int, ARGS[2]) # 3
-# n_neurons = Base.parse(Int, ARGS[3]) # 32
-# batch_size = Base.parse(Int, ARGS[4]) # 32
-# id_fold = Base.parse(Int, ARGS[5]) # 1
+_nfold = 5 # Base.parse(Int, ARGS[1]) # 5
+nlayers = 3 # Base.parse(Int, ARGS[2]) # 3
+n_neurons = 32 # Base.parse(Int, ARGS[3]) # 32
+batch_size = 32 # Base.parse(Int, ARGS[4]) # 32
+id_fold = 1 #  Base.parse(Int, ARGS[5]) # 1
 
 
 path_experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment_hybrid.json"
@@ -28,9 +28,11 @@ replace_info = Dict(
     "forcing.default_forcing.data_path" => path_input,
     "optimization.observations.default_observation.data_path" => path_observation,
     "optimization.optimization_cost_threaded" => false,
-    # "experiment.hybrid.fold.fold_path" => "/",
-    # "experiment.hybrid.fold.which_fold" => 10,
-    # "experiment.model_output.path" => path_output,
+    "hybrid.ml_training.options.batch_size" => batch_size,
+    "hybrid.ml_training.which_fold" => _nfold,
+    # "hybrid.ml_training.fold_path" => "blablabla",
+    "hybrid.ml_model.options.n_layers" => nlayers,
+    "hybrid.ml_model.options.n_neurons" => n_neurons,
 )
 
 info = getExperimentInfo(path_experiment_json; replace_info=replace_info);
