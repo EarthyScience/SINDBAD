@@ -46,25 +46,25 @@ for site_index in 1:205
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "n_repeat" => 1),
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "n_repeat" => 1),
+            Dict("spinup_mode" => "eta_scale_AHCWD", "forcing" => "day_MSC", "n_repeat" => 1),
         ]
     elseif nrepeat_d < 0
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "n_repeat" => 1),
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "n_repeat" => 1),
+            Dict("spinup_mode" => "eta_scale_AHCWD", "forcing" => "day_MSC", "n_repeat" => 1),
         ]
     elseif nrepeat_d == 0
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "n_repeat" => 1),
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "n_repeat" => 1),
+            Dict("spinup_mode" => "eta_scale_A0HCWD", "forcing" => "day_MSC", "n_repeat" => 1),
         ]
     elseif nrepeat_d > 0
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "n_repeat" => 1),
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "n_repeat" => 1),
+            Dict("spinup_mode" => "eta_scale_A0HCWD", "forcing" => "day_MSC", "n_repeat" => 1),
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat_d),
         ]
     else
@@ -87,21 +87,24 @@ for site_index in 1:205
     # forcing_set = "zarr";
     # forcing_config = "forcing_$(forcing_set).json";
     parallelization_lib = "threads"
-    exp_main = "Insitu_v202503"
+    exp_main = "Insitu_v202505_RgPot_LargeK_Reserve_Scale_100K"
 
     opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
     opti_set = (:set1, :set3, :set9)
-    opti_set = (:set9,)
-    opti_cost = ("NSE", "NNSE")
     optimize_it = true;
-    o_set = :set3
+    opti_set = (:set1, :set3)
+    opti_set = (:set1, )
+    o_set = :set1
+
+    opti_cost = ("NNSE",)
+    # opti_cost = ("NSE", "NNSE")
     o_cost = "NNSE"
     for o_set in opti_set
         for o_cost in opti_cost
             path_output = "/Net/Groups/BGI/tscratch/skoirala/$(exp_main)/$(forcing_set)/$(o_set)"
             exp_name = "$(exp_main)_$(forcing_set)_$(o_set)_$(o_cost)"
 
-            params_file = joinpath(path_output, "$(domain)_$(exp_name)", "optimization", "$(exp_name)_$(domain)_model_parameters_to_optimize.csv")
+            params_file = joinpath(path_output, "$(domain)_$(exp_name)", "optimization", "$(exp_name)_$(domain)_model_parameters_optimized.csv")
             replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
                 # "experiment.basics.config_files.forcing" => forcing_config,
                 "experiment.basics.config_files.optimization" => "optimization_$(o_cost).json",
@@ -117,23 +120,26 @@ for site_index in 1:205
                 "experiment.flags.debug_model" => false,
                 "experiment.model_spinup.sequence" => sequence,
                 "forcing.default_forcing.data_path" => path_input,
-                "forcing.subset.site" => [site_index, site_index],
+                "forcing.subset.site" => [site_index],
                 "experiment.model_output.path" => path_output,
                 "experiment.exe_rules.parallelization" => parallelization_lib,
                 "optimization.optimization_cost_method" => "CostModelObsMT",
                 "optimization.optimization_cost_threaded" => true,
-                "optimization.parameter_scaling" => "scale_bounds",
+                "optimization.optimization_parameter_scaling" => "scale_bounds",
                 "optimization.algorithm_optimization" => "CMAEvolutionStrategy_CMAES_fn_insitu.json",
                 "optimization.observations.default_observation.data_path" => path_observation,
                 "optimization.observational_constraints" => opti_sets[o_set],)
 
+            replace_info["experiment.basics.config_files.model_structure"] = "model_structure_PF_largeK_Scale.json";
+            replace_info["experiment.basics.config_files.optimization"] = "optimization_PF.json";
+        
             if isfile(params_file)
                 replace_info["experiment.basics.config_files.parameters"] = params_file
                 println("$(site_index): File $(params_file) exists, and hence will run the experiment with optimized parameters....")
             else
                 println("$(site_index): File $(params_file) does not exist, and hence cannot run the experiment with optimized parameters. Running with default.")
+                continue
             end
-
 
             out_forw = runExperimentForward(experiment_json; replace_info=replace_info, log_level=:error);
 
