@@ -148,7 +148,7 @@ for k_σ ∈ k_σs
     in_gargs=(;
         train_refs = (; sites_training, indices_sites_training, xfeatures, tbl_params, batch_size, chunk_size, metadata_global),
         test_val_refs = (; sites_validation, indices_sites_validation, sites_testing, indices_sites_testing),
-        total_constraints = length(info.optimization.observational_constraints),
+        total_constraints = length(info.optimization.cost_options.variable),
         forward_args,
         loss_fargs = (lossSite, getInnerArgs)
     );

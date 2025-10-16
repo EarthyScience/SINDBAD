@@ -21,7 +21,7 @@ function compute(params::gppVPD_Maekelae2008, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppVPD_Maekelae2008}) = "calculate the VPD stress on gpp_potential based on Maekelae2008 [eqn 5]"
+purpose(::Type{gppVPD_Maekelae2008}) = "VPD stress on GPP potential based on Maekelae (2008)."
 
 @doc """
 

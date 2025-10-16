@@ -2,7 +2,7 @@ export cCycleDisturbance
 
 abstract type cCycleDisturbance <: LandEcosystem end
 
-purpose(::Type{cCycleDisturbance}) = "Disturb the carbon cycle pools"
+purpose(::Type{cCycleDisturbance}) = "Disturbance of the carbon cycle pools."
 
 includeApproaches(cCycleDisturbance, @__DIR__)
 

@@ -2,7 +2,7 @@ export treeFraction
 
 abstract type treeFraction <: LandEcosystem end
 
-purpose(::Type{treeFraction}) = "Fractional coverage of trees"
+purpose(::Type{treeFraction}) = "Tree cover fraction."
 
 includeApproaches(treeFraction, @__DIR__)
 

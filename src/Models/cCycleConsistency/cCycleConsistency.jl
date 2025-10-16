@@ -2,7 +2,7 @@ export cCycleConsistency
 
 abstract type cCycleConsistency <: LandEcosystem end
 
-purpose(::Type{cCycleConsistency}) = "Consistency checks on the c allocation and transfers between pools"
+purpose(::Type{cCycleConsistency}) = "Consistency and sanity checks in carbon allocation and transfers."
 
 includeApproaches(cCycleConsistency, @__DIR__)
 

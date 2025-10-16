@@ -42,7 +42,7 @@ replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01"
 # info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 # forcing = getForcing(info);
 # run_helpers = prepTEM(forcing, info);
-# @time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
+# @time runTEM!(run_helpers.space_selected_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 

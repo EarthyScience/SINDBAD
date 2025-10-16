@@ -22,7 +22,7 @@ function compute(params::gppVPD_MOD17, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppVPD_MOD17}) = "VPD stress on gpp_potential based on MOD17 model"
+purpose(::Type{gppVPD_MOD17}) = "VPD stress on GPP potential based on the MOD17 model."
 
 @doc """
 

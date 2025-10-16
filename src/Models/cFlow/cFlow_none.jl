@@ -20,7 +20,7 @@ function define(params::cFlow_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cFlow_none}) = "set transfer between pools to 0 [i.e. nothing is transfered] set c*giver & c*taker matrices to [] get the transfer matrix transfers"
+purpose(::Type{cFlow_none}) = "Sets carbon transfers between pools to 0 (no transfer); sets c_giver and c_taker matrices to empty; retrieves the transfer matrix."
 
 @doc """
 

@@ -12,7 +12,7 @@ function define(params::sublimation_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{sublimation_none}) = "sets the snow sublimation to zero"
+purpose(::Type{sublimation_none}) = "Sets snow sublimation to 0."
 
 @doc """
 

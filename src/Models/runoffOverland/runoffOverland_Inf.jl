@@ -15,7 +15,7 @@ function compute(params::runoffOverland_Inf, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffOverland_Inf}) = "## assumes overland flow to be infiltration excess runoff"
+purpose(::Type{runoffOverland_Inf}) = "Overland flow due to infiltration excess runoff."
 
 @doc """
 

@@ -68,11 +68,7 @@ function precompute(params::cAllocation_fixed, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocation_fixed}) = """
-Compute the fraction of net primary production (NPP) allocated to different plant organs with fixed allocation parameters. 
-The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree). 
-Root allocation is further divided into fine (cf2Root) and coarse roots (cf2RootCoarse) according to the frac_fine_to_coarse parameter.
-"""
+purpose(::Type{cAllocation_fixed}) = "Sets carbon allocation to each pool using fixed allocation parameters."
 
 @doc """
 

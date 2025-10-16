@@ -13,7 +13,7 @@ function compute(params::fAPAR_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{fAPAR_forcing}) = "sets land.states.fAPAR from forcing"
+purpose(::Type{fAPAR_forcing}) = "Gets fAPAR from forcing data."
 
 @doc """
 

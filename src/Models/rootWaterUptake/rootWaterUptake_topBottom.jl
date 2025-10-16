@@ -44,7 +44,7 @@ function compute(params::rootWaterUptake_topBottom, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{rootWaterUptake_topBottom}) = "rootUptake from each of the soil layer from top to bottom using all water in each layer"
+purpose(::Type{rootWaterUptake_topBottom}) = "Root uptake from each soil layer from top to bottom, using maximul available water in each layer."
 
 @doc """
 

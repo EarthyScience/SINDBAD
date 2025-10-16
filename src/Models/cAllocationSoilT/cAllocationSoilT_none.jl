@@ -12,7 +12,7 @@ function define(params::cAllocationSoilT_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationSoilT_none}) = "sets the temperature effect on allocation to one (no effect)"
+purpose(::Type{cAllocationSoilT_none}) = "Sets the temperature effect on allocation to 1 (no effect)."
 
 @doc """
 

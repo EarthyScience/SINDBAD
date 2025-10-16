@@ -58,7 +58,7 @@ function precompute(params::plantForm_PFT, forcing, land, helpers)
 	return land
 end
 
-purpose(::Type{plantForm_PFT}) = "get the plant form based on PFT"
+purpose(::Type{plantForm_PFT}) = "Differentiate plant form based on PFT."
 
 @doc """ 
 

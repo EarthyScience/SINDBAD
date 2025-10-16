@@ -29,7 +29,7 @@ function compute(params::interception_fAPAR, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{interception_fAPAR}) = "computes canopy interception evaporation as a fraction of fAPAR"
+purpose(::Type{interception_fAPAR}) = "Interception loss as a fraction of fAPAR."
 
 @doc """
 

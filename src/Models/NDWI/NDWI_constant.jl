@@ -18,7 +18,7 @@ function precompute(params::NDWI_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{NDWI_constant}) = "sets NDWI as a constant"
+purpose(::Type{NDWI_constant}) = "Sets NDWI as a constant value."
 
 @doc """
 

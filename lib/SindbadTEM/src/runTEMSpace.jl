@@ -37,12 +37,12 @@ function coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_
 end
 
 """
-    parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, parallelization_mode::SindbadParallelizationMethod)
+    parallelizeTEM!(space_selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, parallelization_mode::SindbadParallelizationMethod)
 
 Parallelizes the SINDBAD Terrestrial Ecosystem Model (TEM) across multiple locations using the specified parallelization backend.
 
 # Arguments:
-- `selected_models`: A tuple of all models selected in the given model structure.
+- `space_selected_models`: A vector of tuple of all models selected in the given model structure that vary per location.
 - `space_forcing`: A collection of forcing NamedTuples for multiple locations, replicated to avoid data races during parallel execution.
 - `space_spinup_forcing`: A collection of spinup forcing NamedTuples for multiple locations, replicated to avoid data races during parallel execution.
 - `loc_forcing_t`: A forcing NamedTuple for a single location and a single time step.
@@ -79,17 +79,33 @@ parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcin
 """
 function parallelizeTEM! end
 
-function parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::ThreadsParallelization)
+function parallelizeTEM!(space_selected_models::Tuple, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::ThreadsParallelization)
     Threads.@threads for space_index ∈ eachindex(space_forcing)
-        coreTEM!(selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
+        coreTEM!(space_selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
     end
     return nothing
 end
 
-function parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::QbmapParallelization)
+function parallelizeTEM!(space_selected_models::Vector, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::ThreadsParallelization)
+    Threads.@threads for space_index ∈ eachindex(space_forcing)
+        coreTEM!(space_selected_models[space_index], space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
+    end
+    return nothing
+end
+
+function parallelizeTEM!(space_selected_models::Tuple, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::QbmapParallelization)
     space_index = 1
     qbmap(space_forcing) do _
-        coreTEM!(selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
+        coreTEM!(space_selected_models, space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
+        space_index += 1
+    end
+    return nothing
+end
+
+function parallelizeTEM!(space_selected_models::Vector, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, ::QbmapParallelization)
+    space_index = 1
+    qbmap(space_forcing) do _
+        coreTEM!(space_selected_models[space_index], space_forcing[space_index], space_spinup_forcing[space_index], loc_forcing_t, space_output[space_index], space_land[space_index], tem_info)
         space_index += 1
     end
     return nothing
@@ -154,18 +170,18 @@ function runTEM! end
 
 function runTEM!(selected_models, forcing::NamedTuple, info::NamedTuple)
     run_helpers = prepTEM(selected_models, forcing, info)
-    runTEM!(selected_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
+    runTEM!(run_helpers.space_selected_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
     return run_helpers.output_array
 end
 
 function runTEM!(forcing::NamedTuple, info::NamedTuple)
     run_helpers = prepTEM(forcing, info)
-    runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
+    runTEM!(run_helpers.space_selected_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
     return run_helpers.output_array
 end
 
-function runTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info::NamedTuple)
-    parallelizeTEM!(selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, tem_info.run.parallelization)
+function runTEM!(space_selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info::NamedTuple)
+    parallelizeTEM!(space_selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, tem_info.run.parallelization)
     return nothing
 end
 
@@ -225,18 +241,18 @@ end
 
 
 function timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land, forcing_types, model_helpers, output_vars, _, ::DoDebugModel) # debug the models
-    @info "\nforc\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------forcing--------------------------------------------------------------`\n", display_color=(214,39,82))
     @time f_ts = getForcingForTimeStep(loc_forcing, loc_forcing_t, 1, forcing_types)
-    @info "\n-------------\n"
-    @info "\neach model\n"
+    showInfoSeparator()
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------each model--------------------------------------------------------------`\n", display_color=(214,39,82))
     @time land = computeTEM(selected_models, f_ts, land, model_helpers, DoDebugModel())
-    @info "\n-------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------all models--------------------------------------------------------------`\n", display_color=(214,39,82))
     @info "\nall models\n"
     @time land = computeTEM(selected_models, f_ts, land, model_helpers)
-    @info "\n-------------\n"
-    @info "\nset output\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------set output--------------------------------------------------------------`\n", display_color=(214,39,82))
+    @info "\n\n"
     @time setOutputForTimeStep!(loc_output, land, 1, output_vars)
-    @info "\n-------------\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------each model--------------------------------------------------------------`\n", display_color=(214,39,82))
     return nothing
 end
 

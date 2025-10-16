@@ -2,7 +2,7 @@ export plantForm
 
 abstract type plantForm <: LandEcosystem end
 
-purpose(::Type{plantForm}) = "define the plant form of the ecosystem"
+purpose(::Type{plantForm}) = "Plant form of the ecosystem."
 
 includeApproaches(plantForm, @__DIR__)
 

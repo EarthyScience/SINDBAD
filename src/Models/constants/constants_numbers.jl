@@ -15,7 +15,7 @@ function define(params::constants_numbers, forcing, land, helpers)
 	return land
 end
 
-purpose(::Type{constants_numbers}) = "constants of numbers such as 1 to 10"
+purpose(::Type{constants_numbers}) = "Includes constants for numbers such as 1 to 10."
 
 @doc """ 
 

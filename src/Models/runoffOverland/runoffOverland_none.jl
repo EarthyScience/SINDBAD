@@ -13,7 +13,7 @@ function define(params::runoffOverland_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffOverland_none}) = "sets overland runoff to zero"
+purpose(::Type{runoffOverland_none}) = "Sets overland runoff to 0."
 
 @doc """
 

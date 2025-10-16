@@ -91,7 +91,7 @@ function precompute(params::soilWBase_uniform, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{soilWBase_uniform}) = "distributes the soil hydraulic properties for different soil layers assuming an uniform vertical distribution of all soil properties"
+purpose(::Type{soilWBase_uniform}) = "Soil hydraulic properties distributed for different soil layers assuming a uniform vertical distribution."
 
 @doc """
 

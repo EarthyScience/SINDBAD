@@ -2,7 +2,7 @@ export evapotranspiration
 
 abstract type evapotranspiration <: LandEcosystem end
 
-purpose(::Type{evapotranspiration}) = "Calculate the evapotranspiration as a sum of components"
+purpose(::Type{evapotranspiration}) = "Evapotranspiration."
 
 includeApproaches(evapotranspiration, @__DIR__)
 

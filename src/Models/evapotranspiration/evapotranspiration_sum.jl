@@ -32,7 +32,7 @@ function compute(params::evapotranspiration_sum, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{evapotranspiration_sum}) = "calculates evapotranspiration as a sum of all potential components"
+purpose(::Type{evapotranspiration_sum}) = "Evapotranspiration as a sum of all potential components"
 
 @doc """
 

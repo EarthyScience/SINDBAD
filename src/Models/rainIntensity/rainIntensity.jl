@@ -2,7 +2,7 @@ export rainIntensity
 
 abstract type rainIntensity <: LandEcosystem end
 
-purpose(::Type{rainIntensity}) = "Set rainfall intensity"
+purpose(::Type{rainIntensity}) = "Rainfall intensity."
 
 includeApproaches(rainIntensity, @__DIR__)
 

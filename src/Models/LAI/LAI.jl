@@ -2,7 +2,7 @@ export LAI
 
 abstract type LAI <: LandEcosystem end
 
-purpose(::Type{LAI}) = "Leaf area index"
+purpose(::Type{LAI}) = "Leaf Area Index"
 
 includeApproaches(LAI, @__DIR__)
 

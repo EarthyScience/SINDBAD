@@ -87,7 +87,7 @@ Creates a NamedTuple containing forcing data and metadata.
 - Helper information is generated using `collectForcingHelpers`.
 """
 function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
-    @info "getForcing: processing forcing helpers..."
+    showInfo(getForcing, @__FILE__, @__LINE__, "processing forcing helpers...")
     @debug "     ::dimensions::"
     indims = getDataDims.(incubes, Ref(Symbol.(info.experiment.data_settings.forcing.data_dimension.space)))
     @debug "     ::variable names::"
@@ -105,7 +105,7 @@ function createForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     end
     data_ts_type = [_dt for _dt in data_ts_type]
     f_types =  Tuple(Tuple.(Pair.(forcing_vars, data_ts_type)))
-    @info "\n----------------------------------------------\n"
+    showInfoSeparator()
     forcing = (;
         data=typed_cubes,
         dims=indims,
@@ -144,7 +144,7 @@ function getForcing(info::NamedTuple)
     data_path = forcing_data_settings.default_forcing.data_path
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
-        @info "getForcing: default_data_path: $(data_path)"
+        showInfo(getForcing, @__FILE__, @__LINE__, "default_data_path: `$(data_path)`")
         nc_default = loadDataFile(data_path)
     end
     data_backend = getfield(SindbadData, toUpperCaseFirst(info.helpers.run.input_data_backend, "Backend"))()
@@ -161,7 +161,7 @@ function getForcing(info::NamedTuple)
     default_info = info.experiment.data_settings.forcing.default_forcing
     forcing_vars = keys(forcing_data_settings.variables)
     tar_dims = getTargetDimensionOrder(info)
-    @info "getForcing: getting forcing variables..."
+    showInfo(getForcing, @__FILE__, @__LINE__, "getting forcing variables. Units given in forcing settings are not strictly enforced but shown for reference. Bounds are applied after unit conversion...", n_m=1)
     vinfo = nothing
     f_sizes = nothing
     f_dimension = nothing
@@ -172,7 +172,10 @@ function getForcing(info::NamedTuple)
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)
-        @info "      $(k): $(vinfo.source_variable)"
+        v_op = vinfo.additive_unit_conversion ? " + " : " * "
+        v_op = v_op * "$(vinfo.source_to_sindbad_unit)"
+        v_string = "`$(k)` ($(vinfo.sindbad_unit), $(vinfo.bounds)) = <$(vinfo.space_time_type)> `$(vinfo.source_variable)` ($(vinfo.source_unit)) $(v_op)"
+        showInfo(nothing, @__FILE__, @__LINE__, v_string, n_m=4)
         if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
             f_sizes = collectForcingSizes(info, incube)
             f_dimension = getSindbadDims(incube)

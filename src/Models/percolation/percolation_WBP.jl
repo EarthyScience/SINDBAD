@@ -38,7 +38,7 @@ function compute(params::percolation_WBP, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{percolation_WBP}) = "computes the percolation into the soil after the surface runoff process"
+purpose(::Type{percolation_WBP}) = "Percolation as a difference of throughfall and surface runoff loss."
 
 @doc """
 

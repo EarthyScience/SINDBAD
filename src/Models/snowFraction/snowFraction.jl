@@ -2,7 +2,7 @@ export snowFraction
 
 abstract type snowFraction <: LandEcosystem end
 
-purpose(::Type{snowFraction}) = "Calculate snow cover fraction"
+purpose(::Type{snowFraction}) = "Snow cover fraction."
 
 includeApproaches(snowFraction, @__DIR__)
 

@@ -2,7 +2,7 @@ export autoRespiration
 
 abstract type autoRespiration <: LandEcosystem end
 
-purpose(::Type{autoRespiration}) = "estimates autotrophic respiration for growth and maintenance"
+purpose(::Type{autoRespiration}) = "Autotrophic respiration for growth and maintenance."
 
 includeApproaches(autoRespiration, @__DIR__)
 

@@ -39,7 +39,7 @@ function compute(params::evaporation_vegFraction, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{evaporation_vegFraction}) = "calculates the bare soil evaporation from 1-frac_vegetation & PET soil"
+purpose(::Type{evaporation_vegFraction}) = "Bare soil evaporation from the non-vegetated fraction and potential evaporation."
 
 @doc """
 

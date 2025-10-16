@@ -49,7 +49,7 @@ function compute(params::runoffSurface_Orth2013, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffSurface_Orth2013}) = "calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff"
+purpose(::Type{runoffSurface_Orth2013}) = "Surface runoff directly calculated using delay coefficient for the last 60 days based on the Orth et al. (2013) method."
 
 @doc """
 

@@ -48,7 +48,7 @@ function compute(params::rootWaterUptake_proportion, forcing, land, helpers)
 end
 
 
-purpose(::Type{rootWaterUptake_proportion}) = "rootUptake from each soil layer proportional to the relative plant water availability in the layer"
+purpose(::Type{rootWaterUptake_proportion}) = "Root uptake from each soil layer proportional to the relative plant water availability in the layer."
 
 @doc """
 

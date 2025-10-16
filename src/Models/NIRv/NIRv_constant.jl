@@ -18,7 +18,7 @@ function precompute(params::NIRv_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{NIRv_constant}) = "sets NIRv as a constant"
+purpose(::Type{NIRv_constant}) = "Sets NIRv as a constant value."
 
 @doc """
 

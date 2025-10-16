@@ -22,7 +22,7 @@ function compute(params::cTauSoilT_Q10, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cTauSoilT_Q10}) = "Compute effect of temperature on psoil carbon fluxes"
+purpose(::Type{cTauSoilT_Q10}) = "Effect of soil temperature on decomposition rates using a Q10 function."
 
 @doc """
 

@@ -2,7 +2,7 @@ export rainSnow
 
 abstract type rainSnow <: LandEcosystem end
 
-purpose(::Type{rainSnow}) = "Set/get rain and snow"
+purpose(::Type{rainSnow}) = "Rain and snow partitioning."
 
 includeApproaches(rainSnow, @__DIR__)
 

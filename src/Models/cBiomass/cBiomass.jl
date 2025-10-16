@@ -2,7 +2,7 @@ export cBiomass
 
 abstract type cBiomass <: LandEcosystem end
 
-purpose(::Type{cBiomass}) = "Compute aboveground_biomass"
+purpose(::Type{cBiomass}) = "Computes aboveground biomass (AGB)."
 
 includeApproaches(cBiomass, @__DIR__)
 

@@ -66,7 +66,7 @@ function compute(params::cCycleBase_CASA, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cCycleBase_CASA}) = "Compute carbon to nitrogen ratio & base turnover rates"
+purpose(::Type{cCycleBase_CASA}) = "Structure and properties of the carbon cycle components used in the CASA approach."
 
 @doc """
 

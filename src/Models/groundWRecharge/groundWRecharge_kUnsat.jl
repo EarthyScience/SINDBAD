@@ -27,7 +27,7 @@ function compute(params::groundWRecharge_kUnsat, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{groundWRecharge_kUnsat}) = "GW recharge as the unsaturated hydraulic conductivity of the lowermost soil layer"
+purpose(::Type{groundWRecharge_kUnsat}) = "Groundwater recharge as the unsaturated hydraulic conductivity of the lowermost soil layer."
 
 @doc """
 

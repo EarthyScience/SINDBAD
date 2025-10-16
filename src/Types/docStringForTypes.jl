@@ -1207,7 +1207,7 @@ Abstract type for types in machine learning related methods in SINDBAD
 
 ## Available methods/subtypes:
 
- -  `GradType`: Abstract type for automatic differentiation or finite differences for gradient calculations 
+ -  `MLGradType`: Abstract type for automatic differentiation or finite differences for gradient calculations 
      -  `EnzymeGrad`: Use Enzyme.jl for automatic differentiation 
      -  `FiniteDiffGrad`: Use FiniteDiff.jl for finite difference calculations 
      -  `FiniteDifferencesGrad`: Use FiniteDifferences.jl for finite difference calculations 
@@ -1222,13 +1222,13 @@ Sindbad.Types.MLTypes
 
 @doc """
 
-# GradType
+# MLGradType
 
 Abstract type for automatic differentiation or finite differences for gradient calculations
 
 ## Type Hierarchy
 
-```GradType <: MLTypes <: SindbadTypes <: Any```
+```MLGradType <: MLTypes <: SindbadTypes <: Any```
 
 -----
 
@@ -1246,7 +1246,7 @@ Abstract type for automatic differentiation or finite differences for gradient c
 
 
 """
-Sindbad.Types.GradType
+Sindbad.Types.MLGradType
 
 @doc """
 
@@ -1256,7 +1256,7 @@ Use Enzyme.jl for automatic differentiation
 
 ## Type Hierarchy
 
-```EnzymeGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
+```EnzymeGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
@@ -1270,7 +1270,7 @@ Use FiniteDiff.jl for finite difference calculations
 
 ## Type Hierarchy
 
-```FiniteDiffGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
+```FiniteDiffGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
@@ -1284,7 +1284,7 @@ Use FiniteDifferences.jl for finite difference calculations
 
 ## Type Hierarchy
 
-```FiniteDifferencesGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
+```FiniteDifferencesGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
@@ -1298,7 +1298,7 @@ Use ForwardDiff.jl for automatic differentiation
 
 ## Type Hierarchy
 
-```ForwardDiffGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
+```ForwardDiffGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
@@ -1312,7 +1312,7 @@ Use PolyesterForwardDiff.jl for automatic differentiation
 
 ## Type Hierarchy
 
-```PolyesterForwardDiffGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
+```PolyesterForwardDiffGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
@@ -1326,7 +1326,7 @@ Use Zygote.jl for automatic differentiation
 
 ## Type Hierarchy
 
-```ZygoteGrad <: GradType <: MLTypes <: SindbadTypes <: Any```
+```ZygoteGrad <: MLGradType <: MLTypes <: SindbadTypes <: Any```
 
 
 """
@@ -3582,4 +3582,252 @@ aggregation to yearly anomalies
 
 """
 Sindbad.Types.TimeYearAnomaly
+
+@doc """
+
+# MLModelType
+
+Abstract type for machine learning models used in SINDBAD
+
+## Type Hierarchy
+
+```MLModelType <: MLTypes <: SindbadTypes <: Any```
+
+-----
+
+# Extended help
+
+## Available methods/subtypes:
+
+ -  `FluxDenseNN`: simple dense neural network model implemented in Flux.jl 
+
+
+
+"""
+Sindbad.Types.MLModelType
+
+@doc """
+
+# FluxDenseNN
+
+simple dense neural network model implemented in Flux.jl
+
+## Type Hierarchy
+
+```FluxDenseNN <: MLModelType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.FluxDenseNN
+
+@doc """
+
+# MLOptimizerType
+
+Abstract type for optimizers used for training ML models in SINDBAD
+
+## Type Hierarchy
+
+```MLOptimizerType <: MLTypes <: SindbadTypes <: Any```
+
+-----
+
+# Extended help
+
+## Available methods/subtypes:
+
+ -  `OptimisersAdam`: Use Optimisers.jl Adam optimizer for training ML models in SINDBAD 
+
+
+
+"""
+Sindbad.Types.MLOptimizerType
+
+@doc """
+
+# OptimisersAdam
+
+Use Optimisers.jl Adam optimizer for training ML models in SINDBAD
+
+## Type Hierarchy
+
+```OptimisersAdam <: MLOptimizerType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.OptimisersAdam
+
+@doc """
+
+# MLTrainingType
+
+Abstract type for training a hybrid algorithm in SINDBAD
+
+## Type Hierarchy
+
+```MLTrainingType <: MLTypes <: SindbadTypes <: Any```
+
+-----
+
+# Extended help
+
+## Available methods/subtypes:
+
+ -  `MixedGradient`: Use a mixed gradient approach for training using gradient from multiple methods and combining them with pullback from zygote 
+
+
+
+"""
+Sindbad.Types.MLTrainingType
+
+@doc """
+
+# MixedGradient
+
+Use a mixed gradient approach for training using gradient from multiple methods and combining them with pullback from zygote
+
+## Type Hierarchy
+
+```MixedGradient <: MLTrainingType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.MixedGradient
+
+@doc """
+
+# CalcFoldFromSplit
+
+Use a split of the data to calculate the folds for cross-validation. The default wat to calculate the folds is by splitting the data into k-folds. In this case, the split is done on the go based on the values given in ml_training.split_ratios and n_folds.
+
+## Type Hierarchy
+
+```CalcFoldFromSplit <: MLTrainingType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.CalcFoldFromSplit
+
+@doc """
+
+# LoadFoldFromFile
+
+Use precalculated data to load the folds for cross-validation. In this case, the data path has to be set under ml_training.fold_path and ml_training.which_fold. The data has to be in the format of a jld2 file with the following structure: /folds/0, /folds/1, /folds/2, ... /folds/n_folds. Each fold has to be a tuple of the form (train_indices, test_indices).
+
+## Type Hierarchy
+
+```LoadFoldFromFile <: MLTrainingType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.LoadFoldFromFile
+
+@doc """
+
+# ActivationType
+
+Abstract type for activation functions used in ML models
+
+## Type Hierarchy
+
+```ActivationType <: MLTypes <: SindbadTypes <: Any```
+
+-----
+
+# Extended help
+
+## Available methods/subtypes:
+
+ -  `FluxRelu`: Use Flux.jl ReLU activation function 
+ -  `FluxSigmoid`: Use Flux.jl Sigmoid activation function 
+ -  `FluxTanh`: Use Flux.jl Tanh activation function 
+
+
+
+"""
+Sindbad.Types.ActivationType
+
+@doc """
+
+# FluxRelu
+
+Use Flux.jl ReLU activation function
+
+## Type Hierarchy
+
+```FluxRelu <: ActivationType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.FluxRelu
+
+@doc """
+
+# FluxSigmoid
+
+Use Flux.jl Sigmoid activation function
+
+## Type Hierarchy
+
+```FluxSigmoid <: ActivationType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.FluxSigmoid
+
+@doc """
+
+# FluxTanh
+
+Use Flux.jl Tanh activation function
+
+## Type Hierarchy
+
+```FluxTanh <: ActivationType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.FluxTanh
+
+@doc """
+
+# LossModelObsML
+
+Loss function using metrics between the predicted model and observation as defined in optimization.json
+
+## Type Hierarchy
+
+```LossModelObsML <: MLTrainingType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.LossModelObsML
+
+@doc """
+
+# CustomSigmoid
+
+Use a custom sigmoid activation function. In this case, the `k_σ` parameter in ml_model sections of the settings is used to control the steepness of the sigmoid function.
+
+## Type Hierarchy
+
+```CustomSigmoid <: ActivationType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.CustomSigmoid
+
+@doc """
+
+# OptimisersDescent
+
+Use Optimisers.jl Descent optimizer for training ML models in SINDBAD
+
+## Type Hierarchy
+
+```OptimisersDescent <: MLOptimizerType <: MLTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Types.OptimisersDescent
 

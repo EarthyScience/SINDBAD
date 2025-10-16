@@ -175,3 +175,61 @@ function plotTimeSeriesDebug(info, opt_dat, def_dat)
     return nothing
 end
 
+
+"""
+    plotTimeSeriesWithObs(out,obs_array,cost_options,info)
+Generate time series plots comparing optimized and default model outputs with observations.
+# Arguments
+- `out_opti`: Optimization output data structure containing model outputs and information
+# Description
+Generates time series plots that compare the optimized and default model outputs with observations. The function iterates over each variable specified in the cost options and creates a separate plot for each one. Each plot displays the observed data as scatter points, along with the default and optimized model outputs as line graphs. Additionally, it includes vertical lines indicating the calculated loss metric values for both the default and optimized models.
+"""
+function plotTimeSeriesWithObs(out,obs_array,cost_options)
+    costOpt = cost_options
+    info    = out.info
+    domain  = info.experiment.basics.domain
+    plots_default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
+
+
+    fig_prefix = joinpath(info.output.dirs.figure, "comparison_time_series_1_" * info.experiment.basics.name * "_" * domain)
+    foreach(costOpt) do var_row
+        v = var_row.variable
+        println("plot time series comparison:: $v")
+        v = (var_row.mod_field, var_row.mod_subfield)
+        vinfo = getVariableInfo(v, info.experiment.basics.temporal_resolution)
+        v = vinfo["standard_name"]
+        lossMetric = var_row.cost_metric
+        loss_name = nameof(typeof(lossMetric))
+        if loss_name in (:NNSEInv, :NSEInv)
+            lossMetric = NSE()
+        end
+        valids = var_row.valids
+        (obs_var, obs_σ, def_var) = getData(out.output, obs_array, var_row)
+        obs_var_TMP = nanmean(obs_var, dims=2)
+
+        # obs_var_TMP = obs_var[:, 1, 1]
+        non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
+        if length(non_nan_index) < 2
+            tspan = 1:length(obs_var_TMP)
+        else
+            tspan = first(non_nan_index):last(non_nan_index)
+        end
+        obs_var = obs_var_TMP[tspan]
+        obs_σ = obs_σ[tspan]
+        # obs_var = obs_var[tspan]
+
+        def_var_TMP = mean(def_var, dims=3)
+        def_var = def_var_TMP[tspan]
+        valids = valids[tspan]
+
+        xdata = [info.helpers.dates.range[tspan]...]
+
+        metr_def = metric(obs_var[valids], obs_σ[valids], def_var[valids], lossMetric)
+
+        plots_plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1plots_cm)
+        plots_plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1plots_cm, legend=:outerbottom, legendcolumns=2, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(domain): $(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))", color=:steelblue2)
+        plots_savefig(fig_prefix * "_$(v).png")
+    end
+
+    return nothing
+end

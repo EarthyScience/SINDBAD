@@ -19,7 +19,7 @@ forcing = getForcing(info);
 GC.gc()
 
 run_helpers = prepTEM(forcing, info);
-@time runTEM!(info.models.forward, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
+@time runTEM!(run_helpers.space_selected_models, run_helpers.space_forcing, run_helpers.space_spinup_forcing, run_helpers.loc_forcing_t, run_helpers.space_output, run_helpers.space_land, run_helpers.tem_info)
 
 ds = forcing.data[1];
 plotdat = run_helpers.output_array;

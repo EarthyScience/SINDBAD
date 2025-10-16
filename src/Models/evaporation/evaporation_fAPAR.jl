@@ -37,7 +37,7 @@ function compute(params::evaporation_fAPAR, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{evaporation_fAPAR}) = "calculates the bare soil evaporation from 1-fAPAR & PET soil"
+purpose(::Type{evaporation_fAPAR}) = "Bare soil evaporation from the non-absorbed fAPAR (as a proxy for vegetation fraction) and potential evaporation."
 
 @doc """
 

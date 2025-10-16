@@ -21,14 +21,18 @@ Loads and sets up the experiment configuration, saving the information and enabl
   4. Sets up a debug error catcher if `catch_model_errors` is enabled.
 """
 function getExperimentInfo(sindbad_experiment::String; replace_info=Dict())
-    @info "getExperimentInfo: load configurations..."
+    replace_info_text = isempty(replace_info) ? "none" : " $(Tuple(keys(replace_info)))"
+    showInfoSeparator()
+    
+    showInfo(getExperimentInfo, @__FILE__, @__LINE__, "loading experiment configurations", n_m=1)
+    showInfo(nothing, @__FILE__, @__LINE__, "→→→    experiment_path: `$(sindbad_experiment)`", n_m=1)
+
+    showInfo(nothing, @__FILE__, @__LINE__, "→→→    replace_info_fields: `$(replace_info_text)`", n_m=1)
     info = getConfiguration(sindbad_experiment; replace_info=deepcopy(replace_info))
 
-    @info "getExperimentInfo: setup experiment..."
     info = setupInfo(info)
     saveInfo(info, info.helpers.run.save_info)
     setDebugErrorCatcher(info.helpers.run.catch_model_errors)
-    @info "\n------------------------------------------------\n"
     return info
 end
 
@@ -56,8 +60,8 @@ Generates global attributes for output cubes, including system and experiment me
 - The function collects system information using Julia's `Sys` module and `versioninfo`.
 """
 function getGlobalAttributesForOutCubes(info)
-    os = Sys.iswindows() ? "Windows" : Sys.isapple() ?
-         "macOS" : Sys.islinux() ? "Linux" : "unknown"
+    os = Sys.iswindows() ? "Windows" : Sys.isapple() ? "macOS" : Sys.islinux() ? "Linux" : "unknown"
+    simulation_by = Sys.iswindows() ? ENV["USERNAME"] : ENV["USER"]
     io = IOBuffer()
     versioninfo(io)
     str = String(take!(io))
@@ -67,7 +71,7 @@ function getGlobalAttributesForOutCubes(info)
     # Pkg.status("Sindbad", io=io)
     # sindbad_version = String(take!(io))
     global_attr = Dict(
-        "simulation_by" => ENV["USER"],
+        "simulation_by" => simulation_by,
         "experiment" => info.temp.experiment.basics.name,
         "domain" => info.temp.experiment.basics.domain,
         "date" => string(Date(now())),
@@ -100,8 +104,9 @@ Saves or skips saving the experiment configuration to a file.
 function saveInfo end
 
 function saveInfo(info, ::DoSaveInfo)
-    @info "  saveInfo: saving info..."
-    @save joinpath(info.output.dirs.settings, "info.jld2") info
+    info_path = joinpath(info.output.dirs.settings, "info.jld2")
+    showInfo(saveInfo, @__FILE__, @__LINE__, "saving info to `$(info_path)`")
+    @save info_path info
     return nothing
 end
 
@@ -127,7 +132,7 @@ Enables/Disables a debug error catcher for the SINDBAD framework. When enabled, 
 function setDebugErrorCatcher end
 
 function setDebugErrorCatcher(::DoCatchModelErrors)
-    @info "  setDebugErrorCatcher: setting error catcher..."
+    showInfo(setDebugErrorCatcher, @__FILE__, @__LINE__, "setting up debug error catcher", n_m=1)
     Sindbad.eval(:(error_catcher = []))
     return nothing
 end

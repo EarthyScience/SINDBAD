@@ -24,7 +24,7 @@ function define(params::cFlowVegProperties_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cFlowVegProperties_none}) = "set transfer between pools to 0 [i.e. nothing is transfered]"
+purpose(::Type{cFlowVegProperties_none}) = "Sets carbon transfers between pools to 0 (no transfer)."
 
 @doc """
 

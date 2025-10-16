@@ -25,7 +25,7 @@ function compute(params::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppDirRadiation_Maekelae2008}) = "light saturation scalar [light effect] on gpp_potential based on Maekelae2008"
+purpose(::Type{gppDirRadiation_Maekelae2008}) = "Light saturation scalar (light effect) on GPP potential based on Maekelae (2008)."
 
 @doc """
 

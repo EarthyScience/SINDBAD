@@ -21,7 +21,7 @@ function compute(params::cAllocationSoilT_Friedlingstein1999, forcing, land, hel
     return land
 end
 
-purpose(::Type{cAllocationSoilT_Friedlingstein1999}) = "partial temperature effect on decomposition/mineralization based on Friedlingstein1999"
+purpose(::Type{cAllocationSoilT_Friedlingstein1999}) = "Calculates the partial temperature effect on decomposition and mineralization based on Friedlingstein et al. (1999)."
 
 @doc """
 

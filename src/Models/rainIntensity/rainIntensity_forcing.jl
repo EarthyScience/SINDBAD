@@ -13,7 +13,7 @@ function compute(params::rainIntensity_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{rainIntensity_forcing}) = "stores the time series of rainfall & snowfall from forcing"
+purpose(::Type{rainIntensity_forcing}) = "Gets rainfall intensity from forcing data."
 
 @doc """
 

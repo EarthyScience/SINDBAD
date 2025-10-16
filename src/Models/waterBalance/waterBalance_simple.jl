@@ -48,7 +48,7 @@ function compute(params::waterBalance_simple, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{waterBalance_simple}) = "check the water balance in every time step"
+purpose(::Type{waterBalance_simple}) = "Simply checks the water balance as P-ET-R-ds/dt."
 
 @doc """
 

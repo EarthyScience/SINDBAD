@@ -24,7 +24,7 @@ function compute(params::gpp_min, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gpp_min}) = "compute the actual GPP with potential scaled by minimum stress scalar of demand & supply for uncoupled model structure [no coupling with transpiration]"
+purpose(::Type{gpp_min}) = "GPP with potential scaled by the minimum stress scalar of demand and supply for uncoupled model structures."
 
 @doc """
 

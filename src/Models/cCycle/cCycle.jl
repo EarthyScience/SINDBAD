@@ -2,7 +2,7 @@ export cCycle
 
 abstract type cCycle <: LandEcosystem end
 
-purpose(::Type{cCycle}) = "Allocate carbon to vegetation components"
+purpose(::Type{cCycle}) = "Compute fluxes and changes (cycling) of carbon pools."
 
 includeApproaches(cCycle, @__DIR__)
 

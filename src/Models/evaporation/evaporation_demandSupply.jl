@@ -36,7 +36,7 @@ function compute(params::evaporation_demandSupply, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{evaporation_demandSupply}) = "calculates the bare soil evaporation from demand-supply limited approach. "
+purpose(::Type{evaporation_demandSupply}) = "Bare soil evaporation using a demand-supply limited approach."
 
 @doc """
 

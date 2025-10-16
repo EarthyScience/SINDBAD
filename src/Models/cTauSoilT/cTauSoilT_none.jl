@@ -13,7 +13,7 @@ function define(params::cTauSoilT_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cTauSoilT_none}) = "set the outputs to ones"
+purpose(::Type{cTauSoilT_none}) = "Sets the effect of soil temperature on decomposition rates to 1 (no temperature effect)."
 
 @doc """
 

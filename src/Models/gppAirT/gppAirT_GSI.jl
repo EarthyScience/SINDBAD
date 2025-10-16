@@ -57,7 +57,7 @@ function compute(params::gppAirT_GSI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppAirT_GSI}) = "temperature stress on gpp_potential based on GSI implementation of LPJ"
+purpose(::Type{gppAirT_GSI}) = "Temperature effect on GPP based on the GSI implementation of LPJ."
 
 @doc """
 

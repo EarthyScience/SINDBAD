@@ -76,7 +76,7 @@ function compute(params::sublimation_GLEAM, forcing, land, helpers)
 end
 
 
-purpose(::Type{sublimation_GLEAM}) = "instantiates the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM"
+purpose(::Type{sublimation_GLEAM}) = "Sublimation using the Priestley-Taylor term following the GLEAM approach."
 
 @doc """
 

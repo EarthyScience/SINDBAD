@@ -17,7 +17,7 @@ function compute(params::gpp_transpirationWUE, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gpp_transpirationWUE}) = "calculate GPP based on transpiration & water use efficiency"
+purpose(::Type{gpp_transpirationWUE}) = "GPP based on transpiration and water use efficiency."
 
 @doc """
 

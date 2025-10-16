@@ -43,7 +43,7 @@ function compute(params::gppSoilW_GSI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppSoilW_GSI}) = "soil moisture stress on gpp_potential based on GSI implementation of LPJ"
+purpose(::Type{gppSoilW_GSI}) = "Soil moisture stress on GPP potential based on the GSI implementation of LPJ."
 
 @doc """
 

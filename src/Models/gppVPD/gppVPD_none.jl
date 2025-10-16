@@ -14,7 +14,7 @@ function define(params::gppVPD_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppVPD_none}) = "sets the VPD stress on gpp_potential to one (no stress)"
+purpose(::Type{gppVPD_none}) = "Sets VPD stress on GPP potential to 1 (no stress)."
 
 @doc """
 

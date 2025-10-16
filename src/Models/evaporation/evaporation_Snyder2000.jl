@@ -72,7 +72,7 @@ function compute(params::evaporation_Snyder2000, forcing, land, helpers)
 end
 
 
-purpose(::Type{evaporation_Snyder2000}) = "calculates the bare soil evaporation using relative drying rate of soil"
+purpose(::Type{evaporation_Snyder2000}) = "Bare soil evaporation using the relative drying rate of soil following Snyder (2000)."
 
 @doc """
 

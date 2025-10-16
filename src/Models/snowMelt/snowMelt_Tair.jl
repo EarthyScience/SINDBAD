@@ -42,7 +42,7 @@ function compute(params::snowMelt_Tair, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{snowMelt_Tair}) = "computes the snow melt term as function of air temperature"
+purpose(::Type{snowMelt_Tair}) = "Snowmelt as a function of air temperature."
 
 @doc """
 

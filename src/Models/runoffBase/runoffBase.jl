@@ -2,7 +2,7 @@ export runoffBase
 
 abstract type runoffBase <: LandEcosystem end
 
-purpose(::Type{runoffBase}) = "Baseflow"
+purpose(::Type{runoffBase}) = "Baseflow."
 
 includeApproaches(runoffBase, @__DIR__)
 

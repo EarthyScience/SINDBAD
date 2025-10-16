@@ -13,7 +13,7 @@ function define(params::cAllocationLAI_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationLAI_none}) = "sets the LAI effect on allocation to one (no effect)"
+purpose(::Type{cAllocationLAI_none}) = "Sets the LAI effect on allocation to 1 (no effect)."
 
 @doc """
 

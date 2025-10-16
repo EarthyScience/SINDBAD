@@ -58,7 +58,7 @@ function compute(params::drainage_dos, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{drainage_dos}) = "downward flow of moisture [drainage] in soil layers based on exponential function of soil moisture degree of saturation"
+purpose(::Type{drainage_dos}) = "Drainage flux based on an exponential function of soil moisture degree of saturation."
 
 @doc """
 

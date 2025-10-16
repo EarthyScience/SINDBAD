@@ -2,7 +2,7 @@ export gppDemand
 
 abstract type gppDemand <: LandEcosystem end
 
-purpose(::Type{gppDemand}) = "Combine effects as multiplicative or minimum"
+purpose(::Type{gppDemand}) = "Combined effect of environmental demand on GPP."
 
 includeApproaches(gppDemand, @__DIR__)
 

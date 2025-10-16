@@ -53,7 +53,7 @@ function compute(params::cFlowVegProperties_CASA, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cFlowVegProperties_CASA}) = "effects of vegetation that change the transfers between carbon pools"
+purpose(::Type{cFlowVegProperties_CASA}) = "Effect of vegetation properties on carbon transfers between pools as modeled in CASA."
 
 @doc """
 

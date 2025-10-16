@@ -22,7 +22,7 @@ function compute(params::transpirationDemand_CASA, forcing, land, helpers)
 end
 
 
-purpose(::Type{transpirationDemand_CASA}) = "calculate the supply limited transpiration as function of volumetric soil content & soil properties; as in the CASA model"
+purpose(::Type{transpirationDemand_CASA}) = "Demand-limited transpiration as a function of volumetric soil content and soil properties, as in the CASA model."
 
 
 @doc """

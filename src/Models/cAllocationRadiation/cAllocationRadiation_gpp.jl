@@ -16,7 +16,7 @@ function compute(params::cAllocationRadiation_gpp, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationRadiation_gpp}) = "radiation effect on allocation = the same for GPP"
+purpose(::Type{cAllocationRadiation_gpp}) = "Sets the radiation effect on allocation equal to that for GPP."
 
 @doc """
 

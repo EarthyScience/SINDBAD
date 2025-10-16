@@ -81,7 +81,7 @@ function compute(params::PET_Lu2005, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{PET_Lu2005}) = "Calculates land.fluxes.PET from the forcing variables"
+purpose(::Type{PET_Lu2005}) = "Calculates PET using Lu et al. (2005) method."
 
 @doc """
 

@@ -38,7 +38,7 @@ function compute(params::cAllocationSoilW_gppGSI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationSoilW_gppGSI}) = "moisture effect on allocation from same for GPP based on GSI approach"
+purpose(::Type{cAllocationSoilW_gppGSI}) = "Calculates the moisture effect on allocation as for GPP using the GSI approach."
 
 @doc """
 

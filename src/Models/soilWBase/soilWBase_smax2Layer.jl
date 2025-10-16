@@ -55,7 +55,7 @@ function compute(params::soilWBase_smax2Layer, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{soilWBase_smax2Layer}) = "defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the model_structure.json based on the older version of the Pre-Tokyo Model"
+purpose(::Type{soilWBase_smax2Layer}) = "Maximum soil water content of two soil layers as fractions of total soil depth, based on the older version of the Pre-Tokyo Model."
 
 @doc """
 

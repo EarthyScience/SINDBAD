@@ -79,7 +79,7 @@ function compute(params::cAllocationTreeFraction_Friedlingstein1999, forcing, la
     return land
 end
 
-purpose(::Type{cAllocationTreeFraction_Friedlingstein1999}) = "adjust the allocation coefficients according to the fraction of trees to herbaceous & fine to coarse root partitioning"
+purpose(::Type{cAllocationTreeFraction_Friedlingstein1999}) = "Adjusts allocation coefficients according to the fraction of trees to herbaceous plants and fine to coarse root partitioning."
 
 @doc """
 

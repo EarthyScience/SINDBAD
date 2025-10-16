@@ -17,7 +17,7 @@ function compute(params::transpiration_demandSupply, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{transpiration_demandSupply}) = "calculate the actual transpiration as the minimum of the supply & demand"
+purpose(::Type{transpiration_demandSupply}) = "Transpiration as the minimum of supply and demand."
 
 @doc """
 

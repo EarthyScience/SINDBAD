@@ -20,7 +20,7 @@ function compute(params::snowFraction_binary, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{snowFraction_binary}) = "compute the fraction of snow cover."
+purpose(::Type{snowFraction_binary}) = "Snow cover fraction using a binary approach."
 
 @doc """
 

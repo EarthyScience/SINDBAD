@@ -2,7 +2,7 @@ export fAPAR
 
 abstract type fAPAR <: LandEcosystem end
 
-purpose(::Type{fAPAR}) = "Fraction of absorbed photosynthetically active radiation"
+purpose(::Type{fAPAR}) = "Fraction of absorbed photosynthetically active radiation."
 
 includeApproaches(fAPAR, @__DIR__)
 

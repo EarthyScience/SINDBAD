@@ -45,7 +45,7 @@ function compute(params::gppDiffRadiation_GSI, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppDiffRadiation_GSI}) = "cloudiness scalar [radiation diffusion] on gpp_potential based on GSI implementation of LPJ"
+purpose(::Type{gppDiffRadiation_GSI}) = "Cloudiness scalar (radiation diffusion) on GPP potential based on the GSI implementation of LPJ."
 
 @doc """
 

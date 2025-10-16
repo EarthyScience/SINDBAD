@@ -2,7 +2,7 @@ export capillaryFlow
 
 abstract type capillaryFlow <: LandEcosystem end
 
-purpose(::Type{capillaryFlow}) = "Flux of water from lower to upper soil layers (upward soil moisture movement)"
+purpose(::Type{capillaryFlow}) = "Capillary flux of water from lower to upper soil layers (upward soil moisture movement)."
 
 includeApproaches(capillaryFlow, @__DIR__)
 

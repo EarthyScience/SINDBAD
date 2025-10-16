@@ -31,7 +31,7 @@ function compute(params::groundWRecharge_fraction, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{groundWRecharge_fraction}) = "GW recharge as a fraction of moisture of the lowermost soil layer"
+purpose(::Type{groundWRecharge_fraction}) = "Groundwater recharge as a fraction of the moisture in the lowermost soil layer."
 
 @doc """
 

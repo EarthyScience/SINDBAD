@@ -166,14 +166,12 @@ function timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land, tem_info
 end
 
 function timeLoopTEM(selected_models, loc_forcing, loc_forcing_t, land, tem_info, ::DoDebugModel) # debug the models
-    @info "\nforc\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------forcing--------------------------------------------------------------`\n", display_color=(214,39,82))
     @time f_ts = getForcingForTimeStep(loc_forcing, loc_forcing_t, 1, tem_info.vals.forcing_types)
-    @info "\n-------------\n"
-    @info "\neach model\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------each model--------------------------------------------------------------`\n", display_color=(214,39,82))
     @time land = computeTEM(selected_models, f_ts, land, tem_info.model_helpers, tem_info.run.debug_model)
-    @info "\n-------------\n"
-    @info "\nall models\n"
+    showInfo(nothing, @__FILE__, @__LINE__, "\n`----------------------------------------all models--------------------------------------------------------------`\n", display_color=(214,39,82))
     @time land = computeTEM(selected_models, f_ts, land, tem_info.model_helpers)
-    @info "\n-------------\n"
+    showInfoSeparator()
     return [land]
 end

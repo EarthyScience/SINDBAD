@@ -6,6 +6,7 @@ version = "0.1.0"
 [deps]
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
 CodeTracking = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
+Crayons = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 FieldMetadata = "bf96fef3-21d2-5d20-8afa-0e7d4c32a885"
@@ -23,6 +24,7 @@ TypedTables = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
 
 [compat]
 Accessors = "0.1.42"
+Crayons = "4.1.1"
 Dates = "1.11.0"
 NaNStatistics = "0.6.50"
 Pkg = "1.10.0"

@@ -44,7 +44,7 @@ function precompute(params::soilTexture_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{soilTexture_forcing}) = "sets the soil texture properties from input"
+purpose(::Type{soilTexture_forcing}) = "Gets Soil texture properties from forcing data."
 
 @doc """
 

@@ -34,7 +34,7 @@ function compute(params::runoffBase_Zhang2008, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffBase_Zhang2008}) = "computes baseflow from a linear ground water storage"
+purpose(::Type{runoffBase_Zhang2008}) = "Baseflow from a linear groundwater storage following Zhang (2008)."
 
 @doc """
 

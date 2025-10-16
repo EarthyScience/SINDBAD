@@ -22,7 +22,7 @@ function compute(params::transpirationSupply_Federer1982, forcing, land, helpers
     return land
 end
 
-purpose(::Type{transpirationSupply_Federer1982}) = "calculate the supply limited transpiration as a function of max rate parameter & avaialable water"
+purpose(::Type{transpirationSupply_Federer1982}) = "Supply-limited transpiration as a function of a maximum rate parameter and available water, following Federer (1982)."
 
 @doc """
 

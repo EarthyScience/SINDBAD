@@ -119,7 +119,7 @@ plotIOModelStructure(info, :compute, [:input, :output])
 
 """
 function plotIOModelStructure(info, which_function=:compute, which_field=[:input, :output])
-    @info "     plotIOModelStructure: plotting IO of $which_function functions in the selected model structure ..."
+    showInfo(plotIOModelStructure, @__FILE__, @__LINE__, "plotting IO model structure for $(which_function) with fields $(which_field)", n_f=4)
 
     in_out_models = getInOutModels(info.models.forward, which_function);
     unique_variables = getAllVariables(in_out_models, which_field)

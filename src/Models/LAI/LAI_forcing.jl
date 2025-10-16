@@ -12,7 +12,7 @@ function compute(params::LAI_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{LAI_forcing}) = "sets land.states.LAI from forcing"
+purpose(::Type{LAI_forcing}) = "Gets LAI from forcing data."
 
 @doc """
 

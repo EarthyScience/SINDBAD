@@ -30,7 +30,7 @@ function compute(params::runoffInfiltrationExcess_Jung, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffInfiltrationExcess_Jung}) = "infiltration excess runoff as a function of rainintensity and vegetated fraction"
+purpose(::Type{runoffInfiltrationExcess_Jung}) = "Infiltration excess runoff as a function of rain intensity and vegetated fraction."
 
 @doc """
 

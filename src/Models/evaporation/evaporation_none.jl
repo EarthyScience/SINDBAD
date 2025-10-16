@@ -13,7 +13,7 @@ function define(params::evaporation_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{evaporation_none}) = "sets the soil evaporation to zero"
+purpose(::Type{evaporation_none}) = "Bare soil evaporation set to 0."
 
 @doc """
 

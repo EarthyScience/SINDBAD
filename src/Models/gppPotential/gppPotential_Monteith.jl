@@ -20,7 +20,7 @@ function compute(params::gppPotential_Monteith, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppPotential_Monteith}) = "set the potential GPP based on radiation use efficiency"
+purpose(::Type{gppPotential_Monteith}) = "Potential GPP based on radiation use efficiency model/concept of Monteith."
 
 @doc """
 

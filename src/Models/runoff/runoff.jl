@@ -2,7 +2,7 @@ export runoff
 
 abstract type runoff <: LandEcosystem end
 
-purpose(::Type{runoff}) = "Calculate the total runoff as a sum of components"
+purpose(::Type{runoff}) = "Total runoff."
 
 includeApproaches(runoff, @__DIR__)
 

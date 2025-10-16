@@ -13,7 +13,7 @@ function compute(params::NIRv_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{NIRv_forcing}) = "sets land.states.NIRv from forcing"
+purpose(::Type{NIRv_forcing}) = "Gets NIRv from forcing data."
 
 @doc """
 

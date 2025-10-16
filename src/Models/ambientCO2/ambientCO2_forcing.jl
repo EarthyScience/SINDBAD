@@ -14,7 +14,7 @@ function compute(params::ambientCO2_forcing, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{ambientCO2_forcing}) = "sets ambient_CO2 from forcing"
+purpose(::Type{ambientCO2_forcing}) = "Gets ambient CO₂ from forcing data."
 
 @doc """
 

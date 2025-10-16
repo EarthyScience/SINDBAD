@@ -14,7 +14,7 @@ function define(params::gppSoilW_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gppSoilW_none}) = "sets the soil moisture stress on gpp_potential to one (no stress)"
+purpose(::Type{gppSoilW_none}) = "Sets soil moisture stress on GPP potential to 1 (no stress)."
 
 @doc """
 

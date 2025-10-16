@@ -310,7 +310,7 @@ function helpPrepTEM end
 
 function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocArray)
 
-    @info "     preparing spatial and tem helpers"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "preparing spatial and tem helpers", n_f=6)
     space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
 
     # generate vals for dispatch of forcing and output
@@ -318,7 +318,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
 
     ## run the model for one time step
-    @info "     model run for one location and time step"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "model run for one location and time step", n_f=6)
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     loc_forcing = getLocData(forcing_nt_array, space_ind[1])
@@ -331,7 +331,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     output_dims = output.dims
 
     # collect local data and create copies
-    @info "     preallocating local, threaded, and spatial data"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "preallocating local, threaded, and spatial data", n_f=6)
     space_forcing = map([space_ind...]) do lsi
         getLocData(forcing_nt_array, lsi)
     end
@@ -345,22 +345,24 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
 
+    space_selected_models = [[selected_models for _ ∈ 1:length(space_ind)]...]
+
     forcing_nt_array = nothing
 
-    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_info)
+    run_helpers = (; space_selected_models, space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars, tem_info)
     return run_helpers
 end
 
 function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocArrayAll)
 
-    @info "     preparing spatial and tem helpers"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "preparing spatial and tem helpers", n_f=6)
     space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTEMInfo(info, forcing);
 
     ## run the model for one time step
-    @info "     model run for one location and time step"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "model run for one location and time step", n_f=6)
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     loc_forcing = getLocData(forcing_nt_array, space_ind[1])
@@ -373,7 +375,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     output_dims, output_array = getOutDimsArrays(info, forcing.helpers)
 
     # collect local data and create copies
-    @info "     preallocating local, threaded, and spatial data"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "preallocating local, threaded, and spatial data", n_f=6)
     space_forcing = map([space_ind...]) do lsi
         getLocData(forcing_nt_array, lsi)
     end
@@ -387,16 +389,18 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
 
     space_land = Tuple([deepcopy(loc_land) for _ ∈ 1:length(space_ind)])
 
+    space_selected_models = [[selected_models for _ ∈ 1:length(space_ind)]...]
+
     forcing_nt_array = nothing
 
-    run_helpers = (; space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars=info.output.variables, tem_info)
+    run_helpers = (; space_selected_models, space_forcing, space_ind, space_spinup_forcing, loc_forcing_t, output_array, space_output, space_land, loc_land, output_dims, output_vars=info.output.variables, tem_info)
     return run_helpers
 end
 
 
 function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::NamedTuple, output::NamedTuple, ::PreAllocArrayFD)
 
-    @info "     preparing spatial and tem helpers"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "preparing spatial and tem helpers", n_f=6)
     space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
 
     # generate vals for dispatch of forcing and output
@@ -404,7 +408,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
 
 
     ## run the model for one time step
-    @info "     model run for one location and time step"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "model run for one location and time step", n_f=6)
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     land_init = output.land_init
     output_array = output.data
@@ -414,7 +418,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
     addErrorCatcher(loc_land, info.helpers.run.debug_model)
 
     # collect local data and create copies
-    @info "     preallocating local, threaded, and spatial data"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "preallocating local, threaded, and spatial data", n_f=6)
     space_forcing = map([space_ind...]) do lsi
         getLocData(forcing_nt_array, lsi)
     end
@@ -433,9 +437,11 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
         getLocData(output_array, lsi)
     end
 
+    space_selected_models = [[selected_models for _ ∈ 1:length(space_ind)]...]
+
     forcing_nt_array = nothing
 
-    run_helpers = (; space_forcing, space_observation, space_ind, space_spinup_forcing, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_info)
+    run_helpers = (; space_selected_models, space_forcing, space_observation, space_ind, space_spinup_forcing, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_info)
 
     return run_helpers
 end
@@ -463,14 +469,14 @@ end
 function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTuple, ::PreAllocStacked)
     
     # get the output things
-    @info "     preparing spatial and tem helpers"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "preparing spatial and tem helper", n_f=6)
     space_ind = getSpatialInfo(forcing, info.helpers.run.filter_nan_pixels)
 
     # generate vals for dispatch of forcing and output
     tem_info = getRunTEMInfo(info, forcing);
 
     ## run the model for one time step
-    @info "     model run for one location and time step"
+    showInfo(helpPrepTEM, @__FILE__, @__LINE__, "model run for one location and time step", n_f=6)
     land_init = output.land_init
     forcing_nt_array = makeNamedTuple(forcing.data, forcing.variables)
     loc_forcing = getLocData(forcing_nt_array, space_ind[1])
@@ -481,8 +487,10 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, output::NamedTu
     output_vars = output.variables
     output_dims = output.dims
 
+    space_selected_models = [[selected_models for _ ∈ 1:length(space_ind)]...]
+
     land_time_series = nothing
-    run_helpers = (; loc_forcing, loc_forcing_t, loc_spinup_forcing, loc_land, land_time_series, space_ind, output_dims, output_vars, tem_info)
+    run_helpers = (; loc_forcing, loc_forcing_t, loc_spinup_forcing, loc_land, land_time_series, space_selected_models, space_ind, output_dims, output_vars, tem_info)
     return run_helpers
 end
 
@@ -565,19 +573,21 @@ function prepTEM(forcing::NamedTuple, info::NamedTuple)
 end
 
 function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
-    @info "prepTEM: preparing to run terrestrial ecosystem model (TEM)"
+    showInfo(prepTEM, @__FILE__, @__LINE__, "preparing to run terrestrial ecosystem model (TEM)", n_f=1)
     output = prepTEMOut(info, forcing.helpers)
-    @info "  helpPrepTEM: preparing helpers for running model experiment"
+    showInfo(prepTEM, @__FILE__, @__LINE__, "  preparing helpers for running model experiment", n_f=4)
     run_helpers = helpPrepTEM(selected_models, info, forcing, output, info.helpers.run.land_output_type)
-    @info "\n----------------------------------------------\n"
+    showInfoSeparator()
+
     return run_helpers
 end
 
 function prepTEM(selected_models, forcing::NamedTuple, observations::NamedTuple, info::NamedTuple)
-    @info "prepTEM: preparing to run terrestrial ecosystem model (TEM)"
+    showInfo(prepTEM, @__FILE__, @__LINE__, "preparing to run terrestrial ecosystem model (TEM)", n_f=1)
     output = prepTEMOut(info, forcing.helpers)
     run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, info.helpers.run.land_output_type)
-    @info "\n----------------------------------------------\n"
+    showInfoSeparator()
+
     return run_helpers
 end
 

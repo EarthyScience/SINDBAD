@@ -1,7 +1,4 @@
-# using SindbadData
-# using SindbadData.DimensionalData
-# using SindbadData.AxisKeys
-# using SindbadData.YAXArrays
+export loadCovariates
 
 """
     loadCovariates(sites_forcing; kind="all")

@@ -155,7 +155,7 @@ metadata_global = info.output.file_info.global_metadata
 in_gargs=(;
     train_refs = (; sites_training, indices_sites_training, xfeatures, parameter_table, batch_size, chunk_size, metadata_global),
     test_val_refs = (; sites_validation, indices_sites_validation, sites_testing, indices_sites_testing),
-    total_constraints = length(info.optimization.observational_constraints),
+    total_constraints = length(info.optimization.cost_options.variable),
     forward_args = (selected_models,
         space_forcing,
         space_spinup_forcing,

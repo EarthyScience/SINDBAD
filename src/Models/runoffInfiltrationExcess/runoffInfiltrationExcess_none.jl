@@ -13,7 +13,7 @@ function define(params::runoffInfiltrationExcess_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{runoffInfiltrationExcess_none}) = "sets infiltration excess runoff to zero"
+purpose(::Type{runoffInfiltrationExcess_none}) = "Sets infiltration excess runoff to 0."
 
 @doc """
 

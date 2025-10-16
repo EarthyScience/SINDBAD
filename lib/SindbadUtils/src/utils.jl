@@ -152,7 +152,7 @@ Retrieve the Sindbad data depot path.
 The path to the Sindbad data depot.
 """
 function getSindbadDataDepot(; env_data_depot_var="SINDBAD_DATA_DEPOT", local_data_depot="../data")
-    data_depot = haskey(ENV, env_data_depot_var) ? ENV[env_data_depot_var] : local_data_depot
+    data_depot = isabspath(local_data_depot) ? local_data_depot : haskey(ENV, env_data_depot_var) ? ENV[env_data_depot_var] : local_data_depot
     return data_depot
 end
 
@@ -238,7 +238,7 @@ Displays the given text as a banner using Figlets.
 - `disp_text`: The text to display (default: "SINDBAD").
 - `c_olor`: Whether to display the text in random colors (default: `false`).
 """
-function sindbadBanner(disp_text="SINDBAD", c_olor=false)
+function sindbadBanner(disp_text="SINDBAD", c_olor=true)
     if c_olor
         print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
     end

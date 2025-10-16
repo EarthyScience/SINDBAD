@@ -36,7 +36,7 @@ function compute(params::cTau_mult, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cTau_mult}) = "multiply all effects that change the turnover rates [k]"
+purpose(::Type{cTau_mult}) = "Combines all effects that change the turnover rates by multiplication."
 
 @doc """
 

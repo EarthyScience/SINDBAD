@@ -23,7 +23,7 @@ function compute(params::vegFraction_scaledNIRv, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{vegFraction_scaledNIRv}) = "sets frac_vegetation by scaling the NIRv value"
+purpose(::Type{vegFraction_scaledNIRv}) = "Vegetation fraction as a linear function of NIRv."
 
 @doc """
 

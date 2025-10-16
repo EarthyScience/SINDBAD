@@ -2,7 +2,7 @@ export cAllocationTreeFraction
 
 abstract type cAllocationTreeFraction <: LandEcosystem end
 
-purpose(::Type{cAllocationTreeFraction}) = "Adjustment of carbon allocation according to tree cover"
+purpose(::Type{cAllocationTreeFraction}) = "Adjusts carbon allocation according to tree cover."
 
 includeApproaches(cAllocationTreeFraction, @__DIR__)
 

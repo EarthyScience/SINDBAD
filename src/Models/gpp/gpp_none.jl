@@ -13,7 +13,7 @@ function define(params::gpp_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{gpp_none}) = "sets the actual GPP to zero"
+purpose(::Type{gpp_none}) = "Sets GPP to 0."
 
 @doc """
 

@@ -21,7 +21,7 @@ function compute(params::transpirationSupply_wAWC, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{transpirationSupply_wAWC}) = "calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture"
+purpose(::Type{transpirationSupply_wAWC}) = "Supply-limited transpiration as the minimum of the fraction of total available water capacity and available moisture."
 
 @doc """
 

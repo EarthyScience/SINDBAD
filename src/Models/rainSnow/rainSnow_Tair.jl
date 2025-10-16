@@ -35,7 +35,7 @@ function compute(params::rainSnow_Tair, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{rainSnow_Tair}) = "separates the rain & snow based on temperature threshold"
+purpose(::Type{rainSnow_Tair}) = "Rain and snow partitioning based on a temperature threshold."
 
 @doc """
 

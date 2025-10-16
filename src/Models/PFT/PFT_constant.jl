@@ -15,7 +15,7 @@ function precompute(params::PFT_constant, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{PFT_constant}) = "sets a uniform PFT class"
+purpose(::Type{PFT_constant}) = "Sets a uniform PFT class."
 
 @doc """
 

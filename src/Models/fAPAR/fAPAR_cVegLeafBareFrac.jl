@@ -30,7 +30,7 @@ function compute(params::fAPAR_cVegLeafBareFrac, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{fAPAR_cVegLeafBareFrac}) = "Compute FAPAR based on carbon pool of the leaf, but only for the vegetation fraction"
+purpose(::Type{fAPAR_cVegLeafBareFrac}) = "fAPAR based on the carbon pool of leaves, but only for the vegetated fraction."
 
 @doc """
 

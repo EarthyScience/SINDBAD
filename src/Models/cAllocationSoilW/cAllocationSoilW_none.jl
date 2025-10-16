@@ -14,7 +14,7 @@ function define(params::cAllocationSoilW_none, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{cAllocationSoilW_none}) = "sets the moisture effect on allocation to one (no effect)"
+purpose(::Type{cAllocationSoilW_none}) = "Sets the moisture effect on allocation to 1 (no effect)."
 
 @doc """
 

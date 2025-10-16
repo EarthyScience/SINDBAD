@@ -33,7 +33,7 @@ function compute(params::groundWSurfaceWInteraction_fracGroundW, forcing, land, 
 end
 
 
-purpose(::Type{groundWSurfaceWInteraction_fracGroundW}) = "calculates the depletion of groundwater to the surface water as a fraction of groundwater storage"
+purpose(::Type{groundWSurfaceWInteraction_fracGroundW}) = "Depletion of groundwater to surface water as a fraction of groundwater storage."
 
 @doc """
 

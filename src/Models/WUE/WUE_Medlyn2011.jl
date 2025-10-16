@@ -46,7 +46,7 @@ function compute(params::WUE_Medlyn2011, forcing, land, helpers)
 end
 
 
-purpose(::Type{WUE_Medlyn2011}) = "calculates the WUE/AOE ci/ca as a function of daytime mean VPD. calculates the WUE/AOE ci/ca as a function of daytime mean VPD & ambient co2"
+purpose(::Type{WUE_Medlyn2011}) = "Calculates WUE as a function of daytime mean VPD and ambient CO₂, following Medlyn et al. (2011)."
 
 @doc """
 
