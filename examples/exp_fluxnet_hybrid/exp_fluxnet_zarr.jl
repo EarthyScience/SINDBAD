@@ -115,7 +115,7 @@ for o_set in opti_set
             "experiment.flags.debug_model" => false,
             "experiment.model_spinup.sequence" => sequence,
             "forcing.default_forcing.data_path" => path_input,
-            "forcing.subset.site" => [site_index, site_index],
+            "forcing.subset.site" => [site_index],
             "experiment.model_output.path" => path_output,
             "experiment.exe_rules.parallelization" => parallelization_lib,
             "optimization.optimization_cost_method" => "CostModelObsMT",
