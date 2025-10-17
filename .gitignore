@@ -62,6 +62,7 @@ sandbox/*
 sandbox/.*
 sandbox/**/*
 !sandbox/
+!sandbox/.keep
 
 .vscode
 .gitlab-ci.yml
