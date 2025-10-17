@@ -835,7 +835,7 @@ methodsOf(Sindbad; the_type=Function)
 
 The output format for types is:
 
-```
+```julia
 ## TypeName
 Purpose of the type
 
@@ -931,7 +931,7 @@ showMethodsOf(ambientCO2)
 
 The output format is the same as `methodsOf`, showing:
 
-```
+```julia
 ## TypeName
 Purpose of the type
 
