@@ -1,6 +1,6 @@
 # Sindbad.jl
 
-[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![License: GPL-3.0](https://img.shields.io/badge/License-GPLv3-blue)](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE)
+[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![License: EUPLv1.2](https://img.shields.io/badge/License-EUPLv1.2-seagreen)](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE)
 
 <img src="docs/src/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
@@ -128,9 +128,9 @@ Other smaller packages can be imported and put together to build an experiment w
 ## SINDBAD Contributors 
 
 SINDBAD is developed at the Department of Biogeochemical Integration of the Max Planck Institute for Biogeochemistry in Jena, Germany with the following active contributors
-with active contributions from [Sujan Koirala](https://www.bgc-jena.mpg.de/person/skoirala/2206), [Lazaro Alonso](https://www.bgc-jena.mpg.de/person/lalonso/2206), [Xu Shan](https://www.bgc-jena.mpg.de/person/138641/2206), [Hoontaek Lee](https://www.bgc-jena.mpg.de/person/hlee/2206), [Fabian Gans](https://www.bgc-jena.mpg.de/person/fgans/4777761), [Felix Cremer](https://www.bgc-jena.mpg.de/person/fcremer/2206), [Nuno Carvalhais](https://www.bgc-jena.mpg.de/person/ncarval/2206).
+with active contributions from [Sujan Koirala](https://www.bgc-jena.mpg.de/person/skoirala/2206), [Xu Shan](https://www.bgc-jena.mpg.de/person/138641/2206), [Jialiang Zhou](https://www.bgc-jena.mpg.de/person/137086/2206), [Lazaro Alonso](https://www.bgc-jena.mpg.de/person/lalonso/2206), [Fabian Gans](https://www.bgc-jena.mpg.de/person/fgans/4777761), [Felix Cremer](https://www.bgc-jena.mpg.de/person/fcremer/2206), [Nuno Carvalhais](https://www.bgc-jena.mpg.de/person/ncarval/2206).
 
-For a full list of current and previous contributors, see https://earthyscience.github.io/Sindbad.jl/dev/pages/about/team
+For a full list of current and previous contributors, see http://sindbad-mdi.org/pages/about/team.html
 
 ## Copyright and license
 
