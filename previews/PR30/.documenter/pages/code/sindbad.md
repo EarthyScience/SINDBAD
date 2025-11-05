@@ -347,6 +347,8 @@ Abstract type for all SINDBAD land ecosystem models/approaches
     
   - `cCycleBase_GSI`: Structure and properties of the carbon cycle components as needed for a dynamic phenology-based carbon cycle in the GSI approach. 
     
+  - `cCycleBase_GSITOOPFT`: Implements the carbon cycle base model with GSI parameterization for multiple PFTs. Defines turnover rates and carbon to nitrogen ratios for different vegetation and soil pools.  
+    
   - `cCycleBase_GSI_PlantForm`: Same as GSI, additionally allowing for scaling of turnover parameters based on plant forms. 
     
   - `cCycleBase_GSI_PlantForm_LargeKReserve`: Same as cCycleBase_GSI_PlantForm, but with a default of larger turnover of reserve pool so that it respires and flows. 
