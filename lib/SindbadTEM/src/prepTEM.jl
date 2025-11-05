@@ -573,7 +573,7 @@ function prepTEM(forcing::NamedTuple, info::NamedTuple)
 end
 
 function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
-    showInfo(prepTEM, @__FILE__, @__LINE__, "preparing to run terrestrial ecosystem model (TEM)", n_f=1)
+    showInfo(prepTEM, @__FILE__, @__LINE__, "preparing to run terrestrial ecosystem model (TEM) for $(nameof(typeof(info.helpers.run.land_output_type)))", n_f=1)
     output = prepTEMOut(info, forcing.helpers)
     showInfo(prepTEM, @__FILE__, @__LINE__, "  preparing helpers for running model experiment", n_f=4)
     run_helpers = helpPrepTEM(selected_models, info, forcing, output, info.helpers.run.land_output_type)
@@ -583,7 +583,7 @@ function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
 end
 
 function prepTEM(selected_models, forcing::NamedTuple, observations::NamedTuple, info::NamedTuple)
-    showInfo(prepTEM, @__FILE__, @__LINE__, "preparing to run terrestrial ecosystem model (TEM)", n_f=1)
+    showInfo(prepTEM, @__FILE__, @__LINE__, "preparing to run terrestrial ecosystem model (TEM) for $(nameof(typeof(info.helpers.run.land_output_type)))", n_f=1)
     output = prepTEMOut(info, forcing.helpers)
     run_helpers = helpPrepTEM(selected_models, info, forcing, observations, output, info.helpers.run.land_output_type)
     showInfoSeparator()
