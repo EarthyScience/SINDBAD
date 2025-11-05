@@ -29,11 +29,13 @@ This package is designed to provide reusable utilities for data manipulation, st
 
 """
 module SindbadUtils
-   using Sindbad
+   using ..Sindbad.Types
    using Crayons
    using StyledStrings
    using FIGlet
    using Logging
+   using Accessors
+   using Dates
 
    include("getArrayView.jl")
    include("utils.jl")

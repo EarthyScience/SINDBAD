@@ -107,6 +107,9 @@ module Sindbad
    include("Models/Models.jl")
    include("generateCode.jl")
    @reexport using .Models
+   # ? maybe rename module, a shorter name?
+   include("utils/SindbadUtils.jl")
+   @reexport using .SindbadUtils
 
    # append the docstring of the LandEcosystem type to the docstring of the Sindbad module so that all the methods of the LandEcosystem type are included after the models have been described
    @doc """
