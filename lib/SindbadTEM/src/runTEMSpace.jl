@@ -36,6 +36,18 @@ function coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_
     return nothing
 end
 
+function coreTEM!(selected_models, loc_forcing, loc_spinup_forcing, loc_spinup_sequence, loc_forcing_t, loc_output, loc_land, tem_info)
+    # update the loc_forcing with the actual location
+    loc_forcing_t = getForcingForTimeStep(loc_forcing, loc_forcing_t, 1, tem_info.vals.forcing_types)
+    # run precompute
+    land_prec = precomputeTEM(selected_models, loc_forcing_t, loc_land, tem_info.model_helpers) 
+    # run spinup
+    land_spin = spinupTEM(selected_models, loc_spinup_forcing, loc_spinup_sequence, loc_forcing_t, land_prec, tem_info, tem_info.run.spinup_TEM)
+
+    timeLoopTEM!(selected_models, loc_forcing, loc_forcing_t, loc_output, land_spin, tem_info.vals.forcing_types, tem_info.model_helpers, tem_info.vals.output_vars, tem_info.n_timesteps, tem_info.run.debug_model)
+    return nothing
+end
+
 """
     parallelizeTEM!(space_selected_models, space_forcing, space_spinup_forcing, loc_forcing_t, space_output, space_land, tem_info, parallelization_mode::SindbadParallelizationMethod)
 

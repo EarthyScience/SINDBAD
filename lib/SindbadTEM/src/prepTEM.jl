@@ -433,6 +433,10 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
         getAllSpinupForcing(loc_forcing, info.spinup.sequence, tem_info);
     end
 
+     # f_disturbance_years
+    fd_index = findall(forcing.variables.==:f_disturbance_year)[1]
+    space_spinup_sequence = getSequence.(forcing.data[fd_index], Ref(info.helpers.dates));
+
     space_output = map([space_ind...]) do lsi
         getLocData(output_array, lsi)
     end
@@ -441,7 +445,7 @@ function helpPrepTEM(selected_models, info, forcing::NamedTuple, observations::N
 
     forcing_nt_array = nothing
 
-    run_helpers = (; space_selected_models, space_forcing, space_observation, space_ind, space_spinup_forcing, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_info)
+    run_helpers = (; space_selected_models, space_forcing, space_observation, space_ind, space_spinup_forcing, space_spinup_sequence, loc_forcing_t, space_output, loc_land, output_vars=output.variables, tem_info)
 
     return run_helpers
 end
