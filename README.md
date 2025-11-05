@@ -1,6 +1,6 @@
 # Sindbad.jl
 
-[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![License: GPL-3.0](https://img.shields.io/badge/License-GPLv3-blue)](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE)
+[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![License: EUPLv1.2](https://img.shields.io/badge/License-EUPLv1.2-seagreen)](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE)
 
 <img src="docs/src/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
@@ -57,7 +57,7 @@ For a short description on sub-packages under `/lib/`
 - with git repo access
 ```
 julia]
-pkg > add https://git.bgc-jena.mpg.de/sindbad/sindbad.jl.git
+pkg > add git@github.com:EarthyScience/SINDBAD.git
 ```
 
 - without git repo access
@@ -72,12 +72,12 @@ Start a julia prompt in the sindbad_root
 julia
 ```
 
-Go to main example directory
+Go to main sandbox directory
 ```
-cd examples
+cd sandbox
 ```
 
-Create a new experiment directory, e.g., my_env and go to that directory
+Create a new sandbox directory, e.g., my_env and go to that directory
 
 ```
 julia > run(`mkdir -p my_env`)
@@ -105,7 +105,7 @@ instantiate
 
 ### Download the example data
 
-Before running the experiments, download the example by running the following script in the ````examples```` directory
+Before running the experiments, download the example by running the following script in the ````sandbox```` directory
 
 ````bash
 bash download_example_data.sh
@@ -128,14 +128,44 @@ Other smaller packages can be imported and put together to build an experiment w
 ## SINDBAD Contributors 
 
 SINDBAD is developed at the Department of Biogeochemical Integration of the Max Planck Institute for Biogeochemistry in Jena, Germany with the following active contributors
-with active contributions from [Sujan Koirala](https://www.bgc-jena.mpg.de/person/skoirala/2206), [Lazaro Alonso](https://www.bgc-jena.mpg.de/person/lalonso/2206), [Xu Shan](https://www.bgc-jena.mpg.de/person/138641/2206), [Hoontaek Lee](https://www.bgc-jena.mpg.de/person/hlee/2206), [Fabian Gans](https://www.bgc-jena.mpg.de/person/fgans/4777761), [Felix Cremer](https://www.bgc-jena.mpg.de/person/fcremer/2206), [Nuno Carvalhais](https://www.bgc-jena.mpg.de/person/ncarval/2206).
+with active contributions from [Sujan Koirala](https://www.bgc-jena.mpg.de/person/skoirala/2206), [Xu Shan](https://www.bgc-jena.mpg.de/person/138641/2206), [Jialiang Zhou](https://www.bgc-jena.mpg.de/person/137086/2206), [Lazaro Alonso](https://www.bgc-jena.mpg.de/person/lalonso/2206), [Fabian Gans](https://www.bgc-jena.mpg.de/person/fgans/4777761), [Felix Cremer](https://www.bgc-jena.mpg.de/person/fcremer/2206), [Nuno Carvalhais](https://www.bgc-jena.mpg.de/person/ncarval/2206).
 
-For a full list of current and previous contributors, see https://earthyscience.github.io/Sindbad.jl/dev/pages/about/team
+For a full list of current and previous contributors, see http://sindbad-mdi.org/pages/about/team.html
 
-## Copyright
-SINDBAD (Strategies to Integrate Data and Biogeochemical Models) A model data integration framework
-Copyright (C) 2025  Max-Planck-Gesellschaft zur Förderung der Wissenschaften
+## Copyright and license
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3 of the License.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+**SINDBAD: Strategies to Integrate Data and Biogeochemical Models**  
+
+**Copyright © 2025**  
+Max-Planck-Gesellschaft zur Förderung der Wissenschaften
+
+For copyright details, see the [NOTICE](./NOTICE) file.
+
+---
+
+#### License
+
+SINDBAD is free and open-source software, licensed under the [European Union Public License v1.2 (EUPL)](https://eupl.eu/1.2/en).
+
+---
+
+#### Your Rights
+
+You are free to:
+
+- Copy, modify, and redistribute the code  
+- Use the software as a package in your own projects, regardless of their license or copyright status  
+- Apply the software in both commercial and non-commercial contexts  
+
+---
+
+#### Your Responsibilities
+
+If you modify the code — excluding changes made solely for interoperability — you **must redistribute the modified version under the EUPL v1.2 or a compatible license**. This ensures the long-term sustainability of the project and supports an open, inclusive, and collaborative community.
+
+---
+
+#### Disclaimer
+
+This software is provided in the hope that it will be useful, but **without any warranty** — including, without limitation, the implied warranties of merchantability or fitness for a particular purpose.
