@@ -58,6 +58,11 @@ examples/data/
 docs/build/
 build/
 __pycache__
+sandbox/*
+sandbox/.*
+sandbox/**/*
+!sandbox/
+!sandbox/.keep
 
 .vscode
 .gitlab-ci.yml
