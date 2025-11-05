@@ -3254,7 +3254,7 @@ Abstract type for model types in SINDBAD
 
 The allocation is adjusted based on the TreeFrac fraction (land.states.frac_tree).  Root allocation is further divided into fine (cf2Root) and coarse roots (cf2RootCoarse) according to the frac_fine_to_coarse parameter.
 
-```
+```julia
      -  `cAllocation_none`: sets the carbon allocation to zero (nothing to allocated) 
  -  `cAllocationLAI`: Estimates allocation to the leaf pool given light limitation constraints to photosynthesis. Estimation via dynamics in leaf area index (LAI). Dynamic allocation approach. 
      -  `cAllocationLAI_Friedlingstein1999`: Estimate the effect of light limitation on carbon allocation via leaf area index (LAI) based on Friedlingstein et al., 1999. 
