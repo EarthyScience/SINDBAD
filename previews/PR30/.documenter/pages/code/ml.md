@@ -852,7 +852,7 @@ loadTrainedNN(path_model)
 </details>
 
 <details class='jldocstring custom-block' open>
-<summary><a id='SindbadML.loss-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}' href='#SindbadML.loss-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}'><span class="jlbinding">SindbadML.loss</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+<summary><a id='SindbadML.loss-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}' href='#SindbadML.loss-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}'><span class="jlbinding">SindbadML.loss</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
 
 
 
@@ -959,7 +959,7 @@ Function to calculate the loss for a given site. This is used for optimization, 
 </details>
 
 <details class='jldocstring custom-block' open>
-<summary><a id='SindbadML.lossVector-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}' href='#SindbadML.lossVector-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}'><span class="jlbinding">SindbadML.lossVector</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
+<summary><a id='SindbadML.lossVector-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}' href='#SindbadML.lossVector-Tuple{Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, LossModelObsML}'><span class="jlbinding">SindbadML.lossVector</span></a> <Badge type="info" class="jlObjectType jlMethod" text="Method" /></summary>
 
 
 
