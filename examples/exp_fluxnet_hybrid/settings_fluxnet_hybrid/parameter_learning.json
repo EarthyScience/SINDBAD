@@ -20,7 +20,7 @@
       "n_folds": 10
     },
     "package": "",
-    "fold_path": "",
+    "fold_path": "/User/homes/lalonso/SINDBAD/examples/exp_fluxnet_hybrid/sampling/nfolds_sites_indices_0.jld2",
     "which_fold": 2
   },
   "ml_gradient": {
@@ -42,7 +42,7 @@
   "replace_value_for_gradient": 0.0,
   "save_checkpoint": true,
   "covariates": {
-    "path": "CovariatesFLUXNET_3.zarr",
+    "path": "/Net/Groups/BGI/work_5/scratch/lalonso/CovariatesFLUXNET_3.zarr",
     "variables": "all"
   },
 
