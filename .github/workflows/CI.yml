@@ -55,7 +55,8 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
       - name: Develop and test SINDBAD
-        shell: julia --project=SINDBAD {0}
+        working-directory: ./SINDBAD
+        shell: julia --project {0}
         run: |
           using Pkg
           pkg"registry up"
