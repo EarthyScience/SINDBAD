@@ -58,6 +58,7 @@ module Models
     # Import & export necessary modules/functions
     using ..Sindbad
     import ..Sindbad.Types: purpose, LandEcosystem
+    using ..SindbadUtils
     using FieldMetadata: @metadata
     using Parameters: @with_kw
     @metadata timescale "" String
@@ -383,6 +384,6 @@ module Models
 
     # now having this ordered list is independent from the step including the models into this `module`.
     include(joinpath(@__DIR__, "standardSindbadModels.jl"))
-
+    include("runModels.jl")
 
 end
