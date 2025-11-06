@@ -126,7 +126,7 @@ const sidebar = [
 ]
 
 export default defineConfig({
-  base: '/',
+  base: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
   title: "SINDBAD",
   description: "A model-data integration framework for terrestrial ecosystem processes",
   lastUpdated: true,
@@ -139,6 +139,9 @@ export default defineConfig({
   ],
   
   vite: {
+    define: {
+      __DEPLOY_ABSPATH__: JSON.stringify('REPLACE_ME_DOCUMENTER_VITEPRESS_DEPLOY_ABSPATH'),
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '../components')
