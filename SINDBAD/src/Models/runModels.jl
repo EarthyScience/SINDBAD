@@ -19,7 +19,7 @@ function computeTEM(models::Tuple, forcing, land, model_helpers, ::DoDebugModel)
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
         println("compute: $(typeof(model))")
-        @time _land = Models.compute(model, forcing, _land, model_helpers)::otype
+        @time _land = compute(model, forcing, _land, model_helpers)::otype
     end
 end
 
@@ -54,7 +54,7 @@ run the compute function of SINDBAD models
 """
 function computeTEM(models::LongTuple, forcing, _land, model_helpers) 
     return foldlLongTuple(models, init=_land) do model, _land
-        Models.compute(model, forcing, _land, model_helpers)
+        compute(model, forcing, _land, model_helpers)
     end
 end
 
@@ -72,7 +72,7 @@ run the compute function of SINDBAD models
 """
 function computeTEM(models::Tuple, forcing, land, model_helpers) 
     return foldlUnrolled(models; init=land) do _land, model
-        _land = Models.compute(model, forcing, _land, model_helpers)
+        _land = compute(model, forcing, _land, model_helpers)
     end
 end
 
@@ -89,7 +89,7 @@ run the define and precompute functions of SINDBAD models to instantiate all fie
 """
 function defineTEM(models::Tuple, forcing, land, model_helpers)
     return foldlUnrolled(models; init=land) do _land, model
-        _land = Models.define(model, forcing, _land, model_helpers)
+        _land = define(model, forcing, _land, model_helpers)
     end
 end
 
@@ -106,7 +106,7 @@ run the precompute function of SINDBAD models to instantiate all fields of land
 """
 function defineTEM(models::LongTuple, forcing, _land, model_helpers)
     return foldlLongTuple(models, init=_land) do model, _land
-        _land = Models.define(model, forcing, _land, model_helpers)
+        _land = define(model, forcing, _land, model_helpers)
     end
 end
 
@@ -124,8 +124,8 @@ run the define and precompute functions of SINDBAD models to instantiate all fie
 """
 function definePrecomputeTEM(models::Tuple, forcing, land, model_helpers)
     return foldlUnrolled(models; init=land) do _land, model
-        _land = Models.define(model, forcing, _land, model_helpers)
-        _land = Models.precompute(model, forcing, _land, model_helpers)
+        _land = define(model, forcing, _land, model_helpers)
+        _land = precompute(model, forcing, _land, model_helpers)
     end
 end
 
@@ -142,8 +142,8 @@ run the precompute function of SINDBAD models to instantiate all fields of land
 """
 function definePrecomputeTEM(models::LongTuple, forcing, _land, model_helpers)
     return foldlLongTuple(models, init=_land) do model, _land
-        _land = Models.define(model, forcing, _land, model_helpers)
-        _land = Models.precompute(model, forcing, _land, model_helpers)
+        _land = define(model, forcing, _land, model_helpers)
+        _land = precompute(model, forcing, _land, model_helpers)
     end
 end
 
@@ -164,7 +164,7 @@ function precomputeTEM(models::Tuple, forcing, land, model_helpers, ::DoDebugMod
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
         println("precompute: $(typeof(model))")
-        @time _land = Models.precompute(model, forcing, _land, model_helpers)::otype
+        @time _land = precompute(model, forcing, _land, model_helpers)::otype
     end
 end
 
@@ -199,7 +199,7 @@ run the precompute function of SINDBAD models to instantiate all fields of land
 """
 function precomputeTEM(models::LongTuple, forcing, _land, model_helpers)
     return foldlLongTuple(models, init=_land) do model, _land
-        Models.precompute(model, forcing, _land, model_helpers)
+        precompute(model, forcing, _land, model_helpers)
     end
 end
 
@@ -216,7 +216,7 @@ run the precompute function of SINDBAD models to instantiate all fields of land
 """
 function precomputeTEM(models::Tuple, forcing, land, model_helpers)
     return foldlUnrolled(models; init=land) do _land, model
-        _land = Models.precompute(model, forcing, _land, model_helpers)
+        _land = precompute(model, forcing, _land, model_helpers)
     end
 end
 

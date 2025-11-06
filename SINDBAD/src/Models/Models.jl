@@ -58,7 +58,6 @@ module Models
     # Import & export necessary modules/functions
     using ..Sindbad
     import ..Sindbad.Types: purpose, LandEcosystem
-    using ..SindbadUtils
     using FieldMetadata: @metadata
     using Parameters: @with_kw
     @metadata timescale "" String
