@@ -54,17 +54,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
-      - name: Develop and test SINDBAD
+      - name: Develop and test Sindbad
         shell: julia --project=test_env {0}
         run: |
           using Pkg
           pkg"registry up"
           Pkg.update()
-          pkg"dev ./SINDBAD" # Develop the package in the SINDBAD directory
+          pkg"dev ./Sindbad" # Develop the package in the Sindbad directory
           Pkg.test("Sindbad"; coverage=true) # Test the package named "Sindbad"
       - uses: julia-actions/julia-processcoverage@v1
         with:
-          directories: SINDBAD/src
+          directories: Sindbad/src
       - uses: codecov/codecov-action@v5
         with:
           files: lcov.info
