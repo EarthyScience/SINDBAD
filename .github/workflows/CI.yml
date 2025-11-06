@@ -55,14 +55,13 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
       - name: Develop and test SINDBAD
-        working-directory: ./SINDBAD
-        shell: julia --project {0}
+        shell: julia --project=test_env {0}
         run: |
           using Pkg
           pkg"registry up"
           Pkg.update()
-          pkg"dev ."
-          Pkg.test(coverage=true)
+          pkg"dev ./SINDBAD"
+          Pkg.test("SINDBAD"; coverage=true)
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: SINDBAD/src
