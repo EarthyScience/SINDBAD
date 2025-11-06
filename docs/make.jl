@@ -18,8 +18,6 @@ using InteractiveUtils
 using DocumenterVitepress
 using Documenter
 using DocStringExtensions
-# using DocumenterMermaid
-# dev ../ ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
 
 makedocs(; sitename="Sindbad",
     authors="Sindbad Development Team",
@@ -27,11 +25,10 @@ makedocs(; sitename="Sindbad",
     format=DocumenterVitepress.MarkdownVitepress(
         repo = "github.com/EarthyScience/SINDBAD",
     ),
-    # remotes=nothing,
-    # draft=false,
+    draft=false,
     warnonly=true,
-    # source="src",
-    # build="build",
+    source="src",
+    build="build",
     )
 # ! ? why this ? 
 # final_site_dir = joinpath(@__DIR__,"build/final_site/")
@@ -43,7 +40,7 @@ makedocs(; sitename="Sindbad",
 #     cp(joinpath(@__DIR__,"src/pages/concept/sindbad_info"), joinpath(final_site_dir, "pages/concept/sindbad_info"); force=true)
 # end
 
-deploydocs(; 
+DocumenterVitepress.deploydocs(; 
     repo = "github.com/EarthyScience/SINDBAD", # this must be the full URL!
     target = joinpath(@__DIR__, "build"), # this is where Vitepress stores its output
     branch = "gh-pages",
