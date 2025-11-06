@@ -56,7 +56,6 @@ module SindbadTEM
    using NLsolve
    using ProgressMeter
    using Sindbad
-   using SindbadUtils
    using SindbadSetup
    using SindbadData: YAXArrays
 
@@ -65,7 +64,6 @@ module SindbadTEM
    include("utilsTEM.jl")
    include("deriveSpinupForcing.jl")
    include("prepTEMOut.jl")
-   include("runModels.jl")
    include("prepTEM.jl")
    include("runTEMLoc.jl")
    include("runTEMSpace.jl")

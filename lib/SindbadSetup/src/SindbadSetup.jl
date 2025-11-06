@@ -59,7 +59,6 @@ This package is designed to produce the SINDBAD `info` object, which contains al
 module SindbadSetup
 
    using Sindbad
-   using SindbadUtils
    using ConstructionBase
    @reexport using CSV: CSV
    @reexport using Infiltrator

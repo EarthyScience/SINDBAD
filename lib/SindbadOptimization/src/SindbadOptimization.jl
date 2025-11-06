@@ -84,7 +84,6 @@ module SindbadOptimization
    using QuasiMonteCarlo
    using StableRNGs
    using Sindbad
-   using SindbadUtils
    using SindbadSetup
    using SindbadTEM
    using SindbadMetrics

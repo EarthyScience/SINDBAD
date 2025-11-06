@@ -39,7 +39,6 @@ This package is designed to streamline the ingestion and preprocessing of input 
 """
 module SindbadData
    using Sindbad
-   using SindbadUtils
    using AxisKeys: KeyedArray, AxisKeys
    using FillArrays
    using DimensionalData

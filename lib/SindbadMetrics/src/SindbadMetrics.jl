@@ -47,8 +47,7 @@ correlation = metric(model_output, observations, Pcor())
 module SindbadMetrics
 
    using Sindbad
-   using SindbadUtils
-
+   
    include("handleDataForLoss.jl")
    include("getMetrics.jl")
    include("metrics.jl")

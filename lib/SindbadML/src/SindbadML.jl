@@ -11,7 +11,7 @@ This package brings together all components required for hybrid (process-based +
 - `Sindbad`, `SindbadTEM`, `SindbadSetup`: Core SINDBAD modules for process-based modeling and setup.
 - `SindbadData.YAXArrays`, `SindbadData.Zarr`, `SindbadData.AxisKeys`, `SindbadData`: Data handling, array, and cube utilities.
 - `SindbadMetrics`: Metrics for model performance/loss evaluation.
-- `Enzyme`, `Zygote`, `ForwardDiff`, `FiniteDiff`, `FiniteDifferences`, `PolyesterForwardDiff`: Automatic and numerical differentiation libraries for gradient-based learning.
+- `PolyesterForwardDiff`, `Enzyme`, `Zygote`, `ForwardDiff`, `FiniteDiff`, `FiniteDifferences`: Automatic and numerical differentiation libraries for gradient-based learning. (Defaults will be Zygote and PolyesterForwardDiff for performance. All others should come as extensions.)
 - `Flux`: Neural network layers and training utilities for ML models.
 - `Optimisers`: Optimizers for training neural networks.
 - `Statistics`: Statistical utilities.
@@ -57,7 +57,7 @@ module SindbadML
     using SindbadData: AllNaN
     using SindbadData: yaxCubeToKeyedArray, Cube
     using SindbadMetrics
-    using Enzyme
+    # using Enzyme # --- MOVED TO EXTENSION ---
 
     using Flux
     using Optimisers

@@ -41,7 +41,6 @@ runExperimentForward(experiment_config)
 module SindbadExperiment
     using Sindbad
     @reexport using Sindbad
-    @reexport using SindbadUtils
     @reexport using SindbadSetup
     @reexport using SindbadData
     @reexport using SindbadTEM

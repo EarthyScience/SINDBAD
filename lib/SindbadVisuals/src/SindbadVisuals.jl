@@ -30,7 +30,6 @@ using SindbadVisuals
 """
 module SindbadVisuals
     using Sindbad
-    using SindbadUtils
     using SindbadMetrics
     # using GLMakie
     # @reexport using GLMakie.Makie
