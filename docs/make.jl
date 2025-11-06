@@ -37,9 +37,9 @@ if !isdir(joinpath(final_site_dir, "/pages/concept/sindbad_info"))
     cp(joinpath(@__DIR__,"src/pages/concept/sindbad_info"), joinpath(final_site_dir, "pages/concept/sindbad_info"); force=true)
 end
 
-deploydocs(; 
+DocumenterVitepress.deploydocs(; 
     repo = "github.com/EarthyScience/SINDBAD", # this must be the full URL!
-    target = "build", # this is where Vitepress stores its output
+    target = joinpath(@__DIR__, "build"), # this is where Vitepress stores its output
     branch = "gh-pages",
     devbranch = "main",
     push_preview = true
