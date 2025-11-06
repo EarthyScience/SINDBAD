@@ -11,6 +11,11 @@ on:
       - '*'
     branches:
       - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -49,10 +54,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
-            ${{ runner.os }}-
-      - uses: julia-actions/julia-buildpkg@v1
-      - uses: julia-actions/julia-runtest@v1
+      - name: Develop and test SINDBAD
+        shell: julia --project=SINDBAD {0}
+        run: |
+          using Pkg
+          pkg"registry up"
+          Pkg.update()
+          pkg"dev ."
+          Pkg.test("SINDBAD"; coverage=true)
       - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: SINDBAD/src
       - uses: codecov/codecov-action@v5
         with:
           files: lcov.info
