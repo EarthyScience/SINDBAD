@@ -1,10 +1,10 @@
 """
-    SindbadUtils
+    Utilities
 
-The `SindbadUtils` package provides a collection of utility functions and tools for handling data, managing NamedTuples, and performing spatial and temporal operations in the SINDBAD framework. It serves as a foundational package for simplifying common tasks and ensuring consistency across SINDBAD experiments.
+The `Utilities` module provides a collection of utility functions and tools for handling data, managing NamedTuples, and performing spatial and temporal operations in the SINDBAD framework. It serves as a foundational module for simplifying common tasks and ensuring consistency across SINDBAD experiments.
 
 # Purpose:
-This package is designed to provide reusable utilities for data manipulation, statistical operations, and spatial/temporal processing. 
+This module is designed to provide reusable utilities for data manipulation, statistical operations, and spatial/temporal processing. 
     
 # Dependencies:
 - `Sindbad`: Provides the core SINDBAD models and types.
@@ -28,7 +28,7 @@ This package is designed to provide reusable utilities for data manipulation, st
    - Handles temporal operations, including time-based filtering and aggregation.
 
 """
-module SindbadUtils
+module Utilities
    using ..Sindbad.Types
    using Crayons
    using StyledStrings
@@ -38,8 +38,8 @@ module SindbadUtils
    using Dates
 
    include("getArrayView.jl")
-   include("utils.jl")
+   include("utilsStacks.jl")
    include("utilsNT.jl")
    include("utilsTemporal.jl")
    
-end # module SindbadUtils
+end # module Utilities

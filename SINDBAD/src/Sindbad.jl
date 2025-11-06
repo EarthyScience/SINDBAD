@@ -75,14 +75,14 @@ module Sindbad
    @reexport using CodeTracking
    @reexport using DataStructures: DataStructures
    @reexport using Dates
-   @reexport using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
+   # @reexport using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
    @reexport using InteractiveUtils
    @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
    @reexport using TypedTables: Table
    @reexport using Accessors: @set
    @reexport using StatsBase
    @reexport using NaNStatistics
-   @reexport using Crayons
+   # @reexport using Crayons
 
    # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of Sindbad.
    file_path = file_path = joinpath(@__DIR__, "tmp_precompile_placeholder.jl")
@@ -108,8 +108,8 @@ module Sindbad
    include("generateCode.jl")
    @reexport using .Models
    # ? maybe rename module, a shorter name?
-   include("utils/SindbadUtils.jl")
-   @reexport using .SindbadUtils
+   include("Utilities/Utilities.jl")
+   @reexport using .Utilities
 
    # append the docstring of the LandEcosystem type to the docstring of the Sindbad module so that all the methods of the LandEcosystem type are included after the models have been described
    @doc """
