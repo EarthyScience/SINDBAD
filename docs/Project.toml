@@ -16,7 +16,7 @@ SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
 SindbadVisuals = "49d56b06-c9ff-43e2-9c93-8639e8c3cbdc"
 
 [sources]
-Sindbad = {path = "../"}
+Sindbad = {path = "../Sindbad"}
 SindbadData = {path = "../lib/SindbadData"}
 SindbadExperiment = {path = "../lib/SindbadExperiment"}
 SindbadML = {path = "../lib/SindbadML"}
