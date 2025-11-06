@@ -250,7 +250,7 @@ end
 
 function getTimeAggregatorTypeInstance(aggr::String)
     uc_first = toUpperCaseFirst(aggr, "Time")
-    return getfield(SindbadUtils, uc_first)()
+    return getfield(Utilities, uc_first)()
 end
 
 

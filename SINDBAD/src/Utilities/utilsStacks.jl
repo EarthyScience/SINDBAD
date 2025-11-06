@@ -240,7 +240,7 @@ Displays the given text as a banner using Figlets.
 """
 function sindbadBanner(disp_text="SINDBAD", c_olor=true)
     if c_olor
-        print(SindbadUtils.Crayon(; foreground=rand(0:255)), "\n")
+        print(Crayon(; foreground=rand(0:255)), "\n")
     end
     println("######################################################################################################\n")
     FIGlet.render(disp_text, rand(figlet_fonts))
