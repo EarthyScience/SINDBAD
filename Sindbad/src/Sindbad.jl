@@ -82,6 +82,7 @@ module Sindbad
    @reexport using Accessors: @set
    @reexport using StatsBase
    @reexport using NaNStatistics
+   using Crayons
    # @reexport using Crayons
 
    # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of Sindbad.

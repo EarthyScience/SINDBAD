@@ -29,6 +29,7 @@ This module is designed to provide reusable utilities for data manipulation, sta
 
 """
 module Utilities
+   using ..Sindbad
    using ..Sindbad.Types
    using Crayons
    using StyledStrings
@@ -36,6 +37,8 @@ module Utilities
    using Logging
    using Accessors
    using Dates
+   using DataStructures
+   using StatsBase
 
    include("getArrayView.jl")
    include("utilsStacks.jl")
