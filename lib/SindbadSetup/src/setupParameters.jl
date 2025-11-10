@@ -93,12 +93,12 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     for m in eachindex(name)
         prm_name = Symbol(name[m])
         appr = approach_func[m]()
-        p_timescale = Sindbad.Models.timescale(appr, prm_name)
+        p_timescale = SindbadCore.Models.timescale(appr, prm_name)
         unit_factor = getUnitConversionForParameter(p_timescale, model_timestep)
         lower[m] = lower[m] * unit_factor
         upper[m] = upper[m] * unit_factor
         if hasproperty(appr, prm_name)
-            p_unit = Sindbad.Models.units(appr, prm_name)
+            p_unit = SindbadCore.Models.units(appr, prm_name)
             push!(unts_ori, p_unit)
             if ~isone(unit_factor)
                 p_unit = replace(p_unit, p_timescale => model_timestep)

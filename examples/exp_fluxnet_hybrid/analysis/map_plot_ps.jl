@@ -116,7 +116,7 @@ end
 #     color_pp = 1.15*colorant"tan1"
 #     Label(fig[end, :], rich("user ", color = color_pinfo,
 #         rich("⋅ Lazaro", color = color_pp),
-#         rich("  Sindbad.jl ", color = color_pinfo,
+#         rich("  SindbadCore.jl ", color = color_pinfo,
 #         rich("| v0.1.0", color = color_pp,
 #         rich("  julia ", color = color_pinfo,
 #         rich("⋅ 1.11", color = color_pp,

@@ -35,7 +35,7 @@ Adds a specified Julia package to the environment of a given module or project.
 
 # Notes:
 - This function assumes that the `where_to_add` module or project is structured with a standard Julia project layout.
-- It requires the `Pkg` module for package management, which is re-exported from core Sindbad.
+- It requires the `Pkg` module for package management, which is re-exported from core SindbadCore.
 
 # Example:
 ```julia

@@ -1,5 +1,5 @@
 ```@docs
-Sindbad.Models
+SindbadCore.Models
 ```
 ## Available Models
 
@@ -2201,11 +2201,11 @@ waterBalance_simple
 ```@meta
 CollapsedDocStrings = false
 DocTestSetup= quote
-using Sindbad.Models
+using SindbadCore.Models
 end
 ```
 
 ```@autodocs
-Modules = [Sindbad.Models]
+Modules = [SindbadCore.Models]
 Public = false
 ```

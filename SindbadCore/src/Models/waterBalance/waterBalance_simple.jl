@@ -9,8 +9,8 @@ function throwError(forcing, land, msg, water_balance, total_water, total_water_
     @show forcing
     println(msg)
     if hasproperty(Sindbad, :error_catcher)
-        push!(Sindbad.error_catcher, land)
-        push!(Sindbad.error_catcher, msg)
+        push!(SindbadCore.error_catcher, land)
+        push!(SindbadCore.error_catcher, msg)
     end
     error(msg)
 end

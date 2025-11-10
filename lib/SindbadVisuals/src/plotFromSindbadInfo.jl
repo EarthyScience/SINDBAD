@@ -142,14 +142,14 @@ function plotIOModelStructure(info, which_function=:compute, which_field=[:input
         for (m_i, model_name) in enumerate(model_names)
             if isa(which_field, String)
                 the_fields = Symbol.(split(which_field, "_"))
-                model_variables = Sindbad.orD()
+                model_variables = SindbadCore.orD()
                 foreach(the_fields) do w_field
                     model_variables[w_field] = in_out_models[model_name][w_field]
                 end
             else
                 model_variables_in = in_out_models[model_name][which_field]
             end
-            if isa(model_variables, Sindbad.orD)
+            if isa(model_variables, SindbadCore.orD)
                 model_variables_in = model_variables[:input]
                 model_variables_out = model_variables[:output]
             end

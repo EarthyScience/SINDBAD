@@ -29,7 +29,7 @@ function (cEco_spin::Spinup_cEco)(pout, p)
         @rep_elem pout[l] ⇒ (cEco, lc, :cEco)
     end
     @pack_nt cEco ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    land = SindbadCore.adjustPackPoolComponents(land, helpers, land.models.c_model)
     update_init = timeLoopTEMSpinup(cEco_spin.models, cEco_spin.forcing, cEco_spin.loc_forcing_t, land, cEco_spin.tem_info, n_timesteps)
 
     pout .= log.(update_init.pools.cEco)
@@ -61,7 +61,7 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
         @rep_elem pout[l] ⇒ (cEco, lc, :cEco)
     end
     @pack_nt cEco ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    land = SindbadCore.adjustPackPoolComponents(land, helpers, land.models.c_model)
 
     TWS = land.pools.TWS
     TWS_prev = cEco_TWS_spin.TWS
@@ -70,7 +70,7 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
     end
 
     @pack_nt TWS ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.w_model)
+    land = SindbadCore.adjustPackPoolComponents(land, helpers, land.models.w_model)
 
     update_init = timeLoopTEMSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, cEco_TWS_spin.loc_forcing_t, land, cEco_TWS_spin.tem_info, n_timesteps)
 
@@ -103,7 +103,7 @@ function (TWS_spin::Spinup_TWS)(pout, p)
         @rep_elem maxZero(p[l]) ⇒ (TWS, lc, :TWS)
     end
     @pack_nt TWS ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.w_model)
+    land = SindbadCore.adjustPackPoolComponents(land, helpers, land.models.w_model)
     update_init = timeLoopTEMSpinup(TWS_spin.models, TWS_spin.forcing, TWS_spin.loc_forcing_t, land, TWS_spin.tem_info, n_timesteps)
     pout .= update_init.pools.TWS
     return nothing
@@ -230,7 +230,7 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
     TWS = r.zero
     TWS = oftype(land.pools.TWS, TWS)
     @pack_nt TWS ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, tem_info.model_helpers, land.models.w_model)
+    land = SindbadCore.adjustPackPoolComponents(land, tem_info.model_helpers, land.models.w_model)
     return land
 end
 
@@ -251,8 +251,8 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
     TWS_prev = cEco_TWS_spin.TWS
     TWS = oftype(land.pools.TWS, TWS_prev)
     @pack_nt TWS ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, tem_info.model_helpers, land.models.c_model)
-    land = Sindbad.adjustPackPoolComponents(land, tem_info.model_helpers, land.models.w_model)
+    land = SindbadCore.adjustPackPoolComponents(land, tem_info.model_helpers, land.models.c_model)
+    land = SindbadCore.adjustPackPoolComponents(land, tem_info.model_helpers, land.models.w_model)
     return land
 end
 
@@ -264,7 +264,7 @@ function spinup(spinup_models, spinup_forcing, loc_forcing_t, land, tem_info, n_
     cEco = exp.(r.zero)
     cEco = oftype(land.pools.cEco, cEco)
     @pack_nt cEco ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, tem_info.model_helpers, land.models.c_model)
+    land = SindbadCore.adjustPackPoolComponents(land, tem_info.model_helpers, land.models.c_model)
     return land
 end
 
@@ -293,7 +293,7 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleAH)
         @rep_elem cVegNew ⇒ (cEco, cVegZix, :cEco)
     end
     @pack_nt cEco ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    land = SindbadCore.adjustPackPoolComponents(land, helpers, land.models.c_model)
     @pack_nt cEco_prev ⇒ land.states
     return land
 end
@@ -320,7 +320,7 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleAHCWD)
         @rep_elem cVegNew ⇒ (cEco, cVegZix, :cEco)
     end
     @pack_nt cEco ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    land = SindbadCore.adjustPackPoolComponents(land, helpers, land.models.c_model)
     @pack_nt cEco_prev ⇒ land.states
     return land
 end
@@ -353,7 +353,7 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     end
 
     @pack_nt cEco ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    land = SindbadCore.adjustPackPoolComponents(land, helpers, land.models.c_model)
     @pack_nt cEco_prev ⇒ land.states
     return land
 end
@@ -382,7 +382,7 @@ function spinup(_, _, _, land, helpers, _, ::EtaScaleA0HCWD)
     end
 
     @pack_nt cEco ⇒ land.pools
-    land = Sindbad.adjustPackPoolComponents(land, helpers, land.models.c_model)
+    land = SindbadCore.adjustPackPoolComponents(land, helpers, land.models.c_model)
     @pack_nt cEco_prev ⇒ land.states
     return land
 end

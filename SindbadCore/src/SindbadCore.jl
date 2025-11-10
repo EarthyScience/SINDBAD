@@ -68,7 +68,7 @@ using Sindbad
 catalog = getVariableCatalog()
 ```
 """
-module Sindbad
+module SindbadCore
    using Reexport: @reexport
    @reexport using Reexport
    @reexport using Pkg
@@ -85,7 +85,7 @@ module Sindbad
    using Crayons
    # @reexport using Crayons
 
-   # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of Sindbad.
+   # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of SindbadCore.
    file_path = file_path = joinpath(@__DIR__, "tmp_precompile_placeholder.jl")
    # Check if the file exists
    if isfile(file_path)

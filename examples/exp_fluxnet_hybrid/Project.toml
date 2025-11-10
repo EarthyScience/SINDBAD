@@ -13,7 +13,7 @@ SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [sources]
-Sindbad = {path = "../../Sindbad"}
+Sindbad = {path = "../../SindbadCore"}
 SindbadData = {path = "../../lib/SindbadData"}
 SindbadML = {path = "../../lib/SindbadML"}
 SindbadMetrics = {path = "../../lib/SindbadMetrics"}

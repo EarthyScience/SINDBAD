@@ -11,7 +11,7 @@ info = getExperimentInfo(experiment_json);
 
 forcing = getForcing(info);
 
-# Sindbad.eval(:(error_catcher = []));
+# SindbadCore.eval(:(error_catcher = []));
 op = prepTEMOut(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow

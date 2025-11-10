@@ -27,7 +27,7 @@ Abstract type for all array types in SINDBAD
 
 
 """
-Sindbad.Types.ArrayTypes
+SindbadCore.Types.ArrayTypes
 
 @doc """
 
@@ -52,7 +52,7 @@ Abstract type for internal model array types in SINDBAD
 
 
 """
-Sindbad.Types.ModelArrayType
+SindbadCore.Types.ModelArrayType
 
 @doc """
 
@@ -66,7 +66,7 @@ Use standard Julia arrays for model variables
 
 
 """
-Sindbad.Types.ModelArrayArray
+SindbadCore.Types.ModelArrayArray
 
 @doc """
 
@@ -80,7 +80,7 @@ Use StaticArrays for model variables
 
 
 """
-Sindbad.Types.ModelArrayStaticArray
+SindbadCore.Types.ModelArrayStaticArray
 
 @doc """
 
@@ -94,7 +94,7 @@ Use array views for model variables
 
 
 """
-Sindbad.Types.ModelArrayView
+SindbadCore.Types.ModelArrayView
 
 @doc """
 
@@ -120,7 +120,7 @@ Abstract type for output array types in SINDBAD
 
 
 """
-Sindbad.Types.OutputArrayType
+SindbadCore.Types.OutputArrayType
 
 @doc """
 
@@ -134,7 +134,7 @@ Use standard Julia arrays for output
 
 
 """
-Sindbad.Types.OutputArray
+SindbadCore.Types.OutputArray
 
 @doc """
 
@@ -148,7 +148,7 @@ Use MArray for output
 
 
 """
-Sindbad.Types.OutputMArray
+SindbadCore.Types.OutputMArray
 
 @doc """
 
@@ -162,7 +162,7 @@ Use SizedArray for output
 
 
 """
-Sindbad.Types.OutputSizedArray
+SindbadCore.Types.OutputSizedArray
 
 @doc """
 
@@ -176,7 +176,7 @@ Use YAXArray for output
 
 
 """
-Sindbad.Types.OutputYAXArray
+SindbadCore.Types.OutputYAXArray
 
 @doc """
 
@@ -227,7 +227,7 @@ Abstract type for model run flags and experimental setup and simulations in SIND
 
 
 """
-Sindbad.Types.ExperimentTypes
+SindbadCore.Types.ExperimentTypes
 
 @doc """
 
@@ -253,7 +253,7 @@ Abstract type for model output strategies in SINDBAD
 
 
 """
-Sindbad.Types.OutputStrategy
+SindbadCore.Types.OutputStrategy
 
 @doc """
 
@@ -267,7 +267,7 @@ Disable output of all model variables
 
 
 """
-Sindbad.Types.DoNotOutputAll
+SindbadCore.Types.DoNotOutputAll
 
 @doc """
 
@@ -281,7 +281,7 @@ Save output variables in separate files
 
 
 """
-Sindbad.Types.DoNotSaveSingleFile
+SindbadCore.Types.DoNotSaveSingleFile
 
 @doc """
 
@@ -295,7 +295,7 @@ Enable output of all model variables
 
 
 """
-Sindbad.Types.DoOutputAll
+SindbadCore.Types.DoOutputAll
 
 @doc """
 
@@ -309,7 +309,7 @@ Save all output variables in a single file
 
 
 """
-Sindbad.Types.DoSaveSingleFile
+SindbadCore.Types.DoSaveSingleFile
 
 @doc """
 
@@ -333,7 +333,7 @@ Abstract type for using different parallelization packages in SINDBAD
 
 
 """
-Sindbad.Types.ParallelizationPackage
+SindbadCore.Types.ParallelizationPackage
 
 @doc """
 
@@ -347,7 +347,7 @@ Use Qbmap for parallelization
 
 
 """
-Sindbad.Types.QbmapParallelization
+SindbadCore.Types.QbmapParallelization
 
 @doc """
 
@@ -361,7 +361,7 @@ Use Julia threads for parallelization
 
 
 """
-Sindbad.Types.ThreadsParallelization
+SindbadCore.Types.ThreadsParallelization
 
 @doc """
 
@@ -403,7 +403,7 @@ Abstract type for model run configuration flags in SINDBAD
 
 
 """
-Sindbad.Types.RunFlag
+SindbadCore.Types.RunFlag
 
 @doc """
 
@@ -417,7 +417,7 @@ Enable cost calculation between model output and observations
 
 
 """
-Sindbad.Types.DoCalcCost
+SindbadCore.Types.DoCalcCost
 
 @doc """
 
@@ -431,7 +431,7 @@ Enable model debugging mode
 
 
 """
-Sindbad.Types.DoDebugModel
+SindbadCore.Types.DoDebugModel
 
 @doc """
 
@@ -445,7 +445,7 @@ Enable filtering of NaN values in spatial data
 
 
 """
-Sindbad.Types.DoFilterNanPixels
+SindbadCore.Types.DoFilterNanPixels
 
 @doc """
 
@@ -459,7 +459,7 @@ Enable inline updates of model state
 
 
 """
-Sindbad.Types.DoInlineUpdate
+SindbadCore.Types.DoInlineUpdate
 
 @doc """
 
@@ -473,7 +473,7 @@ Disable cost calculation between model output and observations
 
 
 """
-Sindbad.Types.DoNotCalcCost
+SindbadCore.Types.DoNotCalcCost
 
 @doc """
 
@@ -487,7 +487,7 @@ Disable model debugging mode
 
 
 """
-Sindbad.Types.DoNotDebugModel
+SindbadCore.Types.DoNotDebugModel
 
 @doc """
 
@@ -501,7 +501,7 @@ Disable filtering of NaN values in spatial data
 
 
 """
-Sindbad.Types.DoNotFilterNanPixels
+SindbadCore.Types.DoNotFilterNanPixels
 
 @doc """
 
@@ -515,7 +515,7 @@ Disable inline updates of model state
 
 
 """
-Sindbad.Types.DoNotInlineUpdate
+SindbadCore.Types.DoNotInlineUpdate
 
 @doc """
 
@@ -529,7 +529,7 @@ Disable forward model run
 
 
 """
-Sindbad.Types.DoNotRunForward
+SindbadCore.Types.DoNotRunForward
 
 @doc """
 
@@ -543,7 +543,7 @@ Disable model parameter optimization
 
 
 """
-Sindbad.Types.DoNotRunOptimization
+SindbadCore.Types.DoNotRunOptimization
 
 @doc """
 
@@ -557,7 +557,7 @@ Disable saving of model information
 
 
 """
-Sindbad.Types.DoNotSaveInfo
+SindbadCore.Types.DoNotSaveInfo
 
 @doc """
 
@@ -571,7 +571,7 @@ Disable terrestrial ecosystem model spinup
 
 
 """
-Sindbad.Types.DoNotSpinupTEM
+SindbadCore.Types.DoNotSpinupTEM
 
 @doc """
 
@@ -585,7 +585,7 @@ Disable storing of spinup results
 
 
 """
-Sindbad.Types.DoNotStoreSpinup
+SindbadCore.Types.DoNotStoreSpinup
 
 @doc """
 
@@ -599,7 +599,7 @@ Disable forward mode automatic differentiation
 
 
 """
-Sindbad.Types.DoNotUseForwardDiff
+SindbadCore.Types.DoNotUseForwardDiff
 
 @doc """
 
@@ -613,7 +613,7 @@ Enable forward model run
 
 
 """
-Sindbad.Types.DoRunForward
+SindbadCore.Types.DoRunForward
 
 @doc """
 
@@ -627,7 +627,7 @@ Enable model parameter optimization
 
 
 """
-Sindbad.Types.DoRunOptimization
+SindbadCore.Types.DoRunOptimization
 
 @doc """
 
@@ -641,7 +641,7 @@ Enable saving of model information
 
 
 """
-Sindbad.Types.DoSaveInfo
+SindbadCore.Types.DoSaveInfo
 
 @doc """
 
@@ -655,7 +655,7 @@ Enable terrestrial ecosystem model spinup
 
 
 """
-Sindbad.Types.DoSpinupTEM
+SindbadCore.Types.DoSpinupTEM
 
 @doc """
 
@@ -669,7 +669,7 @@ Enable storing of spinup results
 
 
 """
-Sindbad.Types.DoStoreSpinup
+SindbadCore.Types.DoStoreSpinup
 
 @doc """
 
@@ -683,7 +683,7 @@ Enable forward mode automatic differentiation
 
 
 """
-Sindbad.Types.DoUseForwardDiff
+SindbadCore.Types.DoUseForwardDiff
 
 @doc """
 
@@ -725,7 +725,7 @@ Abstract type for input data and processing related options in SINDBAD
 
 
 """
-Sindbad.Types.InputTypes
+SindbadCore.Types.InputTypes
 
 @doc """
 
@@ -749,7 +749,7 @@ Abstract type for input data backends in SINDBAD
 
 
 """
-Sindbad.Types.DataFormatBackend
+SindbadCore.Types.DataFormatBackend
 
 @doc """
 
@@ -763,7 +763,7 @@ Use NetCDF format for input data
 
 
 """
-Sindbad.Types.BackendNetcdf
+SindbadCore.Types.BackendNetcdf
 
 @doc """
 
@@ -777,7 +777,7 @@ Use Zarr format for input data
 
 
 """
-Sindbad.Types.BackendZarr
+SindbadCore.Types.BackendZarr
 
 @doc """
 
@@ -791,7 +791,7 @@ Forcing variable with time dimension
 
 
 """
-Sindbad.Types.ForcingWithTime
+SindbadCore.Types.ForcingWithTime
 
 @doc """
 
@@ -805,7 +805,7 @@ Forcing variable without time dimension
 
 
 """
-Sindbad.Types.ForcingWithoutTime
+SindbadCore.Types.ForcingWithoutTime
 
 @doc """
 
@@ -831,7 +831,7 @@ Abstract type for input data array types in SINDBAD
 
 
 """
-Sindbad.Types.InputArrayBackend
+SindbadCore.Types.InputArrayBackend
 
 @doc """
 
@@ -845,7 +845,7 @@ Use standard Julia arrays for input data
 
 
 """
-Sindbad.Types.InputArray
+SindbadCore.Types.InputArray
 
 @doc """
 
@@ -859,7 +859,7 @@ Use keyed arrays for input data
 
 
 """
-Sindbad.Types.InputKeyedArray
+SindbadCore.Types.InputKeyedArray
 
 @doc """
 
@@ -873,7 +873,7 @@ Use named dimension arrays for input data
 
 
 """
-Sindbad.Types.InputNamedDimsArray
+SindbadCore.Types.InputNamedDimsArray
 
 @doc """
 
@@ -887,7 +887,7 @@ Use YAXArray for input data
 
 
 """
-Sindbad.Types.InputYaxArray
+SindbadCore.Types.InputYaxArray
 
 @doc """
 
@@ -917,7 +917,7 @@ Abstract type for spatial subsetting methods in SINDBAD
 
 
 """
-Sindbad.Types.SpatialSubsetter
+SindbadCore.Types.SpatialSubsetter
 
 @doc """
 
@@ -931,7 +931,7 @@ Use site ID (all caps) for spatial subsetting
 
 
 """
-Sindbad.Types.SpaceID
+SindbadCore.Types.SpaceID
 
 @doc """
 
@@ -945,7 +945,7 @@ Use site ID (capitalized) for spatial subsetting
 
 
 """
-Sindbad.Types.SpaceId
+SindbadCore.Types.SpaceId
 
 @doc """
 
@@ -959,7 +959,7 @@ Use site ID for spatial subsetting
 
 
 """
-Sindbad.Types.Spaceid
+SindbadCore.Types.Spaceid
 
 @doc """
 
@@ -973,7 +973,7 @@ Use latitude for spatial subsetting
 
 
 """
-Sindbad.Types.Spacelat
+SindbadCore.Types.Spacelat
 
 @doc """
 
@@ -987,7 +987,7 @@ Use full latitude for spatial subsetting
 
 
 """
-Sindbad.Types.Spacelatitude
+SindbadCore.Types.Spacelatitude
 
 @doc """
 
@@ -1001,7 +1001,7 @@ Use longitude for spatial subsetting
 
 
 """
-Sindbad.Types.Spacelon
+SindbadCore.Types.Spacelon
 
 @doc """
 
@@ -1015,7 +1015,7 @@ Use full longitude for spatial subsetting
 
 
 """
-Sindbad.Types.Spacelongitude
+SindbadCore.Types.Spacelongitude
 
 @doc """
 
@@ -1029,7 +1029,7 @@ Use site location for spatial subsetting
 
 
 """
-Sindbad.Types.Spacesite
+SindbadCore.Types.Spacesite
 
 @doc """
 
@@ -1062,7 +1062,7 @@ Abstract type for land related types that are typically used in preparing object
 
 
 """
-Sindbad.Types.LandTypes
+SindbadCore.Types.LandTypes
 
 @doc """
 
@@ -1091,7 +1091,7 @@ Abstract type for preallocated land helpers types in prepTEM of SINDBAD
 
 
 """
-Sindbad.Types.PreAlloc
+SindbadCore.Types.PreAlloc
 
 @doc """
 
@@ -1105,7 +1105,7 @@ use a preallocated array for model output
 
 
 """
-Sindbad.Types.PreAllocArray
+SindbadCore.Types.PreAllocArray
 
 @doc """
 
@@ -1119,7 +1119,7 @@ use a preallocated array to output all land variables
 
 
 """
-Sindbad.Types.PreAllocArrayAll
+SindbadCore.Types.PreAllocArrayAll
 
 @doc """
 
@@ -1133,7 +1133,7 @@ use a preallocated array for finite difference (FD) hybrid experiments
 
 
 """
-Sindbad.Types.PreAllocArrayFD
+SindbadCore.Types.PreAllocArrayFD
 
 @doc """
 
@@ -1147,7 +1147,7 @@ use arrays of nThreads size for land model output for replicates of multiple thr
 
 
 """
-Sindbad.Types.PreAllocArrayMT
+SindbadCore.Types.PreAllocArrayMT
 
 @doc """
 
@@ -1161,7 +1161,7 @@ save output as a stacked vector of land using map over temporal dimension
 
 
 """
-Sindbad.Types.PreAllocStacked
+SindbadCore.Types.PreAllocStacked
 
 @doc """
 
@@ -1175,7 +1175,7 @@ save land output as a preallocated vector for time series of land
 
 
 """
-Sindbad.Types.PreAllocTimeseries
+SindbadCore.Types.PreAllocTimeseries
 
 @doc """
 
@@ -1189,7 +1189,7 @@ use YAX arrays for model output
 
 
 """
-Sindbad.Types.PreAllocYAXArray
+SindbadCore.Types.PreAllocYAXArray
 
 @doc """
 
@@ -1218,7 +1218,7 @@ Abstract type for types in machine learning related methods in SINDBAD
 
 
 """
-Sindbad.Types.MLTypes
+SindbadCore.Types.MLTypes
 
 @doc """
 
@@ -1246,7 +1246,7 @@ Abstract type for automatic differentiation or finite differences for gradient c
 
 
 """
-Sindbad.Types.MLGradType
+SindbadCore.Types.MLGradType
 
 @doc """
 
@@ -1260,7 +1260,7 @@ Use Enzyme.jl for automatic differentiation
 
 
 """
-Sindbad.Types.EnzymeGrad
+SindbadCore.Types.EnzymeGrad
 
 @doc """
 
@@ -1274,7 +1274,7 @@ Use FiniteDiff.jl for finite difference calculations
 
 
 """
-Sindbad.Types.FiniteDiffGrad
+SindbadCore.Types.FiniteDiffGrad
 
 @doc """
 
@@ -1288,7 +1288,7 @@ Use FiniteDifferences.jl for finite difference calculations
 
 
 """
-Sindbad.Types.FiniteDifferencesGrad
+SindbadCore.Types.FiniteDifferencesGrad
 
 @doc """
 
@@ -1302,7 +1302,7 @@ Use ForwardDiff.jl for automatic differentiation
 
 
 """
-Sindbad.Types.ForwardDiffGrad
+SindbadCore.Types.ForwardDiffGrad
 
 @doc """
 
@@ -1316,7 +1316,7 @@ Use PolyesterForwardDiff.jl for automatic differentiation
 
 
 """
-Sindbad.Types.PolyesterForwardDiffGrad
+SindbadCore.Types.PolyesterForwardDiffGrad
 
 @doc """
 
@@ -1330,7 +1330,7 @@ Use Zygote.jl for automatic differentiation
 
 
 """
-Sindbad.Types.ZygoteGrad
+SindbadCore.Types.ZygoteGrad
 
 @doc """
 
@@ -1385,7 +1385,7 @@ Abstract type for performance metrics and cost calculation methods in SINDBAD
 
 
 """
-Sindbad.Types.MetricTypes
+SindbadCore.Types.MetricTypes
 
 @doc """
 
@@ -1409,7 +1409,7 @@ Abstract type for data aggregation order in SINDBAD
 
 
 """
-Sindbad.Types.DataAggrOrder
+SindbadCore.Types.DataAggrOrder
 
 @doc """
 
@@ -1423,7 +1423,7 @@ Aggregate data first over space, then over time
 
 
 """
-Sindbad.Types.SpaceTime
+SindbadCore.Types.SpaceTime
 
 @doc """
 
@@ -1437,7 +1437,7 @@ Aggregate data first over time, then over space
 
 
 """
-Sindbad.Types.TimeSpace
+SindbadCore.Types.TimeSpace
 
 @doc """
 
@@ -1482,7 +1482,7 @@ Abstract type for performance metrics in SINDBAD
 
 
 """
-Sindbad.Types.PerfMetric
+SindbadCore.Types.PerfMetric
 
 @doc """
 
@@ -1496,7 +1496,7 @@ Mean Squared Error: Measures the average squared difference between predicted an
 
 
 """
-Sindbad.Types.MSE
+SindbadCore.Types.MSE
 
 @doc """
 
@@ -1510,7 +1510,7 @@ Normalized Absolute Mean Error with 1/R scaling: Measures the absolute differenc
 
 
 """
-Sindbad.Types.NAME1R
+SindbadCore.Types.NAME1R
 
 @doc """
 
@@ -1524,7 +1524,7 @@ Normalized Mean Absolute Error with 1/R scaling: Measures the average absolute e
 
 
 """
-Sindbad.Types.NMAE1R
+SindbadCore.Types.NMAE1R
 
 @doc """
 
@@ -1538,7 +1538,7 @@ Normalized Nash-Sutcliffe Efficiency: Measures model performance relative to the
 
 
 """
-Sindbad.Types.NNSE
+SindbadCore.Types.NNSE
 
 @doc """
 
@@ -1552,7 +1552,7 @@ Inverse Normalized Nash-Sutcliffe Efficiency: Inverse of NNSE for minimization p
 
 
 """
-Sindbad.Types.NNSEInv
+SindbadCore.Types.NNSEInv
 
 @doc """
 
@@ -1566,7 +1566,7 @@ Normalized Nash-Sutcliffe Efficiency with uncertainty: Incorporates observation 
 
 
 """
-Sindbad.Types.NNSEσ
+SindbadCore.Types.NNSEσ
 
 @doc """
 
@@ -1580,7 +1580,7 @@ Inverse Normalized Nash-Sutcliffe Efficiency with uncertainty: Inverse of NNSEσ
 
 
 """
-Sindbad.Types.NNSEσInv
+SindbadCore.Types.NNSEσInv
 
 @doc """
 
@@ -1594,7 +1594,7 @@ Normalized Pearson Correlation: Measures linear correlation between predictions 
 
 
 """
-Sindbad.Types.NPcor
+SindbadCore.Types.NPcor
 
 @doc """
 
@@ -1608,7 +1608,7 @@ Inverse Normalized Pearson Correlation: Inverse of NPcor for minimization proble
 
 
 """
-Sindbad.Types.NPcorInv
+SindbadCore.Types.NPcorInv
 
 @doc """
 
@@ -1622,7 +1622,7 @@ Nash-Sutcliffe Efficiency: Measures model performance relative to the mean of ob
 
 
 """
-Sindbad.Types.NSE
+SindbadCore.Types.NSE
 
 @doc """
 
@@ -1636,7 +1636,7 @@ Inverse Nash-Sutcliffe Efficiency: Inverse of NSE for minimization problems
 
 
 """
-Sindbad.Types.NSEInv
+SindbadCore.Types.NSEInv
 
 @doc """
 
@@ -1650,7 +1650,7 @@ Nash-Sutcliffe Efficiency with uncertainty: Incorporates observation uncertainty
 
 
 """
-Sindbad.Types.NSEσ
+SindbadCore.Types.NSEσ
 
 @doc """
 
@@ -1664,7 +1664,7 @@ Inverse Nash-Sutcliffe Efficiency with uncertainty: Inverse of NSEσ for minimiz
 
 
 """
-Sindbad.Types.NSEσInv
+SindbadCore.Types.NSEσInv
 
 @doc """
 
@@ -1678,7 +1678,7 @@ Normalized Spearman Correlation: Measures monotonic relationship between predict
 
 
 """
-Sindbad.Types.NScor
+SindbadCore.Types.NScor
 
 @doc """
 
@@ -1692,7 +1692,7 @@ Inverse Normalized Spearman Correlation: Inverse of NScor for minimization probl
 
 
 """
-Sindbad.Types.NScorInv
+SindbadCore.Types.NScorInv
 
 @doc """
 
@@ -1706,7 +1706,7 @@ Pearson Correlation: Measures linear correlation between predictions and observa
 
 
 """
-Sindbad.Types.Pcor
+SindbadCore.Types.Pcor
 
 @doc """
 
@@ -1720,7 +1720,7 @@ Squared Pearson Correlation: Measures the strength of linear relationship betwee
 
 
 """
-Sindbad.Types.Pcor2
+SindbadCore.Types.Pcor2
 
 @doc """
 
@@ -1734,7 +1734,7 @@ Inverse Squared Pearson Correlation: Inverse of Pcor2 for minimization problems
 
 
 """
-Sindbad.Types.Pcor2Inv
+SindbadCore.Types.Pcor2Inv
 
 @doc """
 
@@ -1748,7 +1748,7 @@ Inverse Pearson Correlation: Inverse of Pcor for minimization problems
 
 
 """
-Sindbad.Types.PcorInv
+SindbadCore.Types.PcorInv
 
 @doc """
 
@@ -1762,7 +1762,7 @@ Spearman Correlation: Measures monotonic relationship between predictions and ob
 
 
 """
-Sindbad.Types.Scor
+SindbadCore.Types.Scor
 
 @doc """
 
@@ -1776,7 +1776,7 @@ Squared Spearman Correlation: Measures the strength of monotonic relationship be
 
 
 """
-Sindbad.Types.Scor2
+SindbadCore.Types.Scor2
 
 @doc """
 
@@ -1790,7 +1790,7 @@ Inverse Squared Spearman Correlation: Inverse of Scor2 for minimization problems
 
 
 """
-Sindbad.Types.Scor2Inv
+SindbadCore.Types.Scor2Inv
 
 @doc """
 
@@ -1804,7 +1804,7 @@ Inverse Spearman Correlation: Inverse of Scor for minimization problems
 
 
 """
-Sindbad.Types.ScorInv
+SindbadCore.Types.ScorInv
 
 @doc """
 
@@ -1818,7 +1818,7 @@ Abstract type for spatial data aggregation methods in SINDBAD
 
 
 """
-Sindbad.Types.SpatialDataAggr
+SindbadCore.Types.SpatialDataAggr
 
 @doc """
 
@@ -1844,7 +1844,7 @@ Abstract type for spatial metric aggregation methods in SINDBAD
 
 
 """
-Sindbad.Types.SpatialMetricAggr
+SindbadCore.Types.SpatialMetricAggr
 
 @doc """
 
@@ -1858,7 +1858,7 @@ Take maximum value across spatial dimensions
 
 
 """
-Sindbad.Types.MetricMaximum
+SindbadCore.Types.MetricMaximum
 
 @doc """
 
@@ -1872,7 +1872,7 @@ Take minimum value across spatial dimensions
 
 
 """
-Sindbad.Types.MetricMinimum
+SindbadCore.Types.MetricMinimum
 
 @doc """
 
@@ -1886,7 +1886,7 @@ Apply spatial aggregation to metrics
 
 
 """
-Sindbad.Types.MetricSpatial
+SindbadCore.Types.MetricSpatial
 
 @doc """
 
@@ -1900,7 +1900,7 @@ Sum values across spatial dimensions
 
 
 """
-Sindbad.Types.MetricSum
+SindbadCore.Types.MetricSum
 
 @doc """
 
@@ -2246,7 +2246,7 @@ Root allocation is further divided into fine (cf2Root) and coarse roots (cf2Root
 
 
 """
-Sindbad.Types.ModelTypes
+SindbadCore.Types.ModelTypes
 
 @doc """
 
@@ -2260,7 +2260,7 @@ Enable error catching during model execution
 
 
 """
-Sindbad.Types.DoCatchModelErrors
+SindbadCore.Types.DoCatchModelErrors
 
 @doc """
 
@@ -2274,7 +2274,7 @@ Disable error catching during model execution
 
 
 """
-Sindbad.Types.DoNotCatchModelErrors
+SindbadCore.Types.DoNotCatchModelErrors
 
 @doc """
 
@@ -2325,7 +2325,7 @@ Abstract type for optimization related functions and methods in SINDBAD
 
 
 """
-Sindbad.Types.OptimizationTypes
+SindbadCore.Types.OptimizationTypes
 
 @doc """
 
@@ -2351,7 +2351,7 @@ Abstract type for cost calculation methods in SINDBAD
 
 
 """
-Sindbad.Types.CostMethod
+SindbadCore.Types.CostMethod
 
 @doc """
 
@@ -2365,7 +2365,7 @@ cost calculation between model output and observations
 
 
 """
-Sindbad.Types.CostModelObs
+SindbadCore.Types.CostModelObs
 
 @doc """
 
@@ -2379,7 +2379,7 @@ cost calculation between land model output and time series observations
 
 
 """
-Sindbad.Types.CostModelObsLandTS
+SindbadCore.Types.CostModelObsLandTS
 
 @doc """
 
@@ -2393,7 +2393,7 @@ multi-threaded cost calculation between model output and observations
 
 
 """
-Sindbad.Types.CostModelObsMT
+SindbadCore.Types.CostModelObsMT
 
 @doc """
 
@@ -2407,7 +2407,7 @@ cost calculation between model output, observations, and priors. NOTE THAT THIS 
 
 
 """
-Sindbad.Types.CostModelObsPriors
+SindbadCore.Types.CostModelObsPriors
 
 @doc """
 
@@ -2432,7 +2432,7 @@ Abstract type for global sensitivity analysis methods in SINDBAD
 
 
 """
-Sindbad.Types.GSAMethod
+SindbadCore.Types.GSAMethod
 
 @doc """
 
@@ -2446,7 +2446,7 @@ Morris method for global sensitivity analysis
 
 
 """
-Sindbad.Types.GSAMorris
+SindbadCore.Types.GSAMorris
 
 @doc """
 
@@ -2460,7 +2460,7 @@ Sobol method for global sensitivity analysis
 
 
 """
-Sindbad.Types.GSASobol
+SindbadCore.Types.GSASobol
 
 @doc """
 
@@ -2474,7 +2474,7 @@ Sobol method with derivative-based measures for global sensitivity analysis
 
 
 """
-Sindbad.Types.GSASobolDM
+SindbadCore.Types.GSASobolDM
 
 @doc """
 
@@ -2511,7 +2511,7 @@ Abstract type for optimization methods in SINDBAD
 
 
 """
-Sindbad.Types.OptimizationMethod
+SindbadCore.Types.OptimizationMethod
 
 @doc """
 
@@ -2525,7 +2525,7 @@ Bayesian Optimization using Matern 5/2 kernel with Automatic Relevance Determina
 
 
 """
-Sindbad.Types.BayesOptKMaternARD5
+SindbadCore.Types.BayesOptKMaternARD5
 
 @doc """
 
@@ -2539,7 +2539,7 @@ Covariance Matrix Adaptation Evolution Strategy (CMA-ES) from CMAEvolutionStrate
 
 
 """
-Sindbad.Types.CMAEvolutionStrategyCMAES
+SindbadCore.Types.CMAEvolutionStrategyCMAES
 
 @doc """
 
@@ -2553,7 +2553,7 @@ Evolutionary version of CMA-ES optimization from Evolutionary.jl
 
 
 """
-Sindbad.Types.EvolutionaryCMAES
+SindbadCore.Types.EvolutionaryCMAES
 
 @doc """
 
@@ -2567,7 +2567,7 @@ Broyden-Fletcher-Goldfarb-Shanno (BFGS) from Optim.jl
 
 
 """
-Sindbad.Types.OptimBFGS
+SindbadCore.Types.OptimBFGS
 
 @doc """
 
@@ -2581,7 +2581,7 @@ Limited-memory Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) from Optim.jl
 
 
 """
-Sindbad.Types.OptimLBFGS
+SindbadCore.Types.OptimLBFGS
 
 @doc """
 
@@ -2595,7 +2595,7 @@ Black Box Optimization with adaptive parameters from Optimization.jl
 
 
 """
-Sindbad.Types.OptimizationBBOadaptive
+SindbadCore.Types.OptimizationBBOadaptive
 
 @doc """
 
@@ -2609,7 +2609,7 @@ Black Box Optimization using Natural Evolution Strategy (xNES) from Optimization
 
 
 """
-Sindbad.Types.OptimizationBBOxnes
+SindbadCore.Types.OptimizationBBOxnes
 
 @doc """
 
@@ -2623,7 +2623,7 @@ BFGS optimization with box constraints from Optimization.jl
 
 
 """
-Sindbad.Types.OptimizationBFGS
+SindbadCore.Types.OptimizationBFGS
 
 @doc """
 
@@ -2637,7 +2637,7 @@ Gradient descent optimization with box constraints from Optimization.jl
 
 
 """
-Sindbad.Types.OptimizationFminboxGradientDescent
+SindbadCore.Types.OptimizationFminboxGradientDescent
 
 @doc """
 
@@ -2651,7 +2651,7 @@ Gradient descent optimization with box constraints using forward differentiation
 
 
 """
-Sindbad.Types.OptimizationFminboxGradientDescentFD
+SindbadCore.Types.OptimizationFminboxGradientDescentFD
 
 @doc """
 
@@ -2665,7 +2665,7 @@ Global CMA-ES optimization with default settings from Optimization.jl
 
 
 """
-Sindbad.Types.OptimizationGCMAESDef
+SindbadCore.Types.OptimizationGCMAESDef
 
 @doc """
 
@@ -2679,7 +2679,7 @@ Global CMA-ES optimization using forward differentiation from Optimization.jl
 
 
 """
-Sindbad.Types.OptimizationGCMAESFD
+SindbadCore.Types.OptimizationGCMAESFD
 
 @doc """
 
@@ -2693,7 +2693,7 @@ Multi-start optimization to find global optimum from Optimization.jl
 
 
 """
-Sindbad.Types.OptimizationMultistartOptimization
+SindbadCore.Types.OptimizationMultistartOptimization
 
 @doc """
 
@@ -2707,7 +2707,7 @@ Nelder-Mead simplex optimization method from Optimization.jl
 
 
 """
-Sindbad.Types.OptimizationNelderMead
+SindbadCore.Types.OptimizationNelderMead
 
 @doc """
 
@@ -2721,7 +2721,7 @@ Quadratic Direct optimization method from Optimization.jl
 
 
 """
-Sindbad.Types.OptimizationQuadDirect
+SindbadCore.Types.OptimizationQuadDirect
 
 @doc """
 
@@ -2746,7 +2746,7 @@ Abstract type for parameter scaling methods in SINDBAD
 
 
 """
-Sindbad.Types.ParameterScaling
+SindbadCore.Types.ParameterScaling
 
 @doc """
 
@@ -2760,7 +2760,7 @@ Scale parameters relative to their bounds
 
 
 """
-Sindbad.Types.ScaleBounds
+SindbadCore.Types.ScaleBounds
 
 @doc """
 
@@ -2774,7 +2774,7 @@ Scale parameters relative to default values
 
 
 """
-Sindbad.Types.ScaleDefault
+SindbadCore.Types.ScaleDefault
 
 @doc """
 
@@ -2788,7 +2788,7 @@ No parameter scaling applied
 
 
 """
-Sindbad.Types.ScaleNone
+SindbadCore.Types.ScaleNone
 
 @doc """
 
@@ -2830,7 +2830,7 @@ Abstract type for model spinup related functions and methods in SINDBAD
 
 
 """
-Sindbad.Types.SpinupTypes
+SindbadCore.Types.SpinupTypes
 
 @doc """
 
@@ -2869,7 +2869,7 @@ Abstract type for model spinup modes in SINDBAD
 
 
 """
-Sindbad.Types.SpinupMode
+SindbadCore.Types.SpinupMode
 
 @doc """
 
@@ -2883,7 +2883,7 @@ Use all forward models for spinup
 
 
 """
-Sindbad.Types.AllForwardModels
+SindbadCore.Types.AllForwardModels
 
 @doc """
 
@@ -2897,7 +2897,7 @@ scale carbon pools using diagnostic scalars for ηH and c_remain
 
 
 """
-Sindbad.Types.EtaScaleA0H
+SindbadCore.Types.EtaScaleA0H
 
 @doc """
 
@@ -2911,7 +2911,7 @@ scale carbon pools of CWD (cLitSlow) using ηH and set vegetation pools to c_rem
 
 
 """
-Sindbad.Types.EtaScaleA0HCWD
+SindbadCore.Types.EtaScaleA0HCWD
 
 @doc """
 
@@ -2925,7 +2925,7 @@ scale carbon pools using diagnostic scalars for ηH and ηA
 
 
 """
-Sindbad.Types.EtaScaleAH
+SindbadCore.Types.EtaScaleAH
 
 @doc """
 
@@ -2939,7 +2939,7 @@ scale carbon pools of CWD (cLitSlow) using ηH and scale vegetation pools by ηA
 
 
 """
-Sindbad.Types.EtaScaleAHCWD
+SindbadCore.Types.EtaScaleAHCWD
 
 @doc """
 
@@ -2953,7 +2953,7 @@ use a fixed-point nonlinear solver with trust region for carbon pools (cEco)
 
 
 """
-Sindbad.Types.NlsolveFixedpointTrustregionCEco
+SindbadCore.Types.NlsolveFixedpointTrustregionCEco
 
 @doc """
 
@@ -2967,7 +2967,7 @@ use a fixed-point nonlinear solver with trust region for both cEco and TWS
 
 
 """
-Sindbad.Types.NlsolveFixedpointTrustregionCEcoTWS
+SindbadCore.Types.NlsolveFixedpointTrustregionCEcoTWS
 
 @doc """
 
@@ -2981,7 +2981,7 @@ use a fixed-point nonlinearsolver with trust region for Total Water Storage (TWS
 
 
 """
-Sindbad.Types.NlsolveFixedpointTrustregionTWS
+SindbadCore.Types.NlsolveFixedpointTrustregionTWS
 
 @doc """
 
@@ -2995,7 +2995,7 @@ use the AutoVern7(Rodas5) method from DifferentialEquations.jl for solving ODEs
 
 
 """
-Sindbad.Types.ODEAutoTsit5Rodas5
+SindbadCore.Types.ODEAutoTsit5Rodas5
 
 @doc """
 
@@ -3009,7 +3009,7 @@ use the DP5 method from DifferentialEquations.jl for solving ODEs
 
 
 """
-Sindbad.Types.ODEDP5
+SindbadCore.Types.ODEDP5
 
 @doc """
 
@@ -3023,7 +3023,7 @@ use the Tsit5 method from DifferentialEquations.jl for solving ODEs
 
 
 """
-Sindbad.Types.ODETsit5
+SindbadCore.Types.ODETsit5
 
 @doc """
 
@@ -3037,7 +3037,7 @@ use the SteadyState solver with DynamicSS and Tsit5 methods
 
 
 """
-Sindbad.Types.SSPDynamicSSTsit5
+SindbadCore.Types.SSPDynamicSSTsit5
 
 @doc """
 
@@ -3051,7 +3051,7 @@ use the SteadyState solver with SSRootfind method
 
 
 """
-Sindbad.Types.SSPSSRootfind
+SindbadCore.Types.SSPSSRootfind
 
 @doc """
 
@@ -3065,7 +3065,7 @@ run only the models selected for spinup in the model structure
 
 
 """
-Sindbad.Types.SelSpinupModels
+SindbadCore.Types.SelSpinupModels
 
 @doc """
 
@@ -3079,7 +3079,7 @@ Spinup spinup_mode for Total Water Storage (TWS)
 
 
 """
-Sindbad.Types.Spinup_TWS
+SindbadCore.Types.Spinup_TWS
 
 @doc """
 
@@ -3093,7 +3093,7 @@ Spinup spinup_mode for cEco
 
 
 """
-Sindbad.Types.Spinup_cEco
+SindbadCore.Types.Spinup_cEco
 
 @doc """
 
@@ -3107,7 +3107,7 @@ Spinup spinup_mode for cEco and TWS
 
 
 """
-Sindbad.Types.Spinup_cEco_TWS
+SindbadCore.Types.Spinup_cEco_TWS
 
 @doc """
 
@@ -3121,7 +3121,7 @@ Basic Spinup sequence without time aggregation
 
 
 """
-Sindbad.Types.SpinupSequence
+SindbadCore.Types.SpinupSequence
 
 @doc """
 
@@ -3135,7 +3135,7 @@ Spinup sequence with time aggregation for corresponding forcingtime series
 
 
 """
-Sindbad.Types.SpinupSequenceWithAggregator
+SindbadCore.Types.SpinupSequenceWithAggregator
 
 @doc """
 
@@ -3184,7 +3184,7 @@ Abstract type for implementing time subset and aggregation types in SINDBAD
 
 
 """
-Sindbad.Types.TimeTypes
+SindbadCore.Types.TimeTypes
 
 @doc """
 
@@ -3231,7 +3231,7 @@ Abstract type for time aggregation methods in SINDBAD
 
 
 """
-Sindbad.Types.TimeAggregation
+SindbadCore.Types.TimeAggregation
 
 @doc """
 
@@ -3245,7 +3245,7 @@ aggregation/slicing to include all years
 
 
 """
-Sindbad.Types.TimeAllYears
+SindbadCore.Types.TimeAllYears
 
 @doc """
 
@@ -3259,7 +3259,7 @@ use array-based time aggregation
 
 
 """
-Sindbad.Types.TimeArray
+SindbadCore.Types.TimeArray
 
 @doc """
 
@@ -3273,7 +3273,7 @@ aggregation to daily time steps
 
 
 """
-Sindbad.Types.TimeDay
+SindbadCore.Types.TimeDay
 
 @doc """
 
@@ -3287,7 +3287,7 @@ aggregation to daily anomalies
 
 
 """
-Sindbad.Types.TimeDayAnomaly
+SindbadCore.Types.TimeDayAnomaly
 
 @doc """
 
@@ -3301,7 +3301,7 @@ aggregation to daily IAV
 
 
 """
-Sindbad.Types.TimeDayIAV
+SindbadCore.Types.TimeDayIAV
 
 @doc """
 
@@ -3315,7 +3315,7 @@ aggregation to daily MSC
 
 
 """
-Sindbad.Types.TimeDayMSC
+SindbadCore.Types.TimeDayMSC
 
 @doc """
 
@@ -3329,7 +3329,7 @@ aggregation to daily MSC anomalies
 
 
 """
-Sindbad.Types.TimeDayMSCAnomaly
+SindbadCore.Types.TimeDayMSCAnomaly
 
 @doc """
 
@@ -3343,7 +3343,7 @@ aggregation to time differences, e.g. monthly anomalies
 
 
 """
-Sindbad.Types.TimeDiff
+SindbadCore.Types.TimeDiff
 
 @doc """
 
@@ -3357,7 +3357,7 @@ aggregation/slicing of the first year
 
 
 """
-Sindbad.Types.TimeFirstYear
+SindbadCore.Types.TimeFirstYear
 
 @doc """
 
@@ -3371,7 +3371,7 @@ aggregation to hourly time steps
 
 
 """
-Sindbad.Types.TimeHour
+SindbadCore.Types.TimeHour
 
 @doc """
 
@@ -3385,7 +3385,7 @@ aggregation to hourly anomalies
 
 
 """
-Sindbad.Types.TimeHourAnomaly
+SindbadCore.Types.TimeHourAnomaly
 
 @doc """
 
@@ -3399,7 +3399,7 @@ aggregation to mean of hourly data over days
 
 
 """
-Sindbad.Types.TimeHourDayMean
+SindbadCore.Types.TimeHourDayMean
 
 @doc """
 
@@ -3413,7 +3413,7 @@ aggregation using time indices, e.g., TimeFirstYear
 
 
 """
-Sindbad.Types.TimeIndexed
+SindbadCore.Types.TimeIndexed
 
 @doc """
 
@@ -3427,7 +3427,7 @@ aggregation to mean over all time steps
 
 
 """
-Sindbad.Types.TimeMean
+SindbadCore.Types.TimeMean
 
 @doc """
 
@@ -3441,7 +3441,7 @@ aggregation to monthly time steps
 
 
 """
-Sindbad.Types.TimeMonth
+SindbadCore.Types.TimeMonth
 
 @doc """
 
@@ -3455,7 +3455,7 @@ aggregation to monthly anomalies
 
 
 """
-Sindbad.Types.TimeMonthAnomaly
+SindbadCore.Types.TimeMonthAnomaly
 
 @doc """
 
@@ -3469,7 +3469,7 @@ aggregation to monthly IAV
 
 
 """
-Sindbad.Types.TimeMonthIAV
+SindbadCore.Types.TimeMonthIAV
 
 @doc """
 
@@ -3483,7 +3483,7 @@ aggregation to monthly MSC
 
 
 """
-Sindbad.Types.TimeMonthMSC
+SindbadCore.Types.TimeMonthMSC
 
 @doc """
 
@@ -3497,7 +3497,7 @@ aggregation to monthly MSC anomalies
 
 
 """
-Sindbad.Types.TimeMonthMSCAnomaly
+SindbadCore.Types.TimeMonthMSCAnomaly
 
 @doc """
 
@@ -3511,7 +3511,7 @@ aggregation without time differences
 
 
 """
-Sindbad.Types.TimeNoDiff
+SindbadCore.Types.TimeNoDiff
 
 @doc """
 
@@ -3525,7 +3525,7 @@ aggregation/slicing of a random year
 
 
 """
-Sindbad.Types.TimeRandomYear
+SindbadCore.Types.TimeRandomYear
 
 @doc """
 
@@ -3539,7 +3539,7 @@ aggregation/slicing/selection of shuffled years
 
 
 """
-Sindbad.Types.TimeShuffleYears
+SindbadCore.Types.TimeShuffleYears
 
 @doc """
 
@@ -3553,7 +3553,7 @@ aggregation to a sized array
 
 
 """
-Sindbad.Types.TimeSizedArray
+SindbadCore.Types.TimeSizedArray
 
 @doc """
 
@@ -3567,7 +3567,7 @@ aggregation to yearly time steps
 
 
 """
-Sindbad.Types.TimeYear
+SindbadCore.Types.TimeYear
 
 @doc """
 
@@ -3581,7 +3581,7 @@ aggregation to yearly anomalies
 
 
 """
-Sindbad.Types.TimeYearAnomaly
+SindbadCore.Types.TimeYearAnomaly
 
 @doc """
 
@@ -3604,7 +3604,7 @@ Abstract type for machine learning models used in SINDBAD
 
 
 """
-Sindbad.Types.MLModelType
+SindbadCore.Types.MLModelType
 
 @doc """
 
@@ -3618,7 +3618,7 @@ simple dense neural network model implemented in Flux.jl
 
 
 """
-Sindbad.Types.FluxDenseNN
+SindbadCore.Types.FluxDenseNN
 
 @doc """
 
@@ -3641,7 +3641,7 @@ Abstract type for optimizers used for training ML models in SINDBAD
 
 
 """
-Sindbad.Types.MLOptimizerType
+SindbadCore.Types.MLOptimizerType
 
 @doc """
 
@@ -3655,7 +3655,7 @@ Use Optimisers.jl Adam optimizer for training ML models in SINDBAD
 
 
 """
-Sindbad.Types.OptimisersAdam
+SindbadCore.Types.OptimisersAdam
 
 @doc """
 
@@ -3678,7 +3678,7 @@ Abstract type for training a hybrid algorithm in SINDBAD
 
 
 """
-Sindbad.Types.MLTrainingType
+SindbadCore.Types.MLTrainingType
 
 @doc """
 
@@ -3692,7 +3692,7 @@ Use a mixed gradient approach for training using gradient from multiple methods 
 
 
 """
-Sindbad.Types.MixedGradient
+SindbadCore.Types.MixedGradient
 
 @doc """
 
@@ -3706,7 +3706,7 @@ Use a split of the data to calculate the folds for cross-validation. The default
 
 
 """
-Sindbad.Types.CalcFoldFromSplit
+SindbadCore.Types.CalcFoldFromSplit
 
 @doc """
 
@@ -3720,7 +3720,7 @@ Use precalculated data to load the folds for cross-validation. In this case, the
 
 
 """
-Sindbad.Types.LoadFoldFromFile
+SindbadCore.Types.LoadFoldFromFile
 
 @doc """
 
@@ -3745,7 +3745,7 @@ Abstract type for activation functions used in ML models
 
 
 """
-Sindbad.Types.ActivationType
+SindbadCore.Types.ActivationType
 
 @doc """
 
@@ -3759,7 +3759,7 @@ Use Flux.jl ReLU activation function
 
 
 """
-Sindbad.Types.FluxRelu
+SindbadCore.Types.FluxRelu
 
 @doc """
 
@@ -3773,7 +3773,7 @@ Use Flux.jl Sigmoid activation function
 
 
 """
-Sindbad.Types.FluxSigmoid
+SindbadCore.Types.FluxSigmoid
 
 @doc """
 
@@ -3787,7 +3787,7 @@ Use Flux.jl Tanh activation function
 
 
 """
-Sindbad.Types.FluxTanh
+SindbadCore.Types.FluxTanh
 
 @doc """
 
@@ -3801,7 +3801,7 @@ Loss function using metrics between the predicted model and observation as defin
 
 
 """
-Sindbad.Types.LossModelObsML
+SindbadCore.Types.LossModelObsML
 
 @doc """
 
@@ -3815,7 +3815,7 @@ Use a custom sigmoid activation function. In this case, the `k_σ` parameter in 
 
 
 """
-Sindbad.Types.CustomSigmoid
+SindbadCore.Types.CustomSigmoid
 
 @doc """
 
@@ -3829,5 +3829,5 @@ Use Optimisers.jl Descent optimizer for training ML models in SINDBAD
 
 
 """
-Sindbad.Types.OptimisersDescent
+SindbadCore.Types.OptimisersDescent
 

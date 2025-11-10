@@ -40,8 +40,8 @@ function addErrorCatcher end
 
 
 function addErrorCatcher(loc_land, ::DoDebugModel) # print land when debug model is true/on
-    Sindbad.eval(:(error_catcher = []))
-    push!(Sindbad.error_catcher, loc_land)
+    SindbadCore.eval(:(error_catcher = []))
+    push!(SindbadCore.error_catcher, loc_land)
     tcPrint(loc_land)
     return nothing
 end

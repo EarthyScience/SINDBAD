@@ -29,8 +29,8 @@ This module is designed to provide reusable utilities for data manipulation, sta
 
 """
 module Utilities
-   using ..Sindbad
-   using ..Sindbad.Types
+   using ..SindbadCore
+   using ..SindbadCore.Types
    using Crayons
    using StyledStrings
    using FIGlet

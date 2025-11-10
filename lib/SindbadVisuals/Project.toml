@@ -9,7 +9,7 @@ Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 SindbadMetrics = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
 
 [sources]
-Sindbad = {path = "../../Sindbad"}
+Sindbad = {path = "../../SindbadCore"}
 SindbadMetrics = {path = "../../lib/SindbadMetrics"}
 
 [compat]

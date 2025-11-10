@@ -7,4 +7,4 @@ version = "0.1.0"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 
 [sources]
-Sindbad = {path = "../../Sindbad"}
+Sindbad = {path = "../../SindbadCore"}

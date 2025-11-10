@@ -117,7 +117,7 @@ end
 """
     setDebugErrorCatcher(::DoCatchModelErrors | ::DoNotCatchModelErrors)
 
-Enables/Disables a debug error catcher for the SINDBAD framework. When enabled, a variable `error_catcher` is enabled and can be written to from within SINDBAD models and functions. This can then be accessed from any scope with `Sindbad.error_catcher`
+Enables/Disables a debug error catcher for the SINDBAD framework. When enabled, a variable `error_catcher` is enabled and can be written to from within SINDBAD models and functions. This can then be accessed from any scope with `SindbadCore.error_catcher`
 
 # Arguments:
 - `::DoCatchModelErrors`: A type dispatch indicating that model errors should be caught.
@@ -127,13 +127,13 @@ Enables/Disables a debug error catcher for the SINDBAD framework. When enabled, 
 - `nothing`.
 
 # Notes:
-- When enabled, sets up an empty error catcher using `Sindbad.eval`.
+- When enabled, sets up an empty error catcher using `SindbadCore.eval`.
 """
 function setDebugErrorCatcher end
 
 function setDebugErrorCatcher(::DoCatchModelErrors)
     showInfo(setDebugErrorCatcher, @__FILE__, @__LINE__, "setting up debug error catcher", n_m=1)
-    Sindbad.eval(:(error_catcher = []))
+    SindbadCore.eval(:(error_catcher = []))
     return nothing
 end
 
