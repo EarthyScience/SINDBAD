@@ -61,7 +61,7 @@ jobs:
           pkg"registry up"
           Pkg.update()
           pkg"dev ./SindbadCore" # Develop the package in the SindbadCore directory
-          Pkg.test("Sindbad"; coverage=true) # Test the package named "SindbadCore"
+          Pkg.test("SindbadCore"; coverage=true) # Test the package named "SindbadCore"
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: SindbadCore/src

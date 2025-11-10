@@ -21,7 +21,7 @@ Returns all defined (and optionally internal) objects in the SINDBAD framework.
 # Example
 ```julia
 # Get all defined types in the SINDBAD framework
-defined_types = getSindbadDefinitions(Sindbad, Type)
+defined_types = getSindbadDefinitions(SindbadCore, Type)
 ```
 """
 function getSindbadDefinitions(sindbad_module, what_to_get; internal_only=true)
@@ -106,10 +106,10 @@ methodsOf(LandEcosystem; ds=", ", bullet=" * ")
 methodsOf(LandEcosystem; is_subtype=true)
 
 # Display types in a module
-methodsOf(Sindbad)
+methodsOf(SindbadCore)
 
 # Display specific types in a module
-methodsOf(Sindbad; the_type=Function)
+methodsOf(SindbadCore; the_type=Function)
 ```
 
 # Extended help

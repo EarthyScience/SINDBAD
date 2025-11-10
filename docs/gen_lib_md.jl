@@ -1,6 +1,6 @@
 using SindbadExperiment
 using SindbadML
-packages_list = (:Sindbad, :SindbadUtils, :SindbadTEM, :SindbadSetup, :SindbadData, :SindbadOptimization, :SindbadExperiment, :SindbadML, :SindbadMetrics)
+packages_list = (:SindbadCore, :SindbadTEM, :SindbadSetup, :SindbadData, :SindbadOptimization, :SindbadExperiment, :SindbadML, :SindbadMetrics)
 mkpath("./src/pages/code_gen")
 lib_path = joinpath(@__DIR__, "../lib")
 

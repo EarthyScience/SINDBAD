@@ -15,7 +15,7 @@ open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
         write(o_file, ":::details $(sm) approaches\n\n")
         write(o_file, ":::tabs\n\n")
 
-        foreach(SindbadCore.subtypes(getfield(Sindbad, sm))) do apr
+        foreach(SindbadCore.subtypes(getfield(SindbadCore, sm))) do apr
 
             write(o_file, "== $(apr)\n")
             write(o_file, "```@docs\n$(apr)\n```\n")

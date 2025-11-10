@@ -38,7 +38,7 @@ display and error msg and stop when there is inconsistency
 """
 function throwError(land, msg)
     tcPrint(land)
-    if hasproperty(Sindbad, :error_catcher)
+    if hasproperty(SindbadCore, :error_catcher)
         push!(SindbadCore.error_catcher, land)
     end
     error(msg)
