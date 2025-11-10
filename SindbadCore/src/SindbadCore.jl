@@ -57,14 +57,14 @@ end
 
 2. **Using utilities from the package**:
 ```julia
-using Sindbad
+using SindbadCore
 # Access utilities or models
 flattened_data = flatten(nested_data)
 ```
 
 3. **Querying the variable catalog**:
 ```julia
-using Sindbad
+using SindbadCore
 catalog = getVariableCatalog()
 ```
 """

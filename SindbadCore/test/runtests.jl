@@ -1,4 +1,4 @@
-using Sindbad
+using SindbadCore
 using BenchmarkTools
 using Test
 

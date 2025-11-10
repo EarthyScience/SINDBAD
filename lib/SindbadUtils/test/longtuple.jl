@@ -1,4 +1,4 @@
-using Sindbad
+using SindbadCore
 using SindbadUtils: makeLongTuple, getTupleFromLongTuple
 using Test
 

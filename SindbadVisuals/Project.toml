@@ -1,0 +1,16 @@
+name = "SindbadVisuals"
+uuid = "49d56b06-c9ff-43e2-9c93-8639e8c3cbdc"
+authors = ["SINDBAD Contributors <sindbad@bgc-jena.mpg.de>"]
+version = "0.1.0"
+
+[deps]
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+SindbadCore = "7e5cc002-9bc1-4508-860d-3c0816be375a"
+SindbadMetrics = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
+
+[sources]
+SindbadCore = {path = "../SindbadCore"}
+SindbadMetrics = {path = "../SindbadMetrics"}
+
+[compat]
+Plots = "1.40.13"

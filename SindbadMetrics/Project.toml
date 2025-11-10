@@ -1,0 +1,10 @@
+name = "SindbadMetrics"
+uuid = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
+authors = ["SINDBAD Contributors <sindbad@bgc-jena.mpg.de>"]
+version = "0.1.0"
+
+[deps]
+SindbadCore = "7e5cc002-9bc1-4508-860d-3c0816be375a"
+
+[sources]
+SindbadCore = {path = "../SindbadCore"}

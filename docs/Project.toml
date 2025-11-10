@@ -4,7 +4,7 @@ DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterVitepress = "4710194d-e776-4893-9690-8d956a29c365"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
+SindbadCore = "7e5cc002-9bc1-4508-860d-3c0816be375a"
 SindbadData = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
 SindbadExperiment = "bbd31fc6-1b7a-43f2-b792-0273fef35116"
 SindbadML = "eb1d8004-2d42-4eef-b369-ed0645c101e8"
@@ -15,12 +15,12 @@ SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
 SindbadVisuals = "49d56b06-c9ff-43e2-9c93-8639e8c3cbdc"
 
 [sources]
-Sindbad = {path = "../SindbadCore"}
-SindbadData = {path = "../lib/SindbadData"}
-SindbadExperiment = {path = "../lib/SindbadExperiment"}
-SindbadML = {path = "../lib/SindbadML"}
-SindbadMetrics = {path = "../lib/SindbadMetrics"}
-SindbadOptimization = {path = "../lib/SindbadOptimization"}
-SindbadSetup = {path = "../lib/SindbadSetup"}
-SindbadTEM = {path = "../lib/SindbadTEM"}
-SindbadVisuals = {path = "../lib/SindbadVisuals"}
+SindbadCore = {path = "../SindbadCore"}
+SindbadData = {path = "../SindbadData"}
+SindbadExperiment = {path = "../SindbadExperiment"}
+SindbadML = {path = "../SindbadML"}
+SindbadMetrics = {path = "../SindbadMetrics"}
+SindbadOptimization = {path = "../SindbadOptimization"}
+SindbadSetup = {path = "../SindbadSetup"}
+SindbadTEM = {path = "../SindbadTEM"}
+SindbadVisuals = {path = "../SindbadVisuals"}

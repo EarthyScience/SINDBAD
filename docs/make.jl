@@ -4,7 +4,7 @@ Pkg.activate(".")
 Pkg.instantiate()
 Pkg.precompile()
 
-using Sindbad
+using SindbadCore
 using SindbadTEM
 using SindbadData
 using SindbadSetup

@@ -1,2 +1,0 @@
-# SINDBAD.jl
-Optimization tools

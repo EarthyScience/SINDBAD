@@ -1,4 +1,4 @@
-using Sindbad
+using SindbadCore
 using InteractiveUtils
 open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
     # write(o_file, "## Models\n\n")

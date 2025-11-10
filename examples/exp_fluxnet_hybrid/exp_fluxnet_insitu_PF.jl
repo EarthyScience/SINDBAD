@@ -1,4 +1,4 @@
-using Sindbad
+using SindbadCore
 using SindbadSetup
 using SindbadUtils
 using SindbadData
