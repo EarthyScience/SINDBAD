@@ -1,8 +1,8 @@
 using SindbadCore
-using SindbadUtils: makeLongTuple, getTupleFromLongTuple
+using SindbadCore.Utilities: makeLongTuple, getTupleFromLongTuple
 using Test
 
-@testset "SindbadUtils: LongTuple" begin
+@testset "Utilitis: LongTuple" begin
     # define a toy tuple of models
     models_set = (rainSnow_Tair(), ambientCO2_constant(), cAllocation_fixed(),
     cCycle_simple(), fAPAR_constant(), gpp_coupled(), PFT_constant(), cCycleBase_CASA())
