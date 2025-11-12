@@ -1,6 +1,6 @@
 
 ```@docs
-Sindbad
+SindbadCore
 ```
 
 ## Exported
@@ -12,9 +12,9 @@ end
 ```
 
 ```@autodocs
-Modules = [Sindbad]
+Modules = [SindbadCore]
 Private = false
-Filter = f -> !(f === Sindbad)
+Filter = f -> !(f === SindbadCore)
 ```
 
 ## Internal
@@ -27,6 +27,6 @@ end
 ```
 
 ```@autodocs
-Modules = [Sindbad]
+Modules = [SindbadCore]
 Public = false
 ```

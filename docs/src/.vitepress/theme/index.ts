@@ -8,7 +8,7 @@ import {
   NolebaseEnhancedReadabilitiesScreenMenu, 
 } from '@nolebase/vitepress-plugin-enhanced-readabilities/client'
 
-// import VersionPicker from "@/VersionPicker.vue"
+import VersionPicker from "@/VersionPicker.vue"
 // import StarUs from '../../components/StarUs.vue'
 import AuthorBadge from '@/AuthorBadge.vue'
 import Authors from '@/Authors.vue'
@@ -32,7 +32,7 @@ export const Theme: ThemeConfig = {
   },
   enhanceApp({ app }) {
     enhanceAppWithTabs(app);
-    // app.component('VersionPicker', VersionPicker);
+    app.component('VersionPicker', VersionPicker);
     app.component('AuthorBadge', AuthorBadge)
     app.component('Authors', Authors)
   }
