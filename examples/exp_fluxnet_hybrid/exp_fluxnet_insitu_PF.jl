@@ -9,7 +9,6 @@ using SindbadTEM
 using SindbadML
 using SindbadML.JLD2
 using SindbadOptimization
-using SindbadMetrics
 using ProgressMeter
 
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"

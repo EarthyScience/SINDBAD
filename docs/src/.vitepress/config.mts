@@ -27,14 +27,12 @@ const codeItems = [
   { text: ' \u00A0\u00A0++ Models', link: '/pages/code/models' },
   { text: ' \u00A0\u00A0++ Types', link: '/pages/code/types' },
   { text: ' \u00A0\u00A0++ Utilities', link: '/pages/code/utilities' },
+  { text: ' \u00A0\u00A0++ Metrics', link: '/pages/code/metrics' },
   { text: ' + Data', link: '/pages/code/data' },
-  { text: ' + Experiment', link: '/pages/code/experiment' },
-  { text: ' + Metrics', link: '/pages/code/metrics' },
   { text: ' + ML', link: '/pages/code/ml' },
   { text: ' + Optimization', link: '/pages/code/optimization' },
   { text: ' + Setup', link: '/pages/code/setup' },
   { text: ' + TEM', link: '/pages/code/tem' },
-  { text: ' + Visuals', link: '/pages/code/visuals' }
 ]
 
 const codeGenItems = [

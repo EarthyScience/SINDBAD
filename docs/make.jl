@@ -4,15 +4,7 @@ Pkg.activate(".")
 Pkg.instantiate()
 Pkg.precompile()
 
-using SindbadCore
-using SindbadTEM
-using SindbadData
-using SindbadSetup
-using SindbadMetrics
-using SindbadML
-using SindbadOptimization
-using SindbadVisuals
-using SindbadExperiment
+using Sindbad
 
 using InteractiveUtils
 using DocumenterVitepress

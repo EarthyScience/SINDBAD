@@ -1,7 +1,6 @@
 using Revise
 using SindbadData
 using SindbadTEM
-using SindbadMetrics
 using SindbadExperiment
 using Plots
 toggleStackTraceNT()

@@ -1,7 +1,7 @@
 """
-    SindbadExperiment
+    Experiment
 
-The `SindbadExperiment` package provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates SINDBAD packages and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
+The `Experiment` package provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates SINDBAD packages and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
 
 # Purpose:
 This package acts as a high-level interface for conducting experiments using the SINDBAD framework. It leverages the functionality of core SINDBAD packages and provides additional utilities for running experiments and managing outputs.
@@ -23,14 +23,14 @@ This package acts as a high-level interface for conducting experiments using the
    - Provides utilities for saving experiment outputs in various formats, ensuring compatibility with downstream analysis tools.
 
 # Notes:
-- The package re-exports core SINDBAD packages (`Sindbad`, `SindbadUtils`, `SindbadSetup`, `SindbadData`, `SindbadTEM`, `SindbadOptimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadExperiment`.
+- The package re-exports core SINDBAD packages (`Sindbad`, `SindbadUtils`, `SindbadSetup`, `SindbadData`, `SindbadTEM`, `SindbadOptimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `Experiment`.
 - Designed to be extensible, enabling users to customize and expand the experimental workflow as needed.
 - Future extensions may include support for additional data formats (e.g., NetCDF, Zarr) and advanced output handling.
 
 # Examples:
 1. **Running an experiment**:
 ```julia
-using SindbadExperiment
+using Experiment
 # Set up experiment parameters
 experiment_config = ...
 
@@ -38,17 +38,16 @@ experiment_config = ...
 runExperimentForward(experiment_config)
 ```
 """
-module SindbadExperiment
-    using SindbadCore
-    @reexport using SindbadCore
-    @reexport using SindbadSetup
-    @reexport using SindbadData
-    @reexport using SindbadTEM
-    @reexport using SindbadOptimization
-    @reexport using SindbadMetrics
-    @reexport using SindbadVisuals
+# module Experiment
+#     using SindbadCore
+#     @reexport using SindbadCore
+#     @reexport using SindbadSetup
+#     @reexport using SindbadData
+#     @reexport using SindbadTEM
+#     @reexport using SindbadOptimization
+#     @reexport using SindbadVisuals
 
-    include("runExperiment.jl")
-    include("saveOutput.jl")
+#     include("runExperiment.jl")
+#     include("saveOutput.jl")
 
-end # module SindbadExperiment
+# end # module Experiment

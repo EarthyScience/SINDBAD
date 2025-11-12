@@ -1,7 +1,6 @@
 using Revise
 using ForwardDiff
 using SindbadTEM
-using SindbadMetrics
 using Random
 toggleStackTraceNT()
 

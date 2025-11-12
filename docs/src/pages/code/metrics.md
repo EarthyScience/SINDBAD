@@ -1,19 +1,19 @@
 ```@docs
-SindbadMetrics
+SindbadCore.Metrics
 ```
 
 ## Exported
 ```@meta
 
 DocTestSetup= quote
-using SindbadMetrics
+using SindbadCore.Metrics
 end
 ```
 
 ```@autodocs
-Modules = [SindbadMetrics]
+Modules = [SindbadCore.Metrics]
 Private = false
-Filter = f -> !(f === SindbadMetrics)
+Filter = f -> !(f === SindbadCore.Metrics)
 ```
 
 ## Internal
@@ -21,11 +21,11 @@ Filter = f -> !(f === SindbadMetrics)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadMetrics
+using SindbadCore.Metrics
 end
 ```
 
 ```@autodocs
-Modules = [SindbadMetrics]
+Modules = [SindbadCore.Metrics]
 Public = false
 ```

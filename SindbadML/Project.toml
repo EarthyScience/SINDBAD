@@ -20,7 +20,6 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 SindbadCore = "7e5cc002-9bc1-4508-860d-3c0816be375a"
 SindbadData = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
-SindbadMetrics = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
 SindbadSetup = "2b7f2987-8a1e-48b4-8a02-cc9e7c4eeb1c"
 SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
@@ -29,7 +28,6 @@ Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 [sources]
 SindbadCore = {path = "../SindbadCore"}
 SindbadData = {path = "../SindbadData"}
-SindbadMetrics = {path = "../SindbadMetrics"}
 SindbadSetup = {path = "../SindbadSetup"}
 SindbadTEM = {path = "../SindbadTEM"}
 

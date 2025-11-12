@@ -144,7 +144,7 @@ Metrics can be combined using various methods:
 ### Calculating a Simple Metric
 
 ```julia
-using SindbadMetrics
+using SindbadCore.Metrics
 
 # Define observations and model output
 y = [1.0, 2.0, 3.0]  # observations
