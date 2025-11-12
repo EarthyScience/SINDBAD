@@ -1,11 +1,9 @@
-using SindbadUtils
 using SindbadTEM
 using SindbadSetup
 using SindbadData
 using SindbadData.DimensionalData
 using SindbadData.AxisKeys
 using SindbadData.YAXArrays
-# using SindbadTEM
 using SindbadML
 using SindbadML.JLD2
 using ProgressMeter

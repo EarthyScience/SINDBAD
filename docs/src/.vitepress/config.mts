@@ -26,21 +26,20 @@ const codeItems = [
   { text: ' + Core', link: '/pages/code/sindbad' },
   { text: ' \u00A0\u00A0++ Models', link: '/pages/code/models' },
   { text: ' \u00A0\u00A0++ Types', link: '/pages/code/types' },
+  { text: ' \u00A0\u00A0++ Utilities', link: '/pages/code/utilities' },
+  { text: ' \u00A0\u00A0++ Metrics', link: '/pages/code/metrics' },
   { text: ' + Data', link: '/pages/code/data' },
-  { text: ' + Experiment', link: '/pages/code/experiment' },
-  { text: ' + Metrics', link: '/pages/code/metrics' },
   { text: ' + ML', link: '/pages/code/ml' },
   { text: ' + Optimization', link: '/pages/code/optimization' },
   { text: ' + Setup', link: '/pages/code/setup' },
   { text: ' + TEM', link: '/pages/code/tem' },
-  { text: ' + Utils', link: '/pages/code/utils' },
-  { text: ' + Visuals', link: '/pages/code/visuals' }
 ]
 
 const codeGenItems = [
   { text: 'Sindbad', link: '/pages/code_gen/Sindbad' },
   { text: ' + Core', link: '/pages/code_gen/Sindbad' },
   { text: ' + Data', link: '/pages/code_gen/SindbadData' },
+  { text: ' + Utilities', link: '/pages/code_gen/SindbadUtils' },
   { text: ' + Experiment', link: '/pages/code_gen/SindbadExperiment' },
   { text: ' + Metrics', link: '/pages/code_gen/SindbadMetrics' },
   { text: ' + ML', link: '/pages/code_gen/SindbadML' },
@@ -48,7 +47,6 @@ const codeGenItems = [
   { text: ' + Optimization', link: '/pages/code_gen/SindbadOptimization' },
   { text: ' + Setup', link: '/pages/code_gen/SindbadSetup' },
   { text: ' + TEM', link: '/pages/code_gen/SindbadTEM' },
-  { text: ' + Utils', link: '/pages/code_gen/SindbadUtils' },
   // { text: ' + Visuals', link: '/pages/code_gen/SindbadVisuals' }
 ]
 const aboutItems = [

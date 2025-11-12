@@ -8,7 +8,7 @@ When working with SINDBAD, it is highly recommended to utilize the built-in func
 
 Check the documentation of the function for further details as:
 ```julia
-using Sindbad
+using SindbadCore
 ?generateSindbadApproach
 ```
 :::
@@ -18,7 +18,7 @@ using Sindbad
 To view available model approaches and their implementations:
 
 ```julia
-using Sindbad: showMethodsOf
+using SindbadCore: showMethodsOf
 showMethodsOf(LandEcosystem)
 ```
 

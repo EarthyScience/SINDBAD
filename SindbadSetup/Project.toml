@@ -1,0 +1,18 @@
+name = "SindbadSetup"
+uuid = "2b7f2987-8a1e-48b4-8a02-cc9e7c4eeb1c"
+authors = ["SINDBAD Contributors <sindbad@bgc-jena.mpg.de>"]
+version = "0.1.0"
+
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+ConstructionBase = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
+Infiltrator = "5903a43b-9cc3-4c30-8d17-598619ec4e9b"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+SindbadCore = "7e5cc002-9bc1-4508-860d-3c0816be375a"
+
+[sources]
+SindbadCore = {path = "../SindbadCore"}
+
+[compat]
+ConstructionBase = "1.5.8"

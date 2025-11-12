@@ -89,7 +89,7 @@ Experiments can select models from:
 ::: tip Viewing Available Models
 
 ```julia
-using Sindbad
+using SindbadCore
 standard_sindbad_models
 all_available_sindbad_models
 ```
