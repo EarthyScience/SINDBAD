@@ -18,6 +18,9 @@ include("Optimization/Optimization.jl")
 include("Experiment/runExperiment.jl")
 include("Experiment/saveOutput.jl")
 
+# extensions interfaces
+include("Interface/plotsrecipes.jl")
+
 @reexport using .Setup
 @reexport using .TEM
 @reexport using .ML
