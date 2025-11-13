@@ -1,22 +1,2 @@
 [deps]
-CMAEvolutionStrategy = "8d3b24bd-414e-49e0-94fb-163cc3a3e411"
-ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
-GCMAES = "4aa9d100-eb0f-11e8-15f1-25748831eb3b"
-ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
-SindbadCore = "7e5cc002-9bc1-4508-860d-3c0816be375a"
-SindbadData = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
-SindbadML = "eb1d8004-2d42-4eef-b369-ed0645c101e8"
-SindbadMetrics = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
-SindbadOptimization = "64fff8bd-0c13-402c-aa96-b97d0bc3655c"
-SindbadSetup = "2b7f2987-8a1e-48b4-8a02-cc9e7c4eeb1c"
-SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
-StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-
-[sources]
-SindbadCore = {path = "../../SindbadCore"}
-SindbadData = {path = "../../SindbadData"}
-SindbadML = {path = "../../SindbadML"}
-SindbadMetrics = {path = "../../SindbadMetrics"}
-SindbadOptimization = {path = "../../SindbadOptimization"}
-SindbadSetup = {path = "../../SindbadSetup"}
-SindbadTEM = {path = "../../SindbadTEM"}
+Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"

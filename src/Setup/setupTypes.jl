@@ -186,7 +186,7 @@ function getTypeInstanceForFlags(option_name::Symbol, option_value, opt_pref="Do
     if !option_value
         structname = toUpperCaseFirst(opt_s, opt_pref*"Not")
     end
-    struct_instance = getfield(SindbadSetup, structname)()
+    struct_instance = getfield(SindbadCore, structname)()
     return struct_instance
 end
 
@@ -217,7 +217,7 @@ function getTypeInstanceForNamedOptions end
 
 function getTypeInstanceForNamedOptions(option_name::String)
     opt_ss = toUpperCaseFirst(option_name)
-    struct_instance = getfield(SindbadSetup, opt_ss)()
+    struct_instance = getfield(SindbadCore, opt_ss)()
     return struct_instance
 end
 

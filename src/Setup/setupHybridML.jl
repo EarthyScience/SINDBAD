@@ -86,7 +86,7 @@ function setHybridOptions(info, which_option)
             end
         end
     end
-    default_opt = sindbadDefaultOptions(getproperty(SindbadSetup, nameof(typeof(field_method)))())
+    default_opt = sindbadDefaultOptions(getproperty(SindbadCore, nameof(typeof(field_method)))())
     merged_options = mergeNamedTuple(default_opt, field_options)
     merged_options = replaceOptionsWithType(merged_options, :activation_out)
     merged_options = replaceOptionsWithType(merged_options, :activation_hidden)

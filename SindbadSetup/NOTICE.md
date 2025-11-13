@@ -1,1 +1,0 @@
-Copyright: Copyright (C) 2025  Max-Planck-Gesellschaft zur Förderung der Wissenschaften; Licensed under the EUPL, with extension of article 5 (compatibility clause) to any licence for distributing derivative works that have been produced by the normal use of the Work as a library.

@@ -1,38 +1,33 @@
-using SindbadTEM
-using SindbadSetup
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-using SindbadML
-using SindbadML.JLD2
-using ProgressMeter
-# using SindbadOptimization
-using SindbadML.Zygote
-# import AbstractDifferentiation as AD, Zygote
-
+using Sindbad
 
 # extra includes for covariate and activation functions
 # extra includes for covariate and activation functions
-include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/load_covariates.jl"))
-include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/test_activation_functions.jl"))
+# include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/load_covariates.jl"))
+# include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/test_activation_functions.jl"))
 
 
 ## paths
-file_folds = load(joinpath(@__DIR__, "nfolds_sites_indices.jld2"))
+# file_folds = load(joinpath(@__DIR__, "nfolds_sites_indices.jld2"))
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
 
 # for remote node
 path_input = "$(getSindbadDataDepot())/FLUXNET_v2023_12_1D.zarr"
 
 path_covariates = "$(getSindbadDataDepot())/CovariatesFLUXNET_3.zarr"
-replace_info = Dict()
+# replace_info = Dict()
 
-replace_info = Dict(
-      "forcing.default_forcing.data_path" => path_input,
-      "optimization.observations.default_observation.data_path" => path_input,
-      "optimization.optimization_cost_threaded" => false,
-      );
+# replace_info = Dict(
+#       "forcing.default_forcing.data_path" => path_input,
+#       "optimization.observations.default_observation.data_path" => path_input,
+#       "optimization.optimization_cost_threaded" => false,
+#       );
+replace_info = Dict()
+if Sys.islinux()
+    replace_info = Dict(
+        "forcing.default_forcing.data_path" => "/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr",
+        "optimization.observations.default_observation.data_path" =>"/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr"
+        );
+end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 

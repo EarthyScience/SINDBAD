@@ -1,10 +1,10 @@
 """
-    SindbadTEM
+    TEM
 
-The `SindbadTEM` package provides the core functionality for running the SINDBAD Terrestrial Ecosystem Model (TEM). It includes utilities for preparing model-ready objects, managing spinup processes and running models.
+The `TEM` module provides the core functionality for running the SINDBAD Terrestrial Ecosystem Model (TEM). It includes utilities for preparing model-ready objects, managing spinup processes and running models.
 
 # Purpose:
-This package integrates various components and utilities required to execute the SINDBAD TEM, including precomputations, spinup, and time loop simulations. It supports parallel execution and efficient handling of large datasets.
+This module integrates various components and utilities required to execute the SINDBAD TEM, including precomputations, spinup, and time loop simulations. It supports parallel execution and efficient handling of large datasets.
 
 # Dependencies:
 - `ComponentArrays`: Used for managing complex, hierarchical data structures like land variables and model states.
@@ -51,12 +51,12 @@ This package integrates various components and utilities required to execute the
 - The package is designed to be modular and extensible, allowing users to customize and extend its functionality for specific use cases.
 - It integrates tightly with the SINDBAD framework, leveraging shared types and utilities from `SindbadSetup`.
 """
-module SindbadTEM
+module TEM
    using ComponentArrays
    using NLsolve
    using ProgressMeter
    using SindbadCore
-   using SindbadSetup
+   using ..Setup
    using SindbadData: YAXArrays
 
    using ThreadPools
@@ -71,4 +71,4 @@ module SindbadTEM
    include("spinupTEM.jl")
    include("spinupSequence.jl")
 
-end # module SindbadTEM
+end # module TEM
