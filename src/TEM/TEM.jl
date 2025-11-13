@@ -57,7 +57,7 @@ module TEM
    using ProgressMeter
    using SindbadCore
    using ..Setup
-   using SindbadData: YAXArrays
+   using ..DataLoaders: YAXArrays
 
    using ThreadPools
 

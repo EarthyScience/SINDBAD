@@ -1,6 +1,3 @@
-export namedTupleToFlareJSON
-export plotIOModelStructure
-
 """
     getAllVariables(in_out_models, which_field)
 

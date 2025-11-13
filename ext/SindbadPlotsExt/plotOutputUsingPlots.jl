@@ -1,7 +1,3 @@
-export plotPerformanceHistograms
-export plotTimeSeriesWithObs
-export plotTimeSeriesDebug
-
 """
     plotPerformanceHistograms(out_opti)
 

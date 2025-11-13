@@ -1,19 +1,19 @@
 ```@docs
-SindbadData
+Sindbad.DataLoaders
 ```
 
 ## Exported
 ```@meta
 
 DocTestSetup= quote
-using SindbadData
+using Sindbad.DataLoaders
 end
 ```
 
 ```@autodocs
-Modules = [SindbadData]
+Modules = [Sindbad.DataLoaders]
 Private = false
-Filter = f -> !(f === SindbadData)
+Filter = f -> !(f === Sindbad.DataLoaders)
 ```
 
 ## Internal
@@ -21,11 +21,11 @@ Filter = f -> !(f === SindbadData)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadData
+using Sindbad.DataLoaders
 end
 ```
 
 ```@autodocs
-Modules = [SindbadData]
+Modules = [Sindbad.DataLoaders]
 Public = false
 ```

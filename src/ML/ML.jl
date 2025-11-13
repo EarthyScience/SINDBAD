@@ -49,11 +49,11 @@ module ML
         CachingPool
 
     using SindbadCore
-    using SindbadData.YAXArrays
-    using SindbadData.Zarr
-    using SindbadData.AxisKeys
-    using SindbadData: AllNaN
-    using SindbadData: yaxCubeToKeyedArray, Cube
+    using ..DataLoaders: YAXArrays
+    using ..DataLoaders: Zarr
+    using ..DataLoaders: AxisKeys
+    using ..DataLoaders: AllNaN
+    using ..DataLoaders: yaxCubeToKeyedArray, Cube
     # using Enzyme # --- MOVED TO EXTENSION ---
 
     using Flux

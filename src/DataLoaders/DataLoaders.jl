@@ -1,7 +1,7 @@
 """
-    SindbadData
+   DataLoaders
 
-The `SindbadData` package provides tools for handling and processing SINDBAD-related input data and processing. It supports reading, cleaning, masking, and managing data for SINDBAD experiments, with a focus on spatial and temporal dimensions.
+The `Data` module provides tools for handling and processing SINDBAD-related input data and processing. It supports reading, cleaning, masking, and managing data for SINDBAD experiments, with a focus on spatial and temporal dimensions.
 
 # Purpose:
 This package is designed to streamline the ingestion and preprocessing of input data for SINDBAD experiments. 
@@ -32,12 +32,12 @@ This package is designed to streamline the ingestion and preprocessing of input 
    - Implements utilities for reading and processing observational data, enabling model validation and performance evaluation.
 
 # Notes:
-- The package re-exports key packages (`NetCDF`, `YAXArrays`, `Zarr`) for convenience, allowing users to access their functionality directly through `SindbadData`.
+- The package re-exports key packages (`NetCDF`, `YAXArrays`, `Zarr`) for convenience, allowing users to access their functionality directly through `Data`.
 - Designed to handle large datasets efficiently, leveraging chunked and compressed data formats like NetCDF and Zarr.
 - Ensures compatibility with SINDBAD's experimental framework by integrating spatial and temporal data management tools.
 
 """
-module SindbadData
+module DataLoaders
    using SindbadCore
    using AxisKeys: KeyedArray, AxisKeys
    using FillArrays
@@ -53,4 +53,4 @@ module SindbadData
    include("getForcing.jl")
    include("getObservation.jl")
    
-end # module SindbadData
+end # module Data
