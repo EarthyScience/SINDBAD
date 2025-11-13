@@ -19,7 +19,7 @@ include("Experiment/runExperiment.jl")
 include("Experiment/saveOutput.jl")
 
 # extensions interfaces
-include("Interface/plotsrecipes.jl")
+include("Interfaces/plotsrecipes.jl")
 
 @reexport using .Setup
 @reexport using .TEM
