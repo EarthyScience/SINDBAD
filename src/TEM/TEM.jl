@@ -54,12 +54,10 @@ This module integrates various components and utilities required to execute the 
 module TEM
    using ComponentArrays
    using NLsolve
-   using ProgressMeter
    using SindbadCore
-   using ..Setup
-   using ..DataLoaders: YAXArrays
-
+   using YAXArrays: mapCube
    using ThreadPools
+   using ..Setup
 
    include("utilsTEM.jl")
    include("deriveSpinupForcing.jl")

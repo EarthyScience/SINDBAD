@@ -9,9 +9,6 @@ function getCacheFromOutput(loc_output, ::ForwardDiffGrad)
     return DiffCache.(loc_output)
 end
 
-# function getCacheFromOutput(loc_output, ::PolyesterForwardDiffGrad)
-#     return getCacheFromOutput(loc_output, ForwardDiffGrad())
-# end
 
 """
     getCacheFromOutput(loc_output, ::MLGradType)
@@ -38,11 +35,6 @@ end
 function getOutputFromCache(loc_output, new_params, ::ForwardDiffGrad)
     return get_tmp.(loc_output, (new_params,))
 end
-
-# function getOutputFromCache(loc_output, new_params, ::PolyesterForwardDiffGrad)
-#     return getOutputFromCache(loc_output, new_params, ForwardDiffGrad())
-# end
-
 
 """
     getOutputFromCache(loc_output, _, ::MLGradType)

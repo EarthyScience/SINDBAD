@@ -49,23 +49,19 @@ module ML
         CachingPool
 
     using SindbadCore
-    using ..DataLoaders: YAXArrays
-    using ..DataLoaders: Zarr
-    using ..DataLoaders: AxisKeys
+    using YAXArrays
+    using Zarr
+    using AxisKeys
     using ..DataLoaders: AllNaN
-    using ..DataLoaders: yaxCubeToKeyedArray, Cube
-    # using Enzyme # --- MOVED TO EXTENSION ---
+    using ..DataLoaders: yaxCubeToKeyedArray
 
     using Flux
     using Optimisers
-    using FiniteDiff
-    using FiniteDifferences
     using ForwardDiff
-    using PolyesterForwardDiff
-    using Zygote
+    import Zygote
     using Statistics
     import ProgressMeter: @showprogress, Progress, next!, progress_pmap, progress_map
-    # using PreallocationTools
+    using PreallocationTools
     using Base.Iterators: repeated, partition
     using Random
     using JLD2

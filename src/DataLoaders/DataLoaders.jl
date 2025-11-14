@@ -42,11 +42,10 @@ module DataLoaders
    using AxisKeys: KeyedArray, AxisKeys
    using FillArrays
    using DimensionalData
-   using NCDatasets
-   @reexport using NetCDF
-   @reexport using YAXArrays
-   @reexport using Zarr
-   using YAXArrayBase
+   using NCDatasets: NCDataset
+   import YAXArrayBase
+   using YAXArrays: YAXArrays, Cube, YAXArray
+   using Zarr
 
    include("utilsData.jl")
    include("spatialSubset.jl")
