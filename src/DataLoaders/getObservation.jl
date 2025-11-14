@@ -102,7 +102,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     forcing_data_settings = info.experiment.data_settings.forcing
     exe_rules_settings = info.experiment.exe_rules
     data_path = observation_data_settings.observations.default_observation.data_path
-    data_backend = getfield(SindbadData, toUpperCaseFirst(exe_rules_settings.input_data_backend, "Backend"))()
+    data_backend = getfield(SindbadCore, toUpperCaseFirst(exe_rules_settings.input_data_backend, "Backend"))()
     default_info = observation_data_settings.observations.default_observation
     tar_dims = getTargetDimensionOrder(info)
 
@@ -181,7 +181,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(varnames_all, Symbol(string(v) * "_mask"))
         push!(varnames_all, Symbol(string(v) * "_weight"))
     end
-    input_array_type = getfield(SindbadData, toUpperCaseFirst(exe_rules_settings.input_array_type, "Input"))()
+    input_array_type = getfield(SindbadCore, toUpperCaseFirst(exe_rules_settings.input_array_type, "Input"))()
     showInfoSeparator()
 
     return (; data=getInputArrayOfType(obscubes, input_array_type), dims=indims, variables=Tuple(varnames_all))

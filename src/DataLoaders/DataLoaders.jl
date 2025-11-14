@@ -45,6 +45,7 @@ module DataLoaders
    using NCDatasets: NCDataset
    import YAXArrayBase
    using YAXArrays: YAXArrays, Cube, YAXArray
+   using YAXArrays.DAT: InDims
    using Zarr
 
    include("utilsData.jl")

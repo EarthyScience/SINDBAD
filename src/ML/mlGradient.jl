@@ -132,9 +132,11 @@ grads = gradientSite(ForwardDiffGrad(), x_vals, (chunk_size=4,), loss_f)
 """
 function gradientSite end
 
-function gradientSite(::ForwardDiffGrad, x_vals::AbstractArray, gradient_options::NamedTuple, loss_f::F) where {F}
-    # cfg = ForwardDiff.GradientConfig(loss_f, x_vals, Chunk{gradient_options.chunk_size}());
-    return ForwardDiff.gradient(loss_f, x_vals)
+function gradientSite(grads_lib::ForwardDiffGrad, x_vals::AbstractArray, chunk_size::Int, loss_f::F, args...) where {F}
+    loss_tmp(x) = loss_f(x, grads_lib, args...)
+    ∇x = similar(x_vals)
+    # cfg = ForwardDiff.GradientConfig(loss_f, x_vals, Chunk{chunk_size}());
+    return ForwardDiff.gradient!(∇x, loss_tmp, x_vals) # # ?, add `cfg` at the end if further control is needed.
 end
 
 function gradientSite(::ZygoteGrad, x_vals::AbstractArray, gradient_options::NamedTuple,loss_f::F) where {F}

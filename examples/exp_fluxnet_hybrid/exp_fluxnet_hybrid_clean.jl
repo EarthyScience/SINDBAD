@@ -1,4 +1,5 @@
 using Sindbad
+using JLD2
 
 # extra includes for covariate and activation functions
 # extra includes for covariate and activation functions
@@ -8,6 +9,7 @@ using Sindbad
 
 ## paths
 # file_folds = load(joinpath(@__DIR__, "nfolds_sites_indices.jld2"))
+file_folds = load("/User/homes/lalonso/SINDBAD/examples/exp_fluxnet_hybrid/sampling/nfolds_sites_indices_0.jld2")
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
 
 # for remote node
@@ -86,7 +88,7 @@ indices_sites_testing = siteNameToID.(sites_testing, Ref(sites_forcing));
 
 indices_sites_batch = indices_sites_training;
 
-xfeatures = loadCovariates(sites_forcing; kind="all", cube_path=path_covariates);
+xfeatures = loadCovariates(sites_forcing; kind="all"); #  cube_path=path_covariates
 @info "xfeatures: [$(minimum(xfeatures)), $(maximum(xfeatures))]"
 
 nor_names_order = xfeatures.features;
@@ -139,9 +141,9 @@ input_args = (
 );
 
 grads_lib = ForwardDiffGrad();
-grads_lib = FiniteDifferencesGrad();
-grads_lib = FiniteDiffGrad();
-grads_lib = PolyesterForwardDiffGrad();
+# grads_lib = FiniteDifferencesGrad();
+# grads_lib = FiniteDiffGrad();
+# grads_lib = PolyesterForwardDiffGrad();
 # grads_lib = ZygoteGrad();
 # grads_lib = EnzymeGrad();
 # backend = AD.ZygoteBackend();

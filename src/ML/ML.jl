@@ -54,7 +54,9 @@ module ML
     using AxisKeys
     using ..DataLoaders: AllNaN
     using ..DataLoaders: yaxCubeToKeyedArray
-
+    using ..Setup: updateModels
+    using ..TEM: coreTEM!
+    
     using Flux
     using Optimisers
     using ForwardDiff

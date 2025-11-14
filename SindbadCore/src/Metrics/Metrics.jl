@@ -42,7 +42,9 @@ correlation = metric(model_output, observations, Pcor())
 """
 module Metrics
 
-   using ..SindbadCore.Types
+   using ..Types
+   import ..Utilities: doTemporalAggregation
+   using StatsBase
    
    include("handleDataForLoss.jl")
    include("getMetrics.jl")

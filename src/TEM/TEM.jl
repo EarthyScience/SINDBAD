@@ -55,7 +55,7 @@ module TEM
    using ComponentArrays
    using NLsolve
    using SindbadCore
-   using YAXArrays: mapCube
+   using YAXArrays: YAXArrays, mapCube
    using ThreadPools
    using ..Setup
 
