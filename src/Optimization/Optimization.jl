@@ -68,19 +68,12 @@ optimized_params = optimizer(cost_function, default_values, lower_bounds, upper_
 module Optimization
 
    using CMAEvolutionStrategy: minimize, xbest
-   # using BayesOpt: ConfigParameters, set_kernel!, bayes_optimization, SC_MAP
-   using Evolutionary: Evolutionary
    using ForwardDiff
    using GlobalSensitivity
-   using MultistartOptimization: MultistartOptimization
-   using NLopt: NLopt
    using Optim
    using Optimization
    using OptimizationOptimJL
-   using OptimizationBBO
-   using OptimizationGCMAES
    using OptimizationCMAEvolutionStrategy
-   # using OptimizationQuadDIRECT
    using QuasiMonteCarlo
    using StableRNGs
    using SindbadCore

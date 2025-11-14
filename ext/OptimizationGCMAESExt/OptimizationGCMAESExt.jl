@@ -1,0 +1,5 @@
+module OptimizationGCMAESExt
+
+import OptimizationGCMAES
+
+end
