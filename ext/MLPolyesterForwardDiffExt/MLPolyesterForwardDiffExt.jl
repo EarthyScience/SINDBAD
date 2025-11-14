@@ -5,7 +5,9 @@ import SinbadCore.Types:
     ForwardDiffGrad
 import Sindbad.ML:
     getCacheFromOutput,
-    getOutputFromCache
+    getOutputFromCache,
+    gradientSite,
+    gradientBatch!
 import PolyesterForwardDiff
 import ForwardDiff
 

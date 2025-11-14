@@ -137,15 +137,6 @@ function gradientSite(::ForwardDiffGrad, x_vals::AbstractArray, gradient_options
     return ForwardDiff.gradient(loss_f, x_vals)
 end
 
-function gradientSite(::FiniteDiffGrad, x_vals::AbstractArray, gradient_options::NamedTuple,loss_f::F) where {F}
-    return FiniteDiff.finite_difference_gradient(loss_f, x_vals)
-end
-
-function gradientSite(::FiniteDifferencesGrad, x_vals::AbstractArray, gradient_options::NamedTuple,loss_f::F) where {F}
-    gr_fds = FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1), loss_f, x_vals)
-    return gr_fds[1]
-end
-
 function gradientSite(::ZygoteGrad, x_vals::AbstractArray, gradient_options::NamedTuple,loss_f::F) where {F}
     return Zygote.gradient(loss_f, x_vals)
 end
