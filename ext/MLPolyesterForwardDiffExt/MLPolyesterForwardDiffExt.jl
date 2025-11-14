@@ -46,8 +46,7 @@ function gradientSite(::PolyesterForwardDiffGrad, x_vals, gradient_options::Name
     return ∇x
 end
 
-function gradientBatch!(grads_lib::PolyesterForwardDiffGrad, dx_batch, chunk_size::Int,
-    loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
+function gradientBatch!(grads_lib::PolyesterForwardDiffGrad, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
     mapfun = showprog ? progress_pmap : pmap
     result = mapfun(CachingPool(workers()), axes(dx_batch, 2)) do idx
         x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)

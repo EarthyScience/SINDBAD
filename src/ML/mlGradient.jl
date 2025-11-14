@@ -181,20 +181,18 @@ gradientBatch!(grads_lib, grads_batch, (chunk_size=4,), loss_functions, scaled_p
 """
 function gradientBatch! end
 
-function gradientBatch!(grads_lib::MLGradType, grads_batch, gradient_options::NamedTuple, loss_functions, scaled_params_batch, sites_batch; showprog=false)
+function gradientBatch!(grads_lib::MLGradType, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
     # Threads.@spawn allows dynamic scheduling instead of static scheduling
     # of Threads.@threads macro.
     # See <https://github.com/JuliaLang/julia/issues/21017>
 
-    p = Progress(length(axes(grads_batch,2)); desc="Computing batch grads...", color=:cyan, enabled=showprog)
+    p = Progress(length(axes(dx_batch, 2)); desc="Computing batch grads...", color=:cyan, enabled=showprog)
     @sync begin
-        for idx ∈ axes(grads_batch, 2)
+        for idx ∈ axes(dx_batch, 2)
             Threads.@spawn begin
-                site_name = sites_batch[idx]
-                loss_f = loss_functions(site=site_name)
-                x_vals = scaled_params_batch(site=site_name).data.data
-                gg = gradientSite(grads_lib, x_vals, gradient_options, loss_f)    
-                grads_batch[:, idx] = gg
+                x_vals, inner_args = get_inner_args(idx, grads_lib, input_args...)
+                gg = gradientSite(grads_lib, x_vals, chunk_size, loss_f, inner_args...)
+                dx_batch[:, idx] = gg
                 next!(p)
             end
         end
