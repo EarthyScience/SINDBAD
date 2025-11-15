@@ -40,13 +40,14 @@ This function runs the core TEM model with the provided parameters, forcing data
 loss_vec, loss_idx = lossVector(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, LossModelObsML())
 ```
 """
-function lossVector(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib,::LossModelObsML)
+function lossVector(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_spinup_sequence, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib,::LossModelObsML)
     loc_output_from_cache = getOutputFromCache(loc_output, params, gradient_lib)
     models = updateModels(params, parameter_to_index, parameter_scaling_type, models)
     coreTEM!(
         models,
         loc_forcing,
         loc_spinup_forcing,
+        loc_spinup_sequence,
         loc_forcing_t,
         loc_output_from_cache,
         land_init,
@@ -92,14 +93,14 @@ This function computes the loss value for a given site by first calling `lossVec
 t_loss = loss(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, LossModelObsML())
 ```
 """
-function loss(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib,loss_type::LossModelObsML)
-    loss_vector, _ = lossVector(params, models,parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, loss_type)
+function loss(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_spinup_sequence, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib,loss_type::LossModelObsML)
+    loss_vector, _ = lossVector(params, models,parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_spinup_sequence, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, loss_type)
     t_loss = combineMetric(loss_vector, constraint_method)
     return t_loss
 end
 
-function lossComponents(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib,loss_type::LossModelObsML)
-    loss_vector, loss_indices = lossVector(params, models,parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, loss_type)
+function lossComponents(params, models, parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_spinup_sequence, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib,loss_type::LossModelObsML)
+    loss_vector, loss_indices = lossVector(params, models,parameter_to_index, parameter_scaling_type, loc_forcing, loc_spinup_forcing, loc_spinup_sequence, loc_forcing_t, loc_output, land_init, tem_info, loc_obs, cost_options, constraint_method, gradient_lib, loss_type)
     t_loss = combineMetric(loss_vector, constraint_method)
     return t_loss, loss_vector, loss_indices
 end

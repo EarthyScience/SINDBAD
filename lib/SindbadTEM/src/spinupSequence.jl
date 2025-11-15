@@ -37,25 +37,36 @@ end
 - new spinup sequence object
 """
 function getSequence(year_disturbance, info_helpers_dates; nrepeat_base=200, year_start = 1979)
-    nrepeat_age = nrepeatYearsAge(year_disturbance; year_start)
-    sequence = [
-        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "n_repeat" => 1),
-        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat_base),
-        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "n_repeat" => 1),
-    ]
-    if nrepeat_age == 0
+    nrepeat_d = nrepeatYearsAge(year_disturbance; year_start)
+    sequence = nothing
+    nrepeat = nrepeat_base
+    if isnothing(nrepeat_d)
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "n_repeat" => 1),
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat_base),
-            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "n_repeat" => 1),
         ]
-    elseif nrepeat_age > 0
+    elseif nrepeat_d < 0
         sequence = [
             Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "n_repeat" => 1),
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat_base),
-            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "n_repeat" => 1),
-            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat_age),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_MSC", "n_repeat" => 1),
         ]
+    elseif nrepeat_d == 0
+        sequence = [
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "n_repeat" => 1),
+        ]
+    elseif nrepeat_d > 0
+        sequence = [
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_MSC", "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_MSC", "n_repeat" => nrepeat_d),
+        ]
+    else
+        error("cannot determine the repeat for disturbance")
     end
     new_sequence = getSpinupTemLite(getSpinupSequenceWithTypes(sequence, info_helpers_dates))
     return new_sequence

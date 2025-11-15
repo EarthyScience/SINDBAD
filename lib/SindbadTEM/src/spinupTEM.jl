@@ -623,6 +623,22 @@ function spinupTEM(selected_models, spinup_forcings, loc_forcing_t, land, tem_in
     return land
 end
 
+function spinupTEM(selected_models, spinup_forcings, spinup_sequence, loc_forcing_t, land, tem_info, ::DoSpinupTEM)
+    land = setSpinupLog(land, 1, tem_info.run.store_spinup)
+    log_index = 2
+    for spin_seq ∈ spinup_sequence
+        forc_name = spin_seq.forcing
+        n_timesteps = spin_seq.n_timesteps
+        n_repeat = spin_seq.n_repeat
+        spinup_mode = spin_seq.spinup_mode
+        @debug "Spinup: \n         spinup_mode: $(nameof(typeof(spinup_mode))), forcing: $(forc_name)"
+        sel_forcing = sequenceForcing(spinup_forcings, forc_name)
+        land = spinupSequence(selected_models, sel_forcing, loc_forcing_t, land, tem_info, n_timesteps, log_index, n_repeat, spinup_mode)
+        log_index += n_repeat
+    end
+    return land
+end
+
 function spinupTEM(selected_models, spinup_forcings, loc_forcing_t, land, tem_info, ::DoNotSpinupTEM)
     return land
 end

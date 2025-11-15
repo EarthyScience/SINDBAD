@@ -49,6 +49,16 @@
       "source_unit": null,
       "source_variable": "dist_frac_sb2018"
     },
+    "f_disturbance_year": {
+      "bounds": [0, 10000],
+      "is_categorical": false,
+      "standard_name": "year of last disturbance",
+      "sindbad_unit": null,
+      "source_product": "Besnard2018",
+      "source_unit": null,
+      "source_variable": "disturbance_year",
+      "space_time_type": "spatial"
+    },
     "f_burnt_area": {
         "bounds": [0.0, 1.0],
         "standard_name": "fire fraction area per area pixel",
