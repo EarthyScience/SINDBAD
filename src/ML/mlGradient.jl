@@ -143,6 +143,35 @@ function gradientSite(::ZygoteGrad, x_vals::AbstractArray, gradient_options::Nam
     return Zygote.gradient(loss_f, x_vals)
 end
 
+function gradientSite(grads_lib::MLGradType, ::AbstractArray, ::Int, ::F, args...) where {F}
+    T = typeof(grads_lib)
+    name = String(nameof(T))
+
+    pkg = if name == "PolyesterForwardDiffGrad"
+        "PolyesterForwardDiff"
+    elseif name == "EnzymeGrad"
+        "Enzyme"
+    elseif name == "FiniteDifferencesGrad"
+        "FiniteDifferences"
+    elseif name == "FiniteDiffGrad"
+        "FiniteDiff"
+    else
+        nothing
+    end
+
+    if pkg !== nothing
+        throw(ArgumentError("""
+`$pkg` is required to use `gradientSite` with `$name` but is not loaded.
+Run `import $pkg` to enable this functionality.
+"""))
+    else
+        throw(ArgumentError("""
+No method available for `gradientSite(::$(T))`.
+If this gradient backend is supposed to work, ensure the correct extension package is installed and loaded.
+"""))
+    end
+end
+
 
 """
     gradientBatch!(grads_lib, grads_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
@@ -181,7 +210,7 @@ gradientBatch!(grads_lib, grads_batch, (chunk_size=4,), loss_functions, scaled_p
 """
 function gradientBatch! end
 
-function gradientBatch!(grads_lib::MLGradType, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
+function gradientBatch!(grads_lib::ForwardDiffGrad, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
     # Threads.@spawn allows dynamic scheduling instead of static scheduling
     # of Threads.@threads macro.
     # See <https://github.com/JuliaLang/julia/issues/21017>
@@ -196,6 +225,35 @@ function gradientBatch!(grads_lib::MLGradType, dx_batch, chunk_size::Int, loss_f
                 next!(p)
             end
         end
+    end
+end
+
+function gradientBatch!(grads_lib::MLGradType, dx_batch, chunk_size::Int, loss_f::Function, get_inner_args::Function, input_args...; showprog=false)
+    T = typeof(grads_lib)
+    name = String(nameof(T))
+
+    pkg = if name == "PolyesterForwardDiffGrad"
+        "PolyesterForwardDiff"
+    elseif name == "EnzymeGrad"
+        "Enzyme"
+    elseif name == "FiniteDifferencesGrad"
+        "FiniteDifferences"
+    elseif name == "FiniteDiffGrad"
+        "FiniteDiff"
+    else
+        nothing
+    end
+
+    if pkg !== nothing
+        throw(ArgumentError("""
+`$pkg` is required to use `gradientBatch!` with `$name` but is not loaded.
+Run `import $pkg` to enable this functionality.
+"""))
+    else
+        throw(ArgumentError("""
+No method available for `gradientBatch!(::$(T))`.
+If this gradient backend is supposed to work, ensure the correct extension package is installed and loaded.
+"""))
     end
 end
 

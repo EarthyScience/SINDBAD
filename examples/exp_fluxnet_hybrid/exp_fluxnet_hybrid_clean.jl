@@ -158,6 +158,12 @@ loss_tmp(x) = lossSite(x, grads_lib, inner_args...)
 
 gradientBatch!(grads_lib, grads_batch, 2, lossSite, getInnerArgs,input_args...; showprog=true)
 
+@info "now testing PolyesterForwardDiffGrad"
+import PolyesterForwardDiff
+grads_lib = PolyesterForwardDiffGrad();
+@time gg = gradientSite(grads_lib, loc_params, 4, lossSite, inner_args...) # with 4 is ~2.3 seconds (and 24 threads)
+gradientBatch!(grads_lib, grads_batch, 4, lossSite, getInnerArgs,input_args...; showprog=true)
+@info "done!"
 
 # ? training arguments
 chunk_size = 2
