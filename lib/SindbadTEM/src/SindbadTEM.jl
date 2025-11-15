@@ -58,9 +58,12 @@ module SindbadTEM
    using Sindbad
    using SindbadUtils
    using SindbadSetup
-   using SindbadData: YAXArrays
 
    using ThreadPools
+   using SindbadData.YAXArrays
+   using SindbadData.Zarr
+   using SindbadData: AllNaN
+   using SindbadData: cleanData
 
    include("utilsTEM.jl")
    include("deriveSpinupForcing.jl")

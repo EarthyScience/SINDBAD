@@ -37,6 +37,6 @@ SindbadTEM = {path = "../../lib/SindbadTEM"}
 SindbadUtils = {path = "../../lib/SindbadUtils"}
 
 [compat]
-DiskArrays = "0.4.11"
+DiskArrays = "0.4"
 Enzyme = "0.13.38"
 PolyesterForwardDiff = "0.1.2"

@@ -3831,3 +3831,45 @@ Use Optimisers.jl Descent optimizer for training ML models in SINDBAD
 """
 Sindbad.Types.OptimisersDescent
 
+@doc """
+
+# cFireBurnedArea_forcing
+
+nothing
+
+## Type Hierarchy
+
+```cFireBurnedArea_forcing <: cFireBurnedArea <: LandEcosystem <: ModelTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Models.cFireBurnedArea_forcing
+
+@doc """
+
+# cFireCombustionCompleteness_vanDerWerf2006
+
+nothing
+
+## Type Hierarchy
+
+```cFireCombustionCompleteness_vanDerWerf2006 <: cFireCombustionCompleteness <: LandEcosystem <: ModelTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Models.cFireCombustionCompleteness_vanDerWerf2006
+
+@doc """
+
+# cFireMortality_vanDerWerf2004
+
+nothing
+
+## Type Hierarchy
+
+```cFireMortality_vanDerWerf2004 <: cFireMortality <: LandEcosystem <: ModelTypes <: SindbadTypes <: Any```
+
+
+"""
+Sindbad.Models.cFireMortality_vanDerWerf2004
+
