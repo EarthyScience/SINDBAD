@@ -1,5 +1,5 @@
 using Revise
-using Sindbad
+using SindbadCore
 using SindbadExperiment
 using Plots
 using QuasiMonteCarlo

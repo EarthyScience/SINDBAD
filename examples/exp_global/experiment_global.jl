@@ -1,5 +1,5 @@
 using Revise
-@time using Sindbad
+@time using SindbadCore
 @time using SindbadData
 @time using SindbadTEM
 @time using SindbadExperiment

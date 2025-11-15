@@ -46,7 +46,7 @@ fig, ax, plt = barplot(sums_years ./ 10^15; color=:grey15, #? diff 1500 Mt C
     axis=(; ytickformat=values -> ["$(round(value, digits=1))Pg" for value in values]),
     figure=(; size=(1200, 400)))
 # ax.xticks = 2003:2015
-ax.title = "cFireTotal Sindbad.jl"
+ax.title = "cFireTotal SindbadCore.jl"
 save("co2_rates_2003_2016_factor_Pg.png", fig)
 
 using JLD2

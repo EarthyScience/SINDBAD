@@ -1,40 +1,35 @@
-using SindbadUtils
-using SindbadTEM
-using SindbadSetup
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-# using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
-using ProgressMeter
-# using SindbadOptimization
-using SindbadML.Zygote
-# import AbstractDifferentiation as AD, Zygote
-
+using Sindbad
+using JLD2
 
 # extra includes for covariate and activation functions
 # extra includes for covariate and activation functions
-include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/load_covariates.jl"))
-include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/test_activation_functions.jl"))
+# include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/load_covariates.jl"))
+# include(joinpath(@__DIR__, "../../examples/exp_fluxnet_hybrid/test_activation_functions.jl"))
 
 
 ## paths
-file_folds = load(joinpath(@__DIR__, "nfolds_sites_indices.jld2"))
+# file_folds = load(joinpath(@__DIR__, "nfolds_sites_indices.jld2"))
+file_folds = load("/User/homes/lalonso/SINDBAD/examples/exp_fluxnet_hybrid/sampling/nfolds_sites_indices_0.jld2")
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
 
 # for remote node
 path_input = "$(getSindbadDataDepot())/FLUXNET_v2023_12_1D.zarr"
 
 path_covariates = "$(getSindbadDataDepot())/CovariatesFLUXNET_3.zarr"
-replace_info = Dict()
+# replace_info = Dict()
 
-replace_info = Dict(
-      "forcing.default_forcing.data_path" => path_input,
-      "optimization.observations.default_observation.data_path" => path_input,
-      "optimization.optimization_cost_threaded" => false,
-      );
+# replace_info = Dict(
+#       "forcing.default_forcing.data_path" => path_input,
+#       "optimization.observations.default_observation.data_path" => path_input,
+#       "optimization.optimization_cost_threaded" => false,
+#       );
+replace_info = Dict()
+if Sys.islinux()
+    replace_info = Dict(
+        "forcing.default_forcing.data_path" => "/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr",
+        "optimization.observations.default_observation.data_path" =>"/Net/Groups/BGI/work_4/scratch/lalonso/FLUXNET_v2023_12_1D.zarr"
+        );
+end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info);
 
@@ -93,7 +88,7 @@ indices_sites_testing = siteNameToID.(sites_testing, Ref(sites_forcing));
 
 indices_sites_batch = indices_sites_training;
 
-xfeatures = loadCovariates(sites_forcing; kind="all", cube_path=path_covariates);
+xfeatures = loadCovariates(sites_forcing; kind="all"); #  cube_path=path_covariates
 @info "xfeatures: [$(minimum(xfeatures)), $(maximum(xfeatures))]"
 
 nor_names_order = xfeatures.features;
@@ -146,9 +141,9 @@ input_args = (
 );
 
 grads_lib = ForwardDiffGrad();
-grads_lib = FiniteDifferencesGrad();
-grads_lib = FiniteDiffGrad();
-grads_lib = PolyesterForwardDiffGrad();
+# grads_lib = FiniteDifferencesGrad();
+# grads_lib = FiniteDiffGrad();
+# grads_lib = PolyesterForwardDiffGrad();
 # grads_lib = ZygoteGrad();
 # grads_lib = EnzymeGrad();
 # backend = AD.ZygoteBackend();
@@ -163,6 +158,12 @@ loss_tmp(x) = lossSite(x, grads_lib, inner_args...)
 
 gradientBatch!(grads_lib, grads_batch, 2, lossSite, getInnerArgs,input_args...; showprog=true)
 
+@info "now testing PolyesterForwardDiffGrad"
+import PolyesterForwardDiff
+grads_lib = PolyesterForwardDiffGrad();
+@time gg = gradientSite(grads_lib, loc_params, 4, lossSite, inner_args...) # with 4 is ~2.3 seconds (and 24 threads)
+gradientBatch!(grads_lib, grads_batch, 4, lossSite, getInnerArgs,input_args...; showprog=true)
+@info "done!"
 
 # ? training arguments
 chunk_size = 2

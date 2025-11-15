@@ -1,43 +1,38 @@
-name: Documenter
+name: Docs build and deploy
 on:
-  # Runs on pushes targeting the `master` branch.
   push:
     branches:
       - main
     tags: ['*']
   pull_request:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-  statuses: write
-        
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  # Build job
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Setup Julia
         uses: julia-actions/setup-julia@v2
-      - name: Pull Julia cache
+        with:
+          version: '1'
+      - name: Julia cache
         uses: julia-actions/cache@v2
-      - name: Install documentation dependencies
-        run: julia --project=docs -e 'using Pkg; pkg"dev . ./lib/SindbadUtils ./lib/SindbadData ./lib/SindbadMetrics ./lib/SindbadSetup ./lib/SindbadTEM ./lib/SindbadML"; Pkg.instantiate(); Pkg.precompile(); Pkg.status()'
       - name: Build and deploy docs
-        uses: julia-actions/julia-docdeploy@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For authentication with GitHub Actions token
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }} # For authentication with SSH deploy key
-          JULIA_DEBUG: "Documenter"
-          DATADEPS_ALWAYS_ACCEPT: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          cd docs;
+          julia --color=yes make.jl
+      - name: Upload site as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Docs build
+          path: ./docs/build

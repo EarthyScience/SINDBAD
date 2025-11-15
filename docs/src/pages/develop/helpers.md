@@ -260,7 +260,7 @@ An array of all defined things in the SINDBAD framework that match the specified
 defined_types = getSindbadDefinitions(Sindbad, Type)
 
 # Get all functions in a specific module
-functions = getSindbadDefinitions(Sindbad.Models, Function)
+functions = getSindbadDefinitions(SindbadCore.Models, Function)
 
 # Get all definitions including external ones
 all_definitions = getSindbadDefinitions(Sindbad, Any, internal_only=false)
