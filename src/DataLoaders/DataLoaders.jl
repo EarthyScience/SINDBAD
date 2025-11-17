@@ -43,6 +43,7 @@ module DataLoaders
    using FillArrays
    using DimensionalData
    using NCDatasets: NCDataset
+   import NCDatasets
    import YAXArrayBase
    using YAXArrays: YAXArrays, Cube, YAXArray
    using YAXArrays.DAT: InDims

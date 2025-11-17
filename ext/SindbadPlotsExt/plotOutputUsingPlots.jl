@@ -9,7 +9,7 @@ Generate performance histograms based on optimization output data.
 # Description
 Creates histogram plots to visualize the distribution of  performance metrics from optimization results.
 """
-function plotPerformanceHistograms(out_opti)
+function Sindbad.plotPerformanceHistograms(out_opti)
     opt_dat = out_opti.output.optimized
     def_dat = out_opti.output.default
     obs_array = out_opti.observation
@@ -69,7 +69,7 @@ Generate time series plots comparing optimized and default model outputs with ob
 # Description
 Generates time series plots that compare the optimized and default model outputs with observations. The function iterates over each variable specified in the cost options and creates a separate plot for each one. Each plot displays the observed data as scatter points, along with the default and optimized model outputs as line graphs. Additionally, it includes vertical lines indicating the calculated loss metric values for both the default and optimized models.
 """
-function plotTimeSeriesWithObs(out_opti)
+function Sindbad.plotTimeSeriesWithObs(out_opti)
     opt_dat = out_opti.output.optimized
     def_dat = out_opti.output.default
     obs_array = out_opti.observation
@@ -137,7 +137,7 @@ Plot debugging figures for model outputs.
 # Description
 This function generates debugging figures by plotting the optimized and default model outputs for each variable specified in the experiment's output variables list. It calculates the mean of the model outputs across layers and then plots them against time using Plots.jl. Debugging figures are saved in a directory specified by `info.output.dirs.figure`.
 """
-function plotTimeSeriesDebug(info, opt_dat, def_dat)
+function Sindbad.plotTimeSeriesDebug(info, opt_dat, def_dat)
 
     # plot debug figures
     output_array_opt = values(opt_dat)
@@ -180,7 +180,7 @@ Generate time series plots comparing optimized and default model outputs with ob
 # Description
 Generates time series plots that compare the optimized and default model outputs with observations. The function iterates over each variable specified in the cost options and creates a separate plot for each one. Each plot displays the observed data as scatter points, along with the default and optimized model outputs as line graphs. Additionally, it includes vertical lines indicating the calculated loss metric values for both the default and optimized models.
 """
-function plotTimeSeriesWithObs(out,obs_array,cost_options)
+function Sindbad.plotTimeSeriesWithObs(out,obs_array,cost_options)
     costOpt = cost_options
     info    = out.info
     domain  = info.experiment.basics.domain

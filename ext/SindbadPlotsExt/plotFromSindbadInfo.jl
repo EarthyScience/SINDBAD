@@ -115,7 +115,7 @@ plotIOModelStructure(info, :compute, [:input, :output])
 - The generated plot is saved as a PDF file in the experiment's output directory.
 
 """
-function plotIOModelStructure(info, which_function=:compute, which_field=[:input, :output])
+function Sindbad.plotIOModelStructure(info, which_function=:compute, which_field=[:input, :output])
     showInfo(plotIOModelStructure, @__FILE__, @__LINE__, "plotting IO model structure for $(which_function) with fields $(which_field)", n_f=4)
 
     in_out_models = getInOutModels(info.models.forward, which_function);

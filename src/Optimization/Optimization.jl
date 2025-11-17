@@ -77,6 +77,8 @@ module Optimization
    using QuasiMonteCarlo
    using StableRNGs
    using SindbadCore
+   using ..TEM: prepTEM, runTEM!
+   using ..Setup: scaleParameters, prepCostOptions, updateModels
    
    include("prepOpti.jl")
    include("optimizer.jl")

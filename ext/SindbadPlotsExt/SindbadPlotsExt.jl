@@ -25,13 +25,8 @@ using Plots
 """
 module SindbadPlotsExt
     using SindbadCore
-
-    import Sindbad:
-        plotPerformanceHistograms,
-        plotTimeSeriesWithObs,
-        plotTimeSeriesDebug,
-        namedTupleToFlareJSON,
-        plotIOModelStructure
+    import Sindbad
+    import Sindbad: plotIOModelStructure
 
     using Plots:
         annotate! as plots_annotate!,
