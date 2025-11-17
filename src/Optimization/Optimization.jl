@@ -78,7 +78,7 @@ module Optimization
    using StableRNGs
    using SindbadCore
    using ..TEM: prepTEM, runTEM!
-   using ..Setup: scaleParameters, prepCostOptions, updateModels
+   using ..Setup: scaleParameters, prepCostOptions, updateModels, backScaleParameters
    
    include("prepOpti.jl")
    include("optimizer.jl")

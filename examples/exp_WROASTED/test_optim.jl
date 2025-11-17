@@ -69,6 +69,6 @@ elseif nrepeat_d > 0
 end
 
 replace_info["experiment.model_spinup.sequence"] = sequence
-@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info)
+@time out_opti = runExperimentOpti(experiment_json; replace_info=replace_info);
 
 # end

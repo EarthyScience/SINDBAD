@@ -5,6 +5,8 @@ using ConstructionBase
 using CSV: CSV
 using JSON: parsefile, json, print as json_print
 using JLD2: @save, load
+using YAXArrays: YAXArrays, YAXArray
+using YAXArrays.Datasets: savedataset
 
 using SindbadCore.Reexport: @reexport
 @reexport using SindbadCore
