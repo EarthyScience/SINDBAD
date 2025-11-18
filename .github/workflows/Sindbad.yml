@@ -58,6 +58,7 @@ jobs:
         shell: julia --project=test {0}
         run: |
           using Pkg
+          pkg"dev ./SindbadCore" # Develop SindbadCore
           pkg"dev ." # Develop the package in the root directory
           pkg"registry up"
           Pkg.update()
