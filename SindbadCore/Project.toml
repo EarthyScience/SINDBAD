@@ -28,13 +28,9 @@ TypedTables = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
 [compat]
 Accessors = "0.1.42"
 Crayons = "4.1.1"
-Dates = "1.10, 1.11.0"
 FIGlet = "0.2.2"
-Logging = "1.10.10, 1.11.0"
 NaNStatistics = "0.6.50"
-Pkg = "1.10.0"
 Reexport = "1.2.2"
-StyledStrings = "1.0.3, 1.11.0"
 TypedTables = "1.4.6"
 julia = "1.10"
 
