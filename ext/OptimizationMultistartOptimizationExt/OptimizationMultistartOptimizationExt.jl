@@ -1,6 +1,0 @@
-module OptimizationMultistartOptimizationExt
-
-import MultistartOptimization
-import NLopt
-
-end

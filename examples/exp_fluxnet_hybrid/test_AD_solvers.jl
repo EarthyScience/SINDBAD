@@ -123,26 +123,26 @@ loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
 gradientBatch!(grads_lib, grads_batch, 2, lossSite, getInnerArgs,input_args...; showprog=true)
 
 # ! Now the extensions!
-@info "now testing PolyesterForwardDiff"
-using PolyesterForwardDiff
-grads_lib = PolyesterForwardDiffGrad();
+# @info "now testing PolyesterForwardDiff"
+# using PolyesterForwardDiff
+# grads_lib = PolyesterForwardDiffGrad();
 
-loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
-# just for one site
-@time gg = gradientSite(grads_lib, loc_params, 4, lossSite, inner_args...)
-# for a batch
-gradientBatch!(grads_lib, grads_batch, 4, lossSite, getInnerArgs,input_args...; showprog=true)
+# loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
+# # just for one site
+# @time gg = gradientSite(grads_lib, loc_params, 4, lossSite, inner_args...)
+# # for a batch
+# gradientBatch!(grads_lib, grads_batch, 4, lossSite, getInnerArgs,input_args...; showprog=true)
 
-# ! FiniteDifferences
-@info "now testing FiniteDifferences"
-using FiniteDifferences
-grads_lib = FiniteDifferencesGrad();
+# # ! FiniteDifferences
+# @info "now testing FiniteDifferences"
+# using FiniteDifferences
+# grads_lib = FiniteDifferencesGrad();
 
-loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
-# just for one site
-@time gg = gradientSite(grads_lib, loc_params, 4, lossSite, inner_args...)
-# for a batch
-gradientBatch!(grads_lib, grads_batch, 4, lossSite, getInnerArgs,input_args...; showprog=true)
+# loc_params, inner_args = getInnerArgs(1, grads_lib, input_args...);
+# # just for one site
+# @time gg = gradientSite(grads_lib, loc_params, 4, lossSite, inner_args...)
+# # for a batch
+# gradientBatch!(grads_lib, grads_batch, 4, lossSite, getInnerArgs,input_args...; showprog=true)
 
 # ! FiniteDiff
 @info "now testing FiniteDiff"

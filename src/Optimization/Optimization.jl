@@ -70,9 +70,13 @@ module Optimization
    using CMAEvolutionStrategy: minimize, xbest
    using ForwardDiff
    using GlobalSensitivity
+   using MultistartOptimization: MultistartOptimization
+   using NLopt: NLopt
    using Optim
    using Optimization
    using OptimizationOptimJL
+   using OptimizationBBO
+   using OptimizationGCMAES
    using OptimizationCMAEvolutionStrategy
    using QuasiMonteCarlo
    using StableRNGs

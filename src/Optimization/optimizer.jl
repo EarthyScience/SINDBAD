@@ -72,11 +72,11 @@ function optimizer(cost_function, default_values, lower_bounds, upper_bounds, al
 end
 
 
-function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::EvolutionaryCMAES)
-    optim_results = Evolutionary.optimize(cost_function, Evolutionary.BoxConstraints(lower_bounds, upper_bounds), default_values, Evolutionary.CMAES(), Evolutionary.Options(; algo_options...))
-    optim_para = Evolutionary.minimizer(optim_results)
-    return optim_para
-end
+# function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::EvolutionaryCMAES)
+#     optim_results = Evolutionary.optimize(cost_function, Evolutionary.BoxConstraints(lower_bounds, upper_bounds), default_values, Evolutionary.CMAES(), Evolutionary.Options(; algo_options...))
+#     optim_para = Evolutionary.minimizer(optim_results)
+#     return optim_para
+# end
 
 
 function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimLBFGS)
@@ -181,4 +181,28 @@ function optimizer(cost_function, default_values, lower_bounds, upper_bounds, al
     optim_prob = OptimizationProblem(optim_cost, default_values; lb=lower_bounds, ub=upper_bounds)
     optim_para = solve(optim_prob, QuadDirect(), splits = ([-0.9, 0, 0.9], [-0.8, 0, 0.8]), algo_options...)
     return optim_para
+end
+
+function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, opt_method::OptimizationMethod)
+    # refer to loading extension!
+    T = typeof(opt_method)
+    name = String(nameof(T))
+    pkg = if name == "EvolutionaryCMAES"
+        "Evolutionary"
+    else
+        nothing
+    end
+    if pkg !== nothing
+        throw(ArgumentError("""
+`$pkg` is required to use `optimizer` with `$name` but is not loaded.
+Run `import $pkg` to enable this functionality.
+"""))
+    else
+        throw(ArgumentError("""
+No method available for `optimizer(::$(T))`.
+If this optimization method is supposed to work, ensure the correct extension package is installed and loaded.
+"""))
+
+end
+
 end
