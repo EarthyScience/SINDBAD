@@ -55,7 +55,7 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
       - name: Develop and test Sindbad
-        shell: julia --project=test
+        shell: julia --project=test {0}
         run: |
           using Pkg
           pkg"registry up"
