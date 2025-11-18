@@ -58,13 +58,13 @@ jobs:
         shell: julia --project=test {0}
         run: |
           using Pkg
+          pkg"dev ." # Develop the package in the root directory
           pkg"registry up"
           Pkg.update()
-          pkg"dev ." # Develop the package in the root directory
           Pkg.test("Sindbad"; coverage=true) # Test the package
       - uses: julia-actions/julia-processcoverage@v1
         with:
-          directories: Sindbad/src
+          directories: src
       - uses: codecov/codecov-action@v5
         with:
           files: lcov.info
