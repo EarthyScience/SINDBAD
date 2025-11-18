@@ -55,14 +55,12 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
       - name: Develop and test Sindbad
-        shell: julia --project=test {0}
+        shell: julia --project=. {0}
         run: |
           using Pkg
-          pkg"dev ./SindbadCore" # Develop SindbadCore
-          pkg"dev ." # Develop the package in the root directory
-          pkg"registry up"
-          Pkg.update()
-          Pkg.test("Sindbad"; coverage=true) # Test the package
+          Pkg.develop(path="SindbadCore")  # Develop SindbadCore
+          Pkg.instantiate()  # Install all dependencies
+          Pkg.test("Sindbad"; coverage=true)
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: src
