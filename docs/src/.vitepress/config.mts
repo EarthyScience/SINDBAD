@@ -76,6 +76,10 @@ const manualItems = [
   { text: 'Useful Helpers', link: '/pages/develop/helpers' },
 ]
 
+const baseTemp = {
+  base: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
+}
+
 const navTemp = {
   nav: [
     { text: 'Concept', items: conceptItems,
@@ -122,6 +126,10 @@ const sidebar = [
     items: aboutItems
   },
 ]
+
+const editLink = {
+  pattern: 'https://github.com/EarthyScience/SINDBAD/edit/main/docs/src/:path'
+}
 
 export default defineConfig({
   base: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
@@ -185,9 +193,7 @@ export default defineConfig({
 
     nav: nav,
     sidebar: sidebar,
-    editLink: {
-      pattern: 'https://github.com/EarthyScience/SINDBAD/edit/main/docs/src/:path'
-    },
+    editLink: editLink,
     socialLinks: [
       {
         icon: "github",
