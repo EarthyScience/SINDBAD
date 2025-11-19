@@ -133,7 +133,7 @@ export default defineConfig({
   outDir: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
   
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['link', { rel: 'icon', href: 'REPLACE_ME_DOCUMENTER_VITEPRESS_FAVICON' }],
   ],
   
   vite: {
@@ -185,6 +185,9 @@ export default defineConfig({
 
     nav: nav,
     sidebar: sidebar,
+    editLink: {
+      pattern: 'https://github.com/EarthyScience/SINDBAD/edit/main/docs/src/:path'
+    },
     socialLinks: [
       {
         icon: "github",
@@ -194,7 +197,7 @@ export default defineConfig({
       },
     ],
     footer: {
-      message: '<a href="https://www.bgc-jena.mpg.de/en" target="_blank"><img src="/logo_mpi_grey.png" class="footer-logo" alt="MPI Logo"/></a>',
+      message: '<a href="https://www.bgc-jena.mpg.de/en" target="_blank"><img src="logo_mpi_grey.png" class="footer-logo" alt="MPI Logo"/></a>',
       copyright: '© Copyright 2025 <strong> SINDBAD Development Team</strong></span>'
     }
   }
