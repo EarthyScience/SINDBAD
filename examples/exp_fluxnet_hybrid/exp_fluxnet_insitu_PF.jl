@@ -1,15 +1,8 @@
 using Sindbad
-using SindbadSetup
-using SindbadUtils
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
-using SindbadOptimization
-using SindbadMetrics
+using DimensionalData
+using AxisKeys
+using YAXArrays
+using JLD2
 using ProgressMeter
 
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
@@ -120,9 +113,9 @@ upper_bounds = tbl_params.upper
 # and compare output and performance
 # use: (go for parallel/threaded approaches)
 
-# using SindbadOptimization.CMAEvolutionStrategy
+# using Sindbad.CMAEvolutionStrategy
 
-results = SindbadOptimization.minimize(cost_function,
+results = Sindbad.Optimization.minimize(cost_function,
     default_values,
     1;
     lower=lower_bounds,
@@ -131,7 +124,7 @@ results = SindbadOptimization.minimize(cost_function,
     multi_threading=true,
 )
 
-optim_para = SindbadOptimization.xbest(results)
+optim_para = Sindbad.Optimization.xbest(results)
 
 # ? https://github.com/AStupidBear/GCMAES.jl
 
@@ -145,7 +138,7 @@ maxiter = 5
 xmin, fmin, status = GCMAES.minimize(cost_function, x0, σ0, lo, hi, maxiter=maxiter)
 
 # ? now speedup convergence with some gradient information
-using SindbadOptimization.ForwardDiff
+using Sindbad.ForwardDiff
 ∇loss(x) = ForwardDiff.gradient(cost_functionFD, x)
 
 xmin, fmin, status = GCMAES.minimize((cost_functionFD, ∇loss), x0, σ0, lo, hi, maxiter=100);

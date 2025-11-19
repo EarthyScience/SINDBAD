@@ -5,7 +5,7 @@ This documentation provides a framework for adding new cost calculation methods 
 :::tip
 For a more detailed view of available cost methods and their purposes, use:
 ```julia
-using Sindbad
+using SindbadCore
 showMethodsOf(CostMethod)
 ```
 This will display a formatted list of all cost methods and their descriptions.

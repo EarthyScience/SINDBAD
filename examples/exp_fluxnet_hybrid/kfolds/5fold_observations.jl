@@ -1,13 +1,11 @@
 using GLMakie
 using GLMakie.Colors
 using StatsBase
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
+using DimensionalData
+using AxisKeys
+using YAXArrays
+using Sindbad
+using JLD2
 using ProgressMeter
 include("../load_covariates.jl")
 

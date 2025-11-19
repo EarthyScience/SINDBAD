@@ -1,9 +1,7 @@
 using Revise
-using SindbadData
-using SindbadTEM
-using SindbadMetrics
-using SindbadExperiment
+using Sindbad
 using Plots
+
 toggleStackTraceNT()
 experiment_json = "../exp_landWrapper/settings_landWrapper/experiment.json"
 begin_year = "1979"

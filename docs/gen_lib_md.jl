@@ -1,6 +1,5 @@
-using SindbadExperiment
-using SindbadML
-packages_list = (:Sindbad, :SindbadUtils, :SindbadTEM, :SindbadSetup, :SindbadData, :SindbadOptimization, :SindbadExperiment, :SindbadML, :SindbadMetrics)
+using Sindbad
+packages_list = (:SindbadCore, :Sindbad)
 mkpath("./src/pages/code_gen")
 lib_path = joinpath(@__DIR__, "../lib")
 
@@ -50,7 +49,7 @@ open(joinpath(@__DIR__, "./src/pages/code_gen/SindbadModels.md"), "w") do o_file
 
     write(o_file, "## Available Models\n\n")
 
-    sindbad_models_from_types = nameof.(Sindbad.subtypes(Sindbad.LandEcosystem))
+    sindbad_models_from_types = nameof.(SindbadCore.subtypes(SindbadCore.LandEcosystem))
     foreach(sort(collect(sindbad_models_from_types))) do sm
         sms = string(sm)
         write(o_file, "### $(sm)\n\n")
@@ -59,7 +58,7 @@ open(joinpath(@__DIR__, "./src/pages/code_gen/SindbadModels.md"), "w") do o_file
         write(o_file, ":::details $(sm) approaches\n\n")
         write(o_file, ":::tabs\n\n")
 
-        foreach(Sindbad.subtypes(getfield(Sindbad, sm))) do apr
+        foreach(SindbadCore.subtypes(getfield(Sindbad, sm))) do apr
 
             write(o_file, "== $(apr)\n")
             write(o_file, "```@docs\n$(apr)\n```\n")
@@ -68,6 +67,6 @@ open(joinpath(@__DIR__, "./src/pages/code_gen/SindbadModels.md"), "w") do o_file
         write(o_file, "\n----\n\n")
     end
     write(o_file, "## Internal\n\n")
-    write(o_file, "```@meta\nCollapsedDocStrings = false\nDocTestSetup= quote\nusing Sindbad.Models\nend\n```\n")
-    write(o_file, "\n```@autodocs\nModules = [Sindbad.Models]\nPublic = false\n```")
+    write(o_file, "```@meta\nCollapsedDocStrings = false\nDocTestSetup= quote\nusing SindbadCore.Models\nend\n```\n")
+    write(o_file, "\n```@autodocs\nModules = [SindbadCore.Models]\nPublic = false\n```")
 end

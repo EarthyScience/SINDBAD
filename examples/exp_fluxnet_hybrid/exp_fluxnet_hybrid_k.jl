@@ -1,12 +1,9 @@
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
+using DimensionalData
+using AxisKeys
+using YAXArrays
+using JLD2
 using ProgressMeter
-using SindbadOptimization
+using Sindbad
 
 # extra includes for covariate and activation functions
 include("load_covariates.jl")

@@ -1,7 +1,7 @@
 using Revise
-using SindbadExperiment
-using SindbadTEM
-using SindbadData
+using Sindbad
+using Plots
+
 toggleStackTraceNT()
 experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);

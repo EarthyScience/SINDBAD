@@ -1,5 +1,5 @@
 using Revise
-using SindbadExperiment
+using Sindbad
 using Dates
 using Plots
 toggleStackTraceNT()
@@ -136,10 +136,10 @@ for site_index in sites
 parameter_table = info.optimization.parameter_table;
     opt_params = parameter_table.optimized
     parameter_names = parameter_table.name_full
-    parameter_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
+    parameter_maps = SindbadCore.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=SindbadCore.DataStructures.OrderedDict)
 
     if isfile(ml_parameter_file)
-        ml_params = Sindbad.parsefile(ml_parameter_file; dicttype=Sindbad.DataStructures.OrderedDict)["parameter"]
+        ml_params = SindbadCore.parsefile(ml_parameter_file; dicttype=SindbadCore.DataStructures.OrderedDict)["parameter"]
 
         for opi in eachindex(opt_params)
             jl_name = parameter_names[opi]

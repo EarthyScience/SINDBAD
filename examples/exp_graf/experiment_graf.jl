@@ -1,7 +1,7 @@
 using Revise
-using SindbadSetup
-@time using SindbadExperiment
+using Sindbad
 using Plots
+
 toggleStackTraceNT()
 domain = "africa";
 optimize_it = true;

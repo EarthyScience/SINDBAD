@@ -1,10 +1,14 @@
 # Sindbad.jl
 
-[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![License: EUPLv1.2](https://img.shields.io/badge/License-EUPLv1.2-seagreen)](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE)
+<div align="center">
 
-<img src="docs/src/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
+[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][discussions-img]][discussions-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![][code-of-conduct-img]][code-of-conduct-url][![][contributors-img]][contributors-url][![License: EUPLv1.2](https://img.shields.io/badge/License-EUPLv1.2-seagreen)](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE) 
 
-[docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
+</div>
+
+<img src="docs/src/assets/sindbad_logo.png" align="right" style="padding-left:10px;" width="150"/>
+
+[docs-dev-img]: https://img.shields.io/badge/docs-in%20development-orange?style=flat-square
 [docs-dev-url]: https://earthyscience.github.io/Sindbad.jl/dev/
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
@@ -18,6 +22,13 @@
 
 [julia-img]: https://img.shields.io/badge/julia-v1.10+-blue.svg
 [julia-url]: https://julialang.org/
+[code-of-conduct-img]: https://img.shields.io/badge/contributor-covenant-code
+[code-of-conduct-url]: https://github.com/EarthyScience/Sindbad.jl/blob/main/CODE_OF_CONDUCT.md
+[discussions-img]: https://img.shields.io/badge/Ask%20us-anything-1abc9c.svg?style=flat-square
+[discussions-url]: https://github.com/EarthyScience/Sindbad.jl/discussions
+[contributors-img]: https://img.shields.io/badge/Contributor's%20Guide-blueviolet?style=flat-square
+[contributors-url]: https://github.com/EarthyScience/Sindbad.jl/blob/main/CONTRIBUTING.md
+
 
 Welcome to the git repository for the development of the framework for **S**trategies to **IN**tegrate **D**ata and **B**iogeochemic**A**l mo**D**els `(SINDBAD)`. 
 
@@ -25,48 +36,91 @@ Researchers and developers actively developing the model and doing research usin
 
 `SINDBAD` is a model data integration framework that encompasses the `biogeochemical cycles of water and carbon`, allows for extensive and flexible integration of parsimonious models with a diverse set of observational data streams.
 
+### Installation
+
+within Julia's package manager
+
+```julia
+julia > ] # type ] to enter the package mode
+```
+
+> [!TIP] 
+> Use the following if you want to use the latest registered released version, if available.
+> ```julia
+> (@v1.12) pkg> add Sindbad
+> ```
+
+> [!CAUTION]
+> Get the latest changes
+> ```julia
+> (@v1.12) pkg> add https://github.com/EarthyScience/SINDBAD.git
+> ```
+
+
+and now doing 
+
+```julia
+julia > using Sindbad
+```
+
+will allow you to run a full experiment.
+
+#### Install only `SindbadCore`
+
+If you only need the core functionality then do
+
+> [!TIP] 
+> Use the following if you want to use the latest registered released version, if available.
+> ```julia
+> (@v1.12) pkg> add SindbadCore
+> ```
+
+otherwise do
+
+```julia
+(@v1.12) pkg> add https://github.com/EarthyScience/SINDBAD.git:SindbadCore
+```
+
 ### Repository Structure
 
-`Sindbad.jl` and its sub-repositories all live in the Sindbad `monorepo`. At the root level of the repository, definitions of Sindbad models, variables, and functions needed for internal model executions are included.
+`Sindbad.jl` and `SindbadCore.jl` live in the SINDBAD `monorepo`.
 
-For a short description on sub-packages under `/lib/`
+For a short description on each see:
 
 <details>
   <summary><span style="color:orange"> 🔥 Click for details 🔥</span></summary>
 
-- `SindbadData.jl`: includes functions to load the forcing and observation data, and has dev dependency on SindbadUtils.
+- `DataLoaders.jl`: includes functions to load the forcing and observation data, and has dev dependency on SindbadUtils.
 
-- `SindbadExperiment.jl`: includes the dev dependencies on all other Sindbad packages that can be used to run an experiment and save the experiment outputs.
+- `Experiment.jl`: includes the dev dependencies on all other Sindbad packages that can be used to run an experiment and save the experiment outputs.
 
-- `SindbadMetrics.jl`: includes the calculation of loss metrics and has dependency on `SindbadUtils.jl`.
+- `SindbadCore.Metrics.jl`: includes the calculation of loss metrics.
 
-- `SindbadML.jl`: includes the dev dependencies on `SindbadTEM.jl`, `SindbadMetrics.jl`, `SindbadSetup.jl`, and `SindbadUtils.jl` as well as external ML libraries to do hybrid modeling.
+- `ML.jl`: includes functions to do hybrid modeling.
 
-- `SindbadOptimization.jl`: includes the optimization schemes and functions to optimize the model, and has dev dependency on `SindbadTEM.jl` and `SindbadMetrics.jl`.
+- `Optimization.jl`: includes the optimization schemes and functions to optimize the model.
 
-- `SindbadSetup.jl`: includes the setup of sindbad model structure and info from the json settings, and has dev dependency on `Sindbad.jl` and `SindbadUtils.jl`.
+- `Setup.jl`: includes the setup of sindbad model structure and info from the json settings.
 
-- `SindbadTEM.jl`: includes the main functions to run SINDBAD Terrestrial Ecosystem Model, and has dev dependency on `Sindbad.jl`, `SindbadSetup.jl`, and `SindbadUtils.jl`.
+- `TEM.jl`: includes the main functions to run SINDBAD Terrestrial Ecosystem Model.
 
-- `SindbadUtils.jl`: includes utility functions that are used in other Sindbad lib packages, which has no dev dependency on other lib packages and Sindbad info, and is dependent on external libraries only.
+- `Utilities.jl`: includes utility functions that are used in other Sindbad `modules`.
 
 </details>
 
-### Installation
+### How to use `Sindbad.jl` in a development setting!
 
-- with git repo access
+<details>
+  <summary><span style="color:orange"> 🔥 Click for details 🔥</span></summary>
+
+#### git clone the repo
+
+Get the latest `Sindbad.jl` package and browse to the directory (SINDBAD)
+
+```sh
+git clone https://github.com/EarthyScience/SINDBAD.git
 ```
-julia]
-pkg > add git@github.com:EarthyScience/SINDBAD.git
-```
-
-- without git repo access
-
-Get the latest sindbad.jl package and browse to the directory (sindbad_root)
-
-### How to dev/use the different packages
-
-Start a julia prompt in the sindbad_root
+Start a julia prompt in the SINDBAD root directory
 
 ```
 julia
@@ -74,10 +128,10 @@ julia
 
 Go to main sandbox directory
 ```
-cd sandbox
+julia> run(`cd sandbox`)
 ```
 
-Create a new sandbox directory, e.g., my_env and go to that directory
+Create a new sandbox directory, e.g., my_env and go into that directory
 
 ```
 julia > run(`mkdir -p my_env`)
@@ -86,14 +140,22 @@ julia > run(`cd my_env`)
 
 Create the julia environment, activate it, and instantiate all dev dependencies and packages by pasting the following in the package mode of Julia REPL.
 
-Sindbad Experiments:
-```
-dev ../.. ../../lib/SindbadUtils ../../lib/SindbadData ../../lib/SindbadMetrics ../../lib/SindbadSetup ../../lib/SindbadTEM ../../lib/SindbadOptimization ../../lib/SindbadExperiment
+
+```julia
+julia>] # type ] to enter the package mode
 ```
 
-SindbadML:
+```julia
+(@v1.12) pkg> activate .
 ```
-dev ../.. ../../lib/SindbadUtils/ ../../lib/SindbadData/ ../../lib/SindbadMetrics/ ../../lib/SindbadSetup/ ../../lib/SindbadTEM ../../lib/SindbadML
+
+```julia
+(my_env) pkg> dev ../..
+```
+and if you want to also develop `SindbadCore` and use those changes do
+
+```julia
+(my_env) pkg> dev ../../SindbadCore/
 ```
 
 Once the dev dependencies are built, run
@@ -102,28 +164,15 @@ resolve
 instantiate
 ```
 
+and if you query the `status` of your current envioroment you should see something like:
 
-### Download the example data
-
-Before running the experiments, download the example by running the following script in the ````sandbox```` directory
-
-````bash
-bash download_example_data.sh
-````
-
-
-### Using Sindbad in your example
-
-Sindbad is divided into following sub-packages which can be imported in your example with
-```using $PACKAGE```
-
-For example 
-
-```using SindbadExperiment```
-
-allows to run the full experiment.
-
-Other smaller packages can be imported and put together to build an experiment workflow as needed
+```julia
+(my_env) pkg> st
+Status `~/SINDBAD/sandbox/my_env/Project.toml`
+  [6686e6de] Sindbad v0.1.0 `../..`
+  [7e5cc002] SindbadCore v0.1.0 `../../SindbadCore`
+```
+</details>
 
 ## SINDBAD Contributors 
 

@@ -1,9 +1,8 @@
 using Revise
-using SindbadExperiment
-using SindbadML
-using SindbadML.JLD2
-using SindbadML.Random
-using SindbadML.Flux
+using Sindbad
+using JLD2
+using Random
+using Flux
 using ProgressMeter
 
 path_experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment_hybrid.json"

@@ -202,7 +202,7 @@ Defines optimization parameters and observational constraints:
 
 1. **Setup**
 ```julia
-using SindbadExperiment
+using Sindbad
 experiment_json = "path/to/experiment.json"
 ```
 
@@ -236,7 +236,7 @@ SINDBAD provides several functions for running experiments with different config
 :::tip
 To list all available experiment methods and their purposes, use:
 ```julia
-using Sindbad
+using SindbadCore
 showMethodsOf(RunFlag)
 ```
 This will display a formatted list of all experiment methods and their descriptions.

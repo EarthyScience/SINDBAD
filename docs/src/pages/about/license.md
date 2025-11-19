@@ -1,3 +1,3 @@
 # License
 
-The public repository of SINDBAD is released under [the GPLV3 License](https://www.gnu.org/licenses/gpl-3.0.txt).
+The public repository of SINDBAD is released under the [License-EUPLv1.2](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE).

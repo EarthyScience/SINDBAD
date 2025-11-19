@@ -1,9 +1,7 @@
 using Revise
-@time using Sindbad
-@time using SindbadData
-@time using SindbadTEM
-@time using SindbadExperiment
+using Sindbad
 using Plots
+
 toggleStackTraceNT()
 domain = "Global";
 optimize_it = true;

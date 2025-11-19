@@ -35,7 +35,7 @@ fig, ax, plt = barplot(sums_years; color=:grey15, #? Mt C (megatonnes of carbon)
     axis=(; ytickformat=values -> ["$(round(value, digits=1))" for value in values]),
     figure=(; size=(1200, 400)))
 ax.xticks = 2003:2015
-ax.title = "gpp yearly Sindbad.jl"
+ax.title = "gpp yearly SindbadCore.jl"
 save("co2_years_gpp_Pg.png", fig)
 
 

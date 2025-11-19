@@ -61,7 +61,7 @@ The algorithm configuration file specifies detailed optimization settings:
 ::: tip Available Methods
 To list all implemented optimization methods:
 ```julia
-using SindbadOptimization
+using Sindbad
 showMethodsOf(OptimizationMethod)
 ```
 :::

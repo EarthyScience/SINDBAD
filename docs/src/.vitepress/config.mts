@@ -26,21 +26,20 @@ const codeItems = [
   { text: ' + Core', link: '/pages/code/sindbad' },
   { text: ' \u00A0\u00A0++ Models', link: '/pages/code/models' },
   { text: ' \u00A0\u00A0++ Types', link: '/pages/code/types' },
+  { text: ' \u00A0\u00A0++ Utilities', link: '/pages/code/utilities' },
+  { text: ' \u00A0\u00A0++ Metrics', link: '/pages/code/metrics' },
   { text: ' + Data', link: '/pages/code/data' },
-  { text: ' + Experiment', link: '/pages/code/experiment' },
-  { text: ' + Metrics', link: '/pages/code/metrics' },
   { text: ' + ML', link: '/pages/code/ml' },
   { text: ' + Optimization', link: '/pages/code/optimization' },
   { text: ' + Setup', link: '/pages/code/setup' },
   { text: ' + TEM', link: '/pages/code/tem' },
-  { text: ' + Utils', link: '/pages/code/utils' },
-  { text: ' + Visuals', link: '/pages/code/visuals' }
 ]
 
 const codeGenItems = [
   { text: 'Sindbad', link: '/pages/code_gen/Sindbad' },
   { text: ' + Core', link: '/pages/code_gen/Sindbad' },
   { text: ' + Data', link: '/pages/code_gen/SindbadData' },
+  { text: ' + Utilities', link: '/pages/code_gen/SindbadUtils' },
   { text: ' + Experiment', link: '/pages/code_gen/SindbadExperiment' },
   { text: ' + Metrics', link: '/pages/code_gen/SindbadMetrics' },
   { text: ' + ML', link: '/pages/code_gen/SindbadML' },
@@ -48,7 +47,6 @@ const codeGenItems = [
   { text: ' + Optimization', link: '/pages/code_gen/SindbadOptimization' },
   { text: ' + Setup', link: '/pages/code_gen/SindbadSetup' },
   { text: ' + TEM', link: '/pages/code_gen/SindbadTEM' },
-  { text: ' + Utils', link: '/pages/code_gen/SindbadUtils' },
   // { text: ' + Visuals', link: '/pages/code_gen/SindbadVisuals' }
 ]
 const aboutItems = [
@@ -77,6 +75,10 @@ const manualItems = [
   { text: 'Documentation', link: '/pages/develop/how_to_doc' },
   { text: 'Useful Helpers', link: '/pages/develop/helpers' },
 ]
+
+const baseTemp = {
+  base: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
+}
 
 const navTemp = {
   nav: [
@@ -125,6 +127,10 @@ const sidebar = [
   },
 ]
 
+const editLink = {
+  pattern: 'https://github.com/EarthyScience/SINDBAD/edit/main/docs/src/:path'
+}
+
 export default defineConfig({
   base: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
   title: "SINDBAD",
@@ -135,7 +141,7 @@ export default defineConfig({
   outDir: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
   
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['link', { rel: 'icon', href: 'REPLACE_ME_DOCUMENTER_VITEPRESS_FAVICON' }],
   ],
   
   vite: {
@@ -187,6 +193,7 @@ export default defineConfig({
 
     nav: nav,
     sidebar: sidebar,
+    editLink: editLink,
     socialLinks: [
       {
         icon: "github",
@@ -196,7 +203,7 @@ export default defineConfig({
       },
     ],
     footer: {
-      message: '<a href="https://www.bgc-jena.mpg.de/en" target="_blank"><img src="/logo_mpi_grey.png" class="footer-logo" alt="MPI Logo"/></a>',
+      message: '<a href="https://www.bgc-jena.mpg.de/en" target="_blank"><img src="logo_mpi_grey.png" class="footer-logo" alt="MPI Logo"/></a>',
       copyright: '© Copyright 2025 <strong> SINDBAD Development Team</strong></span>'
     }
   }

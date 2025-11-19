@@ -1,6 +1,6 @@
 using Serialization
 using Revise
-using SindbadExperiment
+using Sindbad
 # Import the pickle module
 using PyCall
 pickle = pyimport("pickle")
