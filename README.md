@@ -1,10 +1,14 @@
 # Sindbad.jl
 
-[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![License: EUPLv1.2](https://img.shields.io/badge/License-EUPLv1.2-seagreen)](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE)
+<div align="center">
 
-<img src="docs/src/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
+[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][discussions-img]][discussions-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![][code-of-conduct-img]][code-of-conduct-url][![][contributors-img]][contributors-url][![License: EUPLv1.2](https://img.shields.io/badge/License-EUPLv1.2-seagreen)](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE) 
 
-[docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
+</div>
+
+<img src="docs/src/assets/sindbad_logo.png" align="right" style="padding-left:10px;" width="150"/>
+
+[docs-dev-img]: https://img.shields.io/badge/docs-in%20development-orange?style=flat-square
 [docs-dev-url]: https://earthyscience.github.io/Sindbad.jl/dev/
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
@@ -18,6 +22,13 @@
 
 [julia-img]: https://img.shields.io/badge/julia-v1.10+-blue.svg
 [julia-url]: https://julialang.org/
+[code-of-conduct-img]: https://img.shields.io/badge/contributor-covenant-code
+[code-of-conduct-url]: https://github.com/EarthyScience/Sindbad.jl/blob/main/CODE_OF_CONDUCT.md
+[discussions-img]: https://img.shields.io/badge/Ask%20us-anything-1abc9c.svg?style=flat-square
+[discussions-url]: https://github.com/EarthyScience/Sindbad.jl/discussions
+[contributors-img]: https://img.shields.io/badge/Contributor's%20Guide-blueviolet?style=flat-square
+[contributors-url]: https://github.com/EarthyScience/Sindbad.jl/blob/main/CONTRIBUTING.md
+
 
 Welcome to the git repository for the development of the framework for **S**trategies to **IN**tegrate **D**ata and **B**iogeochemic**A**l mo**D**els `(SINDBAD)`. 
 
@@ -33,17 +44,18 @@ within Julia's package manager
 julia > ] # type ] to enter the package mode
 ```
 
-> [!TIP]
-> Get the one with the latest changes
-> ```julia
-> (@v1.12) pkg> add https://github.com/EarthyScience/SINDBAD.git
-> ```
-
-> [!CAUTION] 
+> [!TIP] 
 > Use the following if you want to use the latest registered released version, if available.
 > ```julia
 > (@v1.12) pkg> add Sindbad
 > ```
+
+> [!CAUTION]
+> Get the latest changes
+> ```julia
+> (@v1.12) pkg> add https://github.com/EarthyScience/SINDBAD.git
+> ```
+
 
 and now doing 
 
@@ -52,6 +64,22 @@ julia > using Sindbad
 ```
 
 will allow you to run a full experiment.
+
+#### Install only `SindbadCore`
+
+If you only need the core functionality then do
+
+> [!TIP] 
+> Use the following if you want to use the latest registered released version, if available.
+> ```julia
+> (@v1.12) pkg> add SindbadCore
+> ```
+
+otherwise do
+
+```julia
+(@v1.12) pkg> add https://github.com/EarthyScience/SINDBAD.git:SindbadCore
+```
 
 ### Repository Structure
 
