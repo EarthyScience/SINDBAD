@@ -1,8 +1,8 @@
-# Machine Learning Methods in SindbadML
+# Machine Learning Methods in Sindbad.ML
 
 This page provides an overview of machine learning methods available within SindbadML. It includes details on various components such as activation functions, gradient methods, ML models, optimizers, and training methods, and how to extend them for experiment related to hybrid ML-physical modeling.
 
-# Extending SindbadML: How to Add New Components
+# Extending Sindbad.ML: How to Add New Components
 
 This guide shows how to add new **activation functions**, **gradient methods**, **ML models**, **optimizers**, and **training methods** by following the conventions in the `src/Types/MLTypes.jl` and related files.
 
@@ -23,7 +23,7 @@ purpose(::Type{MyActivation}) = "Describe your activation function here"
 
 ### Step 2: Implement the Activation Function
 
-In `lib/SindbadML/src/activationFunctions.jl`, extend `activationFunction`:
+In `Sindbad/ML/activationFunctions.jl`, extend `activationFunction`:
 
 ```julia
 function activationFunction(model_options, ::MyActivation)
@@ -50,7 +50,7 @@ purpose(::Type{MyGradMethod}) = "Describe your gradient method"
 
 ### Step 2: Implement the Gradient Logic
 
-In `lib/SindbadML/src/mlGradient.jl`, extend `gradientSite` and/or `gradientBatch!`:
+In `Sindbad/ML/src/mlGradient.jl`, extend `gradientSite` and/or `gradientBatch!`:
 
 ```julia
 function gradientSite(::MyGradMethod, x_vals::AbstractArray, gradient_options::NamedTuple, loss_f::F) where {F}
@@ -76,7 +76,7 @@ purpose(::Type{MyMLModel}) = "Describe your ML model"
 
 ### Step 2: Implement the Model Constructor
 
-In `lib/SindbadML/src/mlModels.jl`, extend `mlModel`:
+In `Sindbad/ML/src/mlModels.jl`, extend `mlModel`:
 
 ```julia
 function mlModel(info, n_features, ::MyMLModel)
@@ -102,7 +102,7 @@ purpose(::Type{MyOptimizer}) = "Describe your optimizer"
 
 ### Step 2: Implement the Optimizer Constructor
 
-In `lib/SindbadML/src/mlOptimizers.jl`, extend `mlOptimizer`:
+In `Sindbad/ML/src/mlOptimizers.jl`, extend `mlOptimizer`:
 
 ```julia
 function mlOptimizer(optimizer_options, ::MyOptimizer)
@@ -128,7 +128,7 @@ purpose(::Type{MyTrainingMethod}) = "Describe your training method"
 
 ### Step 2: Implement the Training Function
 
-In `lib/SindbadML/src/mlTrain.jl`, extend `trainML`:
+In `Sindbad/ML/src/mlTrain.jl`, extend `trainML`:
 
 ```julia
 function trainML(hybrid_helpers, ::MyTrainingMethod)

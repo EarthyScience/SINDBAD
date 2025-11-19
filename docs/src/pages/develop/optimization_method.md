@@ -143,7 +143,7 @@ Current methods include:
 In `src/Types/OptimizationTypes.jl`, add a new struct that subtypes `OptimizationMethod`:
 
 ```julia
-import SindbadUtils: purpose
+import SindbadCore.Utilities: purpose
 
 # Define the new optimization type
 struct YourNewOptimizationMethod <: OptimizationMethod end

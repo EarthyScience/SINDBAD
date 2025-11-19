@@ -4,18 +4,17 @@ This page provides an overview of all SINDBAD packages and their main functional
 
 | Package | Description | Key Features |
 |---------|-------------|--------------|
-| [Core](sindbad.md) | Core package `Sindbad` | Main package for model processes and types |
+| [Core](sindbad.md) | Core package `SindbadCore` | Main package for model processes and types |
+| [ Metrics](metrics.md) | Performance metrics | Cost functions, evaluation metrics, and validation tools |
 | [ Models](models.md) | Model implementations | Ecosystem model processes and approaches |
 | [ Types](types.md) | SINDBAD Types | Definition of all SINDBAD types and purposes |
-| [Data](data.md) | Data handling | Input/output operations, data processing, and handling |
+| [ Utilities](utils.md) | Utility functions | Helper functions and common utilities for all packages|
+| [DataLoaders](data.md) | Data handling | Input/output operations, data processing, and handling |
 | [Experiment](experiment.md) | Simulation experiments | Experiment setup, configuration, and execution |
-| [Metrics](metrics.md) | Performance metrics | Cost functions, evaluation metrics, and validation tools |
 | [ML](ml.md) | Machine learning | Machine learning integration and model training |
 | [Optimization](optimization.md) | Optimization methods | Parameter optimization and calibration |
 | [Setup](setup.md) | Setup utilities | configuration of SINDBAD experiment and setup |
 | [TEM](tem.md) | Terrestrial Ecosystem Model | Core ecosystem modeling framework |
-| [Utils](utils.md) | Utility functions | Helper functions and common utilities for all packages|
-| [Visuals](visuals.md) | Visualization tools | Plotting and data visualization helpers |
 
 
 ::: tip `Exported` and `Internal` Sections
@@ -35,23 +34,25 @@ These remain accessible but require qualification with the module name (e.g., `M
 
 ## Package Descriptions
 
-### Core Packages
-- **Sindbad**: The main package that provides the core of SINDBAD.
+### SindbadCore.jl
+
+Contains the following `Modules`:
+
   - **Models**: Module that implements various ecosystem model components and approaches.
   - **Types**: Module that defines various types for dispatching on methods ranging from setup to cost computation.
-- **TEM**: Provides the Terrestrial Ecosystem Model framework and its execution.
+  - **Metrics**: Implements performance metrics and cost functions.
+  - **Utilities**: Provides helper functions and common utilities used across packages.
 
-### Modeling Packages
-- **Experiment**: Manages experiment setup, configuration, and simulations.
-- **Metrics**: Implements performance metrics and cost functions.
-- **ML**: Integrates machine learning capabilities for model training and analysis.
-- **Optimization**: Provides methods for parameter optimization and model calibration.
+### Sindbad.jl
 
-### Utility Packages
-- **Data**: Handles all data-related operations including input/output, data processing, and management.
-- **Setup**: Contains configuration tools for SINDBAD info.
-- **Utils**: Provides helper functions and common utilities used across packages.
-- **Visuals**: Offers tools and helpers for data visualization and plotting.
+Main package that provides all functionaly for SINDBAD.
+
+  - **DataLoaders**: Handles all data-related operations including input/output, data processing, and management.
+  - **Setup**: Contains configuration tools for SINDBAD info.
+  - **TEM**: Provides the Terrestrial Ecosystem Model framework and its execution.
+  - **Experiment**: Manages experiment setup, configuration, and simulations.
+  - **ML**: Integrates machine learning capabilities for model training and analysis.
+  - **Optimization**: Provides methods for parameter optimization and model calibration.
 
 
 ## Sindbad Package Dependencies
@@ -62,8 +63,7 @@ Package Dependency
 
 ::: info Package Usage
 
-- Most application packages can be used independently for specific tasks
-- The core `Sindbad` and ```SindbadUtils``` are required
+- The `SindbadCore` is required for `Sindbad.jl`.
 
 ::: 
 

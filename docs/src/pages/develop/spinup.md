@@ -38,11 +38,11 @@ Spinup is configured in the experiment settings file through two main sections:
 
 ## Available Spinup Methods
 
-Spinup methods are stored in spinup functions within SindbadTEM. The different methods are dispatched on types generated. 
+Spinup methods are stored in spinup functions within Sindbad.TEM. The different methods are dispatched on types generated. 
 
 ```julia
-using SindbadTEM
-?SindbadTEM.spinup
+using Sindbad
+?Sindbad.TEM.spinup
 ```
 
 ::: tip
@@ -82,7 +82,7 @@ SINDBAD uses a type-based dispatch system for spinup methods. To add a new spinu
 In `src/Types/SpinupTypes.jl`, add a new struct and its purpose function:
 
 ```julia
-import SindbadUtils: purpose
+import SindbadCore.Utilities: purpose
 
 # Define the new spinup type
 struct YourNewSpinupMode <: SpinupMode end
