@@ -44,7 +44,7 @@ runExperimentForward(experiment_config)
 #     @reexport using SindbadSetup
 #     @reexport using SindbadData
 #     @reexport using SindbadTEM
-#     @reexport using SindbadOptimization
+#     @reexport using Sindbad
 #     @reexport using SindbadVisuals
 
 #     include("runExperiment.jl")

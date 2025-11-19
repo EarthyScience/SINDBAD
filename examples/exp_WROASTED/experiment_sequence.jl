@@ -1,7 +1,8 @@
 using Revise
-using SindbadExperiment
+using Sindbad
 using Dates
 using Plots
+
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 begin_year = "1979"

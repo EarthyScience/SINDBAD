@@ -1,6 +1,5 @@
 using Revise
-using SindbadCore
-using SindbadExperiment
+using Sindbad
 using Plots
 using QuasiMonteCarlo
 using GlobalSensitivity

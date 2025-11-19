@@ -77,7 +77,7 @@ Flux.@layer Join
 # Example
 
 ```julia
-using SindbadML
+using Sindbad
 using Flux
 using Random
 Random.seed!(123)
@@ -137,7 +137,7 @@ Flux.@layer SplitNN
 Here we do one input features vector or matrix.
 
 ```julia
-using SindbadML
+using Sindbad
 using Flux
 # model
 m = Chain(Dense(4 => 5, relu), Dense(5 => 3), Flux.sigmoid)
@@ -157,7 +157,7 @@ new_params, pullback_func = getPullback(flat, re, _feat_ns)
 Here we do one multiple input features vector or matrix.
 
 ```julia
-using SindbadML
+using Sindbad
 using Flux
 # model
 m1 = Chain(Dense(4 => 5, relu), Dense(5 => 3), Flux.sigmoid)

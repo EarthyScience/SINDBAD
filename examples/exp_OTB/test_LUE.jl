@@ -1,5 +1,6 @@
 using Revise
-using SindbadExperiment
+using Sindbad
+using Plots
 # using CairoMakie
 
 using Plots

@@ -1,6 +1,6 @@
 using MLUtils
-using SindbadData.YAXArrays
-using SindbadData.Zarr
+using YAXArrays
+using Zarr
 
 c_read = Cube("examples/data/CovariatesFLUXNET_3.zarr");
 

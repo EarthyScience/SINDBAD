@@ -1,7 +1,7 @@
 using Revise
-using SindbadTEM
-using SindbadData
+using Sindbad
 using Plots
+
 # using Accessors
 toggleStackTraceNT()
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))

@@ -202,7 +202,7 @@ Defines optimization parameters and observational constraints:
 
 1. **Setup**
 ```julia
-using SindbadExperiment
+using Sindbad
 experiment_json = "path/to/experiment.json"
 ```
 

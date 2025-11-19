@@ -52,7 +52,7 @@ This package is designed to support optimization tasks in SINDBAD, such as calib
 # Examples:
 1. **Running an experiment**:
 ```julia
-using SindbadExperiment
+using Sindbad
 # Set up experiment parameters
 experiment_config = ...
 

@@ -1,12 +1,10 @@
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
+using DimensionalData
+using AxisKeys
+using YAXArrays
+using Sindbad
+using JLD2
 using ProgressMeter
-using SindbadOptimization
+
 include("load_covariates.jl")
 
 # load folds # $nfold $nlayer $neuron $batchsize

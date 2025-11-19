@@ -1,6 +1,7 @@
 using Revise
-using SindbadTEM
+using Sindbad
 using Plots
+
 toggleStackTraceNT()
 
 tjs = (1_000, 2_000, 5_000)#, 50_000, 100_000, 200_000)

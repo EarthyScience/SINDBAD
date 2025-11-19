@@ -1,11 +1,8 @@
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
-using SindbadOptimization
+using Sindbad
+using DimensionalData
+using AxisKeys
+using YAXArrays
+using JLD2
 using ProgressMeter
 
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
@@ -121,7 +118,7 @@ optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds
 # and compare output and performance
 # use: (go for parallel/threaded approaches)
 
-using SindbadOptimization.CMAEvolutionStrategy
+using Sindbad.CMAEvolutionStrategy
 
 results = minimize(cost_function,
     default_values,
@@ -136,7 +133,7 @@ optim_para = xbest(results)
 
 # ? https://github.com/AStupidBear/GCMAES.jl
 
-using SindbadOptimization.GCMAES
+using Sindbad.GCMAES
 x0 = default_values
 σ0 = 0.2
 lo = lower_bounds
