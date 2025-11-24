@@ -1,9 +1,9 @@
 """
-    Sindbad
+    SindbadTEM
 
 A Julia package for the terrestrial ecosystem models within **S**trategies to **IN**tegrate **D**ata and **B**iogeochemic**A**l mo**D**els `(SINDBAD)` framework.
 
-The `Sindbad` package serves as the core of the SINDBAD framework, providing foundational types, utilities, and tools for building and managing SINDBAD models.
+The `SindbadTEM` package serves as the core of the SINDBAD framework, providing foundational types, utilities, and tools for building and managing SINDBAD models.
 
 # Purpose:
 This package defines the `LandEcosystem` supertype, which serves as the base for all SINDBAD models. It also provides utilities for managing model variables, tools for model operations, and a catalog of variables used in SINDBAD workflows.
@@ -57,18 +57,18 @@ end
 
 2. **Using utilities from the package**:
 ```julia
-using Sindbad
+using SindbadTEM
 # Access utilities or models
 flattened_data = flatten(nested_data)
 ```
 
 3. **Querying the variable catalog**:
 ```julia
-using Sindbad
+using SindbadTEM
 catalog = getVariableCatalog()
 ```
 """
-module Sindbad
+module SindbadTEM
    using Reexport: @reexport
    @reexport using Reexport
    @reexport using Pkg
@@ -84,7 +84,7 @@ module Sindbad
    @reexport using NaNStatistics
    @reexport using Crayons
 
-   # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of Sindbad.
+   # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of SindbadTEM.
    file_path = file_path = joinpath(@__DIR__, "tmp_precompile_placeholder.jl")
    # Check if the file exists
    if isfile(file_path)
@@ -94,7 +94,7 @@ module Sindbad
       # Create a blank file if it does not exist
       open(file_path, "w") do file
          # Optionally, you can write some initial content
-         write(file, "# This is a blank file created by Sindbad module to keep track of newly added sindbad approaches/models which automatically updates this file and then forces precompilation to include the new models.\n")
+         write(file, "# This is a blank file created by SindbadTEM module to keep track of newly added sindbad approaches/models which automatically updates this file and then forces precompilation to include the new models.\n")
       end
       println("Created a blank file: $file_path to track precompilation of new models and approaches")
    end
@@ -108,7 +108,7 @@ module Sindbad
    include("generateCode.jl")
    @reexport using .Models
 
-   # append the docstring of the LandEcosystem type to the docstring of the Sindbad module so that all the methods of the LandEcosystem type are included after the models have been described
+   # append the docstring of the LandEcosystem type to the docstring of the SindbadTEM module so that all the methods of the LandEcosystem type are included after the models have been described
    @doc """
    LandEcosystem
 

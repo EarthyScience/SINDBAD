@@ -1,5 +1,5 @@
 # test utilsCore here
-import Sindbad.Models as SM
+import SindbadTEM.Models as SM
 
 include("./mock_input/forcing.jl")
 include("./mock_input/land.jl")

@@ -8,14 +8,14 @@ export modelParameters
 
 
 """
-    getInOutModel(model::Sindbad.Types.LandEcosystem)
-    getInOutModel(model::Sindbad.Types.LandEcosystem, model_func::Symbol)
-    getInOutModel(model::Sindbad.Types.LandEcosystem, model_funcs::Tuple)
+    getInOutModel(model::SindbadTEM.Types.LandEcosystem)
+    getInOutModel(model::SindbadTEM.Types.LandEcosystem, model_func::Symbol)
+    getInOutModel(model::SindbadTEM.Types.LandEcosystem, model_funcs::Tuple)
 
 Parses and retrieves the inputs, outputs, and parameters (I/O/P) of SINDBAD models for specified functions or all functions.
 
 # Arguments:
-- `model::Sindbad.Types.LandEcosystem`: A SINDBAD model instance. If no additional arguments are provided, parses all inputs, outputs, and parameters for all functions of the model.
+- `model::SindbadTEM.Types.LandEcosystem`: A SINDBAD model instance. If no additional arguments are provided, parses all inputs, outputs, and parameters for all functions of the model.
 - `model_func::Symbol`: (Optional) A single symbol representing a specific model function to parse (e.g., `:precompute`, `:parameters`, `:compute`).
 - `model_funcs::Tuple`: (Optional) A tuple of symbols representing multiple model functions to parse (e.g., `(:precompute, :parameters)`).
 
@@ -56,15 +56,15 @@ io_data = getInOutModel(my_model, (:precompute, :parameters))
 function getInOutModel end
 
 
-function getInOutModel(T::Type{<:Sindbad.Types.LandEcosystem}; verbose=false)
+function getInOutModel(T::Type{<:SindbadTEM.Types.LandEcosystem}; verbose=false)
     return getInOutModel(T(), verbose=verbose)
 end
 
-function getInOutModel(model::Sindbad.Types.LandEcosystem; verbose=true)
+function getInOutModel(model::SindbadTEM.Types.LandEcosystem; verbose=true)
     if verbose
         println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
     end
-    mo_in_out=Sindbad.DataStructures.OrderedDict()
+    mo_in_out=SindbadTEM.DataStructures.OrderedDict()
     for func in (:parameters, :compute, :define, :precompute, :update)
         if verbose
             println("   ...$(func)...")
@@ -76,8 +76,8 @@ function getInOutModel(model::Sindbad.Types.LandEcosystem; verbose=true)
 end
 
 
-function getInOutModel(model::Sindbad.Types.LandEcosystem, model_funcs::Tuple)
-    mo_in_out=Sindbad.DataStructures.OrderedDict()
+function getInOutModel(model::SindbadTEM.Types.LandEcosystem, model_funcs::Tuple)
+    mo_in_out=SindbadTEM.DataStructures.OrderedDict()
     println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
     for func in model_funcs
         println("   ...$(func)...")
@@ -99,19 +99,19 @@ end
 
 function getInOutModel(model, model_func::Symbol)
     model_name = string(nameof(typeof(model)))
-    mod_vars = Sindbad.DataStructures.OrderedDict{Symbol, Any}()
+    mod_vars = SindbadTEM.DataStructures.OrderedDict{Symbol, Any}()
     mod_vars[:approach] = model_name
     if model_func == :compute
-        mod_code = @code_string Sindbad.Models.compute(model, nothing, nothing, nothing)
+        mod_code = @code_string SindbadTEM.Models.compute(model, nothing, nothing, nothing)
     elseif model_func == :define
-        mod_code = @code_string Sindbad.Models.define(model, nothing, nothing, nothing)
+        mod_code = @code_string SindbadTEM.Models.define(model, nothing, nothing, nothing)
     elseif model_func == :parameters
         # mod_vars = modelParameter(model, false)
         return modelParameter(model, false)
     elseif model_func == :precompute
-        mod_code = @code_string Sindbad.Models.precompute(model, nothing, nothing, nothing)
+        mod_code = @code_string SindbadTEM.Models.precompute(model, nothing, nothing, nothing)
     elseif model_func == :update
-        mod_code = @code_string Sindbad.Models.update(model, nothing, nothing, nothing)
+        mod_code = @code_string SindbadTEM.Models.update(model, nothing, nothing, nothing)
     else
         error("can only check consistency in compute, define, params, precompute, and update of SINDBAD models. $(model_func) is not a suggested or recommended method to add to a SINDBAD model struct.")
     end
@@ -262,12 +262,12 @@ function getInOutModels(ind_range=1:10000::UnitRange{Int64})
     sm_list = keys(sind_m_dict) |> collect
     s_ind = max(1, first(ind_range))
     e_ind = min(last(ind_range), length(sm_list))
-    sm_io = Sindbad.DataStructures.OrderedDict()
+    sm_io = SindbadTEM.DataStructures.OrderedDict()
     for s in sm_list[s_ind:e_ind]
         s_apr = sind_m_dict[s]
         if !isempty(s_apr)
             s_apr_s = join(s_apr, ".jl, ") * ".jl"
-            sm_io[s]=Sindbad.DataStructures.OrderedDict()
+            sm_io[s]=SindbadTEM.DataStructures.OrderedDict()
             map(s_apr) do s_a
                 s_a_name = Symbol(strip(last(split(string(s_a), string(s) * "_"))))
                 s_a_t = getTypedModel(s_a)
@@ -282,7 +282,7 @@ function getInOutModels(ind_range=1:10000::UnitRange{Int64})
 end
 
 function getInOutModels(models::Tuple)
-    mod_vars = Sindbad.DataStructures.OrderedDict()
+    mod_vars = SindbadTEM.DataStructures.OrderedDict()
     for (mi, _mod) in enumerate(models)
         mod_name = string(nameof(supertype(typeof(_mod))))
         mod_name_sym=Symbol(mod_name)
@@ -292,7 +292,7 @@ function getInOutModels(models::Tuple)
 end
 
 function getInOutModels(models, model_funcs::Tuple)
-    mod_vars = Sindbad.DataStructures.OrderedDict()
+    mod_vars = SindbadTEM.DataStructures.OrderedDict()
     for (mi, _mod) in enumerate(models)
         mod_name = string(nameof(supertype(typeof(_mod))))
         mod_name_sym=Symbol(mod_name)
@@ -303,7 +303,7 @@ function getInOutModels(models, model_funcs::Tuple)
 end
 
 function getInOutModels(models, model_func::Symbol)
-    mod_vars = Sindbad.DataStructures.OrderedDict()
+    mod_vars = SindbadTEM.DataStructures.OrderedDict()
     for (mi, _mod) in enumerate(models)
         mod_name = string(nameof(supertype(typeof(_mod))))
         mod_name_sym=Symbol(mod_name)
@@ -331,7 +331,7 @@ function getTypedModel(model::String, model_timestep="day", num_type=Float64)
 end
 
 function getTypedModel(model::Symbol, model_timestep="day", num_type=Float64)
-    model_obj = getfield(Sindbad.Models, model)
+    model_obj = getfield(SindbadTEM.Models, model)
     model_instance = model_obj()
     parameter_names = fieldnames(model_obj)
     if length(parameter_names) > 0
@@ -363,7 +363,7 @@ get a value of a given model parameter with units corrected
 """
 function getParameterValue(model, parameter_name, model_timestep)
     param = getfield(model, parameter_name)
-    p_timescale = Sindbad.Models.timescale(model, parameter_name)
+    p_timescale = SindbadTEM.Models.timescale(model, parameter_name)
     return param * getUnitConversionForParameter(p_timescale, model_timestep)
 end
 
@@ -444,14 +444,14 @@ end
 
 """
     modelParameter(models, model::Symbol)
-    modelParameter(model::Sindbad.Types.LandEcosystem, show=true)
+    modelParameter(model::SindbadTEM.Types.LandEcosystem, show=true)
 
 Return and optionally display the current parameters of a given SINDBAD model.
 
 # Arguments
 - `models`: A list/collection of SINDBAD models, required when `model` is a Symbol.
 - `model::Symbol`: A SINDBAD model name.
-- `model::Sindbad.Types.LandEcosystem`: A SINDBAD model instance of type LandEcosystem.
+- `model::SindbadTEM.Types.LandEcosystem`: A SINDBAD model instance of type LandEcosystem.
 - `show::Bool`: A flag to print parameters to the screen (default: true).
 
 """
@@ -465,14 +465,14 @@ function modelParameter(models, model::Symbol)
     println("model: $(model_names[m_index])")
     println("approach: $(approach_names[m_index])")
     pnames = fieldnames(typeof(mod))
-    p_dict = Sindbad.DataStructures.OrderedDict()
+    p_dict = SindbadTEM.DataStructures.OrderedDict()
     if length(pnames) == 0
         println("parameters: none")
     else
         println("parameters:")
         foreach(pnames) do fn
             p_dict[fn] = getproperty(mod, fn)
-            p_unit = Sindbad.Models.units(mod, fn)
+            p_unit = SindbadTEM.Models.units(mod, fn)
             p_unit_info = p_unit == "" ? "unitless" : "($p_unit)"
             println("   $fn => $(getproperty(mod, fn)) $p_unit_info")
         end
@@ -480,7 +480,7 @@ function modelParameter(models, model::Symbol)
     return p_dict
 end
 
-function modelParameter(model::Sindbad.Types.LandEcosystem, show=true)
+function modelParameter(model::SindbadTEM.Types.LandEcosystem, show=true)
     model_name = Symbol(supertype(typeof(model)))
     approach_name = nameof(typeof(model))
     if show
@@ -501,12 +501,12 @@ function modelParameter(model::Sindbad.Types.LandEcosystem, show=true)
             # @show model, fn
             mod_prop = getproperty(model, fn)
             p_val = getproperty(model, fn)
-            p_describe = Sindbad.Models.describe(model, fn)
-            p_unit = Sindbad.Models.units(model, fn)
+            p_describe = SindbadTEM.Models.describe(model, fn)
+            p_unit = SindbadTEM.Models.units(model, fn)
             p_u = isempty(p_unit) ? "`unitless`" : "units: `$(p_unit)`"
-            p_timescale = Sindbad.Models.timescale(model, fn)
+            p_timescale = SindbadTEM.Models.timescale(model, fn)
             p_t = isempty(p_timescale) ? "`all` timescales" : "`$(p_timescale)` timescale"
-            p_bounds = Sindbad.Models.bounds(model, fn)
+            p_bounds = SindbadTEM.Models.bounds(model, fn)
             p_w = "$(p_val) ∈ [$(p_bounds[1]), $(p_bounds[2])] => $(p_describe) ($(p_u) @ $(p_t))"
             p_p = Pair(fn, p_w)
             if show

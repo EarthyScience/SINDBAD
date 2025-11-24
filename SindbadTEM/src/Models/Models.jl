@@ -1,10 +1,10 @@
 """
-    Sindbad.Models
+    SindbadTEM.Models
 
 The core module for defining and implementing models and approaches of ecosystem processes in the SINDBAD framework.
 
 # Description
-The `Sindbad.Models` module provides the infrastructure for defining and implementing terrestrial ecosystem models within the SINDBAD framework. It includes tools for model definition, parameter management, and method implementation.
+The `SindbadTEM.Models` module provides the infrastructure for defining and implementing terrestrial ecosystem models within the SINDBAD framework. It includes tools for model definition, parameter management, and method implementation.
 
 # Key Features
 - Model definition and inheritance from `LandEcosystem`
@@ -29,7 +29,7 @@ All models must implement at least one of the following methods:
 
 # Usage
 ```julia
-using Sindbad.Models
+using SindbadTEM.Models
 
 # Define a new model
 abstract type MyModel <: LandEcosystem end
@@ -56,8 +56,8 @@ end
 module Models
 
     # Import & export necessary modules/functions
-    using ..Sindbad
-    import ..Sindbad.Types: purpose, LandEcosystem
+    using ..SindbadTEM
+    import ..SindbadTEM.Types: purpose, LandEcosystem
     using FieldMetadata: @metadata
     using Parameters: @with_kw
     @metadata timescale "" String
@@ -111,7 +111,7 @@ module Models
             caller_info = string(stack[2]) # The second entry is the caller
             c_name = split(caller_info, "at ")[2]
             c_name = split(c_name, ".jl")[1]
-            c_type = getproperty(Sindbad.Models, Symbol(c_name))
+            c_type = getproperty(SindbadTEM.Models, Symbol(c_name))
             return getModelDocString(c_type)
         else
             return ("Information of the caller file is not available.")

@@ -262,7 +262,7 @@ helper function to return a dictionary of sindbad model and approaches
 function getSindbadModels(; all_models=standard_sindbad_models)
     approaches = []
     for _md ∈ all_models
-        push!(approaches, Pair(_md, [nameof(_x) for _x in subtypes(getfield(Sindbad.Models, _md))]))
+        push!(approaches, Pair(_md, [nameof(_x) for _x in subtypes(getfield(SindbadTEM.Models, _md))]))
     end
     return DataStructures.OrderedDict(approaches)
 end

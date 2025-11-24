@@ -1,20 +1,20 @@
-# Sindbad.jl
+# SindbadTEM.jl
 
-[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![License: EUPLv1.2](https://img.shields.io/badge/License-EUPLv1.2-seagreen)](https://github.com/EarthyScience/Sindbad.jl/blob/main/LICENSE)
+[![][docs-stable-img]][docs-stable-url][![][docs-dev-img]][docs-dev-url][![][ci-img]][ci-url] [![][codecov-img]][codecov-url][![Julia][julia-img]][julia-url][![License: EUPLv1.2](https://img.shields.io/badge/License-EUPLv1.2-seagreen)](https://github.com/EarthyScience/SindbadTEM.jl/blob/main/LICENSE)
 
 <img src="docs/src/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
-[docs-dev-url]: https://earthyscience.github.io/Sindbad.jl/dev/
+[docs-dev-url]: https://earthyscience.github.io/SindbadTEM.jl/dev/
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
-[docs-stable-url]: https://earthyscience.github.io/Sindbad.jl/dev/
+[docs-stable-url]: https://earthyscience.github.io/SindbadTEM.jl/dev/
 
-[codecov-img]: https://codecov.io/gh/EarthyScience/Sindbad.jl/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/EarthyScience/Sindbad.jl
+[codecov-img]: https://codecov.io/gh/EarthyScience/SindbadTEM.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/EarthyScience/SindbadTEM.jl
 
-[ci-img]: https://github.com/EarthyScience/Sindbad.jl/workflows/CI/badge.svg
-[ci-url]: https://github.com/EarthyScience/Sindbad.jl/actions?query=workflow%3ACI
+[ci-img]: https://github.com/EarthyScience/SindbadTEM.jl/workflows/CI/badge.svg
+[ci-url]: https://github.com/EarthyScience/SindbadTEM.jl/actions?query=workflow%3ACI
 
 [julia-img]: https://img.shields.io/badge/julia-v1.10+-blue.svg
 [julia-url]: https://julialang.org/
@@ -27,7 +27,7 @@ Researchers and developers actively developing the model and doing research usin
 
 ### Repository Structure
 
-`Sindbad.jl` and its sub-repositories all live in the Sindbad `monorepo`. At the root level of the repository, definitions of Sindbad models, variables, and functions needed for internal model executions are included.
+`SindbadTEM.jl` and its sub-repositories all live in the Sindbad `monorepo`. At the root level of the repository, definitions of Sindbad models, variables, and functions needed for internal model executions are included.
 
 For a short description on sub-packages under `/lib/`
 
@@ -44,9 +44,9 @@ For a short description on sub-packages under `/lib/`
 
 - `SindbadOptimization.jl`: includes the optimization schemes and functions to optimize the model, and has dev dependency on `SindbadTEM.jl` and `SindbadMetrics.jl`.
 
-- `SindbadSetup.jl`: includes the setup of sindbad model structure and info from the json settings, and has dev dependency on `Sindbad.jl` and `SindbadUtils.jl`.
+- `SindbadSetup.jl`: includes the setup of sindbad model structure and info from the json settings, and has dev dependency on `SindbadTEM.jl` and `SindbadUtils.jl`.
 
-- `SindbadTEM.jl`: includes the main functions to run SINDBAD Terrestrial Ecosystem Model, and has dev dependency on `Sindbad.jl`, `SindbadSetup.jl`, and `SindbadUtils.jl`.
+- `SindbadTEM.jl`: includes the main functions to run SINDBAD Terrestrial Ecosystem Model, and has dev dependency on `SindbadTEM.jl`, `SindbadSetup.jl`, and `SindbadUtils.jl`.
 
 - `SindbadUtils.jl`: includes utility functions that are used in other Sindbad lib packages, which has no dev dependency on other lib packages and Sindbad info, and is dependent on external libraries only.
 
@@ -57,12 +57,12 @@ For a short description on sub-packages under `/lib/`
 - with git repo access
 ```
 julia]
-pkg > add git@github.com:EarthyScience/SINDBAD.git
+pkg > add git@github.com:EarthyScience/SindbadTEM.git
 ```
 
 - without git repo access
 
-Get the latest sindbad.jl package and browse to the directory (sindbad_root)
+Get the latest SindbadTEM.jl package and browse to the directory (sindbad_root)
 
 ### How to dev/use the different packages
 

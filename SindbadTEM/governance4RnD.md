@@ -47,7 +47,7 @@ This repository will ONLY be accessible to the members of the [SINDBAD-RnD-Team]
    - [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team) members must consult the [SINDBAD-RnD-Team](https://github.com/orgs/EarthyScience/teams/sindbad-rnd-team) before:
       - Releasing code of their developments in SINDBAD-RnD.
       - Collaborating on SINDBAD-related projects outside the team.
-      - Submitting research proposals leveraging SINDBAD-RnD, preferably including SINDBAD.
+      - Submitting research proposals leveraging SINDBAD-RnD, preferably including SindbadTEM.
    - All members adhere to the [Max Planck Society's guidelines for good scientific practice](https://www.mr.mpg.de/14263212/scientificpractice).
 
 5.	**Note on the definition of collaboration**: Collaboration is nuanced. As a guideline, any activity beyond SINDBAD's FAQ, documentation, or workflows/examples qualifies as collaboration.

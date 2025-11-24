@@ -1,10 +1,10 @@
-import Sindbad.Models as SM
+import SindbadTEM.Models as SM
 
-@testset "ambientCO2" verbose=true begin
-    @testset "ambientCO2_constant" begin
-        tmp_model = ambientCO2_constant()
+@testset "autoRespiration" verbose=true begin
+    @testset "autoRespiration_none" begin
+        tmp_model = autoRespiration_none()
         @test typeof(tmp_model) <: LandEcosystem
-        @test typeof(tmp_model) <: ambientCO2
+        @test typeof(tmp_model) <: autoRespiration
         # update land with define
         land_d = SM.define(tmp_model, tmp_forcing, tmp_land, tmp_helpers)
         land_p = SM.precompute(tmp_model, tmp_forcing, land_d, tmp_helpers)
@@ -12,21 +12,21 @@ import Sindbad.Models as SM
         @test (@ballocated SM.compute($tmp_model, $tmp_forcing, $land_p, $tmp_helpers)) == 0
         # check output
         land = SM.compute(tmp_model, tmp_forcing, land_p, tmp_helpers)
-        # here, it should be the default value
-        @test land.states.ambient_CO2 == 400.0
+        # here, it should zeros
+        @test land.states.c_eco_efflux == zero(tmp_land.pools.cEco)
     end
-    @testset "ambientCO2_forcing" begin
-        tmp_model = ambientCO2_forcing()
+    @testset "autoRespiration_Thornley2000A" begin
+        tmp_model = autoRespiration_Thornley2000A()
         @test typeof(tmp_model) <: LandEcosystem
-        @test typeof(tmp_model) <: ambientCO2
+        @test typeof(tmp_model) <: autoRespiration
         # update land with define
         land_d = SM.define(tmp_model, tmp_forcing, tmp_land, tmp_helpers)
         land_p = SM.precompute(tmp_model, tmp_forcing, land_d, tmp_helpers)
         # test allocations, they should be zero!
         @test (@ballocated SM.compute($tmp_model, $tmp_forcing, $land_p, $tmp_helpers)) == 0
-        # check output
-        land = SM.compute(tmp_model, tmp_forcing, land_p, tmp_helpers)
-        # here, it should be the input forcing
-        @test land.states.ambient_CO2 == 336.01f0
+        # # check output
+        # land = SM.compute(tmp_model, tmp_forcing, land_d, tmp_helpers)
+        # # here
+        # 
     end
 end

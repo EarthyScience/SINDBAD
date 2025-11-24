@@ -12,7 +12,7 @@ The `Types` module consolidates and organizes all the types used in the SINDBAD 
 - **Use**: Provides a unified hierarchy for SINDBAD-specific types.
 
 ### 2. `ModelTypes`
-- **Purpose**: Defines types for models in SINDBAD.
+- **Purpose**: Defines types for models in SindbadTEM.
 - **Use**: Represents various model/processes.
 
 ### 3. `TimeTypes`
@@ -20,7 +20,7 @@ The `Types` module consolidates and organizes all the types used in the SINDBAD 
 - **Use**: Manages temporal aggregation of data on the go.
 
 ### 4. `SpinupTypes`
-- **Purpose**: Defines types for spinup processes in SINDBAD.
+- **Purpose**: Defines types for spinup processes in SindbadTEM.
 - **Use**: Handles methods for initialization and equilibrium states for models.
 
 ### 5. `LandTypes`
@@ -28,7 +28,7 @@ The `Types` module consolidates and organizes all the types used in the SINDBAD 
 - **Use**: Builds land and array for model execution.
 
 ### 6. `ArrayTypes`
-- **Purpose**: Defines types for array structures used in SINDBAD.
+- **Purpose**: Defines types for array structures used in SindbadTEM.
 - **Use**: Provides specialized array types for efficient data handling in model simulation and output.
 
 ### 7. `InputTypes`
@@ -36,19 +36,19 @@ The `Types` module consolidates and organizes all the types used in the SINDBAD 
 - **Use**: Manages input flows and forcing data.
 
 ### 8. `ExperimentTypes`
-- **Purpose**: Defines types for experiments conducted in SINDBAD.
+- **Purpose**: Defines types for experiments conducted in SindbadTEM.
 - **Use**: Represents experimental setups, configurations, and results.
 
 ### 9. `OptimizationTypes`
-- **Purpose**: Defines types for optimization-related functions and methods in SINDBAD.
+- **Purpose**: Defines types for optimization-related functions and methods in SindbadTEM.
 - **Use**: Separates methods for optimization methods, cost functions, methods, etc.
 
 ### 10. `MetricsTypes`
-- **Purpose**: Defines types for metrics used to evaluate model performance in SINDBAD.
+- **Purpose**: Defines types for metrics used to evaluate model performance in SindbadTEM.
 - **Use**: Represents performance metrics and cost evaluation.
 
 ### 11. `MLTypes`
-- **Purpose**: Defines types for machine learning components in SINDBAD.
+- **Purpose**: Defines types for machine learning components in SindbadTEM.
 - **Use**: Supports machine learning workflows and data structures.
 
 ### 12. `LongTuple`

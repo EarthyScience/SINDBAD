@@ -209,9 +209,9 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
         appr_name = Symbol(string(model_name) *"_"* string(appr_name))
     end
     model_type_exists = model_name in nameof.(subtypes(LandEcosystem)) 
-    model_path = joinpath(split(pathof(Sindbad),"/Sindbad.jl")[1], "Models", "$(model_name)", "$(model_name).jl")
+    model_path = joinpath(split(pathof(Sindbad),"/SindbadTEM.jl")[1], "Models", "$(model_name)", "$(model_name).jl")
     model_path_exists = isfile(model_path)
-    appr_path = joinpath(split(pathof(Sindbad),"/Sindbad.jl")[1], "Models", "$(model_name)", "$(appr_name).jl")
+    appr_path = joinpath(split(pathof(Sindbad),"/SindbadTEM.jl")[1], "Models", "$(model_name)", "$(appr_name).jl")
     appr_path_exists = isfile(appr_path)
 
     model_path_exists = over_write_model ? false : model_path_exists
@@ -249,8 +249,8 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
 
     appr_exists = false
     appr_type_exists = false
-    if hasproperty(Sindbad.Models, model_name)
-        model_type = getproperty(Sindbad.Models, model_name)
+    if hasproperty(SindbadTEM.Models, model_name)
+        model_type = getproperty(SindbadTEM.Models, model_name)
         appr_types = nameof.(subtypes(model_type))
         appr_type_exists = appr_name in appr_types
     end
@@ -271,7 +271,7 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
     if appr_exists
         @info "Not generating approach."
     else
-        appr_path = joinpath(split(pathof(Sindbad),"/Sindbad.jl")[1], "Models", "$(model_name)", "$(appr_name).jl")
+        appr_path = joinpath(split(pathof(Sindbad),"/SindbadTEM.jl")[1], "Models", "$(model_name)", "$(appr_name).jl")
         @info "Generating a new approach: $(appr_name) for existing model: $(model_name) at:\n$(appr_path)"
         confirm_ = Base.prompt("Continue: y | n")
         if startswith(confirm_, "y")
