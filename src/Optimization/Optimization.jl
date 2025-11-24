@@ -1,7 +1,7 @@
 """
-    SindbadOptimization
+    Optimization
 
-The `SindbadOptimization` package provides tools for optimizing SINDBAD models, including parameter estimation, model calibration, and cost function evaluation. It integrates various optimization algorithms and utilities to streamline the optimization workflow for SINDBAD experiments.
+The `Optimization` package provides tools for optimizing SINDBAD models, including parameter estimation, model calibration, and cost function evaluation. It integrates various optimization algorithms and utilities to streamline the optimization workflow for SINDBAD experiments.
 
 # Purpose:
 This package is designed to support optimization tasks in SINDBAD, such as calibrating model parameters to match observations or minimizing cost functions. It leverages multiple optimization libraries and provides a unified interface for running optimization routines.
@@ -65,7 +65,7 @@ using Sindbad.Optimization
 optimized_params = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, CMAEvolutionStrategyCMAES())
 ```
 """
-module SindbadOptimization
+module Optimization
 
    using CMAEvolutionStrategy: minimize, xbest
    # using BayesOpt: ConfigParameters, set_kernel!, bayes_optimization, SC_MAP
@@ -95,4 +95,4 @@ module SindbadOptimization
    include("optimizeTEM.jl")
    include("sensitivityAnalysis.jl")
 
-end # module SindbadOptimization
+end # module Optimization
