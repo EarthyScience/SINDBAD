@@ -1,0 +1,44 @@
+export gpp_coupled
+
+struct gpp_coupled <: gpp end
+
+function compute(params::gpp_coupled, forcing, land, helpers)
+
+    ## unpack land variables
+    @unpack_nt begin
+        transpiration_supply ⇐ land.diagnostics
+        gpp_f_soilW ⇐ land.diagnostics
+        gpp_demand ⇐ land.diagnostics
+        WUE ⇐ land.diagnostics
+    end
+
+    gpp = min(transpiration_supply * WUE, gpp_demand * gpp_f_soilW)
+
+    ## pack land variables
+    @pack_nt gpp ⇒ land.fluxes
+    return land
+end
+
+
+purpose(::Type{gpp_coupled}) = "GPP based on transpiration supply and water use efficiency (coupled)."
+
+@doc """
+
+$(getProcessDocstring(gpp_coupled))
+
+---
+
+# Extended help
+
+*References*
+
+*Versions*
+ - 1.0 on 22.11.2019 [skoirala | @dr-ko]
+
+*Created by*
+ - mjung
+ - skoirala | @dr-ko
+
+*Notes*
+"""
+gpp_coupled

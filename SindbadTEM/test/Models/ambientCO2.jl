@@ -1,4 +1,4 @@
-import SindbadTEM.Models as SM
+import SindbadTEM.Processes as SM
 
 @testset "ambientCO2" verbose=true begin
     @testset "ambientCO2_constant" begin

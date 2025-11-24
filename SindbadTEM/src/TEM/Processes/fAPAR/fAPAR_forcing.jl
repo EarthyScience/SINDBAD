@@ -1,0 +1,34 @@
+export fAPAR_forcing
+
+struct fAPAR_forcing <: fAPAR end
+
+function compute(params::fAPAR_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_fAPAR ⇐ forcing
+
+    fAPAR = f_fAPAR
+
+    ## pack land variables
+    @pack_nt fAPAR ⇒ land.states
+    return land
+end
+
+purpose(::Type{fAPAR_forcing}) = "Gets fAPAR from forcing data."
+
+@doc """
+
+$(getProcessDocstring(fAPAR_forcing))
+
+---
+
+# Extended help
+
+*References*
+
+*Versions*
+ - 1.0 on 23.11.2019 [skoirala | @dr-ko]: new approach  
+
+*Created by*
+ - skoirala | @dr-ko
+"""
+fAPAR_forcing

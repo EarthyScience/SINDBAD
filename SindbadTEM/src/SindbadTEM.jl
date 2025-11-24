@@ -50,7 +50,7 @@ This package defines the `LandEcosystem` supertype, which serves as the base for
 # Examples:
 1. **Defining a new SINDBAD model**:
 ```julia
-struct MyModel <: LandEcosystem
+struct MyProcess <: LandEcosystem
     # Define model-specific fields
 end
 ```
@@ -94,19 +94,19 @@ module SindbadTEM
       # Create a blank file if it does not exist
       open(file_path, "w") do file
          # Optionally, you can write some initial content
-         write(file, "# This is a blank file created by SindbadTEM module to keep track of newly added sindbad approaches/models which automatically updates this file and then forces precompilation to include the new models.\n")
+         write(file, "# This is a blank file created by SindbadTEM module to keep track of newly added sindbad approaches/processes which automatically updates this file and then forces precompilation to include the new processes.\n")
       end
-      println("Created a blank file: $file_path to track precompilation of new models and approaches")
+      println("Created a blank file: $file_path to track precompilation of new processes and approaches")
    end
    
    include("Types/Types.jl")
    @reexport using .Types
    include("utilsCore.jl")   
    include("sindbadVariableCatalog.jl")
-   include("modelTools.jl")
-   include("Models/Models.jl")
+   include("TEM/TEMTools.jl")
+   include("TEM/Processes/Processes.jl")
    include("generateCode.jl")
-   @reexport using .Models
+   @reexport using .Processes
 
    # append the docstring of the LandEcosystem type to the docstring of the SindbadTEM module so that all the methods of the LandEcosystem type are included after the models have been described
    @doc """
@@ -125,25 +125,25 @@ module SindbadTEM
    # Example
    ```julia
    # Define a new model type
-   struct MyModel <: LandEcosystem end
+   struct MyProcess <: LandEcosystem end
 
    # Implement required methods
-   function define(params::MyModel, forcing, land, helpers)
+   function define(params::MyProcess, forcing, land, helpers)
    # Initialize arrays and variables
    return land
    end
 
-   function precompute(params::MyModel, forcing, land, helpers)
+   function precompute(params::MyProcess, forcing, land, helpers)
    # Update variables with new realizations
    return land
    end
 
-   function compute(params::MyModel, forcing, land, helpers)
+   function compute(params::MyProcess, forcing, land, helpers)
    # Update model state in time
    return land
    end
 
-   function update(params::MyModel, forcing, land, helpers)
+   function update(params::MyProcess, forcing, land, helpers)
    # Update pools within a single time step
    return land
    end

@@ -1,0 +1,45 @@
+export vegFraction_scaledEVI
+
+#! format: off
+@bounds @describe @units @timescale @with_kw struct vegFraction_scaledEVI{T1} <: vegFraction
+    EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | "" | ""
+end
+#! format: on
+
+function compute(params::vegFraction_scaledEVI, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_vegFraction_scaledEVI params
+
+    ## unpack land variables
+    @unpack_nt begin
+        EVI ⇐ land.states
+    end
+
+    ## calculate variables
+    frac_vegetation = minOne(EVI * EVIscale)
+
+    ## pack land variables
+    @pack_nt frac_vegetation ⇒ land.states
+    return land
+end
+
+purpose(::Type{vegFraction_scaledEVI}) = "Vegetation fraction as a linear function of EVI."
+
+@doc """
+
+$(getProcessDocstring(vegFraction_scaledEVI))
+
+---
+
+# Extended help
+
+*References*
+
+*Versions*
+ - 1.0 on 06.02.2020 [ttraut]  
+ - 1.1 on 05.03.2020 [ttraut]: apply the min function
+
+*Created by*
+ - ttraut
+"""
+vegFraction_scaledEVI

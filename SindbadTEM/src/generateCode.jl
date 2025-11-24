@@ -66,7 +66,7 @@ function generateApproachCode(model_name, appr_name, appr_purpose, n_parameters;
     end
     m_string *= "\npurpose(::Type{$(appr_name)}) = \"$(appr_purpose)\"\n\n"
     m_string *= "@doc \"\"\" \n\n"
-    m_string *= "\t\$(getModelDocString($(appr_name)))\n\n"
+    m_string *= "\t\$(getProcessDocstring($(appr_name)))\n\n"
 
     m_string *= "---\n\n"
 
@@ -107,7 +107,7 @@ The `generateModelCode` function creates a code template for a SINDBAD model. It
 - Defines the model as an abstract type that inherits from `LandEcosystem`.
 - Sets the purpose of the model using the `purpose` function.
 - Includes all approaches associated with the model using the `includeApproaches` function.
-- Generates a placeholder docstring for the model, including a reference to `\$(getModelDocString)`.
+- Generates a placeholder docstring for the model, including a reference to `\$(getProcessDocstring)`.
 
 # Example
 ```julia
@@ -122,7 +122,7 @@ function generateModelCode(model_name, model_purpose)
     m_string *= "\nabstract type $(model_name) <: LandEcosystem end\n"
     m_string *= "\npurpose(::Type{$(model_name)}) = \"$(model_purpose)\"\n"
     m_string *= "\nincludeApproaches($(model_name), @__DIR__)\n\n"
-    m_string *= "@doc \"\"\" \n\t\$(getModelDocString($(model_name)))\n\"\"\"\n"
+    m_string *= "@doc \"\"\" \n\t\$(getProcessDocstring($(model_name)))\n\"\"\"\n"
     m_string *= "$(model_name)\n\n"
     return m_string
 end
@@ -249,8 +249,8 @@ function generateSindbadApproach(model_name::Symbol, model_purpose::String, appr
 
     appr_exists = false
     appr_type_exists = false
-    if hasproperty(SindbadTEM.Models, model_name)
-        model_type = getproperty(SindbadTEM.Models, model_name)
+    if hasproperty(SindbadTEM.Processes, model_name)
+        model_type = getproperty(SindbadTEM.Processes, model_name)
         appr_types = nameof.(subtypes(model_type))
         appr_type_exists = appr_name in appr_types
     end

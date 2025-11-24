@@ -1,4 +1,4 @@
-import SindbadTEM.Models as SM
+import SindbadTEM.Processes as SM
 
 include("../mock_input/forcing.jl")
 include("../mock_input/land.jl")

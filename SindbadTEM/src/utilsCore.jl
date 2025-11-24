@@ -249,7 +249,7 @@ end
 
 helper function to return the default order of a sindbad model
 """
-function getSindbadModelOrder(model_name; all_models=standard_sindbad_models)
+function getSindbadModelOrder(model_name; all_models=standard_sindbad_model)
     mo = findall(x -> x == model_name, all_models)[1]
     println("The order [default] of $(model_name) in models.jl of core SINDBAD is $(mo)")
 end
@@ -259,10 +259,10 @@ end
 
 helper function to return a dictionary of sindbad model and approaches
 """
-function getSindbadModels(; all_models=standard_sindbad_models)
+function getSindbadModels(; all_models=standard_sindbad_model)
     approaches = []
     for _md ∈ all_models
-        push!(approaches, Pair(_md, [nameof(_x) for _x in subtypes(getfield(SindbadTEM.Models, _md))]))
+        push!(approaches, Pair(_md, [nameof(_x) for _x in subtypes(getfield(SindbadTEM.Processes, _md))]))
     end
     return DataStructures.OrderedDict(approaches)
 end

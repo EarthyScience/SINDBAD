@@ -1,4 +1,4 @@
-import SindbadTEM.Models as SM
+import SindbadTEM.Processes as SM
 
 @testset "autoRespiration" verbose=true begin
     @testset "autoRespiration_none" begin
