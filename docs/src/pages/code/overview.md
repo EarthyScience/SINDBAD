@@ -103,9 +103,9 @@ graph TD
     SindbadOptimization --> SetupSimulation
     SindbadOptimization --> SindbadTEM
     
-    SindbadML[SindbadML] --> Sindbad
-    SindbadML --> Utils
-    SindbadML --> SindbadMetrics
+    MachineLearning[MachineLearning] --> Sindbad
+    MachineLearning --> Utils
+    MachineLearning --> SindbadMetrics
     
     SindbadVisuals[SindbadVisuals] --> Sindbad
     SindbadVisuals --> Utils

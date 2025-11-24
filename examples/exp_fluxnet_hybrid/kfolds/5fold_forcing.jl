@@ -139,7 +139,7 @@ with_theme() do
         end
         _pft = if f_var == :f_pft
             @lift(ax_s[i].title = rich(rich("$(f_var)"[3:end]),
-                rich((": "*SindbadML.PFTlabels[Int($(_sdata))]), color=:steelblue)))
+                rich((": "*MachineLearning.PFTlabels[Int($(_sdata))]), color=:steelblue)))
         else
             ax_s[i].title = rich(rich("$(f_var)"[3:end]))
         end

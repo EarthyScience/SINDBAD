@@ -1,5 +1,5 @@
 ```@docs
-SindbadML
+MachineLearning
 ```
 
 ## Exported
@@ -11,9 +11,9 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadML]
+Modules = [MachineLearning]
 Private = false
-Filter = f -> !(f === SindbadML)
+Filter = f -> !(f === MachineLearning)
 ```
 
 ## Internal
@@ -26,6 +26,6 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadML]
+Modules = [MachineLearning]
 Public = false
 ```

@@ -1,7 +1,7 @@
 """
-    SindbadML
+    MachineLearning
 
-The `SindbadML` package provides the core functionality for integrating machine learning (ML) and hybrid modeling capabilities into the SINDBAD framework. It enables the use of neural networks and other ML models alongside process-based models for parameter learning, and potentially hybrid modeling, and advanced optimization.
+The `MachineLearning` package provides the core functionality for integrating machine learning (ML) and hybrid modeling capabilities into the SINDBAD framework. It enables the use of neural networks and other ML models alongside process-based models for parameter learning, and potentially hybrid modeling, and advanced optimization.
 
 # Purpose
 This package brings together all components required for hybrid (process-based + ML) modeling in SINDBAD, including data preparation, model construction, training routines, gradient computation, and optimizer management. It supports flexible configuration, cross-validation, and seamless integration with SINDBAD's process-based modeling workflows.
@@ -40,7 +40,7 @@ This package brings together all components required for hybrid (process-based +
 - The package is modular and extensible, allowing users to add new ML models, optimizers, activation functions, and training methods.
 - It is tightly integrated with the SINDBAD ecosystem, ensuring consistent data handling and reproducibility across hybrid and process-based modeling workflows.
 """
-module SindbadML
+module MachineLearning
     using Distributed:
         nworkers,
         pmap,

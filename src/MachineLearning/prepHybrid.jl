@@ -160,8 +160,8 @@ function getLossFunctionHandles(info, run_helpers, sites)
         push!(loss_functions, loss_tmp)
         push!(loss_component_functions, loss_vector_tmp)
     end
-    loss_functions = SindbadML.KeyedArray(loss_functions; site=sites)
-    loss_component_functions = SindbadML.KeyedArray(loss_component_functions; site=sites)
+    loss_functions = MachineLearning.KeyedArray(loss_functions; site=sites)
+    loss_component_functions = MachineLearning.KeyedArray(loss_component_functions; site=sites)
     return loss_functions, loss_component_functions
 end
 

@@ -43,7 +43,7 @@ const codeGenItems = [
   { text: ' + Data', link: '/pages/code_gen/SindbadData' },
   { text: ' + Experiment', link: '/pages/code_gen/SindbadExperiment' },
   { text: ' + Metrics', link: '/pages/code_gen/SindbadMetrics' },
-  { text: ' + ML', link: '/pages/code_gen/SindbadML' },
+  { text: ' + ML', link: '/pages/code_gen/MachineLearning' },
   { text: ' + Models', link: '/pages/code_gen/SindbadModels' },
   { text: ' + Optimization', link: '/pages/code_gen/SindbadOptimization' },
   { text: ' + Setup', link: '/pages/code_gen/SetupSimulation' },
