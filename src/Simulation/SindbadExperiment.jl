@@ -8,7 +8,7 @@ This package acts as a high-level interface for conducting experiments using the
 
 # Dependencies:
 - `Sindbad`: Provides the core SINDBAD models and types.
-- `SindbadUtils`: Provides utility functions for handling data, spatial operations, and other helper tasks.
+- `Utils`: Provides utility functions for handling data, spatial operations, and other helper tasks.
 - `SindbadSetup`: Manages setup configurations, parameter handling, and shared types for SINDBAD experiments.
 - `SindbadData`: Handles data ingestion, preprocessing, and management for SINDBAD experiments.
 - `SindbadTEM`: Implements the SINDBAD Terrestrial Ecosystem Model (TEM), enabling simulations for single locations, spatial grids, and cubes.
@@ -23,7 +23,7 @@ This package acts as a high-level interface for conducting experiments using the
    - Provides utilities for saving experiment outputs in various formats, ensuring compatibility with downstream analysis tools.
 
 # Notes:
-- The package re-exports core SINDBAD packages (`Sindbad`, `SindbadUtils`, `SindbadSetup`, `SindbadData`, `SindbadTEM`, `SindbadOptimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadExperiment`.
+- The package re-exports core SINDBAD packages (`Sindbad`, `Utils`, `SindbadSetup`, `SindbadData`, `SindbadTEM`, `SindbadOptimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadExperiment`.
 - Designed to be extensible, enabling users to customize and expand the experimental workflow as needed.
 - Future extensions may include support for additional data formats (e.g., NetCDF, Zarr) and advanced output handling.
 
@@ -39,9 +39,9 @@ runExperimentForward(experiment_config)
 ```
 """
 module SindbadExperiment
-    using Sindbad
-    @reexport using Sindbad
-    @reexport using SindbadUtils
+    using SindbadTEM
+    @reexport using SindbadTEM
+    @reexport using Utils
     @reexport using SindbadSetup
     @reexport using SindbadData
     @reexport using SindbadTEM

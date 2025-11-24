@@ -12,7 +12,7 @@ This package integrates various components and utilities required to execute the
 - `ProgressMeter`: Displays progress bars for long-running simulations, improving user feedback.
 - `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadData`: Provides the SINDBAD data handling functions.
-- `SindbadUtils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
+- `Utils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
 - `SindbadSetup`: Provides the SINDBAD setup functions.
 - `ThreadPools`: Enables efficient thread-based parallelization for running simulations across multiple locations.
 
@@ -55,8 +55,8 @@ module SindbadTEM
    using ComponentArrays
    using NLsolve
    using ProgressMeter
-   using Sindbad
-   using SindbadUtils
+   using SindbadTEM
+   using Utils
    using SindbadSetup
    using SindbadData: YAXArrays
 

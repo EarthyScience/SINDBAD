@@ -48,7 +48,7 @@ module SindbadML
         nprocs,
         CachingPool
 
-    using Sindbad
+    using SindbadTEM
     using SindbadTEM
     using SindbadSetup
     using SindbadData.YAXArrays

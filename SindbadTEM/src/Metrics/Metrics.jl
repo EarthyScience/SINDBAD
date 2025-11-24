@@ -1,7 +1,7 @@
 """
-    SindbadMetrics
+    Metrics
 
-The `SindbadMetrics` package provides tools for evaluating the performance of SINDBAD models. It includes a variety of metrics for comparing model outputs with observations, calculating statistical measures, and updating model parameters based on evaluation results.
+The `Metrics` package provides tools for evaluating the performance of SINDBAD models. It includes a variety of metrics for comparing model outputs with observations, calculating statistical measures, and updating model parameters based on evaluation results.
 
 
 # Purpose:
@@ -11,17 +11,17 @@ It has heavy usage in `SindbadOptimization` but the package is separated to redu
 
 # Dependencies:
 - `Sindbad`: Provides the core SINDBAD models and types.
-- `SindbadUtils`: Provides utility functions for handling data and NamedTuples, which are essential for metric calculations.
+- `Utils`: Provides utility functions for handling data and NamedTuples, which are essential for metric calculations.
 
 # Included Files:
 
 1. **`handleDataForLoss.jl`**:
    - Implements functions for preprocessing and handling data before calculating loss functions or metrics.
 
-2. **`getMetrics.jl`**:
+2. **`getMetric.jl`**:
    - Provides functions for retrieving and organizing metrics based on model outputs and observations.
 
-3. **`metrics.jl`**:
+3. **`metric.jl`**:
    - Contains the core metric definitions, including statistical measures (e.g., RMSE, correlation) and custom metrics for SINDBAD experiments.
 
 
@@ -33,24 +33,24 @@ It has heavy usage in `SindbadOptimization` but the package is separated to redu
 # Examples:
 1. **Calculating RMSE**:
 ```julia
-using SindbadMetrics
+using Metrics
 rmse = metric(model_output, observations, RMSE())
 ```
 
 2. **Computing correlation**:
 ```julia
-using SindbadMetrics
+using Metrics
 correlation = metric(model_output, observations, Pcor())
 ```
 
 """
-module SindbadMetrics
+module Metrics
 
-   using Sindbad
-   using SindbadUtils
+   using SindbadTEM
+   using Utils
 
    include("handleDataForLoss.jl")
-   include("getMetrics.jl")
-   include("metrics.jl")
+   include("getMetric.jl")
+   include("metric.jl")
 
-end # module SindbadMetrics
+end # module Metrics

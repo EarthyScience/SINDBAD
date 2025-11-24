@@ -9,7 +9,7 @@ This package is designed to produce the SINDBAD `info` object, which contains al
 
 # Dependencies:
 - `Sindbad`: Provides the core SINDBAD models and types.
-- `SindbadUtils`: Supplies utility functions for handling data and other helper tasks during the setup process.
+- `Utils`: Supplies utility functions for handling data and other helper tasks during the setup process.
 - `ConstructionBase`: Provides a base type for constructing types, enabling the creation of custom types for SINDBAD experiments.
 - `CSV`: Provides tools for reading and writing CSV files, commonly used for input and output data in SINDBAD experiments.
 - `Infiltrator`: Enables interactive debugging during the setup process, improving development and troubleshooting.
@@ -58,8 +58,8 @@ This package is designed to produce the SINDBAD `info` object, which contains al
 """
 module SindbadSetup
 
-   using Sindbad
-   using SindbadUtils
+   using SindbadTEM
+   using Utils
    using ConstructionBase
    @reexport using CSV: CSV
    @reexport using Infiltrator

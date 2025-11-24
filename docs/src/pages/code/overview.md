@@ -63,7 +63,7 @@ Package Dependency
 ::: info Package Usage
 
 - Most application packages can be used independently for specific tasks
-- The core `Sindbad` and ```SindbadUtils``` are required
+- The core `Sindbad` and ```Utils``` are required
 
 ::: 
 
@@ -80,38 +80,38 @@ graph TD
     Sindbad --> ArrayTypes[ArrayTypes]
     
     %% Lib packages
-    SindbadUtils[SindbadUtils] --> Sindbad
+    Utils[Utils] --> Sindbad
     SindbadData[SindbadData] --> Sindbad
-    SindbadData --> SindbadUtils
+    SindbadData --> Utils
     
     SindbadSetup[SindbadSetup] --> Sindbad
-    SindbadSetup --> SindbadUtils
+    SindbadSetup --> Utils
     SindbadSetup --> SindbadData
     
     SindbadMetrics[SindbadMetrics] --> Sindbad
-    SindbadMetrics --> SindbadUtils
+    SindbadMetrics --> Utils
     
     SindbadTEM[SindbadTEM] --> Sindbad
-    SindbadTEM --> SindbadUtils
+    SindbadTEM --> Utils
     SindbadTEM --> SindbadData
     SindbadTEM --> SindbadSetup
     SindbadTEM --> SindbadMetrics
     
     SindbadOptimization[SindbadOptimization] --> Sindbad
-    SindbadOptimization --> SindbadUtils
+    SindbadOptimization --> Utils
     SindbadOptimization --> SindbadMetrics
     SindbadOptimization --> SindbadSetup
     SindbadOptimization --> SindbadTEM
     
     SindbadML[SindbadML] --> Sindbad
-    SindbadML --> SindbadUtils
+    SindbadML --> Utils
     SindbadML --> SindbadMetrics
     
     SindbadVisuals[SindbadVisuals] --> Sindbad
-    SindbadVisuals --> SindbadUtils
+    SindbadVisuals --> Utils
     
     SindbadExperiment[SindbadExperiment] --> Sindbad
-    SindbadExperiment --> SindbadUtils
+    SindbadExperiment --> Utils
     SindbadExperiment --> SindbadData
     SindbadExperiment --> SindbadSetup
     SindbadExperiment --> SindbadTEM

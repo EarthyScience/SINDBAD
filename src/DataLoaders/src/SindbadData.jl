@@ -8,7 +8,7 @@ This package is designed to streamline the ingestion and preprocessing of input 
 
 # Dependencies:
 - `Sindbad`: Provides the core SINDBAD models and types.
-- `SindbadUtils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
+- `Utils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
 - `AxisKeys`: Enables labeled multidimensional arrays (`KeyedArray`) for managing data with explicit axis labels.
 - `FillArrays`: Provides efficient representations of arrays filled with a single value, useful for initializing data structures.
 - `DimensionalData`: Facilitates working with multidimensional data, particularly for indexing and slicing along spatial and temporal dimensions.
@@ -38,8 +38,8 @@ This package is designed to streamline the ingestion and preprocessing of input 
 
 """
 module SindbadData
-   using Sindbad
-   using SindbadUtils
+   using SindbadTEM
+   using Utils
    using AxisKeys: KeyedArray, AxisKeys
    using FillArrays
    using DimensionalData

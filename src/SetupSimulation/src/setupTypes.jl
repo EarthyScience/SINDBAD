@@ -205,7 +205,7 @@ Retrieves a type instance for a named option based on its string or symbol repre
 - If the input is a `Symbol`, it is converted to a `String` before processing.
 - The function capitalizes the first letter of each word in the option name and removes underscores to match the type naming convention.
 - This is used for type-based dispatch in SINDBAD's configuration and execution.
-- The type for temporal aggregation is set using `getTimeAggregatorTypeInstance` in `SindbadUtils`. It uses a similar approach and prefixes `Time` to type.
+- The type for temporal aggregation is set using `getTimeAggregatorTypeInstance` in `Utils`. It uses a similar approach and prefixes `Time` to type.
 
 # Example:
 - A named option for 

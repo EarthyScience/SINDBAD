@@ -1,4 +1,4 @@
-using Sindbad
+using SindbadTEM
 using SindbadTEM
 using SindbadData
 using SindbadSetup
@@ -13,7 +13,7 @@ using DocumenterVitepress
 using Documenter
 using DocStringExtensions
 # using DocumenterMermaid
-# dev ../ ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
+# dev ../ ../lib/Utils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
 
 makedocs(; sitename="Sindbad",
     authors="Sindbad Development Team",

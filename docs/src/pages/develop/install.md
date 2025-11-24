@@ -18,10 +18,10 @@ julia> ]
 pkg > st Sindbad
 ````
 
-## Start using Sindbad
+## Start using SindbadTEM
 
 Sindbad comes with several predefined models, which you can use individually or in combination.
 
 ```julia
-using Sindbad
+using SindbadTEM
 ```

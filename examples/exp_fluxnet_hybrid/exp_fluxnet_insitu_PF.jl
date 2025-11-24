@@ -1,6 +1,6 @@
-using Sindbad
+using SindbadTEM
 using SindbadSetup
-using SindbadUtils
+using Utils
 using SindbadData
 using SindbadData.DimensionalData
 using SindbadData.AxisKeys

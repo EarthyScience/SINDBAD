@@ -101,7 +101,7 @@ module SindbadTEM
    
    include("Types/Types.jl")
    @reexport using .Types
-   include("utilsCore.jl")   
+   include("TEM/TEMUtils.jl")   
    include("sindbadVariableCatalog.jl")
    include("TEM/TEMTools.jl")
    include("TEM/Processes/Processes.jl")

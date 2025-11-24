@@ -11,7 +11,7 @@ The `SindbadVisuals` module provides visualization tools and helpers for the SIN
 
 ## Dependencies
 - `Sindbad`: Core SINDBAD framework.
-- `SindbadUtils`: Utility functions for SINDBAD.
+- `Utils`: Utility functions for SINDBAD.
 - `Plots`: For static plotting.
 
 ### Expected but not currently installed due to compatilibity in BGC cluster
@@ -29,8 +29,8 @@ using SindbadVisuals
 ```
 """
 module SindbadVisuals
-    using Sindbad
-    using SindbadUtils
+    using SindbadTEM
+    using Utils
     using SindbadMetrics
     # using GLMakie
     # @reexport using GLMakie.Makie

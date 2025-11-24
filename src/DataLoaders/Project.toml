@@ -10,14 +10,14 @@ FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
 NCDatasets = "85f8d34a-cbdd-5861-8df4-14fed0d494ab"
 NetCDF = "30363a11-5582-574a-97bb-aa9a979735b9"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
-SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
+Utils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
 YAXArrayBase = "90b8fcef-0c2d-428d-9c56-5f86629e9d14"
 YAXArrays = "c21b50f5-aa40-41ea-b809-c0f5e47bfa5c"
 Zarr = "0a941bbe-ad1d-11e8-39d9-ab76183a1d99"
 
 [sources]
 Sindbad = {path = "../.."}
-SindbadUtils = {path = "../../lib/SindbadUtils"}
+Utils = {path = "../../lib/Utils"}
 
 [compat]
 AxisKeys = "0.2.15"

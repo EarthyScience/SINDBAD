@@ -48,7 +48,7 @@ const codeGenItems = [
   { text: ' + Optimization', link: '/pages/code_gen/SindbadOptimization' },
   { text: ' + Setup', link: '/pages/code_gen/SindbadSetup' },
   { text: ' + TEM', link: '/pages/code_gen/SindbadTEM' },
-  { text: ' + Utils', link: '/pages/code_gen/SindbadUtils' },
+  { text: ' + Utils', link: '/pages/code_gen/Utils' },
   // { text: ' + Visuals', link: '/pages/code_gen/SindbadVisuals' }
 ]
 const aboutItems = [

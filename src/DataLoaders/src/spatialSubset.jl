@@ -26,7 +26,7 @@ function getSpatialSubset(ss, v)
             if !isnothing(ss_r)
                 ss_range = collect(ss_r)
                 ss_typeName = Symbol("Space" * string(ssn))
-                v = spatialSubset(v, ss_range, getfield(SindbadUtils, ss_typeName)())
+                v = spatialSubset(v, ss_range, getfield(Utils, ss_typeName)())
             end
         end
     end

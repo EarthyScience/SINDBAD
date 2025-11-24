@@ -35,7 +35,7 @@ land.TWS   # Total Water Storage
 For every approach structure/implementation, the `land` should be examined for potential violations of the variable grouping using:
 
 ```julia
-using SindbadUtils: tcPrint
+using Utils: tcPrint
 tcPrint(land)
 ```
 
@@ -53,7 +53,7 @@ For more information about variable grouping and organization, see the [land con
 The `LandWrapper` provides a convenient way to work with time series data from land model simulations. For more details about time series handling in SINDBAD, see the [land concept documentation](../concept/land.md#time-series-handling).
 
 ```julia
-using SindbadTEM.SindbadUtils: LandWrapper
+using SindbadTEM.Utils: LandWrapper
 using Random
 Random.seed!(123)
 
@@ -107,7 +107,7 @@ g_flux = land_wrapped.fluxes.g_flux
 lines(g_flux; figure = (; size = (600, 300)))
 
 # Plot multiple pools
-using SindbadTEM.SindbadUtils: stackArrays
+using SindbadTEM.Utils: stackArrays
 d_pool = land_wrapped.pools.d_pool
 series(stackArrays(d_pool); 
     color = [:black, :red, :dodgerblue, :orange],

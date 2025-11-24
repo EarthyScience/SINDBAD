@@ -1,19 +1,19 @@
 ```@docs
-SindbadUtils
+Utils
 ```
 
 ## Exported
 ```@meta
 
 DocTestSetup= quote
-using SindbadUtils
+using Utils
 end
 ```
 
 ```@autodocs
-Modules = [SindbadUtils]
+Modules = [Utils]
 Private = false
-Filter = f -> !(f === SindbadUtils)
+Filter = f -> !(f === Utils)
 ```
 
 ## Internal
@@ -21,11 +21,11 @@ Filter = f -> !(f === SindbadUtils)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadUtils
+using Utils
 end
 ```
 
 ```@autodocs
-Modules = [SindbadUtils]
+Modules = [Utils]
 Public = false
 ```
