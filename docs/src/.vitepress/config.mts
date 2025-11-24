@@ -49,7 +49,7 @@ const codeGenItems = [
   { text: ' + Setup', link: '/pages/code_gen/SetupSimulation' },
   { text: ' + TEM', link: '/pages/code_gen/SindbadTEM' },
   { text: ' + Utils', link: '/pages/code_gen/Utils' },
-  // { text: ' + Visuals', link: '/pages/code_gen/SindbadVisuals' }
+  // { text: ' + Visuals', link: '/pages/code_gen/Visualization' }
 ]
 const aboutItems = [
   { text: 'Contact', link: '/pages/about/contact' },

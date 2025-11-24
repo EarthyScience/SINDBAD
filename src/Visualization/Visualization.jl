@@ -1,7 +1,7 @@
 """
-# SindbadVisuals Module
+# Visualization Module
 
-The `SindbadVisuals` module provides visualization tools and helpers for the SINDBAD output analysis. While still under development, the aim is to provide comprehensive tools for visualizing and understanding the behavior of models within the SINDBAD framework.
+The `Visualization` module provides visualization tools and helpers for the SINDBAD output analysis. While still under development, the aim is to provide comprehensive tools for visualizing and understanding the behavior of models within the SINDBAD framework.
 
 ## Features
 - **Output Data Visualization**: Tools for plotting model outputs and diagnostics of hybrid experimetn.
@@ -28,7 +28,7 @@ To use the module, simply import it:
 using Sindbad.Visualization
 ```
 """
-module SindbadVisuals
+module Visualization
     using Sindbad.Simulation
     using Utils
     using SindbadTEM.Metrics
@@ -41,4 +41,4 @@ module SindbadVisuals
     include("plotOutputUsingPlots.jl")
     include("plotFromSindbadInfo.jl")
 
-end # module SindbadVisuals
+end # module Visualization

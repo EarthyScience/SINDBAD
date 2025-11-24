@@ -107,8 +107,8 @@ graph TD
     MachineLearning --> Utils
     MachineLearning --> SindbadMetrics
     
-    SindbadVisuals[SindbadVisuals] --> Sindbad
-    SindbadVisuals --> Utils
+    Visualization[Visualization] --> Sindbad
+    Visualization --> Utils
     
     SindbadExperiment[SindbadExperiment] --> Sindbad
     SindbadExperiment --> Utils

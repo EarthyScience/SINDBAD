@@ -1,5 +1,5 @@
 ```@docs
-SindbadVisuals
+Visualization
 ```
 
 ## Exported
@@ -11,9 +11,9 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadVisuals]
+Modules = [Visualization]
 Private = false
-Filter = f -> !(f === SindbadVisuals)
+Filter = f -> !(f === Visualization)
 ```
 
 ## Internal
@@ -26,6 +26,6 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadVisuals]
+Modules = [Visualization]
 Public = false
 ```
