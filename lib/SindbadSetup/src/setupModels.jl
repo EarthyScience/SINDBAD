@@ -4,7 +4,7 @@ export setSpinupAndForwardModels
 """
     checkSelectedModels(sindbad_models::AbstractArray, selected_models::AbstractArray)
 
-Validates that the selected models in `model_structure.json` exist in the full list of `standard_sindbad_models`.
+Validates that the selected models in `model_structure.json` exist in the full list of `standard_sindbad_model`.
 
 # Arguments:
 - `sindbad_models`: An array of all available SINDBAD models.
@@ -21,7 +21,7 @@ function checkSelectedModels(sindbad_models, selected_models::AbstractArray)
         if sm ∉ sindbad_models
             @show sindbad_models
             error(sm,
-                " is not a valid model defined in either standard_sindbad_models || user-defined sindbad_models. Check model_structure settings in json or model_structure.sindbad_models in replace_info")
+                " is not a valid model defined in either standard_sindbad_model || user-defined sindbad_models. Check model_structure settings in json or model_structure.sindbad_models in replace_info")
             return false
         end
     end
@@ -29,13 +29,13 @@ function checkSelectedModels(sindbad_models, selected_models::AbstractArray)
 end
 
 """
-    getAllSindbadModels(info; all_models_default=standard_sindbad_models)
+    getAllSindbadModels(info; all_models_default=standard_sindbad_model)
 
 Retrieves the list of all SINDBAD models, either from the provided `info` object or a default list.
 
 # Arguments:
 - `info`: A NamedTuple or object containing experiment configuration and metadata.
-- `all_models_default`: (Optional) The default list of SINDBAD models to use if `info` does not specify a custom list. Defaults to `standard_sindbad_models`.
+- `all_models_default`: (Optional) The default list of SINDBAD models to use if `info` does not specify a custom list. Defaults to `standard_sindbad_model`.
 
 # Returns:
 - A list of all SINDBAD models, either from `info.sindbad_models` (if available) or `all_models_default`.
@@ -44,12 +44,12 @@ Retrieves the list of all SINDBAD models, either from the provided `info` object
 - If the `info` object has a property `sindbad_models`, it overrides the default list.
 - This function ensures flexibility by allowing custom model lists to be specified in the experiment configuration.
 """
-function getAllSindbadModels(info; sindbad_models=standard_sindbad_models,  selected_models=standard_sindbad_models, selected_models_info=nothing)
+function getAllSindbadModels(info; sindbad_models=standard_sindbad_model,  selected_models=standard_sindbad_model, selected_models_info=nothing)
     if hasproperty(info.settings.model_structure, :sindbad_models)
         sindbad_models = info.settings.model_structure.sindbad_models
         showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "using user-defined orders/models from model_structure.sindbad_models with model_structure including:", n_m=1)
     else
-        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "using standard orders/models from standard_sindbad_models with model_structure including:", n_m=1)
+        showInfo(getAllSindbadModels, @__FILE__, @__LINE__, "using standard orders/models from standard_sindbad_model with model_structure including:", n_m=1)
     end
     mod_ind = 1
     foreach(sindbad_models) do sm
@@ -105,7 +105,7 @@ Retrieves and orders the list of selected models based on the configuration in `
 
 # Notes:
 - Ensures consistency by validating the selected models using `checkSelectedModels`.
-- Orders the models as specified in `standard_sindbad_models`.
+- Orders the models as specified in `standard_sindbad_model`.
 """
 function setOrderedSelectedModels(info::NamedTuple)
     showInfo(setOrderedSelectedModels, @__FILE__, @__LINE__, "setting Ordered Selected Models...")

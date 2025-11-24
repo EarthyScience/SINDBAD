@@ -90,8 +90,8 @@ Experiments can select models from:
 
 ```julia
 using Sindbad
-standard_sindbad_models
-all_available_sindbad_models
+standard_sindbad_model
+all_available_sindbad_model
 ```
 
 :::

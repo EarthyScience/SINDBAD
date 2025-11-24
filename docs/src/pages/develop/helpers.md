@@ -234,7 +234,7 @@ models = getSindbadModels()
 ::: tip
 
 `getSindbadModels` is particularly useful for:
-- Discovering available models in `standard_sindbad_models` in the SINDBAD framework
+- Discovering available models in `standard_sindbad_model` in the SINDBAD framework
 
 :::
 
@@ -260,7 +260,7 @@ An array of all defined things in the SINDBAD framework that match the specified
 defined_types = getSindbadDefinitions(Sindbad, Type)
 
 # Get all functions in a specific module
-functions = getSindbadDefinitions(Sindbad.Models, Function)
+functions = getSindbadDefinitions(SindbadTEM.Processes, Function)
 
 # Get all definitions including external ones
 all_definitions = getSindbadDefinitions(Sindbad, Any, internal_only=false)

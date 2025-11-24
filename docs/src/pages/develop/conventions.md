@@ -166,7 +166,7 @@ Include version history and references in the documentation for traceability.
 
 ```julia
 @doc """
-$(getModelDocString(ApproachName))
+$(getProcessDocstring(ApproachName))
 
 *References*
 - Author, Year. Title. Journal.

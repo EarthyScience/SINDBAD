@@ -81,7 +81,7 @@ In `lib/SindbadML/src/mlModels.jl`, extend `mlModel`:
 ```julia
 function mlModel(info, n_features, ::MyMLModel)
     # Build and return your model
-    return MyModelConstructor(n_features, ...)
+    return MyProcessConstructor(n_features, ...)
 end
 ```
 

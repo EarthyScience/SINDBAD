@@ -2,7 +2,7 @@ using Sindbad
 using InteractiveUtils
 open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
     # write(o_file, "## Models\n\n")
-    write(o_file, "```@docs\nSindbad.Models\n```\n")
+    write(o_file, "```@docs\nSindbadTEM.Processes\n```\n")
 
     write(o_file, "## Available Models\n\n")
 
@@ -24,6 +24,6 @@ open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
         write(o_file, "\n----\n\n")
     end
     write(o_file, "## Internal\n\n")
-    write(o_file, "```@meta\nCollapsedDocStrings = false\nDocTestSetup= quote\nusing Sindbad.Models\nend\n```\n")
-    write(o_file, "\n```@autodocs\nModules = [Sindbad.Models]\nPublic = false\n```")
+    write(o_file, "```@meta\nCollapsedDocStrings = false\nDocTestSetup= quote\nusing SindbadTEM.Processes\nend\n```\n")
+    write(o_file, "\n```@autodocs\nModules = [SindbadTEM.Processes]\nPublic = false\n```")
 end
