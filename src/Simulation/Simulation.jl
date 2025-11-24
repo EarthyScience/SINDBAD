@@ -55,10 +55,10 @@ module SindbadTEM
    using ComponentArrays
    using NLsolve
    using ProgressMeter
-   using Sindbad.Simulation
-   using Utils
-   using Sindbad.SetupSimulation
-   using Sindbad.DataLoaders: YAXArrays
+   using SindbadTEM
+   using SindbadTEM.Utils
+   using ..SetupSimulation
+   using ..DataLoaders: YAXArrays
 
    using ThreadPools
 
@@ -72,5 +72,7 @@ module SindbadTEM
    include("runTEMCube.jl")
    include("spinupTEM.jl")
    include("spinupSequence.jl")
+   include("runExperiment.jl")
+   include("saveOutput.jl")
 
 end # module SindbadTEM

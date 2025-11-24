@@ -42,12 +42,6 @@ module SindbadExperiment
     using Sindbad.Simulation
     @reexport using Sindbad.Simulation
     @reexport using Utils
-    @reexport using Sindbad.SetupSimulation
-    @reexport using Sindbad.DataLoaders
-    @reexport using Sindbad.Simulation
-    @reexport using Sindbad.Optimization
-    @reexport using SindbadTEM.Metrics
-    @reexport using Sindbad.Visualization
 
     include("runExperiment.jl")
     include("saveOutput.jl")
