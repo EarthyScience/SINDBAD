@@ -6,7 +6,7 @@ SindbadVisuals
 ```@meta
 
 DocTestSetup= quote
-using SindbadVisuals
+using Sindbad.Visualization
 end
 ```
 
@@ -21,7 +21,7 @@ Filter = f -> !(f === SindbadVisuals)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadVisuals
+using Sindbad.Visualization
 end
 ```
 

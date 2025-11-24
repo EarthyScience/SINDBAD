@@ -13,7 +13,7 @@ This package integrates various components and utilities required to execute the
 - `Sindbad`: Provides the core SINDBAD models and types.
 - `SindbadData`: Provides the SINDBAD data handling functions.
 - `Utils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
-- `SindbadSetup`: Provides the SINDBAD setup functions.
+- `SetupSimulation`: Provides the SINDBAD setup functions.
 - `ThreadPools`: Enables efficient thread-based parallelization for running simulations across multiple locations.
 
 # Included Files:
@@ -49,16 +49,16 @@ This package integrates various components and utilities required to execute the
 
 # Notes:
 - The package is designed to be modular and extensible, allowing users to customize and extend its functionality for specific use cases.
-- It integrates tightly with the SINDBAD framework, leveraging shared types and utilities from `SindbadSetup`.
+- It integrates tightly with the SINDBAD framework, leveraging shared types and utilities from `SetupSimulation`.
 """
 module SindbadTEM
    using ComponentArrays
    using NLsolve
    using ProgressMeter
-   using SindbadTEM
+   using Sindbad.Simulation
    using Utils
-   using SindbadSetup
-   using SindbadData: YAXArrays
+   using Sindbad.SetupSimulation
+   using Sindbad.DataLoaders: YAXArrays
 
    using ThreadPools
 

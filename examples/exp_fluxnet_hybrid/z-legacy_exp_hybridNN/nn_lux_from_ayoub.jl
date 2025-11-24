@@ -1,7 +1,7 @@
 using Revise
 using ForwardDiff
-using SindbadTEM
-using SindbadMetrics
+using Sindbad.Simulation
+using SindbadTEM.Metrics
 using Random
 toggleStackTraceNT()
 

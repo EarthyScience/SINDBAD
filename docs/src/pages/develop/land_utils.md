@@ -53,7 +53,7 @@ For more information about variable grouping and organization, see the [land con
 The `LandWrapper` provides a convenient way to work with time series data from land model simulations. For more details about time series handling in SINDBAD, see the [land concept documentation](../concept/land.md#time-series-handling).
 
 ```julia
-using SindbadTEM.Utils: LandWrapper
+using Sindbad.Simulation.Utils: LandWrapper
 using Random
 Random.seed!(123)
 
@@ -107,7 +107,7 @@ g_flux = land_wrapped.fluxes.g_flux
 lines(g_flux; figure = (; size = (600, 300)))
 
 # Plot multiple pools
-using SindbadTEM.Utils: stackArrays
+using Sindbad.Simulation.Utils: stackArrays
 d_pool = land_wrapped.pools.d_pool
 series(stackArrays(d_pool); 
     color = [:black, :red, :dodgerblue, :orange],
@@ -120,7 +120,7 @@ series(stackArrays(d_pool);
 For more information about working with dimensional data, see the [land concept documentation](../concept/land.md#dimensional-data).
 
 ```julia
-using SindbadData.DimensionalData
+using Sindbad.DataLoaders.DimensionalData
 using Dates
 
 # Add time dimension to flux data
@@ -133,7 +133,7 @@ dd_flux = DimArray(g_flux[:], (Ti=time_interval,); name=:g_flux)
 lines(dd_flux; figure = (; size = (600, 300)))
 
 # Add dimensions to pool data
-using SindbadData: toDimStackArray
+using Sindbad.DataLoaders: toDimStackArray
 pool_names = ["root", "veg", "leaf", "wood"]
 dd_pool = toDimStackArray(stackArrays(d_pool), time_interval, pool_names)
 series(dd_pool; 

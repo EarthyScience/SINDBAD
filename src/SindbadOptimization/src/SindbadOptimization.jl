@@ -23,7 +23,7 @@ This package is designed to support optimization tasks in SINDBAD, such as calib
 - `GlobalSensitivity`: Provides tools for global sensitivity analysis, including Sobol indices and variance-based sensitivity analysis.
 - `Sindbad`: Provides the core SINDBAD models and types.
 - `Utils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
-- `SindbadSetup`: Provides the SINDBAD setup.
+- `SetupSimulation`: Provides the SINDBAD setup.
 - `SindbadTEM`: Provides the SINDBAD Terrestrial Ecosystem Model (TEM) as the target for optimization tasks.
 - `SindbadMetrics`: Supplies metrics for evaluating model performance, which are used in cost function calculations.
 
@@ -52,7 +52,7 @@ This package is designed to support optimization tasks in SINDBAD, such as calib
 # Examples:
 1. **Running an experiment**:
 ```julia
-using SindbadExperiment
+using Sindbad.Simulation
 # Set up experiment parameters
 experiment_config = ...
 
@@ -61,7 +61,7 @@ runExperimentOpti(experiment_config)
 ```
 2. **Running a CMA-ES optimization**:
 ```julia
-using SindbadOptimization
+using Sindbad.Optimization
 optimized_params = optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, CMAEvolutionStrategyCMAES())
 ```
 """
@@ -83,11 +83,11 @@ module SindbadOptimization
    # using OptimizationQuadDIRECT
    using QuasiMonteCarlo
    using StableRNGs
-   using SindbadTEM
+   using Sindbad.Simulation
    using Utils
-   using SindbadSetup
-   using SindbadTEM
-   using SindbadMetrics
+   using Sindbad.SetupSimulation
+   using Sindbad.Simulation
+   using SindbadTEM.Metrics
 
    include("prepOpti.jl")
    include("optimizer.jl")

@@ -1,8 +1,8 @@
 using Revise
-@time using SindbadTEM
-@time using SindbadData
-@time using SindbadTEM
-@time using SindbadExperiment
+@time using Sindbad.Simulation
+@time using Sindbad.DataLoaders
+@time using Sindbad.Simulation
+@time using Sindbad.Simulation
 using Plots
 toggleStackTraceNT()
 domain = "Global";

@@ -1,4 +1,4 @@
-using SindbadTEM
+using Sindbad.Simulation
 using BenchmarkTools
 using Test
 

@@ -29,7 +29,7 @@ All models must implement at least one of the following methods:
 
 # Usage
 ```julia
-using SindbadTEM.Processes
+using Sindbad.Simulation.Processes
 
 # Define a new process
 abstract type MyProcess <: LandEcosystem end

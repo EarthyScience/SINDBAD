@@ -25,13 +25,13 @@ The `SindbadVisuals` module provides visualization tools and helpers for the SIN
 ## Usage
 To use the module, simply import it:
 ```julia
-using SindbadVisuals
+using Sindbad.Visualization
 ```
 """
 module SindbadVisuals
-    using SindbadTEM
+    using Sindbad.Simulation
     using Utils
-    using SindbadMetrics
+    using SindbadTEM.Metrics
     # using GLMakie
     # @reexport using GLMakie.Makie
     # using Colors

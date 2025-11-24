@@ -1,5 +1,5 @@
 using Revise
-using SindbadExperiment
+using Sindbad.Simulation
 
 # TODO add to SindbadOptimization
 using Distributions, PDMats, DistributionFits, Turing, MCMCChains

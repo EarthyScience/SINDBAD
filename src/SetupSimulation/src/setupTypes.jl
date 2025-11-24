@@ -177,7 +177,7 @@ Generates a type instance for boolean flags based on the flag name and value.
 
 # Notes:
 - The function converts the flag name to a string, capitalizes the first letter of each word, and appends the appropriate prefix (`Do` or `DoNot`).
-- The resulting type is retrieved from the `SindbadSetup` module and instantiated.
+- The resulting type is retrieved from the `SetupSimulation` module and instantiated.
 - This is used for type-based dispatch in SINDBAD's model execution.
 """
 function getTypeInstanceForFlags(option_name::Symbol, option_value, opt_pref="Do")
@@ -186,7 +186,7 @@ function getTypeInstanceForFlags(option_name::Symbol, option_value, opt_pref="Do
     if !option_value
         structname = toUpperCaseFirst(opt_s, opt_pref*"Not")
     end
-    struct_instance = getfield(SindbadSetup, structname)()
+    struct_instance = getfield(SetupSimulation, structname)()
     return struct_instance
 end
 
@@ -199,7 +199,7 @@ Retrieves a type instance for a named option based on its string or symbol repre
 - `option_name`: The name of the option, provided as either a `String` or a `Symbol`.
 
 # Returns:
-- An instance of the corresponding type from the `SindbadSetup` module.
+- An instance of the corresponding type from the `SetupSimulation` module.
 
 # Notes:
 - If the input is a `Symbol`, it is converted to a `String` before processing.
@@ -217,7 +217,7 @@ function getTypeInstanceForNamedOptions end
 
 function getTypeInstanceForNamedOptions(option_name::String)
     opt_ss = toUpperCaseFirst(option_name)
-    struct_instance = getfield(SindbadSetup, opt_ss)()
+    struct_instance = getfield(SetupSimulation, opt_ss)()
     return struct_instance
 end
 

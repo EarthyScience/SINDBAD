@@ -84,9 +84,9 @@ graph TD
     SindbadData[SindbadData] --> Sindbad
     SindbadData --> Utils
     
-    SindbadSetup[SindbadSetup] --> Sindbad
-    SindbadSetup --> Utils
-    SindbadSetup --> SindbadData
+    SetupSimulation[SetupSimulation] --> Sindbad
+    SetupSimulation --> Utils
+    SetupSimulation --> SindbadData
     
     SindbadMetrics[SindbadMetrics] --> Sindbad
     SindbadMetrics --> Utils
@@ -94,13 +94,13 @@ graph TD
     SindbadTEM[SindbadTEM] --> Sindbad
     SindbadTEM --> Utils
     SindbadTEM --> SindbadData
-    SindbadTEM --> SindbadSetup
+    SindbadTEM --> SetupSimulation
     SindbadTEM --> SindbadMetrics
     
     SindbadOptimization[SindbadOptimization] --> Sindbad
     SindbadOptimization --> Utils
     SindbadOptimization --> SindbadMetrics
-    SindbadOptimization --> SindbadSetup
+    SindbadOptimization --> SetupSimulation
     SindbadOptimization --> SindbadTEM
     
     SindbadML[SindbadML] --> Sindbad
@@ -113,7 +113,7 @@ graph TD
     SindbadExperiment[SindbadExperiment] --> Sindbad
     SindbadExperiment --> Utils
     SindbadExperiment --> SindbadData
-    SindbadExperiment --> SindbadSetup
+    SindbadExperiment --> SetupSimulation
     SindbadExperiment --> SindbadTEM
     SindbadExperiment --> SindbadOptimization
     SindbadExperiment --> SindbadMetrics    

@@ -327,7 +327,7 @@ function runExperimentSensitivity(sindbad_experiment::String; replace_info=Dict(
     
     cost_function = opti_helpers.cost_function
 
-    # d_opt = getproperty(SindbadSetup, :GSAMorris)()
+    # d_opt = getproperty(SetupSimulation, :GSAMorris)()
     method_options =info.optimization.sensitivity_analysis.options
     setLogLevel(log_level)
 

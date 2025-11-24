@@ -6,7 +6,7 @@ SindbadOptimization
 ```@meta
 
 DocTestSetup= quote
-using SindbadOptimization
+using Sindbad.Optimization
 end
 ```
 
@@ -21,7 +21,7 @@ Filter = f -> !(f === SindbadOptimization)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadOptimization
+using Sindbad.Optimization
 end
 ```
 

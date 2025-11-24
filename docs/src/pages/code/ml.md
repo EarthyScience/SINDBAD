@@ -6,7 +6,7 @@ SindbadML
 ```@meta
 
 DocTestSetup= quote
-using SindbadML
+using Sindbad.MachineLearning
 end
 ```
 
@@ -21,7 +21,7 @@ Filter = f -> !(f === SindbadML)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadML
+using Sindbad.MachineLearning
 end
 ```
 

@@ -240,7 +240,7 @@ Creates and returns a time aggregator instance based on the provided aggregation
 An instance of the corresponding time aggregator type.
 
 # Notes:
-- A similar approach `getTypeInstanceForNamedOptions` is used in `SindbadSetup` for creating types of other named option
+- A similar approach `getTypeInstanceForNamedOptions` is used in `SetupSimulation` for creating types of other named option
 """
 function getTimeAggregatorTypeInstance end
 

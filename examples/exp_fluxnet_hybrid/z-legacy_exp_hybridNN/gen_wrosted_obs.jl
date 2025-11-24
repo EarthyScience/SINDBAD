@@ -1,4 +1,4 @@
-using SindbadTEM, SindbadTEM, SindbadOptimization
+using Sindbad.Simulation, SindbadTEM, SindbadOptimization
 using YAXArrays, YAXArrayBase
 using AxisKeys
 using Flux

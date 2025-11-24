@@ -1,19 +1,19 @@
-using SindbadTEM
-using SindbadTEM
-using SindbadData
-using SindbadSetup
-using SindbadMetrics
-using SindbadML
-using SindbadOptimization
-using SindbadVisuals
-using SindbadExperiment
+using Sindbad.Simulation
+using Sindbad.Simulation
+using Sindbad.DataLoaders
+using Sindbad.SetupSimulation
+using SindbadTEM.Metrics
+using Sindbad.MachineLearning
+using Sindbad.Optimization
+using Sindbad.Visualization
+using Sindbad.Simulation
 
 using InteractiveUtils
 using DocumenterVitepress
 using Documenter
 using DocStringExtensions
 # using DocumenterMermaid
-# dev ../ ../lib/Utils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
+# dev ../ ../lib/Utils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SetupSimulation ../lib/SindbadTEM ../lib/SindbadML
 
 makedocs(; sitename="Sindbad",
     authors="Sindbad Development Team",

@@ -6,7 +6,7 @@ SindbadMetrics
 ```@meta
 
 DocTestSetup= quote
-using SindbadMetrics
+using SindbadTEM.Metrics
 end
 ```
 
@@ -21,7 +21,7 @@ Filter = f -> !(f === SindbadMetrics)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadMetrics
+using SindbadTEM.Metrics
 end
 ```
 

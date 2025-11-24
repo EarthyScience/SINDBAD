@@ -1,6 +1,6 @@
-using SindbadTEM
+using Sindbad.Simulation
 using JLD2
-using SindbadML
+using Sindbad.MachineLearning
 
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"

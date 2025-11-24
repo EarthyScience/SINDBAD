@@ -38,7 +38,7 @@ This package is designed to streamline the ingestion and preprocessing of input 
 
 """
 module SindbadData
-   using SindbadTEM
+   using Sindbad.Simulation
    using Utils
    using AxisKeys: KeyedArray, AxisKeys
    using FillArrays

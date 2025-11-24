@@ -1,6 +1,6 @@
 using Revise
-using SindbadTEM
-using SindbadExperiment
+using Sindbad.Simulation
+using Sindbad.Simulation
 using Plots
 using QuasiMonteCarlo
 toggleStackTraceNT()

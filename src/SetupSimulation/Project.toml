@@ -1,4 +1,4 @@
-name = "SindbadSetup"
+name = "SetupSimulation"
 uuid = "2b7f2987-8a1e-48b4-8a02-cc9e7c4eeb1c"
 authors = ["SINDBAD Contributors <sindbad@bgc-jena.mpg.de>"]
 version = "0.1.0"

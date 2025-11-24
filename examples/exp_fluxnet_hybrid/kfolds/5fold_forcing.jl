@@ -1,13 +1,13 @@
 using GLMakie
 
 using StatsBase
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
+using Sindbad.DataLoaders
+using Sindbad.DataLoaders.DimensionalData
+using Sindbad.DataLoaders.AxisKeys
+using Sindbad.DataLoaders.YAXArrays
+using Sindbad.Simulation
+using Sindbad.MachineLearning
+using Sindbad.MachineLearning.JLD2
 using ProgressMeter
 include("../load_covariates.jl")
 

@@ -15,7 +15,7 @@ To view the list of available metrics:
 :::tip
 To list all available cost metrics and their purposes, use:
 ```julia
-using SindbadTEM
+using Sindbad.Simulation
 showMethodsOf(PerfMetric)
 ```
 This will display a formatted list of all cost metrics and their descriptions, including:
@@ -144,7 +144,7 @@ Metrics can be combined using various methods:
 ### Calculating a Simple Metric
 
 ```julia
-using SindbadMetrics
+using SindbadTEM.Metrics
 
 # Define observations and model output
 y = [1.0, 2.0, 3.0]  # observations

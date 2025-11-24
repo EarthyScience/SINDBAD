@@ -1,6 +1,6 @@
 using Random
 using YAXArrays
-using SindbadData.Zarr
+using Sindbad.DataLoaders.Zarr
 using NaNStatistics
 # using Rasters, ArchGDAL
 # using Rasters.Lookups

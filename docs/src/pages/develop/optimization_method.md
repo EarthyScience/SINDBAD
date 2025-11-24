@@ -80,7 +80,7 @@ Using a JSON file for `algorithm_optimization` allows for:
 
 To list all available optimization methods and their purposes, use:
 ```julia
-using SindbadTEM
+using Sindbad.Simulation
 showMethodsOf(OptimizationMethod)
 ```
 This will display a formatted list of all optimization methods and their descriptions.

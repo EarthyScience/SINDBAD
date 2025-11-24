@@ -1,19 +1,19 @@
 ```@docs
-SindbadSetup
+SetupSimulation
 ```
 
 ## Exported
 ```@meta
 
 DocTestSetup= quote
-using SindbadSetup
+using Sindbad.SetupSimulation
 end
 ```
 
 ```@autodocs
-Modules = [SindbadSetup]
+Modules = [SetupSimulation]
 Private = false
-Filter = f -> !(f === SindbadSetup)
+Filter = f -> !(f === SetupSimulation)
 ```
 
 ## Internal
@@ -21,11 +21,11 @@ Filter = f -> !(f === SindbadSetup)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadSetup
+using Sindbad.SetupSimulation
 end
 ```
 
 ```@autodocs
-Modules = [SindbadSetup]
+Modules = [SetupSimulation]
 Public = false
 ```

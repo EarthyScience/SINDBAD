@@ -186,7 +186,7 @@ When working with SINDBAD, it is highly recommended to utilize the built-in func
 
 Check the documentation of the function for further details as:
 ```julia
-using SindbadTEM
+using Sindbad.Simulation
 ?generateSindbadApproach
 ```
 :::

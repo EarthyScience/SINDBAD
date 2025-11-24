@@ -6,7 +6,7 @@ SindbadData
 ```@meta
 
 DocTestSetup= quote
-using SindbadData
+using Sindbad.DataLoaders
 end
 ```
 
@@ -21,7 +21,7 @@ Filter = f -> !(f === SindbadData)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadData
+using Sindbad.DataLoaders
 end
 ```
 

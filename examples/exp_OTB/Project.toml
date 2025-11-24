@@ -10,7 +10,7 @@ SindbadExperiment = "bbd31fc6-1b7a-43f2-b792-0273fef35116"
 SindbadML = "eb1d8004-2d42-4eef-b369-ed0645c101e8"
 SindbadMetrics = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
 SindbadOptimization = "64fff8bd-0c13-402c-aa96-b97d0bc3655c"
-SindbadSetup = "2b7f2987-8a1e-48b4-8a02-cc9e7c4eeb1c"
+SetupSimulation = "2b7f2987-8a1e-48b4-8a02-cc9e7c4eeb1c"
 SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
 Utils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
 StableRNGs = "860ef19b-820b-49d6-a774-d7a799459cd3"
@@ -22,6 +22,6 @@ SindbadExperiment = {path = "../../lib/SindbadExperiment"}
 SindbadML = {path = "../../lib/SindbadML"}
 SindbadMetrics = {path = "../../lib/SindbadMetrics"}
 SindbadOptimization = {path = "../../lib/SindbadOptimization"}
-SindbadSetup = {path = "../../lib/SindbadSetup"}
+SetupSimulation = {path = "../../lib/SetupSimulation"}
 SindbadTEM = {path = "../../lib/SindbadTEM"}
 Utils = {path = "../../lib/Utils"}

@@ -1,9 +1,9 @@
 using Revise
-using SindbadExperiment
-using SindbadML
-using SindbadML.JLD2
-using SindbadML.Random
-using SindbadML.Flux
+using Sindbad.Simulation
+using Sindbad.MachineLearning
+using Sindbad.MachineLearning.JLD2
+using Sindbad.MachineLearning.Random
+using Sindbad.MachineLearning.Flux
 using ProgressMeter
 
 path_experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment_hybrid.json"

@@ -1,4 +1,4 @@
-using SindbadML
+using Sindbad.MachineLearning
 using Test
 
 @testset "SindbadML.jl" begin

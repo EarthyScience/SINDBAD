@@ -1,5 +1,5 @@
 using Revise
-@time using SindbadExperiment
+@time using Sindbad.Simulation
 using Plots
 toggleStackTraceNT()
 domain = "africa";

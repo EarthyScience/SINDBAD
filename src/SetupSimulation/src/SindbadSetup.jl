@@ -1,8 +1,8 @@
 
 """
-   SindbadSetup
+   SetupSimulation
 
-The `SindbadSetup` package provides tools for setting up and configuring SINDBAD experiments and runs. It handles the creation of experiment configurations, model structures, parameters, and output setups, ensuring a streamlined workflow for SINDBAD simulations.
+The `SetupSimulation` package provides tools for setting up and configuring SINDBAD experiments and runs. It handles the creation of experiment configurations, model structures, parameters, and output setups, ensuring a streamlined workflow for SINDBAD simulations.
 
 # Purpose:
 This package is designed to produce the SINDBAD `info` object, which contains all the necessary configurations and metadata for running SINDBAD experiments. It facilitates reading configurations, building model structures, and preparing outputs.
@@ -52,13 +52,13 @@ This package is designed to produce the SINDBAD `info` object, which contains al
    - Calls various functions to collect the `info` object by integrating all configurations, models, parameters, and outputs.
 
 # Notes:
-- The package re-exports several key packages (`Infiltrator`, `CSV`, `JLD2`) for convenience, allowing users to access their functionality directly through `SindbadSetup`.
+- The package re-exports several key packages (`Infiltrator`, `CSV`, `JLD2`) for convenience, allowing users to access their functionality directly through `SetupSimulation`.
 - Designed to be modular and extensible, enabling users to customize and expand the setup process for specific use cases.
 
 """
-module SindbadSetup
+module SetupSimulation
 
-   using SindbadTEM
+   using Sindbad.Simulation
    using Utils
    using ConstructionBase
    @reexport using CSV: CSV
@@ -90,4 +90,4 @@ module SindbadSetup
    end
    include(ds_file)
 
-end # module SindbadSetup
+end # module SetupSimulation

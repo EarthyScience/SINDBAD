@@ -6,7 +6,7 @@ SindbadTEM
 ```@meta
 
 DocTestSetup= quote
-using SindbadTEM
+using Sindbad.Simulation
 end
 ```
 
@@ -21,7 +21,7 @@ Filter = f -> !(f === SindbadTEM)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadTEM
+using Sindbad.Simulation
 end
 ```
 
