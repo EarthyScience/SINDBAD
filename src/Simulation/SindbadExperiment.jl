@@ -1,18 +1,18 @@
 """
-    SindbadExperiment
+    Sindbad.Simulation
 
-The `SindbadExperiment` package provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates SINDBAD packages and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
+The `Sindbad.Simulation` module provides tools for designing, running, and analyzing experiments in the SINDBAD MDI framework. It integrates SINDBAD packages and utilities to streamline the experimental workflow, from data preparation to model execution and output analysis.
 
 # Purpose:
-This package acts as a high-level interface for conducting experiments using the SINDBAD framework. It leverages the functionality of core SINDBAD packages and provides additional utilities for running experiments and managing outputs.
+This module acts as a high-level interface for conducting experiments using the SINDBAD framework. It leverages the functionality of core SINDBAD packages and provides additional utilities for running experiments and managing outputs.
 
 # Dependencies:
-- `Sindbad`: Provides the core SINDBAD models and types.
-- `Utils`: Provides utility functions for handling data, spatial operations, and other helper tasks.
+- `SindbadTEM`: Provides the core SINDBAD models and types.
+- `SindbadTEM.Utils`: Provides utility functions for handling data, spatial operations, and other helper tasks.
 - `SetupSimulation`: Manages setup configurations, parameter handling, and shared types for SINDBAD experiments.
 - `DataLoaders`: Handles data ingestion, preprocessing, and management for SINDBAD experiments.
 - `SindbadTEM`: Implements the SINDBAD Terrestrial Ecosystem Model (TEM), enabling simulations for single locations, spatial grids, and cubes.
-- `SindbadOptimization`: Provides optimization algorithms for parameter estimation and model calibration.
+- `Sindbad.Optimization`: Provides optimization algorithms for parameter estimation and model calibration.
 - `SindbadMetrics`: Supplies metrics for evaluating model performance and comparing simulations with observations.
 
 # Included Files:
@@ -23,7 +23,7 @@ This package acts as a high-level interface for conducting experiments using the
    - Provides utilities for saving experiment outputs in various formats, ensuring compatibility with downstream analysis tools.
 
 # Notes:
-- The package re-exports core SINDBAD packages (`Sindbad`, `Utils`, `SetupSimulation`, `DataLoaders`, `SindbadTEM`, `SindbadOptimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadExperiment`.
+- The package re-exports core SINDBAD packages (`Sindbad`, `Utils`, `SetupSimulation`, `DataLoaders`, `SindbadTEM`, `Sindbad.Optimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `Sindbad.Simulation`.
 - Designed to be extensible, enabling users to customize and expand the experimental workflow as needed.
 - Future extensions may include support for additional data formats (e.g., NetCDF, Zarr) and advanced output handling.
 
@@ -38,7 +38,7 @@ experiment_config = ...
 runExperimentForward(experiment_config)
 ```
 """
-module SindbadExperiment
+module Sindbad.Simulation
     using Sindbad.Simulation
     @reexport using Sindbad.Simulation
     @reexport using Utils
@@ -46,4 +46,4 @@ module SindbadExperiment
     include("runExperiment.jl")
     include("saveOutput.jl")
 
-end # module SindbadExperiment
+end # module Sindbad.Simulation

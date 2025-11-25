@@ -1,5 +1,5 @@
 ```@docs
-SindbadOptimization
+Optimization
 ```
 
 ## Exported
@@ -11,9 +11,9 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadOptimization]
+Modules = [Optimization]
 Private = false
-Filter = f -> !(f === SindbadOptimization)
+Filter = f -> !(f === Optimization)
 ```
 
 ## Internal
@@ -21,11 +21,11 @@ Filter = f -> !(f === SindbadOptimization)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using Sindbad.Optimization
+using Optimization
 end
 ```
 
 ```@autodocs
-Modules = [SindbadOptimization]
+Modules = [Optimization]
 Public = false
 ```

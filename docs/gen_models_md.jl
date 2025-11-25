@@ -1,4 +1,4 @@
-using Sindbad.Simulation
+using SindbadTEM
 using InteractiveUtils
 open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
     # write(o_file, "## Models\n\n")
@@ -6,7 +6,7 @@ open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
 
     write(o_file, "## Available Models\n\n")
 
-    sindbad_models_from_types = nameof.(Sindbad.subtypes(Sindbad.LandEcosystem))
+    sindbad_models_from_types = nameof.(SindbadTEM.subtypes(SindbadTEM.LandEcosystem))
     foreach(sort(collect(sindbad_models_from_types))) do sm
         sms = string(sm)
         write(o_file, "### $(sm)\n\n")
@@ -15,7 +15,7 @@ open(joinpath(@__DIR__, "./src/pages/code/models.md"), "w") do o_file
         write(o_file, ":::details $(sm) approaches\n\n")
         write(o_file, ":::tabs\n\n")
 
-        foreach(Sindbad.subtypes(getfield(Sindbad, sm))) do apr
+        foreach(SindbadTEM.subtypes(getfield(SindbadTEM, sm))) do apr
 
             write(o_file, "== $(apr)\n")
             write(o_file, "```@docs\n$(apr)\n```\n")

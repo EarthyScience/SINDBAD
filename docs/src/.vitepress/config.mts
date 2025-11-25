@@ -23,29 +23,28 @@ const settingsItems = [
 
 const codeItems = [
   { text: 'Sindbad', link: '/pages/code/overview' },
-  { text: ' + Core', link: '/pages/code/sindbad' },
-  { text: ' \u00A0\u00A0++ Models', link: '/pages/code/models' },
+  { text: ' + TEM', link: '/pages/code/sindbadTEM' },
+  { text: ' \u00A0\u00A0++ Metrics', link: '/pages/code/metrics' },
+  { text: ' \u00A0\u00A0++ Processes', link: '/pages/code/models' },
   { text: ' \u00A0\u00A0++ Types', link: '/pages/code/types' },
-  { text: ' + Data', link: '/pages/code/data' },
-  { text: ' + Experiment', link: '/pages/code/experiment' },
-  { text: ' + Metrics', link: '/pages/code/metrics' },
-  { text: ' + ML', link: '/pages/code/ml' },
+  { text: ' \u00A0\u00A0++ Utils', link: '/pages/code/utils' },
+  { text: ' + DataLoaders', link: '/pages/code/data' },
+  { text: ' + MachineLearning', link: '/pages/code/ml' },
   { text: ' + Optimization', link: '/pages/code/optimization' },
-  { text: ' + Setup', link: '/pages/code/setup' },
-  { text: ' + TEM', link: '/pages/code/tem' },
-  { text: ' + Utils', link: '/pages/code/utils' },
-  { text: ' + Visuals', link: '/pages/code/visuals' }
+  { text: ' + SetupSimulation', link: '/pages/code/setup' },
+  { text: ' + Simulation', link: '/pages/code/simulation' },
+  { text: ' + Visualization', link: '/pages/code/visuals' }
 ]
 
 const codeGenItems = [
   { text: 'Sindbad', link: '/pages/code_gen/Sindbad' },
   { text: ' + Core', link: '/pages/code_gen/Sindbad' },
   { text: ' + Data', link: '/pages/code_gen/DataLoaders' },
-  { text: ' + Experiment', link: '/pages/code_gen/SindbadExperiment' },
+  { text: ' + Experiment', link: '/pages/code_gen/Sindbad.Simulation' },
   { text: ' + Metrics', link: '/pages/code_gen/SindbadMetrics' },
   { text: ' + ML', link: '/pages/code_gen/MachineLearning' },
   { text: ' + Models', link: '/pages/code_gen/SindbadModels' },
-  { text: ' + Optimization', link: '/pages/code_gen/SindbadOptimization' },
+  { text: ' + Optimization', link: '/pages/code_gen/Sindbad.Optimization' },
   { text: ' + Setup', link: '/pages/code_gen/SetupSimulation' },
   { text: ' + TEM', link: '/pages/code_gen/SindbadTEM' },
   { text: ' + Utils', link: '/pages/code_gen/Utils' },

@@ -1,14 +1,14 @@
 """
     DataLoaders
 
-The `DataLoaders` package provides tools for handling and processing SINDBAD-related input data and processing. It supports reading, cleaning, masking, and managing data for SINDBAD experiments, with a focus on spatial and temporal dimensions.
+The `DataLoaders` module provides tools for handling and processing SINDBAD-related input data and processing. It supports reading, cleaning, masking, and managing data for SINDBAD experiments, with a focus on spatial and temporal dimensions.
 
 # Purpose:
-This package is designed to streamline the ingestion and preprocessing of input data for SINDBAD experiments. 
+This module is designed to streamline the ingestion and preprocessing of input data for SINDBAD experiments. 
 
 # Dependencies:
-- `Sindbad`: Provides the core SINDBAD models and types.
-- `Utils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
+- `SindbadTEM`: Provides the core SINDBAD models and types.
+- `SindbadTEM.Utils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
 - `AxisKeys`: Enables labeled multidimensional arrays (`KeyedArray`) for managing data with explicit axis labels.
 - `FillArrays`: Provides efficient representations of arrays filled with a single value, useful for initializing data structures.
 - `DimensionalData`: Facilitates working with multidimensional data, particularly for indexing and slicing along spatial and temporal dimensions.

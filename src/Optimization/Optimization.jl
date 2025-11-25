@@ -1,31 +1,26 @@
 """
     Optimization
 
-The `Optimization` package provides tools for optimizing SINDBAD models, including parameter estimation, model calibration, and cost function evaluation. It integrates various optimization algorithms and utilities to streamline the optimization workflow for SINDBAD experiments.
+The `Optimization` module provides tools for optimizing SINDBAD models, including parameter estimation, model calibration, and cost function evaluation. It integrates various optimization algorithms and utilities to streamline the optimization workflow for SINDBAD experiments.
 
 # Purpose:
-This package is designed to support optimization tasks in SINDBAD, such as calibrating model parameters to match observations or minimizing cost functions. It leverages multiple optimization libraries and provides a unified interface for running optimization routines.
+This module is designed to support optimization tasks in SINDBAD, such as calibrating model parameters to match observations or minimizing cost functions. It leverages multiple optimization libraries and provides a unified interface for running optimization routines.
 
 # Dependencies:
-- `CMAEvolutionStrategy`: Provides the CMA-ES (Covariance Matrix Adaptation Evolution Strategy) algorithm for global optimization.
-- `Evolutionary`: Supplies evolutionary algorithms for optimization, useful for non-convex problems.
-- `ForwardDiff`: Enables automatic differentiation for gradient-based optimization methods.
-- `MultistartOptimization`: Implements multistart optimization for finding global optima by running multiple local optimizations.
-- `NLopt`: Provides a collection of nonlinear optimization algorithms, including derivative-free methods.
-- `Optim`: Supplies optimization algorithms such as BFGS and LBFGS for gradient-based optimization.
-- `Optimization`: A unified interface for various optimization backends, simplifying the integration of multiple libraries.
-- `OptimizationOptimJL`: Integrates the `Optim` library into the `Optimization` interface.
-- `OptimizationBBO`: Provides black-box optimization methods for derivative-free optimization.
-- `OptimizationGCMAES`: Implements the GCMA-ES (Global Covariance Matrix Adaptation Evolution Strategy) algorithm.
-- `OptimizationCMAEvolutionStrategy`: Integrates CMA-ES into the `Optimization` interface.
-- `QuasiMonteCarlo`: Provides quasi-Monte Carlo methods for optimization, useful for high-dimensional problems.
-- `StableRNGs`: Supplies stable random number generators for reproducible optimization results.
-- `GlobalSensitivity`: Provides tools for global sensitivity analysis, including Sobol indices and variance-based sensitivity analysis.
-- `Sindbad`: Provides the core SINDBAD models and types.
-- `Utils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
-- `SetupSimulation`: Provides the SINDBAD setup.
-- `SindbadTEM`: Provides the SINDBAD Terrestrial Ecosystem Model (TEM) as the target for optimization tasks.
-- `SindbadMetrics`: Supplies metrics for evaluating model performance, which are used in cost function calculations.
+- `CMAEvolutionStrategy`: Covariance Matrix Adaptation Evolution Strategy backend.
+- `Evolutionary`: Additional evolutionary/metaheuristic optimizers.
+- `ForwardDiff`: Automatic differentiation for gradient-based workflows.
+- `MultistartOptimization`: Multi-start orchestration utilities.
+- `NLopt`: Large suite of derivative-free and gradient-based optimizers.
+- `Optim`: Quasi-Newton and trust-region algorithms (BFGS, LBFGS, etc.).
+- `Optimization` + `OptimizationOptimJL`: SciML interface plus the Optim bridge.
+- `OptimizationGCMAES` / `OptimizationCMAEvolutionStrategy`: Extra CMA-ES variants exposed through `Optimization`.
+- `QuasiMonteCarlo`: Low-discrepancy sequence sampling (initial populations, Sobol sets, etc.).
+- `StableRNGs`: Reproducible random number generation for stochastic optimizers.
+- `GlobalSensitivity`: Sobol/variance-based sensitivity tooling for pre/post analysis.
+- `SindbadTEM` and `SindbadTEM.Utils`: Core TEM types and helper utilities.
+- `SindbadTEM.Metrics`: Metric/cost definitions referenced during optimization.
+- `Sindbad.SetupSimulation` / `Sindbad.Simulation`: Provide the experiment `info` and runtime hooks the optimizers call.
 
 # Included Files:
 1. **`prepOpti.jl`**:

@@ -1,20 +1,18 @@
 """
     Metrics
 
-The `Metrics` package provides tools for evaluating the performance of SINDBAD models. It includes a variety of metrics for comparing model outputs with observations, calculating statistical measures, and updating model parameters based on evaluation results.
-
+The `Metrics` module provides tools for evaluating the performance of SINDBAD models. It includes a variety of metrics for comparing model outputs with observations, calculating statistical measures, and updating model parameters based on evaluation results.
 
 # Purpose:
-This package is designed to define and compute metrics that assess the accuracy and reliability of SINDBAD models. It supports a wide range of statistical and performance metrics, enabling robust model evaluation and calibration.
+This module is designed to define and compute metrics that assess the accuracy and reliability of SINDBAD models. It supports a wide range of statistical and performance metrics, enabling robust model evaluation and calibration.
 
-It has heavy usage in `SindbadOptimization` but the package is separated to reduce to import burdens of optimization schemes. This allows for import into independent workflows for model evaluation and parameter estimation, e.g., in hybrid modeling.
+It has heavy usage in `Sindbad.Optimization` but the module is separated to reduce import burdens of optimization schemes. This allows for import into independent workflows for model evaluation and parameter estimation, e.g., in hybrid modeling.
 
 # Dependencies:
-- `Sindbad`: Provides the core SINDBAD models and types.
-- `Utils`: Provides utility functions for handling data and NamedTuples, which are essential for metric calculations.
+- `SindbadTEM`: Provides the core SINDBAD models and types.
+- `SindbadTEM.Utils`: Provides utility functions for handling data and NamedTuples, which are essential for metric calculations.
 
 # Included Files:
-
 1. **`handleDataForLoss.jl`**:
    - Implements functions for preprocessing and handling data before calculating loss functions or metrics.
 
@@ -24,22 +22,21 @@ It has heavy usage in `SindbadOptimization` but the package is separated to redu
 3. **`metric.jl`**:
    - Contains the core metric definitions, including statistical measures (e.g., RMSE, correlation) and custom metrics for SINDBAD experiments.
 
-
-!!! note
-    - The package is designed to be extensible, allowing users to define custom metrics for specific use cases.
-    - Metrics are computed in a modular fashion, ensuring compatibility with SINDBAD's optimization and evaluation workflows.
-    - Supports both standard statistical metrics and domain-specific metrics tailored to SINDBAD experiments.
+# Notes:
+- The module is designed to be extensible, allowing users to define custom metrics for specific use cases.
+- Metrics are computed in a modular fashion, ensuring compatibility with SINDBAD's optimization and evaluation workflows.
+- Supports both standard statistical metrics and domain-specific metrics tailored to SINDBAD experiments.
 
 # Examples:
 1. **Calculating RMSE**:
 ```julia
-using Metrics
+using SindbadTEM.Metrics
 rmse = metric(model_output, observations, RMSE())
 ```
 
 2. **Computing correlation**:
 ```julia
-using Metrics
+using SindbadTEM.Metrics
 correlation = metric(model_output, observations, Pcor())
 ```
 

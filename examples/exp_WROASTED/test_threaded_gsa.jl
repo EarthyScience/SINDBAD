@@ -106,6 +106,6 @@ cost_function = opti_helpers.cost_function
 p_bounds=Tuple.(Pair.(opti_helpers.lower_bounds,opti_helpers.upper_bounds));
 method_options = info.optimization.sensitivity_analysis.options;
 
-sampler = getproperty(SindbadOptimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options..., method_options.method_options... )
+sampler = getproperty(Sindbad.Optimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options..., method_options.method_options... )
 results = gsa(cost_function, sampler, p_bounds; method_options..., batch=true)
 

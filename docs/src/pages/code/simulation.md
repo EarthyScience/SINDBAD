@@ -1,5 +1,5 @@
 ```@docs
-SindbadTEM
+Sindbad.Simulation
 ```
 
 ## Exported
@@ -11,9 +11,9 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadTEM]
+Modules = [Sindbad.Simulation]
 Private = false
-Filter = f -> !(f === SindbadTEM)
+Filter = f -> !(f === Sindbad.Simulation)
 ```
 
 ## Internal
@@ -26,6 +26,6 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadTEM]
+Modules = [Sindbad.Simulation]
 Public = false
 ```

@@ -40,14 +40,14 @@ end
 
 
 function globalSensitivity(cost_function, method_options, p_bounds, ::GSASobol; batch=true)
-    sampler = getproperty(SindbadOptimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options..., method_options.method_options... )
+    sampler = getproperty(Sindbad.Optimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options..., method_options.method_options... )
     results = gsa(cost_function, sampler, p_bounds; method_options..., batch=batch)
     return results
 end
 
 
 function globalSensitivity(cost_function, method_options, p_bounds, ::GSASobolDM; batch=true)
-    sampler = getproperty(SindbadOptimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options...)
+    sampler = getproperty(Sindbad.Optimization.GlobalSensitivity, Symbol(method_options.sampler))(; method_options.sampler_options...)
     samples = method_options.samples
     lb = first.(p_bounds)
     ub = last.(p_bounds)

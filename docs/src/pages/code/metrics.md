@@ -1,5 +1,5 @@
 ```@docs
-SindbadMetrics
+Metrics
 ```
 
 ## Exported
@@ -11,9 +11,9 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadMetrics]
+Modules = [Metrics]
 Private = false
-Filter = f -> !(f === SindbadMetrics)
+Filter = f -> !(f === Metrics)
 ```
 
 ## Internal
@@ -26,6 +26,6 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadMetrics]
+Modules = [Metrics]
 Public = false
 ```

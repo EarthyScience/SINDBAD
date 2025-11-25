@@ -1,57 +1,62 @@
 """
-    SindbadTEM.Processes
+    Processes
 
 The core module for defining and implementing models and approaches of ecosystem processes in the SINDBAD framework.
 
-# Description
-The `SindbadTEM.Processes` module provides the infrastructure for defining and implementing terrestrial ecosystem models within the SINDBAD framework. It includes tools for process definition, parameter management, and method implementation.
+# Purpose:
+The `Processes` module provides the infrastructure for defining and implementing terrestrial ecosystem models within the SINDBAD framework. It includes tools for process definition, parameter management, and method implementation. All SINDBAD models inherit from `LandEcosystem` and implement standardized methods for model execution.
 
-# Key Features
-- Model definition and inheritance from `LandEcosystem`
-- Parameter management with metadata (bounds, units, timescale)
-- Standardized method implementation (define, precompute, compute, update)
-- Model documentation and purpose tracking
-- Model approach management and validation
+# Dependencies:
+- `SindbadTEM`: Provides the core SINDBAD models and types, including `LandEcosystem` and `purpose` function.
+- `FieldMetadata`: Enables metadata annotations for model parameters (bounds, units, timescale, descriptions).
+- `Parameters`: Provides the `@with_kw` macro for keyword argument construction.
 
-# Required Methods
-All models must implement at least one of the following methods:
-- `define`: Initialize arrays and variables
-- `precompute`: Prepare variables for computation
-- `compute`: Perform process calculations
-- `update`: Update process state
+# Included Files:
+The module dynamically includes all process implementations from subdirectories in `TEM/Processes/`. Each process directory contains:
+- A main process file (e.g., `gpp.jl`) defining the abstract process type
+- Approach files (e.g., `gpp_LUE.jl`, `gpp_Farquhar.jl`) implementing specific approaches
 
-# Metadata Macros
-- `@bounds`: Define parameter bounds
-- `@describe`: Add parameter descriptions
-- `@units`: Specify parameter units
-- `@timescale`: Define temporal scale of the parameter that is used to determine the units of the parameter and their conversion factors
-- `@with_kw`: Enable keyword argument construction
+Key processes include:
+- Carbon cycle processes (GPP, respiration, allocation, turnover)
+- Water cycle processes (evapotranspiration, runoff, soil water)
+- Vegetation processes (LAI, fAPAR, phenology)
+- And many more ecosystem processes
 
-# Usage
+# Notes:
+- All models must implement at least one of the following methods: `define`, `precompute`, `compute`, or `update`.
+- Parameters should use metadata macros (`@bounds`, `@describe`, `@units`, `@timescale`) for proper documentation and validation.
+- Processes should follow SINDBAD modeling conventions for consistency and maintainability.
+- The module provides `getProcessDocstring` and `getApproachDocString` functions for automatic documentation generation.
+
+# Examples:
+1. **Defining a new process**:
 ```julia
-using Sindbad.Simulation.Processes
+using SindbadTEM.Processes
 
-# Define a new process
 abstract type MyProcess <: LandEcosystem end
 purpose(::Type{MyProcess}) = "Description of my process."
+```
 
-# Define an approach
+2. **Defining an approach with parameters**:
+```julia
 @bounds @describe @units @timescale @with_kw struct MyProcess_v1{T} <: MyProcess
     param1::T = 1.0 | (0.0, 2.0) | "Description" | "units" | "timescale"
 end
+```
 
-# Implement required methods
+3. **Implementing required methods**:
+```julia
 function define(params::MyProcess_v1, forcing, land, helpers)
     # Initialize arrays and variables
     return land
 end
+
+function compute(params::MyProcess_v1, forcing, land, helpers)
+    # Perform process calculations
+    return land
+end
 ```
 
-# Notes
-- Processes should follow the SINDBAD modeling conventions
-- All parameters should have appropriate metadata
-- Methods should be implemented efficiently for performance
-- Documentation should be comprehensive and clear
 """
 module Processes
 

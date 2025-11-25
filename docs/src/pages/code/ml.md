@@ -6,7 +6,7 @@ MachineLearning
 ```@meta
 
 DocTestSetup= quote
-using Sindbad.MachineLearning
+using MachineLearning
 end
 ```
 

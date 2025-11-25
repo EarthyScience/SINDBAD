@@ -122,7 +122,7 @@ upper_bounds = tbl_params.upper
 
 # using Sindbad.Optimization.CMAEvolutionStrategy
 
-results = SindbadOptimization.minimize(cost_function,
+results = Sindbad.Optimization.minimize(cost_function,
     default_values,
     1;
     lower=lower_bounds,
@@ -131,7 +131,7 @@ results = SindbadOptimization.minimize(cost_function,
     multi_threading=true,
 )
 
-optim_para = SindbadOptimization.xbest(results)
+optim_para = Sindbad.Optimization.xbest(results)
 
 # ? https://github.com/AStupidBear/GCMAES.jl
 

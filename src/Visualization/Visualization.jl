@@ -1,31 +1,43 @@
 """
-# Visualization Module
+    Visualization
 
-The `Visualization` module provides visualization tools and helpers for the SINDBAD output analysis. While still under development, the aim is to provide comprehensive tools for visualizing and understanding the behavior of models within the SINDBAD framework.
+Visualization utilities for SINDBAD experiments. This module focuses on
+plotting model outputs, diagnostics, and experiment metadata—currently
+via `Plots.jl`, with hooks prepared for future interactive Makie support.
 
-## Features
-- **Output Data Visualization**: Tools for plotting model outputs and diagnostics of hybrid experimetn.
-- **Input-Output Relationships**: Functions for visualizing input-output structures of models.
-- **Interactive Plots**: Support for interactive visualizations using `GLMakie`.
-- **Static Plots**: Support for static visualizations using `Plots`.
+# Purpose:
+- Provide ready-to-use plotting helpers that understand SINDBAD's
+  `info`, outputs, and metric structures.
+- Speed up exploratory analysis by wrapping common visual layouts
+  (time series, site comparisons, diagnostic summaries).
 
-## Dependencies
-- `Sindbad`: Core SINDBAD framework.
-- `Utils`: Utility functions for SINDBAD.
-- `Plots`: For static plotting.
+# Dependencies:
+- `SindbadTEM`, `SindbadTEM.Utils`, `SindbadTEM.Metrics`: Access to core
+  types, helper utilities, and metric metadata.
+- `Plots`: Default backend for static visualizations.
+- *(Optional / planned)* `GLMakie`, `Colors`: Interactive plotting stack
+  to be enabled once cluster compatibility issues are resolved.
 
-### Expected but not currently installed due to compatilibity in BGC cluster
-- `GLMakie`: For interactive plotting.
-- `Colors`: For color management in plots.
+# Included Files:
+1. **`plotOutputUsingPlots.jl`**:
+   - Implements plotting helpers for land fluxes, pools, and diagnostics
+     using `Plots.jl`.
+2. **`plotFromSindbadInfo.jl`**:
+   - Visualizes experiment metadata (model ordering, approaches, inputs)
+     directly from the `info` NamedTuple.
 
-## Included Files
-- `plotOutputData.jl`: Contains functions for visualizing model output data.
-- `plotFromSindbadInfo.jl`: Contains functions for visualizing input-output relationships and other metadata from `SINDBAD info`.
+# Notes:
+- Additional plot recipes are being added progressively; current focus is
+  on covering the default experiment workflow.
+- The API is reexported via `Sindbad.Visualization`, so users simply load
+  `Sindbad` to access plotting helpers.
 
-## Usage
-To use the module, simply import it:
+# Usage:
 ```julia
 using Sindbad.Visualization
+
+plotPerformanceHistograms(opt_results)
+plotIOModelStructure(info)
 ```
 """
 module Visualization

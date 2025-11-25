@@ -6,7 +6,7 @@ A Julia package for the terrestrial ecosystem models within **S**trategies to **
 The `SindbadTEM` package serves as the core of the SINDBAD framework, providing foundational types, utilities, and tools for building and managing SINDBAD models.
 
 # Purpose:
-This package defines the `LandEcosystem` supertype, which serves as the base for all SINDBAD models. It also provides utilities for managing model variables, tools for model operations, and a catalog of variables used in SINDBAD workflows.
+This module defines the `LandEcosystem` supertype, which serves as the base for all SINDBAD models. It also provides utilities for managing model variables, tools for model operations, and a catalog of variables used in SINDBAD workflows.
 
 # Dependencies:
 - `Reexport`: Simplifies re-exporting functionality from other packages, ensuring a clean and modular design.
@@ -24,28 +24,31 @@ This package defines the `LandEcosystem` supertype, which serves as the base for
 
 
 # Included Files:
-1. **`coreTypes.jl`**:
-   - Defines the core types used in SINDBAD, including the `LandEcosystem` supertype and other fundamental types.
+1. **`Types/Types.jl`**:
+   - Collects all SINDBAD types (model, time, land, array, experiment, etc.) and exports `purpose` along with helper utilities. Re-exported via `SindbadTEM.Types`.
 
-2. **`utilsCore.jl`**:
-   - Contains core utility functions for SINDBAD, including helper methods for array operations and code generation macros for NamedTuple packing and unpacking.
+2. **`TEM/TEMUtils.jl`**:
+   - Provides helper macros and functions for manipulating pools, NamedTuples, logging, and other TER utilities. Re-exported as `SindbadTEM.TEMUtils`.
 
 3. **`sindbadVariableCatalog.jl`**:
-   - Defines a catalog of variables used in SINDBAD models, ensuring consistency and standardization across workflows. Note that every new variable would need a manual entry in the catalog so that the output files are written with correct information.
+   - Defines the canonical catalog of SINDBAD variables to keep file IO metadata consistent.
 
-4. **`modelTools.jl`**:
-   - Provides tools for extracting information from SINDBAD models, including mode code, variables, and parameters.
+4. **`TEM/TEMTools.jl`**:
+   - Supplies tooling for inspecting models (I/O listings, parameter conversions, docstring builders, etc.).
 
-5. **`Models/models.jl`**:
-   - Implements the core SINDBAD models, inheriting from the `LandEcosystem` supertype. Also, introduces the fallback function for compute, precompute, etc. so that they are optional in every model.
+5. **`TEM/Processes/Processes.jl`**:
+   - Declares the process hierarchy, metadata macros, and all process/approach definitions. Re-exported as `SindbadTEM.Processes`.
 
 6. **`generateCode.jl`**:
-   - Contains code generation utilities for SINDBAD models and workflows.
+   - Houses code-generation utilities to scaffold new SINDBAD process implementations and workflows.
+
+7. **`Types/docStringForTypes.jl`**:
+   - Auto-generated documentation that appends type docstrings to the main module for discoverability.
 
 # Notes:
 - The `LandEcosystem` supertype serves as the foundation for all SINDBAD models, enabling extensibility and modularity.
 - The package re-exports key functionality from other packages (e.g., `Flatten`, `StaticArraysCore`, `DataStructures`) to simplify usage and integration.
-- Designed to be lightweight and modular, allowing seamless integration with other SINDBAD packages.
+- Designed to be lightweight and modular, allowing seamless integration with other SINDBAD modules in the top src directory of the repository.
 
 # Examples:
 1. **Defining a new SINDBAD model**:

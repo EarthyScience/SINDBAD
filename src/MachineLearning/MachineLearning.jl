@@ -1,16 +1,16 @@
 """
     MachineLearning
 
-The `MachineLearning` package provides the core functionality for integrating machine learning (ML) and hybrid modeling capabilities into the SINDBAD framework. It enables the use of neural networks and other ML models alongside process-based models for parameter learning, and potentially hybrid modeling, and advanced optimization.
+The `MachineLearning` module provides the core functionality for integrating machine learning (ML) and hybrid modeling capabilities into the SINDBAD framework. It enables the use of neural networks and other ML models alongside process-based models for parameter learning, and potentially hybrid modeling, and advanced optimization.
 
 # Purpose
-This package brings together all components required for hybrid (process-based + ML) modeling in SINDBAD, including data preparation, model construction, training routines, gradient computation, and optimizer management. It supports flexible configuration, cross-validation, and seamless integration with SINDBAD's process-based modeling workflows.
+This module brings together all components required for hybrid (process-based + ML) modeling in SINDBAD, including data preparation, model construction, training routines, gradient computation, and optimizer management. It supports flexible configuration, cross-validation, and seamless integration with SINDBAD's process-based modeling workflows.
 
 # Dependencies
 - `Distributed`: Parallel and distributed computing utilities (`nworkers`, `pmap`, `workers`, `nprocs`, `CachingPool`).
-- `Sindbad`, `SindbadTEM`, `SetupSimulation`: Core SINDBAD modules for process-based modeling and setup.
-- `DataLoaders.YAXArrays`, `DataLoaders.Zarr`, `DataLoaders.AxisKeys`, `DataLoaders`: Data handling, array, and cube utilities.
-- `SindbadMetrics`: Metrics for model performance/loss evaluation.
+- `SindbadTEM`, `Sindbad.SetupSimulation`, `Sindbad.Simulation`: Core SINDBAD modules for process-based modeling and setup.
+- `Sindbad.DataLoaders`: Provides `YAXArrays`, `Zarr`, `AxisKeys`, cube utilities, and helper types like `AllNaN`.
+- `SindbadTEM.Metrics`: Metrics for model performance/loss evaluation.
 - `Enzyme`, `Zygote`, `ForwardDiff`, `FiniteDiff`, `FiniteDifferences`, `PolyesterForwardDiff`: Automatic and numerical differentiation libraries for gradient-based learning.
 - `Flux`: Neural network layers and training utilities for ML models.
 - `Optimisers`: Optimizers for training neural networks.

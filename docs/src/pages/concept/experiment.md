@@ -31,7 +31,7 @@ SINDBAD experiments are guided by four fundamental principles:
 ### 2. Flexibility
 - Supports diverse modeling approaches
 - Integrates core models from base packages
-- Utilizes optimization tools from SindbadOptimization
+- Utilizes optimization tools from Sindbad.Optimization
 - Adapts to various scientific objectives
 
 ### 3. Extensibility

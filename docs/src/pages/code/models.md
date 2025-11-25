@@ -2201,7 +2201,7 @@ waterBalance_simple
 ```@meta
 CollapsedDocStrings = false
 DocTestSetup= quote
-using Sindbad.Simulation.Processes
+using SindbadTEM.Processes
 end
 ```
 

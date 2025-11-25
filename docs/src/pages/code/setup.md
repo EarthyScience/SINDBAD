@@ -6,7 +6,7 @@ SetupSimulation
 ```@meta
 
 DocTestSetup= quote
-using Sindbad.SetupSimulation
+using SetupSimulation
 end
 ```
 

@@ -1,8 +1,9 @@
-using Sindbad.Simulation
+using SindbadTEM
+using Sindbad
+using SindbadTEM.Metrics
 using Sindbad.Simulation
 using Sindbad.DataLoaders
 using Sindbad.SetupSimulation
-using SindbadTEM.Metrics
 using Sindbad.MachineLearning
 using Sindbad.Optimization
 using Sindbad.Visualization

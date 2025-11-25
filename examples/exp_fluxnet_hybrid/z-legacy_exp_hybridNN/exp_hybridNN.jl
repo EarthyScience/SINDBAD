@@ -1,6 +1,6 @@
 # install dependencies by running the following line first:
 # dev ../.. ../../lib/Utils/ ../../lib/DataLoaders/ ../../lib/SindbadMetrics/ ../../lib/SetupSimulation/ ../../lib/SindbadTEM ../../lib/MachineLearning
-# dev ../.. ../../lib/Utils/ ../../lib/DataLoaders/ ../../lib/SindbadMetrics/ ../../lib/SetupSimulation/ ../../lib/SindbadTEM ../../lib/SindbadOptimization ../../lib/MachineLearning
+# dev ../.. ../../lib/Utils/ ../../lib/DataLoaders/ ../../lib/SindbadMetrics/ ../../lib/SetupSimulation/ ../../lib/SindbadTEM ../../lib/Sindbad.Optimization ../../lib/MachineLearning
 using Revise
 using Sindbad.DataLoaders
 using Sindbad.Simulation
