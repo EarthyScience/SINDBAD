@@ -13,7 +13,7 @@ using DocumenterVitepress
 using Documenter
 using DocStringExtensions
 # using DocumenterMermaid
-# dev ../ ../lib/Utils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SetupSimulation ../lib/SindbadTEM ../lib/MachineLearning
+# dev ../ ../lib/Utils ../lib/DataLoaders ../lib/SindbadMetrics ../lib/SetupSimulation ../lib/SindbadTEM ../lib/MachineLearning
 
 makedocs(; sitename="Sindbad",
     authors="Sindbad Development Team",

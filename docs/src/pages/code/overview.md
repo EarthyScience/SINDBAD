@@ -81,19 +81,19 @@ graph TD
     
     %% Lib packages
     Utils[Utils] --> Sindbad
-    SindbadData[SindbadData] --> Sindbad
-    SindbadData --> Utils
+    DataLoaders[DataLoaders] --> Sindbad
+    DataLoaders --> Utils
     
     SetupSimulation[SetupSimulation] --> Sindbad
     SetupSimulation --> Utils
-    SetupSimulation --> SindbadData
+    SetupSimulation --> DataLoaders
     
     SindbadMetrics[SindbadMetrics] --> Sindbad
     SindbadMetrics --> Utils
     
     SindbadTEM[SindbadTEM] --> Sindbad
     SindbadTEM --> Utils
-    SindbadTEM --> SindbadData
+    SindbadTEM --> DataLoaders
     SindbadTEM --> SetupSimulation
     SindbadTEM --> SindbadMetrics
     
@@ -112,7 +112,7 @@ graph TD
     
     SindbadExperiment[SindbadExperiment] --> Sindbad
     SindbadExperiment --> Utils
-    SindbadExperiment --> SindbadData
+    SindbadExperiment --> DataLoaders
     SindbadExperiment --> SetupSimulation
     SindbadExperiment --> SindbadTEM
     SindbadExperiment --> SindbadOptimization

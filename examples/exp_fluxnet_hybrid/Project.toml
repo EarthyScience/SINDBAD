@@ -5,7 +5,7 @@ GCMAES = "4aa9d100-eb0f-11e8-15f1-25748831eb3b"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
-SindbadData = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
+DataLoaders = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
 MachineLearning = "eb1d8004-2d42-4eef-b369-ed0645c101e8"
 SindbadMetrics = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
 SindbadOptimization = "64fff8bd-0c13-402c-aa96-b97d0bc3655c"
@@ -16,7 +16,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [sources]
 Sindbad = {path = "../.."}
-SindbadData = {path = "../../lib/SindbadData"}
+DataLoaders = {path = "../../lib/DataLoaders"}
 MachineLearning = {path = "../../lib/MachineLearning"}
 SindbadMetrics = {path = "../../lib/SindbadMetrics"}
 SindbadOptimization = {path = "../../lib/SindbadOptimization"}

@@ -10,7 +10,7 @@ This package acts as a high-level interface for conducting experiments using the
 - `Sindbad`: Provides the core SINDBAD models and types.
 - `Utils`: Provides utility functions for handling data, spatial operations, and other helper tasks.
 - `SetupSimulation`: Manages setup configurations, parameter handling, and shared types for SINDBAD experiments.
-- `SindbadData`: Handles data ingestion, preprocessing, and management for SINDBAD experiments.
+- `DataLoaders`: Handles data ingestion, preprocessing, and management for SINDBAD experiments.
 - `SindbadTEM`: Implements the SINDBAD Terrestrial Ecosystem Model (TEM), enabling simulations for single locations, spatial grids, and cubes.
 - `SindbadOptimization`: Provides optimization algorithms for parameter estimation and model calibration.
 - `SindbadMetrics`: Supplies metrics for evaluating model performance and comparing simulations with observations.
@@ -23,7 +23,7 @@ This package acts as a high-level interface for conducting experiments using the
    - Provides utilities for saving experiment outputs in various formats, ensuring compatibility with downstream analysis tools.
 
 # Notes:
-- The package re-exports core SINDBAD packages (`Sindbad`, `Utils`, `SetupSimulation`, `SindbadData`, `SindbadTEM`, `SindbadOptimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadExperiment`.
+- The package re-exports core SINDBAD packages (`Sindbad`, `Utils`, `SetupSimulation`, `DataLoaders`, `SindbadTEM`, `SindbadOptimization`, `SindbadMetrics`) for convenience, allowing users to access their functionality directly through `SindbadExperiment`.
 - Designed to be extensible, enabling users to customize and expand the experimental workflow as needed.
 - Future extensions may include support for additional data formats (e.g., NetCDF, Zarr) and advanced output handling.
 

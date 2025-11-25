@@ -40,7 +40,7 @@ for domain ∈ sites
     nrepeat = 200
     data_path = joinpath("./examples/exp_WROASTED",path_input)
     # data_path = getAbsDataPath(info, path_input)
-    nc = SindbadData.NetCDF.open(data_path)
+    nc = DataLoaders.NetCDF.open(data_path)
     y_dist = nc.gatts["last_disturbance_on"]
 
     nrepeat_d = -1

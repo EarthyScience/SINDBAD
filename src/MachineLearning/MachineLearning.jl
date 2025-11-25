@@ -9,7 +9,7 @@ This package brings together all components required for hybrid (process-based +
 # Dependencies
 - `Distributed`: Parallel and distributed computing utilities (`nworkers`, `pmap`, `workers`, `nprocs`, `CachingPool`).
 - `Sindbad`, `SindbadTEM`, `SetupSimulation`: Core SINDBAD modules for process-based modeling and setup.
-- `SindbadData.YAXArrays`, `SindbadData.Zarr`, `SindbadData.AxisKeys`, `SindbadData`: Data handling, array, and cube utilities.
+- `DataLoaders.YAXArrays`, `DataLoaders.Zarr`, `DataLoaders.AxisKeys`, `DataLoaders`: Data handling, array, and cube utilities.
 - `SindbadMetrics`: Metrics for model performance/loss evaluation.
 - `Enzyme`, `Zygote`, `ForwardDiff`, `FiniteDiff`, `FiniteDifferences`, `PolyesterForwardDiff`: Automatic and numerical differentiation libraries for gradient-based learning.
 - `Flux`: Neural network layers and training utilities for ML models.
@@ -48,14 +48,14 @@ module MachineLearning
         nprocs,
         CachingPool
 
-    using Sindbad.Simulation
-    using Sindbad.Simulation
-    using Sindbad.SetupSimulation
-    using Sindbad.DataLoaders.YAXArrays
-    using Sindbad.DataLoaders.Zarr
-    using Sindbad.DataLoaders.AxisKeys
-    using Sindbad.DataLoaders: AllNaN
-    using Sindbad.DataLoaders: yaxCubeToKeyedArray, Cube
+    using SindbadTEM
+    using ..Simulation
+    using ..SetupSimulation
+    using ..DataLoaders.YAXArrays
+    using ..DataLoaders.Zarr
+    using ..DataLoaders.AxisKeys
+    using ..DataLoaders: AllNaN
+    using ..DataLoaders: yaxCubeToKeyedArray, Cube
     using SindbadTEM.Metrics
     using Enzyme
 

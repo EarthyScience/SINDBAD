@@ -1,7 +1,7 @@
 """
-    SindbadTEM
+    Simulation
 
-The `SindbadTEM` package provides the core functionality for running the SINDBAD Terrestrial Ecosystem Model (TEM). It includes utilities for preparing model-ready objects, managing spinup processes and running models.
+The `Simulation` package provides the core functionality for running the SINDBAD Terrestrial Ecosystem Model (TEM). It includes utilities for preparing model-ready objects, managing spinup processes and running models.
 
 # Purpose:
 This package integrates various components and utilities required to execute the SINDBAD TEM, including precomputations, spinup, and time loop simulations. It supports parallel execution and efficient handling of large datasets.
@@ -11,7 +11,7 @@ This package integrates various components and utilities required to execute the
 - `NLsolve`: Used for solving nonlinear equations, particularly in spinup processes (e.g., fixed-point solvers).
 - `ProgressMeter`: Displays progress bars for long-running simulations, improving user feedback.
 - `Sindbad`: Provides the core SINDBAD models and types.
-- `SindbadData`: Provides the SINDBAD data handling functions.
+- `DataLoaders`: Provides the SINDBAD data handling functions.
 - `Utils`: Provides utility functions for handling NamedTuple, spatial operations, and other helper tasks for spatial and temporal operations.
 - `SetupSimulation`: Provides the SINDBAD setup functions.
 - `ThreadPools`: Enables efficient thread-based parallelization for running simulations across multiple locations.
@@ -51,7 +51,7 @@ This package integrates various components and utilities required to execute the
 - The package is designed to be modular and extensible, allowing users to customize and extend its functionality for specific use cases.
 - It integrates tightly with the SINDBAD framework, leveraging shared types and utilities from `SetupSimulation`.
 """
-module SindbadTEM
+module Simulation
    using ComponentArrays
    using NLsolve
    using ProgressMeter
@@ -62,7 +62,7 @@ module SindbadTEM
 
    using ThreadPools
 
-   include("utilsTEM.jl")
+   include("utilsSimulation.jl")
    include("deriveSpinupForcing.jl")
    include("prepTEMOut.jl")
    include("runModels.jl")
@@ -75,4 +75,4 @@ module SindbadTEM
    include("runExperiment.jl")
    include("saveOutput.jl")
 
-end # module SindbadTEM
+end # module Simulation

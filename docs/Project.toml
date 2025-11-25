@@ -5,7 +5,7 @@ Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterVitepress = "4710194d-e776-4893-9690-8d956a29c365"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
-SindbadData = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
+DataLoaders = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
 SindbadExperiment = "bbd31fc6-1b7a-43f2-b792-0273fef35116"
 MachineLearning = "eb1d8004-2d42-4eef-b369-ed0645c101e8"
 SindbadMetrics = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
@@ -17,7 +17,7 @@ Visualization = "49d56b06-c9ff-43e2-9c93-8639e8c3cbdc"
 
 [sources]
 Sindbad = {path = "../"}
-SindbadData = {path = "../lib/SindbadData"}
+DataLoaders = {path = "../lib/DataLoaders"}
 SindbadExperiment = {path = "../lib/SindbadExperiment"}
 MachineLearning = {path = "../lib/MachineLearning"}
 SindbadMetrics = {path = "../lib/SindbadMetrics"}

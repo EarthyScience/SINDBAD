@@ -77,17 +77,17 @@ module Optimization
    using Optim
    using Optimization
    using OptimizationOptimJL
-   using OptimizationBBO
+   # using OptimizationBBO
    using OptimizationGCMAES
    using OptimizationCMAEvolutionStrategy
    # using OptimizationQuadDIRECT
    using QuasiMonteCarlo
    using StableRNGs
-   using Sindbad.Simulation
-   using Utils
-   using Sindbad.SetupSimulation
-   using Sindbad.Simulation
+   using SindbadTEM
+   using SindbadTEM.Utils
    using SindbadTEM.Metrics
+   using ..SetupSimulation
+   using ..Simulation
 
    include("prepOpti.jl")
    include("optimizer.jl")

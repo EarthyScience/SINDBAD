@@ -33,7 +33,7 @@ jobs:
       - name: Pull Julia cache
         uses: julia-actions/cache@v2
       - name: Install documentation dependencies
-        run: julia --project=docs -e 'using Pkg; pkg"dev . ./lib/Utils ./lib/SindbadData ./lib/SindbadMetrics ./lib/SetupSimulation ./lib/SindbadTEM ./lib/MachineLearning"; Pkg.instantiate(); Pkg.precompile(); Pkg.status()'
+        run: julia --project=docs -e 'using Pkg; pkg"dev . ./lib/Utils ./lib/DataLoaders ./lib/SindbadMetrics ./lib/SetupSimulation ./lib/SindbadTEM ./lib/MachineLearning"; Pkg.instantiate(); Pkg.precompile(); Pkg.status()'
       - name: Build and deploy docs
         uses: julia-actions/julia-docdeploy@v1
         env:

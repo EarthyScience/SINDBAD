@@ -40,7 +40,7 @@ const codeItems = [
 const codeGenItems = [
   { text: 'Sindbad', link: '/pages/code_gen/Sindbad' },
   { text: ' + Core', link: '/pages/code_gen/Sindbad' },
-  { text: ' + Data', link: '/pages/code_gen/SindbadData' },
+  { text: ' + Data', link: '/pages/code_gen/DataLoaders' },
   { text: ' + Experiment', link: '/pages/code_gen/SindbadExperiment' },
   { text: ' + Metrics', link: '/pages/code_gen/SindbadMetrics' },
   { text: ' + ML', link: '/pages/code_gen/MachineLearning' },

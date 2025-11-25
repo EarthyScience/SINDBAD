@@ -58,8 +58,8 @@ This package is designed to produce the SINDBAD `info` object, which contains al
 """
 module SetupSimulation
 
-   using Sindbad.Simulation
-   using Utils
+   using SindbadTEM
+   using SindbadTEM.Utils
    using ConstructionBase
    @reexport using CSV: CSV
    @reexport using Infiltrator
@@ -80,7 +80,7 @@ module SetupSimulation
    include("setupInfo.jl")
 
    #  include doc strings for all types in Types
-   ds_file = joinpath(dirname(pathof(Sindbad)), "Types/docStringForTypes.jl")
+   ds_file = joinpath(dirname(pathof(SindbadTEM)), "Types/docStringForTypes.jl")
    loc_types = subtypes(SindbadTypes)
    open(ds_file, "a") do o_file
       writeTypeDocString(o_file, SindbadTypes)

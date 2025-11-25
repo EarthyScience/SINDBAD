@@ -143,7 +143,7 @@ o_set = :set1
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 
     # load matlab wroasted results
-    nc_ml = SindbadData.NetCDF.open(ml_data_file)
+    nc_ml = DataLoaders.NetCDF.open(ml_data_file)
 
     varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :nirv => "gpp")
 

@@ -324,9 +324,9 @@ Adds a specified Julia package to the environment of a given module or project.
 
 **Usage**
 
-Add the DataFrames package to `SindbadData` module
+Add the DataFrames package to `DataLoaders` module
 ```julia
-addPackage(SindbadData, "DataFrames")
+addPackage(DataLoaders, "DataFrames")
 ```
 
 **Notes**

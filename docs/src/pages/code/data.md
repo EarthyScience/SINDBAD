@@ -1,5 +1,5 @@
 ```@docs
-SindbadData
+DataLoaders
 ```
 
 ## Exported
@@ -11,9 +11,9 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadData]
+Modules = [DataLoaders]
 Private = false
-Filter = f -> !(f === SindbadData)
+Filter = f -> !(f === DataLoaders)
 ```
 
 ## Internal
@@ -26,6 +26,6 @@ end
 ```
 
 ```@autodocs
-Modules = [SindbadData]
+Modules = [DataLoaders]
 Public = false
 ```

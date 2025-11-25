@@ -29,8 +29,8 @@ using Sindbad.Visualization
 ```
 """
 module Visualization
-    using Sindbad.Simulation
-    using Utils
+    using SindbadTEM
+    using SindbadTEM.Utils
     using SindbadTEM.Metrics
     # using GLMakie
     # @reexport using GLMakie.Makie
