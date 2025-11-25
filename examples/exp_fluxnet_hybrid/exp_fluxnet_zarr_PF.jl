@@ -1,5 +1,5 @@
 using Revise
-using Sindbad.Simulation
+using Sindbad
 using Dates
 using Plots
 toggleStackTraceNT()

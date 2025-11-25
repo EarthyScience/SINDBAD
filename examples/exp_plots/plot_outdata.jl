@@ -1,5 +1,5 @@
 using Revise
-using Sindbad.Simulation
+using Sindbad
 toggleStackTraceNT()
 
 experiment_json = "../exp_plots/settings_plots/experiment.json"

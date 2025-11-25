@@ -60,7 +60,7 @@ function parseSaveCode(info)
             appr_name = string(nameof(typeof(_mod)))
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
-            mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
+            mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/TEM/Processes", mod_name, appr_name * ".jl")
             write(o_file, "# " * mod_file * "\n")
             mod_string = "# Call order: $mi\n\n"
             write(o_file, mod_string)
@@ -69,7 +69,7 @@ function parseSaveCode(info)
             if mi == lastindex(models)
                 mod_ending = "\n"
             end
-            mod_code = @code_string Models.define(_mod, nothing, nothing, nothing)
+            mod_code = @code_string SindbadTEM.Processes.define(_mod, nothing, nothing, nothing)
             if occursin("LandEcosystem", mod_code)
                 if isnothing(fallback_code_define)
                     fallback_code_define = mod_code
@@ -90,21 +90,21 @@ function parseSaveCode(info)
         mod_string = "# Code for precompute and compute functions in models of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain.\n"
         mod_string *= "# Precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step.\n"
         write(o_file, mod_string)
-        mod_string = "# Based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
+        mod_string = "# Based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/TEM/Processes/[model]/[approach].jl\n"
         write(o_file, mod_string)
         for (mi, _mod) in enumerate(models)
             mod_name = string(nameof(supertype(typeof(_mod))))
             appr_name = string(nameof(typeof(_mod)))
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
-            mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
+            mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/TEM/Processes", mod_name, appr_name * ".jl")
             write(o_file, "# " * mod_file * "\n")
             mod_string = "# Call order: $mi\n\n"
             write(o_file, mod_string)
 
             mod_ending = "\n\n"
 
-            mod_code = @code_string Models.precompute(_mod, nothing, nothing, nothing)
+            mod_code = @code_string SindbadTEM.Processes.precompute(_mod, nothing, nothing, nothing)
 
             if occursin("LandEcosystem", mod_code)
                 if isnothing(fallback_code_precompute)
@@ -114,7 +114,7 @@ function parseSaveCode(info)
                 write(o_file, mod_code * mod_ending)
             end
 
-            mod_code = @code_string Models.compute(_mod, nothing, nothing, nothing)
+            mod_code = @code_string SindbadTEM.Processes.compute(_mod, nothing, nothing, nothing)
             if occursin("LandEcosystem", mod_code)
                 if isnothing(fallback_code_compute)
                     fallback_code_compute = mod_code
@@ -134,14 +134,14 @@ function parseSaveCode(info)
     # Write structs
     open(outfile_struct, "w") do o_file
         mod_string = "# Code for parameter structs of SINDBAD for $(info.settings.experiment.basics.name) experiment applied to $(info.settings.experiment.basics.domain) domain.\n"
-        mod_string *= "# Based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
+        mod_string *= "# Based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/TEM/Processes/[model]/[approach].jl\n\n"
         write(o_file, mod_string)
         write(o_file, "abstract type LandEcosystem end\n")
 
         for (mi, _mod) in enumerate(models)
             mod_name = string(nameof(supertype(typeof(_mod))))
             appr_name = string(nameof(typeof(_mod)))
-            mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/Models", mod_name, appr_name * ".jl")
+            mod_file = joinpath(info.temp.experiment.dirs.sindbad, "src/TEM/Processes", mod_name, appr_name * ".jl")
             mod_string = "\n# $appr_name\n"
             write(o_file, mod_string)
             write(o_file, "# " * mod_file * "\n")

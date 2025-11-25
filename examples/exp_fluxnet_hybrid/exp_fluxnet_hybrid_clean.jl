@@ -1,11 +1,11 @@
 using Utils
-using Sindbad.Simulation
+using Sindbad
 using Sindbad.SetupSimulation
 using Sindbad.DataLoaders
 using Sindbad.DataLoaders.DimensionalData
 using Sindbad.DataLoaders.AxisKeys
 using Sindbad.DataLoaders.YAXArrays
-# using Sindbad.Simulation
+# using Sindbad
 using Sindbad.MachineLearning
 using Sindbad.MachineLearning.JLD2
 using ProgressMeter

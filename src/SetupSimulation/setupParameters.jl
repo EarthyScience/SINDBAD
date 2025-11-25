@@ -60,11 +60,11 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     timescale=String[]
     for obj in selected_models
         k_names = propertynames(obj)
-        push!(constrains, Models.bounds(obj)...)
+        push!(constrains, SindbadTEM.Processes.bounds(obj)...)
         push!(default, [getproperty(obj, name) for name in k_names]...)
         push!(name, k_names...)
         push!(model_approach, repeat([nameof(typeof(obj))], length(k_names))...)
-        push!(timescale, Models.timescale(obj)...)
+        push!(timescale, SindbadTEM.Processes.timescale(obj)...)
     end
     # infer types by re-building
     constrains = [c for c in constrains]
@@ -74,10 +74,10 @@ function getParameters(selected_models::Tuple, num_type, model_timestep; return_
     lower = [constrains[i][1] for i in 1:nbounds]
     upper = [constrains[i][2] for i in 1:nbounds]
     
-    model = [Symbol(supertype(getproperty(Models, m))) for m in model_approach]
+    model = [Symbol(supertype(getproperty(SindbadTEM.Processes, m))) for m in model_approach]
     model_str = string.(model)
     name_full = [join((last(split(model_str[i], ".")), name[i]), ".") for i in 1:nbounds]
-    approach_func = [getfield(Models, m) for m in model_approach]
+    approach_func = [getfield(SindbadTEM.Processes, m) for m in model_approach]
     model_prev = model_approach[1]
     m_id = findall(x-> x==model_prev, model_names_list)[1]
     model_id = map(model_approach) do m

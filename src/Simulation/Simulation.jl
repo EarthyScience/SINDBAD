@@ -64,8 +64,9 @@ module Simulation
    using SindbadTEM
    using SindbadTEM.Utils
    using ..SetupSimulation
-   using ..DataLoaders: YAXArrays
-
+   using ..DataLoaders
+   using ..Visualization
+   using ..Optimization
    using ThreadPools
 
    include("utilsSimulation.jl")

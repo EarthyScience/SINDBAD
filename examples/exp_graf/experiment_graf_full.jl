@@ -1,6 +1,6 @@
 using Revise
 using Sindbad.SetupSimulation
-@time using Sindbad.Simulation
+@time using Sindbad
 using Plots
 toggleStackTraceNT()
 domain = "africa_full_parameters";

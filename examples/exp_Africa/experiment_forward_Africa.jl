@@ -1,5 +1,5 @@
 using Revise
-using Sindbad.Simulation
+using Sindbad
 toggleStackTraceNT()
 
 domain = "Africa";

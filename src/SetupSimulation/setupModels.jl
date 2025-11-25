@@ -55,7 +55,7 @@ function getAllSindbadModels(info; sindbad_models=standard_sindbad_model,  selec
     foreach(sindbad_models) do sm
         if sm in selected_models
             selected_approach = selected_models_info === nothing ? "none" : Symbol("$(sm)_$(getfield(selected_models_info, sm).approach)")
-            showInfo(nothing, @__FILE__, @__LINE__, "$(mod_ind): `$(selected_approach)`.jl => $(purpose(getproperty(Sindbad, selected_approach)))", n_m=6)
+            showInfo(nothing, @__FILE__, @__LINE__, "$(mod_ind): `$(selected_approach)`.jl => $(purpose(getproperty(SindbadTEM, selected_approach)))", n_m=6)
             mod_ind += 1
         end
     end

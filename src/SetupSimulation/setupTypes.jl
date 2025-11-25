@@ -155,7 +155,7 @@ Retrieves the type instance for a given cost metric based on its name.
 """
 function getTypeInstanceForCostMetric(option_name::String)
     opt_ss = toUpperCaseFirst(option_name)
-    struct_instance = getfield(Sindbad, opt_ss)()
+    struct_instance = getfield(SindbadTEM, opt_ss)()
     return struct_instance
 end
 

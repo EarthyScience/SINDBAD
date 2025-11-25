@@ -1,7 +1,5 @@
 using Revise
-using Sindbad.Simulation
-using Sindbad.Simulation
-using Sindbad.DataLoaders
+using Sindbad
 toggleStackTraceNT()
 experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);

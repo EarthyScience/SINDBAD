@@ -133,7 +133,7 @@ function setDebugErrorCatcher end
 
 function setDebugErrorCatcher(::DoCatchModelErrors)
     showInfo(setDebugErrorCatcher, @__FILE__, @__LINE__, "setting up debug error catcher", n_m=1)
-    Sindbad.eval(:(error_catcher = []))
+    SindbadTEM.eval(:(error_catcher = []))
     return nothing
 end
 

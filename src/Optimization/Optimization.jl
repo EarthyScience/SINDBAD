@@ -82,7 +82,7 @@ module Optimization
    using SindbadTEM.Utils
    using SindbadTEM.Metrics
    using ..SetupSimulation
-   using ..Simulation
+   # using ..Simulation
 
    include("prepOpti.jl")
    include("optimizer.jl")

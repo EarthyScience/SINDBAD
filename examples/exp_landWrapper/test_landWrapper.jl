@@ -1,8 +1,8 @@
 using Revise
 using Sindbad.DataLoaders
-using Sindbad.Simulation
+using Sindbad
 using SindbadTEM.Metrics
-using Sindbad.Simulation
+using Sindbad
 using Plots
 toggleStackTraceNT()
 experiment_json = "../exp_landWrapper/settings_landWrapper/experiment.json"

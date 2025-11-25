@@ -1,5 +1,5 @@
 
-using Sindbad.Simulation
+using Sindbad
 
 info = getExperimentInfo("../exp_flare/settings_flare/experiment.json"); 
 

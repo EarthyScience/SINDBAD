@@ -1,5 +1,5 @@
 using Revise
-using Sindbad.Simulation
+using Sindbad
 using Sindbad.MachineLearning
 using Sindbad.MachineLearning.JLD2
 using Sindbad.MachineLearning.Random

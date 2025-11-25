@@ -257,13 +257,13 @@ An array of all defined things in the SINDBAD framework that match the specified
 **Usage**
 ```julia
 # Get all defined types in the SINDBAD framework
-defined_types = getSindbadDefinitions(Sindbad, Type)
+defined_types = getSindbadDefinitions(SindbadTEM, Type)
 
 # Get all functions in a specific module
 functions = getSindbadDefinitions(SindbadTEM.Processes, Function)
 
 # Get all definitions including external ones
-all_definitions = getSindbadDefinitions(Sindbad, Any, internal_only=false)
+all_definitions = getSindbadDefinitions(SindbadTEM, Any, internal_only=false)
 ```
 
 ::: tip

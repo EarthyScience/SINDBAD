@@ -21,7 +21,7 @@ Returns all defined (and optionally internal) objects in the SINDBAD framework.
 # Example
 ```julia
 # Get all defined types in the SINDBAD framework
-defined_types = getSindbadDefinitions(Sindbad, Type)
+defined_types = getSindbadDefinitions(SindbadTEM, Type)
 ```
 """
 function getSindbadDefinitions(sindbad_module, what_to_get; internal_only=true)

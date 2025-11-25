@@ -62,31 +62,28 @@ Sindbad.Visualization.plot_output(results)
 ```
 """
 module Sindbad
+  using SindbadTEM.Reexport: @reexport
 
-using SindbadTEM
-using SindbadTEM.Reexport: @reexport
-@reexport using SindbadTEM
-
-using ConstructionBase
-using CSV: CSV
-using JSON: parsefile, json, print as json_print
-using JLD2: @save, load
-using YAXArrays: YAXArrays, YAXArray
-using YAXArrays.Datasets: savedataset
+  @reexport using SindbadTEM
+  @reexport using ConstructionBase
+  @reexport using CSV: CSV
+  @reexport using JSON: parsefile, json, print as json_print
+  @reexport using JLD2: @save, load
+  @reexport using YAXArrays: YAXArrays, YAXArray
+  @reexport using YAXArrays.Datasets: savedataset
 
 
 
-include("DataLoaders/DataLoaders.jl")
-@reexport using .DataLoaders
-include("SetupSimulation/SetupSimulation.jl")
-@reexport using .SetupSimulation
-include("Simulation/Simulation.jl")
-@reexport using .Simulation
-include("Optimization/Optimization.jl")
-@reexport using .Optimization
-include("MachineLearning/MachineLearning.jl")
-@reexport using .MachineLearning
-include("Visualization/Visualization.jl")
-@reexport using .Visualization
-
+  include("DataLoaders/DataLoaders.jl")
+  @reexport using .DataLoaders
+  include("SetupSimulation/SetupSimulation.jl")
+  @reexport using .SetupSimulation
+  include("Visualization/Visualization.jl")
+  @reexport using .Visualization
+  include("Optimization/Optimization.jl")
+  @reexport using .Optimization
+  include("MachineLearning/MachineLearning.jl")
+  @reexport using .MachineLearning
+  include("Simulation/Simulation.jl")
+  @reexport using .Simulation
 end # module Sindbad

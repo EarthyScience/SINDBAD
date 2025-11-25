@@ -47,31 +47,30 @@ module MachineLearning
         workers,
         nprocs,
         CachingPool
-
+    using Enzyme
+    using FiniteDiff
+    using FiniteDifferences
+    using Flux
+    using ForwardDiff
+    using Base.Iterators: repeated, partition
+    using JLD2
+    using Optimisers
+    using PolyesterForwardDiff
+    using PreallocationTools
+    import ProgressMeter: @showprogress, Progress, next!, progress_pmap, progress_map
+    using Random
+    using Statistics
+    using Zygote
+    
     using SindbadTEM
-    using ..Simulation
+    using SindbadTEM.Metrics
     using ..SetupSimulation
     using ..DataLoaders.YAXArrays
     using ..DataLoaders.Zarr
     using ..DataLoaders.AxisKeys
     using ..DataLoaders: AllNaN
     using ..DataLoaders: yaxCubeToKeyedArray, Cube
-    using SindbadTEM.Metrics
-    using Enzyme
 
-    using Flux
-    using Optimisers
-    using FiniteDiff
-    using FiniteDifferences
-    using ForwardDiff
-    using PolyesterForwardDiff
-    using Zygote
-    using Statistics
-    import ProgressMeter: @showprogress, Progress, next!, progress_pmap, progress_map
-    using PreallocationTools
-    using Base.Iterators: repeated, partition
-    using Random
-    using JLD2
 
     include("utilsML.jl")
     include("diffCaches.jl")
