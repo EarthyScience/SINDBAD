@@ -30,10 +30,6 @@ This package is designed to provide reusable utilities for data manipulation, st
 """
 module Utils
    using ..SindbadTEM
-   using Crayons
-   using StyledStrings
-   using FIGlet
-   using Logging
 
    include("getArrayView.jl")
    include("utilsBasic.jl")

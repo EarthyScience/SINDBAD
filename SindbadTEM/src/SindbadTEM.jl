@@ -83,6 +83,9 @@ module SindbadTEM
    @reexport using StatsBase
    @reexport using NaNStatistics
    @reexport using Crayons
+   @reexport using StyledStrings
+   @reexport using FIGlet
+   @reexport using Logging
 
    # create a tmp_ file for tracking the creation of new approaches. This is needed because precompiler is not consistently loading the newly created approaches. This file is appended every time a new model/approach is created which forces precompile in the next use of SindbadTEM.
    file_path = file_path = joinpath(@__DIR__, "tmp_precompile_placeholder.jl")
@@ -107,6 +110,10 @@ module SindbadTEM
    include("TEM/Processes/Processes.jl")
    include("generateCode.jl")
    @reexport using .Processes
+   include("Utils/Utils.jl")
+   @reexport using .Utils
+   include("Metrics/Metrics.jl")
+   @reexport using .Metrics
 
    # append the docstring of the LandEcosystem type to the docstring of the SindbadTEM module so that all the methods of the LandEcosystem type are included after the models have been described
    @doc """

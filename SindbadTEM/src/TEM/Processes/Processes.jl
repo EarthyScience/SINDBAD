@@ -382,7 +382,7 @@ module Processes
     end
 
     # now having this ordered list is independent from the step including the models into this `module`.
-    include(joinpath(@__DIR__, "standardSindbadModels.jl"))
+    include(joinpath(@__DIR__, "standardSindbadTEM.jl"))
 
 
 end

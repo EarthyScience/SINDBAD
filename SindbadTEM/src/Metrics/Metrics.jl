@@ -47,7 +47,7 @@ correlation = metric(model_output, observations, Pcor())
 module Metrics
 
    using ..SindbadTEM
-   using Utils
+   using ..Utils
 
    include("handleDataForLoss.jl")
    include("getMetric.jl")
