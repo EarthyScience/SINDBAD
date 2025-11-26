@@ -1,12 +1,21 @@
-name: CI
+name: SindbadTEM.jl
 on:
   pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
     branches:
       - main
   push:
+    tags:
+      - '*'
     branches:
       - main
-    tags: '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -17,6 +26,7 @@ jobs:
         version:
           - '1.10'
           - '1.11'
+          - '1'
         os:
           - ubuntu-latest
           - macOS-latest
@@ -44,10 +54,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
-            ${{ runner.os }}-
-      - uses: julia-actions/julia-buildpkg@v1
-      - uses: julia-actions/julia-runtest@v1
+      - name: Develop and test SindbadTEM
+        shell: julia --project=test_env {0}
+        run: |
+          using Pkg
+          pkg"registry up"
+          Pkg.update()
+          pkg"dev ./SindbadTEM" # Develop the package in the SindbadTEM directory
+          Pkg.test("SindbadTEM"; coverage=true) # Test the package named "SindbadTEM"
       - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: SindbadTEM/src
       - uses: codecov/codecov-action@v5
         with:
-          file: lcov.info
+          files: lcov.info
