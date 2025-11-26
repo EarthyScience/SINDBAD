@@ -1,20 +1,15 @@
-using SindbadTEM
+using Pkg
+cd(@__DIR__)
+Pkg.activate(".")
+Pkg.instantiate()
+Pkg.precompile()
+
 using Sindbad
-using SindbadTEM.Metrics
-using Sindbad.Simulation
-using Sindbad.DataLoaders
-using Sindbad.SetupSimulation
-using Sindbad.MachineLearning
-using Sindbad.Optimization
-using Sindbad.Visualization
-using Sindbad.Simulation
 
 using InteractiveUtils
 using DocumenterVitepress
 using Documenter
 using DocStringExtensions
-# using DocumenterMermaid
-# dev ../ ../lib/Utils ../lib/DataLoaders ../lib/SindbadMetrics ../lib/SetupSimulation ../lib/SindbadTEM ../lib/MachineLearning
 
 makedocs(; sitename="Sindbad",
     authors="Sindbad Development Team",
