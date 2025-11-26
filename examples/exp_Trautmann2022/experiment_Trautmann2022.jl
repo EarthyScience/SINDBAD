@@ -1,8 +1,5 @@
 using Revise
 @time using Sindbad
-@time using Sindbad.DataLoaders
-@time using Sindbad
-@time using Sindbad
 using Plots
 toggleStackTraceNT()
 domain = "Global";

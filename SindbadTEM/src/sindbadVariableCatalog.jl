@@ -1539,7 +1539,7 @@ function checkMissingVarInfo(appr)
             checkMissingVarInfo(sub_appr)
         end
     else
-        in_out_model = getInOutProcess(appr, verbose=false)
+        in_out_model = getInOutModel(appr, verbose=false)
         d_methods = (:define, :precompute, :compute, :update)
         for d_method in d_methods
             inputs = in_out_model[d_method][:input]

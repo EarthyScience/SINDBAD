@@ -121,7 +121,7 @@ plotIOModelStructure(info, :compute, [:input, :output])
 function plotIOModelStructure(info, which_function=:compute, which_field=[:input, :output])
     showInfo(plotIOModelStructure, @__FILE__, @__LINE__, "plotting IO model structure for $(which_function) with fields $(which_field)", n_f=4)
 
-    in_out_models = getInOutProcesses(info.models.forward, which_function);
+    in_out_models = getInOutModels(info.models.forward, which_function);
     unique_variables = getAllVariables(in_out_models, which_field)
     if isa(which_field, Vector)
         which_field = join(which_field, "_")

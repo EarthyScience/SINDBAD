@@ -1,7 +1,4 @@
 using Revise
-using Sindbad.DataLoaders
-using Sindbad
-using SindbadTEM.Metrics
 using Sindbad
 using Plots
 toggleStackTraceNT()

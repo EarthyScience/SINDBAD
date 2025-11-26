@@ -138,7 +138,7 @@ module Processes
         doc_string = "\n"
 
         doc_string *= "$(purpose(appr))\n\n"
-        in_out_model = getInOutProcess(appr, verbose=false)
+        in_out_model = getInOutModel(appr, verbose=false)
         doc_string *= "# Parameters\n"
         params = in_out_model[:parameters]
         if length(params) == 0

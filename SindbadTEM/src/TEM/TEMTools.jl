@@ -1,6 +1,6 @@
 
-export getInOutProcess
-export getInOutProcesses
+export getInOutModel
+export getInOutModels
 export getTypedModel
 export getUnitConversionForParameter
 export modelParameter
@@ -8,9 +8,9 @@ export modelParameters
 
 
 """
-    getInOutProcess(model::SindbadTEM.Types.LandEcosystem)
-    getInOutProcess(model::SindbadTEM.Types.LandEcosystem, model_func::Symbol)
-    getInOutProcess(model::SindbadTEM.Types.LandEcosystem, model_funcs::Tuple)
+    getInOutModel(model::SindbadTEM.Types.LandEcosystem)
+    getInOutModel(model::SindbadTEM.Types.LandEcosystem, model_func::Symbol)
+    getInOutModel(model::SindbadTEM.Types.LandEcosystem, model_funcs::Tuple)
 
 Parses and retrieves the inputs, outputs, and parameters (I/O/P) of SINDBAD models for specified functions or all functions.
 
@@ -36,31 +36,31 @@ Parses and retrieves the inputs, outputs, and parameters (I/O/P) of SINDBAD mode
 # Examples:
 1. **Parsing all functions of a model**:
 ```julia
-model_io = getInOutProcess(my_model)
+model_io = getInOutModel(my_model)
 ```
 
 2. **Parsing a specific function of a model**:
 ```julia
-compute_io = getInOutProcess(my_model, :compute)
+compute_io = getInOutModel(my_model, :compute)
 ```
 
 3. **Parsing multiple functions of a model**:
 ```julia
-io_data = getInOutProcess(my_model, (:precompute, :parameters))
+io_data = getInOutModel(my_model, (:precompute, :parameters))
 ```
 
 4. **Handling warnings for unextracted variables**:
     - If a variable from `land` or `forcing` is not unpacked using `@unpack_nt`, a warning is issued to encourage better coding practices.
 
 """
-function getInOutProcess end
+function getInOutModel end
 
 
-function getInOutProcess(T::Type{<:SindbadTEM.Types.LandEcosystem}; verbose=false)
-    return getInOutProcess(T(), verbose=verbose)
+function getInOutModel(T::Type{<:SindbadTEM.Types.LandEcosystem}; verbose=false)
+    return getInOutModel(T(), verbose=verbose)
 end
 
-function getInOutProcess(model::SindbadTEM.Types.LandEcosystem; verbose=true)
+function getInOutModel(model::SindbadTEM.Types.LandEcosystem; verbose=true)
     if verbose
         println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
     end
@@ -69,19 +69,19 @@ function getInOutProcess(model::SindbadTEM.Types.LandEcosystem; verbose=true)
         if verbose
             println("   ...$(func)...")
         end
-        io_func = getInOutProcess(model, func)
+        io_func = getInOutModel(model, func)
         mo_in_out[func] = io_func
     end
     return mo_in_out
 end
 
 
-function getInOutProcess(model::SindbadTEM.Types.LandEcosystem, model_funcs::Tuple)
+function getInOutModel(model::SindbadTEM.Types.LandEcosystem, model_funcs::Tuple)
     mo_in_out=SindbadTEM.DataStructures.OrderedDict()
     println("   collecting I/O/P of: $(nameof(typeof(model))).jl")
     for func in model_funcs
         println("   ...$(func)...")
-        io_func = getInOutProcess(model, func)
+        io_func = getInOutModel(model, func)
         if length(model_funcs) == 2 && :parameters in model_funcs
             if func !== :parameters
                 mo_in_out[:approach] = io_func[:approach]
@@ -97,7 +97,7 @@ function getInOutProcess(model::SindbadTEM.Types.LandEcosystem, model_funcs::Tup
     return mo_in_out
 end
 
-function getInOutProcess(model, model_func::Symbol)
+function getInOutModel(model, model_func::Symbol)
     model_name = string(nameof(typeof(model)))
     mod_vars = SindbadTEM.DataStructures.OrderedDict{Symbol, Any}()
     mod_vars[:approach] = model_name
@@ -190,10 +190,10 @@ function getInOutProcess(model, model_func::Symbol)
 end
 
 """
-    getInOutProcesses(ind_range::UnitRange{Int64}=1:10000)
-    getInOutProcesses(models::Tuple)
-    getInOutProcesses(models, model_funcs::Tuple)
-    getInOutProcesses(models, model_func::Symbol)
+    getInOutModels(ind_range::UnitRange{Int64}=1:10000)
+    getInOutModels(models::Tuple)
+    getInOutModels(models, model_funcs::Tuple)
+    getInOutModels(models, model_func::Symbol)
 
 Parses and retrieves the inputs, outputs, and parameters (I/O/P) of multiple SINDBAD models with varying levels of specificity.
 
@@ -228,36 +228,36 @@ Parses and retrieves the inputs, outputs, and parameters (I/O/P) of multiple SIN
     - Inputs are extracted from lines containing `⇐`, `land.`, or `forcing.`.
     - Outputs are extracted from lines containing `⇒`.
     - Warnings are issued for unextracted variables from `land` or `forcing` that do not follow the convention of unpacking variables locally using `@unpack_nt`.
-- **Integration with `getInOutProcess`**:
-    - This function internally calls `getInOutProcess` for each model and function to retrieve the I/O/P details.
+- **Integration with `getInOutModel`**:
+    - This function internally calls `getInOutModel` for each model and function to retrieve the I/O/P details.
 
 # Examples:
 1. **Parsing all models in a range**:
 ```julia
-model_io = getInOutProcesses(1:10)
+model_io = getInOutModels(1:10)
 ```
 
 2. **Parsing specific models**:
 ```julia
-model_io = getInOutProcesses((model1, model2))
+model_io = getInOutModels((model1, model2))
 ```
 
 3. **Parsing specific functions of models**:
 ```julia
-model_io = getInOutProcesses((model1, model2), (:precompute, :compute))
+model_io = getInOutModels((model1, model2), (:precompute, :compute))
 ```
 
 4. **Parsing a single function of models**:
 ```julia
-model_io = getInOutProcesses((model1, model2), :compute)
+model_io = getInOutModels((model1, model2), :compute)
 ```
 
 5. **Handling warnings for unextracted variables**:
     - If a variable from `land` or `forcing` is not unpacked using `@unpack_nt`, a warning is issued to encourage better coding practices.
 """
-function getInOutProcesses end
+function getInOutModels end
 
-function getInOutProcesses(ind_range=1:10000::UnitRange{Int64})
+function getInOutModels(ind_range=1:10000::UnitRange{Int64})
     sind_m_dict = getSindbadModels();
     sm_list = keys(sind_m_dict) |> collect
     s_ind = max(1, first(ind_range))
@@ -272,7 +272,7 @@ function getInOutProcesses(ind_range=1:10000::UnitRange{Int64})
                 s_a_name = Symbol(strip(last(split(string(s_a), string(s) * "_"))))
                 s_a_t = getTypedModel(s_a)
                 println("Model::: $s")
-                io_model = getInOutProcess(s_a_t)
+                io_model = getInOutModel(s_a_t)
                 sm_io[s][s_a_name] = io_model
             end
         end
@@ -281,34 +281,34 @@ function getInOutProcesses(ind_range=1:10000::UnitRange{Int64})
     return sm_io
 end
 
-function getInOutProcesses(models::Tuple)
+function getInOutModels(models::Tuple)
     mod_vars = SindbadTEM.DataStructures.OrderedDict()
     for (mi, _mod) in enumerate(models)
         mod_name = string(nameof(supertype(typeof(_mod))))
         mod_name_sym=Symbol(mod_name)
-        mod_vars[mod_name_sym] = getInOutProcess(_mod, (:compute, :parameters))
+        mod_vars[mod_name_sym] = getInOutModel(_mod, (:compute, :parameters))
     end
     return mod_vars
 end
 
-function getInOutProcesses(models, model_funcs::Tuple)
+function getInOutModels(models, model_funcs::Tuple)
     mod_vars = SindbadTEM.DataStructures.OrderedDict()
     for (mi, _mod) in enumerate(models)
         mod_name = string(nameof(supertype(typeof(_mod))))
         mod_name_sym=Symbol(mod_name)
-        mod_io = getInOutProcess(_mod, model_funcs)
+        mod_io = getInOutModel(_mod, model_funcs)
         mod_vars[mod_name_sym] = mod_io
     end
     return mod_vars
 end
 
-function getInOutProcesses(models, model_func::Symbol)
+function getInOutModels(models, model_func::Symbol)
     mod_vars = SindbadTEM.DataStructures.OrderedDict()
     for (mi, _mod) in enumerate(models)
         mod_name = string(nameof(supertype(typeof(_mod))))
         mod_name_sym=Symbol(mod_name)
         dict_key_name = mod_name_sym
-        mod_vars[dict_key_name] = getInOutProcess(_mod, model_func)
+        mod_vars[dict_key_name] = getInOutModel(_mod, model_func)
     end
     return mod_vars
 end
