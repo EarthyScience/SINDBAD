@@ -1,16 +1,16 @@
-using SindbadUtils
-using SindbadTEM
-using SindbadSetup
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-# using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
+using Utils
+using Sindbad
+using Sindbad.SetupSimulation
+using Sindbad.DataLoaders
+using Sindbad.DataLoaders.DimensionalData
+using Sindbad.DataLoaders.AxisKeys
+using Sindbad.DataLoaders.YAXArrays
+# using Sindbad
+using Sindbad.MachineLearning
+using Sindbad.MachineLearning.JLD2
 using ProgressMeter
-# using SindbadOptimization
-using SindbadML.Zygote
+# using Sindbad.Optimization
+using Sindbad.MachineLearning.Zygote
 # import AbstractDifferentiation as AD, Zygote
 
 

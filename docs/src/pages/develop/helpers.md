@@ -234,7 +234,7 @@ models = getSindbadModels()
 ::: tip
 
 `getSindbadModels` is particularly useful for:
-- Discovering available models in `standard_sindbad_models` in the SINDBAD framework
+- Discovering available models in `standard_sindbad_model` in the SINDBAD framework
 
 :::
 
@@ -257,13 +257,13 @@ An array of all defined things in the SINDBAD framework that match the specified
 **Usage**
 ```julia
 # Get all defined types in the SINDBAD framework
-defined_types = getSindbadDefinitions(Sindbad, Type)
+defined_types = getSindbadDefinitions(SindbadTEM, Type)
 
 # Get all functions in a specific module
-functions = getSindbadDefinitions(Sindbad.Models, Function)
+functions = getSindbadDefinitions(SindbadTEM.Processes, Function)
 
 # Get all definitions including external ones
-all_definitions = getSindbadDefinitions(Sindbad, Any, internal_only=false)
+all_definitions = getSindbadDefinitions(SindbadTEM, Any, internal_only=false)
 ```
 
 ::: tip
@@ -324,9 +324,9 @@ Adds a specified Julia package to the environment of a given module or project.
 
 **Usage**
 
-Add the DataFrames package to `SindbadData` module
+Add the DataFrames package to `DataLoaders` module
 ```julia
-addPackage(SindbadData, "DataFrames")
+addPackage(DataLoaders, "DataFrames")
 ```
 
 **Notes**

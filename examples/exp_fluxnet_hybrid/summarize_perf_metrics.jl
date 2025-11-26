@@ -1,6 +1,6 @@
 using Serialization
 using Revise
-using SindbadExperiment
+using Sindbad
 # Import the pickle module
 using PyCall
 pickle = pyimport("pickle")
@@ -106,7 +106,7 @@ for site_index in site_range
                     println("$(site_index): $(domain), $(o_set), $(v), $(mtr), $(mod_path_mtr) is missing. Cannot calculate metrics. Continuing...")
                     continue
                 end
-                mod_dat_ds = SindbadData.zopen(mod_path_mtr, "r")
+                mod_dat_ds = DataLoaders.zopen(mod_path_mtr, "r")
                 mod_dat = mod_dat_ds["$(mod_v)"][:, 1]
 
 

@@ -1,5 +1,5 @@
 using Revise
-using SindbadExperiment
+using Sindbad.Simulation
 using Dates
 using Plots
 toggleStackTraceNT()
@@ -78,7 +78,7 @@ for site_index in 1:205
 
                 for mtr in opti_cost_cmp
                     mod_path_mtr = replace(mod_path, o_cost => String(mtr))
-                    mod_dat_ds = SindbadData.zopen(mod_path_mtr, "r")
+                    mod_dat_ds = DataLoaders.zopen(mod_path_mtr, "r")
                     mod_dat = mod_dat_ds["$(mod_v)"][:,1]
                     
 

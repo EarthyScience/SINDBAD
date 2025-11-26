@@ -1,15 +1,15 @@
 using Sindbad
-using SindbadSetup
-using SindbadUtils
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
-using SindbadOptimization
-using SindbadMetrics
+using Sindbad.SetupSimulation
+using Utils
+using Sindbad.DataLoaders
+using Sindbad.DataLoaders.DimensionalData
+using Sindbad.DataLoaders.AxisKeys
+using Sindbad.DataLoaders.YAXArrays
+using Sindbad
+using Sindbad.MachineLearning
+using Sindbad.MachineLearning.JLD2
+using Sindbad.Optimization
+using SindbadTEM.Metrics
 using ProgressMeter
 
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
@@ -87,7 +87,7 @@ function lossSiteFD(new_params, models, loc_forcing, loc_spinup_forcing,
 
     new_models = updateModelParameters(param_to_index, models, new_params)
 
-    out_data = SindbadML.getOutputFromCache(loc_output, new_params, ForwardDiffGrad())
+    out_data = MachineLearning.getOutputFromCache(loc_output, new_params, ForwardDiffGrad())
 
     coreTEM!(new_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, out_data, land_init, tem...)
     lossVec = metricVector(out_data, loc_obs, loc_cost_options)
@@ -97,13 +97,13 @@ end
 
 default_values = Float32.(tbl_params.default)
 
-lossSiteFD(default_values, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem)
+lossSiteFD(default_values, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, MachineLearning.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem)
 
 lossSite2(default_values, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem)
 
 cost_function = x -> lossSite2(x, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, loc_output, land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem) 
 
-cost_functionFD = x -> lossSiteFD(x, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem) 
+cost_functionFD = x -> lossSiteFD(x, selected_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, MachineLearning.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, param_to_index, loc_obs, loc_cost_options, constraint_method, tem) 
 
 @time cost_function(default_values)
 @time cost_functionFD(default_values)
@@ -120,9 +120,9 @@ upper_bounds = tbl_params.upper
 # and compare output and performance
 # use: (go for parallel/threaded approaches)
 
-# using SindbadOptimization.CMAEvolutionStrategy
+# using Sindbad.Optimization.CMAEvolutionStrategy
 
-results = SindbadOptimization.minimize(cost_function,
+results = Sindbad.Optimization.minimize(cost_function,
     default_values,
     1;
     lower=lower_bounds,
@@ -131,7 +131,7 @@ results = SindbadOptimization.minimize(cost_function,
     multi_threading=true,
 )
 
-optim_para = SindbadOptimization.xbest(results)
+optim_para = Sindbad.Optimization.xbest(results)
 
 # ? https://github.com/AStupidBear/GCMAES.jl
 
@@ -145,7 +145,7 @@ maxiter = 5
 xmin, fmin, status = GCMAES.minimize(cost_function, x0, σ0, lo, hi, maxiter=maxiter)
 
 # ? now speedup convergence with some gradient information
-using SindbadOptimization.ForwardDiff
+using Sindbad.Optimization.ForwardDiff
 ∇loss(x) = ForwardDiff.gradient(cost_functionFD, x)
 
 xmin, fmin, status = GCMAES.minimize((cost_functionFD, ∇loss), x0, σ0, lo, hi, maxiter=100);

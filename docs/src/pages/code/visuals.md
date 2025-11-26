@@ -1,19 +1,19 @@
 ```@docs
-SindbadVisuals
+Visualization
 ```
 
 ## Exported
 ```@meta
 
 DocTestSetup= quote
-using SindbadVisuals
+using Sindbad.Visualization
 end
 ```
 
 ```@autodocs
-Modules = [SindbadVisuals]
+Modules = [Visualization]
 Private = false
-Filter = f -> !(f === SindbadVisuals)
+Filter = f -> !(f === Visualization)
 ```
 
 ## Internal
@@ -21,11 +21,11 @@ Filter = f -> !(f === SindbadVisuals)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadVisuals
+using Sindbad.Visualization
 end
 ```
 
 ```@autodocs
-Modules = [SindbadVisuals]
+Modules = [Visualization]
 Public = false
 ```

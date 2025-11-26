@@ -1,19 +1,15 @@
+using Pkg
+cd(@__DIR__)
+Pkg.activate(".")
+Pkg.instantiate()
+Pkg.precompile()
+
 using Sindbad
-using SindbadTEM
-using SindbadData
-using SindbadSetup
-using SindbadMetrics
-using SindbadML
-using SindbadOptimization
-using SindbadVisuals
-using SindbadExperiment
 
 using InteractiveUtils
 using DocumenterVitepress
 using Documenter
 using DocStringExtensions
-# using DocumenterMermaid
-# dev ../ ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
 
 makedocs(; sitename="Sindbad",
     authors="Sindbad Development Team",

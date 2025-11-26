@@ -1,5 +1,5 @@
 using Revise
-using SindbadExperiment
+using Sindbad.Simulation
 using Dates
 using Plots
 toggleStackTraceNT()
@@ -101,7 +101,7 @@ for site_index in 1:205
                     @show mod_path_mtr
                     continue
                 end
-                mod_dat_ds = SindbadData.zopen(mod_path_mtr, "r")
+                mod_dat_ds = DataLoaders.zopen(mod_path_mtr, "r")
                 mod_dat = mod_dat_ds["$(mod_v)"][:, 1]
 
 

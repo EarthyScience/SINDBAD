@@ -1,8 +1,5 @@
 using Revise
 @time using Sindbad
-@time using SindbadData
-@time using SindbadTEM
-@time using SindbadExperiment
 using Plots
 toggleStackTraceNT()
 domain = "Global";

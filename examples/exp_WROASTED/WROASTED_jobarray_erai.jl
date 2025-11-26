@@ -1,5 +1,5 @@
 using Revise
-using SindbadExperiment
+using Sindbad
 using Dates
 using Plots
 toggleStackTraceNT()
@@ -42,7 +42,7 @@ nrepeat = 200
 
 
 ## get the spinup sequence
-nc = SindbadData.NetCDF.open(path_input);
+nc = DataLoaders.NetCDF.open(path_input);
 y_dist = nc.gatts["last_disturbance_on"]
 
 nrepeat_d = nothing
@@ -141,7 +141,7 @@ for o_set in opti_set
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 
     # load matlab wroasted results
-    nc_ml = SindbadData.NetCDF.open(ml_data_file)
+    nc_ml = DataLoaders.NetCDF.open(ml_data_file)
 
     varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :nirv => "gpp")
 

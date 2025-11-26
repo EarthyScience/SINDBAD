@@ -1,8 +1,8 @@
 using Revise
-using SindbadData
+using Sindbad.DataLoaders
 using SindbadTEM
-using SindbadExperiment
-using SindbadExperiment.YAXArrays
+using Sindbad
+using Sindbad.YAXArrays
 using ProgressMeter
 toggleStackTraceNT()
 

@@ -1,4 +1,5 @@
-global_models = (:wCycleBase,
+global_models = (:constants, 
+    :wCycleBase,
     :rainSnow,
     :rainIntensity,
     :PET,

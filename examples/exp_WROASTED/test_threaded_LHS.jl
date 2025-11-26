@@ -1,6 +1,6 @@
 using Revise
+using SindbadTEM
 using Sindbad
-using SindbadExperiment
 using Plots
 using QuasiMonteCarlo
 toggleStackTraceNT()

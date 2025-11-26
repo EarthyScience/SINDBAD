@@ -18,10 +18,10 @@ julia> ]
 pkg > st Sindbad
 ````
 
-## Start using Sindbad
+## Start using Sindbad.Simulation
 
 Sindbad comes with several predefined models, which you can use individually or in combination.
 
 ```julia
-using Sindbad
+using Sindbad.Simulation
 ```

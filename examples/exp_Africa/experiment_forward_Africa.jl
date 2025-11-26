@@ -1,5 +1,5 @@
 using Revise
-using SindbadTEM
+using Sindbad
 toggleStackTraceNT()
 
 domain = "Africa";

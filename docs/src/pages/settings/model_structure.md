@@ -64,7 +64,7 @@ The `models` section lists selected models with their corresponding approaches. 
 :::
 
 ::: tip Model Dependencies
-- Use `standard_sindbad_models` to view the complete list of available models
+- Use `standard_sindbad_model` to view the complete list of available models
 - Ensure model combinations are feasible (some processes depend on others)
 - Example: Snow processes require snowfall in the model structure
 :::

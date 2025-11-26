@@ -46,7 +46,7 @@ pkg > activate . # now, instantiate
 ````
 
 ````sh
-] dev ../ ../lib/SindbadUtils ../lib/SindbadData ../lib/SindbadMetrics ../lib/SindbadSetup ../lib/SindbadTEM ../lib/SindbadML
+] dev ../ ../lib/SindbadUtils ../lib/Sindbad.DataLoaders ../lib/SindbadMetrics ../lib/Sindbad.SetupSimulation ../lib/SindbadTEM ../lib/SindbadML
 ````
 
 ````sh

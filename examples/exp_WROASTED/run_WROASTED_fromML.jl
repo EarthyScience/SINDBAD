@@ -1,5 +1,5 @@
 using Revise
-using SindbadExperiment
+using Sindbad
 using Dates
 using Plots
 toggleStackTraceNT()
@@ -70,7 +70,7 @@ for site_index in sites
     if !isfile(data_path)
         continue
     end
-    nc = SindbadData.NetCDF.open(data_path)
+    nc = DataLoaders.NetCDF.open(data_path)
     y_dist = nc.gatts["last_disturbance_on"]
 
     nrepeat_d = nothing
@@ -192,7 +192,7 @@ parameter_table = info.optimization.parameter_table;
             end
             ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
             @show ml_data_file
-            nc_ml = SindbadData.NetCDF.open(ml_data_file)
+            nc_ml = DataLoaders.NetCDF.open(ml_data_file)
             ml_dat = nc_ml[varib_dict[v]][:]
             if v == :agb
                 ml_dat = nc_ml[varib_dict[v]][1, 2, :]
@@ -261,7 +261,7 @@ parameter_table = info.optimization.parameter_table;
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
                     @show ml_data_file
-                    nc_ml = SindbadData.NetCDF.open(ml_data_file)
+                    nc_ml = DataLoaders.NetCDF.open(ml_data_file)
                     ml_dat = nc_ml[varib_dict[v]]
                 end
                 if size(def_var, 2) == 1

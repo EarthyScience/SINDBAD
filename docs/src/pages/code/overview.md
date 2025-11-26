@@ -1,21 +1,20 @@
 # SINDBAD Packages Overview
 
-This page provides an overview of all SINDBAD packages and their main functionalities.
+This page provides an overview of all SINDBAD packages and their main modules and functionalities.
 
-| Package | Description | Key Features |
-|---------|-------------|--------------|
-| [Core](sindbad.md) | Core package `Sindbad` | Main package for model processes and types |
-| [ Models](models.md) | Model implementations | Ecosystem model processes and approaches |
-| [ Types](types.md) | SINDBAD Types | Definition of all SINDBAD types and purposes |
-| [Data](data.md) | Data handling | Input/output operations, data processing, and handling |
-| [Experiment](experiment.md) | Simulation experiments | Experiment setup, configuration, and execution |
-| [Metrics](metrics.md) | Performance metrics | Cost functions, evaluation metrics, and validation tools |
-| [ML](ml.md) | Machine learning | Machine learning integration and model training |
-| [Optimization](optimization.md) | Optimization methods | Parameter optimization and calibration |
-| [Setup](setup.md) | Setup utilities | configuration of SINDBAD experiment and setup |
-| [TEM](tem.md) | Terrestrial Ecosystem Model | Core ecosystem modeling framework |
-| [Utils](utils.md) | Utility functions | Helper functions and common utilities for all packages|
-| [Visuals](visuals.md) | Visualization tools | Plotting and data visualization helpers |
+| Package | Module | Description | Key Features |
+|--------|--------|-------------|--------------|
+| [Sindbad](sindbad.md) | - | SINDBAD MDI Framework | Top-level orchestration package for **S**trategies to **IN**tegrate **D**ata and **B**iogeochemic**A**l mo**D**els. |
+| | [MachineLearning](ml.md) | Machine learning | Machine learning integration and model training |
+| | [Optimization](optimization.md) | Optimization methods | Parameter optimization and calibration |
+| | [SetupSimulation](setup.md) | Setup utilities | Configuration of SINDBAD experiments and setup |
+| | [Simulation](simulation.md) | Terrestrial Ecosystem Model | Core ecosystem modeling framework |
+| | [Visualization](visuals.md) | Visualization tools | Plotting and data visualization helpers |
+| [SindbadTEM](sindbadTEM.md) | - | Core terrestrial ecosystem models and types `Sindbad` | Main package for model processes, types, and utils |
+| | [Processes](models.md) | Model implementations | Ecosystem model processes and approaches |
+| | [Metrics](metrics.md) | Performance metrics | Cost functions, evaluation metrics, and validation tools |
+| | [Types](types.md) | SINDBAD Types | Definition of all SINDBAD types and purposes |
+| | [Utils](utils.md) | Utility functions | Helper functions and common utilities for all packages |
 
 
 ::: tip `Exported` and `Internal` Sections
@@ -35,23 +34,23 @@ These remain accessible but require qualification with the module name (e.g., `M
 
 ## Package Descriptions
 
-### Core Packages
-- **Sindbad**: The main package that provides the core of SINDBAD.
+### Core Package
+- **SindbadTEM**: The main package that provides the core of SINDBAD.
   - **Models**: Module that implements various ecosystem model components and approaches.
+  - **Metrics**: Implements performance metrics and cost functions.
   - **Types**: Module that defines various types for dispatching on methods ranging from setup to cost computation.
-- **TEM**: Provides the Terrestrial Ecosystem Model framework and its execution.
+  - **Utils**: Provides helper functions and common utilities used across packages.
 
-### Modeling Packages
-- **Experiment**: Manages experiment setup, configuration, and simulations.
-- **Metrics**: Implements performance metrics and cost functions.
-- **ML**: Integrates machine learning capabilities for model training and analysis.
+### MDI Package
+#### Modeling Modules
+- **Simulation**: Provides the Terrestrial Ecosystem Model framework and its execution, and manages experiment setup, configuration, and simulations.
+- **MachineLearning**: Integrates machine learning capabilities for model training and analysis.
 - **Optimization**: Provides methods for parameter optimization and model calibration.
 
-### Utility Packages
-- **Data**: Handles all data-related operations including input/output, data processing, and management.
-- **Setup**: Contains configuration tools for SINDBAD info.
-- **Utils**: Provides helper functions and common utilities used across packages.
-- **Visuals**: Offers tools and helpers for data visualization and plotting.
+#### Utility Modules
+- **DataLoaders**: Handles all data-related operations including input/output, data processing, and management.
+- **SetupSimulation**: Contains configuration tools for SINDBAD info.
+- **Visualization**: Offers tools and helpers for data visualization and plotting.
 
 
 ## Sindbad Package Dependencies
@@ -63,7 +62,7 @@ Package Dependency
 ::: info Package Usage
 
 - Most application packages can be used independently for specific tasks
-- The core `Sindbad` and ```SindbadUtils``` are required
+- The core `Sindbad` and ```Utils``` are required
 
 ::: 
 
@@ -71,50 +70,50 @@ Package Dependency
 ```mermaid
 graph TD
     %% Main Sindbad package
-    Sindbad[Sindbad Core] --> Types[Types]
+    SindbadTEM[Sindbad TEM] --> Types[Types]
     
     %% Core dependencies
-    Sindbad --> ModelTypes[ModelTypes]
-    Sindbad --> TimeTypes[TimeTypes]
-    Sindbad --> LandTypes[LandTypes]
-    Sindbad --> ArrayTypes[ArrayTypes]
+    SindbadTEM --> ModelTypes[ModelTypes]
+    SindbadTEM --> TimeTypes[TimeTypes]
+    SindbadTEM --> LandTypes[LandTypes]
+    SindbadTEM --> ArrayTypes[ArrayTypes]
     
     %% Lib packages
-    SindbadUtils[SindbadUtils] --> Sindbad
-    SindbadData[SindbadData] --> Sindbad
-    SindbadData --> SindbadUtils
+    Utils[Utils] --> Sindbad
+    DataLoaders[DataLoaders] --> Sindbad
+    DataLoaders --> Utils
     
-    SindbadSetup[SindbadSetup] --> Sindbad
-    SindbadSetup --> SindbadUtils
-    SindbadSetup --> SindbadData
+    SetupSimulation[SetupSimulation] --> Sindbad
+    SetupSimulation --> Utils
+    SetupSimulation --> DataLoaders
     
     SindbadMetrics[SindbadMetrics] --> Sindbad
-    SindbadMetrics --> SindbadUtils
+    SindbadMetrics --> Utils
     
-    SindbadTEM[SindbadTEM] --> Sindbad
-    SindbadTEM --> SindbadUtils
-    SindbadTEM --> SindbadData
-    SindbadTEM --> SindbadSetup
-    SindbadTEM --> SindbadMetrics
+    Simulation[Simulation] --> SindbadTEM
+    Simulation --> SindbadTEM.Utils
+    Simulation --> Sindbad.DataLoaders
+    Simulation --> Sindbad.SetupSimulation
+    Simulation --> SindbadTEM.Metrics
     
-    SindbadOptimization[SindbadOptimization] --> Sindbad
-    SindbadOptimization --> SindbadUtils
-    SindbadOptimization --> SindbadMetrics
-    SindbadOptimization --> SindbadSetup
-    SindbadOptimization --> SindbadTEM
+    Sindbad.Optimization[Sindbad.Optimization] --> Sindbad
+    Sindbad.Optimization --> Utils
+    Sindbad.Optimization --> SindbadMetrics
+    Sindbad.Optimization --> SetupSimulation
+    Sindbad.Optimization --> SindbadTEM
     
-    SindbadML[SindbadML] --> Sindbad
-    SindbadML --> SindbadUtils
-    SindbadML --> SindbadMetrics
+    MachineLearning[MachineLearning] --> Sindbad
+    MachineLearning --> Utils
+    MachineLearning --> SindbadMetrics
     
-    SindbadVisuals[SindbadVisuals] --> Sindbad
-    SindbadVisuals --> SindbadUtils
+    Visualization[Visualization] --> Sindbad
+    Visualization --> Utils
     
-    SindbadExperiment[SindbadExperiment] --> Sindbad
-    SindbadExperiment --> SindbadUtils
-    SindbadExperiment --> SindbadData
-    SindbadExperiment --> SindbadSetup
-    SindbadExperiment --> SindbadTEM
-    SindbadExperiment --> SindbadOptimization
-    SindbadExperiment --> SindbadMetrics    
+    Sindbad.Simulation[Sindbad.Simulation] --> Sindbad
+    Sindbad.Simulation --> Utils
+    Sindbad.Simulation --> DataLoaders
+    Sindbad.Simulation --> SetupSimulation
+    Sindbad.Simulation --> SindbadTEM
+    Sindbad.Simulation --> Sindbad.Optimization
+    Sindbad.Simulation --> SindbadMetrics    
 ```

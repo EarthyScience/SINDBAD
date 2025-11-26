@@ -1,19 +1,19 @@
 ```@docs
-SindbadML
+MachineLearning
 ```
 
 ## Exported
 ```@meta
 
 DocTestSetup= quote
-using SindbadML
+using MachineLearning
 end
 ```
 
 ```@autodocs
-Modules = [SindbadML]
+Modules = [MachineLearning]
 Private = false
-Filter = f -> !(f === SindbadML)
+Filter = f -> !(f === MachineLearning)
 ```
 
 ## Internal
@@ -21,11 +21,11 @@ Filter = f -> !(f === SindbadML)
 CollapsedDocStrings = false
 
 DocTestSetup= quote
-using SindbadML
+using Sindbad.MachineLearning
 end
 ```
 
 ```@autodocs
-Modules = [SindbadML]
+Modules = [MachineLearning]
 Public = false
 ```

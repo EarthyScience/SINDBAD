@@ -1,11 +1,11 @@
-using SindbadData
-using SindbadData.DimensionalData
-using SindbadData.AxisKeys
-using SindbadData.YAXArrays
-using SindbadTEM
-using SindbadML
-using SindbadML.JLD2
-using SindbadOptimization
+using Sindbad.DataLoaders
+using Sindbad.DataLoaders.DimensionalData
+using Sindbad.DataLoaders.AxisKeys
+using Sindbad.DataLoaders.YAXArrays
+using Sindbad
+using Sindbad.MachineLearning
+using Sindbad.MachineLearning.JLD2
+using Sindbad.Optimization
 using ProgressMeter
 
 experiment_json = "../exp_fluxnet_hybrid/settings_fluxnet_hybrid/experiment.json"
@@ -79,7 +79,7 @@ function lossSiteFD(new_params, models, loc_forcing, loc_spinup_forcing,
 
     new_models = updateModelParameters(parameter_to_index, models, new_params)
 
-    out_data = SindbadML.getOutputFromCache(loc_output, new_params, ForwardDiffGrad())
+    out_data = MachineLearning.getOutputFromCache(loc_output, new_params, ForwardDiffGrad())
 
     coreTEM!(new_models, loc_forcing, loc_spinup_forcing, loc_forcing_t, out_data, land_init, tem...)
     lossVec = metricVector(out_data, loc_obs, loc_cost_options)
@@ -90,7 +90,7 @@ end
 default_values = Float32.(parameter_table.initial)
 
 lossSiteFD(default_values, selected_models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, parameter_to_index, loc_obs,
+    loc_forcing_t, MachineLearning.getCacheFromOutput(loc_output, ForwardDiffGrad()), land_init, parameter_to_index, loc_obs,
     loc_cost_options, constraint_method, tem)
 
 lossSite2(default_values, selected_models, loc_forcing, loc_spinup_forcing,
@@ -102,7 +102,7 @@ cost_function = x -> lossSite2(x, selected_models, loc_forcing, loc_spinup_forci
     loc_cost_options, constraint_method, tem)
 
 cost_functionFD = x -> lossSiteFD(x, selected_models, loc_forcing, loc_spinup_forcing,
-    loc_forcing_t, SindbadML.getCacheFromOutput(loc_output, ForwardDiffGrad()),
+    loc_forcing_t, MachineLearning.getCacheFromOutput(loc_output, ForwardDiffGrad()),
     land_init, parameter_to_index, loc_obs,
     loc_cost_options, constraint_method, tem)
 
@@ -121,7 +121,7 @@ optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds
 # and compare output and performance
 # use: (go for parallel/threaded approaches)
 
-using SindbadOptimization.CMAEvolutionStrategy
+using Sindbad.Optimization.CMAEvolutionStrategy
 
 results = minimize(cost_function,
     default_values,
@@ -136,7 +136,7 @@ optim_para = xbest(results)
 
 # ? https://github.com/AStupidBear/GCMAES.jl
 
-using SindbadOptimization.GCMAES
+using Sindbad.Optimization.GCMAES
 x0 = default_values
 σ0 = 0.2
 lo = lower_bounds

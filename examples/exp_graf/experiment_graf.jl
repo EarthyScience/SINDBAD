@@ -1,6 +1,5 @@
 using Revise
-using SindbadSetup
-@time using SindbadExperiment
+@time using Sindbad
 using Plots
 toggleStackTraceNT()
 domain = "africa";
