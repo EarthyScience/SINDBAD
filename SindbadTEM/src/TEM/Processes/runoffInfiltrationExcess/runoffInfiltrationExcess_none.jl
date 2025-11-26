@@ -17,7 +17,7 @@ purpose(::Type{runoffInfiltrationExcess_none}) = "Sets infiltration excess runof
 
 @doc """
 
-$(getProcessDocstring(runoffInfiltrationExcess_none))
+$(getModelDocString(runoffInfiltrationExcess_none))
 
 ---
 

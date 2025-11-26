@@ -7,6 +7,6 @@ purpose(::Type{PFT}) = "Plant Functional Type (PFT) classification."
 includeApproaches(PFT, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(PFT))
+	$(getModelDocString(PFT))
 """
 PFT

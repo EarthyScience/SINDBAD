@@ -39,7 +39,7 @@ purpose(::Type{vegAvailableWater_rootWaterEfficiency}) = "PAW as a function of s
 
 @doc """
 
-$(getProcessDocstring(vegAvailableWater_rootWaterEfficiency))
+$(getModelDocString(vegAvailableWater_rootWaterEfficiency))
 
 ---
 

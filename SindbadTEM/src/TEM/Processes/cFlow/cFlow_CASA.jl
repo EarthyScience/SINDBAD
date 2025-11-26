@@ -50,7 +50,7 @@ purpose(::Type{cFlow_CASA}) = "Carbon transfer rates between pools as modeled in
 
 @doc """
 
-$(getProcessDocstring(cFlow_CASA))
+$(getModelDocString(cFlow_CASA))
 
 ---
 

@@ -77,7 +77,7 @@ purpose(::Type{cTauSoilW_GSI}) = "Effect of soil moisture on decomposition rates
 
 @doc """
 
-$(getProcessDocstring(cTauSoilW_GSI))
+$(getModelDocString(cTauSoilW_GSI))
 
 ---
 

@@ -72,7 +72,7 @@ purpose(::Type{cAllocation_fixed}) = "Sets carbon allocation to each pool using 
 
 @doc """
 
-$(getProcessDocstring(cAllocation_fixed))
+$(getModelDocString(cAllocation_fixed))
 
 ---
 

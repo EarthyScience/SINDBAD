@@ -62,7 +62,7 @@ purpose(::Type{groundWSoilWInteraction_gradient}) = "Delayed/Buffer storage that
 
 @doc """
 
-$(getProcessDocstring(groundWSoilWInteraction_gradient))
+$(getModelDocString(groundWSoilWInteraction_gradient))
 
 ---
 

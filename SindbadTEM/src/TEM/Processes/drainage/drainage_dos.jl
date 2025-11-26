@@ -62,7 +62,7 @@ purpose(::Type{drainage_dos}) = "Drainage flux based on an exponential function 
 
 @doc """
 
-$(getProcessDocstring(drainage_dos))
+$(getModelDocString(drainage_dos))
 
 ---
 

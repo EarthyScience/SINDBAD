@@ -51,7 +51,7 @@ purpose(::Type{rootWaterEfficiency_k2Layer}) = "Water uptake efficiency by roots
 
 @doc """
 
-$(getProcessDocstring(rootWaterEfficiency_k2Layer))
+$(getModelDocString(rootWaterEfficiency_k2Layer))
 
 ---
 

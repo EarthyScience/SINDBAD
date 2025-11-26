@@ -73,7 +73,7 @@ purpose(::Type{cFlowSoilProperties_CASA}) = "Effect of soil properties on carbon
 
 @doc """
 
-$(getProcessDocstring(cFlowSoilProperties_CASA))
+$(getModelDocString(cFlowSoilProperties_CASA))
 
 ---
 

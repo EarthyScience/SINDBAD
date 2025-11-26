@@ -17,7 +17,7 @@ purpose(::Type{NDVI_forcing}) = "Gets NDVI from forcing data."
 
 @doc """
 
-$(getProcessDocstring(NDVI_forcing))
+$(getModelDocString(NDVI_forcing))
 
 ---
 

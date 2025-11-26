@@ -17,7 +17,7 @@ purpose(::Type{runoffSaturationExcess_none}) = "Sets saturation excess runoff to
 
 @doc """
 
-$(getProcessDocstring(runoffSaturationExcess_none))
+$(getModelDocString(runoffSaturationExcess_none))
 
 ---
 

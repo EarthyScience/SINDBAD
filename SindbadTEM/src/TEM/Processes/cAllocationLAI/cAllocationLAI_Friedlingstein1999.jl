@@ -28,7 +28,7 @@ purpose(::Type{cAllocationLAI_Friedlingstein1999}) = "Estimates the effect of li
 
 @doc """
 
-$(getProcessDocstring(cAllocationLAI_Friedlingstein1999))
+$(getModelDocString(cAllocationLAI_Friedlingstein1999))
 
 ---
 

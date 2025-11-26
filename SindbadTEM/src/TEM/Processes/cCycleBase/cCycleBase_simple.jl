@@ -66,7 +66,7 @@ purpose(::Type{cCycleBase_simple}) = "Structure and properties of the carbon cyc
 
 @doc """
 
-$(getProcessDocstring(cCycleBase_simple))
+$(getModelDocString(cCycleBase_simple))
 
 ---
 

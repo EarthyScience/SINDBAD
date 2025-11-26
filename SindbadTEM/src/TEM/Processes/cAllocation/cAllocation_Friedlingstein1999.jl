@@ -80,7 +80,7 @@ purpose(::Type{cAllocation_Friedlingstein1999}) = "Dynamically allocates carbon 
 
 @doc """
 
-$(getProcessDocstring(cAllocation_Friedlingstein1999))
+$(getModelDocString(cAllocation_Friedlingstein1999))
 
 ---
 

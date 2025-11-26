@@ -7,7 +7,7 @@ purpose(::Type{drainage}) = "Drainage flux of water from upper to lower soil lay
 includeApproaches(drainage, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(drainage))
+	$(getModelDocString(drainage))
 """
 drainage
 

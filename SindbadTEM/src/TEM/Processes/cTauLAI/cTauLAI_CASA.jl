@@ -102,7 +102,7 @@ purpose(::Type{cTauLAI_CASA}) = "Effect of LAI on turnover rates and computes th
 
 @doc """
 
-$(getProcessDocstring(cTauLAI_CASA))
+$(getModelDocString(cTauLAI_CASA))
 
 ---
 

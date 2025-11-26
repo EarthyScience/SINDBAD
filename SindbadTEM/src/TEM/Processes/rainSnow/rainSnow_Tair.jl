@@ -39,7 +39,7 @@ purpose(::Type{rainSnow_Tair}) = "Rain and snow partitioning based on a temperat
 
 @doc """
 
-$(getProcessDocstring(rainSnow_Tair))
+$(getModelDocString(rainSnow_Tair))
 
 ---
 

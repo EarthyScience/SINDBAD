@@ -7,6 +7,6 @@ purpose(::Type{cFlowSoilProperties}) = "Effect of soil properties on carbon tran
 includeApproaches(cFlowSoilProperties, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cFlowSoilProperties))
+	$(getModelDocString(cFlowSoilProperties))
 """
 cFlowSoilProperties

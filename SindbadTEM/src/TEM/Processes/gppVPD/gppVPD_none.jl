@@ -18,7 +18,7 @@ purpose(::Type{gppVPD_none}) = "Sets VPD stress on GPP potential to 1 (no stress
 
 @doc """
 
-$(getProcessDocstring(gppVPD_none))
+$(getModelDocString(gppVPD_none))
 
 ---
 

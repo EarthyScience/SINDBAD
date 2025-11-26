@@ -167,7 +167,7 @@ purpose(::Type{cCycleBase_GSI}) = "Structure and properties of the carbon cycle 
 
 @doc """
 
-$(getProcessDocstring(cCycleBase_GSI))
+$(getModelDocString(cCycleBase_GSI))
 
 ---
 

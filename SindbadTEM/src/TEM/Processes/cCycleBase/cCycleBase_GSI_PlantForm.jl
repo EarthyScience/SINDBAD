@@ -216,7 +216,7 @@ purpose(::Type{cCycleBase_GSI_PlantForm}) = "Same as GSI, additionally allowing 
 
 @doc """
 
-$(getProcessDocstring(cCycleBase_GSI_PlantForm))
+$(getModelDocString(cCycleBase_GSI_PlantForm))
 
 ---
 

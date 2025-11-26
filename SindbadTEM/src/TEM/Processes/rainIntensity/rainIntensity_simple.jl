@@ -23,7 +23,7 @@ purpose(::Type{rainIntensity_simple}) = "Rainfall intensity as a linear function
 
 @doc """
 
-$(getProcessDocstring(rainIntensity_simple))
+$(getModelDocString(rainIntensity_simple))
 
 ---
 

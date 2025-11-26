@@ -17,7 +17,7 @@ purpose(::Type{runoffSurface_none}) = "Sets surface runoff to 0."
 
 @doc """
 
-$(getProcessDocstring(runoffSurface_none))
+$(getModelDocString(runoffSurface_none))
 
 ---
 

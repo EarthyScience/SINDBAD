@@ -17,7 +17,7 @@ purpose(::Type{groundWRecharge_none}) = "Sets groundwater recharge to 0."
 
 @doc """
 
-$(getProcessDocstring(groundWRecharge_none))
+$(getModelDocString(groundWRecharge_none))
 
 ---
 

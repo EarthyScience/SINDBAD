@@ -27,7 +27,7 @@ purpose(::Type{vegFraction_scaledNIRv}) = "Vegetation fraction as a linear funct
 
 @doc """
 
-$(getProcessDocstring(vegFraction_scaledNIRv))
+$(getModelDocString(vegFraction_scaledNIRv))
 
 ---
 

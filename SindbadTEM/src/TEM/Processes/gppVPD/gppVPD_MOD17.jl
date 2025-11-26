@@ -26,7 +26,7 @@ purpose(::Type{gppVPD_MOD17}) = "VPD stress on GPP potential based on the MOD17 
 
 @doc """
 
-$(getProcessDocstring(gppVPD_MOD17))
+$(getModelDocString(gppVPD_MOD17))
 
 ---
 

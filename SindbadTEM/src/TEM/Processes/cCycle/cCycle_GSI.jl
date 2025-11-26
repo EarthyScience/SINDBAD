@@ -111,7 +111,7 @@ purpose(::Type{cCycle_GSI}) = "Carbon cycle with components based on the GSI app
 
 @doc """
 
-$(getProcessDocstring(cCycle_GSI))
+$(getModelDocString(cCycle_GSI))
 
 ---
 

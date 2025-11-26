@@ -7,6 +7,6 @@ purpose(::Type{cFlow}) = "Transfer rates for carbon flow between different pools
 includeApproaches(cFlow, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cFlow))
+	$(getModelDocString(cFlow))
 """
 cFlow

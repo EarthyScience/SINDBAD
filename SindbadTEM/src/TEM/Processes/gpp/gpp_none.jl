@@ -17,7 +17,7 @@ purpose(::Type{gpp_none}) = "Sets GPP to 0."
 
 @doc """
 
-$(getProcessDocstring(gpp_none))
+$(getModelDocString(gpp_none))
 
 ---
 

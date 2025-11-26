@@ -51,7 +51,7 @@ purpose(::Type{gppDiffRadiation_Turner2006}) = "Cloudiness scalar (radiation dif
 
 @doc """
 
-$(getProcessDocstring(gppDiffRadiation_Turner2006))
+$(getModelDocString(gppDiffRadiation_Turner2006))
 
 ---
 

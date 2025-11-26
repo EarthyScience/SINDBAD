@@ -37,7 +37,7 @@ purpose(::Type{groundWSurfaceWInteraction_fracGroundW}) = "Depletion of groundwa
 
 @doc """
 
-$(getProcessDocstring(groundWSurfaceWInteraction_fracGroundW))
+$(getModelDocString(groundWSurfaceWInteraction_fracGroundW))
 
 ---
 

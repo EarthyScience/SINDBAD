@@ -7,6 +7,6 @@ purpose(::Type{LAI}) = "Leaf Area Index"
 includeApproaches(LAI, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(LAI))
+	$(getModelDocString(LAI))
 """
 LAI

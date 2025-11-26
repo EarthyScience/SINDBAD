@@ -28,7 +28,7 @@ purpose(::Type{gpp_min}) = "GPP with potential scaled by the minimum stress scal
 
 @doc """
 
-$(getProcessDocstring(gpp_min))
+$(getModelDocString(gpp_min))
 
 ---
 

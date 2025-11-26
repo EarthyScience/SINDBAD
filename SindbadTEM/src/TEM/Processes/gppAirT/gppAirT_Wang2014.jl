@@ -24,7 +24,7 @@ purpose(::Type{gppAirT_Wang2014}) = "Temperature effect on GPP based on Wang (20
 
 @doc """
 
-$(getProcessDocstring(gppAirT_Wang2014))
+$(getModelDocString(gppAirT_Wang2014))
 
 ---
 

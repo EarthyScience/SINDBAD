@@ -36,7 +36,7 @@ purpose(::Type{cFlow_simple}) = "Carbon transfer rates between pools modeled a s
 
 @doc """
 
-$(getProcessDocstring(cFlow_simple))
+$(getModelDocString(cFlow_simple))
 
 ---
 

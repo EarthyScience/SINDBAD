@@ -22,7 +22,7 @@ purpose(::Type{EVI_constant}) = "Sets EVI as a constant value."
 
 @doc """
 
-$(getProcessDocstring(EVI_constant))
+$(getModelDocString(EVI_constant))
 
 ---
 

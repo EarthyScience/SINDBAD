@@ -26,7 +26,7 @@ purpose(::Type{transpirationSupply_Federer1982}) = "Supply-limited transpiration
 
 @doc """
 
-$(getProcessDocstring(transpirationSupply_Federer1982))
+$(getModelDocString(transpirationSupply_Federer1982))
 
 ---
 

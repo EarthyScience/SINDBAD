@@ -7,6 +7,6 @@ purpose(::Type{gppSoilW}) = "Effect of soil moisture on GPP: 1 indicates no soil
 includeApproaches(gppSoilW, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(gppSoilW))
+	$(getModelDocString(gppSoilW))
 """
 gppSoilW

@@ -7,6 +7,6 @@ purpose(::Type{cTauSoilW}) = "Effect of soil moisture on decomposition rates."
 includeApproaches(cTauSoilW, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cTauSoilW))
+	$(getModelDocString(cTauSoilW))
 """
 cTauSoilW

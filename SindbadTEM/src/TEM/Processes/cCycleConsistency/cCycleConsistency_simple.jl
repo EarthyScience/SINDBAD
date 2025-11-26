@@ -125,7 +125,7 @@ purpose(::Type{cCycleConsistency_simple}) = "Checks consistency in the cCycle ve
 
 @doc """
 
-$(getProcessDocstring(cCycleConsistency_simple))
+$(getModelDocString(cCycleConsistency_simple))
 
 ---
 

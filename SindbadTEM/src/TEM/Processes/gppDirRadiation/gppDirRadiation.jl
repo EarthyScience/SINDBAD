@@ -7,6 +7,6 @@ purpose(::Type{gppDirRadiation}) = "Effect of direct radiation (light effect) on
 includeApproaches(gppDirRadiation, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(gppDirRadiation))
+	$(getModelDocString(gppDirRadiation))
 """
 gppDirRadiation

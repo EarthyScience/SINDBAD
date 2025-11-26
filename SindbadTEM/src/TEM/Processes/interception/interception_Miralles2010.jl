@@ -78,7 +78,7 @@ purpose(::Type{interception_Miralles2010}) = "Interception loss according to the
 
 @doc """
 
-$(getProcessDocstring(interception_Miralles2010))
+$(getModelDocString(interception_Miralles2010))
 
 ---
 

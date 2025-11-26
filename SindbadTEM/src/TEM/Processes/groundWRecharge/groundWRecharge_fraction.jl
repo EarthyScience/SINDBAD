@@ -35,7 +35,7 @@ purpose(::Type{groundWRecharge_fraction}) = "Groundwater recharge as a fraction 
 
 @doc """
 
-$(getProcessDocstring(groundWRecharge_fraction))
+$(getModelDocString(groundWRecharge_fraction))
 
 ---
 

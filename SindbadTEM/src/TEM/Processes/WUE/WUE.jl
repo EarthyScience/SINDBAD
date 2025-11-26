@@ -7,6 +7,6 @@ purpose(::Type{WUE}) = "Water Use Efficiency (WUE)."
 includeApproaches(WUE, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(WUE))
+	$(getModelDocString(WUE))
 """
 WUE

@@ -48,7 +48,7 @@ purpose(::Type{runoffSurface_directIndirectFroSoil}) = "Surface runoff as the su
 
 @doc """
 
-$(getProcessDocstring(runoffSurface_directIndirectFroSoil))
+$(getModelDocString(runoffSurface_directIndirectFroSoil))
 
 ---
 

@@ -26,7 +26,7 @@ purpose(::Type{gppAirT_MOD17}) = "Temperature effect on GPP based on the MOD17 m
 
 @doc """
 
-$(getProcessDocstring(gppAirT_MOD17))
+$(getModelDocString(gppAirT_MOD17))
 
 ---
 

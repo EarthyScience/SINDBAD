@@ -7,6 +7,6 @@ purpose(::Type{evapotranspiration}) = "Evapotranspiration."
 includeApproaches(evapotranspiration, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(evapotranspiration))
+	$(getModelDocString(evapotranspiration))
 """
 evapotranspiration

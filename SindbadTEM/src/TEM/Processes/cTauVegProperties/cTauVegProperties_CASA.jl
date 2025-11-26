@@ -90,7 +90,7 @@ purpose(::Type{cTauVegProperties_CASA}) = "Effect of vegetation type on decompos
 
 @doc """
 
-$(getProcessDocstring(cTauVegProperties_CASA))
+$(getModelDocString(cTauVegProperties_CASA))
 
 ---
 

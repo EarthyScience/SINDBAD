@@ -48,7 +48,7 @@ purpose(::Type{drainage_kUnsat}) = "Drainage flux based on unsaturated hydraulic
 
 @doc """
 
-$(getProcessDocstring(drainage_kUnsat))
+$(getModelDocString(drainage_kUnsat))
 
 ---
 

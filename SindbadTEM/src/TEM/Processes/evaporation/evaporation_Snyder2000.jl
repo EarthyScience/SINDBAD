@@ -76,7 +76,7 @@ purpose(::Type{evaporation_Snyder2000}) = "Bare soil evaporation using the relat
 
 @doc """
 
-$(getProcessDocstring(evaporation_Snyder2000))
+$(getModelDocString(evaporation_Snyder2000))
 
 ---
 

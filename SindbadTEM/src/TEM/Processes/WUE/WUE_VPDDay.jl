@@ -28,7 +28,7 @@ purpose(::Type{WUE_VPDDay}) = "Calculates WUE as a function of WUE at 1 hPa and 
 
 @doc """
 
-$(getProcessDocstring(WUE_VPDDay))
+$(getModelDocString(WUE_VPDDay))
 
 ---
 

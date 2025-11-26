@@ -38,7 +38,7 @@ purpose(::Type{runoffBase_Zhang2008}) = "Baseflow from a linear groundwater stor
 
 @doc """
 
-$(getProcessDocstring(runoffBase_Zhang2008))
+$(getModelDocString(runoffBase_Zhang2008))
 
 ---
 

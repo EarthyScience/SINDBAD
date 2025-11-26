@@ -66,7 +66,7 @@ purpose(::Type{cCycle_CASA}) = "Carbon cycle wtih components based on the CASA a
 
 @doc """
 
-$(getProcessDocstring(cCycle_CASA))
+$(getModelDocString(cCycle_CASA))
 
 ---
 

@@ -7,6 +7,6 @@ purpose(::Type{cAllocationNutrients}) = "Pseudo-effect of nutrients on carbon al
 includeApproaches(cAllocationNutrients, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cAllocationNutrients))
+	$(getModelDocString(cAllocationNutrients))
 """
 cAllocationNutrients

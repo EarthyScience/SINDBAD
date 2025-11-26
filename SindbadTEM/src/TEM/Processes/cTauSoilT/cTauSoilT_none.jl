@@ -17,7 +17,7 @@ purpose(::Type{cTauSoilT_none}) = "Sets the effect of soil temperature on decomp
 
 @doc """
 
-$(getProcessDocstring(cTauSoilT_none))
+$(getModelDocString(cTauSoilT_none))
 
 ---
 

@@ -47,7 +47,7 @@ purpose(::Type{gppSoilW_GSI}) = "Soil moisture stress on GPP potential based on 
 
 @doc """
 
-$(getProcessDocstring(gppSoilW_GSI))
+$(getModelDocString(gppSoilW_GSI))
 
 ---
 

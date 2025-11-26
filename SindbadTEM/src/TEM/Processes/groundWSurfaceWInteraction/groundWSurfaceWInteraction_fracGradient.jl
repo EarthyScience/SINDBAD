@@ -36,7 +36,7 @@ purpose(::Type{groundWSurfaceWInteraction_fracGradient}) = "Moisture exchange be
 
 @doc """
 
-$(getProcessDocstring(groundWSurfaceWInteraction_fracGradient))
+$(getModelDocString(groundWSurfaceWInteraction_fracGradient))
 
 ---
 

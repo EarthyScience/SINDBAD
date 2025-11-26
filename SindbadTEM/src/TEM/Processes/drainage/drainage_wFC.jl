@@ -44,7 +44,7 @@ purpose(::Type{drainage_wFC}) = "Drainage flux based on overflow above field cap
 
 @doc """
 
-$(getProcessDocstring(drainage_wFC))
+$(getModelDocString(drainage_wFC))
 
 ---
 

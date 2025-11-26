@@ -64,7 +64,7 @@ purpose(::Type{cCycleDisturbance_cFlow}) = "Moves carbon in all pools except res
 
 @doc """
 
-$(getProcessDocstring(cCycleDisturbance_cFlow))
+$(getModelDocString(cCycleDisturbance_cFlow))
 
 ---
 

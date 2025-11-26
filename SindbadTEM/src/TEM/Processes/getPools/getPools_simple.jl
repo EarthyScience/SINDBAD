@@ -32,7 +32,7 @@ purpose(::Type{getPools_simple}) = "Simply take throughfall as the maximum avail
 
 @doc """
 
-$(getProcessDocstring(getPools_simple))
+$(getModelDocString(getPools_simple))
 
 ---
 

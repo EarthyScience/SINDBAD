@@ -22,7 +22,7 @@ purpose(::Type{NIRv_constant}) = "Sets NIRv as a constant value."
 
 @doc """
 
-$(getProcessDocstring(NIRv_constant))
+$(getModelDocString(NIRv_constant))
 
 ---
 

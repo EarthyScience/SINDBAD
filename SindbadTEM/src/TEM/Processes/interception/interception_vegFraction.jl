@@ -33,7 +33,7 @@ purpose(::Type{interception_vegFraction}) = "Interception loss as a fraction of 
 
 @doc """
 
-$(getProcessDocstring(interception_vegFraction))
+$(getModelDocString(interception_vegFraction))
 
 ---
 

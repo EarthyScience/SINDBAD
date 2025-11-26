@@ -37,7 +37,7 @@ purpose(::Type{rainSnow_rain}) = "All precipitation is assumed to be liquid rain
 
 @doc """
 
-$(getProcessDocstring(rainSnow_rain))
+$(getModelDocString(rainSnow_rain))
 
 ---
 

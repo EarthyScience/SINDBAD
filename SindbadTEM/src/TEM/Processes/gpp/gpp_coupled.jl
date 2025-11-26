@@ -24,7 +24,7 @@ purpose(::Type{gpp_coupled}) = "GPP based on transpiration supply and water use 
 
 @doc """
 
-$(getProcessDocstring(gpp_coupled))
+$(getModelDocString(gpp_coupled))
 
 ---
 

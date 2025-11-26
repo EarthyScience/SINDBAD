@@ -21,7 +21,7 @@ purpose(::Type{transpiration_coupled}) = "Transpiration as a function of GPP and
 
 @doc """
 
-$(getProcessDocstring(transpiration_coupled))
+$(getModelDocString(transpiration_coupled))
 
 ---
 

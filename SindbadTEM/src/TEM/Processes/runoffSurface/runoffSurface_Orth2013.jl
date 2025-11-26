@@ -53,7 +53,7 @@ purpose(::Type{runoffSurface_Orth2013}) = "Surface runoff directly calculated us
 
 @doc """
 
-$(getProcessDocstring(runoffSurface_Orth2013))
+$(getModelDocString(runoffSurface_Orth2013))
 
 ---
 

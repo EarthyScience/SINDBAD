@@ -60,7 +60,7 @@ purpose(::Type{groundWSoilWInteraction_VanDijk2010}) = "Upward flow of water fro
 
 @doc """
 
-$(getProcessDocstring(groundWSoilWInteraction_VanDijk2010))
+$(getModelDocString(groundWSoilWInteraction_VanDijk2010))
 
 ---
 

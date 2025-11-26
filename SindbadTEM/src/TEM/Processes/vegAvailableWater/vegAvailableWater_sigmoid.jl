@@ -58,7 +58,7 @@ purpose(::Type{vegAvailableWater_sigmoid}) = "PAW using a sigmoid function of so
 
 @doc """
 
-$(getProcessDocstring(vegAvailableWater_sigmoid))
+$(getModelDocString(vegAvailableWater_sigmoid))
 
 ---
 

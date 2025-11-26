@@ -7,6 +7,6 @@ purpose(::Type{gppVPD}) = "Effect of vapor pressure deficit (VPD) on GPP: 1 indi
 includeApproaches(gppVPD, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(gppVPD))
+	$(getModelDocString(gppVPD))
 """
 gppVPD

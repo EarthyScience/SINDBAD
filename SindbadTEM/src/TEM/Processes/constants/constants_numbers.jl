@@ -19,7 +19,7 @@ purpose(::Type{constants_numbers}) = "Includes constants for numbers such as 1 t
 
 @doc """ 
 
-	$(getProcessDocstring(constants_numbers))
+	$(getModelDocString(constants_numbers))
 
 ---
 

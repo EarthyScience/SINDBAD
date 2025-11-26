@@ -26,7 +26,7 @@ purpose(::Type{cTauSoilT_Q10}) = "Effect of soil temperature on decomposition ra
 
 @doc """
 
-$(getProcessDocstring(cTauSoilT_Q10))
+$(getModelDocString(cTauSoilT_Q10))
 
 ---
 

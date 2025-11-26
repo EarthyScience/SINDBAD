@@ -85,7 +85,7 @@ purpose(::Type{PET_Lu2005}) = "Calculates PET using Lu et al. (2005) method."
 
 @doc """
 
-$(getProcessDocstring(PET_Lu2005))
+$(getModelDocString(PET_Lu2005))
 
 ---
 

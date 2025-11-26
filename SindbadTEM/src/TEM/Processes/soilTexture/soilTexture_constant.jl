@@ -45,7 +45,7 @@ purpose(::Type{soilTexture_constant}) = "Sets soil texture properties as constan
 
 @doc """
 
-$(getProcessDocstring(soilTexture_constant))
+$(getModelDocString(soilTexture_constant))
 
 ---
 

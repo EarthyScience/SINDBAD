@@ -16,7 +16,7 @@ purpose(::Type{sublimation_none}) = "Sets snow sublimation to 0."
 
 @doc """
 
-$(getProcessDocstring(sublimation_none))
+$(getModelDocString(sublimation_none))
 
 ---
 

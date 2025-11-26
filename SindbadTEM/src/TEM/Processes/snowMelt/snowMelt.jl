@@ -7,7 +7,7 @@ purpose(::Type{snowMelt}) = "Snowmelt."
 includeApproaches(snowMelt, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(snowMelt))
+	$(getModelDocString(snowMelt))
 """
 snowMelt
 

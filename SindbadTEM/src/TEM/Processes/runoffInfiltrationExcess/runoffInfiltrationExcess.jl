@@ -7,6 +7,6 @@ purpose(::Type{runoffInfiltrationExcess}) = "Infiltration excess runoff."
 includeApproaches(runoffInfiltrationExcess, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(runoffInfiltrationExcess))
+	$(getModelDocString(runoffInfiltrationExcess))
 """
 runoffInfiltrationExcess

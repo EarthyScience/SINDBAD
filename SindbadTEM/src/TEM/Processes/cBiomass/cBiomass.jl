@@ -7,6 +7,6 @@ purpose(::Type{cBiomass}) = "Computes aboveground biomass (AGB)."
 includeApproaches(cBiomass, @__DIR__)
 
 @doc """ 
-        $(getProcessDocstring(cBiomass))
+        $(getModelDocString(cBiomass))
 """
 cBiomass

@@ -7,7 +7,7 @@ purpose(::Type{rainSnow}) = "Rain and snow partitioning."
 includeApproaches(rainSnow, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(rainSnow))
+	$(getModelDocString(rainSnow))
 """
 rainSnow
 

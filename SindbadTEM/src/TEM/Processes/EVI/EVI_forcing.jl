@@ -16,7 +16,7 @@ purpose(::Type{EVI_forcing}) = "Gets EVI from forcing data."
 
 @doc """
 
-$(getProcessDocstring(EVI_forcing))
+$(getModelDocString(EVI_forcing))
 
 ---
 

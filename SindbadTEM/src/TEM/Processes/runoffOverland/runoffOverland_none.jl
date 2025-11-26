@@ -17,7 +17,7 @@ purpose(::Type{runoffOverland_none}) = "Sets overland runoff to 0."
 
 @doc """
 
-$(getProcessDocstring(runoffOverland_none))
+$(getModelDocString(runoffOverland_none))
 
 ---
 

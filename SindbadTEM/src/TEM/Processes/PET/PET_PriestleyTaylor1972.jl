@@ -37,7 +37,7 @@ purpose(::Type{PET_PriestleyTaylor1972}) = "Calculates PET using Priestley-Taylo
 
 @doc """
 
-$(getProcessDocstring(PET_PriestleyTaylor1972))
+$(getModelDocString(PET_PriestleyTaylor1972))
 
 ---
 

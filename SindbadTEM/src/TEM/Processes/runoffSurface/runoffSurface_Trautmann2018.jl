@@ -60,7 +60,7 @@ purpose(::Type{runoffSurface_Trautmann2018}) = "Surface runoff directly calculat
 
 @doc """
 
-$(getProcessDocstring(runoffSurface_Trautmann2018))
+$(getModelDocString(runoffSurface_Trautmann2018))
 
 ---
 

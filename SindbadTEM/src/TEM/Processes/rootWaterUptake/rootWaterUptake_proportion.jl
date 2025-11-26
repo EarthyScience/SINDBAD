@@ -52,7 +52,7 @@ purpose(::Type{rootWaterUptake_proportion}) = "Root uptake from each soil layer 
 
 @doc """
 
-$(getProcessDocstring(rootWaterUptake_proportion))
+$(getModelDocString(rootWaterUptake_proportion))
 
 ---
 

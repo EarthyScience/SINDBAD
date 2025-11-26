@@ -7,6 +7,6 @@ purpose(::Type{gppPotential}) = "Potential GPP based on maximum instantaneous ra
 includeApproaches(gppPotential, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(gppPotential))
+	$(getModelDocString(gppPotential))
 """
 gppPotential

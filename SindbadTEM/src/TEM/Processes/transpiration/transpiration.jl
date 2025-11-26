@@ -7,6 +7,6 @@ purpose(::Type{transpiration}) = "Transpiration."
 includeApproaches(transpiration, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(transpiration))
+	$(getModelDocString(transpiration))
 """
 transpiration

@@ -31,7 +31,7 @@ purpose(::Type{groundWRecharge_kUnsat}) = "Groundwater recharge as the unsaturat
 
 @doc """
 
-$(getProcessDocstring(groundWRecharge_kUnsat))
+$(getModelDocString(groundWRecharge_kUnsat))
 
 ---
 

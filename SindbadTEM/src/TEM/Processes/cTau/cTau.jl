@@ -7,6 +7,6 @@ purpose(::Type{cTau}) = "Actual decomposition/turnover rates of all carbon pools
 includeApproaches(cTau, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cTau))
+	$(getModelDocString(cTau))
 """
 cTau

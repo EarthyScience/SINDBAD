@@ -88,7 +88,7 @@ purpose(::Type{soilWBase_smax2fRD4}) = "Maximum soil water content of two soil l
 
 @doc """
 
-$(getProcessDocstring(soilWBase_smax2fRD4))
+$(getModelDocString(soilWBase_smax2fRD4))
 
 ---
 

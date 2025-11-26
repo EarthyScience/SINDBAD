@@ -50,7 +50,7 @@ purpose(::Type{WUE_Medlyn2011}) = "Calculates WUE as a function of daytime mean 
 
 @doc """
 
-$(getProcessDocstring(WUE_Medlyn2011))
+$(getModelDocString(WUE_Medlyn2011))
 
 ---
 

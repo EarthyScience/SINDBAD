@@ -21,7 +21,7 @@ purpose(::Type{transpiration_demandSupply}) = "Transpiration as the minimum of s
 
 @doc """
 
-$(getProcessDocstring(transpiration_demandSupply))
+$(getModelDocString(transpiration_demandSupply))
 
 ---
 

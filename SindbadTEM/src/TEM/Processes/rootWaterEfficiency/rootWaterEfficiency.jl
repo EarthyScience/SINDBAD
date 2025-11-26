@@ -7,6 +7,6 @@ purpose(::Type{rootWaterEfficiency}) = "Water uptake efficiency by roots for eac
 includeApproaches(rootWaterEfficiency, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(rootWaterEfficiency))
+	$(getModelDocString(rootWaterEfficiency))
 """
 rootWaterEfficiency

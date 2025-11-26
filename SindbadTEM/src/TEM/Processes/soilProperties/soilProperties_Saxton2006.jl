@@ -119,7 +119,7 @@ purpose(::Type{soilProperties_Saxton2006}) = "Soil hydraulic properties based on
 
 @doc """
 
-$(getProcessDocstring(soilProperties_Saxton2006))
+$(getModelDocString(soilProperties_Saxton2006))
 
 ---
 

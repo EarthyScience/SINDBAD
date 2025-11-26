@@ -52,7 +52,7 @@ purpose(::Type{gppDemand_mult}) = "Demand GPP as the product of all stress scala
 
 @doc """
 
-$(getProcessDocstring(gppDemand_mult))
+$(getModelDocString(gppDemand_mult))
 
 ---
 

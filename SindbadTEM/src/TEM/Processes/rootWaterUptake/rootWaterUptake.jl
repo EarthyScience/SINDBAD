@@ -7,7 +7,7 @@ purpose(::Type{rootWaterUptake}) = "Root water uptake from soil."
 includeApproaches(rootWaterUptake, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(rootWaterUptake))
+	$(getModelDocString(rootWaterUptake))
 """
 rootWaterUptake
 

@@ -46,7 +46,7 @@ purpose(::Type{runoffSurface_directIndirect}) = "Surface runoff as the sum of th
 
 @doc """
 
-$(getProcessDocstring(runoffSurface_directIndirect))
+$(getModelDocString(runoffSurface_directIndirect))
 
 ---
 

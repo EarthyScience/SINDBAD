@@ -7,7 +7,7 @@ purpose(::Type{capillaryFlow}) = "Capillary flux of water from lower to upper so
 includeApproaches(capillaryFlow, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(capillaryFlow))
+	$(getModelDocString(capillaryFlow))
 """
 capillaryFlow
 

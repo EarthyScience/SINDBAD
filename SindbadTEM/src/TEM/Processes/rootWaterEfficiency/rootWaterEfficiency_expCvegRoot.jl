@@ -78,7 +78,7 @@ purpose(::Type{rootWaterEfficiency_expCvegRoot}) = "Water uptake efficiency by r
 
 @doc """
 
-$(getProcessDocstring(rootWaterEfficiency_expCvegRoot))
+$(getModelDocString(rootWaterEfficiency_expCvegRoot))
 
 ---
 

@@ -33,7 +33,7 @@ purpose(::Type{interception_fAPAR}) = "Interception loss as a fraction of fAPAR.
 
 @doc """
 
-$(getProcessDocstring(interception_fAPAR))
+$(getModelDocString(interception_fAPAR))
 
 ---
 

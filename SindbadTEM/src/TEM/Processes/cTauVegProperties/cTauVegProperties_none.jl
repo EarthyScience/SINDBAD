@@ -28,7 +28,7 @@ purpose(::Type{cTauVegProperties_none}) = "Sets the effect of vegetation propert
 
 @doc """
 
-$(getProcessDocstring(cTauVegProperties_none))
+$(getModelDocString(cTauVegProperties_none))
 
 ---
 

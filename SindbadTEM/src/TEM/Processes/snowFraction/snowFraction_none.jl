@@ -17,7 +17,7 @@ purpose(::Type{snowFraction_none}) = "Sets the snow cover fraction to 0."
 
 @doc """
 
-$(getProcessDocstring(snowFraction_none))
+$(getModelDocString(snowFraction_none))
 
 ---
 

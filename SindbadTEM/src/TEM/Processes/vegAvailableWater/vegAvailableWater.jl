@@ -7,6 +7,6 @@ purpose(::Type{vegAvailableWater}) = "Plant available water (PAW), i.e., the amo
 includeApproaches(vegAvailableWater, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(vegAvailableWater))
+	$(getModelDocString(vegAvailableWater))
 """
 vegAvailableWater

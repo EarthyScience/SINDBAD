@@ -110,7 +110,7 @@ purpose(::Type{cCycle_simple}) = "Carbon cycle with components based on the simp
 
 @doc """
 
-$(getProcessDocstring(cCycle_simple))
+$(getModelDocString(cCycle_simple))
 
 ---
 

@@ -7,6 +7,6 @@ purpose(::Type{cAllocationLAI}) = "Estimates allocation to the leaf pool given l
 includeApproaches(cAllocationLAI, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cAllocationLAI))
+	$(getModelDocString(cAllocationLAI))
 """
 cAllocationLAI

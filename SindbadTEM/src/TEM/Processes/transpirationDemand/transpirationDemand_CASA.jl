@@ -27,7 +27,7 @@ purpose(::Type{transpirationDemand_CASA}) = "Demand-limited transpiration as a f
 
 @doc """
 
-$(getProcessDocstring(transpirationDemand_CASA))
+$(getModelDocString(transpirationDemand_CASA))
 
 ---
 

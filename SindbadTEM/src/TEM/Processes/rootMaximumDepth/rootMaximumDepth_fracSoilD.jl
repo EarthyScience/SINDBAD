@@ -37,7 +37,7 @@ purpose(::Type{rootMaximumDepth_fracSoilD}) = "Maximum rooting depth as a fracti
 
 @doc """
 
-$(getProcessDocstring(rootMaximumDepth_fracSoilD))
+$(getModelDocString(rootMaximumDepth_fracSoilD))
 
 ---
 

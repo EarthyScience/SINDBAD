@@ -17,7 +17,7 @@ purpose(::Type{saturatedFraction_none}) = "Sets the saturated soil fraction to 0
 
 @doc """
 
-$(getProcessDocstring(saturatedFraction_none))
+$(getModelDocString(saturatedFraction_none))
 
 ---
 

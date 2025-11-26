@@ -39,7 +39,7 @@ purpose(::Type{runoffSurface_indirect}) = "All overland runoff is collected in s
 
 @doc """
 
-$(getProcessDocstring(runoffSurface_indirect))
+$(getModelDocString(runoffSurface_indirect))
 
 ---
 

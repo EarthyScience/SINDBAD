@@ -83,7 +83,7 @@ purpose(::Type{cAllocationTreeFraction_Friedlingstein1999}) = "Adjusts allocatio
 
 @doc """
 
-$(getProcessDocstring(cAllocationTreeFraction_Friedlingstein1999))
+$(getModelDocString(cAllocationTreeFraction_Friedlingstein1999))
 
 ---
 

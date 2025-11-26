@@ -92,7 +92,7 @@ purpose(::Type{wCycleBase_simple}) = "Through `wCycle`.jl, adjust/update the var
 
 @doc """
 
-$(getProcessDocstring(wCycleBase_simple))
+$(getModelDocString(wCycleBase_simple))
 
 ---
 

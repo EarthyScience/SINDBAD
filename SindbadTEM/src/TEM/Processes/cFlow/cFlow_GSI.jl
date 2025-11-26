@@ -172,7 +172,7 @@ purpose(::Type{cFlow_GSI}) = "Carbon transfer rates between pools based on the G
 
 @doc """
 
-$(getProcessDocstring(cFlow_GSI))
+$(getModelDocString(cFlow_GSI))
 
 
 ---

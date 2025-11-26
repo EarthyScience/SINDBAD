@@ -17,7 +17,7 @@ purpose(::Type{NIRv_forcing}) = "Gets NIRv from forcing data."
 
 @doc """
 
-$(getProcessDocstring(NIRv_forcing))
+$(getModelDocString(NIRv_forcing))
 
 ---
 

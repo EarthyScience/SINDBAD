@@ -16,7 +16,7 @@ purpose(::Type{NDWI_forcing}) = "Gets NDWI from forcing data."
 
 @doc """
 
-$(getProcessDocstring(NDWI_forcing))
+$(getModelDocString(NDWI_forcing))
 
 ---
 

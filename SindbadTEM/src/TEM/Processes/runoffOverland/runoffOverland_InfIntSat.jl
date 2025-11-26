@@ -19,7 +19,7 @@ purpose(::Type{runoffOverland_InfIntSat}) = "Overland flow as the sum of infiltr
 
 @doc """
 
-$(getProcessDocstring(runoffOverland_InfIntSat))
+$(getModelDocString(runoffOverland_InfIntSat))
 
 ---
 

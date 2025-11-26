@@ -43,7 +43,7 @@ purpose(::Type{gpp_mult}) = "GPP with potential scaled by the product of stress 
 
 @doc """
 
-$(getProcessDocstring(gpp_mult))
+$(getModelDocString(gpp_mult))
 
 ---
 

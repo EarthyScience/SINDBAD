@@ -7,6 +7,6 @@ purpose(::Type{fAPAR}) = "Fraction of absorbed photosynthetically active radiati
 includeApproaches(fAPAR, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(fAPAR))
+	$(getModelDocString(fAPAR))
 """
 fAPAR

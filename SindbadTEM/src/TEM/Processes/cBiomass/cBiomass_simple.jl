@@ -20,7 +20,7 @@ purpose(::Type{cBiomass_simple}) = "Calculates AGB `simply` as the sum of wood a
 
 @doc """
 
-$(getProcessDocstring(cBiomass_simple))
+$(getModelDocString(cBiomass_simple))
 
 ---
 

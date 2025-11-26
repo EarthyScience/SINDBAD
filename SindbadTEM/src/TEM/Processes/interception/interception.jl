@@ -7,6 +7,6 @@ purpose(::Type{interception}) = "Interception loss."
 includeApproaches(interception, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(interception))
+	$(getModelDocString(interception))
 """
 interception

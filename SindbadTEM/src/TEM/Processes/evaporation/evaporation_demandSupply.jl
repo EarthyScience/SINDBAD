@@ -40,7 +40,7 @@ purpose(::Type{evaporation_demandSupply}) = "Bare soil evaporation using a deman
 
 @doc """
 
-$(getProcessDocstring(evaporation_demandSupply))
+$(getModelDocString(evaporation_demandSupply))
 
 ---
 

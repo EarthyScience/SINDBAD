@@ -42,7 +42,7 @@ purpose(::Type{cAllocationSoilW_gppGSI}) = "Calculates the moisture effect on al
 
 @doc """
 
-$(getProcessDocstring(cAllocationSoilW_gppGSI))
+$(getModelDocString(cAllocationSoilW_gppGSI))
 
 ---
 

@@ -22,7 +22,7 @@ purpose(::Type{fAPAR_constant}) = "Sets fAPAR as a constant value."
 
 @doc """
 
-$(getProcessDocstring(fAPAR_constant))
+$(getModelDocString(fAPAR_constant))
 
 ---
 

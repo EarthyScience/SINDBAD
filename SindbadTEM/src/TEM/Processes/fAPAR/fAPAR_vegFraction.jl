@@ -24,7 +24,7 @@ purpose(::Type{fAPAR_vegFraction}) = "fAPAR as a linear function of vegetation f
 
 @doc """
 
-$(getProcessDocstring(fAPAR_vegFraction))
+$(getModelDocString(fAPAR_vegFraction))
 
 ---
 

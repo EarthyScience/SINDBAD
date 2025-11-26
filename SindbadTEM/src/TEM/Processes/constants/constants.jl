@@ -7,7 +7,7 @@ purpose(::Type{constants}) = "Defines constants and variables that are independe
 includeApproaches(constants, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(constants))
+	$(getModelDocString(constants))
 """
 constants
 

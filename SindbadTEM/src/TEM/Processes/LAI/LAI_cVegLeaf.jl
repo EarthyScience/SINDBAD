@@ -25,7 +25,7 @@ purpose(::Type{LAI_cVegLeaf}) = "LAI as a function of cVegLeaf and SLA."
 
 @doc """
 
-$(getProcessDocstring(LAI_cVegLeaf))
+$(getModelDocString(LAI_cVegLeaf))
 
 ---
 

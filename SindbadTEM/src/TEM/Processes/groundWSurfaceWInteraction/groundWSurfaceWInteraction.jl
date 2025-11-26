@@ -7,7 +7,7 @@ purpose(::Type{groundWSurfaceWInteraction}) = "Water exchange between surface an
 includeApproaches(groundWSurfaceWInteraction, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(groundWSurfaceWInteraction))
+	$(getModelDocString(groundWSurfaceWInteraction))
 """
 groundWSurfaceWInteraction
 

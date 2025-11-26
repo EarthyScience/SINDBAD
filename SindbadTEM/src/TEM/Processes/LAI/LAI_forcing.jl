@@ -16,7 +16,7 @@ purpose(::Type{LAI_forcing}) = "Gets LAI from forcing data."
 
 @doc """
 
-$(getProcessDocstring(LAI_forcing))
+$(getModelDocString(LAI_forcing))
 
 ---
 

@@ -37,7 +37,7 @@ purpose(::Type{rainSnow_forcing}) = "Sets rainfall and snowfall from forcing dat
 
 @doc """
 
-$(getProcessDocstring(rainSnow_forcing))
+$(getModelDocString(rainSnow_forcing))
 
 ---
 

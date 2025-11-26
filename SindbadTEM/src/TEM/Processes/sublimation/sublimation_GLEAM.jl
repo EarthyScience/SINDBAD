@@ -80,7 +80,7 @@ purpose(::Type{sublimation_GLEAM}) = "Sublimation using the Priestley-Taylor ter
 
 @doc """
 
-$(getProcessDocstring(sublimation_GLEAM))
+$(getModelDocString(sublimation_GLEAM))
 
 ---
 

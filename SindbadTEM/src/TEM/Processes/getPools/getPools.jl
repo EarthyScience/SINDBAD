@@ -7,6 +7,6 @@ purpose(::Type{getPools}) = "Retrieves the amount of water at the beginning of t
 includeApproaches(getPools, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(getPools))
+	$(getModelDocString(getPools))
 """
 getPools

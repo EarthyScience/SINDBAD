@@ -68,7 +68,7 @@ purpose(::Type{gppDiffRadiation_Wang2015}) = "Cloudiness scalar (radiation diffu
 
 @doc """
 
-$(getProcessDocstring(gppDiffRadiation_Wang2015))
+$(getModelDocString(gppDiffRadiation_Wang2015))
 
 ---
 

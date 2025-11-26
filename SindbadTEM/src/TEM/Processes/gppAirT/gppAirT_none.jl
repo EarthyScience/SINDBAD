@@ -18,7 +18,7 @@ purpose(::Type{gppAirT_none}) = "Sets temperature stress on GPP to 1 (no stress)
 
 @doc """
 
-$(getProcessDocstring(gppAirT_none))
+$(getModelDocString(gppAirT_none))
 
 ---
 

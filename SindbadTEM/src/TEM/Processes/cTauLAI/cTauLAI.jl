@@ -7,6 +7,6 @@ purpose(::Type{cTauLAI}) = "Effect of LAI on turnover rates of carbon pools."
 includeApproaches(cTauLAI, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cTauLAI))
+	$(getModelDocString(cTauLAI))
 """
 cTauLAI

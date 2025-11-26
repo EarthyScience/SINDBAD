@@ -17,7 +17,7 @@ purpose(::Type{autoRespirationAirT_none}) = "No air temperature effect on autotr
 
 @doc """
 
-$(getProcessDocstring(autoRespirationAirT_none))
+$(getModelDocString(autoRespirationAirT_none))
 
 ---
 

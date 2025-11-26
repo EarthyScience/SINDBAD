@@ -17,7 +17,7 @@ purpose(::Type{groundWSoilWInteraction_none}) = "Sets groundwater capillary flux
 
 @doc """
 
-$(getProcessDocstring(groundWSoilWInteraction_none))
+$(getModelDocString(groundWSoilWInteraction_none))
 
 ---
 

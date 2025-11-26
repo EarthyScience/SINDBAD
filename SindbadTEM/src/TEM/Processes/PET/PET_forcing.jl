@@ -16,7 +16,7 @@ purpose(::Type{PET_forcing}) = "Gets PET from forcing data."
 
 @doc """
 
-$(getProcessDocstring(PET_forcing))
+$(getModelDocString(PET_forcing))
 
 ---
 

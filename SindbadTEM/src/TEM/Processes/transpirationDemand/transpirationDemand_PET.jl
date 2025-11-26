@@ -25,7 +25,7 @@ purpose(::Type{transpirationDemand_PET}) = "Demand-limited transpiration as a fu
 
 @doc """
 
-$(getProcessDocstring(transpirationDemand_PET))
+$(getModelDocString(transpirationDemand_PET))
 
 ---
 

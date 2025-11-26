@@ -17,7 +17,7 @@ purpose(::Type{cAllocationLAI_none}) = "Sets the LAI effect on allocation to 1 (
 
 @doc """
 
-$(getProcessDocstring(cAllocationLAI_none))
+$(getModelDocString(cAllocationLAI_none))
 
 ---
 

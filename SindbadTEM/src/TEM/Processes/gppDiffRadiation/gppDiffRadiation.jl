@@ -7,6 +7,6 @@ purpose(::Type{gppDiffRadiation}) = "Effect of diffuse radiation (Cloudiness sca
 includeApproaches(gppDiffRadiation, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(gppDiffRadiation))
+	$(getModelDocString(gppDiffRadiation))
 """
 gppDiffRadiation

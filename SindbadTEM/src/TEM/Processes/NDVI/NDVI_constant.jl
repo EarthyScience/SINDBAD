@@ -22,7 +22,7 @@ purpose(::Type{NDVI_constant}) = "Sets NDVI as a constant value."
 
 @doc """
 
-$(getProcessDocstring(NDVI_constant))
+$(getModelDocString(NDVI_constant))
 
 ---
 

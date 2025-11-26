@@ -23,7 +23,7 @@ purpose(::Type{treeFraction_constant}) = "Sets tree cover fraction as a constant
 
 @doc """
 
-$(getProcessDocstring(treeFraction_constant))
+$(getModelDocString(treeFraction_constant))
 
 ---
 

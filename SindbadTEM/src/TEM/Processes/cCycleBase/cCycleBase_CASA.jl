@@ -70,7 +70,7 @@ purpose(::Type{cCycleBase_CASA}) = "Structure and properties of the carbon cycle
 
 @doc """
 
-$(getProcessDocstring(cCycleBase_CASA))
+$(getModelDocString(cCycleBase_CASA))
 
 ---
 

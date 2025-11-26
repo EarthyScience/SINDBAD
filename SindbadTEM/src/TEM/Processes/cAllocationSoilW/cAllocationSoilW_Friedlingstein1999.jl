@@ -27,7 +27,7 @@ purpose(::Type{cAllocationSoilW_Friedlingstein1999}) = "Calculates the partial m
 
 @doc """
 
-$(getProcessDocstring(cAllocationSoilW_Friedlingstein1999))
+$(getModelDocString(cAllocationSoilW_Friedlingstein1999))
 
 ---
 

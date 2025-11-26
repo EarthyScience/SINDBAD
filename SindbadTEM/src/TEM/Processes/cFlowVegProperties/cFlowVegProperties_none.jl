@@ -28,7 +28,7 @@ purpose(::Type{cFlowVegProperties_none}) = "Sets carbon transfers between pools 
 
 @doc """
 
-$(getProcessDocstring(cFlowVegProperties_none))
+$(getModelDocString(cFlowVegProperties_none))
 
 ---
 

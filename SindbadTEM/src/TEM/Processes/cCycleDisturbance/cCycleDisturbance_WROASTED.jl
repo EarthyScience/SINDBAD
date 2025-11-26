@@ -63,7 +63,7 @@ purpose(::Type{cCycleDisturbance_WROASTED}) = "Moves carbon in reserve pool to s
 
 @doc """
 
-$(getProcessDocstring(cCycleDisturbance_WROASTED))
+$(getModelDocString(cCycleDisturbance_WROASTED))
 
 ---
 

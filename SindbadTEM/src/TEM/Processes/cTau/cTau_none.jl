@@ -17,7 +17,7 @@ purpose(::Type{cTau_none}) = "Sets the decomposition/turnover rates of all carbo
 
 @doc """
 
-$(getProcessDocstring(cTau_none))
+$(getModelDocString(cTau_none))
 
 ---
 

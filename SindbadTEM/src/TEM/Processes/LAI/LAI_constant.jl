@@ -22,7 +22,7 @@ purpose(::Type{LAI_constant}) = "sets LAI as a constant value."
 
 @doc """
 
-$(getProcessDocstring(LAI_constant))
+$(getModelDocString(LAI_constant))
 
 ---
 

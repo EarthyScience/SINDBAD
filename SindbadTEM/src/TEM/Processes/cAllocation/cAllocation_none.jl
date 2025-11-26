@@ -17,7 +17,7 @@ purpose(::Type{cAllocation_none}) = "Sets carbon allocation to 0."
 
 @doc """
 
-$(getProcessDocstring(cAllocation_none))
+$(getModelDocString(cAllocation_none))
 
 ---
 

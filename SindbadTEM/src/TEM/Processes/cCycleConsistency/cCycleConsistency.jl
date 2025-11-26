@@ -7,6 +7,6 @@ purpose(::Type{cCycleConsistency}) = "Consistency and sanity checks in carbon al
 includeApproaches(cCycleConsistency, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cCycleConsistency))
+	$(getModelDocString(cCycleConsistency))
 """
 cCycleConsistency

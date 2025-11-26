@@ -29,7 +29,7 @@ purpose(::Type{runoffInfiltrationExcess_kUnsat}) = "Infiltration excess runoff b
 
 @doc """
 
-$(getProcessDocstring(runoffInfiltrationExcess_kUnsat))
+$(getModelDocString(runoffInfiltrationExcess_kUnsat))
 
 ---
 

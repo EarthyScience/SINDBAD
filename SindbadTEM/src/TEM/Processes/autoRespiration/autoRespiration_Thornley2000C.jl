@@ -92,7 +92,7 @@ purpose(::Type{autoRespiration_Thornley2000C}) = "Calculates autotrophic mainten
 
 @doc """
 
-    $(getProcessDocstring(autoRespiration_Thornley2000C))
+    $(getModelDocString(autoRespiration_Thornley2000C))
 
 ----
 # Extended help

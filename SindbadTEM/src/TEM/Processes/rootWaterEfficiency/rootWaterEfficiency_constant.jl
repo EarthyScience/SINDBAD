@@ -57,7 +57,7 @@ purpose(::Type{rootWaterEfficiency_constant}) = "Water uptake efficiency by root
 
 @doc """
 
-$(getProcessDocstring(rootWaterEfficiency_constant))
+$(getModelDocString(rootWaterEfficiency_constant))
 
 ---
 

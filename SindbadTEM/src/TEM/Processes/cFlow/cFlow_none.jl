@@ -24,7 +24,7 @@ purpose(::Type{cFlow_none}) = "Sets carbon transfers between pools to 0 (no tran
 
 @doc """
 
-$(getProcessDocstring(cFlow_none))
+$(getModelDocString(cFlow_none))
 
 ---
 

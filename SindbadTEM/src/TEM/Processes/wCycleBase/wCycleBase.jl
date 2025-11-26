@@ -7,6 +7,6 @@ purpose(::Type{wCycleBase}) = "Sets the basic structure of the water cycle stora
 includeApproaches(wCycleBase, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(wCycleBase))
+	$(getModelDocString(wCycleBase))
 """
 wCycleBase

@@ -95,7 +95,7 @@ purpose(::Type{soilWBase_uniform}) = "Soil hydraulic properties distributed for 
 
 @doc """
 
-$(getProcessDocstring(soilWBase_uniform))
+$(getModelDocString(soilWBase_uniform))
 
 ---
 

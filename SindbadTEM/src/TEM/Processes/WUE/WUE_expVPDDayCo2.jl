@@ -35,7 +35,7 @@ purpose(::Type{WUE_expVPDDayCo2}) = "Calculates WUE as a function of WUE at 1 hP
 
 @doc """
 
-$(getProcessDocstring(WUE_expVPDDayCo2))
+$(getModelDocString(WUE_expVPDDayCo2))
 
 ---
 

@@ -15,7 +15,7 @@ end
 
 purpose(::Type{autoRespiration_none}) = "Sets autotrophic respiration fluxes to 0."
 @doc """
-    $(getProcessDocstring(autoRespiration_none))
+    $(getModelDocString(autoRespiration_none))
 
 ---
 # Extended help

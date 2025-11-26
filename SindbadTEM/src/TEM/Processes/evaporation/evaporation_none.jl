@@ -17,7 +17,7 @@ purpose(::Type{evaporation_none}) = "Bare soil evaporation set to 0."
 
 @doc """
 
-$(getProcessDocstring(evaporation_none))
+$(getModelDocString(evaporation_none))
 
 ---
 

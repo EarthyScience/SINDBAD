@@ -22,7 +22,7 @@ purpose(::Type{WUE_constant}) = "Sets WUE as a constant value."
 
 @doc """
 
-$(getProcessDocstring(WUE_constant))
+$(getModelDocString(WUE_constant))
 
 ---
 

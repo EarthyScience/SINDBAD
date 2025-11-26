@@ -7,6 +7,6 @@ purpose(::Type{cCycleBase}) = "Defines the base properties of the carbon cycle c
 includeApproaches(cCycleBase, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cCycleBase))
+	$(getModelDocString(cCycleBase))
 """
 cCycleBase

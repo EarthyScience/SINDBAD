@@ -7,7 +7,7 @@ purpose(::Type{percolation}) = "Percolation through the top of soil"
 includeApproaches(percolation, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(percolation))
+	$(getModelDocString(percolation))
 """
 percolation
 

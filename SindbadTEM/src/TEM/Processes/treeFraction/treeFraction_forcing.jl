@@ -16,7 +16,7 @@ purpose(::Type{treeFraction_forcing}) = "Gets tree cover fraction from forcing d
 
 @doc """
 
-$(getProcessDocstring(treeFraction_forcing))
+$(getModelDocString(treeFraction_forcing))
 
 ---
 

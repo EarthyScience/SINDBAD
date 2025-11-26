@@ -215,7 +215,7 @@ purpose(::Type{cCycleBase_GSI_PlantForm_LargeKReserve}) = "Same as cCycleBase_GS
 
 @doc """
 
-$(getProcessDocstring(cCycleBase_GSI_PlantForm_LargeKReserve))
+$(getModelDocString(cCycleBase_GSI_PlantForm_LargeKReserve))
 
 ---
 

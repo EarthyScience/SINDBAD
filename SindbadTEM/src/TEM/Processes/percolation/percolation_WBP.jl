@@ -42,7 +42,7 @@ purpose(::Type{percolation_WBP}) = "Percolation as a difference of throughfall a
 
 @doc """
 
-$(getProcessDocstring(percolation_WBP))
+$(getModelDocString(percolation_WBP))
 
 ---
 

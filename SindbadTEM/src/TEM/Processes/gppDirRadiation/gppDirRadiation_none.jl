@@ -16,7 +16,7 @@ purpose(::Type{gppDirRadiation_none}) = "Sets the light saturation scalar (light
 
 @doc """
 
-$(getProcessDocstring(gppDirRadiation_none))
+$(getModelDocString(gppDirRadiation_none))
 
 ---
 

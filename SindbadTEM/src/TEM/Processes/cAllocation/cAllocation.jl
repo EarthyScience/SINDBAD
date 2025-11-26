@@ -7,6 +7,6 @@ purpose(::Type{cAllocation}) = "Allocation fraction of NPP to different vegetati
 includeApproaches(cAllocation, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cAllocation))
+	$(getModelDocString(cAllocation))
 """
 cAllocation

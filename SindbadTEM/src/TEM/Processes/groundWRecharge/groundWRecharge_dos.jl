@@ -54,7 +54,7 @@ purpose(::Type{groundWRecharge_dos}) = "Groundwater recharge as an exponential f
 
 @doc """
 
-$(getProcessDocstring(groundWRecharge_dos))
+$(getModelDocString(groundWRecharge_dos))
 
 ---
 

@@ -22,7 +22,7 @@ purpose(::Type{cVegetationDieOff_forcing}) = "Get the fraction of vegetation tha
 
 @doc """
 
-$(getProcessDocstring(cVegetationDieOff_forcing))
+$(getModelDocString(cVegetationDieOff_forcing))
 
 ---
 

@@ -50,7 +50,7 @@ purpose(::Type{gppDemand_min}) = "Demand GPP as the minimum of all stress scalar
 
 @doc """
 
-$(getProcessDocstring(gppDemand_min))
+$(getModelDocString(gppDemand_min))
 
 ---
 

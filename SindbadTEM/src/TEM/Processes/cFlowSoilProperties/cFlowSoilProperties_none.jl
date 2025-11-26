@@ -28,7 +28,7 @@ purpose(::Type{cFlowSoilProperties_none}) = "Sets carbon transfers between pools
 
 @doc """
 
-$(getProcessDocstring(cFlowSoilProperties_none))
+$(getModelDocString(cFlowSoilProperties_none))
 
 ---
 

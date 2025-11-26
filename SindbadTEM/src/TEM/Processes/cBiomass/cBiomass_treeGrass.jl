@@ -24,7 +24,7 @@ purpose(::Type{cBiomass_treeGrass}) = "Considers the tree-grass fraction to incl
 
 @doc """
 
-$(getProcessDocstring(cBiomass_treeGrass))
+$(getModelDocString(cBiomass_treeGrass))
 
 ---
 

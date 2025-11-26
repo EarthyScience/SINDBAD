@@ -17,7 +17,7 @@ purpose(::Type{fAPAR_forcing}) = "Gets fAPAR from forcing data."
 
 @doc """
 
-$(getProcessDocstring(fAPAR_forcing))
+$(getModelDocString(fAPAR_forcing))
 
 ---
 

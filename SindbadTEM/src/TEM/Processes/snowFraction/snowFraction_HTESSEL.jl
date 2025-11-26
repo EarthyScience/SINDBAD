@@ -31,7 +31,7 @@ purpose(::Type{snowFraction_HTESSEL}) = "Snow cover fraction following the HTESS
 
 @doc """
 
-$(getProcessDocstring(snowFraction_HTESSEL))
+$(getModelDocString(snowFraction_HTESSEL))
 
 ---
 

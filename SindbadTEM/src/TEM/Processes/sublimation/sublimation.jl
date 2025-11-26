@@ -7,7 +7,7 @@ purpose(::Type{sublimation}) = "Snow sublimation."
 includeApproaches(sublimation, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(sublimation))
+	$(getModelDocString(sublimation))
 """
 sublimation
 

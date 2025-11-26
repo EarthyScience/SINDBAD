@@ -62,7 +62,7 @@ purpose(::Type{plantForm_PFT}) = "Differentiate plant form based on PFT."
 
 @doc """ 
 
-	$(getProcessDocstring(plantForm_PFT))
+	$(getModelDocString(plantForm_PFT))
 
 ---
 

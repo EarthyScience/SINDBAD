@@ -7,6 +7,6 @@ purpose(::Type{soilTexture}) = "Soil texture (sand, silt, clay, and organic matt
 includeApproaches(soilTexture, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(soilTexture))
+	$(getModelDocString(soilTexture))
 """
 soilTexture

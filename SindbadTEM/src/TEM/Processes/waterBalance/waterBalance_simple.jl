@@ -52,7 +52,7 @@ purpose(::Type{waterBalance_simple}) = "Simply checks the water balance as P-ET-
 
 @doc """
 
-$(getProcessDocstring(waterBalance_simple))
+$(getModelDocString(waterBalance_simple))
 
 ---
 

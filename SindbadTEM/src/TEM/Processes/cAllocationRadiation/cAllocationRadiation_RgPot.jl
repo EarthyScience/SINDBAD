@@ -31,7 +31,7 @@ purpose(::Type{cAllocationRadiation_RgPot}) = "Calculates the radiation effect o
 
 @doc """ 
 
-	$(getProcessDocstring(cAllocationRadiation_RgPot))
+	$(getModelDocString(cAllocationRadiation_RgPot))
 
 ---
 

@@ -22,7 +22,7 @@ purpose(::Type{vegFraction_constant}) = "Sets vegetation fraction as a constant 
 
 @doc """
 
-$(getProcessDocstring(vegFraction_constant))
+$(getModelDocString(vegFraction_constant))
 
 ---
 

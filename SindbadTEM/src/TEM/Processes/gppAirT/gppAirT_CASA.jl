@@ -45,7 +45,7 @@ purpose(::Type{gppAirT_CASA}) = "Temperature effect on GPP based as implemented 
 
 @doc """
 
-$(getProcessDocstring(gppAirT_CASA))
+$(getModelDocString(gppAirT_CASA))
 
 ---
 

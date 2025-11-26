@@ -7,6 +7,6 @@ purpose(::Type{gppAirT}) = "Effect of temperature on GPP: 1 indicates no tempera
 includeApproaches(gppAirT, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(gppAirT))
+	$(getModelDocString(gppAirT))
 """
 gppAirT

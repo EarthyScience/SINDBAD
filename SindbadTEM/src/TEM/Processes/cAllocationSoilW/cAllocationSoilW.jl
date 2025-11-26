@@ -7,6 +7,6 @@ purpose(::Type{cAllocationSoilW}) = "Effect of soil moisture on carbon allocatio
 includeApproaches(cAllocationSoilW, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(cAllocationSoilW))
+	$(getModelDocString(cAllocationSoilW))
 """
 cAllocationSoilW

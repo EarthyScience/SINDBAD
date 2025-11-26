@@ -17,7 +17,7 @@ purpose(::Type{cAllocationNutrients_none}) = "Sets the pseudo-nutrient limitatio
 
 @doc """
 
-$(getProcessDocstring(cAllocationNutrients_none))
+$(getModelDocString(cAllocationNutrients_none))
 
 ---
 

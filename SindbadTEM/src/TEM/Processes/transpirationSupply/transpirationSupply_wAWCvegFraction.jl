@@ -25,7 +25,7 @@ purpose(::Type{transpirationSupply_wAWCvegFraction}) = "Supply-limited transpira
 
 @doc """
 
-$(getProcessDocstring(transpirationSupply_wAWCvegFraction))
+$(getModelDocString(transpirationSupply_wAWCvegFraction))
 
 ---
 

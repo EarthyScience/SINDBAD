@@ -17,7 +17,7 @@ purpose(::Type{rainIntensity_forcing}) = "Gets rainfall intensity from forcing d
 
 @doc """
 
-$(getProcessDocstring(rainIntensity_forcing))
+$(getModelDocString(rainIntensity_forcing))
 
 ---
 

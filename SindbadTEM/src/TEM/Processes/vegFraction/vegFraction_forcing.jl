@@ -16,7 +16,7 @@ purpose(::Type{vegFraction_forcing}) = "Gets vegetation fraction from forcing da
 
 @doc """
 
-$(getProcessDocstring(vegFraction_forcing))
+$(getModelDocString(vegFraction_forcing))
 
 ---
 

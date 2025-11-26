@@ -28,7 +28,7 @@ purpose(::Type{cBiomass_treeGrass_cVegReserveScaling}) = "Same as `cBiomass_tree
 
 @doc """ 
 
-	$(getProcessDocstring(cBiomass_treeGrass_cVegReserveScaling))
+	$(getModelDocString(cBiomass_treeGrass_cVegReserveScaling))
 
 ---
 

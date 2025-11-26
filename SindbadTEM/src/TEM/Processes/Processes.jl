@@ -26,7 +26,7 @@ Key processes include:
 - All models must implement at least one of the following methods: `define`, `precompute`, `compute`, or `update`.
 - Parameters should use metadata macros (`@bounds`, `@describe`, `@units`, `@timescale`) for proper documentation and validation.
 - Processes should follow SINDBAD modeling conventions for consistency and maintainability.
-- The module provides `getProcessDocstring` and `getApproachDocString` functions for automatic documentation generation.
+- The module provides `getModelDocString` and `getApproachDocString` functions for automatic documentation generation.
 
 # Examples:
 1. **Defining a new process**:
@@ -81,7 +81,7 @@ module Processes
     missingApproachPurpose(x) = "$(x) is missing the definition of purpose. Add `purpose(::Type{$(nameof(x))})` = \"the_purpose\"` in `$(nameof(x)).jl` file to define the specific purpose"
 
     """
-        getProcessDocstring()
+        getModelDocString()
 
     Generate a base docstring for a SINDBAD process or approach.
 
@@ -99,16 +99,16 @@ module Processes
     - If the caller is an approach, it generates a docstring with the approach's purpose, parameters, and methods (`define`, `precompute`, `compute`, `update`), including their inputs and outputs.
 
     # Methods
-    - `getProcessDocstring()`: Determines the calling context using the stack trace and generates the appropriate docstring.
-    - `getProcessDocstring(modl_appr)`: Generates a docstring for a specific process or approach.
-    - `getProcessDocstringForModel(modl)`: Generates a docstring for a SINDBAD process, including its purpose and subtypes.
+    - `getModelDocString()`: Determines the calling context using the stack trace and generates the appropriate docstring.
+    - `getModelDocString(modl_appr)`: Generates a docstring for a specific process or approach.
+    - `getModelDocStringForModel(modl)`: Generates a docstring for a SINDBAD process, including its purpose and subtypes.
     - `getApproachDocString(appr)`: Generates a docstring for a SINDBAD approach, including its purpose, parameters, and methods.
-    - `getProcessDocstringForIO(doc_string, io_list)`: Appends input/output details to the docstring for a given list of variables.
+    - `getModelDocStringForIO(doc_string, io_list)`: Appends input/output details to the docstring for a given list of variables.
     """
-    function getProcessDocstring end
+    function getModelDocString end
 
 
-    function getProcessDocstring()
+    function getModelDocString()
         stack = stacktrace()
         
         # Extract the file and line number of the caller
@@ -117,16 +117,16 @@ module Processes
             c_name = split(caller_info, "at ")[2]
             c_name = split(c_name, ".jl")[1]
             c_type = getproperty(SindbadTEM.Processes, Symbol(c_name))
-            return getProcessDocstring(c_type)
+            return getModelDocString(c_type)
         else
             return ("Information of the caller file is not available.")
         end
     end
 
-    function getProcessDocstring(modl_appr)
+    function getModelDocString(modl_appr)
         doc_string = ""
         if supertype(modl_appr) == LandEcosystem
-            doc_string = getProcessDocstringForModel(modl_appr)
+            doc_string = getModelDocStringForModel(modl_appr)
         else
             doc_string = getApproachDocString(modl_appr)
         end
@@ -165,20 +165,20 @@ module Processes
                 doc_string *= "\n`$(d_method)`:\n"
             end
             doc_string *= "- **Inputs**\n"
-            doc_string = getProcessDocstringForIO(doc_string, inputs)
+            doc_string = getModelDocStringForIO(doc_string, inputs)
             doc_string *= "- **Outputs**\n"
-            doc_string = getProcessDocstringForIO(doc_string, outputs)
+            doc_string = getModelDocStringForIO(doc_string, outputs)
         end
         if length(undefined_str) > 0
             doc_string *= "\n`$(undefined_str[1:end-2])` methods are not defined\n"        
         end
         appr_name = string(nameof(appr))
-        doc_string *= "\n*End of `getProcessDocstring`-generated docstring for `$(appr_name).jl`.\nCheck the Extended help for user-defined information.*"
+        doc_string *= "\n*End of `getModelDocString`-generated docstring for `$(appr_name).jl`.\nCheck the Extended help for user-defined information.*"
         return doc_string
     end
 
 
-    function getProcessDocstringForIO(doc_string, io_list)
+    function getModelDocStringForIO(doc_string, io_list)
         if length(io_list) == 0
             doc_string *= "     - None\n"
             return doc_string
@@ -199,7 +199,7 @@ module Processes
         return doc_string
     end
 
-    function getProcessDocstringForModel(modl)
+    function getModelDocStringForModel(modl)
         doc_string = "\n"
 
         doc_string *= "\t$(purpose(modl))\n\n"

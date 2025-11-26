@@ -19,7 +19,7 @@ purpose(::Type{runoffOverland_Inf}) = "Overland flow due to infiltration excess 
 
 @doc """
 
-$(getProcessDocstring(runoffOverland_Inf))
+$(getModelDocString(runoffOverland_Inf))
 
 ---
 

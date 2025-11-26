@@ -61,7 +61,7 @@ purpose(::Type{gppAirT_GSI}) = "Temperature effect on GPP based on the GSI imple
 
 @doc """
 
-$(getProcessDocstring(gppAirT_GSI))
+$(getModelDocString(gppAirT_GSI))
 
 ---
 

@@ -48,7 +48,7 @@ purpose(::Type{gppAirT_Maekelae2008}) = "Temperature effect on GPP based on Maek
 
 @doc """
 
-$(getProcessDocstring(gppAirT_Maekelae2008))
+$(getModelDocString(gppAirT_Maekelae2008))
 
 ---
 

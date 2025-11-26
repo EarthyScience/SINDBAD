@@ -73,7 +73,7 @@ purpose(::Type{cAllocation_GSI}) = "Dynamically allocates carbon based on temper
 
 @doc """
 
-$(getProcessDocstring(cAllocation_GSI))
+$(getModelDocString(cAllocation_GSI))
 
 ---
 

@@ -17,7 +17,7 @@ purpose(::Type{cTauSoilW_none}) = "Sets the effect of soil moisture on decomposi
 
 @doc """
 
-$(getProcessDocstring(cTauSoilW_none))
+$(getModelDocString(cTauSoilW_none))
 
 ---
 

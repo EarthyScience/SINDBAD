@@ -50,7 +50,7 @@ purpose(::Type{snowMelt_TairRn}) = "Snowmelt based on temperature and net radiat
 
 @doc """
 
-$(getProcessDocstring(snowMelt_TairRn))
+$(getModelDocString(snowMelt_TairRn))
 
 ---
 

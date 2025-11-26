@@ -17,7 +17,7 @@ purpose(::Type{runoffBase_none}) = "Sets base runoff to 0."
 
 @doc """
 
-$(getProcessDocstring(runoffBase_none))
+$(getModelDocString(runoffBase_none))
 
 ---
 

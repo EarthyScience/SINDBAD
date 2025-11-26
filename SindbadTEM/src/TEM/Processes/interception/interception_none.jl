@@ -17,7 +17,7 @@ purpose(::Type{interception_none}) = "Sets interception loss to 0."
 
 @doc """
 
-$(getProcessDocstring(interception_none))
+$(getModelDocString(interception_none))
 
 ---
 

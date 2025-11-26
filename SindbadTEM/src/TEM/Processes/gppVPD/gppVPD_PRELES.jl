@@ -38,7 +38,7 @@ purpose(::Type{gppVPD_PRELES}) = "VPD stress on GPP potential based on Maekelae 
 
 @doc """
 
-$(getProcessDocstring(gppVPD_PRELES))
+$(getModelDocString(gppVPD_PRELES))
 
 ---
 

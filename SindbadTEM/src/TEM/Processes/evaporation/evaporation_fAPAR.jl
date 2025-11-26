@@ -41,7 +41,7 @@ purpose(::Type{evaporation_fAPAR}) = "Bare soil evaporation from the non-absorbe
 
 @doc """
 
-$(getProcessDocstring(evaporation_fAPAR))
+$(getModelDocString(evaporation_fAPAR))
 
 ---
 

@@ -10,7 +10,7 @@ purpose(::Type{deriveVariables_simple}) = "Incudes derivation of few variables t
 
 @doc """
 
-$(getProcessDocstring(deriveVariables_simple))
+$(getModelDocString(deriveVariables_simple))
 
 ----
 

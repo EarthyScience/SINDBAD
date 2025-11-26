@@ -20,7 +20,7 @@ purpose(::Type{plantForm_fixed}) = "Sets plant form to a fixed form with 1: tree
 
 @doc """ 
 
-	$(getProcessDocstring(plantForm_fixed))
+	$(getModelDocString(plantForm_fixed))
 
 ---
 

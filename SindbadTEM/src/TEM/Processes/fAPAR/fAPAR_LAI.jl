@@ -26,7 +26,7 @@ purpose(::Type{fAPAR_LAI}) = "fAPAR as a function of LAI."
 
 @doc """
 
-$(getProcessDocstring(fAPAR_LAI))
+$(getModelDocString(fAPAR_LAI))
 
 ---
 

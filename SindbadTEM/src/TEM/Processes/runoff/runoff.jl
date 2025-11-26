@@ -7,6 +7,6 @@ purpose(::Type{runoff}) = "Total runoff."
 includeApproaches(runoff, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(runoff))
+	$(getModelDocString(runoff))
 """
 runoff

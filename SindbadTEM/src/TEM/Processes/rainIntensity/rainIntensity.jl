@@ -7,6 +7,6 @@ purpose(::Type{rainIntensity}) = "Rainfall intensity."
 includeApproaches(rainIntensity, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(rainIntensity))
+	$(getModelDocString(rainIntensity))
 """
 rainIntensity

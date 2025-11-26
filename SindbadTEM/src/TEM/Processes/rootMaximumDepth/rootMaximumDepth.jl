@@ -7,6 +7,6 @@ purpose(::Type{rootMaximumDepth}) = "Maximum rooting depth."
 includeApproaches(rootMaximumDepth, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(rootMaximumDepth))
+	$(getModelDocString(rootMaximumDepth))
 """
 rootMaximumDepth

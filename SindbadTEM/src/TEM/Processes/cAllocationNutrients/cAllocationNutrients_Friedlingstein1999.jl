@@ -40,7 +40,7 @@ purpose(::Type{cAllocationNutrients_Friedlingstein1999}) = "Calculates pseudo-nu
 
 @doc """
 
-$(getProcessDocstring(cAllocationNutrients_Friedlingstein1999))
+$(getModelDocString(cAllocationNutrients_Friedlingstein1999))
 
 ---
 

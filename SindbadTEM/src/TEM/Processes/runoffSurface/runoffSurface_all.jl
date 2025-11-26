@@ -20,7 +20,7 @@ purpose(::Type{runoffSurface_all}) = "All overland runoff generates surface runo
 
 @doc """
 
-$(getProcessDocstring(runoffSurface_all))
+$(getModelDocString(runoffSurface_all))
 
 ---
 

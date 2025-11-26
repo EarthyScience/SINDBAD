@@ -48,7 +48,7 @@ purpose(::Type{soilTexture_forcing}) = "Gets Soil texture properties from forcin
 
 @doc """
 
-$(getProcessDocstring(soilTexture_forcing))
+$(getModelDocString(soilTexture_forcing))
 
 ---
 

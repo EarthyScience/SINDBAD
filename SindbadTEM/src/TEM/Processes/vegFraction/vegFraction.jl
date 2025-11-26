@@ -7,6 +7,6 @@ purpose(::Type{vegFraction}) = "Vegetation cover fraction."
 includeApproaches(vegFraction, @__DIR__)
 
 @doc """ 
-	$(getProcessDocstring(vegFraction))
+	$(getModelDocString(vegFraction))
 """
 vegFraction
