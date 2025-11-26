@@ -233,7 +233,7 @@ function setModelRunInfo(info::NamedTuple)
         info = @set info.settings.experiment.flags.catch_model_errors = false
     end
     run_vals = convertRunFlagsToTypes(info)
-    output_array_type = getfield(SetupSimulation, toUpperCaseFirst(info.settings.experiment.model_output.output_array_type, "Output"))()
+    output_array_type = getfield(SindbadTEM, toUpperCaseFirst(info.settings.experiment.model_output.output_array_type, "Output"))()
     run_info = (; run_vals..., output_array_type = output_array_type)
     run_info = setTupleField(run_info, (:save_single_file, getTypeInstanceForFlags(:save_single_file, info.settings.experiment.model_output.save_single_file, "Do")))
     run_info = setTupleField(run_info, (:use_forward_diff, run_vals.use_forward_diff))
@@ -241,8 +241,8 @@ function setModelRunInfo(info::NamedTuple)
     run_info = setTupleField(run_info, (:input_array_type, info.settings.experiment.exe_rules.input_array_type))
 
     parallelization = titlecase(info.settings.experiment.exe_rules.parallelization)
-    run_info = setTupleField(run_info, (:parallelization, getfield(SetupSimulation, Symbol(parallelization*"Parallelization"))()))
-    land_output_type = getfield(SetupSimulation, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "PreAlloc"))()
+    run_info = setTupleField(run_info, (:parallelization, getfield(SindbadTEM, Symbol(parallelization*"Parallelization"))()))
+    land_output_type = getfield(SindbadTEM, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "PreAlloc"))()
     run_info = setTupleField(run_info, (:land_output_type, land_output_type))
     info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., run=run_info)))
     return info

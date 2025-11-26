@@ -27,16 +27,16 @@ This module defines the `LandEcosystem` supertype, which serves as the base for 
 1. **`Types/Types.jl`**:
    - Collects all SINDBAD types (model, time, land, array, experiment, etc.) and exports `purpose` along with helper utilities. Re-exported via `SindbadTEM.Types`.
 
-2. **`TEM/TEMUtils.jl`**:
+2. **`TEMUtils.jl`**:
    - Provides helper macros and functions for manipulating pools, NamedTuples, logging, and other TER utilities. Re-exported as `SindbadTEM.TEMUtils`.
 
 3. **`sindbadVariableCatalog.jl`**:
    - Defines the canonical catalog of SINDBAD variables to keep file IO metadata consistent.
 
-4. **`TEM/TEMTools.jl`**:
+4. **`TEMTools.jl`**:
    - Supplies tooling for inspecting models (I/O listings, parameter conversions, docstring builders, etc.).
 
-5. **`TEM/Processes/Processes.jl`**:
+5. **`Processes/Processes.jl`**:
    - Declares the process hierarchy, metadata macros, and all process/approach definitions. Re-exported as `SindbadTEM.Processes`.
 
 6. **`generateCode.jl`**:
@@ -107,10 +107,10 @@ module SindbadTEM
    
    include("Types/Types.jl")
    @reexport using .Types
-   include("TEM/TEMUtils.jl")   
    include("sindbadVariableCatalog.jl")
-   include("TEM/TEMTools.jl")
-   include("TEM/Processes/Processes.jl")
+   include("TEMTools.jl")
+   include("TEMUtils.jl")   
+   include("Processes/Processes.jl")
    include("generateCode.jl")
    @reexport using .Processes
    include("Utils/Utils.jl")

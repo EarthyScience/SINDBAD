@@ -117,7 +117,7 @@ for model_array_type ∈ ("static_array",) #, "array") #, "static_array")
         println("..............................")
 
         # sel_pool = :TWS
-        sp_method = getfield(SetupSimulation, toUpperCaseFirst("nlsolve_fixedpoint_trustregion_$(string(sel_pool))"))()
+        sp_method = getfield(SindbadTEM, toUpperCaseFirst("nlsolve_fixedpoint_trustregion_$(string(sel_pool))"))()
         println("NL_solve: ")
         @time out_sp_nl = SindbadTEM.spinup(spinup_models, theforcing, loc_forcing_t, deepcopy(land_for_s), tem_info, n_timesteps, sp_method)
         println("..............................")

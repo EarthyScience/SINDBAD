@@ -77,7 +77,7 @@ function optimizeYax(map_cubes...; out::NamedTuple, tem::NamedTuple, optim::Name
     output, forcing, observation = unpackYaxOpti(map_cubes; forcing_vars)
     forcing = (; Pair.(forcing_vars, forcing)...)
     observation = (; Pair.(obs_vars, observation)...)
-    land_output_type = getfield(SetupSimulation, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "PreAlloc"))()
+    land_output_type = getfield(SindbadTEM, toUpperCaseFirst(info.settings.experiment.exe_rules.land_output_type, "PreAlloc"))()
     params = optimizeTEM(forcing, observation, info)
     return output[:] = params.optimized
 end
