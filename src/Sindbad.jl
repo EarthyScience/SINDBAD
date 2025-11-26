@@ -75,8 +75,8 @@ module Sindbad
   @reexport using .Visualization
   include("Optimization/Optimization.jl")
   @reexport using .Optimization
-  include("MachineLearning/MachineLearning.jl")
-  @reexport using .MachineLearning
   include("Simulation/Simulation.jl")
   @reexport using .Simulation
+  include("MachineLearning/MachineLearning.jl")
+  @reexport using .MachineLearning
 end # module Sindbad

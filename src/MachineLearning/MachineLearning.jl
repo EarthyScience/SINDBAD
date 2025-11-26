@@ -47,7 +47,7 @@ module MachineLearning
         workers,
         nprocs,
         CachingPool
-    using Enzyme
+    # using Enzyme
     using FiniteDiff
     using FiniteDifferences
     using Flux
@@ -68,8 +68,8 @@ module MachineLearning
     using AxisKeys
     using ..DataLoaders: AllNaN
     using ..DataLoaders: yaxCubeToKeyedArray
-    using ..Setup: updateModels
-    using ..TEM: coreTEM!
+    using ..SetupSimulation: updateModels
+    using ..Simulation: coreTEM!
 
 
     include("utilsML.jl")
