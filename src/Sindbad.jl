@@ -62,17 +62,10 @@ Sindbad.Visualization.plot_output(results)
 ```
 """
 module Sindbad
+  using SindbadTEM
+  
   using SindbadTEM.Reexport: @reexport
-
   @reexport using SindbadTEM
-  @reexport using ConstructionBase
-  @reexport using CSV: CSV
-  @reexport using JSON: parsefile, json, print as json_print
-  @reexport using JLD2: @save, load
-  @reexport using YAXArrays: YAXArrays, YAXArray
-  @reexport using YAXArrays.Datasets: savedataset
-
-
 
   include("DataLoaders/DataLoaders.jl")
   @reexport using .DataLoaders

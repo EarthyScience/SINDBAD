@@ -39,15 +39,15 @@ This module is designed to streamline the ingestion and preprocessing of input d
 """
 module DataLoaders
    using SindbadTEM
-   using SindbadTEM.Utils
    using AxisKeys: KeyedArray, AxisKeys
    using FillArrays
    using DimensionalData
-   using NCDatasets
-   @reexport using NetCDF
-   @reexport using YAXArrays
-   @reexport using Zarr
-   using YAXArrayBase
+   using NCDatasets: NCDataset
+   import NCDatasets
+   import YAXArrayBase
+   using YAXArrays: YAXArrays, Cube, YAXArray
+   using YAXArrays.DAT: InDims
+   using Zarr
 
    include("utilsData.jl")
    include("spatialSubset.jl")

@@ -63,13 +63,13 @@ module MachineLearning
     using Zygote
     
     using SindbadTEM
-    using SindbadTEM.Metrics
-    using ..SetupSimulation
-    using ..DataLoaders.YAXArrays
-    using ..DataLoaders.Zarr
-    using ..DataLoaders.AxisKeys
+    using YAXArrays
+    using Zarr
+    using AxisKeys
     using ..DataLoaders: AllNaN
-    using ..DataLoaders: yaxCubeToKeyedArray, Cube
+    using ..DataLoaders: yaxCubeToKeyedArray
+    using ..Setup: updateModels
+    using ..TEM: coreTEM!
 
 
     include("utilsML.jl")

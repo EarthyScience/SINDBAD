@@ -48,7 +48,16 @@ using SindbadTEM.Utils
 """
 module Utils
    using ..SindbadTEM
-
+   using ..SindbadTEM.Types
+   using Crayons
+   using StyledStrings
+   using FIGlet
+   using Logging
+   using Accessors
+   using Dates
+   using DataStructures
+   using StatsBase
+   
    include("getArrayView.jl")
    include("utilsBasic.jl")
    include("utilsNT.jl")
