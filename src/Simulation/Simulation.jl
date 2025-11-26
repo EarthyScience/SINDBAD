@@ -58,6 +58,7 @@ This module integrates various components and utilities required to execute the 
 - It integrates tightly with the SINDBAD framework, leveraging shared types and utilities from `SetupSimulation`.
 """
 module Simulation
+   using YAXArrays
    using ComponentArrays
    using NLsolve
    using ProgressMeter

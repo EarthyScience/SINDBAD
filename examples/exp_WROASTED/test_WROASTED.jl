@@ -12,6 +12,7 @@ end_year = "2017"
 domain = "US-SRM"
 # domain = "MY-PSO"
 path_input = "$(getSindbadDataDepot())/fn/$(domain).1979.2017.daily.nc"
+path_input  = "/Net/Groups/BGI/scratch/skoirala/RnD/SINDBAD-RnD-SK/examples/data/fn/US-SRM.1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
 
 path_observation = path_input
