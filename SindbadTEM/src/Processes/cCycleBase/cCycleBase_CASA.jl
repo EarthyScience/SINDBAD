@@ -20,8 +20,10 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
 
     # one flow per declared edge of this approach, resolved against the configured
     # pool structure, rather than a transfer matrix carried as a parameter. The same
-    # call keys the flows by pool-name pair and sizes the neutral flow vector, so a
-    # cFlow approach reads the topology and fills in values instead of rederiving both
+    # call keys the flows by pool-name pair and sizes the flow vectors, starting
+    # c_flow_ME_vec at the microbial-efficiency defaults CASA_FLOW_EDGES carries
+    # rather than the neutral one, so a cMicrobialEfficiency approach only has to
+    # refine values instead of supplying them from nothing
     (c_flow_order, c_taker, c_giver, c_flow_named_edges, c_flow_A_vec, c_flow_QP_vec,
         c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
 
@@ -90,8 +92,9 @@ draws them, so neither has to be transcribed here to be read.
  - Potter; C. S.; Randerson; J. T.; Field; C. B.; Matson; P. A.; Vitousek; P. M.; Mooney; H. A.  & Klooster, S. A. (1993). Terrestrial ecosystem production: a process model based on global  satellite & surface data. Global Biogeochemical Cycles, 7[4], 811-841.
 
 *Versions*
- - 1.0 on 28.05.2022 [skoirala | @dr-ko]: migrate to julia  
+ - 1.0 on 28.05.2022 [skoirala | @dr-ko]: migrate to julia
  - 1.1 on 04.09.2026 [skoirala]: c_flow_ME_vec allocated here; dead c_flow_MEQP_array parameter and the transcribed c_flow_A_array removed
+ - 1.2 on 09.09.2026 [skoirala]: CASA_FLOW_EDGES now carries the microbial-efficiency defaults, so c_flow_ME_vec starts at the CASA table's own values instead of neutral
 
 *Created by*
  - ncarvalhais
