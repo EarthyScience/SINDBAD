@@ -223,7 +223,8 @@ function setDatesInfo(info::NamedTuple)
         end
         tmp_dates = set_namedtuple_field(tmp_dates, (time_prop, prop_val))
     end
-    timestep = getfield(Dates, Symbol(titlecase(info.settings.experiment.basics.time.temporal_resolution)))(1)
+    tr_n, tr_unit = parseTemporalResolution(info.settings.experiment.basics.time.temporal_resolution)
+    timestep = getfield(Dates, Symbol(titlecase(tr_unit)))(tr_n)
     time_range = DateTime(info.settings.experiment.basics.time.date_begin):timestep:DateTime(info.settings.experiment.basics.time.date_end)
     tmp_dates = set_namedtuple_field(tmp_dates, (:temporal_resolution, info.settings.experiment.basics.time.temporal_resolution))
     tmp_dates = set_namedtuple_field(tmp_dates, (:timestep, timestep))
@@ -251,17 +252,39 @@ function setModelRunInfo(info::NamedTuple)
         info = @set info.settings.experiment.flags.catch_model_errors = false
     end
     run_vals = convertRunFlagsToTypes(info)
-    output_array_type = getfield(Types, to_uppercase_first(info.settings.experiment.model_output.output_array_type, "Output"))()
+    # check if lazy run is set, and if so, set output array type to YAXArray regardless of the setting in json, as well as land output type to YAXArray
+    run_lazy = get(info.settings.experiment.flags, :run_lazy, false)
+
+    in_output_array_type = info.settings.experiment.model_output.output_array_type
+    if run_lazy
+        in_output_array_type = "YAXArray"
+    end
+    output_array_type = getfield(Types, to_uppercase_first(in_output_array_type, "Output"))()
     run_info = (; run_vals..., output_array_type = output_array_type)
+
+    run_info = set_namedtuple_field(run_info, (:run_lazy, getTypeInstanceForFlags(:run_lazy, run_lazy, "Do")))
+
     run_info = set_namedtuple_field(run_info, (:save_single_file, getTypeInstanceForFlags(:save_single_file, info.settings.experiment.model_output.save_single_file, "Do")))
-    run_info = set_namedtuple_field(run_info, (:use_forward_diff, run_vals.use_forward_diff))
-    run_info = set_namedtuple_field(run_info, (:input_data_backend, info.settings.experiment.exe_rules.input_data_backend))
-    run_info = set_namedtuple_field(run_info, (:input_array_type, info.settings.experiment.exe_rules.input_array_type))
+    # a lazy run always needs lazy (YAXArray) forcing/observation data; a non-lazy run always needs KeyedArray
+    input_array_type = run_lazy ? InputYAXArray() : InputKeyedArray()
+    run_info = set_namedtuple_field(run_info, (:input_array_type, input_array_type))
 
     parallelization = titlecase(info.settings.experiment.exe_rules.parallelization)
     run_info = set_namedtuple_field(run_info, (:parallelization, getfield(Types, Symbol(parallelization*"Parallelization"))()))
-    land_output_type = getfield(Types, to_uppercase_first(info.settings.experiment.exe_rules.land_output_type, "PreAlloc"))()
+
+    # if lazy, the run helpers will handle the output array type and land output type, so we set those to YAXArray here regardless of the setting in json, and the run helpers will overwrite it if not lazy
+    in_land_output_type = info.settings.experiment.exe_rules.land_output_type
+    if run_lazy
+        in_land_output_type = "YAXArray"
+    end
+    land_output_type = getfield(Types, to_uppercase_first(in_land_output_type, "PreAlloc"))()
     run_info = set_namedtuple_field(run_info, (:land_output_type, land_output_type))
+
+    ## visualization backend
+    visualization_backend = get(info.settings.experiment.exe_rules, :visualization_backend, "Types")
+    visualization_backend_type = getfield(Types, to_uppercase_first(visualization_backend, "Visualization"))()
+    run_info = set_namedtuple_field(run_info, (:visualization_backend, visualization_backend_type))
+    
     info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., run=run_info)))
     return info
 end
@@ -300,7 +323,7 @@ Validates and sets the absolute path for the restart file used in spinup.
 - The updated `info` NamedTuple with the absolute restart file path set.
 """
 function setRestartFilePath(info::NamedTuple)
-    restart_file_in = info.settings.experiment.model_spinup.restart_file
+    restart_file_in = get(info.settings.experiment.model_spinup, :restart_file, nothing)
     restart_file = nothing
 
     if !isnothing(restart_file_in)
@@ -380,9 +403,11 @@ function setSpinupInfo(info)
     info = setRestartFilePath(info)
     infospin = info.settings.experiment.model_spinup
     # change spinup sequence dispatch variables to Val, get the temporal aggregators
-    seqq = infospin.sequence
-    seqq_typed = getSpinupSequenceWithTypes(seqq, info.temp.helpers.dates)
-    infospin = set_namedtuple_field(infospin, (:sequence, [_s for _s in seqq_typed]))
+    seqq = get(infospin, :sequence, nothing)
+    if !isnothing(seqq)
+        seqq_typed = getSpinupSequenceWithTypes(seqq, info.temp.helpers.dates)
+        infospin = set_namedtuple_field(infospin, (:sequence, [_s for _s in seqq_typed]))
+    end
     info = set_namedtuple_subfield(info, :temp, (:spinup, infospin))
     return info
 end
@@ -462,12 +487,19 @@ function setupInfo(info::NamedTuple)
     land_init = createInitLand(info.pools, info.temp)
     info = (; info..., temp=(; info.temp..., helpers=(; info.temp.helpers..., land_init=land_init)))
 
+    data_settings = (;)
+    if hasproperty(info.settings, :forcing)
+        data_settings = set_namedtuple_field(data_settings, (:forcing, info.settings.forcing))
+    end
     if (info.settings.experiment.flags.run_optimization || info.settings.experiment.flags.calc_cost) && hasproperty(info.settings.optimization, :algorithm_optimization)
         # @info "  setupInfo: setting ParameterOptimization and Observation info..."
         info = setOptimization(info)
+        data_settings = set_namedtuple_field(data_settings, (:optimization, info.settings.optimization))
     else
-        parameter_table = info.temp.models.parameter_table
-        checkParameterBounds(parameter_table.name, parameter_table.initial, parameter_table.lower, parameter_table.upper, ScaleNone(), p_units=parameter_table.units, show_info=true, model_names=parameter_table.model_approach)
+        parameter_table = get(info.temp.models, :parameter_table, nothing)
+        if !isnothing(parameter_table)
+            checkParameterBounds(parameter_table.name, parameter_table.initial, parameter_table.lower, parameter_table.upper, ScaleNone(), p_units=parameter_table.units, show_info=true, model_names=parameter_table.model_approach)
+        end
      end
 
     if hasproperty(info.settings, :hybrid)
@@ -480,7 +512,6 @@ function setupInfo(info::NamedTuple)
     end
 
     print_info(setupInfo, @__FILE__, @__LINE__, "Cleaning Info Fields...")
-    data_settings = (; forcing = info.settings.forcing, optimization = info.settings.optimization)
     exe_rules = info.settings.experiment.exe_rules
     info = drop_namedtuple_fields(info, (:model_structure, :experiment, :output, :pools))
     info = (; info..., info.temp...)

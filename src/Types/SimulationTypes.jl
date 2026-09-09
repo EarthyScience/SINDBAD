@@ -7,12 +7,12 @@ purpose(::Type{SimulationTypes}) = "Abstract type for model simulation run flags
 export RunFlag
 export DoCalcCost
 export DoNotCalcCost
-export DoUseForwardDiff
-export DoNotUseForwardDiff
 export DoFilterNanPixels
 export DoNotFilterNanPixels
 export DoRunForward
 export DoNotRunForward
+export DoRunLazy
+export DoNotRunLazy
 export DoRunOptimization
 export DoNotRunOptimization
 export DoSaveInfo
@@ -44,6 +44,12 @@ purpose(::Type{DoRunForward}) = "Enable forward model run"
 struct DoNotRunForward <: RunFlag end
 purpose(::Type{DoNotRunForward}) = "Disable forward model run"
 
+struct DoRunLazy <: RunFlag end
+purpose(::Type{DoRunLazy}) = "Enable lazy run mode for running experiements based on Diskarrays and YAXArrays"
+
+struct DoNotRunLazy <: RunFlag end
+purpose(::Type{DoNotRunLazy}) = "Disable lazy run mode for running experiements based on Diskarrays and YAXArrays"
+
 struct DoRunOptimization <: RunFlag end
 purpose(::Type{DoRunOptimization}) = "Enable model parameter optimization"
 
@@ -67,12 +73,6 @@ purpose(::Type{DoStoreSpinup}) = "Enable storing of spinup results"
 
 struct DoNotStoreSpinup <: RunFlag end
 purpose(::Type{DoNotStoreSpinup}) = "Disable storing of spinup results"
-
-struct DoUseForwardDiff <: RunFlag end
-purpose(::Type{DoUseForwardDiff}) = "Enable forward mode automatic differentiation"
-
-struct DoNotUseForwardDiff <: RunFlag end
-purpose(::Type{DoNotUseForwardDiff}) = "Disable forward mode automatic differentiation"
 
 # ------------------------- parallelization options-------------------------
 export ParallelizationPackage
