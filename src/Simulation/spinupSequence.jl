@@ -27,11 +27,10 @@ end
 
 
 """
-    getSequence(year_disturbance, info_helpers_dates; nrepeat_base=200, year_start = 1979)
+    getSequence(year_disturbance, nrepeat_base=200, year_start = 1979)
 
 # Arguments:
 - `year_disturbance`: a year date, as an string
-- `info_helpers_dates`: information about dates
 - `nrepeat_base`=200 [default]
 - `year_start`: 1979 [default] start year, as an interger
 # Outputs

@@ -66,22 +66,6 @@ links.
 Lives here rather than with the approaches because every name in it is a pool of this
 structure and the list resolves against no other. See `cFlowEdges` for the ordering
 convention and why edges must name leaf pools.
-
-# Notes:
-- The 16 decomposition edges (everything leaving a litter, microbial or soil pool)
-  carry a `(giver => taker, value)` microbial-efficiency default instead of a plain
-  pair, so `cFlowStructure` starts `c_flow_ME_vec` at the CASA table's own values
-  rather than the neutral one every other structure gets. The 6 vegetation-to-litter
-  edges are litterfall, not decomposition, and stay plain pairs. The values match
-  `cMicrobialEfficiency_CASA`'s parameter defaults (`eff_cLit_to_cMicSurf`,
-  `eff_cSoil_to_cMicSoil`, and so on), which is what selecting that approach, or
-  `cMicrobialEfficiency_CASApool`, still reproduces.
-- `cMicSoil_to_cSoilSlow` and `cMicSoil_to_cSoilOld` are the one pathway whose real
-  value is texture-driven (`meTextureEfficiency`, from `st_clay`/`st_silt`), which
-  needs runtime data this declaration does not have. Their `0.45` here is a static
-  fallback, matching the other soil-group constants, not the texture response;
-  `cMicrobialEfficiency_CASA` and `cMicrobialEfficiency_CASApool` both overwrite it
-  with the real value when selected.
 """
 const CASA_FLOW_EDGES = (                    # giver => taker, in flow-vector order
     :cVegRootFine     => :cLitRootFineFast,                                  # giver 1
@@ -89,14 +73,14 @@ const CASA_FLOW_EDGES = (                    # giver => taker, in flow-vector or
     :cVegRootCoarse   => :cLitRootCoarse,                                    # giver 2
     :cVegWood         => :cLitWood,                                          # giver 3
     :cVegLeaf         => :cLitLeafFast,     :cVegLeaf         => :cLitLeafSlow,   # giver 4
-    (:cLitLeafFast     => :cMicSurf, 0.4),                                    # giver 5
-    (:cLitLeafSlow     => :cMicSurf, 0.4),  (:cLitLeafSlow     => :cSoilSlow, 0.6),  # giver 6
-    (:cLitRootFineFast => :cMicSoil, 0.45),                                   # giver 7
-    (:cLitRootFineSlow => :cMicSoil, 0.45), (:cLitRootFineSlow => :cSoilSlow, 0.55), # giver 8
-    (:cLitRootCoarse   => :cMicSoil, 0.4),  (:cLitRootCoarse   => :cSoilSlow, 0.6),  # giver 9
-    (:cLitWood         => :cMicSurf, 0.4),  (:cLitWood         => :cSoilSlow, 0.6),  # giver 10
-    (:cMicSurf         => :cSoilSlow, 0.4),                                   # giver 11
-    (:cMicSoil         => :cSoilSlow, 0.45), (:cMicSoil        => :cSoilOld, 0.45),  # giver 12
-    (:cSoilSlow        => :cMicSoil, 0.45), (:cSoilSlow        => :cSoilOld, 0.45),  # giver 13
-    (:cSoilOld         => :cMicSoil, 0.45),                                   # giver 14
+    :cLitLeafFast     => :cMicSurf,                                          # giver 5
+    :cLitLeafSlow     => :cMicSurf,         :cLitLeafSlow     => :cSoilSlow,  # giver 6
+    :cLitRootFineFast => :cMicSoil,                                          # giver 7
+    :cLitRootFineSlow => :cMicSoil,         :cLitRootFineSlow => :cSoilSlow,  # giver 8
+    :cLitRootCoarse   => :cMicSoil,         :cLitRootCoarse   => :cSoilSlow,  # giver 9
+    :cLitWood         => :cMicSurf,         :cLitWood         => :cSoilSlow,  # giver 10
+    :cMicSurf         => :cSoilSlow,                                         # giver 11
+    :cMicSoil         => :cSoilSlow,        :cMicSoil         => :cSoilOld,   # giver 12
+    :cSoilSlow        => :cMicSoil,         :cSoilSlow        => :cSoilOld,   # giver 13
+    :cSoilOld         => :cMicSoil,                                          # giver 14
 )

@@ -73,36 +73,11 @@ or `()` if it declares none.
   `cLitRootFineFast` and `cLitRootFineSlow` while `cVegRootCoarse` feeds only `cLitRootCoarse`, so a
   group-level `cVegRoot => cLitFast` would invent links that do not exist.
   `cFlowStructure` rejects both mistakes.
-- An entry is a plain `giver => taker` pair, or a `(giver => taker, value)` tuple when
-  the edge carries a microbial-efficiency default. `CASA_FLOW_EDGES` uses the latter
-  for the CASA table's statically-known values; every other declaration is plain pairs.
-  The value can only be static data resolved at declaration time, since neither
-  `helpers` nor `land` exist yet here: a transfer whose efficiency depends on a runtime
-  driver, such as soil texture, still needs a `cMicrobialEfficiency` approach to set it.
-  See `cFlowEdgeGiverTaker` and `cFlowEdgeMEDefault`.
 """
 function cFlowEdges end
 
 cFlowEdges(::Type{<:cCycleBase}) = ()
 cFlowEdges(T::cCycleBase) = cFlowEdges(typeof(T))
-
-"""
-    cFlowEdgeGiverTaker(edge)
-
-Return the `giver => taker` pair of a declared edge, whether it is a plain pair or a
-`(giver => taker, value)` tuple carrying a microbial-efficiency default.
-"""
-cFlowEdgeGiverTaker(edge::Pair) = edge
-cFlowEdgeGiverTaker(edge::Tuple) = first(edge)
-
-"""
-    cFlowEdgeMEDefault(edge)
-
-Return the microbial-efficiency default a declared edge carries, or `nothing` for a
-plain `giver => taker` pair.
-"""
-cFlowEdgeMEDefault(edge::Pair) = nothing
-cFlowEdgeMEDefault(edge::Tuple) = last(edge)
 
 """
     cFlowStructure(params::cCycleBase, cEco, helpers)
@@ -123,16 +98,14 @@ c_flow_ME_vec)`, in the order the approaches pack it.
   or what order they sit in, which is what an approach rederiving each of them
   separately from a matrix left open. `c_flow_named_edges` is the same topology keyed
   by pool-name pair rather than by position, built by `cFlowNamedEdges`.
-- `c_flow_A_vec`, `c_flow_QP_vec` and `c_flow_ME_vec` are built here rather than in a
-  `cFlow`, `cQualityPartition` or `cMicrobialEfficiency` approach for the same reason:
-  their length and order are the topology's, so an approach building one had to reach
-  for `c_taker` to re-measure what the base already knows. Those approaches fill in
-  values; they no longer decide the shape. `c_flow_A_vec` and `c_flow_QP_vec` are
-  always neutral, one per flow. `c_flow_ME_vec` starts the same way, then takes on
-  whatever default `cFlowEdgeMEDefault` finds on each declared edge, so `cCycle` reads
-  a valid efficiency even when no `cMicrobialEfficiency` model is selected at all, and
-  `CASA_FLOW_EDGES` in particular starts it at the CASA table's own values rather than
-  neutral.
+- `c_flow_A_vec`, `c_flow_QP_vec` and `c_flow_ME_vec` are neutral, one per flow, and
+  are built here rather than in a `cFlow`, `cQualityPartition` or
+  `cMicrobialEfficiency` approach for the same reason: their length and order are the
+  topology's, so an approach building one had to reach for `c_taker` to re-measure
+  what the base already knows. Those approaches fill in values; they no longer decide
+  the shape. Allocating here also means the neutral value of one exists whenever the
+  topology does, so `cCycle` reads a valid `c_flow_QP_vec` and `c_flow_ME_vec` even
+  when no `cQualityPartition` or `cMicrobialEfficiency` model is selected at all.
 - Sorted by `(giver, taker)`, which is the column-major order `findall` produced from
   the matrix and which `c_flow_A_vec`, `c_flow_QP_vec`, `c_flow_ME_vec` and the
   `d_cFlow` output dimension are all indexed by. Column-major means the giver is the
@@ -147,12 +120,11 @@ c_flow_ME_vec)`, in the order the approaches pack it.
 """
 function cFlowStructure(params::cCycleBase, cEco, helpers)
     edges = cFlowEdges(typeof(params))
-    pairs = cFlowEdgeGiverTaker.(edges)
-    givers = [cFlowEdgeIndex(params, helpers, first(pair), pair) for pair ∈ pairs]
-    takers = [cFlowEdgeIndex(params, helpers, last(pair), pair) for pair ∈ pairs]
+    givers = [cFlowEdgeIndex(params, helpers, first(edge), edge) for edge ∈ edges]
+    takers = [cFlowEdgeIndex(params, helpers, last(edge), edge) for edge ∈ edges]
     flows = collect(zip(givers, takers))
     if length(unique(flows)) < length(flows)
-        repeated = unique([pairs[i] for i ∈ findall(flow -> count(==(flow), flows) > 1, flows)])
+        repeated = unique([edges[i] for i ∈ findall(flow -> count(==(flow), flows) > 1, flows)])
         error("$(nameof(typeof(params))) declares the carbon flow edge(s) " *
               "$(repeated) more than once. Each giver to taker link carries one flow, " *
               "so list it once.")
@@ -165,11 +137,6 @@ function cFlowStructure(params::cCycleBase, cEco, helpers)
     c_flow_A_vec = getVectorOfType(cEco, length(c_taker), one)
     c_flow_QP_vec = getVectorOfType(cEco, length(c_taker), one)
     c_flow_ME_vec = getVectorOfType(cEco, length(c_taker), one)
-    for (pos, i) ∈ enumerate(order)
-        default = cFlowEdgeMEDefault(edges[i])
-        isnothing(default) ||
-            (c_flow_ME_vec = repElem(c_flow_ME_vec, default, c_flow_ME_vec, c_flow_ME_vec, pos))
-    end
     return c_flow_order, c_taker, c_giver, c_flow_named_edges, c_flow_A_vec, c_flow_QP_vec,
         c_flow_ME_vec
 end

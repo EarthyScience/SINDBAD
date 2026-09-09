@@ -47,48 +47,10 @@
             structure = poolStructure(configuration)
             leaves = Set(leafNames(structure.components))
             for edge in P.cFlowEdges(approach)
-                pair = P.cFlowEdgeGiverTaker(edge)
-                @test first(pair) ∈ leaves
-                @test last(pair) ∈ leaves
+                @test first(edge) ∈ leaves
+                @test last(edge) ∈ leaves
             end
         end
-    end
-
-    @testset "only CASA's decomposition edges carry a microbial-efficiency default" begin
-        # GSI/MGMT declare plain giver => taker pairs, unaffected by CASA's extension.
-        for approach in (P.cCycleBase_GSI, P.cCycleBase_GSI_PlantForm, P.cCycleBase_GSI_PlantForm_MGMT)
-            for edge in P.cFlowEdges(approach)
-                @test P.cFlowEdgeMEDefault(edge) === nothing
-            end
-        end
-
-        casa_me_defaults = Dict(
-            P.cFlowEdgeGiverTaker(edge) => P.cFlowEdgeMEDefault(edge)
-            for edge in P.cFlowEdges(P.cCycleBase_CASA)
-        )
-        vegetation_edges = (
-            :cVegRootFine => :cLitRootFineFast, :cVegRootFine => :cLitRootFineSlow,
-            :cVegRootCoarse => :cLitRootCoarse, :cVegWood => :cLitWood,
-            :cVegLeaf => :cLitLeafFast, :cVegLeaf => :cLitLeafSlow,
-        )
-        for edge in vegetation_edges
-            @test casa_me_defaults[edge] === nothing
-        end
-        expected = Dict(
-            (:cLitLeafFast => :cMicSurf) => 0.4, (:cLitLeafSlow => :cMicSurf) => 0.4,
-            (:cLitWood => :cMicSurf) => 0.4, (:cLitLeafSlow => :cSoilSlow) => 0.6,
-            (:cLitRootCoarse => :cSoilSlow) => 0.6, (:cLitWood => :cSoilSlow) => 0.6,
-            (:cLitRootFineSlow => :cSoilSlow) => 0.55,
-            (:cLitRootFineFast => :cMicSoil) => 0.45, (:cLitRootFineSlow => :cMicSoil) => 0.45,
-            (:cLitRootCoarse => :cMicSoil) => 0.4, (:cMicSurf => :cSoilSlow) => 0.4,
-            (:cMicSoil => :cSoilSlow) => 0.45, (:cMicSoil => :cSoilOld) => 0.45,
-            (:cSoilSlow => :cMicSoil) => 0.45, (:cSoilOld => :cMicSoil) => 0.45,
-            (:cSoilSlow => :cSoilOld) => 0.45,
-        )
-        for (edge, value) in expected
-            @test casa_me_defaults[edge] == value
-        end
-        @test length(casa_me_defaults) == length(vegetation_edges) + length(expected)
     end
 
     @testset "aliases are declared only where nesting cannot express them" begin
@@ -196,22 +158,21 @@ end
         ix(name) = findfirst(==(name), pool_names)
         flow_matrix = cFlowMatrix(P.cCycleBase_CASA, pool_names)
         edges = P.cFlowEdges(P.cCycleBase_CASA)
-        pairs = P.cFlowEdgeGiverTaker.(edges)
-        for pair in pairs
-            @test flow_matrix[ix(last(pair)), ix(first(pair))] != 0
+        for edge in edges
+            @test flow_matrix[ix(last(edge)), ix(first(edge))] != 0
         end
         # the transpose is a different matrix, so the orientation is not a free choice.
         # Asserted on the one-way edges only: CASA also has reciprocal pairs, such as
         # cMicSoil <-> cSoilSlow, whose reverse cell is filled by its own flow.
-        for pair in pairs
-            (last(pair) => first(pair)) ∈ pairs && continue
-            @test flow_matrix[ix(first(pair)), ix(last(pair))] == 0
+        for edge in edges
+            (last(edge) => first(edge)) ∈ edges && continue
+            @test flow_matrix[ix(first(edge)), ix(last(edge))] == 0
         end
         @test flow_matrix[ix(:cLitLeafFast), ix(:cVegLeaf)] != 0
         @test flow_matrix[ix(:cVegLeaf), ix(:cLitLeafFast)] == 0
         # the two methods agree
-        givers = [ix(first(p)) for p in pairs]
-        takers = [ix(last(p)) for p in pairs]
+        givers = [ix(first(e)) for e in edges]
+        takers = [ix(last(e)) for e in edges]
         order = sortperm(collect(zip(givers, takers)))
         @test cFlowMatrix(givers[order], takers[order], length(pool_names)) == flow_matrix
         # a name the structure does not have

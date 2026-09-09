@@ -326,12 +326,11 @@ function cFlowMatrix(approach, pool_names)
         error("$(approach_name) declares no carbon flow edges, so it has no flow " *
               "matrix. Use an approach that declares `cFlowEdges`.")
     end
-    pairs = cFlowEdgeGiverTaker.(edges)
-    givers = [cFlowNamePosition(approach_name, pool_names, first(pair), pair) for pair ∈ pairs]
-    takers = [cFlowNamePosition(approach_name, pool_names, last(pair), pair) for pair ∈ pairs]
+    givers = [cFlowNamePosition(approach_name, pool_names, first(edge), edge) for edge ∈ edges]
+    takers = [cFlowNamePosition(approach_name, pool_names, last(edge), edge) for edge ∈ edges]
     flows = collect(zip(givers, takers))
     if length(unique(flows)) < length(flows)
-        repeated = unique([pairs[i] for i ∈ findall(flow -> count(==(flow), flows) > 1, flows)])
+        repeated = unique([edges[i] for i ∈ findall(flow -> count(==(flow), flows) > 1, flows)])
         error("$(approach_name) declares the carbon flow edge(s) $(repeated) more than " *
               "once. Each giver to taker link carries one flow, so list it once.")
     end
