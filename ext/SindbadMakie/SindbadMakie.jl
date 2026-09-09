@@ -120,6 +120,13 @@ function _category_color(category)
     return get(_CATEGORY_COLORS, category, :gray)
 end
 
+function _parent_sized_figure(fig)
+    if isdefined(Main, :WGLMakie)
+        return Main.WGLMakie.WithConfig(fig; resize_to=:parent)
+    end
+    return fig
+end
+
 function _slider_item(label_str, lo, hi, def)
     sl = Slider(_slider_range(lo, hi, def); startvalue = def)
 
@@ -194,8 +201,8 @@ function _build_input_panel(title_str, items, fixed_paths, get_range, get_value)
             DOM.div(elements...;
                 style=Styles("display" => "flex", "flex-direction" => "column", "gap" => "8px"));
             style=Styles(
-                "min-width" => "240px",
-                "flex" => "1 1 240px",
+                "min-width" => "0",
+                "flex" => "1 1 220px",
                 "padding" => "10px",
                 "border-top" => "4px solid $(_category_color(category))"
             )
@@ -246,8 +253,8 @@ function _build_output_panel(title_str, items)
             DOM.div(elements...;
                 style=Styles("display" => "flex", "flex-direction" => "column", "gap" => "8px"));
             style=Styles(
-                "min-width" => "180px",
-                "flex" => "1 1 180px",
+                "min-width" => "0",
+                "flex" => "1 1 160px",
                 "padding" => "10px",
                 "border-top" => "4px solid $(_category_color(category))"
             )
@@ -310,7 +317,14 @@ function Sindbad.app_process(model, compute::Symbol;
     end
 
     params_panel = DOM.div(params_elements...;
-        style = Styles("padding" => "10px", "overflow-y" => "auto", "height" => "100%"));
+        style = Styles(
+            "padding" => "10px",
+            "overflow-y" => "auto",
+            "height" => "100%",
+            "display" => "flex",
+            "flex-direction" => "column",
+            "gap" => "8px"
+        ));
 
     in_items = [(path, leaf) for (path, leaf) in in_paths]
 
@@ -414,8 +428,7 @@ function Sindbad.app_process(model, compute::Symbol;
     end
 
     app = App() do
-        # Make Makie responsive
-        fig.scene.viewport[] = Rect2f(0, 0, 800, 500)
+        parent_sized_fig = _parent_sized_figure(fig)
 
         title_card = Card(
             DOM.div(
@@ -442,6 +455,7 @@ function Sindbad.app_process(model, compute::Symbol;
                 inputs_panel;
                 style=Styles(
                     "flex" => "1",
+                    "flex-basis" => "360px",
                     "min-width" => "0"
                 )
             ),
@@ -450,6 +464,7 @@ function Sindbad.app_process(model, compute::Symbol;
                 outputs_panel;
                 style=Styles(
                     "flex" => "1",
+                    "flex-basis" => "360px",
                     "min-width" => "0"
                 )
             );
@@ -464,16 +479,21 @@ function Sindbad.app_process(model, compute::Symbol;
 
         plot_card = Card(
             DOM.div(
-                fig;
+                parent_sized_fig;
                 style=Styles(
                     "width" => "100%",
-                    "height" => "100%"
+                    "height" => "100%",
+                    "min-height" => "360px",
+                    "display" => "flex",
+                    "flex" => "1"
                 )
             );
 
             style=Styles(
                 "grid-area" => "plot",
                 "min-height" => "400px",
+                "min-width" => "0",
+                "height" => "100%",
                 "overflow" => "hidden"
             )
         )
@@ -497,9 +517,14 @@ function Sindbad.app_process(model, compute::Symbol;
                 "display" => "grid",
                 "gap" => "20px",          # ← space between IO and plot
                 "height" => "100%",
+                "min-width" => "0",
+                "min-height" => "0",
 
                 # Responsive
-                "@media (max-width: 768px)" => Dict(
+                "@media (max-width: 1100px)" => Dict(
+                    "grid-template-columns" => "280px 1fr"
+                ),
+                "@media (max-width: 900px)" => Dict(
                     "grid-template-columns" => "1fr",
                     "grid-template-rows" =>
                         "auto auto auto auto",
@@ -520,8 +545,10 @@ function Sindbad.app_process(model, compute::Symbol;
 
             style=Styles(
                 "height" => "100vh",
+                "max-width" => "100%",
                 "padding" => "20px",
                 "box-sizing" => "border-box",
+                "overflow-x" => "hidden",
 
                 # Slider expansion
                 ".bonito-slider" => Dict(
@@ -532,11 +559,8 @@ function Sindbad.app_process(model, compute::Symbol;
                     "width" => "100%"
                 ),
 
-                # Stack INPUT/OUTPUT on phones
-                "@media (max-width: 768px)" => Dict(
-                    ".io" => Dict(
-                        "flex-direction" => "column"
-                    )
+                "@media (max-width: 900px)" => Dict(
+                    "padding" => "12px"
                 )
             )
         )
