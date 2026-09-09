@@ -427,13 +427,36 @@ function Sindbad.app_process(model, compute::Symbol;
         @warn "Unable to evaluate $(nameof(typeof(model))) for the initial plot" exception=(error, catch_backtrace())
     end
 
-    app = App() do
+    app = App(title="SindbadApp") do
         parent_sized_fig = _parent_sized_figure(fig)
+
+        theme_button = DOM.button(
+            "Dark mode";
+            onclick=js"event => {
+                const dark = document.documentElement.dataset.theme !== 'dark';
+                document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+                document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+                document.body.style.backgroundColor = dark ? '#0A0C0D' : '#ffffff';
+                document.body.style.color = dark ? '#f5f7fa' : '#0A0C0D';
+                event.currentTarget.textContent = dark ? 'Light mode' : 'Dark mode';
+            }",
+            style=Styles(
+                "margin-left" => "auto",
+                "padding" => "6px 10px",
+                "cursor" => "pointer"
+            )
+        )
 
         title_card = Card(
             DOM.div(
-                DOM.b(string(nameof(typeof(model)))),
-                DOM.span(" — $(string(io[:approach]))")
+                # DOM.b(string(nameof(typeof(model)))),
+                DOM.span("$(string(io[:approach]))"),
+                theme_button;
+                style=Styles(
+                    "display" => "flex",
+                    "align-items" => "center",
+                    "gap" => "8px"
+                )
             );
             style=Styles(
                 "grid-area" => "title",
