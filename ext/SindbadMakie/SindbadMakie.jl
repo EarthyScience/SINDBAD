@@ -348,6 +348,9 @@ function Sindbad.app_process(model, compute::Symbol;
         barplot!(ax, 1:length(out_paths), output_values; color=output_colors)
         ax.xticks = (1:length(out_paths), output_labels)
         autolimits!(ax)
+        on(output_values) do _
+            ylims!(ax, nothing, nothing)
+        end
     end
 
     function update_outputs!()
