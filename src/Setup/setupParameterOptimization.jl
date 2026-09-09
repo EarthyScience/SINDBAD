@@ -150,11 +150,12 @@ function getCostOptions(optim_info::NamedTuple, vars_info, tem_variables, number
     for (i, _aggr) in enumerate(time_aggrs)
         aggr_func = getAggrFunc(aggr_funcs[i])
         _aggr_name = string(_aggr)
-        skip_sampling = false
-        if startswith(_aggr_name, dates_helpers.temporal_resolution)
-            skip_sampling = true
+        # Matching native resolution requires no sampler (including n-unit steps).
+        aggInd = if _aggr_name == dates_helpers.temporal_resolution
+            [nothing]
+        else
+            create_TimeSampler(dates_helpers.range, to_uppercase_first(_aggr, "Time"), aggr_func)
         end
-        aggInd = create_TimeSampler(dates_helpers.range, to_uppercase_first(_aggr, "Time"), aggr_func, skip_sampling)
         push!(agg_indices, aggInd)
     end
     push!(all_options, obs_ind)
