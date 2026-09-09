@@ -19,11 +19,10 @@ surface. The last two entries are the aggregated GSI litter pools, which take th
 litter-to-soil efficiency; on CASA they are absent and `setMEFlow` skips them, and on GSI
 the CASA-only entries are absent instead, so one table serves both.
 
-A function rather than a table written inline, because two approaches declare it:
-[`cMicrobialEfficiencycLit_CASA`](@ref) as this group's factor, and
-[`cMicrobialEfficiency_CASA`](@ref) as part of the whole self-contained table. This is
-the assignment whose `cLitRootCoarse` and `cLitWood` columns were transposed for as long
-as it was a dense array indexed by position, so it exists in exactly one place.
+Declared as a function, called from `cCycleBase_CASA.define` to seed `c_flow_ME_vec`
+with CASA's static litter defaults. This is the assignment whose `cLitRootCoarse` and
+`cLitWood` columns were transposed for as long as it was a dense array indexed by
+position, so it is kept as one table read from one place rather than written inline.
 """
 function meCASAFlowsLitter(eff_cLit_to_cMicSurf, eff_cLitRootFine_to_cMicSoil,
         eff_cLitRootCoarse_to_cMicSoil, eff_cLit_to_cSoilSlow,
@@ -67,7 +66,7 @@ ten CASA litter transfers under `CarbonPoolsCASA`, and the two aggregated
 
 `_none`, `_constant` and `_texture` decide which transfers are theirs from
 `helpers.pools.zix.cLit`, so they need no edge list and hold on any pool structure.
-`_CASA` names its edges instead, because it is the only one that distinguishes pathways
-within the group.
+CASA's own per-pathway litter table lives in `cCycleBase_CASA` as defaults instead of
+a group factor here.
 """
 cMicrobialEfficiencycLit

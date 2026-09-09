@@ -20,8 +20,9 @@ The body is `setFlowEdgeValue` in `landUtils.jl`, shared with `setQPFlow`. There
 group counterpart here: an efficiency is a per-flow retention fraction rather than a
 partition, so a giver's outgoing efficiencies are under no obligation to sum to one.
 
-Only the `_CASA` approaches use this. The others find their flows through `zix`, which
-needs no edge list and holds on any pool structure.
+Used by the `_CASA` approaches, and by `cCycleBase_CASA.define` itself to seed
+`c_flow_ME_vec` with CASA's static defaults. The others find their flows through
+`zix`, which needs no edge list and holds on any pool structure.
 """
 function setMEFlow(me_vec, c_flow_named_edges, edge, value)
     return setFlowEdgeValue(me_vec, c_flow_named_edges, edge, value)
@@ -35,8 +36,7 @@ The CASA microbial carbon-transfer efficiency of soil texture,
 
 The soil profile collapses to a single mean clay and silt fraction, as in
 `cQualityPartitionSoilProperties_clay`. Shared because the same law is the whole of the
-three `_texture` approaches and the soil-microbial half of
-[`cMicrobialEfficiencycMic_CASA`](@ref).
+three `_texture` approaches.
 """
 function meTextureEfficiency(effA, effB, st_clay, st_silt)
     return clamp_zero_one(effA - effB * (mean(st_silt) + mean(st_clay)))
@@ -71,17 +71,24 @@ disjoint set of transfers and is a process of its own:
 [`cQualityPartition_mult`](@ref) combines the quality-partition factors and
 [`cTau_mult`](@ref) the decomposition-rate stressors.
 
-Three approaches bypass the factors instead of combining them, and read none of their
-diagnostics, so any of them can be selected whether or not the groups are:
+Two approaches bypass the factors instead of combining them, and read none of their
+diagnostics, so either can be selected whether or not the groups are:
 
-- [`cMicrobialEfficiency_CASA`](@ref): the whole CASA table in one selection, equal to
-  composing the three `_CASA` factors. It shares their declarations rather than repeating
-  them, so the two paths cannot drift apart.
 - [`cMicrobialEfficiency_none`](@ref): every transfer keeps the neutral efficiency of
   one.
 - [`cMicrobialEfficiency_constant`](@ref): one constant on every decomposition transfer,
   whichever group it leaves. Set it to zero for the endpoint where all decomposed carbon
   respires.
+
+CASA does not need a third: `cCycleBase_CASA` itself carries the 14 statically-known
+CASA transfers as ordinary bounded parameters and writes them into `c_flow_ME_vec` in
+`define`, so that table is the default with no `cMicrobialEfficiency` approach
+selected at all. Only the soil-microbial pool's texture response, driven by
+`st_clay`/`st_silt`, still needs one: select [`cMicrobialEfficiencycMic_texture`](@ref)
+(composed with `_texture` for the other two groups through
+[`cMicrobialEfficiency_mult`](@ref)), which applies the response to every transfer
+leaving a microbial pool rather than singling out the soil one the way CASA's original
+table did.
 
 # Notes:
 - Split by giver pool group rather than by control. A group is a pool-name prefix, so it
@@ -90,7 +97,7 @@ diagnostics, so any of them can be selected whether or not the groups are:
   alike. A split by control instead strands the texture response on CASA, because GSI
   has no microbial pool for it to act on.
 - Within each group, `_none`, `_constant` and `_texture` find their transfers through
-  `zix` and so hold on any structure, while `_CASA` names its edges because it is the
-  only one that distinguishes pathways within a group.
+  `zix` and so hold on any structure. CASA's exact, per-edge treatment does not have a
+  group-factor form; it lives entirely in `cCycleBase_CASA`'s own parameters instead.
 """
 cMicrobialEfficiency

@@ -181,13 +181,16 @@ end
 end
 
 # The three pool-group microbial-efficiency factors, driven for real rather than compared
-# against a parallel edge list. Each group's _CASA approach is run on a synthetic land and
-# the positions it moves away from the neutral one are read back, so this checks what the
-# approaches actually write. The groups must partition the decomposition transfers: every
-# one owned exactly once, none shared, and no vegetation transfer touched. That is the
-# property cMicrobialEfficiency_mult relies on, and the check the dense c_flow_ME_array had
-# no way to express -- it is what would have caught its transposed coarse-root and wood
-# columns.
+# against a parallel edge list. Each group's _constant approach is run on a synthetic land
+# and the positions it moves away from the neutral one are read back, so this checks what
+# the approaches actually write. The groups must partition the decomposition transfers:
+# every one owned exactly once, none shared, and no vegetation transfer touched. That is
+# the property cMicrobialEfficiency_mult relies on, and the check the dense
+# c_flow_ME_array had no way to express -- it is what would have caught its transposed
+# coarse-root and wood columns. _constant drives this rather than the now-removed
+# cMicrobialEfficiencyc{Lit,Mic,Soil}_CASA (whose static values duplicated
+# cCycleBase_CASA's own, so they were dropped): the partition property this checks holds
+# for any per-group approach, not something specific to CASA's exact table.
 @testset "microbial efficiency group coverage" begin
     P = SindbadTEM.Processes
 
@@ -204,7 +207,7 @@ end
         return names
     end
 
-    # a land carrying just what the _CASA approaches unpack
+    # a land and helpers carrying just what the _constant approaches unpack
     function syntheticLand(approach)
         pool_names = Tuple(leafNames(poolStructure(poolConfiguration(approach)).components))
         n_pools = length(pool_names)
@@ -218,6 +221,8 @@ end
             takers[flow_matrix[taker, giver]] = taker
         end
         named = P.cFlowNamedEdges(Tuple(takers), Tuple(givers), pool_names)
+        zixOf(prefix) = Tuple(findall(nm -> startswith(String(nm), prefix), pool_names))
+        helpers = (; pools = (; zix = (; cLit = zixOf("cLit"), cMic = zixOf("cMic"), cSoil = zixOf("cSoil"))))
         land = (;
             pools = (; cEco = zeros(n_pools)),
             cCycleBase = (; c_taker = Tuple(takers), c_giver = Tuple(givers),
@@ -226,24 +231,24 @@ end
             diagnostics = (;),
             properties = (; st_clay = [0.2], st_silt = [0.3]),
         )
-        return land, pool_names, givers, takers, n_flows
+        return land, helpers, pool_names, givers, takers, n_flows
     end
 
     # which flow positions this approach moves away from the neutral one
-    function ownedFlows(approach_instance, diagnostic, land)
-        l = P.define(approach_instance, nothing, land, nothing)
-        l = P.precompute(approach_instance, nothing, l, nothing)
+    function ownedFlows(approach_instance, diagnostic, land, helpers)
+        l = P.define(approach_instance, nothing, land, helpers)
+        l = P.precompute(approach_instance, nothing, l, helpers)
         factor = getproperty(l.diagnostics, diagnostic)
         return Set(findall(!=(1.0), factor))
     end
 
-    groups = ((P.cMicrobialEfficiencycLit_CASA(), :c_flow_ME_f_cLit, :cLit),
-              (P.cMicrobialEfficiencycMic_CASA(), :c_flow_ME_f_cMic, :cMic),
-              (P.cMicrobialEfficiencycSoil_CASA(), :c_flow_ME_f_cSoil, :cSoil))
+    groups = ((P.cMicrobialEfficiencycLit_constant(), :c_flow_ME_f_cLit, :cLit),
+              (P.cMicrobialEfficiencycMic_constant(), :c_flow_ME_f_cMic, :cMic),
+              (P.cMicrobialEfficiencycSoil_constant(), :c_flow_ME_f_cSoil, :cSoil))
 
     for base in (P.cCycleBase_CASA, P.cCycleBase_GSI)
-        land, pool_names, givers, _, n_flows = syntheticLand(base)
-        owned = [ownedFlows(a, d, land) for (a, d, _) in groups]
+        land, helpers, pool_names, givers, _, n_flows = syntheticLand(base)
+        owned = [ownedFlows(a, d, land, helpers) for (a, d, _) in groups]
 
         @testset "$(nameof(base)): the groups are disjoint" begin
             for i in 1:3, j in (i + 1):3
@@ -276,7 +281,75 @@ end
 
     # cMic has no pools under GSI, so its factor must come out entirely neutral there
     @testset "the cMic group is inert without microbial pools" begin
-        land, _, _, _, _ = syntheticLand(P.cCycleBase_GSI)
-        @test isempty(ownedFlows(P.cMicrobialEfficiencycMic_CASA(), :c_flow_ME_f_cMic, land))
+        land, helpers, _, _, _, _ = syntheticLand(P.cCycleBase_GSI)
+        @test isempty(ownedFlows(P.cMicrobialEfficiencycMic_constant(), :c_flow_ME_f_cMic, land, helpers))
+    end
+end
+
+# cCycleBase_CASA's own microbial-efficiency defaults: the static half of the CASA table
+# now lives here (see cCycleBase_CASA.jl), not in a separate cMicrobialEfficiency
+# approach, so this is the only remaining check against the class of bug the CASA table
+# used to hide when it was a dense, position-indexed array (its coarse-root and wood
+# columns transposed).
+@testset "cCycleBase_CASA seeds its own static microbial-efficiency defaults" begin
+    P = SindbadTEM.Processes
+
+    function leafNames(components, prefix="")
+        names = Symbol[]
+        for name in propertynames(components)
+            value = getproperty(components, name)
+            if isa(value, NamedTuple)
+                append!(names, leafNames(value, prefix * String(name)))
+            else
+                push!(names, Symbol(prefix * String(name)))
+            end
+        end
+        return names
+    end
+
+    pool_names = Tuple(leafNames(poolStructure(P.CarbonPoolsCASA).components))
+    n_pools = length(pool_names)
+    flow_matrix = cFlowMatrix(P.cCycleBase_CASA, pool_names)
+    n_flows = maximum(flow_matrix)
+    givers = zeros(Int, n_flows)
+    takers = zeros(Int, n_flows)
+    for taker in 1:n_pools, giver in 1:n_pools
+        flow_matrix[taker, giver] == 0 && continue
+        givers[flow_matrix[taker, giver]] = giver
+        takers[flow_matrix[taker, giver]] = taker
+    end
+    named = P.cFlowNamedEdges(Tuple(takers), Tuple(givers), pool_names)
+    zix = NamedTuple(nm => (i,) for (i, nm) in enumerate(pool_names))
+    helpers = (; pools = (; zix = zix, components = (; cEco = pool_names)))
+    land = (; pools = (; cEco = zeros(n_pools)), diagnostics = (;), cCycleBase = (;), models = (;))
+
+    land2 = P.define(P.cCycleBase_CASA(), nothing, land, helpers)
+    me = land2.diagnostics.c_flow_ME_vec
+    valueAt(edge) = me[first(getproperty(named, edge))]
+
+    expected = Dict(
+        :cLitLeafFast_to_cMicSurf => 0.4, :cLitLeafSlow_to_cMicSurf => 0.4,
+        :cLitWood_to_cMicSurf => 0.4, :cLitLeafSlow_to_cSoilSlow => 0.6,
+        :cLitRootCoarse_to_cSoilSlow => 0.6, :cLitWood_to_cSoilSlow => 0.6,
+        :cLitRootFineSlow_to_cSoilSlow => 0.55,
+        :cLitRootFineFast_to_cMicSoil => 0.45, :cLitRootFineSlow_to_cMicSoil => 0.45,
+        :cLitRootCoarse_to_cMicSoil => 0.4, :cMicSurf_to_cSoilSlow => 0.4,
+        :cSoilSlow_to_cMicSoil => 0.45, :cSoilOld_to_cMicSoil => 0.45,
+        :cSoilSlow_to_cSoilOld => 0.45,
+    )
+    for (edge, value) in expected
+        @test valueAt(edge) == value
+    end
+
+    # the two texture-driven edges are not seeded here: no cMicrobialEfficiency approach
+    # was run, so they keep the neutral default cFlowStructure allocated.
+    @test valueAt(:cMicSoil_to_cSoilSlow) == 1.0
+    @test valueAt(:cMicSoil_to_cSoilOld) == 1.0
+
+    # vegetation-to-litter transfers are litterfall, not decomposition, and stay neutral
+    for edge in (:cVegRootFine_to_cLitRootFineFast, :cVegRootFine_to_cLitRootFineSlow,
+                 :cVegRootCoarse_to_cLitRootCoarse, :cVegWood_to_cLitWood,
+                 :cVegLeaf_to_cLitLeafFast, :cVegLeaf_to_cLitLeafSlow)
+        @test valueAt(edge) == 1.0
     end
 end

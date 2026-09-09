@@ -38,7 +38,7 @@ purpose(::Type{cMicrobialEfficiency_mult}) = "Combines the litter, microbial, an
 
 The factors come from [`cMicrobialEfficiencycLit`](@ref),
 [`cMicrobialEfficiencycMic`](@ref) and [`cMicrobialEfficiencycSoil`](@ref), each with its
-own `_none`, `_constant`, `_texture` and `_CASA` approaches, so the treatment of one pool
+own `_none`, `_constant` and `_texture` approaches, so the treatment of one pool
 group can be swapped without touching the other two.
 
 Combining is valid because the three own disjoint giver pools: a factor writes an
@@ -50,11 +50,16 @@ All three factor processes must be selected in the model structure alongside thi
 approach; a missing one is an absent diagnostic rather than a neutral factor, so it fails
 at unpack rather than silently leaving that group's transfers at perfect retention.
 Leaving `cMicrobialEfficiency` out entirely instead gives every flow the efficiency of
-one that `cCycleBase` allocates.
+one that `cCycleBase` allocates, except under `CarbonPoolsCASA`, where
+`cCycleBase_CASA` itself seeds `c_flow_ME_vec` with CASA's static defaults regardless
+of what `cMicrobialEfficiency` approach, if any, is selected — this approach still
+overwrites every edge the three factors own on top of those defaults.
 
 To reproduce the whole-vector texture response this process used to offer in one
-approach, select `_texture` in all three groups. To reproduce the CASA table, select
-`_CASA` in all three.
+approach, select `_texture` in all three groups. This is also the closest composed
+equivalent to CASA's original per-edge texture split, though it applies the texture
+response to every transfer leaving a pool group rather than singling out the
+soil-microbial pathway the way CASA's table did.
 
 *References*
 

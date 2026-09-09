@@ -16,9 +16,9 @@ stabilization into old soil carbon and the return to the microbial pool can be c
 apart. On the GSI structures only `cSoilSlow_to_cSoilOld` exists and the other two are
 skipped.
 
-A function rather than a table written inline, because two approaches declare it:
-[`cMicrobialEfficiencycSoil_CASA`](@ref) as this group's factor, and
-[`cMicrobialEfficiency_CASA`](@ref) as part of the whole self-contained table.
+Declared as a function, called from `cCycleBase_CASA.define` to seed `c_flow_ME_vec`
+with CASA's static soil defaults, kept as one table read from one place rather than
+written inline.
 """
 function meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)
     return (
@@ -51,7 +51,7 @@ alone under the GSI structures.
 
 `_none`, `_constant` and `_texture` decide which transfers are theirs from
 `helpers.pools.zix.cSoil`, so they need no edge list and hold on any pool structure.
-`_CASA` names its edges instead, because it is the only one that distinguishes pathways
-within the group.
+CASA's own per-pathway soil table lives in `cCycleBase_CASA` as defaults instead of a
+group factor here.
 """
 cMicrobialEfficiencycSoil
