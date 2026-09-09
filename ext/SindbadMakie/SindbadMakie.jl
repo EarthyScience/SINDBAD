@@ -101,6 +101,25 @@ function _numeric_value(value)
     return value isa Number ? Float64(value) : NaN
 end
 
+const _CATEGORY_COLORS = Dict(
+    "forcing" => :steelblue,
+    "states" => :seagreen,
+    "diagnostics" => :darkorange,
+    "pools" => :firebrick,
+    "fluxes" => :mediumpurple,
+    "constants" => :slategray,
+    "properties" => :goldenrod,
+)
+
+function _category_for_path(path)
+    parts = split(path, ".")
+    return parts[1] == "land" && length(parts) > 1 ? parts[2] : parts[1]
+end
+
+function _category_color(category)
+    return get(_CATEGORY_COLORS, category, :gray)
+end
+
 function _slider_item(label_str, lo, hi, def)
     sl = Slider(_slider_range(lo, hi, def); startvalue = def)
 
@@ -135,48 +154,112 @@ end
 function _build_input_panel(title_str, items, fixed_paths, get_range, get_value)
     sliders  = Pair{String, Any}[]
     fixed_values = Pair{String, Any}[]
-    elements = [DOM.div(DOM.b(title_str))]
+    categories = Dict{String, Vector{Tuple{String, Symbol}}}()
+    category_order = String[]
 
-    for (label_str, key) in items
-        if label_str in fixed_paths
-            value = get_value(label_str, key)
-            value_observable = Observable(string(value))
-            item = DOM.div(
-                DOM.div(map(v -> v, value_observable)),
-                DOM.div(label_str)
-            )
-            push!(elements, item)
-            push!(fixed_values, label_str => value_observable)
-        else
-            lo, hi, def = get_range(label_str, key)
-            item, sl = _slider_item(label_str, lo, hi, def)
-            push!(elements, item)
-            push!(sliders, label_str => sl)
+    for item in items
+        path = first(item)
+        category = _category_for_path(path)
+        if !haskey(categories, category)
+            categories[category] = Tuple{String, Symbol}[]
+            push!(category_order, category)
         end
+        push!(categories[category], item)
     end
 
-    content = DOM.div(elements...;
-        style = Styles("padding" => "10px", "overflow-y" => "auto", "height" => "100%"))
+    category_cards = Any[]
+
+    for category in category_order
+        elements = [DOM.div(DOM.b(category))]
+        for (label_str, key) in categories[category]
+            display_label = split(label_str, ".")[end]
+            if label_str in fixed_paths
+                value = get_value(label_str, key)
+                value_observable = Observable(string(value))
+                item = DOM.div(
+                    DOM.div(map(v -> v, value_observable)),
+                    DOM.div(display_label)
+                )
+                push!(elements, item)
+                push!(fixed_values, label_str => value_observable)
+            else
+                lo, hi, def = get_range(label_str, key)
+                item, sl = _slider_item(display_label, lo, hi, def)
+                push!(elements, item)
+                push!(sliders, label_str => sl)
+            end
+        end
+
+        push!(category_cards, Card(
+            DOM.div(elements...;
+                style=Styles("display" => "flex", "flex-direction" => "column", "gap" => "8px"));
+            style=Styles(
+                "min-width" => "240px",
+                "flex" => "1 1 240px",
+                "padding" => "10px",
+                "border-top" => "4px solid $(_category_color(category))"
+            )
+        ))
+    end
+
+    content = DOM.div(
+        DOM.div(DOM.b(title_str)),
+        DOM.div(category_cards...;
+            style=Styles("display" => "flex", "flex-wrap" => "wrap", "gap" => "10px"));
+        style=Styles("padding" => "10px", "overflow-y" => "auto", "height" => "100%")
+    )
 
     return content, sliders, fixed_values
 end
 
 function _build_output_panel(title_str, items)
     observables = []
-    elements    = [DOM.div(DOM.b(title_str))]
+    categories = Dict{String, Vector{Tuple{String, Symbol}}}()
+    category_order = String[]
 
-    for (label_str, key) in items
-        obs  = Observable("—")
-        item = DOM.div(
-            DOM.div(map(v -> v, obs)),
-            DOM.div(label_str)
-        )
-        push!(elements, item)
-        push!(observables, label_str => obs)
+    for item in items
+        path = first(item)
+        category = _category_for_path(path)
+        if !haskey(categories, category)
+            categories[category] = Tuple{String, Symbol}[]
+            push!(category_order, category)
+        end
+        push!(categories[category], item)
     end
 
-    content = DOM.div(elements...;
-        style = Styles("padding" => "10px", "overflow-y" => "auto", "height" => "100%"))
+    category_cards = Any[]
+
+    for category in category_order
+        elements = [DOM.div(DOM.b(category))]
+        for (label_str, key) in categories[category]
+            obs  = Observable("—")
+            display_label = split(label_str, ".")[end]
+            item = DOM.div(
+                DOM.div(map(v -> v, obs)),
+                DOM.div(display_label)
+            )
+            push!(elements, item)
+            push!(observables, label_str => obs)
+        end
+
+        push!(category_cards, Card(
+            DOM.div(elements...;
+                style=Styles("display" => "flex", "flex-direction" => "column", "gap" => "8px"));
+            style=Styles(
+                "min-width" => "180px",
+                "flex" => "1 1 180px",
+                "padding" => "10px",
+                "border-top" => "4px solid $(_category_color(category))"
+            )
+        ))
+    end
+
+    content = DOM.div(
+        DOM.div(DOM.b(title_str)),
+        DOM.div(category_cards...;
+            style=Styles("display" => "flex", "flex-wrap" => "wrap", "gap" => "10px"));
+        style=Styles("padding" => "10px", "overflow-y" => "auto", "height" => "100%")
+    )
 
     return content, observables
 end
@@ -253,12 +336,18 @@ function Sindbad.app_process(model, compute::Symbol;
     output_observable_map = Dict(output_observables)
 
     fig = Figure()
-    ax  = Axis(fig[1, 1]; title="Outputs", xlabel="output", ylabel="value")
+    ax  = Axis(fig[1, 1];
+        title="Outputs",
+        xlabel="output",
+        ylabel="value"
+    )
     output_values = Observable(fill(NaN, length(out_paths)))
-    output_labels = [path for (path, _) in out_paths]
+    output_labels = [string(key) for (_, key) in out_paths]
+    output_colors = [_category_color(_category_for_path(path)) for (path, _) in out_paths]
     if !isempty(out_paths)
-        barplot!(ax, 1:length(out_paths), output_values)
+        barplot!(ax, 1:length(out_paths), output_values; color=output_colors)
         ax.xticks = (1:length(out_paths), output_labels)
+        autolimits!(ax)
     end
 
     function update_outputs!()
@@ -450,7 +539,7 @@ function Sindbad.app_process(model, compute::Symbol;
         )
     end
 
-    Bonito.Server(app, "0.0.0.0", 8080)
+    Bonito.Server(app, "0.0.0.0", 0)
     Bonito.browser_display()
     # return app, param_sliders, input_sliders, output_observables
     return app
