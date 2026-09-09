@@ -1,5 +1,6 @@
 module SindbadMakie
 import Sindbad
+import SindbadTEM
 using Sindbad.Setup: getParameters
 using Makie
 using Bonito
@@ -38,6 +39,68 @@ function _flatten_paths(node, prefix="")
     return result
 end
 
+function _path_symbols(path)
+    return Symbol.(split(path, "."))
+end
+
+function _nested_get(value, path)
+    for key in path
+        hasproperty(value, key) || return nothing
+        value = getproperty(value, key)
+    end
+    return value
+end
+
+function _nested_set(value, path, replacement)
+    isempty(path) && return replacement
+
+    key = first(path)
+    hasproperty(value, key) || return value
+    child = _nested_set(getproperty(value, key), path[2:end], replacement)
+    return merge(value, NamedTuple{(key,)}((child,)))
+end
+
+function _context_get(forcing, land, path)
+    parts = _path_symbols(path)
+    isempty(parts) && return nothing
+
+    root, remainder = first(parts), parts[2:end]
+    value = root === :forcing ? forcing : root === :land ? land : nothing
+    return isnothing(value) ? nothing : _nested_get(value, remainder)
+end
+
+function _context_set(forcing, land, path, replacement)
+    parts = _path_symbols(path)
+    isempty(parts) && return forcing, land
+
+    root, remainder = first(parts), parts[2:end]
+    if root === :forcing
+        forcing = _nested_set(forcing, remainder, replacement)
+    elseif root === :land
+        land = _nested_set(land, remainder, replacement)
+    end
+    return forcing, land
+end
+
+function _run_define_precompute(model, forcing, land, helpers)
+    land = SindbadTEM.Processes.define(model, forcing, land, helpers)
+    return SindbadTEM.Processes.precompute(model, forcing, land, helpers)
+end
+
+function _model_with_parameters(model, sliders)
+    isempty(sliders) && return model
+
+    params = getParameters(model)
+    values = map(keys(params)) do key
+        haskey(sliders, key) ? sliders[key].value[] : getproperty(model, key)
+    end
+    return typeof(model)(values...)
+end
+
+function _numeric_value(value)
+    return value isa Number ? Float64(value) : NaN
+end
+
 function _slider_item(label_str, lo, hi, def)
     sl = Slider(_slider_range(lo, hi, def); startvalue = def)
 
@@ -57,16 +120,45 @@ function _build_slider_panel(title_str, items, get_range)
     elements = [DOM.div(DOM.b(title_str))]
 
     for (label_str, key) in items
-        lo, hi, def = get_range(key)
+        lo, hi, def = get_range(label_str, key)
         item, sl    = _slider_item(label_str, lo, hi, def)
         push!(elements, item)
-        push!(sliders, key => sl)
+        push!(sliders, label_str => sl)
     end
 
     content = DOM.div(elements...;
         style = Styles("padding" => "10px", "overflow-y" => "auto", "height" => "100%"))
 
     return content, sliders
+end
+
+function _build_input_panel(title_str, items, fixed_paths, get_range, get_value)
+    sliders  = Pair{String, Any}[]
+    fixed_values = Pair{String, Any}[]
+    elements = [DOM.div(DOM.b(title_str))]
+
+    for (label_str, key) in items
+        if label_str in fixed_paths
+            value = get_value(label_str, key)
+            value_observable = Observable(string(value))
+            item = DOM.div(
+                DOM.div(map(v -> v, value_observable)),
+                DOM.div(label_str)
+            )
+            push!(elements, item)
+            push!(fixed_values, label_str => value_observable)
+        else
+            lo, hi, def = get_range(label_str, key)
+            item, sl = _slider_item(label_str, lo, hi, def)
+            push!(elements, item)
+            push!(sliders, label_str => sl)
+        end
+    end
+
+    content = DOM.div(elements...;
+        style = Styles("padding" => "10px", "overflow-y" => "auto", "height" => "100%"))
+
+    return content, sliders, fixed_values
 end
 
 function _build_output_panel(title_str, items)
@@ -80,7 +172,7 @@ function _build_output_panel(title_str, items)
             DOM.div(label_str)
         )
         push!(elements, item)
-        push!(observables, key => obs)
+        push!(observables, label_str => obs)
     end
 
     content = DOM.div(elements...;
@@ -89,12 +181,22 @@ function _build_output_panel(title_str, items)
     return content, observables
 end
 
-function Sindbad.app_process(model, compute::Symbol; input_ranges::Dict = Dict())
+function Sindbad.app_process(model, compute::Symbol;
+    input_ranges::Dict = Dict(), forcing = (;), land = (;), helpers = (;))
 
     params = getParameters(model)
     io = Sindbad.getInOutModel(model, compute)
     in_paths = _flatten_paths(io[:input])
     out_paths = _flatten_paths(io[:output])
+
+    # Initialize fields created by define/precompute before deriving slider defaults.
+    initialized_land = _run_define_precompute(model, forcing, land, helpers)
+    # Land-side inputs are initialized by the model context and remain fixed for
+    # the current run. Only forcing inputs are user-adjustable sliders.
+    fixed_input_paths = [
+        path for (path, _) in _flatten_paths(io[:input])
+        if startswith(path, "land.")
+    ]
 
     K = keys(params)
     K_fixed = filter(k -> !(params[k].default isa Number), K)
@@ -129,19 +231,95 @@ function Sindbad.app_process(model, compute::Symbol; input_ranges::Dict = Dict()
 
     in_items = [(path, leaf) for (path, leaf) in in_paths]
 
-    inputs_panel, input_sliders = _build_slider_panel("Inputs", in_items,
-        leaf -> if haskey(input_ranges, leaf)
-            r = input_ranges[leaf]; (r[1], r[2], r[3])
-        else
-            (-Inf, Inf, 0.0)
-        end)
+    inputs_panel, input_sliders, fixed_input_values = _build_input_panel(
+        "Inputs", in_items, fixed_input_paths,
+        (path, leaf) -> begin
+            value = _context_get(forcing, initialized_land, path)
+            default = value isa Number ? value : 0.0
+            if haskey(input_ranges, leaf)
+                r = input_ranges[leaf]
+                (r[1], r[2], r[3])
+            else
+                (-Inf, Inf, default)
+            end
+        end,
+        (path, _) -> _context_get(forcing, initialized_land, path))
 
     out_items = [(path, leaf) for (path, leaf) in out_paths]
     outputs_panel, output_observables = _build_output_panel("Outputs", out_items)
+    param_slider_map = Dict(param_sliders)
+    input_slider_map = Dict(input_sliders)
+    fixed_input_value_map = Dict(fixed_input_values)
+    output_observable_map = Dict(output_observables)
 
     fig = Figure()
-    ax  = Axis(fig[1, 1]; title="Plot", xlabel="input", ylabel="output")
-    text!(ax, 0.5, 0.5; text="placeholder", align=(:center, :center), space=:relative)
+    ax  = Axis(fig[1, 1]; title="Outputs", xlabel="output", ylabel="value")
+    output_values = Observable(fill(NaN, length(out_paths)))
+    output_labels = [path for (path, _) in out_paths]
+    if !isempty(out_paths)
+        barplot!(ax, 1:length(out_paths), output_values)
+        ax.xticks = (1:length(out_paths), output_labels)
+    end
+
+    function update_outputs!()
+        current_model = _model_with_parameters(model, param_slider_map)
+        current_forcing, current_land = forcing, land
+
+        for (path, _) in in_paths
+            if !(path in fixed_input_paths)
+                value = input_slider_map[path].value[]
+                current_forcing, current_land =
+                    _context_set(current_forcing, current_land, path, value)
+            end
+        end
+
+        current_land = _run_define_precompute(
+            current_model, current_forcing, current_land, helpers)
+
+        for path in fixed_input_paths
+            fixed_value = _context_get(current_forcing, current_land, path)
+            fixed_input_value_map[path][] = string(fixed_value)
+        end
+
+        # Some land inputs, such as states created by define, only exist now.
+        for (path, _) in in_paths
+            if startswith(path, "land.") && !(path in fixed_input_paths)
+                value = input_slider_map[path].value[]
+                current_forcing, current_land =
+                    _context_set(current_forcing, current_land, path, value)
+            end
+        end
+
+        current_land = SindbadTEM.Processes.compute(
+            current_model, current_forcing, current_land, helpers)
+
+        output_result = map(out_paths) do (path, _)
+            value = _context_get(current_forcing, current_land, path)
+            _numeric_value(value)
+        end
+        output_values[] = output_result
+
+        for ((path, _), value) in zip(out_paths, output_result)
+            output_observable_map[path][] = isfinite(value) ? string(value) : "—"
+        end
+    end
+
+    for (_, slider) in param_sliders
+        on(slider.value) do _
+            update_outputs!()
+        end
+    end
+    for (_, slider) in input_sliders
+        on(slider.value) do _
+            update_outputs!()
+        end
+    end
+
+    try
+        update_outputs!()
+    catch error
+        @warn "Unable to evaluate $(nameof(typeof(model))) for the initial plot" exception=(error, catch_backtrace())
+    end
 
     app = App() do
         # Make Makie responsive
