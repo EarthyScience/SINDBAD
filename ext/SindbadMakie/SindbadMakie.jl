@@ -146,7 +146,6 @@ function Sindbad.app_process(model, compute::Symbol; input_ranges::Dict = Dict()
     app = App() do
         # Make Makie responsive
         fig.scene.viewport[] = Rect2f(0, 0, 800, 500)
-        fig.scene.px_area[] = Rect2f(0, 0, 800, 500)
 
         title_card = Card(
             DOM.div(
