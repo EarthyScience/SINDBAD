@@ -187,7 +187,7 @@
       "approach": "Lu2005"
     },
     "PFT": {
-      "approach": "forcing"
+      "approach": "forcing_MODIS_IGBP"
     },
     "plantForm": {
       "approach": "PFT"

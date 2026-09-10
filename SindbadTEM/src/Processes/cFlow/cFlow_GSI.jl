@@ -31,6 +31,33 @@ function define(params::cFlow_GSI, forcing, land, helpers)
     return land
 end
 
+"""
+    edgesBetween(c_giver, c_taker, giver_zix, taker_zix)
+
+Every flow-vector position whose giver is in `giver_zix` and whose taker is in
+`taker_zix`, by pool membership rather than by matching a literal
+`<giver>_to_<taker>` name.
+
+This is what lets `cFlow_GSI` work against more than one pool structure: Leaf's
+shedding lands in one pool under `CarbonPoolsGSI` (`cLitFast`) and two under
+`CarbonPoolsCASA` (`cLitLeafFast`, `cLitLeafSlow`), and this finds every one of
+them without either config's specific pool names appearing here. `c_flow_A_vec`
+only needs to carry "how much of the giver's outflow takes this path" for each
+match; a giver split across several same-membership edges gets its fast/slow
+(or similar) proportions from `c_flow_QP_vec` instead, which is what
+`cQualityPartitioncVeg`/`cQualityPartitioncLit` already resolve independently of
+this approach.
+
+An empty `giver_zix` -- a pool this structure does not have at all, e.g.
+`CarbonPoolsCASA`'s absent `cVegReserve` -- naturally returns no edges rather
+than erroring, so the reserve-pool exchange this approach models simply
+contributes nothing on a structure without one.
+"""
+function edgesBetween(c_giver, c_taker, giver_zix, taker_zix)
+    return Tuple(flow for flow ∈ eachindex(c_giver, c_taker)
+                 if c_giver[flow] ∈ giver_zix && c_taker[flow] ∈ taker_zix)
+end
+
 function adjust_pk(c_eco_k, kValue, flowValue, maxValue, zix, helpers)
     c_eco_k_f_sum = zero(eltype(c_eco_k))
     c_eco_k_sum = zero(eltype(c_eco_k))
@@ -51,11 +78,13 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI params
     ## unpack land variables
     @unpack_nt begin
-        c_flow_named_edges ⇐ land.cCycleBase
+        (c_giver, c_taker) ⇐ land.cCycleBase
         (c_allocation_f_soilW, c_allocation_f_soilT, c_allocation_f_cloud, eco_stressor_prev, slope_eco_stressor_prev)  ⇐ land.diagnostics
         c_eco_k ⇐ land.diagnostics
         c_flow_A_vec ⇐ land.diagnostics
     end
+    (zix_cVegLeaf, zix_cVegRoot, zix_cVegReserve, zix_cLit) = (helpers.pools.zix.cVegLeaf,
+        helpers.pools.zix.cVegRoot, helpers.pools.zix.cVegReserve, helpers.pools.zix.cLit)
 
     # Compute sigmoid functions
     # LPJ-GSI formulation: In GSI; the stressors are smoothened per control variable. That means; gppfsoilW; fTair; and fRdiff should all have a GSI approach for 1:1 conversion. For now; the function below smoothens the combined stressors; & then calculates the slope for allocation
@@ -110,25 +139,25 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     k_shedding_reserve = reserve_k_sum
     k_shedding_reserve_frac = safe_divide(reserve_k_sum, reserve_k_f_sum)
     
-    for flow ∈ c_flow_named_edges.cVegReserve_to_cVegLeaf
+    for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegReserve, zix_cVegLeaf)
         c_flow_A_vec = repElem(c_flow_A_vec, reserve_to_leaf_frac, c_flow_A_vec, c_flow_A_vec, flow)
     end
-    for flow ∈ c_flow_named_edges.cVegReserve_to_cVegRoot
+    for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegReserve, zix_cVegRoot)
         c_flow_A_vec = repElem(c_flow_A_vec, reserve_to_root_frac, c_flow_A_vec, c_flow_A_vec, flow)
     end
-    for flow ∈ c_flow_named_edges.cVegLeaf_to_cVegReserve
+    for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegLeaf, zix_cVegReserve)
         c_flow_A_vec = repElem(c_flow_A_vec, leaf_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, flow)
     end
-    for flow ∈ c_flow_named_edges.cVegRoot_to_cVegReserve
+    for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegRoot, zix_cVegReserve)
         c_flow_A_vec = repElem(c_flow_A_vec, root_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, flow)
     end
-    for flow ∈ c_flow_named_edges.cVegLeaf_to_cLitFast
+    for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegLeaf, zix_cLit)
         c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_leaf_frac, c_flow_A_vec, c_flow_A_vec, flow)
     end
-    for flow ∈ c_flow_named_edges.cVegRoot_to_cLitFast
+    for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegRoot, zix_cLit)
         c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_root_frac, c_flow_A_vec, c_flow_A_vec, flow)
     end
-    for flow ∈ c_flow_named_edges.cVegReserve_to_cLitFast
+    for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegReserve, zix_cLit)
         c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_reserve_frac, c_flow_A_vec, c_flow_A_vec, flow)
     end
 
@@ -170,12 +199,22 @@ $(getModelDocString(cFlow_GSI))
 
 # Extended help
 
+The reserve-pool exchange and leaf/root shedding this approach models are located
+by pool membership (`edgesBetween`), not by naming an exact `<giver>_to_<taker>`
+edge, so the same code applies unchanged whether Leaf's shedding lands in one
+pool (`CarbonPoolsGSI`'s `cLitFast`) or several (`CarbonPoolsCASA`'s
+`cLitLeafFast`/`cLitLeafSlow`), and whether a reserve pool exists at all: an
+absent one (`CarbonPoolsCASA` has none) makes every reserve-related edge lookup
+return no matches, so those terms simply contribute nothing rather than erroring
+or silently mismatching the wrong edge.
+
 *References*
 
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]
- - 1.1 on 05.02.2021 [skoirala | @dr-ko]: changes with stressors & smoothing as well as handling the activation of leaf/root to reserve | reserve to leaf/root switches. Adjustment of total flow rates [cTau] of relevant pools  
- - 1.1 on 05.02.2021 [skoirala | @dr-ko]: move code from dyna. Add table etc.  
+ - 1.1 on 05.02.2021 [skoirala | @dr-ko]: changes with stressors & smoothing as well as handling the activation of leaf/root to reserve | reserve to leaf/root switches. Adjustment of total flow rates [cTau] of relevant pools
+ - 1.1 on 05.02.2021 [skoirala | @dr-ko]: move code from dyna. Add table etc.
+ - 1.2 on 10.09.2026 [skoirala]: edge selection generalized from exact `c_flow_named_edges.<giver>_to_<taker>` name lookups (which errored on any pool structure without a literal edge of that exact name, e.g. CarbonPoolsCASA's absent cVegReserve or its split cLitLeafFast/cLitLeafSlow in place of cLitFast) to `edgesBetween`, a giver/taker pool-membership match
 
 *Created by*
  - ncarvalhais, sbesnard, skoirala

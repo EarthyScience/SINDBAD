@@ -1,12 +1,120 @@
 export cCycleBase_CASA
 
+"""
+    CVEG_ROOTFINE_LEAF_AGE_PER_PFT
+
+Mean age of fine roots and of leaves, per canonical PFT (`PFTCatalog_SINDBAD_PFT`)
+name -- the legacy `cVegRootFine_age_per_PFT` and `cVegLeaf_age_per_PFT`
+arrays were identical, so one table now serves both. Fixed data, not a
+parameter -- calibration happens through `cVegRootFine_age_scalar`/
+`cVegLeaf_age_scalar` in `cCycleBase_CASA` instead.
+
+Transcribed from the legacy 12-element array (values `[1.8, 1.2, 1.2, 5.0,
+1.8, 1.0, 1.0, 0.0, 1.0, 2.8, 1.0, 1.0]`), keyed to `PFTCatalog_MODIS_PFT`
+position order (array position `i` = code `i - 1`). See
+`LIT_FRAC_LIGNIN_PER_PFT` in `vegQualityTraits_CASA.jl` for the full
+source-position and gap-fill convention this follows; `Croplands` here is
+1.0 from position 9 (`Broadleaf_Croplands`), with position 8
+(`Cereal_Croplands`, 0.0) dropped once both collapse onto IGBP's single
+`Croplands` class.
+
+These two fields are unused by `compute` today (dead parameters in the
+original array form too); this table only modernizes their representation
+so they are ready if wired in later, and does not change model behavior.
+"""
+const CVEG_ROOTFINE_LEAF_AGE_PER_PFT = (;
+    Evergreen_Needleleaf_Forests = 1.2,
+    Evergreen_Broadleaf_Forests = 1.2,
+    Deciduous_Needleleaf_Forests = 5.0,
+    Deciduous_Broadleaf_Forests = 1.8,
+    Mixed_Forests = 1.8,
+    Closed_Shrublands = 1.0,
+    Open_Shrublands = 1.0,
+    Woody_Savannas = 1.0,
+    Savannas = 1.0,
+    Grasslands = 1.0,
+    Permanent_Wetlands = 1.0,
+    Croplands = 1.0,
+    Urban_and_Built_up_Lands = 2.8,
+    Cropland_Natural_Vegetation_Mosaics = 1.0,
+    Permanent_Snow_and_Ice = 1.0,
+    Barren = 1.0,
+    Water_Bodies = 1.8,
+    Unclassified = 1.0,
+)
+
+"""
+    CVEG_ROOTCOARSE_WOOD_AGE_PER_PFT
+
+Mean age of coarse roots and of wood, per canonical PFT
+(`PFTCatalog_SINDBAD_PFT`) name -- the legacy `cVegRootCoarse_age_per_PFT` and
+`cVegWood_age_per_PFT` arrays were identical, so one table now serves both.
+Fixed data, not a parameter -- calibration happens through
+`cVegRootCoarse_age_scalar`/`cVegWood_age_scalar` in `cCycleBase_CASA`
+instead.
+
+Transcribed the same way as `CVEG_ROOTFINE_LEAF_AGE_PER_PFT` from the legacy
+12-element array (values `[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0,
+5.5, 40.0, 1.0, 40.0]`); see that constant's docstring for the source-position
+and gap-fill notes, which apply identically here (`Croplands` = 5.5 from
+position 9, position 8 dropped). Also unused by `compute` today; see the
+same note there.
+"""
+const CVEG_ROOTCOARSE_WOOD_AGE_PER_PFT = (;
+    Evergreen_Needleleaf_Forests = 58.0,
+    Evergreen_Broadleaf_Forests = 58.0,
+    Deciduous_Needleleaf_Forests = 42.0,
+    Deciduous_Broadleaf_Forests = 27.0,
+    Mixed_Forests = 27.0,
+    Closed_Shrublands = 25.0,
+    Open_Shrublands = 25.0,
+    Woody_Savannas = 25.0,
+    Savannas = 25.0,
+    Grasslands = 25.0,
+    Permanent_Wetlands = 25.0,
+    Croplands = 5.5,
+    Urban_and_Built_up_Lands = 40.0,
+    Cropland_Natural_Vegetation_Mosaics = 5.5,
+    Permanent_Snow_and_Ice = 1.0,
+    Barren = 40.0,
+    Water_Bodies = 41.0,
+    Unclassified = 40.0,
+)
+
+"""
+    CASA_ANNK
+
+Turnover rate of each CASA ecosystem carbon pool, per pool name, exactly as
+originally transcribed for `cCycleBase_CASA` (values `[1, 0.03, 0.03, 1, 14.8,
+3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045]`, in the pool order
+`poolStructure(CarbonPoolsCASA)` declares). Fixed data, not a parameter --
+calibration happens through `annk_scalar` in `cCycleBase_CASA` instead, since
+array-valued struct fields cannot be optimized.
+"""
+const CASA_ANNK = (;
+    cVegRootFine = 1.0,
+    cVegRootCoarse = 0.03,
+    cVegWood = 0.03,
+    cVegLeaf = 1.0,
+    cLitLeafFast = 14.8,
+    cLitLeafSlow = 3.9,
+    cLitRootFineFast = 18.5,
+    cLitRootFineSlow = 4.8,
+    cLitRootCoarse = 0.2424,
+    cLitWood = 0.2424,
+    cMicSurf = 6.0,
+    cMicSoil = 7.3,
+    cSoilSlow = 0.2,
+    cSoilOld = 0.0045,
+)
+
 #! format: off
-@bounds @describe @units @timescale @with_kw struct cCycleBase_CASA{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14} <: cCycleBase
-    annk::T1 = Float64.([1, 0.03, 0.03, 1, 14.8, 3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045]) | (Float64.([0.05, 0.002, 0.002, 0.05, 1.48, 0.39, 1.85, 0.48, 0.02424, 0.02424, 0.6, 0.73, 0.02, 0.0045]), Float64.([3.3, 0.5, 0.5, 3.3, 148.0, 39.0, 185.0, 48.0, 2.424, 2.424, 60.0, 73.0, 2.0, 0.045])) | "turnover rate of ecosystem carbon pools" | "year-1" | ""
-    cVegRootFine_age_per_PFT::T2 = Float64.([1.8, 1.2, 1.2, 5.0, 1.8, 1.0, 1.0, 0.0, 1.0, 2.8, 1.0, 1.0]) | (Float64.([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), Float64.([20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0])) | "mean age of fine roots" | "yr" | ""
-    cVegRootCoarse_age_per_PFT::T3 = Float64.([41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0, 5.5, 40.0, 1.0, 40.0]) | (Float64.([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), Float64.([100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0])) | "mean age of coarse roots" | "yr" | ""
-    cVegWood_age_per_PFT::T4 = Float64.([41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0, 5.5, 40.0, 1.0, 40.0]) | (Float64.([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), Float64.([100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0])) | "mean age of wood" | "yr" | ""
-    cVegLeaf_age_per_PFT::T5 = Float64.([1.8, 1.2, 1.2, 5.0, 1.8, 1.0, 1.0, 0.0, 1.0, 2.8, 1.0, 1.0]) | (Float64.([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), Float64.([20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0])) | "mean age of leafs" | "yr" | ""
+@bounds @describe @units @timescale @with_kw struct cCycleBase_CASA{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15} <: cCycleBase
+    annk_scalar::T1 = 1.0 | (0.25, 4.0) | "scalar for the per-pool turnover rate of ecosystem carbon pools" | "-" | ""
+    cVegRootFine_age_scalar::T2 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of fine roots" | "-" | ""
+    cVegRootCoarse_age_scalar::T3 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of coarse roots" | "-" | ""
+    cVegWood_age_scalar::T4 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of wood" | "-" | ""
+    cVegLeaf_age_scalar::T5 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of leaves" | "-" | ""
     p_C_to_N_cVeg::T6 = Float64.([25.0, 260.0, 260.0, 25.0]) | (-Inf, Inf) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN" | ""
     eff_cLit_to_cMicSurf::T7 = 0.4 | (0.0, 1.0) | "Microbial carbon-transfer efficiency of litter decomposition into the surface microbial pool." | "fraction" | ""
     eff_cLitRootFine_to_cMicSoil::T8 = 0.45 | (0.0, 1.0) | "Microbial carbon-transfer efficiency of fine-root litter decomposition into the soil microbial pool." | "fraction" | ""
@@ -16,6 +124,7 @@ export cCycleBase_CASA
     eff_cMicSurf_to_cSoilSlow::T12 = 0.4 | (0.0, 1.0) | "Microbial carbon-transfer efficiency of surface microbial turnover into the slow soil pool." | "fraction" | ""
     eff_cSoil_to_cMicSoil::T13 = 0.45 | (0.0, 1.0) | "Microbial carbon-transfer efficiency of slow and old soil decomposition returning to the soil microbial pool." | "fraction" | ""
     eff_cSoilSlow_to_cSoilOld::T14 = 0.45 | (0.0, 1.0) | "Microbial carbon-transfer efficiency of slow soil decomposition stabilized into old soil carbon." | "fraction" | ""
+    c_remain::T15 = 50.0 | (0.1, 100.0) | "remaining carbon after disturbance" | "gC/m2" | ""
 end
 #! format: on
 
@@ -33,11 +142,46 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
     (c_flow_order, c_taker, c_giver, c_flow_named_edges, c_flow_A_vec, c_flow_QP_vec,
         c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
 
-    # CASA's own static microbial-efficiency table, applied on top of the neutral
-    # c_flow_ME_vec cFlowStructure just built. The two soil-microbial edges this does
-    # not cover keep the neutral default unless a texture-driven approach is selected
-    # (cMicrobialEfficiencycMic_texture, or the per-group _CASA trio for the exact
-    # CASA distinction between the surface and soil microbial pathways).
+    ## Instantiate variables, matching cCycleBase_GSI_PlantForm.jl: define only
+    ## sets up structure (topology, zero-initialized arrays) and runs once ever,
+    ## never on later parameter realizations, so nothing here may depend on an
+    ## actual parameter value -- that happens in precompute instead.
+    C_to_N_cVeg = zero(cEco)
+    c_eco_k_base = zero(cEco)
+
+    c_model = cCycleBase_CASA()
+
+    ## pack land variables
+    @pack_nt begin
+        (C_to_N_cVeg, c_eco_k_base, c_flow_A_vec, c_flow_QP_vec, c_flow_ME_vec) ⇒ land.diagnostics
+        (c_flow_order, c_taker, c_giver, c_flow_named_edges) ⇒ land.cCycleBase
+        c_model ⇒ land.models
+    end
+    return land
+end
+
+function precompute(params::cCycleBase_CASA, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_cCycleBase_CASA params
+
+    ## unpack land variables
+    @unpack_nt begin
+        C_to_N_cVeg ⇐ land.diagnostics
+        c_eco_k_base ⇐ land.diagnostics
+        c_flow_ME_vec ⇐ land.diagnostics
+        c_flow_named_edges ⇐ land.cCycleBase
+    end
+
+    ## calculate variables
+    # CASA's own static microbial-efficiency table, applied on top of the
+    # neutral c_flow_ME_vec define allocated. Lives here, not in define, since
+    # the eff_* fields are ordinary optimizable parameters: precompute runs
+    # once per parameter realization, so a value the optimizer changes is
+    # picked up on the next iteration, unlike define which runs once ever. The
+    # two soil-microbial edges this does not cover keep the neutral default
+    # unless a texture-driven approach is selected (cMicrobialEfficiencycMic_texture,
+    # or the per-group _CASA trio for the exact CASA distinction between the
+    # surface and soil microbial pathways).
     ME_flows = (
         meCASAFlowsLitter(eff_cLit_to_cMicSurf, eff_cLitRootFine_to_cMicSoil,
             eff_cLitRootCoarse_to_cMicSoil, eff_cLit_to_cSoilSlow,
@@ -49,42 +193,68 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
         c_flow_ME_vec = setMEFlow(c_flow_ME_vec, c_flow_named_edges, edge, value)
     end
 
-    ## Instantiate variables
-    C_to_N_cVeg = one.(cEco)
+    # carbon to nitrogen ratio [gC.gN-1]. Bulk tuple-indexed broadcasting
+    # assignment (C_to_N_cVeg[helpers.pools.zix.cVeg] .= p_C_to_N_cVeg) is not
+    # supported on the land array types used here (land.diagnostics arrays are
+    # immutable SVectors); every GSI-family cCycleBase carries that exact line
+    # commented out for the same reason, replaced by this type-stable
+    # per-element loop.
+    vegZix = helpers.pools.zix.cVeg
+    for ix ∈ eachindex(vegZix)
+        @rep_elem p_C_to_N_cVeg[ix] ⇒ (C_to_N_cVeg, vegZix[ix], :cEco)
+    end
 
-    c_model = cCycleBase_CASA()
+    # turnover rates, by pool name rather than by cEco position, so a
+    # structure that ordered pools differently still gets its turnovers in
+    # the right slots -- same convention cCycleBase_GSI_PlantForm.jl uses.
+    for ix ∈ helpers.pools.zix.cVegRootFine
+        @rep_elem CASA_ANNK.cVegRootFine * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cVegRootCoarse
+        @rep_elem CASA_ANNK.cVegRootCoarse * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cVegWood
+        @rep_elem CASA_ANNK.cVegWood * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cVegLeaf
+        @rep_elem CASA_ANNK.cVegLeaf * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cLitLeafFast
+        @rep_elem CASA_ANNK.cLitLeafFast * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cLitLeafSlow
+        @rep_elem CASA_ANNK.cLitLeafSlow * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cLitRootFineFast
+        @rep_elem CASA_ANNK.cLitRootFineFast * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cLitRootFineSlow
+        @rep_elem CASA_ANNK.cLitRootFineSlow * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cLitRootCoarse
+        @rep_elem CASA_ANNK.cLitRootCoarse * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cLitWood
+        @rep_elem CASA_ANNK.cLitWood * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cMicSurf
+        @rep_elem CASA_ANNK.cMicSurf * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cMicSoil
+        @rep_elem CASA_ANNK.cMicSoil * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cSoilSlow
+        @rep_elem CASA_ANNK.cSoilSlow * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
+    for ix ∈ helpers.pools.zix.cSoilOld
+        @rep_elem CASA_ANNK.cSoilOld * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+    end
 
     ## pack land variables
     @pack_nt begin
-        (C_to_N_cVeg, c_flow_A_vec, c_flow_QP_vec, c_flow_ME_vec) ⇒ land.diagnostics
-        (c_flow_order, c_taker, c_giver, c_flow_named_edges) ⇒ land.cCycleBase
-        c_model ⇒ land.models
+        (C_to_N_cVeg, c_eco_k_base, c_flow_ME_vec) ⇒ land.diagnostics
+        c_remain ⇒ land.states
     end
-    return land
-end
-
-# all the parameters that are required for tau and for QP ME should be loaded here...
-
-
-function compute(params::cCycleBase_CASA, forcing, land, helpers)
-    ## unpack parameters
-    @unpack_cCycleBase_CASA params
-
-    ## unpack land variables
-    @unpack_nt begin
-        C_to_N_cVeg ⇐ land.diagnostics
-        o_one ⇐ land.constants
-    end
-
-    ## calculate variables
-    # carbon to nitrogen ratio [gC.gN-1]
-    C_to_N_cVeg[helpers.pools.zix.cVeg] .= p_C_to_N_cVeg
-
-    # turnover rates
-    c_eco_k_base .= annk
-
-    ## pack land variables
-    @pack_nt (c_eco_k_base) ⇒ land.diagnostics
     return land
 end
 
@@ -110,15 +280,29 @@ draws them, so neither has to be transcribed here to be read.
 
 # Microbial efficiency
 
-`define` also carries CASA's static microbial-carbon-transfer-efficiency table as
-ordinary bounded parameters (`eff_cLit_to_cMicSurf` and the other seven), and writes
-them into `c_flow_ME_vec` itself, so CASA has a realistic default even with no
-`cMicrobialEfficiency` approach selected. Only the soil-microbial pool's texture
+`precompute` also carries CASA's static microbial-carbon-transfer-efficiency table
+as ordinary bounded parameters (`eff_cLit_to_cMicSurf` and the other seven), and
+writes them into `c_flow_ME_vec` itself, so CASA has a realistic default even with
+no `cMicrobialEfficiency` approach selected. Only the soil-microbial pool's texture
 response is left out, since it needs `st_clay`/`st_silt` at runtime: select
 `cMicrobialEfficiencycMic_texture` (composed with `_texture` for the other two groups
 through `cMicrobialEfficiency_mult`) for it, applied to every transfer leaving a
 microbial pool rather than singling out the soil one the way CASA's original table
-did.
+did. This lives in `precompute`, not `define`, since the `eff_*` fields are
+ordinary optimizable parameters: `define` runs once ever, so a value the optimizer
+changes would never be picked up there.
+
+# Turnover rates
+
+Likewise, `annk_scalar` and the four `*_age_scalar` fields are resolved in
+`precompute`, following the same pattern `cCycleBase_GSI_PlantForm.jl` uses:
+`define` only allocates the zero-initialized `c_eco_k_base`/`C_to_N_cVeg` arrays
+and the flow topology, and `precompute` writes their actual values by pool name
+via `@rep_elem`, since the land arrays involved are immutable `SVector`s that
+bulk `.=`/tuple-indexed assignment cannot mutate in place. `CASA_ANNK` carries
+the fixed per-pool turnover data this file was originally hardcoded with; only
+`annk_scalar` is optimizable, since array-valued struct fields are excluded from
+optimization entirely.
 
 *References*
  - Carvalhais; N.; Reichstein; M.; Seixas; J.; Collatz; G. J.; Pereira; J. S.; Berbigier; P.  & Rambal, S. (2008). Implications of the carbon cycle steady state assumption for  biogeochemical modeling performance & inverse parameter retrieval. Global Biogeochemical Cycles, 22[2].
@@ -129,6 +313,8 @@ did.
  - 1.0 on 28.05.2022 [skoirala | @dr-ko]: migrate to julia
  - 1.1 on 04.09.2026 [skoirala]: c_flow_ME_vec allocated here; dead c_flow_MEQP_array parameter and the transcribed c_flow_A_array removed
  - 1.2 on 09.09.2026 [skoirala]: ingested cMicrobialEfficiency_CASA's 8 static constants as parameters here, applied to c_flow_ME_vec in define; cMicrobialEfficiency_CASA and the three per-group cMicrobialEfficiencyc{Lit,Mic,Soil}_CASA factors removed, since their static values duplicated these
+ - 1.3 on 10.09.2026 [skoirala]: the four *_age_per_PFT fields (still unwired into precompute) keyed by canonical PFT name (PFTCatalog_SINDBAD_PFT) instead of a positional index; became fixed named lookups (CVEG_ROOTFINE_LEAF_AGE_PER_PFT, CVEG_ROOTCOARSE_WOOD_AGE_PER_PFT) plus bounded scalar multipliers, since array-valued struct fields cannot be optimized
+ - 1.4 on 10.09.2026 [skoirala]: this file had never actually been run end to end -- ported it onto the working cCycleBase_GSI_PlantForm.jl pattern to fix what surfaced: `annk` became the fixed CASA_ANNK lookup plus an optimizable annk_scalar, matching the *_age_per_PFT treatment above; the ME-table and per-pool-turnover value computation moved from define into precompute, since define runs once ever and cannot pick up a parameter value the optimizer later changes; C_to_N_cVeg/c_eco_k_base's bulk `.=`/tuple-indexed assignments were replaced with @rep_elem loops, since land.diagnostics arrays are immutable SVectors; and c_eco_k_base, previously never allocated, is now defined and packed like every other diagnostic here
 
 *Created by*
  - ncarvalhais

@@ -12,7 +12,7 @@ function define(params::cCycleDisturbance_FireMortality, forcing, land, helpers)
         (z_zero, o_one) ⇐ land.constants
     end
     zix_veg_all = Tuple(vcat(getZix(cVeg, helpers.pools.zix.cVeg)...))
-    c_lose_to_zix_vec = Tuple{Int}[]
+    c_lose_to_zix_vec = Tuple{Vararg{Int}}[]
     for zixVeg ∈ zix_veg_all
         # make reserve pool flow to slow litter pool/woody debris
         if helpers.pools.components.cEco[zixVeg] == :cVegReserve

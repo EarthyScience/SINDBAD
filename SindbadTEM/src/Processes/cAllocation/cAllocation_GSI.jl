@@ -9,7 +9,7 @@ function define(params::cAllocation_GSI, forcing, land, helpers)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     c_allocation_to_veg = zero(cEco)
-    cVeg_zix = Tuple{Int}[]
+    cVeg_zix = Tuple{Vararg{Int}}[]
     cVeg_nzix = eltype(cEco)[]
     cpI = 1
     for cpName ∈ cVeg_names

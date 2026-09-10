@@ -12,7 +12,7 @@ function define(params::cCycleManagement_Harvest, forcing, land, helpers)
         (z_zero, o_one) ⇐ land.constants
     end
     zix_veg_all = Tuple(vcat(getZix(cVeg, helpers.pools.zix.cVeg)...))
-    c_lose_to_zix_vec = Tuple{Int}[]
+    c_lose_to_zix_vec = Tuple{Vararg{Int}}[]
     is_crop_harvest_pool = one.(cEco)
     is_wood_harvest_pool = one.(cEco)
     for zixVeg ∈ zix_veg_all

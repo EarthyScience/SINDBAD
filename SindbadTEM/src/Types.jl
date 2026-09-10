@@ -83,6 +83,29 @@ module TEMTypes
     function poolAliases end
     poolAliases(configuration) = (;)
 
+    # ------------------------- PFT catalog trait -----------------------------------------------------------
+    # Declared here for the same reason `poolConfiguration` is: `Sindbad.Setup` reaches it
+    # unqualified through `using SindbadTEM`, while the catalog types themselves stay inside
+    # Processes. A `PFT_forcing_*`/`PFT_constant` approach never names its catalog's
+    # crosswalk directly; it gets both back from `pftCatalog` and hands them to
+    # `pftCanonicalName`.
+    export pftCatalog
+
+    """
+        pftCatalog(T)
+
+    Return the PFT catalog a `PFT_forcing_*`/`PFT_constant` approach interprets its raw
+    codes against, or `nothing` if it declares none.
+
+    An approach declares one beside its `purpose`, e.g.
+    `pftCatalog(::Type{PFT_forcing_MODIS_IGBP}) = PFTCatalog_MODIS_IGBP`. The returned
+    catalog is a type, passed to `pftName`/`pftCanonicalName` to resolve a raw code to a
+    name.
+    """
+    function pftCatalog end
+    pftCatalog(::Type{<:LandEcosystem}) = nothing
+    pftCatalog(T::LandEcosystem) = pftCatalog(typeof(T))
+
     # ------------------------- model error handling type ------------------------------------------------------------
     export DoCatchModelErrors
     export DoNotCatchModelErrors
