@@ -42,13 +42,13 @@ $(getModelDocString(cTauVegProperties_CASA))
 
 # Extended help
 
-The approach applies `lit_k_f_lignin`, published by the [`lignin`](@ref)
+The approach applies `lit_k_f_lignin`, published by the [`vegQualityTraits`](@ref)
 process, to the structural litter pools `cLitLeafSlow` and `cLitRootFineSlow`.
 
 This approach previously owned the whole lignin calculation, with seven
-parameters of its own. Those now live in [`metabolicFraction`](@ref) and
-[`lignin`](@ref), so the lignin chemistry is declared once and shared with
-`cQualityPartition`, which needs the same quantities.
+parameters of its own. Those now live in [`vegQualityTraits`](@ref), so the lignin
+chemistry is declared once and shared with `cQualityPartition`, which needs the same
+quantities.
 
 It also previously contained a PFT-dependent turnover block that derived
 `c_eco_τ` from a per-pool `AGE`. That block was a partial MATLAB translation
@@ -65,6 +65,7 @@ from `cTau` and its `cTauSoilT`/`cTauSoilW`/`cTauLAI` factors.
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]
  - 2.0 on 04.09.2026 [skoirala]: lignin properties moved to the lignin process; dead turnover block removed
+ - 2.1 on 09.09.2026 [skoirala]: metabolicFraction and lignin merged into vegQualityTraits
 
 *Created by*
  - ncarvalhais

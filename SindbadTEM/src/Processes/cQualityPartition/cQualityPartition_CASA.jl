@@ -77,10 +77,10 @@ dedicated `cQualityPartition` process. The output `c_flow_QP_vec` is indexed by
 active flow (`c_flow_order`) rather than by a dense giver-taker matrix.
 
 The litter-chemistry terms `lit_frac_metabolic`, `lit_frac_lignin_struct` and
-`lit_frac_lignin_wood` come from the [`metabolicFraction`](@ref) and
-[`lignin`](@ref) processes, which run before `cQualityPartition`. This approach
-declares none of them itself; it previously carried a private
-`frac_lignin_wood` that duplicated the one in `cFlowVegProperties_CASA`.
+`lit_frac_lignin_wood` come from the [`vegQualityTraits`](@ref) process, which runs
+before `cQualityPartition`. This approach declares none of them itself; it previously
+carried a private `frac_lignin_wood` that duplicated the one in
+`cFlowVegProperties_CASA`.
 
 The flow table is declared over the full CASA pool topology and matched against
 the configured structure by pool-name pair through `c_flow_named_edges`. Edges the

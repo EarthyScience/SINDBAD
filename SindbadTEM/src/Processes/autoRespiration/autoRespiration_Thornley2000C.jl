@@ -99,7 +99,7 @@ purpose(::Type{autoRespiration_Thornley2000C}) = "Calculates autotrophic mainten
 
 The degradation coefficient `Fd` of the maintenance-respiration term is taken
 from `land.properties.lit_frac_metabolic`, published by the
-[`metabolicFraction`](@ref) process, rather than from a parameter of this
+[`vegQualityTraits`](@ref) process, rather than from a parameter of this
 approach.
 
 !!! warning "Pair this approach with a non-zero metabolic fraction"
@@ -107,9 +107,9 @@ approach.
     was a misnomer: the value is the Thornley degradation coefficient, not a
     metabolic litter fraction, and it only coincided with the CASA
     `lit_frac_metabolic_A` default. Reading `lit_frac_metabolic` instead means
-    `metabolicFraction_none`, which sets it to zero, drives `Fd` and therefore
+    `vegQualityTraits_none`, which sets it to zero, drives `Fd` and therefore
     maintenance respiration to zero. Select
-    `metabolicFraction: {"approach": "constant"}`, whose default is 0.85, to
+    `vegQualityTraits: {"approach": "constant"}`, whose default is 0.85, to
     reproduce the earlier behaviour.
 
 *References*

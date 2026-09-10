@@ -43,10 +43,7 @@
     "cCycleBase": {
         "approach": "GSI_PlantForm"
     },
-    "metabolicFraction": {
-      "approach": "none"
-    },
-    "lignin": {
+    "vegQualityTraits": {
       "approach": "none"
     },
     "cMicrobialEfficiency": {
