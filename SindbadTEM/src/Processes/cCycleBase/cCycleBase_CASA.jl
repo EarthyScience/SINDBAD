@@ -1,4 +1,73 @@
 export cCycleBase_CASA
+export meCASAFlowsLitter
+export meCASAFlowsSoil
+
+"""
+    meCASAFlowsLitter(eff_cLit_to_cMicSurf, eff_cLitRootFine_to_cMicSoil,
+        eff_cLitRootCoarse_to_cMicSoil, eff_cLit_to_cSoilSlow,
+        eff_cLitRootFine_to_cSoilSlow)
+
+The CASA microbial carbon-transfer efficiency of every litter decomposition pathway, as
+`edge => value` pairs keyed by giver-to-taker pool-name pair.
+
+The surface microbial pathway retains least, the direct route into slow soil most, and
+fine roots sit between the two because they decompose in the soil rather than at the
+surface. The last two entries are the aggregated GSI litter pools, which take the
+litter-to-soil efficiency; on CASA they are absent and `setMEFlow` skips them, and on GSI
+the CASA-only entries are absent instead, so one table serves both.
+
+Declared as a function, called from `precompute` below to seed `c_flow_ME_vec` with
+CASA's static litter defaults. Lives here, alongside the approach that is its only
+caller, rather than in `cMicrobialEfficiencycLit` (a sibling process whose own
+`_texture`/`_none`/`_constant` approaches this table has nothing to do with) -- moved
+here from there since a plain helper function has no reason to live in a different
+process's namespace than the one approach that calls it. This is the assignment whose
+`cLitRootCoarse` and `cLitWood` columns were transposed for as long as it was a dense
+array indexed by position, so it is kept as one table read from one place rather than
+written inline.
+"""
+function meCASAFlowsLitter(eff_cLit_to_cMicSurf, eff_cLitRootFine_to_cMicSoil,
+        eff_cLitRootCoarse_to_cMicSoil, eff_cLit_to_cSoilSlow,
+        eff_cLitRootFine_to_cSoilSlow)
+    return (
+        (:cLitLeafFast_to_cMicSurf, eff_cLit_to_cMicSurf),
+        (:cLitLeafSlow_to_cMicSurf, eff_cLit_to_cMicSurf),
+        (:cLitWood_to_cMicSurf, eff_cLit_to_cMicSurf),
+        (:cLitRootFineFast_to_cMicSoil, eff_cLitRootFine_to_cMicSoil),
+        (:cLitRootFineSlow_to_cMicSoil, eff_cLitRootFine_to_cMicSoil),
+        (:cLitRootCoarse_to_cMicSoil, eff_cLitRootCoarse_to_cMicSoil),
+        (:cLitLeafSlow_to_cSoilSlow, eff_cLit_to_cSoilSlow),
+        (:cLitRootCoarse_to_cSoilSlow, eff_cLit_to_cSoilSlow),
+        (:cLitWood_to_cSoilSlow, eff_cLit_to_cSoilSlow),
+        (:cLitRootFineSlow_to_cSoilSlow, eff_cLitRootFine_to_cSoilSlow),
+        (:cLitFast_to_cSoilSlow, eff_cLit_to_cSoilSlow),
+        (:cLitSlow_to_cSoilSlow, eff_cLit_to_cSoilSlow),
+    )
+end
+
+"""
+    meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)
+
+The CASA microbial carbon-transfer efficiency of the soil decomposition pathways, as
+`edge => value` pairs keyed by giver-to-taker pool-name pair.
+
+The two routes carry the same CASA value but are separate parameters so that
+stabilization into old soil carbon and the return to the microbial pool can be calibrated
+apart. On the GSI structures only `cSoilSlow_to_cSoilOld` exists and the other two are
+skipped.
+
+Declared as a function, called from `precompute` below to seed `c_flow_ME_vec` with
+CASA's static soil defaults, for the same reason `meCASAFlowsLitter` lives here rather
+than in `cMicrobialEfficiencycSoil`: it belongs beside its only caller, not in a
+different process's namespace.
+"""
+function meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)
+    return (
+        (:cSoilSlow_to_cMicSoil, eff_cSoil_to_cMicSoil),
+        (:cSoilOld_to_cMicSoil, eff_cSoil_to_cMicSoil),
+        (:cSoilSlow_to_cSoilOld, eff_cSoilSlow_to_cSoilOld),
+    )
+end
 
 """
     CVEG_ROOTFINE_LEAF_AGE_PER_PFT
@@ -315,6 +384,7 @@ optimization entirely.
  - 1.2 on 09.09.2026 [skoirala]: ingested cMicrobialEfficiency_CASA's 8 static constants as parameters here, applied to c_flow_ME_vec in define; cMicrobialEfficiency_CASA and the three per-group cMicrobialEfficiencyc{Lit,Mic,Soil}_CASA factors removed, since their static values duplicated these
  - 1.3 on 10.09.2026 [skoirala]: the four *_age_per_PFT fields (still unwired into precompute) keyed by canonical PFT name (PFTCatalog_SINDBAD_PFT) instead of a positional index; became fixed named lookups (CVEG_ROOTFINE_LEAF_AGE_PER_PFT, CVEG_ROOTCOARSE_WOOD_AGE_PER_PFT) plus bounded scalar multipliers, since array-valued struct fields cannot be optimized
  - 1.4 on 10.09.2026 [skoirala]: this file had never actually been run end to end -- ported it onto the working cCycleBase_GSI_PlantForm.jl pattern to fix what surfaced: `annk` became the fixed CASA_ANNK lookup plus an optimizable annk_scalar, matching the *_age_per_PFT treatment above; the ME-table and per-pool-turnover value computation moved from define into precompute, since define runs once ever and cannot pick up a parameter value the optimizer later changes; C_to_N_cVeg/c_eco_k_base's bulk `.=`/tuple-indexed assignments were replaced with @rep_elem loops, since land.diagnostics arrays are immutable SVectors; and c_eco_k_base, previously never allocated, is now defined and packed like every other diagnostic here
+ - 1.5 on 10.09.2026 [skoirala]: meCASAFlowsLitter/meCASAFlowsSoil moved here from cMicrobialEfficiencycLit/cMicrobialEfficiencycSoil, since this is their only caller and a plain helper function has no reason to live in a different process's namespace than the one approach that calls it
 
 *Created by*
  - ncarvalhais

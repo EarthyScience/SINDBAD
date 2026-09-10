@@ -1,32 +1,8 @@
 export cMicrobialEfficiencycSoil
-export meCASAFlowsSoil
 
 abstract type cMicrobialEfficiencycSoil <: LandEcosystem end
 
 purpose(::Type{cMicrobialEfficiencycSoil}) = "Microbial carbon-transfer efficiency of the decomposition flows leaving the soil carbon pools."
-
-"""
-    meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)
-
-The CASA microbial carbon-transfer efficiency of the soil decomposition pathways, as
-`edge => value` pairs keyed by giver-to-taker pool-name pair.
-
-The two routes carry the same CASA value but are separate parameters so that
-stabilization into old soil carbon and the return to the microbial pool can be calibrated
-apart. On the GSI structures only `cSoilSlow_to_cSoilOld` exists and the other two are
-skipped.
-
-Declared as a function, called from `cCycleBase_CASA.define` to seed `c_flow_ME_vec`
-with CASA's static soil defaults, kept as one table read from one place rather than
-written inline.
-"""
-function meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)
-    return (
-        (:cSoilSlow_to_cMicSoil, eff_cSoil_to_cMicSoil),
-        (:cSoilOld_to_cMicSoil, eff_cSoil_to_cMicSoil),
-        (:cSoilSlow_to_cSoilOld, eff_cSoilSlow_to_cSoilOld),
-    )
-end
 
 includeApproaches(cMicrobialEfficiencycSoil, @__DIR__)
 
