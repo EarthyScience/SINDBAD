@@ -85,19 +85,24 @@ The process separates carbon-quality/routing effects from the transfer-rate
 calculation itself. In the legacy SINDBAD CASA implementation, the corresponding
 quantity was `p_F_vec`.
 
-The partition splits along three independent controls, each of which owns a
-disjoint set of givers and is a process of its own:
+The partition splits along four independent controls, each of which owns a
+disjoint giver pool group and is a process of its own, named after that group the
+way `cMicrobialEfficiency`'s factors are:
 
-- [`cQualityPartitionMetabolicFraction`](@ref): the metabolic/structural split of
-  leaf and fine-root litterfall.
-- [`cQualityPartitionLignin`](@ref): the lignin control of structural and woody
+- [`cQualityPartitioncVeg`](@ref): the metabolic/structural split of leaf and
+  fine-root litterfall.
+- [`cQualityPartitioncLit`](@ref): the lignin control of structural and woody
   litter decomposition.
-- [`cQualityPartitionSoilProperties`](@ref): the clay control of slow-soil and microbial
+- [`cQualityPartitioncMic`](@ref): the clay control of soil-microbial
   stabilization.
+- [`cQualityPartitioncSoil`](@ref): the clay control of slow-soil stabilization.
 
-[`cQualityPartition_mult`](@ref) multiplies the three factors, the way
-[`cTau_mult`](@ref) multiplies the decomposition-rate stressors.
-[`cQualityPartition_CASA`](@ref) remains available as a self-contained
-alternative that declares all three in one table.
+[`cQualityPartition_mult`](@ref) multiplies the four factors, the way
+[`cTau_mult`](@ref) multiplies the decomposition-rate stressors. There is no
+self-contained single-table alternative: composing
+`cQualityPartitioncVeg_vegQualityTraits`, `cQualityPartitioncLit_vegQualityTraits`,
+`cQualityPartitioncMic_texture` and `cQualityPartitioncSoil_texture` through
+`cQualityPartition_mult` reproduces the old CASA table exactly, so the separate
+`cQualityPartition_CASA` approach that used to declare it in one table was removed.
 """
 cQualityPartition

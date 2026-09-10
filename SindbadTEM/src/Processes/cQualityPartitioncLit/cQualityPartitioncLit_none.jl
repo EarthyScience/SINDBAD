@@ -1,8 +1,8 @@
-export cQualityPartitionLignin_none
+export cQualityPartitioncLit_none
 
-struct cQualityPartitionLignin_none <: cQualityPartitionLignin end
+struct cQualityPartitioncLit_none <: cQualityPartitioncLit end
 
-function define(params::cQualityPartitionLignin_none, forcing, land, helpers)
+function define(params::cQualityPartitioncLit_none, forcing, land, helpers)
     @unpack_nt begin
         c_taker ⇐ land.cCycleBase
         cEco ⇐ land.pools
@@ -10,16 +10,16 @@ function define(params::cQualityPartitionLignin_none, forcing, land, helpers)
 
     # One value per active carbon transfer, neutral so that every flow this process
     # does not own leaves the partition to the other factors.
-    c_flow_QP_f_lignin = getVectorOfType(cEco, length(c_taker), one)
+    c_flow_QP_f_cLit = getVectorOfType(cEco, length(c_taker), one)
 
-    @pack_nt c_flow_QP_f_lignin ⇒ land.diagnostics
+    @pack_nt c_flow_QP_f_cLit ⇒ land.diagnostics
     return land
 end
 
-function precompute(params::cQualityPartitionLignin_none, forcing, land, helpers)
+function precompute(params::cQualityPartitioncLit_none, forcing, land, helpers)
     ## unpack land variables
     @unpack_nt begin
-        c_flow_QP_f_lignin ⇐ land.diagnostics
+        c_flow_QP_f_cLit ⇐ land.diagnostics
         c_flow_named_edges ⇐ land.cCycleBase
     end
 
@@ -27,20 +27,20 @@ function precompute(params::cQualityPartitionLignin_none, forcing, land, helpers
     # No lignin preference between direct stabilization and the microbial pathway,
     # but still a partition: structural and woody litter decomposition divides
     # equally over whichever of the two the configured structure has.
-    for group ∈ (QP_LIGNIN_STRUCT_GROUPS..., QP_LIGNIN_WOOD_GROUPS...)
-        c_flow_QP_f_lignin = setQPGroupEqual(c_flow_QP_f_lignin, c_flow_named_edges, group)
+    for group ∈ (QP_CLIT_STRUCT_GROUPS..., QP_CLIT_WOOD_GROUPS...)
+        c_flow_QP_f_cLit = setQPGroupEqual(c_flow_QP_f_cLit, c_flow_named_edges, group)
     end
 
     ## pack land variables
-    @pack_nt c_flow_QP_f_lignin ⇒ land.diagnostics
+    @pack_nt c_flow_QP_f_cLit ⇒ land.diagnostics
     return land
 end
 
-purpose(::Type{cQualityPartitionLignin_none}) = "Applies no lignin preference: structural and woody litter decomposition divides equally between the slow soil pool and the microbial pools."
+purpose(::Type{cQualityPartitioncLit_none}) = "Applies no lignin preference: structural and woody litter decomposition divides equally between the slow soil pool and the microbial pools."
 
 @doc """
 
-	$(getModelDocString(cQualityPartitionLignin_none))
+	$(getModelDocString(cQualityPartitioncLit_none))
 
 ---
 
@@ -55,10 +55,11 @@ which is the neutral value.
 *References*
 
 *Versions*
- - 1.0 on 04.09.2026 [skoirala]
+ - 1.0 on 04.09.2026 [skoirala]: as cQualityPartitionLignin_none
+ - 2.0 on 10.09.2026 [skoirala]: renamed/relocated into cQualityPartitioncLit
 
 *Created by*
  - skoirala
 
 """
-cQualityPartitionLignin_none
+cQualityPartitioncLit_none
