@@ -84,16 +84,16 @@ function precompute(params::cCycleBase_GSI_PlantForm, forcing, land, helpers)
     @unpack_nt begin
         (C_to_N_cVeg, c_eco_k_base, c_eco_τ, zero_c_τ_pf) ⇐ land.diagnostics
         (z_zero, o_one) ⇐ land.constants
-        plant_form ⇐ land.states
+        veg_type ⇐ land.states
     end
 
     c_τ_pf = zero_c_τ_pf
     ## replace values
-    if plant_form == :tree
+    if veg_type == :tree
         c_τ_pf = c_τ_tree
-    elseif plant_form == :shrub
+    elseif veg_type == :shrub
         c_τ_pf = c_τ_shrub
-    elseif plant_form == :herb
+    elseif veg_type == :herb
         c_τ_pf = c_τ_herb
     end
 
@@ -157,12 +157,20 @@ $(getModelDocString(cCycleBase_GSI_PlantForm))
 
 # Extended help
 
+Reads `land.states.veg_type` and branches on `:tree`/`:shrub`/`:herb`, so the
+experiment's `vegTypes` approach must resolve into `VegTypeCatalog_PlantForm` (e.g.
+`vegTypes_forcing_MODIS_IGBP_PlantForm`) for this to select anything other than the
+zero-initialized default from `define`.
+
 *References*
  - Potter; C. S.; J. T. Randerson; C. B. Field; P. A. Matson; P. M.  Vitousek; H. A. Mooney; & S. A. Klooster. 1993. Terrestrial ecosystem  production: A process model based on global satellite & surface data.  Global Biogeochemical Cycles. 7: 811-841.
 
 *Versions*
- - 1.0 on 28.02.2020 [skoirala | @dr-ko]  
+ - 1.0 on 28.02.2020 [skoirala | @dr-ko]
  - 1.1 on 04.09.2026 [skoirala]: c_flow_ME_vec allocated here alongside c_flow_A_vec and c_flow_QP_vec
+ - 1.2 on 10.09.2026 [skoirala]: reads `land.states.veg_type` instead of
+   `land.states.plant_form`, following the merge of the `PFT`/`plantForm`
+   processes into `vegTypes`; branch structure and field names unchanged
 
 *Created by*
  - ncarvalhais

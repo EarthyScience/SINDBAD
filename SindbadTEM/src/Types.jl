@@ -83,28 +83,47 @@ module TEMTypes
     function poolAliases end
     poolAliases(configuration) = (;)
 
-    # ------------------------- PFT catalog trait -----------------------------------------------------------
-    # Declared here for the same reason `poolConfiguration` is: `Sindbad.Setup` reaches it
+    # ------------------------- vegetation-type catalog traits ------------------------------------------------
+    # Declared here for the same reason `poolConfiguration` is: `Sindbad.Setup` reaches them
     # unqualified through `using SindbadTEM`, while the catalog types themselves stay inside
-    # Processes. A `PFT_forcing_*`/`PFT_constant` approach never names its catalog's
-    # crosswalk directly; it gets both back from `pftCatalog` and hands them to
-    # `pftCanonicalName`.
-    export pftCatalog
+    # Processes. A `vegTypes_forcing_*`/`vegTypes_constant*` approach never names a catalog
+    # directly; it gets both back from these two traits and hands them to `resolveVegType`.
+    export vegTypeCatalog
+    export vegTypeClassification
 
     """
-        pftCatalog(T)
+        vegTypeCatalog(T)
 
-    Return the PFT catalog a `PFT_forcing_*`/`PFT_constant` approach interprets its raw
-    codes against, or `nothing` if it declares none.
+    Return the source catalog a `vegTypes_forcing_*`/`vegTypes_constant*` approach
+    interprets its raw codes against, or `nothing` if it declares none.
 
     An approach declares one beside its `purpose`, e.g.
-    `pftCatalog(::Type{PFT_forcing_MODIS_IGBP}) = PFTCatalog_MODIS_IGBP`. The returned
-    catalog is a type, passed to `pftName`/`pftCanonicalName` to resolve a raw code to a
-    name.
+    `vegTypeCatalog(::Type{vegTypes_forcing_MODIS_IGBP}) = VegTypeCatalog_MODIS_IGBP`.
+    The returned catalog is a type, passed to `resolveVegType` to resolve a raw code to
+    a canonical name.
     """
-    function pftCatalog end
-    pftCatalog(::Type{<:LandEcosystem}) = nothing
-    pftCatalog(T::LandEcosystem) = pftCatalog(typeof(T))
+    function vegTypeCatalog end
+    vegTypeCatalog(::Type{<:LandEcosystem}) = nothing
+    vegTypeCatalog(T::LandEcosystem) = vegTypeCatalog(typeof(T))
+
+    """
+        vegTypeClassification(T)
+
+    Return the target classification a `vegTypes_forcing_*`/`vegTypes_constant*`
+    approach crosswalks its resolved canonical name into, or `nothing` if it declares
+    none, in which case `resolvedVegTypeClassification` (in `vegTypes.jl`) resolves
+    that to the canonical vocabulary itself, `VegTypeCatalog_SINDBAD` -- i.e. no
+    grouping.
+
+    An approach declares one beside its `purpose`, e.g.
+    `vegTypeClassification(::Type{vegTypes_forcing_MODIS_IGBP_PlantForm}) =
+    VegTypeCatalog_PlantForm`. The returned classification is a type, passed to
+    `resolveVegType`/`vegTypeClassOf` to resolve a canonical name into that
+    classification's own class name.
+    """
+    function vegTypeClassification end
+    vegTypeClassification(::Type{<:LandEcosystem}) = nothing
+    vegTypeClassification(T::LandEcosystem) = vegTypeClassification(typeof(T))
 
     # ------------------------- model error handling type ------------------------------------------------------------
     export DoCatchModelErrors

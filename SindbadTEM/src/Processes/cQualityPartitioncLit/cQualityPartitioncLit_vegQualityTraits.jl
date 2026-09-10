@@ -59,7 +59,7 @@ with its complement, into the flows of `QP_CLIT_STRUCT_GROUPS` and
 exactly once, in `vegQualityTraits`.
 
 This is the properly-connected replacement for the legacy
-[`cQualityPartitioncLit_PFT`](@ref), whose per-PFT table never read
+[`cQualityPartitioncLit_vegTypesLegacy`](@ref), whose per-PFT table never read
 `vegQualityTraits`' actual output and could silently disagree with it.
 
 *References*

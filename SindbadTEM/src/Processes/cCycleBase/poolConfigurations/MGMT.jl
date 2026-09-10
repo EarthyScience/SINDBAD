@@ -10,20 +10,21 @@ The GSI structure plus a `cProducts` component holding harvested wood and crop
 carbon, 10 pools in all.
 
 # Notes:
-- The first eight pools are declared exactly as `CarbonPoolsGSI` declares them, in the
-  same order, so the two structures agree on every `cEco` index they share. That is
-  why `cCycleBase_GSI_PlantForm_MGMT` reuses `GSI_FLOW_EDGES` unchanged.
+- Built directly on `poolStructure(CarbonPoolsGSI)` (splatted in, both at the top
+  level for `combine` and inside `components` for the eight shared pools) rather than
+  repeating its leaf entries, so the two structures cannot drift apart on the eight
+  pools they share. Declaration order is preserved by the splat, so the two structures
+  still agree on every `cEco` index they share -- that is why
+  `cCycleBase_GSI_PlantForm_MGMT` reuses `GSI_FLOW_EDGES` unchanged.
 - Products are decay only: carbon enters them from management and leaves by turnover,
   with no pool-to-pool transfer, so they add no flow edges.
 - See `poolStructure(::Type{CarbonPoolsGSI})` for the shape and ordering rules that
   apply to every structure.
 """
 poolStructure(::Type{CarbonPoolsMGMT}) = (;
-    combine = :cEco,
+    poolStructure(CarbonPoolsGSI)...,
     components = (;
-        cVeg      = (; Root = (1, 25.0), Wood = (1, 25.0), Leaf = (1, 25.0), Reserve = (1, 10.0)),
-        cLit      = (; Fast = (1, 100.0), Slow = (1, 250.0)),
-        cSoil     = (; Slow = (1, 500.0), Old = (1, 1000.0)),
+        poolStructure(CarbonPoolsGSI).components...,
         cProducts = (; Wood = (1, 20.0), Crop = (1, 20.0)),
     ),
 )

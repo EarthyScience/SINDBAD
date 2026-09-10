@@ -186,11 +186,8 @@
     "PET": {
       "approach": "Lu2005"
     },
-    "PFT": {
-      "approach": "forcing_MODIS_IGBP"
-    },
-    "plantForm": {
-      "approach": "PFT"
+    "vegTypes": {
+      "approach": "forcing_MODIS_IGBP_PlantForm"
     },
     "rainSnow": {
       "approach": "Tair"

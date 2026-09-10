@@ -70,87 +70,6 @@ function meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)
 end
 
 """
-    CVEG_ROOTFINE_LEAF_AGE_PER_PFT
-
-Mean age of fine roots and of leaves, per canonical PFT (`PFTCatalog_SINDBAD_PFT`)
-name -- the legacy `cVegRootFine_age_per_PFT` and `cVegLeaf_age_per_PFT`
-arrays were identical, so one table now serves both. Fixed data, not a
-parameter -- calibration happens through `cVegRootFine_age_scalar`/
-`cVegLeaf_age_scalar` in `cCycleBase_CASA` instead.
-
-Transcribed from the legacy 12-element array (values `[1.8, 1.2, 1.2, 5.0,
-1.8, 1.0, 1.0, 0.0, 1.0, 2.8, 1.0, 1.0]`), keyed to `PFTCatalog_MODIS_PFT`
-position order (array position `i` = code `i - 1`). See
-`LIT_FRAC_LIGNIN_PER_PFT` in `vegQualityTraits_CASA.jl` for the full
-source-position and gap-fill convention this follows; `Croplands` here is
-1.0 from position 9 (`Broadleaf_Croplands`), with position 8
-(`Cereal_Croplands`, 0.0) dropped once both collapse onto IGBP's single
-`Croplands` class.
-
-These two fields are unused by `compute` today (dead parameters in the
-original array form too); this table only modernizes their representation
-so they are ready if wired in later, and does not change model behavior.
-"""
-const CVEG_ROOTFINE_LEAF_AGE_PER_PFT = (;
-    Evergreen_Needleleaf_Forests = 1.2,
-    Evergreen_Broadleaf_Forests = 1.2,
-    Deciduous_Needleleaf_Forests = 5.0,
-    Deciduous_Broadleaf_Forests = 1.8,
-    Mixed_Forests = 1.8,
-    Closed_Shrublands = 1.0,
-    Open_Shrublands = 1.0,
-    Woody_Savannas = 1.0,
-    Savannas = 1.0,
-    Grasslands = 1.0,
-    Permanent_Wetlands = 1.0,
-    Croplands = 1.0,
-    Urban_and_Built_up_Lands = 2.8,
-    Cropland_Natural_Vegetation_Mosaics = 1.0,
-    Permanent_Snow_and_Ice = 1.0,
-    Barren = 1.0,
-    Water_Bodies = 1.8,
-    Unclassified = 1.0,
-)
-
-"""
-    CVEG_ROOTCOARSE_WOOD_AGE_PER_PFT
-
-Mean age of coarse roots and of wood, per canonical PFT
-(`PFTCatalog_SINDBAD_PFT`) name -- the legacy `cVegRootCoarse_age_per_PFT` and
-`cVegWood_age_per_PFT` arrays were identical, so one table now serves both.
-Fixed data, not a parameter -- calibration happens through
-`cVegRootCoarse_age_scalar`/`cVegWood_age_scalar` in `cCycleBase_CASA`
-instead.
-
-Transcribed the same way as `CVEG_ROOTFINE_LEAF_AGE_PER_PFT` from the legacy
-12-element array (values `[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0,
-5.5, 40.0, 1.0, 40.0]`); see that constant's docstring for the source-position
-and gap-fill notes, which apply identically here (`Croplands` = 5.5 from
-position 9, position 8 dropped). Also unused by `compute` today; see the
-same note there.
-"""
-const CVEG_ROOTCOARSE_WOOD_AGE_PER_PFT = (;
-    Evergreen_Needleleaf_Forests = 58.0,
-    Evergreen_Broadleaf_Forests = 58.0,
-    Deciduous_Needleleaf_Forests = 42.0,
-    Deciduous_Broadleaf_Forests = 27.0,
-    Mixed_Forests = 27.0,
-    Closed_Shrublands = 25.0,
-    Open_Shrublands = 25.0,
-    Woody_Savannas = 25.0,
-    Savannas = 25.0,
-    Grasslands = 25.0,
-    Permanent_Wetlands = 25.0,
-    Croplands = 5.5,
-    Urban_and_Built_up_Lands = 40.0,
-    Cropland_Natural_Vegetation_Mosaics = 5.5,
-    Permanent_Snow_and_Ice = 1.0,
-    Barren = 40.0,
-    Water_Bodies = 41.0,
-    Unclassified = 40.0,
-)
-
-"""
     CASA_ANNK
 
 Turnover rate of each CASA ecosystem carbon pool, per pool name, exactly as
@@ -385,6 +304,7 @@ optimization entirely.
  - 1.3 on 10.09.2026 [skoirala]: the four *_age_per_PFT fields (still unwired into precompute) keyed by canonical PFT name (PFTCatalog_SINDBAD_PFT) instead of a positional index; became fixed named lookups (CVEG_ROOTFINE_LEAF_AGE_PER_PFT, CVEG_ROOTCOARSE_WOOD_AGE_PER_PFT) plus bounded scalar multipliers, since array-valued struct fields cannot be optimized
  - 1.4 on 10.09.2026 [skoirala]: this file had never actually been run end to end -- ported it onto the working cCycleBase_GSI_PlantForm.jl pattern to fix what surfaced: `annk` became the fixed CASA_ANNK lookup plus an optimizable annk_scalar, matching the *_age_per_PFT treatment above; the ME-table and per-pool-turnover value computation moved from define into precompute, since define runs once ever and cannot pick up a parameter value the optimizer later changes; C_to_N_cVeg/c_eco_k_base's bulk `.=`/tuple-indexed assignments were replaced with @rep_elem loops, since land.diagnostics arrays are immutable SVectors; and c_eco_k_base, previously never allocated, is now defined and packed like every other diagnostic here
  - 1.5 on 10.09.2026 [skoirala]: meCASAFlowsLitter/meCASAFlowsSoil moved here from cMicrobialEfficiencycLit/cMicrobialEfficiencycSoil, since this is their only caller and a plain helper function has no reason to live in a different process's namespace than the one approach that calls it
+ - 1.6 on 10.09.2026 [skoirala]: CVEG_ROOTFINE_LEAF_AGE_PER_PFT and CVEG_ROOTCOARSE_WOOD_AGE_PER_PFT moved to the consolidated vegTypeParamCatalog.jl as CVEG_ROOTFINE_LEAF_AGE_PER_VEGTYPE/CVEG_ROOTCOARSE_WOOD_AGE_PER_VEGTYPE, alongside every other per-vegetation-type fixed table; the four *_age_scalar fields stay here since they are this approach's own calibration parameters, still unwired into precompute
 
 *Created by*
  - ncarvalhais

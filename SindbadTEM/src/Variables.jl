@@ -1540,12 +1540,12 @@ sindbad_tem_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "states",
         :description => "amount of water available for transpiration per soil layer"
     ),
-    :states__PFT => orD(
-        :standard_name => "PFT",
-        :long_name => "plant_functional_type",
+    :states__veg_type => orD(
+        :standard_name => "veg_type",
+        :long_name => "vegetation_type",
         :units => "class",
         :land_field => "states",
-        :description => "plant functional type class of the pixel, the single source of PFT for downstream processes"
+        :description => "vegetation type class of the pixel, the single source of vegetation type for downstream processes"
     ),
     :states__Tair_prev => orD(
         :standard_name => "Tair_prev",

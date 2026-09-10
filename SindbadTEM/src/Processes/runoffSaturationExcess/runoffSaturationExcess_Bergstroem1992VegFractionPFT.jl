@@ -28,11 +28,11 @@ function precompute(params::runoffSaturationExcess_Bergstroem1992VegFractionPFT,
     ## unpack parameters and forcing
     #@needscheck
     @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT params
-    @unpack_nt PFT ⇐ land.states
+    @unpack_nt veg_type ⇐ land.states
 
-    # get the PFT data & assign parameters, by canonical PFT name
-    # (PFTCatalog_SINDBAD_PFT) rather than a raw numeric code tied to one
-    # specific classification
+    # get the vegetation-type data & assign parameters, by canonical
+    # vegetation-type name (VegTypeCatalog_SINDBAD) rather than a raw numeric
+    # code tied to one specific classification
     β_PFTs = (;
         Evergreen_Needleleaf_Forests = β_Evergreen_Needleleaf_Forests,
         Evergreen_Broadleaf_Forests = β_Evergreen_Broadleaf_Forests,
@@ -53,7 +53,7 @@ function precompute(params::runoffSaturationExcess_Bergstroem1992VegFractionPFT,
         Water_Bodies = β_Water_Bodies,
         Unclassified = β_Unclassified,
     )
-    β_veg = getproperty(β_PFTs, PFT)
+    β_veg = getproperty(β_PFTs, veg_type)
 
     # get the berg parameters according the vegetation fraction
     β_veg_max = max(β_min, β_veg)
@@ -109,12 +109,21 @@ $(getModelDocString(runoffSaturationExcess_Bergstroem1992VegFractionPFT))
 
 # Extended help
 
-Each canonical PFT name (`PFTCatalog_SINDBAD_PFT`) gets its own bounded,
+Each canonical vegetation-type name (`VegTypeCatalog_SINDBAD`) gets its own bounded,
 independently optimizable `β_<name>` scaling parameter, selected in
-`precompute` by `land.states.PFT` directly rather than by a raw numeric code
+`precompute` by `land.states.veg_type` directly rather than by a raw numeric code
 plus a `+1` offset into an array. All 18 defaults are identical (3.0, the
 original uniform default), so re-keying by canonical name changes no model
 behavior.
+
+These 18 fields are independently optimizable calibration parameters, not fixed
+data, so unlike the four downstream tables in `vegTypeParamCatalog.jl` they are not
+re-keyed generically via `vegTypeCatalogFor` for other classifications: averaging two
+independently calibrated bounded parameters into a group's value would silently
+discard calibration signal. This approach therefore only makes sense selected
+alongside a fine-grained `vegTypes` approach (one whose target classification is
+`VegTypeCatalog_SINDBAD`, i.e. no `_PlantForm` suffix) -- `land.states.veg_type` must
+be one of the 18 `β_<name>` field names for `getproperty(β_PFTs, veg_type)` to resolve.
 
 *References*
  - Bergström, S. (1992). The HBV model–its structure & applications. SMHI.
@@ -128,6 +137,9 @@ behavior.
    MODIS PFT/Bonan codes 0-11) replaced by 18 β_<name> fields keyed to the
    canonical PFT vocabulary (PFTCatalog_SINDBAD_PFT), looked up by name instead
    of `Int(PFT) + 1`
+ - 3.0 on 10.09.2026 [skoirala]: looked up by `land.states.veg_type` instead of
+   `land.states.PFT`, following the merge of the `PFT`/`plantForm` processes
+   into `vegTypes`; field names and defaults unchanged
 
 *Created by*
  - ttraut
