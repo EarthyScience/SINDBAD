@@ -694,9 +694,11 @@ function repVec(v::AbstractVector, v_new)
 end
 
 function repVec(v::SVector, v_new)
-    n_0 = zero(first(v))
-    v = v .* n_0 + v_new
-    return v
+    # `zero(v)` depends only on v's type, not its runtime values, so this is exact
+    # even when v holds NaN or Inf -- unlike the `v .* zero(...)` mask this replaced,
+    # where `0 * Inf` and `0 * NaN` are themselves NaN. `v_new` is broadcast in via
+    # `.+`, matching both a scalar and a same-size vector.
+    return zero(v) .+ v_new
 end
 
 """

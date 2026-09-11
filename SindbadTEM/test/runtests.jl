@@ -23,6 +23,7 @@ include("testParameterTimescales.jl")
 include("testPoolScatterGather.jl")
 include("testPoolConfigurations.jl")
 include("testRepElem.jl")
+include("testRepVec.jl")
 include("testQualityPartition.jl")
 # checkApproaches.jl (every approach's define/precompute/compute -- update is opt-in, off by
 # default -- run against the real process sequence) deliberately isn't included here: it's pure
