@@ -2,6 +2,17 @@ export vegDynamics_forcing
 
 struct vegDynamics_forcing <: vegDynamics end
 
+function precompute(params::vegDynamics_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_nt f_pft ⇐ forcing
+
+    veg_type = f_pft[1]
+
+    ## pack land variables
+    @pack_nt veg_type ⇒ land.states
+    return land
+end
+
 function compute(params::vegDynamics_forcing, forcing, land, helpers)
     ## unpack forcing
     @unpack_nt f_pft ⇐ forcing
