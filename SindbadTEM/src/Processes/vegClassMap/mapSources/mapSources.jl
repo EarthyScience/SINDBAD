@@ -19,7 +19,7 @@ canonical classes it lumps together), plus its mapping onto the canonical vocabu
   same convention `poolConfigurations/poolConfigurations.jl` uses for carbon pool
   structures.
 - `VegTypeCatalog_SINDBAD` is the canonical catalog: the one name set every
-  downstream science approach (the `_PER_VEGTYPE` tables in `vegTypeParamCatalog.jl`,
+  downstream science approach (the `_PER_VEGTYPE` tables in `ParamsForVegClasses.jl`,
   ...) is written against. It is copied from `VegTypeCatalog_MODIS_IGBP` (same names,
   same codes) since that is what SINDBAD's actual forcing sources use today, but kept
   separate so it can gain classes IGBP does not have without ever compromising
@@ -32,13 +32,13 @@ canonical classes it lumps together), plus its mapping onto the canonical vocabu
   `VegTypeCatalog_PlantForm` grouping many canonical classes into `:tree`/`:shrub`/
   `:herb`/`:unknown`). `vegTypeClassOf` and `vegTypeCatalogFor` handle both cases
   uniformly, normalizing a bare `Symbol` target to a one-element tuple.
-- Catalogs subtype `SindbadTypes`, deliberately not `vegTypes`, mirroring why
+- Catalogs subtype `SindbadTypes`, deliberately not `vegClassMap`, mirroring why
   `CarbonPoolConfiguration` subtypes `SindbadTypes` rather than `cCycleBase`: a
   catalog has no `define` and no parameters, so registering it as an approach would
   surface it as a broken one.
-- `vegTypes.jl` includes this file before `includeApproaches(vegTypes, @__DIR__)` runs,
-  so every catalog is defined before any `vegTypes_forcing_*`/`vegTypes_constant*`
-  approach that references one loads.
+- `vegClassMap.jl` includes this file before `includeApproaches(vegClassMap, @__DIR__)` runs,
+  so every catalog is defined before any `vegClassMap_*` approach that references one
+  loads.
 """
 abstract type VegTypeCatalog <: SindbadTypes end
 purpose(::Type{VegTypeCatalog}) = "Abstract type for vegetation-type classification catalogs, one per real data source or derived grouping, each mapping onto the canonical SINDBAD vocabulary"
@@ -105,6 +105,13 @@ Resolve a numeric class code to its catalog's raw crosswalk target, i.e. the sin
 canonical name for a one-to-one catalog, or the tuple of canonical names for a
 one-to-many catalog. Most callers want `vegTypeClassOf` instead, which resolves all
 the way to one class name regardless of which kind of catalog is involved.
+
+Only ever called with a one-to-one `SourceCatalog` in practice (`resolveVegType`
+never resolves a raw code against a grouping catalog like `VegTypeCatalog_PlantForm`
+-- see its own docstring), so unlike `vegTypeClassOf`, this one has no one-to-many
+call site to be allocation-free for: its return type genuinely varies (a bare
+`Symbol` for one catalog's entries, an `NTuple` for another's), so no amount of
+restructuring the walk makes it uniformly-typed. Left as a plain loop.
 """
 function vegTypeCanonicalName(::Type{T}, code) where {T <: VegTypeCatalog}
     for (name_code, canonical_target) in vegTypeClasses(T)
@@ -131,14 +138,28 @@ target.
 Errors, naming the classification and the unmatched name, if no class of
 `Classification` covers `canonical_name` -- see `validateVegTypeCoverage` for why this
 should never fire once every catalog is included.
+
+Walks `vegTypeClasses(T)` by compile-time tail-recursion (`_vegTypeClassOf`) rather
+than a `for` loop. For a one-to-many catalog like `VegTypeCatalog_PlantForm`, each
+entry's target tuple has a different length (`:tree`'s 7 names vs `:shrub`'s 2), so a
+`for` loop's iteration variable has no single concrete type across entries and Julia
+falls back to type-unstable, allocating code -- confirmed via `@code_warntype`
+(`Body::ANY`) and a real `precompute` allocation on every `_PlantForm` approach.
+Every entry's actual *return* value (`first(name_code)`) is a plain `Symbol`
+regardless of the entry, though, so recursing on `Base.tail` of the classes tuple
+(one fully specialized compiled method per recursion depth) keeps that return type
+concrete while still letting each depth's own `canonical_target` type vary freely.
 """
 function vegTypeClassOf(::Type{T}, canonical_name::Symbol) where {T <: VegTypeCatalog}
-    for (name_code, canonical_target) in vegTypeClasses(T)
-        targets = canonical_target isa Tuple ? canonical_target : (canonical_target,)
-        if canonical_name in targets
-            return first(name_code)
-        end
-    end
+    return _vegTypeClassOf(T, canonical_name, vegTypeClasses(T))
+end
+@inline function _vegTypeClassOf(::Type{T}, canonical_name::Symbol, classes::Tuple) where {T}
+    name_code, canonical_target = first(classes)
+    targets = canonical_target isa Tuple ? canonical_target : (canonical_target,)
+    canonical_name in targets && return first(name_code)
+    return _vegTypeClassOf(T, canonical_name, Base.tail(classes))
+end
+@inline function _vegTypeClassOf(::Type{T}, canonical_name::Symbol, ::Tuple{}) where {T}
     error("$(canonical_name) is not covered by any class of $(nameof(T)). Known " *
           "classes: $(first.(first.(vegTypeClasses(T)))).")
 end
@@ -146,7 +167,7 @@ end
 """
     vegTypeCatalogFor(base_table::NamedTuple, ::Type{Classification})
 
-Re-key a base table declared in `vegTypeParamCatalog.jl` (always keyed by
+Re-key a base table declared in `ParamsForVegClasses.jl` (always keyed by
 `VegTypeCatalog_SINDBAD`'s canonical names) onto `Classification`'s own class names.
 One-to-one entries (including `VegTypeCatalog_SINDBAD`, the identity case) pass the
 base value through unchanged under the new name; one-to-many entries (e.g.
@@ -258,4 +279,4 @@ end
 validateVegTypeCrosswalks()
 validateVegTypeCoverage()
 
-include("vegTypeParamCatalog.jl")
+include("ParamsForVegClasses.jl")

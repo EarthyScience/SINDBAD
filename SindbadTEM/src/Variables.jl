@@ -1547,8 +1547,8 @@ sindbad_tem_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "states",
         :description => "amount of water available for transpiration per soil layer"
     ),
-    :states__veg_type => orD(
-        :standard_name => "veg_type",
+    :states__veg_type_name => orD(
+        :standard_name => "veg_type_name",
         :long_name => "vegetation_type",
         :units => "class",
         :land_field => "states",

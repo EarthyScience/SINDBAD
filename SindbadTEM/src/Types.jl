@@ -86,21 +86,23 @@ module TEMTypes
     # ------------------------- vegetation-type catalog traits ------------------------------------------------
     # Declared here for the same reason `poolConfiguration` is: `Sindbad.Setup` reaches them
     # unqualified through `using SindbadTEM`, while the catalog types themselves stay inside
-    # Processes. A `vegTypes_forcing_*`/`vegTypes_constant*` approach never names a catalog
-    # directly; it gets both back from these two traits and hands them to `resolveVegType`.
+    # Processes. Only `vegClassMap` approaches declare these two traits -- `vegDynamics`
+    # approaches obtain a raw code (from forcing or a constant) without ever naming a
+    # catalog. A `vegClassMap` approach never names a catalog directly in its `precompute`;
+    # it gets both back from these two traits and hands them to `resolveVegType`.
     export vegTypeCatalog
     export vegTypeClassification
 
     """
         vegTypeCatalog(T)
 
-    Return the source catalog a `vegTypes_forcing_*`/`vegTypes_constant*` approach
-    interprets its raw codes against, or `nothing` if it declares none.
+    Return the source catalog a `vegClassMap` approach interprets `land.states.veg_type`
+    (set upstream by `vegDynamics`) against, or `nothing` if it declares none.
 
     An approach declares one beside its `purpose`, e.g.
-    `vegTypeCatalog(::Type{vegTypes_forcing_MODIS_IGBP}) = VegTypeCatalog_MODIS_IGBP`.
-    The returned catalog is a type, passed to `resolveVegType` to resolve a raw code to
-    a canonical name.
+    `vegTypeCatalog(::Type{vegClassMap_MODIS_IGBP}) = VegTypeCatalog_MODIS_IGBP`. The
+    returned catalog is a type, passed to `resolveVegType` to resolve a raw code to a
+    canonical name.
     """
     function vegTypeCatalog end
     vegTypeCatalog(::Type{<:LandEcosystem}) = nothing
@@ -109,14 +111,13 @@ module TEMTypes
     """
         vegTypeClassification(T)
 
-    Return the target classification a `vegTypes_forcing_*`/`vegTypes_constant*`
-    approach crosswalks its resolved canonical name into, or `nothing` if it declares
-    none, in which case `resolvedVegTypeClassification` (in `vegTypes.jl`) resolves
-    that to the canonical vocabulary itself, `VegTypeCatalog_SINDBAD` -- i.e. no
-    grouping.
+    Return the target classification a `vegClassMap` approach crosswalks its resolved
+    canonical name into, or `nothing` if it declares none, in which case
+    `resolvedVegTypeClassification` (in `vegClassMap.jl`) resolves that to the canonical
+    vocabulary itself, `VegTypeCatalog_SINDBAD` -- i.e. no grouping.
 
     An approach declares one beside its `purpose`, e.g.
-    `vegTypeClassification(::Type{vegTypes_forcing_MODIS_IGBP_PlantForm}) =
+    `vegTypeClassification(::Type{vegClassMap_MODIS_IGBP_PlantForm}) =
     VegTypeCatalog_PlantForm`. The returned classification is a type, passed to
     `resolveVegType`/`vegTypeClassOf` to resolve a canonical name into that
     classification's own class name.

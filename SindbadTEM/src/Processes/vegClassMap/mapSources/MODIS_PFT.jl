@@ -10,9 +10,9 @@ The Plant Functional Type legend, Table 7 of the MCD12Q1 user guide (Bonan,
 2002), transcribed exactly as documented for the `name => code` half of each
 entry. This is the legend the CASA-family per-vegetation-type constants
 (turnover ages, lignin fractions, C:N ratios) are actually calibrated
-against, evidenced by `cQualityPartitioncVeg_vegTypesLegacy.jl`'s docstring noting "PFT
-class 8 has no lignin," true only of this legend's `Cereal_Croplands` (code
-7, 1-based array position 8).
+against, evidenced by `ParamsForVegClasses.jl`'s `LIT_FRAC_LIGNIN_PER_VEGTYPE`
+docstring noting "PFT class 8 has no lignin," true only of this legend's
+`Cereal_Croplands` (code 7, 1-based array position 8).
 
 Two classes have no clean 1:1 match onto the canonical
 `VegTypeCatalog_SINDBAD` vocabulary (itself copied from IGBP), placeholders

@@ -1,5 +1,5 @@
 export LIT_FRAC_LIGNIN_PER_VEGTYPE
-export LIT_C_TO_N_PER_VEGTYPE
+export LIT_CN_RATIO_PER_VEGTYPE
 export CVEG_ROOTFINE_AGE_PER_VEGTYPE
 export CVEG_LEAF_AGE_PER_VEGTYPE
 export CVEG_ROOTCOARSE_AGE_PER_VEGTYPE
@@ -12,7 +12,7 @@ export CVEG_WOOD_AGE_PER_VEGTYPE
 
 Lignin fraction of litter, per canonical vegetation type
 (`VegTypeCatalog_SINDBAD`) name. Fixed data, not a parameter -- calibration
-happens through `lit_frac_lignin_scalar` in `vegQualityTraits_CASA` instead.
+happens through `lit_frac_lignin_scalar` in `vegQualityTraits_vegType` instead.
 
 Transcribed from the legacy 12-element `lit_frac_lignin_per_PFT` array (values
 `[0.2, 0.2, 0.22, 0.25, 0.2, 0.15, 0.1, 0.0, 0.2, 0.15, 0.15, 0.1]`), which was
@@ -60,20 +60,20 @@ const LIT_FRAC_LIGNIN_PER_VEGTYPE = (;
 )
 
 """
-    LIT_C_TO_N_PER_VEGTYPE
+    LIT_CN_RATIO_PER_VEGTYPE
 
 Carbon-to-nitrogen ratio of litter, per canonical vegetation type
 (`VegTypeCatalog_SINDBAD`) name. Fixed data, not a parameter -- calibration
-happens through `lit_C_to_N_scalar` in `vegQualityTraits_CASA` instead.
+happens through `lit_CN_ratio_scalar` in `vegQualityTraits_vegType` instead.
 
 Transcribed the same way as `LIT_FRAC_LIGNIN_PER_VEGTYPE` from the legacy
-`lit_C_to_N_per_PFT` array (values
+`lit_CN_ratio_per_PFT` array (values
 `[40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0]`);
 see that constant's docstring for the source-position and gap-fill notes,
 which apply identically here (position 8, `Cereal_Croplands` = 0.0, is
 likewise dropped once collapsed onto `Croplands`).
 """
-const LIT_C_TO_N_PER_VEGTYPE = (;
+const LIT_CN_RATIO_PER_VEGTYPE = (;
     Evergreen_Needleleaf_Forests = 50.0,
     Evergreen_Broadleaf_Forests = 65.0,
     Deciduous_Needleleaf_Forests = 80.0,
@@ -105,8 +105,8 @@ instead.
 
 Drives vegetation-organ turnover at runtime: `cCycleBase_CASA`'s `define`
 re-keys this table (via `vegTypeCatalogFor`) onto whichever classification
-the experiment's `vegTypes` approach resolved into, and `precompute` looks up
-the current pixel's `land.states.veg_type` in it for `cVegRootFine`'s
+the experiment's `vegClassMap` approach resolved into, and `precompute` looks up
+the current pixel's `land.states.veg_type_name` in it for `cVegRootFine`'s
 turnover time. `cCycleBase_GSI`/`_GSI_PlantForm`/`_GSI_PlantForm_MGMT` do the
 same for their single, undifferentiated `cVegRoot` pool.
 

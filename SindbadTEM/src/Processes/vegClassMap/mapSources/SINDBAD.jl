@@ -7,7 +7,7 @@ purpose(::Type{VegTypeCatalog_SINDBAD}) = "SINDBAD's own canonical vegetation-ty
     vegTypeClasses(::Type{VegTypeCatalog_SINDBAD})
 
 SINDBAD's canonical vegetation-type classes: the one name set every
-downstream science approach (`vegTypeParamCatalog.jl`'s `_PER_VEGTYPE`
+downstream science approach (`ParamsForVegClasses.jl`'s `_PER_VEGTYPE`
 tables, `VegTypeCatalog_PlantForm`, ...) is written against. Copied from
 `VegTypeCatalog_MODIS_IGBP` (same names, same codes) since that is what
 SINDBAD's actual forcing sources use today, but kept as its own catalog
