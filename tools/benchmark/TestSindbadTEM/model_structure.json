@@ -186,8 +186,11 @@
     "PET": {
       "approach": "Lu2005"
     },
-    "vegTypes": {
-      "approach": "forcing_MODIS_IGBP_PlantForm"
+    "vegDynamics": {
+      "approach": "forcing"
+    },
+    "vegClassMap": {
+      "approach": "MODIS_IGBP_PlantForm"
     },
     "rainSnow": {
       "approach": "Tair"
