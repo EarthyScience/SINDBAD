@@ -18,7 +18,7 @@ partitioning and decomposition-rate processes need:
 - `lit_frac_metabolic`: fraction of leaf and fine-root litterfall routed to the
   metabolic litter pools. The complement, `1 - lit_frac_metabolic`, goes to the
   structural pools.
-- `lit_C_to_N`: carbon-to-nitrogen ratio of litter.
+- `lit_CN_ratio`: carbon-to-nitrogen ratio of litter.
 - `lit_frac_lignin`: fraction of litter that is lignin.
 - `lit_nonsol_to_sol_lignin`: scalar converting nonsoluble to soluble lignin.
 - `lit_frac_lignin_struct`: lignin as a fraction of structural litter carbon, which

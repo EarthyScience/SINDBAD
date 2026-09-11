@@ -3,7 +3,7 @@ export vegQualityTraits_constant
 #! format: off
 @bounds @describe @units @timescale @with_kw struct vegQualityTraits_constant{T1,T2,T3,T4,T5,T6,T7,T8} <: vegQualityTraits
     lit_frac_metabolic::T1 = 0.85 | (0.0, 1.0) | "fraction of leaf and fine-root litterfall routed to the metabolic litter pools" | "fraction" | ""
-    lit_C_to_N::T2 = 50.0 | (10.0, 150.0) | "carbon-to-nitrogen ratio of litter" | "gC/gN" | ""
+    lit_CN_ratio::T2 = 50.0 | (10.0, 150.0) | "carbon-to-nitrogen ratio of litter" | "gC/gN" | ""
     lit_frac_lignin::T3 = 0.2 | (0.0, 1.0) | "fraction of litter that is lignin" | "fraction" | ""
     lit_nonsol_to_sol_lignin::T4 = 2.22 | (1.0, 5.0) | "scalar converting nonsoluble to soluble lignin" | "fraction" | ""
     lit_frac_lignin_struct::T5 = 0.3 | (0.0, 1.0) | "lignin as a fraction of structural litter carbon" | "fraction" | ""
@@ -24,7 +24,7 @@ function precompute(params::vegQualityTraits_constant, forcing, land, helpers)
 
     ## pack land variables
     @pack_nt begin
-        (lit_C_to_N, lit_frac_lignin, lit_frac_metabolic, lit_nonsol_to_sol_lignin) ⇒ land.properties
+        (lit_CN_ratio, lit_frac_lignin, lit_frac_metabolic, lit_nonsol_to_sol_lignin) ⇒ land.properties
         (lit_frac_C_lignin, lit_frac_lignin_struct, lit_frac_lignin_wood, lit_k_f_lignin) ⇒ land.properties
     end
     return land

@@ -45,11 +45,11 @@ function precompute(params::vegQualityTraits_vegType, forcing, land, helpers)
     # are plain Float64 literals; oftype matches each looked-up value to its scalar's
     # type before multiplying, so the result stays the parameter type instead of
     # silently widening to Float64.
-    lit_C_to_N = oftype(lit_CN_ratio_scalar, getproperty(lit_CN_ratio_per_vegtype, veg_type_name)) * lit_CN_ratio_scalar
+    lit_CN_ratio = oftype(lit_CN_ratio_scalar, getproperty(lit_CN_ratio_per_vegtype, veg_type_name)) * lit_CN_ratio_scalar
     lit_frac_lignin = oftype(lit_frac_lignin_scalar, getproperty(lit_frac_lignin_per_vegtype, veg_type_name)) * lit_frac_lignin_scalar
 
     # lignin-to-nitrogen ratio of litter
-    lignin_to_N = (lit_C_to_N * lit_frac_lignin) * lit_nonsol_to_sol_lignin
+    lignin_to_N = (lit_CN_ratio * lit_frac_lignin) * lit_nonsol_to_sol_lignin
 
     # the metabolic fraction of litter decreases linearly with the
     # lignin-to-nitrogen ratio
@@ -68,7 +68,7 @@ function precompute(params::vegQualityTraits_vegType, forcing, land, helpers)
 
     ## pack land variables
     @pack_nt begin
-        (lit_C_to_N, lit_frac_lignin, lit_frac_metabolic, lit_nonsol_to_sol_lignin) ⇒ land.properties
+        (lit_CN_ratio, lit_frac_lignin, lit_frac_metabolic, lit_nonsol_to_sol_lignin) ⇒ land.properties
         (lit_frac_C_lignin, lit_frac_lignin_struct, lit_frac_lignin_wood, lit_k_f_lignin) ⇒ land.properties
     end
     return land
@@ -92,7 +92,7 @@ scaled by a bounded, optimizable multiplier (`lit_frac_lignin_scalar`,
 `lit_CN_ratio_scalar`) since the per-vegetation-type tables themselves are fixed data
 excluded from optimization, forms the lignin-to-nitrogen ratio
 
-`lignin_to_N = lit_C_to_N * lit_frac_lignin * lit_nonsol_to_sol_lignin`
+`lignin_to_N = lit_CN_ratio * lit_frac_lignin * lit_nonsol_to_sol_lignin`
 
 and computes
 

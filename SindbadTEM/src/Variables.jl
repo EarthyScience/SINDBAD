@@ -1183,8 +1183,8 @@ sindbad_tem_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "properties",
         :description => "hydraulic conductivity of soil at wilting point per layer"
     ),
-    :properties__lit_C_to_N => orD(
-        :standard_name => "lit_C_to_N",
+    :properties__lit_CN_ratio => orD(
+        :standard_name => "lit_CN_ratio",
         :long_name => "litter_carbon_to_nitrogen_ratio",
         :units => "gC/gN",
         :land_field => "properties",

@@ -11,7 +11,7 @@ function define(params::vegQualityTraits_none, forcing, land, helpers)
     # from, and decomposition rates are left untouched. lit_k_f_lignin is a
     # multiplicative rate factor, so its neutral value is one, not zero.
     lit_frac_metabolic = z_zero
-    lit_C_to_N = z_zero
+    lit_CN_ratio = z_zero
     lit_frac_lignin = z_zero
     lit_nonsol_to_sol_lignin = z_zero
     lit_frac_lignin_struct = z_zero
@@ -21,7 +21,7 @@ function define(params::vegQualityTraits_none, forcing, land, helpers)
 
     ## pack land variables
     @pack_nt begin
-        (lit_C_to_N, lit_frac_lignin, lit_frac_metabolic, lit_nonsol_to_sol_lignin) ⇒ land.properties
+        (lit_CN_ratio, lit_frac_lignin, lit_frac_metabolic, lit_nonsol_to_sol_lignin) ⇒ land.properties
         (lit_frac_C_lignin, lit_frac_lignin_struct, lit_frac_lignin_wood, lit_k_f_lignin) ⇒ land.properties
     end
     return land
