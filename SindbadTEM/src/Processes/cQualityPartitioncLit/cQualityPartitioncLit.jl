@@ -1,33 +1,8 @@
 export cQualityPartitioncLit
-export QP_CLIT_STRUCT_GROUPS, QP_CLIT_WOOD_GROUPS
 
 abstract type cQualityPartitioncLit <: LandEcosystem end
 
 purpose(::Type{cQualityPartitioncLit}) = "Effect of litter lignin content on the carbon-quality partition: the split of structural and woody litter decomposition between the slow soil pool and the microbial pools."
-
-"""
-    QP_CLIT_STRUCT_GROUPS
-
-The structural-litter partition groups this process owns, as
-`(stabilized edge, microbial edge)` pairs. The first edge of a pair takes the
-lignin fraction of structural litter carbon and the second takes its complement.
-"""
-const QP_CLIT_STRUCT_GROUPS = (
-    (:cLitLeafSlow_to_cSoilSlow, :cLitLeafSlow_to_cMicSurf),
-    (:cLitRootFineSlow_to_cSoilSlow, :cLitRootFineSlow_to_cMicSoil),
-)
-
-"""
-    QP_CLIT_WOOD_GROUPS
-
-The woody-litter partition groups this process owns, in the same
-`(stabilized edge, microbial edge)` shape, split by the lignin fraction of woody
-litter rather than of structural litter.
-"""
-const QP_CLIT_WOOD_GROUPS = (
-    (:cLitWood_to_cSoilSlow, :cLitWood_to_cMicSurf),
-    (:cLitRootCoarse_to_cSoilSlow, :cLitRootCoarse_to_cMicSoil),
-)
 
 includeApproaches(cQualityPartitioncLit, @__DIR__)
 
@@ -42,17 +17,22 @@ carbon-quality partition with one entry per active carbon transfer, in the same
 order as `c_flow_order`, `c_giver` and `c_taker`.
 
 The factor is one everywhere except on the flows leaving the structural and woody
-litter pools, listed in `QP_CLIT_STRUCT_GROUPS` and `QP_CLIT_WOOD_GROUPS`: the
-lignin-rich part of decomposing litter is stabilized directly into the slow soil
-pool, and the rest passes through the microbial pools.
-[`cQualityPartition_mult`](@ref) multiplies this factor with the `cVeg`, `cMic`
-and `cSoil` factors to form `c_flow_QP_vec`.
+litter pools, in `land.cCycleBase.c_flow_qp_groups.cLit.structural` and
+`c_flow_qp_groups.cLit.wood`: the lignin-rich part of decomposing litter is
+stabilized directly into the slow soil pool, and the rest passes through the
+microbial pools. [`cQualityPartition_mult`](@ref) multiplies this factor with
+the `cVeg`, `cMic` and `cSoil` factors to form `c_flow_QP_vec`.
 
-Edges are matched by pool-name pair through `c_flow_named_edges`, so a structure
-without the explicit structural-litter and microbial pools simply keeps its
-neutral partition of one on those flows. `cLitLeafFast_to_cMicSurf` and
-`cLitRootFineFast_to_cMicSoil` are single-outflow and are not listed in either
-group: they already keep that neutral partition.
+`c_flow_qp_groups.cLit` is derived once, from the resolved flow topology, by
+`deriveQPGroups` (`cCycleBase/poolConfigurations/poolConfigurations.jl`): a
+giver whose name starts with `cLit` and whose outgoing edges include both a
+`cSoil`-prefixed taker and a `cMic`-prefixed taker contributes a
+`(soil_positions, mic_positions)` pair, filed under `wood` if the giver's name
+contains `Wood`/`RootCoarse` and `structural` otherwise. `cLitLeafFast` and
+`cLitRootFineFast` are single-outflow (to a `cMic`-prefixed pool only) and so
+never match, keeping that neutral partition. A structure without the explicit
+structural-litter and microbial pools -- e.g. GSI, whose `cLitFast`/`cLitSlow`
+each reach only `cSoilSlow` -- resolves both fields to `()`.
 
 Named after the giver pool group it owns (`cLit`), the way
 [`cMicrobialEfficiencycLit`](@ref)/`cMic`/`cSoil` are, rather than after the

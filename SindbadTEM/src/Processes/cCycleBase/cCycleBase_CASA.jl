@@ -5,16 +5,31 @@ export meCASAFlowsSoil
 """
     meCASAFlowsLitter(eff_cLit_to_cMicSurf, eff_cLitRootFine_to_cMicSoil,
         eff_cLitRootCoarse_to_cMicSoil, eff_cLit_to_cSoilSlow,
-        eff_cLitRootFine_to_cSoilSlow)
+        eff_cLitRootFine_to_cSoilSlow, zix)
 
 The CASA microbial carbon-transfer efficiency of every litter decomposition pathway, as
-`edge => value` pairs keyed by giver-to-taker pool-name pair.
+`(giver_zix, taker_zix, value)` triples matched by pool-index membership
+(`setMEFlow`/`edgesBetween` in `landUtils.jl`), not by a literal
+`<giver>_to_<taker>` name.
 
 The surface microbial pathway retains least, the direct route into slow soil most, and
 fine roots sit between the two because they decompose in the soil rather than at the
-surface. The last two entries are the aggregated GSI litter pools, which take the
-litter-to-soil efficiency; on CASA they are absent and `setMEFlow` skips them, and on GSI
-the CASA-only entries are absent instead, so one table serves both.
+surface.
+
+Only ever called from `cCycleBase_CASA`/`cCycleBase_CASA_Legacy`'s own `precompute`,
+so `zix` is always `CarbonPoolsCASA`'s. An earlier, name-keyed version of this table
+also carried two entries meant to generalize to `CarbonPoolsGSI`'s literal `cLitFast`/
+`cLitSlow` leaf pools if this table were ever read under a GSI-based `cCycleBase` --
+which it never has been, since only the CASA approaches call it. Converting those two
+to `zix`-membership under CASA's own pool set would have been actively wrong rather
+than merely unused: `CarbonPoolsCASA` separately declares `cLitFast`/`cLitSlow` as
+*aliases* (`poolAliases`, `poolConfigurations/CASA.jl`) that union pools needing
+different treatment here -- `cLitSlow` = `cLitLeafSlow` + `cLitRootFineSlow` +
+`cLitRootCoarse` + `cLitWood`, but `cLitRootFineSlow`'s transfer is calibrated
+separately (`eff_cLitRootFine_to_cSoilSlow`, below) from the other three's
+(`eff_cLit_to_cSoilSlow`). Matching CASA's `cLitSlow` alias here would silently
+overwrite `cLitRootFineSlow`'s own value with the other three's. Dropped rather than
+carried forward for a generality no call site exercises.
 
 Declared as a function, called from `precompute` below to seed `c_flow_ME_vec` with
 CASA's static litter defaults. Lives here, alongside the approach that is its only
@@ -28,44 +43,37 @@ written inline.
 """
 function meCASAFlowsLitter(eff_cLit_to_cMicSurf, eff_cLitRootFine_to_cMicSoil,
         eff_cLitRootCoarse_to_cMicSoil, eff_cLit_to_cSoilSlow,
-        eff_cLitRootFine_to_cSoilSlow)
+        eff_cLitRootFine_to_cSoilSlow, zix)
     return (
-        (:cLitLeafFast_to_cMicSurf, eff_cLit_to_cMicSurf),
-        (:cLitLeafSlow_to_cMicSurf, eff_cLit_to_cMicSurf),
-        (:cLitWood_to_cMicSurf, eff_cLit_to_cMicSurf),
-        (:cLitRootFineFast_to_cMicSoil, eff_cLitRootFine_to_cMicSoil),
-        (:cLitRootFineSlow_to_cMicSoil, eff_cLitRootFine_to_cMicSoil),
-        (:cLitRootCoarse_to_cMicSoil, eff_cLitRootCoarse_to_cMicSoil),
-        (:cLitLeafSlow_to_cSoilSlow, eff_cLit_to_cSoilSlow),
-        (:cLitRootCoarse_to_cSoilSlow, eff_cLit_to_cSoilSlow),
-        (:cLitWood_to_cSoilSlow, eff_cLit_to_cSoilSlow),
-        (:cLitRootFineSlow_to_cSoilSlow, eff_cLitRootFine_to_cSoilSlow),
-        (:cLitFast_to_cSoilSlow, eff_cLit_to_cSoilSlow),
-        (:cLitSlow_to_cSoilSlow, eff_cLit_to_cSoilSlow),
+        ((zix.cLitLeaf..., zix.cLitWood...), zix.cMicSurf, eff_cLit_to_cMicSurf),
+        (zix.cLitRootFine, zix.cMicSoil, eff_cLitRootFine_to_cMicSoil),
+        (zix.cLitRootCoarse, zix.cMicSoil, eff_cLitRootCoarse_to_cMicSoil),
+        ((zix.cLitLeafSlow..., zix.cLitRootCoarse..., zix.cLitWood...), zix.cSoilSlow, eff_cLit_to_cSoilSlow),
+        (zix.cLitRootFineSlow, zix.cSoilSlow, eff_cLitRootFine_to_cSoilSlow),
     )
 end
 
 """
-    meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)
+    meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld, zix)
 
 The CASA microbial carbon-transfer efficiency of the soil decomposition pathways, as
-`edge => value` pairs keyed by giver-to-taker pool-name pair.
+`(giver_zix, taker_zix, value)` triples matched by pool-index membership
+(`setMEFlow`/`edgesBetween` in `landUtils.jl`), not by a literal
+`<giver>_to_<taker>` name.
 
 The two routes carry the same CASA value but are separate parameters so that
-stabilization into old soil carbon and the return to the microbial pool can be calibrated
-apart. On the GSI structures only `cSoilSlow_to_cSoilOld` exists and the other two are
-skipped.
+stabilization into old soil carbon and the return to the microbial pool can be
+calibrated apart.
 
 Declared as a function, called from `precompute` below to seed `c_flow_ME_vec` with
 CASA's static soil defaults, for the same reason `meCASAFlowsLitter` lives here rather
 than in `cMicrobialEfficiencycSoil`: it belongs beside its only caller, not in a
 different process's namespace.
 """
-function meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)
+function meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld, zix)
     return (
-        (:cSoilSlow_to_cMicSoil, eff_cSoil_to_cMicSoil),
-        (:cSoilOld_to_cMicSoil, eff_cSoil_to_cMicSoil),
-        (:cSoilSlow_to_cSoilOld, eff_cSoilSlow_to_cSoilOld),
+        (zix.cSoil, zix.cMicSoil, eff_cSoil_to_cMicSoil),
+        (zix.cSoilSlow, zix.cSoilOld, eff_cSoilSlow_to_cSoilOld),
     )
 end
 
@@ -100,8 +108,8 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
     # pool structure, rather than a transfer matrix carried as a parameter. The same
     # call keys the flows by pool-name pair and sizes the neutral flow vector, so a
     # cFlow approach reads the topology and fills in values instead of rederiving both
-    (c_flow_order, c_taker, c_giver, c_flow_named_edges, c_flow_A_vec, c_flow_QP_vec,
-        c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
+    (c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups, c_flow_A_vec,
+        c_flow_QP_vec, c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
 
     ## Instantiate variables, matching cCycleBase_GSI_PlantForm.jl: define only
     ## sets up structure (topology, zero-initialized arrays) and runs once ever,
@@ -115,7 +123,7 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
     ## pack land variables
     @pack_nt begin
         (C_to_N_cVeg, c_eco_k_base, c_flow_A_vec, c_flow_QP_vec, c_flow_ME_vec) ⇒ land.diagnostics
-        (c_flow_order, c_taker, c_giver, c_flow_named_edges) ⇒ land.cCycleBase
+        (c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups) ⇒ land.cCycleBase
         c_model ⇒ land.models
     end
     return land
@@ -130,8 +138,9 @@ function precompute(params::cCycleBase_CASA, forcing, land, helpers)
         C_to_N_cVeg ⇐ land.diagnostics
         c_eco_k_base ⇐ land.diagnostics
         c_flow_ME_vec ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        (c_giver, c_taker) ⇐ land.cCycleBase
     end
+    zix = helpers.pools.zix
 
     ## calculate variables
     # CASA's own static microbial-efficiency table, applied on top of the
@@ -146,12 +155,12 @@ function precompute(params::cCycleBase_CASA, forcing, land, helpers)
     ME_flows = (
         meCASAFlowsLitter(eff_cLit_to_cMicSurf, eff_cLitRootFine_to_cMicSoil,
             eff_cLitRootCoarse_to_cMicSoil, eff_cLit_to_cSoilSlow,
-            eff_cLitRootFine_to_cSoilSlow)...,
-        (:cMicSurf_to_cSoilSlow, eff_cMicSurf_to_cSoilSlow),
-        meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)...,
+            eff_cLitRootFine_to_cSoilSlow, zix)...,
+        (zix.cMicSurf, zix.cSoilSlow, eff_cMicSurf_to_cSoilSlow),
+        meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld, zix)...,
     )
-    for (edge, value) ∈ ME_flows
-        c_flow_ME_vec = setMEFlow(c_flow_ME_vec, c_flow_named_edges, edge, value)
+    for (giver_zix, taker_zix, value) ∈ ME_flows
+        c_flow_ME_vec = setMEFlow(c_flow_ME_vec, c_giver, c_taker, giver_zix, taker_zix, value)
     end
 
     # carbon to nitrogen ratio [gC.gN-1] and turnover rate, both by pool name rather

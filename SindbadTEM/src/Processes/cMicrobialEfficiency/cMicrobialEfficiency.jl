@@ -6,26 +6,30 @@ abstract type cMicrobialEfficiency <: LandEcosystem end
 purpose(::Type{cMicrobialEfficiency}) = "Assemble the flow-specific microbial carbon-transfer efficiency of litter and soil decomposition from the per-pool-group factors. The diagnostic c_flow_ME_vec is aligned with c_flow_order/c_giver/c_taker and represents the old CASA p_E efficiency term."
 
 """
-    setMEFlow(me_vec, c_flow_named_edges, edge, value)
+    setMEFlow(me_vec, c_giver, c_taker, giver_zix, taker_zix, value)
 
-Write `value` into every flow-vector position that carries the named `edge`, and
-return the vector unchanged when the configured pool structure has no such edge.
+Write `value` into every flow-vector position whose giver is in `giver_zix` and
+whose taker is in `taker_zix`, and return the vector unchanged when no flow
+matches -- e.g. a pool structure that lacks either group entirely.
 
-The efficiency tables are declared over the full CASA pool topology, but the same
-approaches are selected against more aggregated structures that lack the explicit
-metabolic/structural litter and microbial pools. Skipping absent edges lets one
-declaration serve both, instead of erroring on a pool the structure never had.
+The efficiency tables are declared once but the values they seed depend only on
+which pools are involved, matched by index membership (`edgesBetween` in
+`landUtils.jl`, which this calls through) rather than by a literal
+`<giver>_to_<taker>` name -- so a table entry naming pools a given structure
+lacks simply contributes nothing there, instead of erroring.
 
-The body is `setFlowEdgeValue` in `landUtils.jl`, shared with `setQPFlow`. There is no
-group counterpart here: an efficiency is a per-flow retention fraction rather than a
-partition, so a giver's outgoing efficiencies are under no obligation to sum to one.
+The body is `setFlowValue` in `landUtils.jl`. There is no group counterpart
+here: an efficiency is a per-flow retention fraction rather than a partition, so a
+giver's outgoing efficiencies are under no obligation to sum to one.
 
-Used by the `_CASA` approaches, and by `cCycleBase_CASA.define` itself to seed
-`c_flow_ME_vec` with CASA's static defaults. The others find their flows through
-`zix`, which needs no edge list and holds on any pool structure.
+Used only by `cCycleBase_CASA`/`cCycleBase_CASA_Legacy`'s own `precompute`, to seed
+`c_flow_ME_vec` with CASA's static defaults (`meCASAFlowsLitter`/`meCASAFlowsSoil`,
+`cCycleBase_CASA.jl`) -- the per-group `cMicrobialEfficiencyc{Lit,Mic,Soil}`
+approaches (`_constant`/`_none`/`_texture`) find their flows through `zix` directly,
+without going through this function at all.
 """
-function setMEFlow(me_vec, c_flow_named_edges, edge, value)
-    return setFlowEdgeValue(me_vec, c_flow_named_edges, edge, value)
+function setMEFlow(me_vec, c_giver, c_taker, giver_zix, taker_zix, value)
+    return setFlowValue(me_vec, c_giver, c_taker, giver_zix, taker_zix, value)
 end
 
 """

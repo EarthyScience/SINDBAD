@@ -220,14 +220,12 @@ end
             givers[flow_matrix[taker, giver]] = giver
             takers[flow_matrix[taker, giver]] = taker
         end
-        named = P.cFlowNamedEdges(Tuple(takers), Tuple(givers), pool_names)
         zixOf(prefix) = Tuple(findall(nm -> startswith(String(nm), prefix), pool_names))
         helpers = (; pools = (; zix = (; cLit = zixOf("cLit"), cMic = zixOf("cMic"), cSoil = zixOf("cSoil"))))
         land = (;
             pools = (; cEco = zeros(n_pools)),
             cCycleBase = (; c_taker = Tuple(takers), c_giver = Tuple(givers),
-                            c_flow_order = ntuple(identity, n_flows),
-                            c_flow_named_edges = named),
+                            c_flow_order = ntuple(identity, n_flows)),
             diagnostics = (;),
             properties = (; st_clay = [0.2], st_silt = [0.3]),
         )
@@ -318,14 +316,28 @@ end
         givers[flow_matrix[taker, giver]] = giver
         takers[flow_matrix[taker, giver]] = taker
     end
-    named = P.cFlowNamedEdges(Tuple(takers), Tuple(givers), pool_names)
-    zix = NamedTuple(nm => (i,) for (i, nm) in enumerate(pool_names))
-    helpers = (; pools = (; zix = zix, components = (; cEco = pool_names)))
-    land = (; pools = (; cEco = zeros(n_pools)), diagnostics = (;), cCycleBase = (;), models = (;))
+    # position => giver_to_taker name, for assertions only -- production code no
+    # longer builds or reads a structure like this (see setMEFlow/edgesBetween,
+    # landUtils.jl, and meCASAFlowsLitter/meCASAFlowsSoil, cCycleBase_CASA.jl,
+    # which match by giver/taker pool-index membership instead).
+    edge_name(flow) = Symbol(String(pool_names[givers[flow]]) * "_to_" * String(pool_names[takers[flow]]))
 
-    land2 = P.define(P.cCycleBase_CASA(), nothing, land, helpers)
+    # zix, both per-leaf (exact name, needed by applyPoolTable/applyPoolCNTable for
+    # every CASA_TAU/CASA_CN_ratio entry) and the three branch groups
+    # meCASAFlowsLitter/meCASAFlowsSoil match against (cLitLeaf, cLitRootFine, cSoil)
+    zixOf(prefix) = Tuple(findall(nm -> startswith(String(nm), prefix), pool_names))
+    group_names = (pool_names..., :cLitLeaf, :cLitRootFine, :cSoil)
+    zix = NamedTuple{Tuple(group_names)}(Tuple(zixOf(String(nm)) for nm in group_names))
+    helpers = (; pools = (; zix = zix, components = (; cEco = pool_names),
+                            zeros = (; cEco = zeros(n_pools)), ones = (; cEco = ones(n_pools))))
+    land = (; pools = (; cEco = zeros(n_pools)), diagnostics = (;), cCycleBase = (;),
+              models = (;), states = (;))
+
+    approach_instance = P.cCycleBase_CASA()
+    land2 = P.define(approach_instance, nothing, land, helpers)
+    land2 = P.precompute(approach_instance, nothing, land2, helpers)
     me = land2.diagnostics.c_flow_ME_vec
-    valueAt(edge) = me[first(getproperty(named, edge))]
+    valueAt(edge) = me[first(flow for flow in 1:n_flows if edge_name(flow) == edge)]
 
     expected = Dict(
         :cLitLeafFast_to_cMicSurf => 0.4, :cLitLeafSlow_to_cMicSurf => 0.4,

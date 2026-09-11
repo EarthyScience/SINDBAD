@@ -322,12 +322,19 @@ sindbad_tem_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "cCycleBase",
         :description => "index of the receiving carbon pool for a given flow"
     ),
-    :cCycleBase__c_flow_named_edges => orD(
-        :standard_name => "c_flow_named_edges",
-        :long_name => "carbon_flow_named_edges",
+    :cCycleBase__pool_names => orD(
+        :standard_name => "pool_names",
+        :long_name => "carbon_pool_names",
         :units => "",
         :land_field => "cCycleBase",
-        :description => "flow vector positions bucketed by the pool name pair they connect, as giver_to_taker, so that a cFlow approach can find the entry carrying a named transfer without knowing its index"
+        :description => "cEco_index => pool_name pair for each carbon pool -- informational only, for inspecting land.cCycleBase; no process matches pools by this"
+    ),
+    :cCycleBase__flow_edges => orD(
+        :standard_name => "flow_edges",
+        :long_name => "carbon_flow_edges",
+        :units => "",
+        :land_field => "cCycleBase",
+        :description => "flow_order => (giver_name => taker_name) pair for each carbon flow, in flow-vector order -- informational only, for inspecting land.cCycleBase; no process matches flows by this"
     ),
     :diagnostics__c_flow_A_array => orD(
         :standard_name => "c_flow_A_array",
