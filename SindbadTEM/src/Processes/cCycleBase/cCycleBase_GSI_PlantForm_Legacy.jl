@@ -84,16 +84,16 @@ function precompute(params::cCycleBase_GSI_PlantForm_Legacy, forcing, land, help
     @unpack_nt begin
         (C_to_N_cVeg, c_eco_k_base, c_eco_τ, zero_c_τ_pf) ⇐ land.diagnostics
         (z_zero, o_one) ⇐ land.constants
-        veg_type ⇐ land.states
+        veg_type_name ⇐ land.states
     end
 
     c_τ_pf = zero_c_τ_pf
     ## replace values
-    if veg_type == :tree
+    if veg_type_name == :tree
         c_τ_pf = c_τ_tree
-    elseif veg_type == :shrub
+    elseif veg_type_name == :shrub
         c_τ_pf = c_τ_shrub
-    elseif veg_type == :herb
+    elseif veg_type_name == :herb
         c_τ_pf = c_τ_herb
     end
 
@@ -160,9 +160,9 @@ Frozen baseline: byte-for-byte the same parameters and logic `cCycleBase_GSI_Pla
 had before its turnover/C:N defaults were centralized into `poolConfigurations/GSI.jl`,
 kept here unchanged so the redesign can be run side by side against it and diffed.
 
-Reads `land.states.veg_type` and branches on `:tree`/`:shrub`/`:herb`, so the
-experiment's `vegTypes` approach must resolve into `VegTypeCatalog_PlantForm` (e.g.
-`vegTypes_forcing_MODIS_IGBP_PlantForm`) for this to select anything other than the
+Reads `land.states.veg_type_name` and branches on `:tree`/`:shrub`/`:herb`, so the
+experiment's `vegClassMap` approach must resolve into `VegTypeCatalog_PlantForm` (e.g.
+`vegClassMap_MODIS_IGBP_PlantForm`) for this to select anything other than the
 zero-initialized default from `define`.
 
 *References*
@@ -171,7 +171,7 @@ zero-initialized default from `define`.
 *Versions*
  - 1.0 on 28.02.2020 [skoirala | @dr-ko]
  - 1.1 on 04.09.2026 [skoirala]: c_flow_ME_vec allocated here alongside c_flow_A_vec and c_flow_QP_vec
- - 1.2 on 10.09.2026 [skoirala]: reads `land.states.veg_type` instead of
+ - 1.2 on 10.09.2026 [skoirala]: reads `land.states.veg_type_name` instead of
    `land.states.plant_form`, following the merge of the `PFT`/`plantForm`
    processes into `vegTypes`; branch structure and field names unchanged
  - 1.3 on 11.09.2026 [skoirala]: split off from cCycleBase_GSI_PlantForm as the

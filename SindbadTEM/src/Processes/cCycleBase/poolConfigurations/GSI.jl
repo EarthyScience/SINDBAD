@@ -67,9 +67,9 @@ vegetation-organ pools that do (`cVegRoot`, `cVegWood`, `cVegLeaf`) are no longe
 read from here: every GSI-family `cCycleBase` approach
 (`cCycleBase_GSI`/`_GSI_PlantForm`/`_GSI_PlantForm_MGMT`) now looks their turnover
 up at runtime from `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/`CVEG_WOOD_AGE_PER_VEGTYPE`/
-`CVEG_LEAF_AGE_PER_VEGTYPE` (`vegTypeParamCatalog.jl`), re-keyed onto the
-experiment's active `vegTypes` classification and looked up by
-`land.states.veg_type`, exactly like `vegQualityTraits_VegTypes.jl` already does
+`CVEG_LEAF_AGE_PER_VEGTYPE` (`ParamsForVegClasses.jl`), re-keyed onto the
+experiment's active `vegClassMap` classification and looked up by
+`land.states.veg_type_name`, exactly like `vegQualityTraits_vegType.jl` already does
 for litter chemistry. This table's own `cVegRoot`/`cVegWood`/`cVegLeaf` entries
 are kept only as a historical record of the pre-refactor "tree" defaults.
 

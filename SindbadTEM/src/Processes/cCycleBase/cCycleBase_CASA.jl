@@ -102,7 +102,7 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
 
     @unpack_nt begin
         cEco ⇐ land.pools
-        veg_type_classification ⇐ land.vegTypes
+        veg_type_class_map ⇐ land.vegClassMap
     end
 
     # one flow per declared edge of this approach, resolved against the configured
@@ -120,13 +120,13 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
     c_eco_k_base = zero(cEco)
 
     # Re-keyed once, at define time, onto whichever classification the experiment's
-    # vegTypes approach resolved into (the canonical vocabulary, or a grouping like
+    # vegClassMap approach resolved into (the canonical vocabulary, or a grouping like
     # VegTypeCatalog_PlantForm) -- see vegTypeCatalogFor, and
-    # vegQualityTraits_VegTypes.jl for the same pattern applied to litter chemistry.
-    rootfine_age_per_vegtype = vegTypeCatalogFor(CVEG_ROOTFINE_AGE_PER_VEGTYPE, typeof(veg_type_classification))
-    leaf_age_per_vegtype = vegTypeCatalogFor(CVEG_LEAF_AGE_PER_VEGTYPE, typeof(veg_type_classification))
-    rootcoarse_age_per_vegtype = vegTypeCatalogFor(CVEG_ROOTCOARSE_AGE_PER_VEGTYPE, typeof(veg_type_classification))
-    wood_age_per_vegtype = vegTypeCatalogFor(CVEG_WOOD_AGE_PER_VEGTYPE, typeof(veg_type_classification))
+    # vegQualityTraits_vegType.jl for the same pattern applied to litter chemistry.
+    rootfine_age_per_vegtype = vegTypeCatalogFor(CVEG_ROOTFINE_AGE_PER_VEGTYPE, typeof(veg_type_class_map))
+    leaf_age_per_vegtype = vegTypeCatalogFor(CVEG_LEAF_AGE_PER_VEGTYPE, typeof(veg_type_class_map))
+    rootcoarse_age_per_vegtype = vegTypeCatalogFor(CVEG_ROOTCOARSE_AGE_PER_VEGTYPE, typeof(veg_type_class_map))
+    wood_age_per_vegtype = vegTypeCatalogFor(CVEG_WOOD_AGE_PER_VEGTYPE, typeof(veg_type_class_map))
 
     c_model = params
 
@@ -151,7 +151,7 @@ function precompute(params::cCycleBase_CASA, forcing, land, helpers)
         c_flow_ME_vec ⇐ land.diagnostics
         (rootfine_age_per_vegtype, leaf_age_per_vegtype, rootcoarse_age_per_vegtype, wood_age_per_vegtype) ⇐ land.diagnostics
         (c_giver, c_taker) ⇐ land.cCycleBase
-        veg_type ⇐ land.states
+        veg_type_name ⇐ land.states
     end
     zix = helpers.pools.zix
 
@@ -187,8 +187,8 @@ function precompute(params::cCycleBase_CASA, forcing, land, helpers)
     # applyPoolTable's docstring, poolConfigurations/poolConfigurations.jl).
     C_to_N_cVeg = applyPoolCNTable(C_to_N_cVeg, CASA_CN_ratio, CN_ratio_scalar, helpers)
 
-    # The four vegetation-organ pools' turnover varies by land.states.veg_type,
-    # looked up in the tables define re-keyed from vegTypeParamCatalog.jl, each
+    # The four vegetation-organ pools' turnover varies by land.states.veg_type_name,
+    # looked up in the tables define re-keyed from ParamsForVegClasses.jl, each
     # scaled by its own bounded multiplier (rootfine_age_scalar/leaf_age_scalar/
     # rootcoarse_age_scalar/wood_age_scalar) through the same
     # applyPoolTable(scalar_for::NamedTuple) convention every other per-pool
@@ -196,10 +196,10 @@ function precompute(params::cCycleBase_CASA, forcing, land, helpers)
     # other CASA pool (litter/microbial/soil) is not vegetation-type dependent
     # and stays on the fixed CASA_TAU table with the single shared k_c_scalar.
     casa_organ_tau = (;
-        cVegRootFine = getproperty(rootfine_age_per_vegtype, veg_type),
-        cVegLeaf = getproperty(leaf_age_per_vegtype, veg_type),
-        cVegRootCoarse = getproperty(rootcoarse_age_per_vegtype, veg_type),
-        cVegWood = getproperty(wood_age_per_vegtype, veg_type),
+        cVegRootFine = getproperty(rootfine_age_per_vegtype, veg_type_name),
+        cVegLeaf = getproperty(leaf_age_per_vegtype, veg_type_name),
+        cVegRootCoarse = getproperty(rootcoarse_age_per_vegtype, veg_type_name),
+        cVegWood = getproperty(wood_age_per_vegtype, veg_type_name),
     )
     casa_organ_scalars = (;
         cVegRootFine = rootfine_age_scalar, cVegLeaf = leaf_age_scalar,
@@ -266,18 +266,18 @@ array-valued struct fields are excluded from optimization entirely.
 
 `CASA_TAU` no longer covers the four vegetation-organ pools (`cVegRootFine`,
 `cVegRootCoarse`, `cVegWood`, `cVegLeaf`): their turnover time now varies by
-`land.states.veg_type`. `define` re-keys `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/
+`land.states.veg_type_name`. `define` re-keys `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/
 `CVEG_LEAF_AGE_PER_VEGTYPE`/`CVEG_ROOTCOARSE_AGE_PER_VEGTYPE`/
-`CVEG_WOOD_AGE_PER_VEGTYPE` (`vegTypeParamCatalog.jl`) onto whichever
-classification the experiment's `vegTypes` approach resolved into
-(`vegTypeCatalogFor`), and `precompute` looks the current pixel's `veg_type` up in
+`CVEG_WOOD_AGE_PER_VEGTYPE` (`ParamsForVegClasses.jl`) onto whichever
+classification the experiment's `vegClassMap` approach resolved into
+(`vegTypeCatalogFor`), and `precompute` looks the current pixel's `veg_type_name` up in
 each, builds a small per-organ table (`casa_organ_tau`) and a matching per-organ
 scalar table (`casa_organ_scalars`, the four `*_age_scalar` fields -- finishing
 what versions 1.6/1.7 left these fields declared but unwired for), and applies
 both through `applyPoolTable`'s `scalar_for::NamedTuple` branch -- the same
 `rate = (1.0/turnover_time) * scalar` convention `k_c_scalar` uses against the
 now-organ-free `CASA_TAU` for every other pool, in a second `applyPoolTable` call.
-This is the same pattern `vegQualityTraits_VegTypes.jl` uses for litter chemistry,
+This is the same pattern `vegQualityTraits_vegType.jl` uses for litter chemistry,
 and the same runtime lookup the GSI-family `cCycleBase` approaches now use for
 their own vegetation-organ pools.
 
@@ -347,8 +347,8 @@ something today's centralization introduced, just never exercised end to end (se
    `CVEG_ROOTCOARSE_AGE_PER_VEGTYPE`/`CVEG_WOOD_AGE_PER_VEGTYPE`
    (`vegTypeParamCatalog.jl`, split from the former combined
    `CVEG_ROOTFINE_LEAF_AGE_PER_VEGTYPE`/`CVEG_ROOTCOARSE_WOOD_AGE_PER_VEGTYPE`)
-   onto the experiment's active `vegTypes` classification via
-   `vegTypeCatalogFor`, and `precompute` looks the pixel's `land.states.veg_type`
+   onto the experiment's active `vegClassMap` classification via
+   `vegTypeCatalogFor`, and `precompute` looks the pixel's `land.states.veg_type_name`
    up in each, so organ turnover now varies by vegetation type instead of being
    one fixed value for every type. The four `*_age_scalar` fields now declare
    `"year"` as their timescale (previously `""`), for the same reason `k_c_scalar`

@@ -95,10 +95,10 @@ calibration happens through `k_c_scalar` in `cCycleBase_CASA` instead, since
 array-valued struct fields cannot be optimized.
 
 The four vegetation-organ pools are not here: their turnover now varies by
-`land.states.veg_type` at runtime, looked up from
+`land.states.veg_type_name` at runtime, looked up from
 `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/`CVEG_LEAF_AGE_PER_VEGTYPE`/
 `CVEG_ROOTCOARSE_AGE_PER_VEGTYPE`/`CVEG_WOOD_AGE_PER_VEGTYPE`
-(`vegTypeParamCatalog.jl`) in `cCycleBase_CASA`'s `precompute`, rather than from one
+(`ParamsForVegClasses.jl`) in `cCycleBase_CASA`'s `precompute`, rather than from one
 fixed value shared by every vegetation type. See that file's docstrings and
 `cCycleBase_CASA.jl`'s own extended help for the mechanics.
 

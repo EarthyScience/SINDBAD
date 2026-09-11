@@ -19,7 +19,7 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI params
     @unpack_nt begin
         cEco ⇐ land.pools
-        veg_type_classification ⇐ land.vegTypes
+        veg_type_class_map ⇐ land.vegClassMap
     end
     ## Instantiate variables
     C_to_N_cVeg = zero(cEco) #sujan
@@ -34,14 +34,14 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
         c_flow_QP_vec, c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
 
     # Re-keyed once, at define time, onto whichever classification the experiment's
-    # vegTypes approach resolved into (the canonical vocabulary, or a grouping like
+    # vegClassMap approach resolved into (the canonical vocabulary, or a grouping like
     # VegTypeCatalog_PlantForm) -- see vegTypeCatalogFor, and
-    # vegQualityTraits_VegTypes.jl for the same pattern applied to litter chemistry.
+    # vegQualityTraits_vegType.jl for the same pattern applied to litter chemistry.
     # No coarse-root table here: GSI has a single, undifferentiated cVegRoot pool
     # (no cVegRootCoarse), unlike CASA.
-    rootfine_age_per_vegtype = vegTypeCatalogFor(CVEG_ROOTFINE_AGE_PER_VEGTYPE, typeof(veg_type_classification))
-    leaf_age_per_vegtype = vegTypeCatalogFor(CVEG_LEAF_AGE_PER_VEGTYPE, typeof(veg_type_classification))
-    wood_age_per_vegtype = vegTypeCatalogFor(CVEG_WOOD_AGE_PER_VEGTYPE, typeof(veg_type_classification))
+    rootfine_age_per_vegtype = vegTypeCatalogFor(CVEG_ROOTFINE_AGE_PER_VEGTYPE, typeof(veg_type_class_map))
+    leaf_age_per_vegtype = vegTypeCatalogFor(CVEG_LEAF_AGE_PER_VEGTYPE, typeof(veg_type_class_map))
+    wood_age_per_vegtype = vegTypeCatalogFor(CVEG_WOOD_AGE_PER_VEGTYPE, typeof(veg_type_class_map))
 
     c_model = params
 
@@ -60,12 +60,12 @@ function precompute(params::cCycleBase_GSI, forcing, land, helpers)
     @unpack_nt begin
         (C_to_N_cVeg, c_eco_k_base, c_eco_τ) ⇐ land.diagnostics
         (rootfine_age_per_vegtype, leaf_age_per_vegtype, wood_age_per_vegtype) ⇐ land.diagnostics
-        veg_type ⇐ land.states
+        veg_type_name ⇐ land.states
     end
 
     ## replace values
-    # cVegRoot/cVegWood/cVegLeaf turnover now varies by land.states.veg_type,
-    # looked up in the tables define re-keyed from vegTypeParamCatalog.jl; the
+    # cVegRoot/cVegWood/cVegLeaf turnover now varies by land.states.veg_type_name,
+    # looked up in the tables define re-keyed from ParamsForVegClasses.jl; the
     # litter/soil/reserve pools stay fixed, from GSI_TAU_DEFAULT, since they are
     # not vegetation-type dependent. c_eco_τ is written by pool name rather than
     # by cEco position, so a structure that orders or omits pools differently
@@ -76,9 +76,9 @@ function precompute(params::cCycleBase_GSI, forcing, land, helpers)
     # type concretely (see applyPoolTable's docstring,
     # poolConfigurations/poolConfigurations.jl).
     c_τ_organs = (;
-        cVegRoot = getproperty(rootfine_age_per_vegtype, veg_type),
-        cVegWood = getproperty(wood_age_per_vegtype, veg_type),
-        cVegLeaf = getproperty(leaf_age_per_vegtype, veg_type),
+        cVegRoot = getproperty(rootfine_age_per_vegtype, veg_type_name),
+        cVegWood = getproperty(wood_age_per_vegtype, veg_type_name),
+        cVegLeaf = getproperty(leaf_age_per_vegtype, veg_type_name),
         cVegReserve = TAU_DORMANT,
         cLitFast = GSI_TAU_DEFAULT.cLitFast, cLitSlow = GSI_TAU_DEFAULT.cLitSlow,
         cSoilSlow = GSI_TAU_DEFAULT.cSoilSlow, cSoilOld = GSI_TAU_DEFAULT.cSoilOld,
@@ -122,11 +122,11 @@ litter/soil pools is `k = (1.0 / turnover_time) * scalar`, where `scalar` is one
 the six `k_c_*_scalar` fields, shared across pools that don't get their own
 individual scalar (`k_c_litter_scalar` for both litter pools, `k_c_soil_scalar` for
 both soil pools). `turnover_time` for `cVegRoot`/`cVegWood`/`cVegLeaf` now varies by
-`land.states.veg_type`: `define` re-keys `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/
-`CVEG_WOOD_AGE_PER_VEGTYPE`/`CVEG_LEAF_AGE_PER_VEGTYPE` (`vegTypeParamCatalog.jl`)
-onto whichever classification the experiment's `vegTypes` approach resolved into
-(`vegTypeCatalogFor`), and `precompute` looks the current pixel's `veg_type` up in
-each -- the same pattern `vegQualityTraits_VegTypes.jl` uses for litter chemistry.
+`land.states.veg_type_name`: `define` re-keys `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/
+`CVEG_WOOD_AGE_PER_VEGTYPE`/`CVEG_LEAF_AGE_PER_VEGTYPE` (`ParamsForVegClasses.jl`)
+onto whichever classification the experiment's `vegClassMap` approach resolved into
+(`vegTypeCatalogFor`), and `precompute` looks the current pixel's `veg_type_name` up in
+each -- the same pattern `vegQualityTraits_vegType.jl` uses for litter chemistry.
 `cVegReserve` stays `TAU_DORMANT` (not vegetation-type dependent), and
 `cLitFast`/`cLitSlow`/`cSoilSlow`/`cSoilOld` stay fixed at `GSI_TAU_DEFAULT`'s
 values (`poolConfigurations/GSI.jl`, also not vegetation-type dependent). The
@@ -183,8 +183,8 @@ fields (`c_τ_Root` etc., see `cCycleBase_GSI_Legacy`) used to do.
    longer reads the fixed `GSI_TAU_DEFAULT` values -- `define` re-keys
    `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/`CVEG_WOOD_AGE_PER_VEGTYPE`/
    `CVEG_LEAF_AGE_PER_VEGTYPE` (`vegTypeParamCatalog.jl`) onto the experiment's
-   active `vegTypes` classification and `precompute` looks the pixel's
-   `land.states.veg_type` up in each, so this approach -- previously documented
+   active `vegClassMap` classification and `precompute` looks the pixel's
+   `land.states.veg_type_name` up in each, so this approach -- previously documented
    as having "no plant-form distinction" -- now varies vegetation-organ
    turnover by vegetation type like `cCycleBase_GSI_PlantForm` did, just at
    finer granularity. `cVegReserve`/litter/soil turnover is unchanged, still

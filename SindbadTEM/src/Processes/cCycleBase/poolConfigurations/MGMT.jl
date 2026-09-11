@@ -42,8 +42,8 @@ Unlike every other pool that approach's turnover loop covers, these two do not
 vary by vegetation type: harvested-product decay does not depend on the pixel's
 vegetation-type classification, so `cCycleBase_GSI_PlantForm_MGMT`'s `precompute`
 merges this fixed pair into its runtime, per-vegtype organ-turnover table (built
-from `vegTypeParamCatalog.jl`'s `CVEG_*_AGE_PER_VEGTYPE` tables) rather than
-looking them up by `veg_type` at all.
+from `ParamsForVegClasses.jl`'s `CVEG_*_AGE_PER_VEGTYPE` tables) rather than
+looking them up by `veg_type_name` at all.
 
 The old `c_τ_cProductsWood`/`c_τ_cProductsCrop` rate defaults (`0.03`, `1.0`
 yr⁻¹) invert to `33.333333333333336` and `1.0`; following `GSI_TAU_DEFAULT`'s

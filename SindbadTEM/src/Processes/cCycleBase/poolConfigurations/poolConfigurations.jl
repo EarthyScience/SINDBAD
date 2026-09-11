@@ -15,8 +15,8 @@ for the pools that are not vegetation-type dependent (`GSI_TAU_DEFAULT`/
 (`GSI_FLOW_EDGES`/`CASA_FLOW_EDGES`) that was already here. The vegetation-organ
 pools' turnover (`cVegRoot`/`cVegRootFine`/`cVegRootCoarse`/`cVegWood`/`cVegLeaf`)
 is not fixed here: every `cCycleBase` approach looks it up at runtime by
-`land.states.veg_type`, from the per-vegetation-type tables in
-`vegTypes/vegTypeCatalogs/vegTypeParamCatalog.jl`.
+`land.states.veg_type_name`, from the per-vegetation-type tables in
+`vegClassMap/mapSources/ParamsForVegClasses.jl`.
 
 An approach names its configuration with `poolConfiguration`, and the configuration
 answers `poolStructure` and `poolAliases`.
