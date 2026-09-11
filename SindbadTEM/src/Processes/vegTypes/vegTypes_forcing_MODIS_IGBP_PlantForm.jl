@@ -10,7 +10,7 @@ function precompute(params::vegTypes_forcing_MODIS_IGBP_PlantForm, forcing, land
     @unpack_nt f_pft ⇐ forcing
 
     veg_type, veg_type_source, veg_type_code = resolveVegType(
-        VegTypeCatalog_MODIS_IGBP, VegTypeCatalog_PlantForm, f_pft[1])
+        VegTypeCatalog_MODIS_IGBP, VegTypeCatalog_PlantForm, f_pft)
 
     ## pack land variables
     @pack_nt (veg_type, veg_type_source, veg_type_code) ⇒ land.states

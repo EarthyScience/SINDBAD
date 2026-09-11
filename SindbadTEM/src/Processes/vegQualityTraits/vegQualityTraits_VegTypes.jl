@@ -1,7 +1,7 @@
-export vegQualityTraits_CASA
+export vegQualityTraits_VegTypes
 
 #! format: off
-@bounds @describe @units @timescale @with_kw struct vegQualityTraits_CASA{T1,T2,T3,T4,T5,T6,T7,T8} <: vegQualityTraits
+@bounds @describe @units @timescale @with_kw struct vegQualityTraits_VegTypes{T1,T2,T3,T4,T5,T6,T7,T8} <: vegQualityTraits
     lit_frac_metabolic_A::T1 = 0.85 | (0.0, 1.0) | "intercept of the metabolic litter fraction at zero lignin-to-nitrogen ratio" | "fraction" | ""
     lit_frac_metabolic_B::T2 = 0.018 | (0.0, 0.1) | "sensitivity of the metabolic litter fraction to the lignin-to-nitrogen ratio" | "fraction" | ""
     lit_nonsol_to_sol_lignin::T3 = 2.22 | (1.0, 5.0) | "scalar converting nonsoluble to soluble lignin" | "fraction" | ""
@@ -13,7 +13,7 @@ export vegQualityTraits_CASA
 end
 #! format: on
 
-function define(params::vegQualityTraits_CASA, forcing, land, helpers)
+function define(params::vegQualityTraits_VegTypes, forcing, land, helpers)
     @unpack_nt veg_type_classification ⇐ land.vegTypes
 
     # Re-keyed once, at define time, onto whichever classification the experiment's
@@ -26,9 +26,9 @@ function define(params::vegQualityTraits_CASA, forcing, land, helpers)
     return land
 end
 
-function precompute(params::vegQualityTraits_CASA, forcing, land, helpers)
+function precompute(params::vegQualityTraits_VegTypes, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegQualityTraits_CASA params
+    @unpack_vegQualityTraits_VegTypes params
 
     ## unpack land variables
     @unpack_nt begin
@@ -74,11 +74,11 @@ function precompute(params::vegQualityTraits_CASA, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{vegQualityTraits_CASA}) = "Metabolic litter fraction and the structural lignin fraction, with vegetation-type-dependent litter chemistry, and the lignin effect on decomposition rate, as modeled in CASA."
+purpose(::Type{vegQualityTraits_VegTypes}) = "Metabolic litter fraction and the structural lignin fraction, with vegetation-type-dependent litter chemistry, and the lignin effect on decomposition rate, as modeled in CASA."
 
 @doc """
 
-	$(getModelDocString(vegQualityTraits_CASA))
+	$(getModelDocString(vegQualityTraits_VegTypes))
 
 ---
 
@@ -124,7 +124,7 @@ original did not.
 
 *Versions*
  - 1.0 on 04.09.2026 [skoirala]: extracted from cTauVegProperties_CASA, as separate metabolicFraction_CASA and lignin_CASA approaches
- - 2.0 on 09.09.2026 [skoirala]: merged metabolicFraction_CASA and lignin_CASA into vegQualityTraits_CASA
+ - 2.0 on 09.09.2026 [skoirala]: merged metabolicFraction_CASA and lignin_CASA into vegQualityTraits_VegTypes
  - 3.0 on 10.09.2026 [skoirala]: per-PFT litter chemistry keyed by canonical
    PFT name (PFTCatalog_SINDBAD_PFT) instead of a positional index into an
    array tied to one specific classification; the two per-PFT arrays became
@@ -139,4 +139,4 @@ original did not.
  - ncarvalhais
 
 """
-vegQualityTraits_CASA
+vegQualityTraits_VegTypes
