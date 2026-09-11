@@ -84,3 +84,72 @@ const CASA_FLOW_EDGES = (                    # giver => taker, in flow-vector or
     :cSoilSlow        => :cMicSoil,         :cSoilSlow        => :cSoilOld,   # giver 13
     :cSoilOld         => :cMicSoil,                                          # giver 14
 )
+
+"""
+    CASA_TAU
+
+Turnover *time* (years) of each CASA carbon pool, per pool name. `k = 1.0/value`
+is computed at the point of use; fixed data, not a parameter -- calibration happens
+through `k_c_scalar` in `cCycleBase_CASA` instead, since array-valued struct fields
+cannot be optimized.
+
+Formerly `CASA_ANNK`, which stored the rate `k` directly (values `[1, 0.03, 0.03, 1,
+14.8, 3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045]`, in the pool order
+`poolStructure(CarbonPoolsCASA)` declares). Renamed and re-expressed as time
+(`1.0/k`) since turnover time in years is the more legible representation, and
+matches what the `c_τ_`-prefixed GSI fields already secretly stored (a time,
+immediately inverted) before this session's centralization.
+
+**Formatting convention** (matches `GSI_TAU_DEFAULT`, `poolConfigurations/GSI.jl`):
+a plain decimal, rounded to one decimal place, when the turnover time is `>= 1`;
+`1.0/N` (`N` the exact original rate, unrounded) when it is `< 1`.
+`cVegRootCoarse`/`cVegWood` (`1.0/0.03 = 33.333333333333336`, rounded to `33.3`),
+`cLitRootCoarse`/`cLitWood` (`1.0/0.2424 = 4.125412541254125`, rounded to `4.1`)
+and `cSoilOld` (`1.0/0.0045 = 222.22222222222223`, rounded to `222.2`) are each a
+deliberate, if small, change to the resulting rate for readability (respectively
+about `0.1%`, `0.6%` and `0.01%` off the original), not merely a representation
+change. `cSoilSlow`'s reciprocal (`1.0/0.2 = 5.0`) already rounds to the same
+value, so it is unaffected.
+"""
+const CASA_TAU = (;
+    cVegRootFine = 1.0,
+    cVegRootCoarse = 33.3,
+    cVegWood = 33.3,
+    cVegLeaf = 1.0,
+    cLitLeafFast = 1.0/14.8,
+    cLitLeafSlow = 1.0/3.9,
+    cLitRootFineFast = 1.0/18.5,
+    cLitRootFineSlow = 1.0/4.8,
+    cLitRootCoarse = 4.1,
+    cLitWood = 4.1,
+    cMicSurf = 1.0/6.0,
+    cMicSoil = 1.0/7.3,
+    cSoilSlow = 5.0,
+    cSoilOld = 222.2,
+)
+
+"""
+    CASA_CN_ratio
+
+Carbon-to-nitrogen ratio of each CASA carbon pool, per pool name. Fixed data, not a
+parameter -- calibration happens through `CN_ratio_scalar` in `cCycleBase_CASA`
+instead. Only the four vegetation pools have a physically meaningful ratio; every
+other pool is `0.0`, exactly as `p_C_to_N_cVeg` (the vector field this replaces) was
+never read for any pool other than `cVeg`'s.
+"""
+const CASA_CN_ratio = (;
+    cVegRootFine = 25.0,
+    cVegRootCoarse = 260.0,
+    cVegWood = 260.0,
+    cVegLeaf = 25.0,
+    cLitLeafFast = 0.0,
+    cLitLeafSlow = 0.0,
+    cLitRootFineFast = 0.0,
+    cLitRootFineSlow = 0.0,
+    cLitRootCoarse = 0.0,
+    cLitWood = 0.0,
+    cMicSurf = 0.0,
+    cMicSoil = 0.0,
+    cSoilSlow = 0.0,
+    cSoilOld = 0.0,
+)

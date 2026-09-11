@@ -1,12 +1,17 @@
 export CarbonPoolConfiguration
 export cFlowEdges
+export TAU_DORMANT
 
 """
     CarbonPoolConfiguration
 
 Abstract supertype of the carbon pool configurations: the pool structure a
 `cCycleBase` approach is written against, together with any aliases that structure
-needs.
+needs. Each configuration's file also centralizes that structure's own fixed
+per-pool defaults an approach reads rather than declares inline -- turnover time
+(`GSI_TAU_DEFAULT`/`GSI_TAU_PLANTFORM`/`MGMT_TAU`/`CASA_TAU`) and vegetation
+carbon-to-nitrogen ratio (`GSI_CN_ratio`/`CASA_CN_ratio`) today, alongside the
+flow-edge topology (`GSI_FLOW_EDGES`/`CASA_FLOW_EDGES`) that was already here.
 
 An approach names its configuration with `poolConfiguration`, and the configuration
 answers `poolStructure` and `poolAliases`.
@@ -29,6 +34,22 @@ answers `poolStructure` and `poolAliases`.
 """
 abstract type CarbonPoolConfiguration <: SindbadTypes end
 purpose(::Type{CarbonPoolConfiguration}) = "Abstract type for the carbon pool structures that cCycleBase approaches are written against"
+
+"""
+    TAU_DORMANT
+
+Shared placeholder turnover *time* (years) for a pool that, by design, effectively
+never decays -- a `(0.25, 4.0)`-bounded scalar could never scale a rate derived
+from this back up to anything physically meaningful, so it exists purely to make
+"this pool is dormant" explicit and consistent wherever it's needed, rather than
+each configuration re-choosing its own large number.
+
+Used for the GSI-family vegetation Reserve pool (`GSI_TAU_DEFAULT`, hence every
+`GSI_TAU_PLANTFORM` entry that inherits it), the `unknown` plant-form's full table
+(`GSI_TAU_PLANTFORM.unknown`), and `MGMT_TAU`'s structural-completeness
+`cProductsWood`/`cProductsCrop` placeholders (`poolConfigurations/MGMT.jl`).
+"""
+const TAU_DORMANT = 1.0e11
 
 """
     poolAliases(configuration)
@@ -201,6 +222,88 @@ function cFlowNamedEdges(c_taker, c_giver, cEco_components)
         end
     end
     return NamedTuple{Tuple(edge_names)}(Tuple(Tuple.(edge_positions)))
+end
+
+"""
+    applyPoolTable(c_eco, table, scalar, helpers)
+
+Multiply each pool in `table` (a per-pool-name `NamedTuple` mapping to a turnover
+*time*, e.g. `GSI_TAU_DEFAULT`/`CASA_TAU`) by `one(T) / T(value) * scalar`, `T` being
+`eltype(c_eco)`, writing the result into `c_eco` at that pool's `cEco` index via
+`repElem`, and return the updated `c_eco`. `scalar` is either one value applied to
+every pool (`cCycleBase_CASA`'s single `k_c_scalar`) or a per-pool-name `NamedTuple`
+with the same keys as `table` (`cCycleBase_GSI`'s `k_c_scalars`, one shared scalar
+per organ/pool group), dispatched on `scalar`'s type.
+
+# Notes:
+- The explicit `T(value)` conversion is not cosmetic: `table`'s entries are `Float64`
+  literals (`GSI_TAU_DEFAULT`/`CASA_TAU` are defined once, independent of any
+  approach's working precision), but `c_eco` and `scalar` are typically `Float32` in
+  a model configured that way. Without converting, `one(turnover_time) /
+  turnover_time` (an untouched `Float64`) times a `Float32` `scalar` promotes to
+  `Float64`, and writing that into an `SVector{N,Float32}` via `repElem` silently
+  upgrades the *whole array* to `Float64` on the very first loop iteration -- so the
+  loop's accumulator has one type on iteration 1 and another from iteration 2 on,
+  which Julia's inference reports as this function returning
+  `Union{SVector{N,Float32}, SVector{N,Float64}}`, not a concrete type. Converting
+  `table`'s value to `eltype(c_eco)` up front keeps every iteration in the same
+  precision as the array being built, closing that union.
+- Exists as its own function, not inlined into each approach's `precompute`, so a
+  type instability in this loop (present or future) cannot silently widen the whole
+  `land` structure `precompute` returns -- inference failing here fails loudly on
+  this function's own, much smaller signature instead. This also keeps the
+  table-driven loop itself out of `precompute`'s already substantial body (unpacking
+  a dozen struct fields, unpacking and repacking several `land` namespaces), rather
+  than adding to it.
+- Used identically by `cCycleBase_GSI`, `cCycleBase_GSI_PlantForm`,
+  `cCycleBase_GSI_PlantForm_MGMT` (`c_eco_τ`, per-pool `k_c_scalars`) and
+  `cCycleBase_CASA` (`c_eco_k_base`, the single `k_c_scalar`) -- the target array's
+  name and whether the scalar varies by pool differ by approach, the loop does not.
+"""
+function applyPoolTable(c_eco, table, scalar::Real, helpers)
+    T = eltype(c_eco)
+    for (pool_name, turnover_time) in pairs(table)
+        for ix in getproperty(helpers.pools.zix, pool_name)
+            tmp = (one(T) / T(turnover_time)) * scalar
+            c_eco = repElem(c_eco, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, ix)
+        end
+    end
+    return c_eco
+end
+function applyPoolTable(c_eco, table, scalar_for::NamedTuple, helpers)
+    T = eltype(c_eco)
+    for (pool_name, turnover_time) in pairs(table)
+        scalar = getproperty(scalar_for, pool_name)
+        for ix in getproperty(helpers.pools.zix, pool_name)
+            tmp = (one(T) / T(turnover_time)) * scalar
+            c_eco = repElem(c_eco, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, ix)
+        end
+    end
+    return c_eco
+end
+
+"""
+    applyPoolCNTable(C_to_N_cVeg, table, cn_scalar, helpers)
+
+Same idea as `applyPoolTable`, for the vegetation carbon-to-nitrogen ratio: multiplies
+each `table` (`GSI_CN_ratio`/`CASA_CN_ratio`) entry by `cn_scalar` directly, no
+turnover-time inversion, writing into `C_to_N_cVeg`. Every `cCycleBase` approach
+applies one shared `CN_ratio_scalar` across all pools, so unlike `applyPoolTable` this
+has only the single-scalar form. Kept as its own function, separate from
+`applyPoolTable`, since the two write different target arrays for a different
+physical quantity even though the loop shape matches -- but for the same
+type-stability reason (see `applyPoolTable`'s notes), it must remain its own function
+barrier rather than get inlined into `precompute`.
+"""
+function applyPoolCNTable(C_to_N_cVeg, table, cn_scalar, helpers)
+    T = eltype(C_to_N_cVeg)
+    for (pool_name, c_to_n) in pairs(table)
+        for ix in getproperty(helpers.pools.zix, pool_name)
+            tmp = T(c_to_n) * cn_scalar
+            C_to_N_cVeg = repElem(C_to_N_cVeg, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, ix)
+        end
+    end
+    return C_to_N_cVeg
 end
 
 # One file per pool structure, listed rather than globbed so only files meant to load

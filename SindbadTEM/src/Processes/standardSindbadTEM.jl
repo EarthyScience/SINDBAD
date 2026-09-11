@@ -25,6 +25,7 @@ standard_sindbad_model = (:constants,
     :soilProperties,
     :soilWBase,
     :vegTypes,
+    :vegQualityTraits,
     :EVI,
     :LAI,
     :NDVI,
@@ -73,7 +74,6 @@ standard_sindbad_model = (:constants,
     :cFireCombustionCompleteness,
     :cFireMortality,
     :cCycleBase,
-    :vegQualityTraits,
     :cMicrobialEfficiencycLit,
     :cMicrobialEfficiencycMic,
     :cMicrobialEfficiencycSoil,
@@ -112,7 +112,9 @@ standard_sindbad_model = (:constants,
     :wCycle,
     :waterBalance,
     :cBiomass,
-    :deriveVariables)
+    :deriveVariables,
+    # :vegDynamics,
+)
 
 """
 a tuple of all available SINDBAD models

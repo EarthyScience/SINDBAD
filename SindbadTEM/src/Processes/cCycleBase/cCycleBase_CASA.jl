@@ -69,41 +69,14 @@ function meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)
     )
 end
 
-"""
-    CASA_ANNK
-
-Turnover rate of each CASA ecosystem carbon pool, per pool name, exactly as
-originally transcribed for `cCycleBase_CASA` (values `[1, 0.03, 0.03, 1, 14.8,
-3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045]`, in the pool order
-`poolStructure(CarbonPoolsCASA)` declares). Fixed data, not a parameter --
-calibration happens through `annk_scalar` in `cCycleBase_CASA` instead, since
-array-valued struct fields cannot be optimized.
-"""
-const CASA_ANNK = (;
-    cVegRootFine = 1.0,
-    cVegRootCoarse = 0.03,
-    cVegWood = 0.03,
-    cVegLeaf = 1.0,
-    cLitLeafFast = 14.8,
-    cLitLeafSlow = 3.9,
-    cLitRootFineFast = 18.5,
-    cLitRootFineSlow = 4.8,
-    cLitRootCoarse = 0.2424,
-    cLitWood = 0.2424,
-    cMicSurf = 6.0,
-    cMicSoil = 7.3,
-    cSoilSlow = 0.2,
-    cSoilOld = 0.0045,
-)
-
 #! format: off
 @bounds @describe @units @timescale @with_kw struct cCycleBase_CASA{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15} <: cCycleBase
-    annk_scalar::T1 = 1.0 | (0.25, 4.0) | "scalar for the per-pool turnover rate of ecosystem carbon pools" | "-" | ""
-    cVegRootFine_age_scalar::T2 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of fine roots" | "-" | ""
-    cVegRootCoarse_age_scalar::T3 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of coarse roots" | "-" | ""
-    cVegWood_age_scalar::T4 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of wood" | "-" | ""
-    cVegLeaf_age_scalar::T5 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of leaves" | "-" | ""
-    p_C_to_N_cVeg::T6 = Float64.([25.0, 260.0, 260.0, 25.0]) | (-Inf, Inf) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN" | ""
+    k_c_scalar::T1 = 1.0 | (0.25, 4.0) | "scalar for the per-pool turnover rate of ecosystem carbon pools" | "-" | "year"
+    rootfine_age_scalar::T2 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of fine roots" | "-" | ""
+    rootcoarse_age_scalar::T3 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of coarse roots" | "-" | ""
+    wood_age_scalar::T4 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of wood" | "-" | ""
+    leaf_age_scalar::T5 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT mean age of leaves" | "-" | ""
+    CN_ratio_scalar::T6 = 1.0 | (0.25, 4.0) | "scalar for the vegetation carbon-to-nitrogen ratio" | "-" | ""
     eff_cLit_to_cMicSurf::T7 = 0.4 | (0.0, 1.0) | "Microbial carbon-transfer efficiency of litter decomposition into the surface microbial pool." | "fraction" | ""
     eff_cLitRootFine_to_cMicSoil::T8 = 0.45 | (0.0, 1.0) | "Microbial carbon-transfer efficiency of fine-root litter decomposition into the soil microbial pool." | "fraction" | ""
     eff_cLitRootCoarse_to_cMicSoil::T9 = 0.4 | (0.0, 1.0) | "Microbial carbon-transfer efficiency of coarse-root litter decomposition into the soil microbial pool." | "fraction" | ""
@@ -137,7 +110,7 @@ function define(params::cCycleBase_CASA, forcing, land, helpers)
     C_to_N_cVeg = zero(cEco)
     c_eco_k_base = zero(cEco)
 
-    c_model = cCycleBase_CASA()
+    c_model = params
 
     ## pack land variables
     @pack_nt begin
@@ -181,62 +154,17 @@ function precompute(params::cCycleBase_CASA, forcing, land, helpers)
         c_flow_ME_vec = setMEFlow(c_flow_ME_vec, c_flow_named_edges, edge, value)
     end
 
-    # carbon to nitrogen ratio [gC.gN-1]. Bulk tuple-indexed broadcasting
-    # assignment (C_to_N_cVeg[helpers.pools.zix.cVeg] .= p_C_to_N_cVeg) is not
-    # supported on the land array types used here (land.diagnostics arrays are
-    # immutable SVectors); every GSI-family cCycleBase carries that exact line
-    # commented out for the same reason, replaced by this type-stable
-    # per-element loop.
-    vegZix = helpers.pools.zix.cVeg
-    for ix ∈ eachindex(vegZix)
-        @rep_elem p_C_to_N_cVeg[ix] ⇒ (C_to_N_cVeg, vegZix[ix], :cEco)
-    end
-
-    # turnover rates, by pool name rather than by cEco position, so a
-    # structure that ordered pools differently still gets its turnovers in
-    # the right slots -- same convention cCycleBase_GSI_PlantForm.jl uses.
-    for ix ∈ helpers.pools.zix.cVegRootFine
-        @rep_elem CASA_ANNK.cVegRootFine * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cVegRootCoarse
-        @rep_elem CASA_ANNK.cVegRootCoarse * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cVegWood
-        @rep_elem CASA_ANNK.cVegWood * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cVegLeaf
-        @rep_elem CASA_ANNK.cVegLeaf * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cLitLeafFast
-        @rep_elem CASA_ANNK.cLitLeafFast * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cLitLeafSlow
-        @rep_elem CASA_ANNK.cLitLeafSlow * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cLitRootFineFast
-        @rep_elem CASA_ANNK.cLitRootFineFast * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cLitRootFineSlow
-        @rep_elem CASA_ANNK.cLitRootFineSlow * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cLitRootCoarse
-        @rep_elem CASA_ANNK.cLitRootCoarse * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cLitWood
-        @rep_elem CASA_ANNK.cLitWood * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cMicSurf
-        @rep_elem CASA_ANNK.cMicSurf * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cMicSoil
-        @rep_elem CASA_ANNK.cMicSoil * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cSoilSlow
-        @rep_elem CASA_ANNK.cSoilSlow * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
-    for ix ∈ helpers.pools.zix.cSoilOld
-        @rep_elem CASA_ANNK.cSoilOld * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
-    end
+    # carbon to nitrogen ratio [gC.gN-1] and turnover rate, both by pool name rather
+    # than by cEco position, so a structure that ordered pools differently still gets
+    # both in the right slots -- same convention cCycleBase_GSI_PlantForm.jl uses.
+    # Bulk tuple-indexed broadcasting assignment is not supported on the land array
+    # types used here (land.diagnostics arrays are immutable SVectors); every
+    # GSI-family cCycleBase carries that exact note for the same reason, replaced by
+    # applyPoolTable/applyPoolCNTable, their own functions rather than inline loops
+    # here so Julia can infer this function's return type concretely (see
+    # applyPoolTable's docstring, poolConfigurations/poolConfigurations.jl).
+    C_to_N_cVeg = applyPoolCNTable(C_to_N_cVeg, CASA_CN_ratio, CN_ratio_scalar, helpers)
+    c_eco_k_base = applyPoolTable(c_eco_k_base, CASA_TAU, k_c_scalar, helpers)
 
     ## pack land variables
     @pack_nt begin
@@ -280,17 +208,33 @@ did. This lives in `precompute`, not `define`, since the `eff_*` fields are
 ordinary optimizable parameters: `define` runs once ever, so a value the optimizer
 changes would never be picked up there.
 
-# Turnover rates
+# Turnover rate and carbon-to-nitrogen ratio
 
-Likewise, `annk_scalar` and the four `*_age_scalar` fields are resolved in
-`precompute`, following the same pattern `cCycleBase_GSI_PlantForm.jl` uses:
-`define` only allocates the zero-initialized `c_eco_k_base`/`C_to_N_cVeg` arrays
-and the flow topology, and `precompute` writes their actual values by pool name
-via `@rep_elem`, since the land arrays involved are immutable `SVector`s that
-bulk `.=`/tuple-indexed assignment cannot mutate in place. `CASA_ANNK` carries
-the fixed per-pool turnover data this file was originally hardcoded with; only
-`annk_scalar` is optimizable, since array-valued struct fields are excluded from
-optimization entirely.
+Likewise, `k_c_scalar`, `CN_ratio_scalar`, and the four `*_age_scalar` fields
+are resolved in `precompute`, following the same pattern
+`cCycleBase_GSI_PlantForm.jl` uses: `define` only allocates the zero-initialized
+`c_eco_k_base`/`C_to_N_cVeg` arrays and the flow topology, and `precompute` writes
+their actual values by pool name via `@rep_elem`, since the land arrays involved are
+immutable `SVector`s that bulk `.=`/tuple-indexed assignment cannot mutate in place.
+`CASA_TAU`/`CASA_CN_ratio` (in `poolConfigurations/CASA.jl`) carry the fixed per-pool
+turnover-time and C:N-ratio data this file used to hold inline (as `CASA_ANNK`, a
+rate rather than a time, and a 4-element `p_C_to_N_cVeg` vector read only for `cVeg`
+pools); only `k_c_scalar`/`CN_ratio_scalar` are optimizable, since array-valued
+struct fields are excluded from optimization entirely.
+
+`k_c_scalar` declares `"year"` as its timescale, not `CASA_TAU` itself (a plain
+`const`, outside the parameter-metadata system that timescale conversion keys
+off). `getTypedModel`/`getParameters` (`SindbadTEM/src/Utils.jl`,
+`src/Setup/setupParameters.jl`) rescale any `"year"`-timescale field's default and
+bounds to the model's actual configured timestep before a run starts -- e.g. a
+`k_c_scalar` default of `1.0` becomes `1/365` for a daily model -- so
+`turnover_time` in `CASA_TAU` can stay expressed in years while `(1.0/
+turnover_time) * k_c_scalar` still comes out already correctly scaled to the
+model's own timestep. This was not the case for `annk_scalar`
+(`cCycleBase_CASA_Legacy`, also `""` timescale) or `CASA_ANNK` before it existed as
+a table at all: a genuine pre-existing bug, not something today's centralization
+introduced, just never exercised end to end (see 1.4's note that this file "had
+never actually been run end to end").
 
 *References*
  - Carvalhais; N.; Reichstein; M.; Seixas; J.; Collatz; G. J.; Pereira; J. S.; Berbigier; P.  & Rambal, S. (2008). Implications of the carbon cycle steady state assumption for  biogeochemical modeling performance & inverse parameter retrieval. Global Biogeochemical Cycles, 22[2].
@@ -305,6 +249,37 @@ optimization entirely.
  - 1.4 on 10.09.2026 [skoirala]: this file had never actually been run end to end -- ported it onto the working cCycleBase_GSI_PlantForm.jl pattern to fix what surfaced: `annk` became the fixed CASA_ANNK lookup plus an optimizable annk_scalar, matching the *_age_per_PFT treatment above; the ME-table and per-pool-turnover value computation moved from define into precompute, since define runs once ever and cannot pick up a parameter value the optimizer later changes; C_to_N_cVeg/c_eco_k_base's bulk `.=`/tuple-indexed assignments were replaced with @rep_elem loops, since land.diagnostics arrays are immutable SVectors; and c_eco_k_base, previously never allocated, is now defined and packed like every other diagnostic here
  - 1.5 on 10.09.2026 [skoirala]: meCASAFlowsLitter/meCASAFlowsSoil moved here from cMicrobialEfficiencycLit/cMicrobialEfficiencycSoil, since this is their only caller and a plain helper function has no reason to live in a different process's namespace than the one approach that calls it
  - 1.6 on 10.09.2026 [skoirala]: CVEG_ROOTFINE_LEAF_AGE_PER_PFT and CVEG_ROOTCOARSE_WOOD_AGE_PER_PFT moved to the consolidated vegTypeParamCatalog.jl as CVEG_ROOTFINE_LEAF_AGE_PER_VEGTYPE/CVEG_ROOTCOARSE_WOOD_AGE_PER_VEGTYPE, alongside every other per-vegetation-type fixed table; the four *_age_scalar fields stay here since they are this approach's own calibration parameters, still unwired into precompute
+ - 1.7 on 11.09.2026 [skoirala]: CASA_ANNK moved to poolConfigurations/CASA.jl as
+   CASA_TAU, re-expressed as turnover time (years) instead of rate, renamed
+   annk_scalar to k_c_scalar to match the same convention now used in GSI; the
+   4-element p_C_to_N_cVeg vector (read only for cVeg pools) replaced by the
+   full-pool-coverage CASA_CN_ratio table (poolConfigurations/CASA.jl, 0.0 for every
+   non-vegetation pool) plus a single CN_ratio_scalar; both turnover and C:N
+   now applied via a generic per-pool-name loop instead of one hand-written loop per
+   pool. The frozen pre-change behavior is preserved, unchanged, as
+   `cCycleBase_CASA_Legacy`, with its own private `CASA_ANNK_Legacy` copy. Also:
+   `define`'s `c_model` now packs `params` itself rather than a freshly
+   constructed `cCycleBase_CASA()`, since `land.models` is only ever read for its
+   type (pure dispatch), so the fresh instance only threw away whatever values
+   `params` actually held for no benefit. `cVegRootFine_age_scalar`/
+   `cVegRootCoarse_age_scalar`/`cVegWood_age_scalar`/`cVegLeaf_age_scalar`
+   renamed to `rootfine_age_scalar`/`rootcoarse_age_scalar`/`wood_age_scalar`/
+   `leaf_age_scalar`, dropping the redundant `cVeg` prefix to match the lowercase
+   organ-name style `k_c_root_scalar` etc. already use.
+ - 1.8 on 11.09.2026 [skoirala]: fixed a bug that predates this file's ever
+   having run end to end (see 1.4): `k_c_scalar` (and `annk_scalar` before it)
+   had `""` (no) declared timescale, and neither did `CASA_ANNK`/`CASA_TAU` (a
+   plain `const`), so nothing rescaled the year-based turnover time to the
+   model's actual configured timestep -- at a daily model, every turnover rate
+   would come out roughly 365x too fast. Declaring `k_c_scalar` `"year"` fixes
+   it, since `getTypedModel`/`getParameters` rescale a `"year"`-timescale
+   field's default (and bounds) to the model's timestep before a run starts,
+   the same mechanism GSI-family `cCycleBase` approaches were fixed with this
+   same day (see their own 1.3-1.5 entries). Not independently verifiable
+   end to end here yet, since this approach still fails earlier at `define`
+   (the pre-existing, already-tracked `allowed_to_fail_approaches` pool-
+   structure-mismatch issue), but confirmed correct via direct inspection of
+   `getTypedModel(:cCycleBase_CASA, "day", Float32).k_c_scalar == 1/365`.
 
 *Created by*
  - ncarvalhais
