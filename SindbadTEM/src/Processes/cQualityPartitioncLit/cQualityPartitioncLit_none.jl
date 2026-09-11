@@ -20,15 +20,20 @@ function precompute(params::cQualityPartitioncLit_none, forcing, land, helpers)
     ## unpack land variables
     @unpack_nt begin
         c_flow_QP_f_cLit ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        c_flow_qp_groups ⇐ land.cCycleBase
     end
 
     ## calculate variables
     # No lignin preference between direct stabilization and the microbial pathway,
     # but still a partition: structural and woody litter decomposition divides
     # equally over whichever of the two the configured structure has.
-    for group ∈ (QP_CLIT_STRUCT_GROUPS..., QP_CLIT_WOOD_GROUPS...)
-        c_flow_QP_f_cLit = setQPGroupEqual(c_flow_QP_f_cLit, c_flow_named_edges, group)
+    for (soil_positions, mic_positions) ∈ (c_flow_qp_groups.cLit.structural..., c_flow_qp_groups.cLit.wood...)
+        n_out = length(soil_positions) + length(mic_positions)
+        n_out == 0 && continue
+        frac_out = safe_divide(one(eltype(c_flow_QP_f_cLit)), n_out)
+        for i ∈ (soil_positions..., mic_positions...)
+            c_flow_QP_f_cLit = repElem(c_flow_QP_f_cLit, frac_out, i)
+        end
     end
 
     ## pack land variables

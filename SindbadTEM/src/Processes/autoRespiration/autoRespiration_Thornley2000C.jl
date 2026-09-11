@@ -47,7 +47,7 @@ function compute(params::autoRespiration_Thornley2000C, forcing, land, helpers)
     zix = getZix(cVeg, cVegZix)
     for ix ∈ zix
 
-        @rep_elem lit_frac_metabolic ⇒ (Fd, ix, :cEco)
+        @rep_elem lit_frac_metabolic ⇒ (Fd, ix)
 
         # compute maintenance & growth respiration terms for each vegetation pool
         # according to MODEL C - growth; degradation & resynthesis view of
@@ -74,11 +74,11 @@ function compute(params::autoRespiration_Thornley2000C, forcing, land, helpers)
 
         # total respiration per pool: R_a = R_m + R_g
         cEcoEfflux_ix = RA_M_ix + RA_G_ix
-        @rep_elem cEcoEfflux_ix ⇒ (c_eco_efflux, ix, :cEco)
-        @rep_elem k_respiration_maintain_ix ⇒ (k_respiration_maintain, ix, :cEco)
-        @rep_elem k_respiration_maintain_su_ix ⇒ (k_respiration_maintain_su, ix, :cEco)
-        @rep_elem RA_M_ix ⇒ (auto_respiration_maintain, ix, :cEco)
-        @rep_elem RA_G_ix ⇒ (auto_respiration_growth, ix, :cEco)
+        @rep_elem cEcoEfflux_ix ⇒ (c_eco_efflux, ix)
+        @rep_elem k_respiration_maintain_ix ⇒ (k_respiration_maintain, ix)
+        @rep_elem k_respiration_maintain_su_ix ⇒ (k_respiration_maintain_su, ix)
+        @rep_elem RA_M_ix ⇒ (auto_respiration_maintain, ix)
+        @rep_elem RA_G_ix ⇒ (auto_respiration_growth, ix)
     end
     ## pack land variables
     @pack_nt begin

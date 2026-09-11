@@ -28,20 +28,26 @@ function precompute(params::cQualityPartitioncLit_constant, forcing, land, helpe
     ## unpack land variables
     @unpack_nt begin
         c_flow_QP_f_cLit ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        c_flow_qp_groups ⇐ land.cCycleBase
         o_one ⇐ land.constants
     end
 
     ## calculate variables
-    for (stabilized_edge, microbial_edge) ∈ QP_CLIT_STRUCT_GROUPS
-        c_flow_QP_f_cLit = setQPGroup(c_flow_QP_f_cLit, c_flow_named_edges,
-            (stabilized_edge, microbial_edge),
-            (frac_lignin_struct, o_one - frac_lignin_struct))
+    for (soil_positions, mic_positions) ∈ c_flow_qp_groups.cLit.structural
+        for i ∈ soil_positions
+            c_flow_QP_f_cLit = repElem(c_flow_QP_f_cLit, frac_lignin_struct, i)
+        end
+        for i ∈ mic_positions
+            c_flow_QP_f_cLit = repElem(c_flow_QP_f_cLit, o_one - frac_lignin_struct, i)
+        end
     end
-    for (stabilized_edge, microbial_edge) ∈ QP_CLIT_WOOD_GROUPS
-        c_flow_QP_f_cLit = setQPGroup(c_flow_QP_f_cLit, c_flow_named_edges,
-            (stabilized_edge, microbial_edge),
-            (frac_lignin_wood, o_one - frac_lignin_wood))
+    for (soil_positions, mic_positions) ∈ c_flow_qp_groups.cLit.wood
+        for i ∈ soil_positions
+            c_flow_QP_f_cLit = repElem(c_flow_QP_f_cLit, frac_lignin_wood, i)
+        end
+        for i ∈ mic_positions
+            c_flow_QP_f_cLit = repElem(c_flow_QP_f_cLit, o_one - frac_lignin_wood, i)
+        end
     end
 
     ## pack land variables

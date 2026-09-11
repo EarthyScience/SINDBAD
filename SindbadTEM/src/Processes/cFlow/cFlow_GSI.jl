@@ -19,7 +19,8 @@ function define(params::cFlow_GSI, forcing, land, helpers)
 
     # The transfer topology and the flow vector itself both belong to cCycleBase,
     # which resolves them once. This approach only needs its own stressor state; it
-    # names the flows it writes directly from c_flow_named_edges in compute.
+    # finds the flows it writes in compute through edgesBetween, a giver/taker
+    # pool-membership match.
     eco_stressor_prev = totalS(soilW) / ∑w_sat
     slope_eco_stressor_prev = zero(eco_stressor_prev)
 
@@ -31,40 +32,13 @@ function define(params::cFlow_GSI, forcing, land, helpers)
     return land
 end
 
-"""
-    edgesBetween(c_giver, c_taker, giver_zix, taker_zix)
-
-Every flow-vector position whose giver is in `giver_zix` and whose taker is in
-`taker_zix`, by pool membership rather than by matching a literal
-`<giver>_to_<taker>` name.
-
-This is what lets `cFlow_GSI` work against more than one pool structure: Leaf's
-shedding lands in one pool under `CarbonPoolsGSI` (`cLitFast`) and two under
-`CarbonPoolsCASA` (`cLitLeafFast`, `cLitLeafSlow`), and this finds every one of
-them without either config's specific pool names appearing here. `c_flow_A_vec`
-only needs to carry "how much of the giver's outflow takes this path" for each
-match; a giver split across several same-membership edges gets its fast/slow
-(or similar) proportions from `c_flow_QP_vec` instead, which is what
-`cQualityPartitioncVeg`/`cQualityPartitioncLit` already resolve independently of
-this approach.
-
-An empty `giver_zix` -- a pool this structure does not have at all, e.g.
-`CarbonPoolsCASA`'s absent `cVegReserve` -- naturally returns no edges rather
-than erroring, so the reserve-pool exchange this approach models simply
-contributes nothing on a structure without one.
-"""
-function edgesBetween(c_giver, c_taker, giver_zix, taker_zix)
-    return Tuple(flow for flow ∈ eachindex(c_giver, c_taker)
-                 if c_giver[flow] ∈ giver_zix && c_taker[flow] ∈ taker_zix)
-end
-
 function adjust_pk(c_eco_k, kValue, flowValue, maxValue, zix, helpers)
     c_eco_k_f_sum = zero(eltype(c_eco_k))
     c_eco_k_sum = zero(eltype(c_eco_k))
     for ix ∈ zix
         # get max possible loss and total loss per pool
         tmp = min(c_eco_k[ix] + kValue + flowValue, maxValue)
-        @rep_elem tmp ⇒ (c_eco_k, ix, :cEco)
+        @rep_elem tmp ⇒ (c_eco_k, ix)
         c_eco_k_f_sum = c_eco_k_f_sum + tmp
         # get max possible loss to litter and total loss to litter per pool
         tmp_k = at_least_zero(tmp - flowValue)
@@ -140,25 +114,25 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
     k_shedding_reserve_frac = safe_divide(reserve_k_sum, reserve_k_f_sum)
     
     for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegReserve, zix_cVegLeaf)
-        c_flow_A_vec = repElem(c_flow_A_vec, reserve_to_leaf_frac, c_flow_A_vec, c_flow_A_vec, flow)
+        c_flow_A_vec = repElem(c_flow_A_vec, reserve_to_leaf_frac, flow)
     end
     for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegReserve, zix_cVegRoot)
-        c_flow_A_vec = repElem(c_flow_A_vec, reserve_to_root_frac, c_flow_A_vec, c_flow_A_vec, flow)
+        c_flow_A_vec = repElem(c_flow_A_vec, reserve_to_root_frac, flow)
     end
     for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegLeaf, zix_cVegReserve)
-        c_flow_A_vec = repElem(c_flow_A_vec, leaf_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, flow)
+        c_flow_A_vec = repElem(c_flow_A_vec, leaf_to_reserve_frac, flow)
     end
     for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegRoot, zix_cVegReserve)
-        c_flow_A_vec = repElem(c_flow_A_vec, root_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, flow)
+        c_flow_A_vec = repElem(c_flow_A_vec, root_to_reserve_frac, flow)
     end
     for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegLeaf, zix_cLit)
-        c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_leaf_frac, c_flow_A_vec, c_flow_A_vec, flow)
+        c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_leaf_frac, flow)
     end
     for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegRoot, zix_cLit)
-        c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_root_frac, c_flow_A_vec, c_flow_A_vec, flow)
+        c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_root_frac, flow)
     end
     for flow ∈ edgesBetween(c_giver, c_taker, zix_cVegReserve, zix_cLit)
-        c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_reserve_frac, c_flow_A_vec, c_flow_A_vec, flow)
+        c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_reserve_frac, flow)
     end
 
     # store the varibles in diagnostic structure

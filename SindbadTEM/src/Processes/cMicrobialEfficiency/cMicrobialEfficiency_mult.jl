@@ -18,7 +18,7 @@ function precompute(params::cMicrobialEfficiency_mult, forcing, land, helpers)
     # an assembly: at most one factor is ever away from one on a given flow.
     for i ∈ eachindex(c_flow_ME_vec)
         tmp = c_flow_ME_f_cLit[i] * c_flow_ME_f_cMic[i] * c_flow_ME_f_cSoil[i]
-        c_flow_ME_vec = repElem(c_flow_ME_vec, tmp, c_flow_ME_vec, c_flow_ME_vec, i)
+        c_flow_ME_vec = repElem(c_flow_ME_vec, tmp, i)
     end
 
     ## pack land variables

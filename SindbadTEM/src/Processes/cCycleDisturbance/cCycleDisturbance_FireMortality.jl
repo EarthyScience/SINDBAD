@@ -76,8 +76,8 @@ function compute(params::cCycleDisturbance_FireMortality, forcing, land, helpers
     # set c_Fire_Flux and c_Veg_Mortality and cFireTotal to 0
     cFireTotal = z_zero
     for izix in zix.cEco
-        @rep_elem z_zero ⇒ (c_Fire_Flux, izix, :cEco)
-        @rep_elem z_zero ⇒ (c_Veg_Mortality, izix, :cEco)
+        @rep_elem z_zero ⇒ (c_Fire_Flux, izix)
+        @rep_elem z_zero ⇒ (c_Veg_Mortality, izix)
     end
 
     # if there is not fire and no dieoff, pack and return
@@ -101,8 +101,8 @@ function compute(params::cCycleDisturbance_FireMortality, forcing, land, helpers
                 @add_to_elem toGain ⇒ (cEco, tarZix, :cEco)
             end
             # feed c_Fire_Flux and c_Veg_Mortality (@rep_elem)
-            @rep_elem cLossFire ⇒ (c_Fire_Flux, zixVeg, :cEco)
-            @rep_elem cLoss ⇒ (c_Veg_Mortality, zixVeg, :cEco)
+            @rep_elem cLossFire ⇒ (c_Fire_Flux, zixVeg)
+            @rep_elem cLoss ⇒ (c_Veg_Mortality, zixVeg)
         end
 
         # compute fire flux from litter and soils
@@ -115,7 +115,7 @@ function compute(params::cCycleDisturbance_FireMortality, forcing, land, helpers
             @add_to_elem -cLoss ⇒ (cEco, zixDead, :cEco) # ? this one is also a new addition
             # Print at every time step, left and right!
             # feed c_Fire_Flux
-            @rep_elem cLossFire ⇒ (c_Fire_Flux, zixDead, :cEco)
+            @rep_elem cLossFire ⇒ (c_Fire_Flux, zixDead)
         end
         # total fire flux
         cFireTotal = totalS(c_Fire_Flux)

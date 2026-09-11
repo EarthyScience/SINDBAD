@@ -63,8 +63,8 @@ function define(params::cCycleBase_CASA_Legacy, forcing, land, helpers)
     # pool structure, rather than a transfer matrix carried as a parameter. The same
     # call keys the flows by pool-name pair and sizes the neutral flow vector, so a
     # cFlow approach reads the topology and fills in values instead of rederiving both
-    (c_flow_order, c_taker, c_giver, c_flow_named_edges, c_flow_A_vec, c_flow_QP_vec,
-        c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
+    (c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups, c_flow_A_vec,
+        c_flow_QP_vec, c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
 
     ## Instantiate variables, matching cCycleBase_GSI_PlantForm.jl: define only
     ## sets up structure (topology, zero-initialized arrays) and runs once ever,
@@ -78,7 +78,7 @@ function define(params::cCycleBase_CASA_Legacy, forcing, land, helpers)
     ## pack land variables
     @pack_nt begin
         (C_to_N_cVeg, c_eco_k_base, c_flow_A_vec, c_flow_QP_vec, c_flow_ME_vec) ⇒ land.diagnostics
-        (c_flow_order, c_taker, c_giver, c_flow_named_edges) ⇒ land.cCycleBase
+        (c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups) ⇒ land.cCycleBase
         c_model ⇒ land.models
     end
     return land
@@ -93,8 +93,9 @@ function precompute(params::cCycleBase_CASA_Legacy, forcing, land, helpers)
         C_to_N_cVeg ⇐ land.diagnostics
         c_eco_k_base ⇐ land.diagnostics
         c_flow_ME_vec ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        (c_giver, c_taker) ⇐ land.cCycleBase
     end
+    zix = helpers.pools.zix
 
     ## calculate variables
     # CASA's own static microbial-efficiency table, applied on top of the
@@ -109,12 +110,12 @@ function precompute(params::cCycleBase_CASA_Legacy, forcing, land, helpers)
     ME_flows = (
         meCASAFlowsLitter(eff_cLit_to_cMicSurf, eff_cLitRootFine_to_cMicSoil,
             eff_cLitRootCoarse_to_cMicSoil, eff_cLit_to_cSoilSlow,
-            eff_cLitRootFine_to_cSoilSlow)...,
-        (:cMicSurf_to_cSoilSlow, eff_cMicSurf_to_cSoilSlow),
-        meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld)...,
+            eff_cLitRootFine_to_cSoilSlow, zix)...,
+        (zix.cMicSurf, zix.cSoilSlow, eff_cMicSurf_to_cSoilSlow),
+        meCASAFlowsSoil(eff_cSoil_to_cMicSoil, eff_cSoilSlow_to_cSoilOld, zix)...,
     )
-    for (edge, value) ∈ ME_flows
-        c_flow_ME_vec = setMEFlow(c_flow_ME_vec, c_flow_named_edges, edge, value)
+    for (giver_zix, taker_zix, value) ∈ ME_flows
+        c_flow_ME_vec = setMEFlow(c_flow_ME_vec, c_giver, c_taker, giver_zix, taker_zix, value)
     end
 
     # carbon to nitrogen ratio [gC.gN-1]. Bulk tuple-indexed broadcasting
@@ -125,53 +126,53 @@ function precompute(params::cCycleBase_CASA_Legacy, forcing, land, helpers)
     # per-element loop.
     vegZix = helpers.pools.zix.cVeg
     for ix ∈ eachindex(vegZix)
-        @rep_elem p_C_to_N_cVeg[ix] ⇒ (C_to_N_cVeg, vegZix[ix], :cEco)
+        @rep_elem p_C_to_N_cVeg[ix] ⇒ (C_to_N_cVeg, vegZix[ix])
     end
 
     # turnover rates, by pool name rather than by cEco position, so a
     # structure that ordered pools differently still gets its turnovers in
     # the right slots -- same convention cCycleBase_GSI_PlantForm.jl uses.
     for ix ∈ helpers.pools.zix.cVegRootFine
-        @rep_elem CASA_ANNK_Legacy.cVegRootFine * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cVegRootFine * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cVegRootCoarse
-        @rep_elem CASA_ANNK_Legacy.cVegRootCoarse * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cVegRootCoarse * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cVegWood
-        @rep_elem CASA_ANNK_Legacy.cVegWood * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cVegWood * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cVegLeaf
-        @rep_elem CASA_ANNK_Legacy.cVegLeaf * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cVegLeaf * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cLitLeafFast
-        @rep_elem CASA_ANNK_Legacy.cLitLeafFast * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cLitLeafFast * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cLitLeafSlow
-        @rep_elem CASA_ANNK_Legacy.cLitLeafSlow * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cLitLeafSlow * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cLitRootFineFast
-        @rep_elem CASA_ANNK_Legacy.cLitRootFineFast * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cLitRootFineFast * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cLitRootFineSlow
-        @rep_elem CASA_ANNK_Legacy.cLitRootFineSlow * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cLitRootFineSlow * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cLitRootCoarse
-        @rep_elem CASA_ANNK_Legacy.cLitRootCoarse * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cLitRootCoarse * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cLitWood
-        @rep_elem CASA_ANNK_Legacy.cLitWood * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cLitWood * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cMicSurf
-        @rep_elem CASA_ANNK_Legacy.cMicSurf * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cMicSurf * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cMicSoil
-        @rep_elem CASA_ANNK_Legacy.cMicSoil * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cMicSoil * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cSoilSlow
-        @rep_elem CASA_ANNK_Legacy.cSoilSlow * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cSoilSlow * annk_scalar ⇒ (c_eco_k_base, ix)
     end
     for ix ∈ helpers.pools.zix.cSoilOld
-        @rep_elem CASA_ANNK_Legacy.cSoilOld * annk_scalar ⇒ (c_eco_k_base, ix, :cEco)
+        @rep_elem CASA_ANNK_Legacy.cSoilOld * annk_scalar ⇒ (c_eco_k_base, ix)
     end
 
     ## pack land variables

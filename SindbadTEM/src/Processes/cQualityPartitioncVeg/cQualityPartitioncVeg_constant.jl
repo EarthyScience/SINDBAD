@@ -27,15 +27,18 @@ function precompute(params::cQualityPartitioncVeg_constant, forcing, land, helpe
     ## unpack land variables
     @unpack_nt begin
         c_flow_QP_f_cVeg ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        c_flow_qp_groups ⇐ land.cCycleBase
         o_one ⇐ land.constants
     end
 
     ## calculate variables
-    for (metabolic_edge, structural_edge) ∈ QP_CVEG_GROUPS
-        c_flow_QP_f_cVeg = setQPGroup(c_flow_QP_f_cVeg, c_flow_named_edges,
-            (metabolic_edge, structural_edge),
-            (frac_metabolic, o_one - frac_metabolic))
+    for (fast_positions, slow_positions) ∈ c_flow_qp_groups.cVeg
+        for i ∈ fast_positions
+            c_flow_QP_f_cVeg = repElem(c_flow_QP_f_cVeg, frac_metabolic, i)
+        end
+        for i ∈ slow_positions
+            c_flow_QP_f_cVeg = repElem(c_flow_QP_f_cVeg, o_one - frac_metabolic, i)
+        end
     end
 
     ## pack land variables

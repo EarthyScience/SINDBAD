@@ -41,7 +41,7 @@ function precompute(params::cMicrobialEfficiencycSoil_constant, forcing, land, h
     zix_cSoil = helpers.pools.zix.cSoil
     for fO ∈ c_flow_order
         c_giver[fO] ∈ zix_cSoil || continue
-        c_flow_ME_f_cSoil = repElem(c_flow_ME_f_cSoil, constant_MicEff_cSoil, c_flow_ME_f_cSoil, c_flow_ME_f_cSoil, fO)
+        c_flow_ME_f_cSoil = repElem(c_flow_ME_f_cSoil, constant_MicEff_cSoil, fO)
     end
 
     ## pack land variables

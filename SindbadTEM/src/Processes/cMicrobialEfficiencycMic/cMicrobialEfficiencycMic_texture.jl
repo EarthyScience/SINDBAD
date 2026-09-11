@@ -44,7 +44,7 @@ function precompute(params::cMicrobialEfficiencycMic_texture, forcing, land, hel
     zix_cMic = helpers.pools.zix.cMic
     for fO ∈ c_flow_order
         c_giver[fO] ∈ zix_cMic || continue
-        c_flow_ME_f_cMic = repElem(c_flow_ME_f_cMic, microbial_efficiency, c_flow_ME_f_cMic, c_flow_ME_f_cMic, fO)
+        c_flow_ME_f_cMic = repElem(c_flow_ME_f_cMic, microbial_efficiency, fO)
     end
 
     ## pack land variables

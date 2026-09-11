@@ -19,7 +19,7 @@ end
 
 function setCAlloc(c_allocation, cAllocValue, zix, helpers)
     for ix ∈ eachindex(zix)
-        @rep_elem cAllocValue * c_allocation[zix[ix]] ⇒ (c_allocation, zix[ix], :cEco)
+        @rep_elem cAllocValue * c_allocation[zix[ix]] ⇒ (c_allocation, zix[ix])
     end
     return c_allocation
 end

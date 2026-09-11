@@ -20,16 +20,19 @@ function precompute(params::cQualityPartitioncVeg_vegQualityTraits, forcing, lan
     ## unpack land variables
     @unpack_nt begin
         c_flow_QP_f_cVeg ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        c_flow_qp_groups ⇐ land.cCycleBase
         lit_frac_metabolic ⇐ land.properties
         o_one ⇐ land.constants
     end
 
     ## calculate variables
-    for (metabolic_edge, structural_edge) ∈ QP_CVEG_GROUPS
-        c_flow_QP_f_cVeg = setQPGroup(c_flow_QP_f_cVeg, c_flow_named_edges,
-            (metabolic_edge, structural_edge),
-            (lit_frac_metabolic, o_one - lit_frac_metabolic))
+    for (fast_positions, slow_positions) ∈ c_flow_qp_groups.cVeg
+        for i ∈ fast_positions
+            c_flow_QP_f_cVeg = repElem(c_flow_QP_f_cVeg, lit_frac_metabolic, i)
+        end
+        for i ∈ slow_positions
+            c_flow_QP_f_cVeg = repElem(c_flow_QP_f_cVeg, o_one - lit_frac_metabolic, i)
+        end
     end
 
     ## pack land variables
@@ -49,8 +52,8 @@ purpose(::Type{cQualityPartitioncVeg_vegQualityTraits}) = "Metabolic litter frac
 
 Reads `lit_frac_metabolic` from `land.properties`, published by whichever
 `vegQualityTraits` approach is selected, and writes it with its complement into
-the flows of `QP_CVEG_GROUPS`. No parameters of its own: the litter chemistry is
-declared exactly once, in `vegQualityTraits`.
+the flows of `land.cCycleBase.c_flow_qp_groups.cVeg`. No parameters of its own:
+the litter chemistry is declared exactly once, in `vegQualityTraits`.
 
 This is the properly-connected replacement for the legacy
 [`cQualityPartitioncVeg_vegTypesLegacy`](@ref), whose per-PFT table never read

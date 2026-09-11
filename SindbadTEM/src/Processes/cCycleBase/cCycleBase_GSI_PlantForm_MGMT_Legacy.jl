@@ -61,8 +61,8 @@ function define(params::cCycleBase_GSI_PlantForm_MGMT_Legacy, forcing, land, hel
     # pool structure, rather than a transfer matrix carried as a parameter. The same
     # call keys the flows by pool-name pair and sizes the neutral flow vector, so a
     # cFlow approach reads the topology and fills in values instead of rederiving both
-    (c_flow_order, c_taker, c_giver, c_flow_named_edges, c_flow_A_vec, c_flow_QP_vec,
-        c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
+    (c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups, c_flow_A_vec,
+        c_flow_QP_vec, c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
 
     c_model = cCycleBase_GSI_PlantForm_MGMT_Legacy()
 
@@ -70,7 +70,7 @@ function define(params::cCycleBase_GSI_PlantForm_MGMT_Legacy, forcing, land, hel
 
     ## pack land variables
     @pack_nt begin
-        (c_flow_order, c_taker, c_giver, c_flow_named_edges) ⇒ land.cCycleBase
+        (c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups) ⇒ land.cCycleBase
         (C_to_N_cVeg, c_eco_τ, c_eco_k_base, zero_c_τ_pf, c_flow_A_vec, c_flow_QP_vec, c_flow_ME_vec) ⇒ land.diagnostics
         c_model ⇒ land.models
     end
@@ -108,28 +108,28 @@ function precompute(params::cCycleBase_GSI_PlantForm_MGMT_Legacy, forcing, land,
     # that orders or omits pools differently still gets its turnovers in the right
     # slots
     for ix ∈ helpers.pools.zix.cVegRoot
-        @rep_elem c_τ_Root * c_τ_Root_scalar ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_Root * c_τ_Root_scalar ⇒ (c_eco_τ, ix)
     end
     for ix ∈ helpers.pools.zix.cVegWood
-        @rep_elem c_τ_Wood * c_τ_Wood_scalar ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_Wood * c_τ_Wood_scalar ⇒ (c_eco_τ, ix)
     end
     for ix ∈ helpers.pools.zix.cVegLeaf
-        @rep_elem c_τ_Leaf * c_τ_Leaf_scalar ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_Leaf * c_τ_Leaf_scalar ⇒ (c_eco_τ, ix)
     end
     for ix ∈ helpers.pools.zix.cVegReserve
-        @rep_elem c_τ_Reserve * c_τ_Reserve_scalar ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_Reserve * c_τ_Reserve_scalar ⇒ (c_eco_τ, ix)
     end
     for ix ∈ helpers.pools.zix.cLitFast
-        @rep_elem c_τ_LitFast * c_τ_Litter_scalar ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_LitFast * c_τ_Litter_scalar ⇒ (c_eco_τ, ix)
     end
     for ix ∈ helpers.pools.zix.cLitSlow
-        @rep_elem c_τ_LitSlow * c_τ_Litter_scalar ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_LitSlow * c_τ_Litter_scalar ⇒ (c_eco_τ, ix)
     end
     for ix ∈ helpers.pools.zix.cSoilSlow
-        @rep_elem c_τ_SoilSlow * c_τ_Soil_scalar ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_SoilSlow * c_τ_Soil_scalar ⇒ (c_eco_τ, ix)
     end
     for ix ∈ helpers.pools.zix.cSoilOld
-        @rep_elem c_τ_SoilOld * c_τ_Soil_scalar ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_SoilOld * c_τ_Soil_scalar ⇒ (c_eco_τ, ix)
     end
 
     # Harvested products decay at their own declared rates. These two parameters
@@ -137,19 +137,19 @@ function precompute(params::cCycleBase_GSI_PlantForm_MGMT_Legacy, forcing, land,
     # pools kept the zero from define, giving them no turnover and an infinite
     # residence time.
     for ix ∈ helpers.pools.zix.cProductsWood
-        @rep_elem c_τ_cProductsWood ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_cProductsWood ⇒ (c_eco_τ, ix)
     end
     for ix ∈ helpers.pools.zix.cProductsCrop
-        @rep_elem c_τ_cProductsCrop ⇒ (c_eco_τ, ix, :cEco)
+        @rep_elem c_τ_cProductsCrop ⇒ (c_eco_τ, ix)
     end
 
     vegZix = helpers.pools.zix.cVeg
     for ix ∈ eachindex(vegZix)
-        @rep_elem p_C_to_N_cVeg[ix] ⇒ (C_to_N_cVeg, vegZix[ix], :cEco)
+        @rep_elem p_C_to_N_cVeg[ix] ⇒ (C_to_N_cVeg, vegZix[ix])
     end
     for i ∈ eachindex(c_eco_k_base)
         tmp = c_eco_τ[i]
-        @rep_elem tmp ⇒ (c_eco_k_base, i, :cEco)
+        @rep_elem tmp ⇒ (c_eco_k_base, i)
     end
 
     ## pack land variables

@@ -18,7 +18,7 @@ function precompute(params::cQualityPartition_mult, forcing, land, helpers)
     # no base term to multiply onto, unlike c_eco_k_base in cTau_mult.
     for i ∈ eachindex(c_flow_QP_vec)
         tmp = c_flow_QP_f_cVeg[i] * c_flow_QP_f_cLit[i] * c_flow_QP_f_cMic[i] * c_flow_QP_f_cSoil[i]
-        c_flow_QP_vec = repElem(c_flow_QP_vec, tmp, c_flow_QP_vec, c_flow_QP_vec, i)
+        c_flow_QP_vec = repElem(c_flow_QP_vec, tmp, i)
     end
 
     ## pack land variables

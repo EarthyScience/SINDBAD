@@ -105,8 +105,8 @@ cFlowEdges(T::cCycleBase) = cFlowEdges(typeof(T))
 
 Resolve an approach's `cFlowEdges` against the pool structure the experiment actually
 configured, returning the whole flow-vector description as
-`(c_flow_order, c_taker, c_giver, c_flow_named_edges, c_flow_A_vec, c_flow_QP_vec,
-c_flow_ME_vec)`, in the order the approaches pack it.
+`(c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups,
+c_flow_A_vec, c_flow_QP_vec, c_flow_ME_vec)`, in the order the approaches pack it.
 
 # Notes:
 - A flow is an edge, so the taker and giver of flow `i` are just the two endpoints of
@@ -115,10 +115,17 @@ c_flow_ME_vec)`, in the order the approaches pack it.
   out by `findall`, and its one remaining reader, `cCycleConsistency_simple`, asks
   only whether a flow sits above or below the diagonal, which is `c_taker` against
   `c_giver`.
-- All seven come from one call so they cannot disagree about how many flows there are
+- All nine come from one call so they cannot disagree about how many flows there are
   or what order they sit in, which is what an approach rederiving each of them
-  separately from a matrix left open. `c_flow_named_edges` is the same topology keyed
-  by pool-name pair rather than by position, built by `cFlowNamedEdges`.
+  separately from a matrix left open. `pool_names` is `cEco_index => pool_name`
+  pairs and `flow_edges` is `flow_order => (giver_name => taker_name)` pairs, one
+  per flow -- readable, at-a-glance context for inspecting `land.cCycleBase` (e.g.
+  what pool 3 or flow 5 actually is), not something any process matches against:
+  every process either resolves positions once here (`c_flow_qp_groups`) or matches
+  by giver/taker pool-index membership at the point of use (`edgesBetween`/
+  `setFlowValue`/`setMEFlow`, `landUtils.jl`/`cMicrobialEfficiency.jl`).
+  `c_flow_qp_groups` is the `cQualityPartition` giver/taker split groups, derived
+  from the same topology by `deriveQPGroups`.
 - `c_flow_A_vec`, `c_flow_QP_vec` and `c_flow_ME_vec` are neutral, one per flow, and
   are built here rather than in a `cFlow`, `cQualityPartition` or
   `cMicrobialEfficiency` approach for the same reason: their length and order are the
@@ -154,12 +161,17 @@ function cFlowStructure(params::cCycleBase, cEco, helpers)
     c_taker = Tuple(takers[order])
     c_giver = Tuple(givers[order])
     c_flow_order = ntuple(identity, length(order))
-    c_flow_named_edges = cFlowNamedEdges(c_taker, c_giver, helpers.pools.components.cEco)
+    cEco_components = helpers.pools.components.cEco
+    pool_names = ntuple(i -> i => cEco_components[i], length(cEco_components))
+    flow_edges = ntuple(
+        i -> c_flow_order[i] => (cEco_components[c_giver[i]] => cEco_components[c_taker[i]]),
+        length(c_taker))
+    c_flow_qp_groups = deriveQPGroups(c_giver, c_taker, cEco_components)
     c_flow_A_vec = getVectorOfType(cEco, length(c_taker), one)
     c_flow_QP_vec = getVectorOfType(cEco, length(c_taker), one)
     c_flow_ME_vec = getVectorOfType(cEco, length(c_taker), one)
-    return c_flow_order, c_taker, c_giver, c_flow_named_edges, c_flow_A_vec, c_flow_QP_vec,
-        c_flow_ME_vec
+    return c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups,
+        c_flow_A_vec, c_flow_QP_vec, c_flow_ME_vec
 end
 
 """
@@ -191,37 +203,104 @@ function cFlowEdgeIndex(params, helpers, pool_name, edge)
 end
 
 """
-    cFlowNamedEdges(c_taker, c_giver, cEco_components)
+    deriveQPGroups(c_giver, c_taker, cEco_components)
 
-Bucket the flow-vector positions by the `(giver, taker)` pool-name pair they connect,
-as `<giver>_to_<taker> => (positions...)`.
+Derive the `cQualityPartition` giver/taker split groups directly from the resolved
+flow topology, by pool-naming convention, rather than from a per-configuration table
+of edge names. Returns `(; cVeg, cLit = (; structural, wood), cMic, cSoil)`, each a tuple
+of `(fraction_positions, complement_positions)` pairs (one pair per giver that
+actually has a matching split in this structure's topology).
 
-`cFlow` approaches need to find "the entry that carries leaf shedding" without
-knowing which index that is. They used to rederive it themselves by matching
-component names and taking `findall(...)[1]`, which silently kept only the first
-match wherever a name spans more than one `cEco` slot. Resolving it once here, as a
-tuple of every match, removes the duplication and the truncation together: the caller
-loops over the tuple instead of writing a single element.
+# Rules
+- `cVeg`: a giver whose own name starts with `cVeg` and whose outgoing edges include a
+  taker pair sharing a base name suffixed `Fast`/`Slow` (e.g. `cLitLeafFast`/
+  `cLitLeafSlow`, both reached from `cVegLeaf`) is a metabolic/structural litterfall
+  split. The `Fast` taker's positions are `fraction_positions`, the `Slow` taker's are
+  `complement_positions`.
+- `cLit`: a giver whose own name starts with `cLit` and whose outgoing edges include
+  both a `cSoil`-prefixed taker and a `cMic`-prefixed taker is a lignin-controlled
+  stabilization split. The `cSoil`-prefixed positions are `fraction_positions`, the
+  `cMic`-prefixed positions are `complement_positions`. Filed under `wood` if the
+  giver's name contains `Wood` or `RootCoarse`, `struct` otherwise.
+- `cMic`/`cSoil`: the giver named exactly `cMicSoil`/`cSoilSlow`, only when it has more
+  than one outgoing edge and one of them reaches `cSoilOld`. The `cSoilOld` positions
+  are `fraction_positions`, every other outgoing edge's positions are
+  `complement_positions`.
 
-A pair the topology does not contain is simply absent, so reading it fails at
-`define` naming the missing edge rather than at a `BoundsError` on an empty
-`findall`.
+The `cVeg`/`cLit` name-prefix restrictions and the `cMic`/`cSoil` more-than-one-edge
+requirement are not cosmetic: without them, a giver like `cSoilSlow` (taker set
+`cMicSoil`/`cSoilOld`, i.e. one `cMic`-prefixed and one `cSoil`-prefixed taker) would
+also match the `cLit` rule, and a single-outflow `cSoilSlow` (as in `CarbonPoolsGSI`,
+which has no `cMicSoil` pool) would match the `cSoil` rule on its lone edge to
+`cSoilOld` with no complementary edge to divide against -- silently replacing that
+edge's neutral partition of one with a fraction meant for an actual two-way split.
+
+A structure with no matching pattern for a given field (e.g. `CarbonPoolsGSI`, whose
+litter and soil pools aren't split by quality) resolves that field to `()`; no
+per-configuration declaration is needed for that to happen correctly.
 """
-function cFlowNamedEdges(c_taker, c_giver, cEco_components)
-    edge_names = Symbol[]
-    edge_positions = Vector{Int}[]
-    for flow ∈ eachindex(c_taker, c_giver)
-        edge = Symbol(String(cEco_components[c_giver[flow]]) * "_to_" *
-                      String(cEco_components[c_taker[flow]]))
-        known = findfirst(==(edge), edge_names)
-        if isnothing(known)
-            push!(edge_names, edge)
-            push!(edge_positions, [flow])
-        else
-            push!(edge_positions[known], flow)
+function deriveQPGroups(c_giver, c_taker, cEco_components)
+    by_giver = Dict{Symbol,Dict{Symbol,Vector{Int}}}()
+    for flow ∈ eachindex(c_giver, c_taker)
+        giver_name = cEco_components[c_giver[flow]]
+        taker_name = cEco_components[c_taker[flow]]
+        takers = get!(by_giver, giver_name, Dict{Symbol,Vector{Int}}())
+        push!(get!(takers, taker_name, Int[]), flow)
+    end
+
+    QPGroup = Tuple{Tuple{Vararg{Int}},Tuple{Vararg{Int}}}
+    cVeg = QPGroup[]
+    cLit_struct = QPGroup[]
+    cLit_wood = QPGroup[]
+    cMic = QPGroup[]
+    cSoil = QPGroup[]
+
+    for (giver_name, takers) ∈ by_giver
+        giver_str = String(giver_name)
+        if startswith(giver_str, "cVeg")
+            for taker_name ∈ keys(takers)
+                taker_str = String(taker_name)
+                endswith(taker_str, "Fast") || continue
+                slow_name = Symbol(taker_str[1:(end - 4)] * "Slow")
+                haskey(takers, slow_name) || continue
+                push!(cVeg, (Tuple(takers[taker_name]), Tuple(takers[slow_name])))
+            end
+        elseif startswith(giver_str, "cLit")
+            soil_positions = Int[]
+            mic_positions = Int[]
+            for (taker_name, positions) ∈ takers
+                taker_str = String(taker_name)
+                if startswith(taker_str, "cSoil")
+                    append!(soil_positions, positions)
+                elseif startswith(taker_str, "cMic")
+                    append!(mic_positions, positions)
+                end
+            end
+            if !isempty(soil_positions) && !isempty(mic_positions)
+                target = (occursin("Wood", giver_str) || occursin("RootCoarse", giver_str)) ?
+                          cLit_wood : cLit_struct
+                push!(target, (Tuple(soil_positions), Tuple(mic_positions)))
+            end
+        elseif giver_name === :cMicSoil || giver_name === :cSoilSlow
+            n_out = sum(length, values(takers))
+            if n_out > 1 && haskey(takers, :cSoilOld)
+                fraction_positions = Tuple(takers[:cSoilOld])
+                complement_positions = Tuple(
+                    position for (taker_name, positions) ∈ takers if taker_name !== :cSoilOld
+                    for position ∈ positions
+                )
+                target = giver_name === :cMicSoil ? cMic : cSoil
+                push!(target, (fraction_positions, complement_positions))
+            end
         end
     end
-    return NamedTuple{Tuple(edge_names)}(Tuple(Tuple.(edge_positions)))
+
+    return (;
+        cVeg = Tuple(cVeg),
+        cLit = (; structural = Tuple(cLit_struct), wood = Tuple(cLit_wood)),
+        cMic = Tuple(cMic),
+        cSoil = Tuple(cSoil),
+    )
 end
 
 """
@@ -265,7 +344,7 @@ function applyPoolTable(c_eco, table, scalar::Real, helpers)
     for (pool_name, turnover_time) in pairs(table)
         for ix in getproperty(helpers.pools.zix, pool_name)
             tmp = (one(T) / T(turnover_time)) * scalar
-            c_eco = repElem(c_eco, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, ix)
+            c_eco = repElem(c_eco, tmp, ix)
         end
     end
     return c_eco
@@ -276,7 +355,7 @@ function applyPoolTable(c_eco, table, scalar_for::NamedTuple, helpers)
         scalar = getproperty(scalar_for, pool_name)
         for ix in getproperty(helpers.pools.zix, pool_name)
             tmp = (one(T) / T(turnover_time)) * scalar
-            c_eco = repElem(c_eco, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, ix)
+            c_eco = repElem(c_eco, tmp, ix)
         end
     end
     return c_eco
@@ -300,7 +379,7 @@ function applyPoolCNTable(C_to_N_cVeg, table, cn_scalar, helpers)
     for (pool_name, c_to_n) in pairs(table)
         for ix in getproperty(helpers.pools.zix, pool_name)
             tmp = T(c_to_n) * cn_scalar
-            C_to_N_cVeg = repElem(C_to_N_cVeg, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, ix)
+            C_to_N_cVeg = repElem(C_to_N_cVeg, tmp, ix)
         end
     end
     return C_to_N_cVeg

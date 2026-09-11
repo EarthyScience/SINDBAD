@@ -20,15 +20,20 @@ function precompute(params::cQualityPartitioncVeg_none, forcing, land, helpers)
     ## unpack land variables
     @unpack_nt begin
         c_flow_QP_f_cVeg ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        c_flow_qp_groups ⇐ land.cCycleBase
     end
 
     ## calculate variables
     # No preference between the metabolic and structural pathway, but still a
     # partition: leaf and fine-root litterfall divides equally over whichever of
     # the two the configured structure has.
-    for group ∈ QP_CVEG_GROUPS
-        c_flow_QP_f_cVeg = setQPGroupEqual(c_flow_QP_f_cVeg, c_flow_named_edges, group)
+    for (fast_positions, slow_positions) ∈ c_flow_qp_groups.cVeg
+        n_out = length(fast_positions) + length(slow_positions)
+        n_out == 0 && continue
+        frac_out = safe_divide(one(eltype(c_flow_QP_f_cVeg)), n_out)
+        for i ∈ (fast_positions..., slow_positions...)
+            c_flow_QP_f_cVeg = repElem(c_flow_QP_f_cVeg, frac_out, i)
+        end
     end
 
     ## pack land variables

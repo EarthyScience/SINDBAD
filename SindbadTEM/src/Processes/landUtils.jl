@@ -1,11 +1,12 @@
 export @add_to_elem, @pack_nt, @rep_elem, @rep_vec, @unpack_nt
 export addToElem, addToEachElem, addVec
 export cFlowMatrix
+export edgesBetween
 export getVectorOfType
 export getZix
 export processPackNT, processUnpackNT
 export repElem, repVec
-export setComponentFromMainPool, setFlowEdgeValue, setMainFromComponentPool
+export setComponentFromMainPool, setFlowValue, setMainFromComponentPool
 export totalS
 export totalS_indices
 using ..SindbadTEM
@@ -366,23 +367,52 @@ function cFlowNamePosition(approach_name, pool_names, pool_name, edge)
 end
 
 """
-    setFlowEdgeValue(flow_vec, c_flow_named_edges, edge, value)
+    edgesBetween(c_giver, c_taker, giver_zix, taker_zix)
 
-Write `value` into every flow-vector position that carries the named `edge`, and
-return the vector unchanged when the configured pool structure has no such edge.
+Every flow-vector position whose giver is in `giver_zix` and whose taker is in
+`taker_zix`, by pool-index membership rather than by matching a literal
+`<giver>_to_<taker>` name.
 
-The tables that fill the per-flow vectors are declared over the full CASA pool
-topology, while the same approaches are selected against more aggregated structures
-that lack the explicit metabolic/structural litter and microbial pools. Skipping
-absent edges lets one declaration serve both, instead of erroring on a pool the
-structure never had.
+This is what lets a caller work against more than one pool structure without
+naming either config's specific pools: e.g. leaf shedding lands in one pool under
+`CarbonPoolsGSI` (`cLitFast`) and two under `CarbonPoolsCASA` (`cLitLeafFast`,
+`cLitLeafSlow`), and this finds every one of them for the same `giver_zix`/
+`taker_zix` pair.
 
-`setQPFlow` and `setMEFlow` are this function under the names their processes read in.
+An empty `giver_zix` or `taker_zix` -- a pool this structure does not have at all,
+e.g. `CarbonPoolsCASA`'s absent `cVegReserve` -- naturally returns no edges rather
+than erroring, so a caller written against a pool a structure lacks simply
+contributes nothing there.
+
+A name-based match (`<giver>_to_<taker>`, e.g. matching a literal alias like
+`CarbonPoolsCASA`'s `cLitSlow`) is not equivalent to this: an alias can union pools
+that individually need different treatment (`cLitSlow` = `cLitLeafSlow` +
+`cLitRootFineSlow` + `cLitRootCoarse` + `cLitWood`, but `cLitRootFineSlow`'s own
+transfer is calibrated separately from the other three's in
+`meCASAFlowsLitter`/`cCycleBase_CASA.jl`), so `giver_zix`/`taker_zix` should name
+the exact pools a caller means, not reach for a broader alias merely because one
+exists with a convenient name.
 """
-function setFlowEdgeValue(flow_vec, c_flow_named_edges, edge, value)
-    hasproperty(c_flow_named_edges, edge) || return flow_vec
-    for flow ∈ getproperty(c_flow_named_edges, edge)
-        flow_vec = repElem(flow_vec, value, flow_vec, flow_vec, flow)
+function edgesBetween(c_giver, c_taker, giver_zix, taker_zix)
+    return Tuple(flow for flow ∈ eachindex(c_giver, c_taker)
+                 if c_giver[flow] ∈ giver_zix && c_taker[flow] ∈ taker_zix)
+end
+
+"""
+    setFlowValue(flow_vec, c_giver, c_taker, giver_zix, taker_zix, value)
+
+Write `value` into every flow-vector position whose giver is in `giver_zix` and
+whose taker is in `taker_zix` (via `edgesBetween`), and return the vector unchanged
+when no flow matches -- e.g. a pool structure that lacks either group entirely.
+
+`setMEFlow` is this function under the name `cMicrobialEfficiency` reads it in as.
+`cQualityPartition` goes through neither this nor named edges: its groups are
+resolved to flow-vector positions once, in `cCycleBase`'s `deriveQPGroups`, and its
+approaches write directly at those positions.
+"""
+function setFlowValue(flow_vec, c_giver, c_taker, giver_zix, taker_zix, value)
+    for flow ∈ edgesBetween(c_giver, c_taker, giver_zix, taker_zix)
+        flow_vec = repElem(flow_vec, value, flow)
     end
     return flow_vec
 end
@@ -529,14 +559,13 @@ end
 Macro to replace an element of a vector or static vector.
 
 # Arguments
-- `outparams::Expr`: Expression in the form `value ⇒ (vector, index, pool_name)`
+- `outparams::Expr`: Expression in the form `value ⇒ (vector, index)`
 
 # Examples
 ```jldoctest
 julia> using StaticArraysCore: SVector
-julia> helpers = (; pools = (; zeros = (; cOther = SVector(0.0f0, 0.0f0),), ones = (; cOther = SVector(1.0f0, 1.0f0),)))
 julia> cOther = SVector(100.0f0, 1.0f0)
-julia> @rep_elem 50.0f0 ⇒ (cOther, 1, :cOther)
+julia> @rep_elem 50.0f0 ⇒ (cOther, 1)
 julia> cOther
 2-element SVector{2, Float32} with indices SOneTo(2):
   50.0f0
@@ -552,7 +581,6 @@ macro rep_elem(outparams::Expr)
     rhsa = rhs.args
     tar = esc(rhsa[1])
     indx = rhsa[2]
-    hp_pool = rhsa[3]
     outCode = [
         Expr(:(=),
             tar,
@@ -560,24 +588,20 @@ macro rep_elem(outparams::Expr)
                 repElem,
                 tar,
                 lhs,
-                esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
-                esc(Expr(:., :(helpers.pools.ones), hp_pool)),
                 esc(indx)))
     ]
     return Expr(:block, outCode...)
 end
 
 """
-    repElem(v::AbstractVector, v_elem, _, _, ind::Int)
-    repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
+    repElem(v::AbstractVector, v_elem, ind::Int)
+    repElem(v::SVector, v_elem, ind::Int)
 
 Replace an element of a vector with a new value.
 
 # Arguments
 - `v`: A `StaticVector` or `AbstractVector`
 - `v_elem`: The new value to assign
-- `v_zero`: A `StaticVector` of zeros (used for `SVector` only)
-- `v_one`: A `StaticVector` of ones (used for `SVector` only)
 - `ind::Int`: The index of the element to replace
 
 # Returns
@@ -587,9 +611,7 @@ Replace an element of a vector with a new value.
 ```jldoctest
 julia> using StaticArraysCore: SVector
 julia> v = SVector(1.0, 2.0, 3.0)
-julia> v_zero = SVector(0.0, 0.0, 0.0)
-julia> v_one = SVector(1.0, 1.0, 1.0)
-julia> repElem(v, 5.0, v_zero, v_one, 2)
+julia> repElem(v, 5.0, 2)
 3-element SVector{3, Float64} with indices SOneTo(3):
  1.0
  5.0
@@ -598,20 +620,18 @@ julia> repElem(v, 5.0, v_zero, v_one, 2)
 """
 function repElem end
 
-function repElem(v::AbstractVector, v_elem, _, _, ind::Int)
+function repElem(v::AbstractVector, v_elem, ind::Int)
     v[ind] = v_elem
     return v
 end
 
-function repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
-    n_0 = zero(first(v_zero))
-    n_1 = one(first(v_zero))
-    v_zero = v_zero .* n_0
-    v_zero = Base.setindex(v_zero, n_1, ind)
-    v_one = v_one .* n_0 .+ n_1
-    v_one = Base.setindex(v_one, n_0, ind)
-    v = v .* v_one .+ v_zero .* v_elem
-    return v
+function repElem(v::SVector{N}, v_elem, ind::Int) where {N}
+    # Written as a per-element tuple selection (rather than a zero/one mask
+    # multiplied into v) because that arithmetic is not exact when v holds NaN or
+    # Inf: `0 * Inf` and `0 * NaN` are themselves NaN, so the mask poisons every
+    # position of v, not just the one being replaced. N is static, so this unrolls
+    # to plain scalar selects with no heap allocation.
+    return SVector(ntuple(i -> i == ind ? v_elem : v[i], Val(N)))
 end
 
 """
@@ -717,8 +737,6 @@ Set component pool values using values from the main pool.
                     repElem,
                     s_comp,
                     Expr(:ref, s_main, ix),
-                    Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
-                    Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
                     c_ix)))
 
             c_ix += 1
@@ -774,8 +792,6 @@ Set main pool values from component pool values.
                     repElem,
                     s_main,
                     Expr(:ref, s_comp, c_ix),
-                    Expr(:., :(helpers.pools.zeros), QuoteNode(s_main)),
-                    Expr(:., :(helpers.pools.ones), QuoteNode(s_main)),
                     ix)))
             c_ix += 1
         end

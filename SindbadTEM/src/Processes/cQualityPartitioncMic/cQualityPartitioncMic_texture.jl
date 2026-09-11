@@ -28,7 +28,7 @@ function precompute(params::cQualityPartitioncMic_texture, forcing, land, helper
     ## unpack land variables
     @unpack_nt begin
         c_flow_QP_f_cMic ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        c_flow_qp_groups ⇐ land.cCycleBase
         st_clay ⇐ land.properties
         o_one ⇐ land.constants
     end
@@ -37,10 +37,15 @@ function precompute(params::cQualityPartitioncMic_texture, forcing, land, helper
     # Collapse the soil profile to a single mean clay fraction, as `meTextureEfficiency`
     # does for the microbial carbon-transfer efficiency.
     frac_cMicSoil_to_cSoilOld = frac_clay_cMicSoil_A + frac_clay_cMicSoil_B * mean(st_clay)
-    (stabilized_edge, other_edge) = only(QP_CMIC_GROUPS)
-    c_flow_QP_f_cMic = setQPGroup(c_flow_QP_f_cMic, c_flow_named_edges,
-        (stabilized_edge, other_edge),
-        (frac_cMicSoil_to_cSoilOld, o_one - frac_cMicSoil_to_cSoilOld))
+    if !isempty(c_flow_qp_groups.cMic)
+        (stabilized_positions, other_positions) = only(c_flow_qp_groups.cMic)
+        for i ∈ stabilized_positions
+            c_flow_QP_f_cMic = repElem(c_flow_QP_f_cMic, frac_cMicSoil_to_cSoilOld, i)
+        end
+        for i ∈ other_positions
+            c_flow_QP_f_cMic = repElem(c_flow_QP_f_cMic, o_one - frac_cMicSoil_to_cSoilOld, i)
+        end
+    end
 
     ## pack land variables
     @pack_nt c_flow_QP_f_cMic ⇒ land.diagnostics
@@ -61,7 +66,8 @@ The approach computes
 
 `frac_cMicSoil_to_cSoilOld = frac_clay_cMicSoil_A + frac_clay_cMicSoil_B * mean(st_clay)`
 
-and writes it, with its complement, into the flows of `QP_CMIC_GROUPS`. The
+and writes it, with its complement, into the flows of
+`land.cCycleBase.c_flow_qp_groups.cMic`. The
 parameters and the arithmetic are those of the soil-microbial part of the
 now-removed `cQualityPartition_CASA`, which this factor (composed with
 [`cQualityPartitioncVeg_vegQualityTraits`](@ref),

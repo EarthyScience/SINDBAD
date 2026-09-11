@@ -27,15 +27,20 @@ function precompute(params::cQualityPartitioncSoil_constant, forcing, land, help
     ## unpack land variables
     @unpack_nt begin
         c_flow_QP_f_cSoil ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        c_flow_qp_groups ⇐ land.cCycleBase
         o_one ⇐ land.constants
     end
 
     ## calculate variables
-    (stabilized_edge, other_edge) = only(QP_CSOIL_GROUPS)
-    c_flow_QP_f_cSoil = setQPGroup(c_flow_QP_f_cSoil, c_flow_named_edges,
-        (stabilized_edge, other_edge),
-        (frac_cSoilSlow_to_cSoilOld, o_one - frac_cSoilSlow_to_cSoilOld))
+    if !isempty(c_flow_qp_groups.cSoil)
+        (stabilized_positions, other_positions) = only(c_flow_qp_groups.cSoil)
+        for i ∈ stabilized_positions
+            c_flow_QP_f_cSoil = repElem(c_flow_QP_f_cSoil, frac_cSoilSlow_to_cSoilOld, i)
+        end
+        for i ∈ other_positions
+            c_flow_QP_f_cSoil = repElem(c_flow_QP_f_cSoil, o_one - frac_cSoilSlow_to_cSoilOld, i)
+        end
+    end
 
     ## pack land variables
     @pack_nt c_flow_QP_f_cSoil ⇒ land.diagnostics

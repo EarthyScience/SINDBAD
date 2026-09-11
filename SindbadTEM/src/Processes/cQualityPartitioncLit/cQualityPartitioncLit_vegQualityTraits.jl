@@ -20,21 +20,27 @@ function precompute(params::cQualityPartitioncLit_vegQualityTraits, forcing, lan
     ## unpack land variables
     @unpack_nt begin
         c_flow_QP_f_cLit ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        c_flow_qp_groups ⇐ land.cCycleBase
         (lit_frac_lignin_struct, lit_frac_lignin_wood) ⇐ land.properties
         o_one ⇐ land.constants
     end
 
     ## calculate variables
-    for (stabilized_edge, microbial_edge) ∈ QP_CLIT_STRUCT_GROUPS
-        c_flow_QP_f_cLit = setQPGroup(c_flow_QP_f_cLit, c_flow_named_edges,
-            (stabilized_edge, microbial_edge),
-            (lit_frac_lignin_struct, o_one - lit_frac_lignin_struct))
+    for (soil_positions, mic_positions) ∈ c_flow_qp_groups.cLit.structural
+        for i ∈ soil_positions
+            c_flow_QP_f_cLit = repElem(c_flow_QP_f_cLit, lit_frac_lignin_struct, i)
+        end
+        for i ∈ mic_positions
+            c_flow_QP_f_cLit = repElem(c_flow_QP_f_cLit, o_one - lit_frac_lignin_struct, i)
+        end
     end
-    for (stabilized_edge, microbial_edge) ∈ QP_CLIT_WOOD_GROUPS
-        c_flow_QP_f_cLit = setQPGroup(c_flow_QP_f_cLit, c_flow_named_edges,
-            (stabilized_edge, microbial_edge),
-            (lit_frac_lignin_wood, o_one - lit_frac_lignin_wood))
+    for (soil_positions, mic_positions) ∈ c_flow_qp_groups.cLit.wood
+        for i ∈ soil_positions
+            c_flow_QP_f_cLit = repElem(c_flow_QP_f_cLit, lit_frac_lignin_wood, i)
+        end
+        for i ∈ mic_positions
+            c_flow_QP_f_cLit = repElem(c_flow_QP_f_cLit, o_one - lit_frac_lignin_wood, i)
+        end
     end
 
     ## pack land variables
@@ -54,9 +60,9 @@ purpose(::Type{cQualityPartitioncLit_vegQualityTraits}) = "Lignin control of the
 
 Reads `lit_frac_lignin_struct` and `lit_frac_lignin_wood` from `land.properties`,
 published by whichever `vegQualityTraits` approach is selected, and writes each,
-with its complement, into the flows of `QP_CLIT_STRUCT_GROUPS` and
-`QP_CLIT_WOOD_GROUPS`. No parameters of its own: the litter chemistry is declared
-exactly once, in `vegQualityTraits`.
+with its complement, into the flows of `land.cCycleBase.c_flow_qp_groups.cLit.structural`
+and `c_flow_qp_groups.cLit.wood`. No parameters of its own: the litter chemistry
+is declared exactly once, in `vegQualityTraits`.
 
 This is the properly-connected replacement for the legacy
 [`cQualityPartitioncLit_vegTypesLegacy`](@ref), whose per-PFT table never read

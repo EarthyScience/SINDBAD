@@ -24,7 +24,7 @@ function precompute(params::cTauVegProperties_CASA, forcing, land, helpers)
     # Lignin slows the decomposition of the structural litter pools only. All
     # other pools keep the neutral factor of one set in define.
     for zix ∈ (helpers.pools.zix.cLitLeafSlow..., helpers.pools.zix.cLitRootFineSlow...)
-        @rep_elem lit_k_f_lignin ⇒ (c_eco_k_f_veg_props, zix, :cEco)
+        @rep_elem lit_k_f_lignin ⇒ (c_eco_k_f_veg_props, zix)
     end
 
     ## pack land variables

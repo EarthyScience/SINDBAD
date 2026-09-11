@@ -21,7 +21,7 @@ function precompute(params::cQualityPartition_none, forcing, land, helpers)
         # No preferential quality partitioning: equally divide the giver's
         # available carbon among its active outgoing pathways.
         frac_out = safe_divide(one.(c_flow_QP_vec[fO]), n_out)
-        c_flow_QP_vec = repElem(c_flow_QP_vec, frac_out, c_flow_QP_vec, c_flow_QP_vec, fO)
+        c_flow_QP_vec = repElem(c_flow_QP_vec, frac_out, fO)
     end
 
     @pack_nt c_flow_QP_vec ⇒ land.diagnostics

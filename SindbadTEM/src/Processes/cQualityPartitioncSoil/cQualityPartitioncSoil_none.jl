@@ -20,15 +20,20 @@ function precompute(params::cQualityPartitioncSoil_none, forcing, land, helpers)
     ## unpack land variables
     @unpack_nt begin
         c_flow_QP_f_cSoil ⇐ land.diagnostics
-        c_flow_named_edges ⇐ land.cCycleBase
+        c_flow_qp_groups ⇐ land.cCycleBase
     end
 
     ## calculate variables
     # No soil-property preference between stabilization and the remaining pathway, but
     # still a partition: slow-soil decomposition divides equally over whichever of
     # the two the configured structure has.
-    for group ∈ QP_CSOIL_GROUPS
-        c_flow_QP_f_cSoil = setQPGroupEqual(c_flow_QP_f_cSoil, c_flow_named_edges, group)
+    for (stabilized_positions, other_positions) ∈ c_flow_qp_groups.cSoil
+        n_out = length(stabilized_positions) + length(other_positions)
+        n_out == 0 && continue
+        frac_out = safe_divide(one(eltype(c_flow_QP_f_cSoil)), n_out)
+        for i ∈ (stabilized_positions..., other_positions...)
+            c_flow_QP_f_cSoil = repElem(c_flow_QP_f_cSoil, frac_out, i)
+        end
     end
 
     ## pack land variables

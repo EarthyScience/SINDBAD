@@ -39,13 +39,13 @@ function precompute(params::rootWaterEfficiency_expCvegRoot, forcing, land, help
         soilW ⇐ land.pools
     end
     if max_root_depth > z_zero
-        @rep_elem one(eltype(root_over)) ⇒ (root_over, 1, :soilW)
+        @rep_elem one(eltype(root_over)) ⇒ (root_over, 1)
     end
     for sl ∈ eachindex(soilW)[2:end]
         soilcumuD = cumulative_soil_depths[sl-1]
         rootOver = max_root_depth - soilcumuD
         rootEff = rootOver >= z_zero ? one(eltype(root_over)) : zero(eltype(root_over))
-        @rep_elem rootEff ⇒ (root_over, sl, :soilW)
+        @rep_elem rootEff ⇒ (root_over, sl)
     end
     ## pack land variables
     @pack_nt root_over ⇒ land.rootWaterEfficiency
@@ -67,7 +67,7 @@ function compute(params::rootWaterEfficiency_expCvegRoot, forcing, land, helpers
 
     for sl ∈ eachindex(soilW)
         root_water_efficiency_sl = root_over[sl] * tmp_rootEff
-        @rep_elem root_water_efficiency_sl ⇒ (root_water_efficiency, sl, :soilW)
+        @rep_elem root_water_efficiency_sl ⇒ (root_water_efficiency, sl)
     end
     ## pack land variables
     @pack_nt root_water_efficiency ⇒ land.diagnostics
