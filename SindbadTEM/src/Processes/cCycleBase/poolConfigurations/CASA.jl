@@ -88,10 +88,19 @@ const CASA_FLOW_EDGES = (                    # giver => taker, in flow-vector or
 """
     CASA_TAU
 
-Turnover *time* (years) of each CASA carbon pool, per pool name. `k = 1.0/value`
-is computed at the point of use; fixed data, not a parameter -- calibration happens
-through `k_c_scalar` in `cCycleBase_CASA` instead, since array-valued struct fields
-cannot be optimized.
+Turnover *time* (years) of every CASA carbon pool except the four vegetation-organ
+pools (`cVegRootFine`, `cVegRootCoarse`, `cVegWood`, `cVegLeaf`), per pool name.
+`k = 1.0/value` is computed at the point of use; fixed data, not a parameter --
+calibration happens through `k_c_scalar` in `cCycleBase_CASA` instead, since
+array-valued struct fields cannot be optimized.
+
+The four vegetation-organ pools are not here: their turnover now varies by
+`land.states.veg_type` at runtime, looked up from
+`CVEG_ROOTFINE_AGE_PER_VEGTYPE`/`CVEG_LEAF_AGE_PER_VEGTYPE`/
+`CVEG_ROOTCOARSE_AGE_PER_VEGTYPE`/`CVEG_WOOD_AGE_PER_VEGTYPE`
+(`vegTypeParamCatalog.jl`) in `cCycleBase_CASA`'s `precompute`, rather than from one
+fixed value shared by every vegetation type. See that file's docstrings and
+`cCycleBase_CASA.jl`'s own extended help for the mechanics.
 
 Formerly `CASA_ANNK`, which stored the rate `k` directly (values `[1, 0.03, 0.03, 1,
 14.8, 3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045]`, in the pool order
@@ -103,19 +112,14 @@ immediately inverted) before this session's centralization.
 **Formatting convention** (matches `GSI_TAU_DEFAULT`, `poolConfigurations/GSI.jl`):
 a plain decimal, rounded to one decimal place, when the turnover time is `>= 1`;
 `1.0/N` (`N` the exact original rate, unrounded) when it is `< 1`.
-`cVegRootCoarse`/`cVegWood` (`1.0/0.03 = 33.333333333333336`, rounded to `33.3`),
 `cLitRootCoarse`/`cLitWood` (`1.0/0.2424 = 4.125412541254125`, rounded to `4.1`)
 and `cSoilOld` (`1.0/0.0045 = 222.22222222222223`, rounded to `222.2`) are each a
 deliberate, if small, change to the resulting rate for readability (respectively
-about `0.1%`, `0.6%` and `0.01%` off the original), not merely a representation
-change. `cSoilSlow`'s reciprocal (`1.0/0.2 = 5.0`) already rounds to the same
-value, so it is unaffected.
+about `0.6%` and `0.01%` off the original), not merely a representation change.
+`cSoilSlow`'s reciprocal (`1.0/0.2 = 5.0`) already rounds to the same value, so it
+is unaffected.
 """
 const CASA_TAU = (;
-    cVegRootFine = 1.0,
-    cVegRootCoarse = 33.3,
-    cVegWood = 33.3,
-    cVegLeaf = 1.0,
     cLitLeafFast = 1.0/14.8,
     cLitLeafSlow = 1.0/3.9,
     cLitRootFineFast = 1.0/18.5,

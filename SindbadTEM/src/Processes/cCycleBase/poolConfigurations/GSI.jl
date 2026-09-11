@@ -58,11 +58,20 @@ const GSI_FLOW_EDGES = (            # giver => taker, in flow-vector order
 """
     GSI_TAU_DEFAULT
 
-Turnover *time* (years) of each GSI carbon pool, `tree`-form values -- the base
-`cCycleBase_GSI` (no plant-form distinction) reads directly, and every entry of
-`GSI_TAU_PLANTFORM` builds on by overriding only what that plant form actually
-changes. `k = 1.0/turnover_time` is computed at the point of use; fixed data, not
-a parameter.
+Turnover *time* (years) of each GSI carbon pool. `k = 1.0/turnover_time` is
+computed at the point of use; fixed data, not a parameter.
+
+Only `cLitFast`/`cLitSlow`/`cSoilSlow`/`cSoilOld`/`cVegReserve` are read from this
+table directly any more -- none of them vary by vegetation type. The three
+vegetation-organ pools that do (`cVegRoot`, `cVegWood`, `cVegLeaf`) are no longer
+read from here: every GSI-family `cCycleBase` approach
+(`cCycleBase_GSI`/`_GSI_PlantForm`/`_GSI_PlantForm_MGMT`) now looks their turnover
+up at runtime from `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/`CVEG_WOOD_AGE_PER_VEGTYPE`/
+`CVEG_LEAF_AGE_PER_VEGTYPE` (`vegTypeParamCatalog.jl`), re-keyed onto the
+experiment's active `vegTypes` classification and looked up by
+`land.states.veg_type`, exactly like `vegQualityTraits_VegTypes.jl` already does
+for litter chemistry. This table's own `cVegRoot`/`cVegWood`/`cVegLeaf` entries
+are kept only as a historical record of the pre-refactor "tree" defaults.
 
 The four vegetation-organ values (`cVegRoot`, `cVegWood`, `cVegLeaf`,
 `cVegReserve`) are exactly what `cCycleBase_GSI_PlantForm`'s `c_τ_tree` field
@@ -83,53 +92,6 @@ reciprocal on purpose.
 const GSI_TAU_DEFAULT = (;
     cVegRoot = 1.0, cVegWood = 50.0, cVegLeaf = 1.0, cVegReserve = TAU_DORMANT,
     cLitFast = 1.0/14.8, cLitSlow = 1.0/3.9, cSoilSlow = 5.0, cSoilOld = 222.2,
-)
-
-"""
-    GSI_TAU_PLANTFORM
-
-`GSI_TAU_DEFAULT`, one variant per `VegTypeCatalog_PlantForm` group (`tree`,
-`shrub`, `herb`, `unknown`) -- top-level keys chosen to match
-`vegTypeClasses(VegTypeCatalog_PlantForm)`'s own group names exactly, since
-`cCycleBase_GSI_PlantForm`'s `precompute` selects an inner table by
-`GSI_TAU_PLANTFORM[land.states.veg_type]`, generically, with no hardcoded branch
-per group. Adding a `vegTypes` classification with different group names means
-adding a matching top-level key here with real, physically meaningful values for
-those groups -- nothing in `cCycleBase_GSI_PlantForm`/`_MGMT` needs to change to
-support it.
-
-Only the four vegetation-organ pools vary by plant form (litter/soil turnover
-doesn't), so each entry below overrides only the fields that actually differ from
-`GSI_TAU_DEFAULT` -- `tree` is `GSI_TAU_DEFAULT` itself, `shrub` overrides just
-`cVegWood`, `herb` overrides its three non-dormant organs. The vegetation Reserve
-pool is `TAU_DORMANT` for every plant form (inherited from `GSI_TAU_DEFAULT`,
-never overridden -- the pre-table `c_τ_herb` field's `0.75e11` was already
-"effectively dormant" in effect, just a different large number than `c_τ_tree`/
-`c_τ_shrub`'s `1.0e11`; both collapse onto the one shared `TAU_DORMANT` value
-now, with no meaningful change to the resulting near-zero rate). `unknown` is the
-one exception: every field is `TAU_DORMANT`, reproducing today's zero-rate
-fallback for a pixel whose vegetation type doesn't resolve to any of the three
-real plant forms, and letting `cCycleBase_GSI_PlantForm` drop the separate
-`zero_c_τ_pf` fallback machinery it needed when tree/shrub/herb were struct
-fields rather than table entries -- `:unknown` is now just another ordinary
-lookup, not a special case in code.
-
-`herb`'s three organs are written as `3.0/4.0` rather than plain `0.75`,
-following `GSI_TAU_DEFAULT`'s magnitude-based formatting convention (turnover
-time `< 1` uses a fraction): `3.0/4.0` is exactly `0.75` in double precision,
-not an approximation of it.
-"""
-const GSI_TAU_PLANTFORM = (;
-    tree = GSI_TAU_DEFAULT,
-    shrub = (; GSI_TAU_DEFAULT..., cVegWood = 5.0),
-    herb = (; GSI_TAU_DEFAULT...,
-        cVegRoot = 3.0/4.0, cVegWood = 3.0/4.0,
-        cVegLeaf = 3.0/4.0,
-    ),
-    unknown = (; GSI_TAU_DEFAULT...,
-        cVegRoot = TAU_DORMANT, cVegWood = TAU_DORMANT, cVegLeaf = TAU_DORMANT, cVegReserve = TAU_DORMANT,
-        cLitFast = TAU_DORMANT, cLitSlow = TAU_DORMANT, cSoilSlow = TAU_DORMANT, cSoilOld = TAU_DORMANT,
-    ),
 )
 
 """

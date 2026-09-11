@@ -9,9 +9,14 @@ Abstract supertype of the carbon pool configurations: the pool structure a
 `cCycleBase` approach is written against, together with any aliases that structure
 needs. Each configuration's file also centralizes that structure's own fixed
 per-pool defaults an approach reads rather than declares inline -- turnover time
-(`GSI_TAU_DEFAULT`/`GSI_TAU_PLANTFORM`/`MGMT_TAU`/`CASA_TAU`) and vegetation
-carbon-to-nitrogen ratio (`GSI_CN_ratio`/`CASA_CN_ratio`) today, alongside the
-flow-edge topology (`GSI_FLOW_EDGES`/`CASA_FLOW_EDGES`) that was already here.
+for the pools that are not vegetation-type dependent (`GSI_TAU_DEFAULT`/
+`CASA_TAU`/`MGMT_PRODUCTS_TAU`) and vegetation carbon-to-nitrogen ratio
+(`GSI_CN_ratio`/`CASA_CN_ratio`) today, alongside the flow-edge topology
+(`GSI_FLOW_EDGES`/`CASA_FLOW_EDGES`) that was already here. The vegetation-organ
+pools' turnover (`cVegRoot`/`cVegRootFine`/`cVegRootCoarse`/`cVegWood`/`cVegLeaf`)
+is not fixed here: every `cCycleBase` approach looks it up at runtime by
+`land.states.veg_type`, from the per-vegetation-type tables in
+`vegTypes/vegTypeCatalogs/vegTypeParamCatalog.jl`.
 
 An approach names its configuration with `poolConfiguration`, and the configuration
 answers `poolStructure` and `poolAliases`.
@@ -44,10 +49,9 @@ from this back up to anything physically meaningful, so it exists purely to make
 "this pool is dormant" explicit and consistent wherever it's needed, rather than
 each configuration re-choosing its own large number.
 
-Used for the GSI-family vegetation Reserve pool (`GSI_TAU_DEFAULT`, hence every
-`GSI_TAU_PLANTFORM` entry that inherits it), the `unknown` plant-form's full table
-(`GSI_TAU_PLANTFORM.unknown`), and `MGMT_TAU`'s structural-completeness
-`cProductsWood`/`cProductsCrop` placeholders (`poolConfigurations/MGMT.jl`).
+Used for the GSI-family vegetation Reserve pool (`GSI_TAU_DEFAULT`, and every
+GSI-family `cCycleBase` approach's runtime `cVegReserve` entry, since the Reserve
+pool is not vegetation-type dependent).
 """
 const TAU_DORMANT = 1.0e11
 

@@ -331,7 +331,8 @@ end
     helpers = (; pools = (; zix = zix, components = (; cEco = pool_names),
                             zeros = (; cEco = zeros(n_pools)), ones = (; cEco = ones(n_pools))))
     land = (; pools = (; cEco = zeros(n_pools)), diagnostics = (;), cCycleBase = (;),
-              models = (;), states = (;))
+              models = (;), states = (; veg_type = :Evergreen_Needleleaf_Forests),
+              vegTypes = (; veg_type_classification = P.VegTypeCatalog_SINDBAD()))
 
     approach_instance = P.cCycleBase_CASA()
     land2 = P.define(approach_instance, nothing, land, helpers)

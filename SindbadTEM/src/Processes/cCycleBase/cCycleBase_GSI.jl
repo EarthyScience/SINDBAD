@@ -17,7 +17,10 @@ end
 
 function define(params::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI params
-    @unpack_nt cEco ⇐ land.pools
+    @unpack_nt begin
+        cEco ⇐ land.pools
+        veg_type_classification ⇐ land.vegTypes
+    end
     ## Instantiate variables
     C_to_N_cVeg = zero(cEco) #sujan
     c_eco_k_base = zero(cEco)
@@ -30,12 +33,23 @@ function define(params::cCycleBase_GSI, forcing, land, helpers)
     (c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups, c_flow_A_vec,
         c_flow_QP_vec, c_flow_ME_vec) = cFlowStructure(params, cEco, helpers)
 
+    # Re-keyed once, at define time, onto whichever classification the experiment's
+    # vegTypes approach resolved into (the canonical vocabulary, or a grouping like
+    # VegTypeCatalog_PlantForm) -- see vegTypeCatalogFor, and
+    # vegQualityTraits_VegTypes.jl for the same pattern applied to litter chemistry.
+    # No coarse-root table here: GSI has a single, undifferentiated cVegRoot pool
+    # (no cVegRootCoarse), unlike CASA.
+    rootfine_age_per_vegtype = vegTypeCatalogFor(CVEG_ROOTFINE_AGE_PER_VEGTYPE, typeof(veg_type_classification))
+    leaf_age_per_vegtype = vegTypeCatalogFor(CVEG_LEAF_AGE_PER_VEGTYPE, typeof(veg_type_classification))
+    wood_age_per_vegtype = vegTypeCatalogFor(CVEG_WOOD_AGE_PER_VEGTYPE, typeof(veg_type_classification))
+
     c_model = params
 
     ## pack land variables
     @pack_nt begin
         (c_flow_order, c_taker, c_giver, pool_names, flow_edges, c_flow_qp_groups) ⇒ land.cCycleBase
         (C_to_N_cVeg, c_eco_τ, c_eco_k_base, c_flow_A_vec, c_flow_QP_vec, c_flow_ME_vec) ⇒ land.diagnostics
+        (rootfine_age_per_vegtype, leaf_age_per_vegtype, wood_age_per_vegtype) ⇒ land.diagnostics
         c_model ⇒ land.models
     end
     return land
@@ -43,23 +57,39 @@ end
 
 function precompute(params::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI params
-    @unpack_nt (C_to_N_cVeg, c_eco_k_base, c_eco_τ) ⇐ land.diagnostics
+    @unpack_nt begin
+        (C_to_N_cVeg, c_eco_k_base, c_eco_τ) ⇐ land.diagnostics
+        (rootfine_age_per_vegtype, leaf_age_per_vegtype, wood_age_per_vegtype) ⇐ land.diagnostics
+        veg_type ⇐ land.states
+    end
 
     ## replace values
-    # c_eco_τ is written by pool name rather than by cEco position, so a structure
-    # that orders or omits pools differently still gets its turnovers in the right
-    # slots. Both applyPoolTable/applyPoolCNTable calls are generic over whatever
-    # pools GSI_TAU_DEFAULT/GSI_CN_ratio cover, rather than one hand-written loop
-    # per pool -- and live as their own functions, not inline loops here, so Julia
-    # can infer this function's return type concretely (see applyPoolTable's
-    # docstring, poolConfigurations/poolConfigurations.jl).
+    # cVegRoot/cVegWood/cVegLeaf turnover now varies by land.states.veg_type,
+    # looked up in the tables define re-keyed from vegTypeParamCatalog.jl; the
+    # litter/soil/reserve pools stay fixed, from GSI_TAU_DEFAULT, since they are
+    # not vegetation-type dependent. c_eco_τ is written by pool name rather than
+    # by cEco position, so a structure that orders or omits pools differently
+    # still gets its turnovers in the right slots. Both applyPoolTable/
+    # applyPoolCNTable calls are generic over whatever pools the table covers,
+    # rather than one hand-written loop per pool -- and live as their own
+    # functions, not inline loops here, so Julia can infer this function's return
+    # type concretely (see applyPoolTable's docstring,
+    # poolConfigurations/poolConfigurations.jl).
+    c_τ_organs = (;
+        cVegRoot = getproperty(rootfine_age_per_vegtype, veg_type),
+        cVegWood = getproperty(wood_age_per_vegtype, veg_type),
+        cVegLeaf = getproperty(leaf_age_per_vegtype, veg_type),
+        cVegReserve = TAU_DORMANT,
+        cLitFast = GSI_TAU_DEFAULT.cLitFast, cLitSlow = GSI_TAU_DEFAULT.cLitSlow,
+        cSoilSlow = GSI_TAU_DEFAULT.cSoilSlow, cSoilOld = GSI_TAU_DEFAULT.cSoilOld,
+    )
     k_c_scalars = (;
         cVegRoot = k_c_root_scalar, cVegWood = k_c_wood_scalar,
         cVegLeaf = k_c_leaf_scalar, cVegReserve = k_c_reserve_scalar,
         cLitFast = k_c_litter_scalar, cLitSlow = k_c_litter_scalar,
         cSoilSlow = k_c_soil_scalar, cSoilOld = k_c_soil_scalar,
     )
-    c_eco_τ = applyPoolTable(c_eco_τ, GSI_TAU_DEFAULT, k_c_scalars, helpers)
+    c_eco_τ = applyPoolTable(c_eco_τ, c_τ_organs, k_c_scalars, helpers)
     C_to_N_cVeg = applyPoolCNTable(C_to_N_cVeg, GSI_CN_ratio, CN_ratio_scalar, helpers)
     for i ∈ eachindex(c_eco_k_base)
         tmp = c_eco_τ[i]
@@ -88,29 +118,34 @@ $(getModelDocString(cCycleBase_GSI))
 # Extended help
 
 Turnover for the four vegetation organs (root, wood, leaf, reserve) and the four
-litter/soil pools is `k = (1.0 / turnover_time) * scalar`, where `turnover_time`
-comes from `GSI_TAU_DEFAULT` (`poolConfigurations/GSI.jl` -- this approach has no
-plant-form distinction, so it always reads the `tree` table, tree being the assumed
-default plant form elsewhere in this codebase) and `scalar` is one of the six
-`k_c_*_scalar` fields, shared across pools that don't get their own individual
-scalar (`k_c_litter_scalar` for both litter pools, `k_c_soil_scalar` for both soil
-pools). The vegetation carbon-to-nitrogen ratio works the same way, against
+litter/soil pools is `k = (1.0 / turnover_time) * scalar`, where `scalar` is one of
+the six `k_c_*_scalar` fields, shared across pools that don't get their own
+individual scalar (`k_c_litter_scalar` for both litter pools, `k_c_soil_scalar` for
+both soil pools). `turnover_time` for `cVegRoot`/`cVegWood`/`cVegLeaf` now varies by
+`land.states.veg_type`: `define` re-keys `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/
+`CVEG_WOOD_AGE_PER_VEGTYPE`/`CVEG_LEAF_AGE_PER_VEGTYPE` (`vegTypeParamCatalog.jl`)
+onto whichever classification the experiment's `vegTypes` approach resolved into
+(`vegTypeCatalogFor`), and `precompute` looks the current pixel's `veg_type` up in
+each -- the same pattern `vegQualityTraits_VegTypes.jl` uses for litter chemistry.
+`cVegReserve` stays `TAU_DORMANT` (not vegetation-type dependent), and
+`cLitFast`/`cLitSlow`/`cSoilSlow`/`cSoilOld` stay fixed at `GSI_TAU_DEFAULT`'s
+values (`poolConfigurations/GSI.jl`, also not vegetation-type dependent). The
+vegetation carbon-to-nitrogen ratio works the same way it always has, against
 `GSI_CN_ratio` and `CN_ratio_scalar`. Both loops are generic over whatever pools
 the respective table covers, rather than one hand-written loop per pool.
 `k_c_scalars`, the per-pool-name scalar lookup the turnover loop reads, is also
 packed into `land.cCycleBase`, alongside the flow topology already stored there.
 
-The six `k_c_*_scalar` fields declare `"year"` as their timescale, not
-`GSI_TAU_DEFAULT` itself (a plain `const`, outside the parameter-metadata system
-that timescale conversion keys off). `getTypedModel`/`getParameters` (`SindbadTEM/src/Utils.jl`,
+The six `k_c_*_scalar` fields declare `"year"` as their timescale, not the
+per-vegtype tables themselves (plain `const`s, outside the parameter-metadata
+system that timescale conversion keys off). `getTypedModel`/`getParameters` (`SindbadTEM/src/Utils.jl`,
 `src/Setup/setupParameters.jl`) rescale any `"year"`-timescale field's default and
 bounds to the model's actual configured timestep before a run starts -- e.g. a
 `k_c_root_scalar` default of `1.0` becomes `1/365` for a daily model -- so
-`turnover_time` in `GSI_TAU_DEFAULT` can stay expressed in years while
-`(1.0/turnover_time) * scalar` still comes out already correctly scaled to the
-model's own timestep, exactly reproducing what putting `"year"` directly on the old,
-now-removed absolute-rate fields (`c_τ_Root` etc., see `cCycleBase_GSI_Legacy`) used
-to do.
+`turnover_time` can stay expressed in years while `(1.0/turnover_time) * scalar`
+still comes out already correctly scaled to the model's own timestep, exactly
+reproducing what putting `"year"` directly on the old, now-removed absolute-rate
+fields (`c_τ_Root` etc., see `cCycleBase_GSI_Legacy`) used to do.
 
 *References*
  - Potter; C. S.; J. T. Randerson; C. B. Field; P. A. Matson; P. M.  Vitousek; H. A. Mooney; & S. A. Klooster. 1993. Terrestrial ecosystem  production: A process model based on global satellite & surface data.  Global Biogeochemical Cycles. 7: 811-841.
@@ -144,6 +179,16 @@ to do.
    timestep: turnover now matches to floating-point precision (root/leaf/
    reserve/litter/soil pools) or by exactly the deliberate `0.02`-vs-`0.03`
    ratio from 1.2 (wood).
+ - 1.4 on 11.09.2026 [skoirala]: `cVegRoot`/`cVegWood`/`cVegLeaf` turnover no
+   longer reads the fixed `GSI_TAU_DEFAULT` values -- `define` re-keys
+   `CVEG_ROOTFINE_AGE_PER_VEGTYPE`/`CVEG_WOOD_AGE_PER_VEGTYPE`/
+   `CVEG_LEAF_AGE_PER_VEGTYPE` (`vegTypeParamCatalog.jl`) onto the experiment's
+   active `vegTypes` classification and `precompute` looks the pixel's
+   `land.states.veg_type` up in each, so this approach -- previously documented
+   as having "no plant-form distinction" -- now varies vegetation-organ
+   turnover by vegetation type like `cCycleBase_GSI_PlantForm` did, just at
+   finer granularity. `cVegReserve`/litter/soil turnover is unchanged, still
+   fixed from `GSI_TAU_DEFAULT`.
  - ncarvalhais
 """
 cCycleBase_GSI

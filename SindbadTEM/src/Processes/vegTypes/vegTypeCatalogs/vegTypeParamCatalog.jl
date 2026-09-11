@@ -1,7 +1,9 @@
 export LIT_FRAC_LIGNIN_PER_VEGTYPE
 export LIT_C_TO_N_PER_VEGTYPE
-export CVEG_ROOTFINE_LEAF_AGE_PER_VEGTYPE
-export CVEG_ROOTCOARSE_WOOD_AGE_PER_VEGTYPE
+export CVEG_ROOTFINE_AGE_PER_VEGTYPE
+export CVEG_LEAF_AGE_PER_VEGTYPE
+export CVEG_ROOTCOARSE_AGE_PER_VEGTYPE
+export CVEG_WOOD_AGE_PER_VEGTYPE
 
 
 
@@ -93,13 +95,20 @@ const LIT_C_TO_N_PER_VEGTYPE = (;
 )
 
 """
-    CVEG_ROOTFINE_LEAF_AGE_PER_VEGTYPE
+    CVEG_ROOTFINE_AGE_PER_VEGTYPE
 
-Mean age of fine roots and of leaves, per canonical vegetation type
-(`VegTypeCatalog_SINDBAD`) name -- the legacy `cVegRootFine_age_per_PFT` and
-`cVegLeaf_age_per_PFT` arrays were identical, so one table serves both.
-Fixed data, not a parameter -- calibration happens through
-`cVegRootFine_age_scalar`/`cVegLeaf_age_scalar` in `cCycleBase_CASA` instead.
+Mean age (turnover time, years) of fine roots, per canonical vegetation type
+(`VegTypeCatalog_SINDBAD`) name. Fixed data, not a parameter -- calibration
+happens through `rootfine_age_scalar` in `cCycleBase_CASA` (and the
+equivalent `k_c_root_scalar` in the GSI-family `cCycleBase` approaches)
+instead.
+
+Drives vegetation-organ turnover at runtime: `cCycleBase_CASA`'s `define`
+re-keys this table (via `vegTypeCatalogFor`) onto whichever classification
+the experiment's `vegTypes` approach resolved into, and `precompute` looks up
+the current pixel's `land.states.veg_type` in it for `cVegRootFine`'s
+turnover time. `cCycleBase_GSI`/`_GSI_PlantForm`/`_GSI_PlantForm_MGMT` do the
+same for their single, undifferentiated `cVegRoot` pool.
 
 Transcribed from the legacy 12-element array (values `[1.8, 1.2, 1.2, 5.0,
 1.8, 1.0, 1.0, 0.0, 1.0, 2.8, 1.0, 1.0]`), keyed to `VegTypeCatalog_MODIS_PFT`
@@ -108,14 +117,8 @@ position order (array position `i` = code `i - 1`). See
 convention this follows; `Croplands` here is 1.0 from position 9
 (`Broadleaf_Croplands`), with position 8 (`Cereal_Croplands`, 0.0) dropped
 once both collapse onto IGBP's single `Croplands` class.
-
-These two fields are unused by `cCycleBase_CASA`'s `compute` today (dead
-parameters in the original array form too, and still dead after moving here
-from `cCycleBase_CASA.jl`); this table only modernizes their representation
-and consolidates it with every other per-vegetation-type default, and does
-not change model behavior.
 """
-const CVEG_ROOTFINE_LEAF_AGE_PER_VEGTYPE = (;
+const CVEG_ROOTFINE_AGE_PER_VEGTYPE = (;
     Evergreen_Needleleaf_Forests = 1.2,
     Evergreen_Broadleaf_Forests = 1.2,
     Deciduous_Needleleaf_Forests = 5.0,
@@ -137,23 +140,41 @@ const CVEG_ROOTFINE_LEAF_AGE_PER_VEGTYPE = (;
 )
 
 """
-    CVEG_ROOTCOARSE_WOOD_AGE_PER_VEGTYPE
+    CVEG_LEAF_AGE_PER_VEGTYPE
 
-Mean age of coarse roots and of wood, per canonical vegetation type
-(`VegTypeCatalog_SINDBAD`) name -- the legacy `cVegRootCoarse_age_per_PFT`
-and `cVegWood_age_per_PFT` arrays were identical, so one table serves both.
-Fixed data, not a parameter -- calibration happens through
-`cVegRootCoarse_age_scalar`/`cVegWood_age_scalar` in `cCycleBase_CASA`
+Mean age (turnover time, years) of leaves, per canonical vegetation type
+(`VegTypeCatalog_SINDBAD`) name. Fixed data, not a parameter -- calibration
+happens through `leaf_age_scalar` in `cCycleBase_CASA` (and the equivalent
+`k_c_leaf_scalar` in the GSI-family `cCycleBase` approaches) instead.
+
+Presently a plain alias of `CVEG_ROOTFINE_AGE_PER_VEGTYPE` (the legacy
+`cVegRootFine_age_per_PFT` and `cVegLeaf_age_per_PFT` arrays were identical),
+kept as its own name rather than folded into one table so leaf and fine-root
+turnover can diverge later without another refactor. See
+`CVEG_ROOTFINE_AGE_PER_VEGTYPE`'s docstring for how it is consumed at
+runtime -- the same `define`/`precompute` pattern applies here.
+"""
+const CVEG_LEAF_AGE_PER_VEGTYPE = CVEG_ROOTFINE_AGE_PER_VEGTYPE
+
+"""
+    CVEG_ROOTCOARSE_AGE_PER_VEGTYPE
+
+Mean age (turnover time, years) of coarse roots, per canonical vegetation
+type (`VegTypeCatalog_SINDBAD`) name. Fixed data, not a parameter --
+calibration happens through `rootcoarse_age_scalar` in `cCycleBase_CASA`
 instead.
 
-Transcribed the same way as `CVEG_ROOTFINE_LEAF_AGE_PER_VEGTYPE` from the
-legacy 12-element array (values `[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0,
-0.0, 5.5, 40.0, 1.0, 40.0]`); see that constant's docstring for the
+Drives vegetation-organ turnover at runtime the same way
+`CVEG_ROOTFINE_AGE_PER_VEGTYPE` does, for `cCycleBase_CASA`'s
+`cVegRootCoarse` pool.
+
+Transcribed the same way as `CVEG_ROOTFINE_AGE_PER_VEGTYPE` from the legacy
+12-element array (values `[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0,
+5.5, 40.0, 1.0, 40.0]`); see that constant's docstring for the
 source-position and gap-fill notes, which apply identically here
-(`Croplands` = 5.5 from position 9, position 8 dropped). Also unused by
-`compute` today; see the same note there.
+(`Croplands` = 5.5 from position 9, position 8 dropped).
 """
-const CVEG_ROOTCOARSE_WOOD_AGE_PER_VEGTYPE = (;
+const CVEG_ROOTCOARSE_AGE_PER_VEGTYPE = (;
     Evergreen_Needleleaf_Forests = 58.0,
     Evergreen_Broadleaf_Forests = 58.0,
     Deciduous_Needleleaf_Forests = 42.0,
@@ -173,3 +194,20 @@ const CVEG_ROOTCOARSE_WOOD_AGE_PER_VEGTYPE = (;
     Water_Bodies = 41.0,
     Unclassified = 40.0,
 )
+
+"""
+    CVEG_WOOD_AGE_PER_VEGTYPE
+
+Mean age (turnover time, years) of wood, per canonical vegetation type
+(`VegTypeCatalog_SINDBAD`) name. Fixed data, not a parameter -- calibration
+happens through `wood_age_scalar` in `cCycleBase_CASA` (and the equivalent
+`k_c_wood_scalar` in the GSI-family `cCycleBase` approaches) instead.
+
+Presently a plain alias of `CVEG_ROOTCOARSE_AGE_PER_VEGTYPE` (the legacy
+`cVegRootCoarse_age_per_PFT` and `cVegWood_age_per_PFT` arrays were
+identical), kept as its own name rather than folded into one table so wood
+and coarse-root turnover can diverge later without another refactor. See
+`CVEG_ROOTFINE_AGE_PER_VEGTYPE`'s docstring for how it is consumed at
+runtime -- the same `define`/`precompute` pattern applies here.
+"""
+const CVEG_WOOD_AGE_PER_VEGTYPE = CVEG_ROOTCOARSE_AGE_PER_VEGTYPE
