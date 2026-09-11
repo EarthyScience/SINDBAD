@@ -39,7 +39,6 @@ control it applies (this used to be `cQualityPartitionMetabolicFraction`).
 [`cQualityPartitioncVeg_vegQualityTraits`](@ref) reads the metabolic fraction
 directly from `land.properties`, published by whichever `vegQualityTraits`
 approach is selected, so the partition and the decomposition-rate side can never
-disagree about it; [`cQualityPartitioncVeg_vegTypesLegacy`](@ref) is kept as a legacy,
-independently-calibrated alternative.
+disagree about it.
 """
 cQualityPartitioncVeg

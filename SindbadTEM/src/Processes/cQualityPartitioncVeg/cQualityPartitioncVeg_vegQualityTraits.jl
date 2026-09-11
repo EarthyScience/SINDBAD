@@ -55,9 +55,9 @@ Reads `lit_frac_metabolic` from `land.properties`, published by whichever
 the flows of `land.cCycleBase.c_flow_qp_groups.cVeg`. No parameters of its own:
 the litter chemistry is declared exactly once, in `vegQualityTraits`.
 
-This is the properly-connected replacement for the legacy
-[`cQualityPartitioncVeg_vegTypesLegacy`](@ref), whose per-PFT table never read
-`vegQualityTraits`' actual output and could silently disagree with it.
+This is the properly-connected replacement for a former per-PFT-table approach
+that never read `vegQualityTraits`' actual output and could silently disagree
+with it.
 
 *References*
 

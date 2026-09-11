@@ -40,7 +40,6 @@ control it applies (this used to be `cQualityPartitionLignin`).
 [`cQualityPartitioncLit_vegQualityTraits`](@ref) reads the lignin fractions
 directly from `land.properties`, published by whichever `vegQualityTraits`
 approach is selected, so the partition and the decomposition-rate side can never
-disagree about them; [`cQualityPartitioncLit_vegTypesLegacy`](@ref) is kept as a legacy,
-independently-calibrated alternative.
+disagree about them.
 """
 cQualityPartitioncLit

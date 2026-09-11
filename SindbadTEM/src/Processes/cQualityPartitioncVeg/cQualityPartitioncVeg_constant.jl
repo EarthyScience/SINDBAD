@@ -59,7 +59,7 @@ purpose(::Type{cQualityPartitioncVeg_constant}) = "Sets the metabolic litter fra
 Use this approach to hold the metabolic/structural split of leaf and fine-root
 litterfall at a prescribed value instead of reading it from `vegQualityTraits` or
 varying it with PFT class. The default of 0.85 is the CASA intercept, which
-[`vegQualityTraits_CASA`](@ref) returns when litter contains no lignin.
+[`vegQualityTraits_vegType`](@ref) returns when litter contains no lignin.
 
 *References*
  - Potter, C. S., Randerson, J. T., Field, C. B., Matson, P. A., Vitousek, P. M., Mooney, H. A., & Klooster, S. A. (1993). Terrestrial ecosystem production: a process model based on global satellite and surface data. Global Biogeochemical Cycles, 7(4), 811-841.

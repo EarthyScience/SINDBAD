@@ -1,52 +1,52 @@
-export vegQualityTraits_VegTypes
+export vegQualityTraits_vegType
 
 #! format: off
-@bounds @describe @units @timescale @with_kw struct vegQualityTraits_VegTypes{T1,T2,T3,T4,T5,T6,T7,T8} <: vegQualityTraits
+@bounds @describe @units @timescale @with_kw struct vegQualityTraits_vegType{T1,T2,T3,T4,T5,T6,T7,T8} <: vegQualityTraits
     lit_frac_metabolic_A::T1 = 0.85 | (0.0, 1.0) | "intercept of the metabolic litter fraction at zero lignin-to-nitrogen ratio" | "fraction" | ""
     lit_frac_metabolic_B::T2 = 0.018 | (0.0, 0.1) | "sensitivity of the metabolic litter fraction to the lignin-to-nitrogen ratio" | "fraction" | ""
     lit_nonsol_to_sol_lignin::T3 = 2.22 | (1.0, 5.0) | "scalar converting nonsoluble to soluble lignin" | "fraction" | ""
     lit_frac_lignin_scalar::T4 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT lignin fraction of litter" | "-" | ""
-    lit_C_to_N_scalar::T5 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT carbon-to-nitrogen ratio of litter" | "-" | ""
+    lit_CN_ratio_scalar::T5 = 1.0 | (0.25, 4.0) | "scalar for the per-PFT carbon-to-nitrogen ratio of litter" | "-" | ""
     lit_frac_C_lignin::T6 = 0.65 | (0.0, 1.0) | "carbon fraction of lignin" | "fraction" | ""
     lit_k_f_lignin_A::T7 = 3.0 | (0.0, 10.0) | "sensitivity of the structural litter decomposition rate to the structural lignin fraction" | "" | ""
     lit_frac_lignin_wood::T8 = 0.4 | (0.0, 1.0) | "lignin fraction of woody litter" | "fraction" | ""
 end
 #! format: on
 
-function define(params::vegQualityTraits_VegTypes, forcing, land, helpers)
-    @unpack_nt veg_type_classification ⇐ land.vegTypes
+function define(params::vegQualityTraits_vegType, forcing, land, helpers)
+    @unpack_nt veg_type_class_map ⇐ land.vegClassMap
 
     # Re-keyed once, at define time, onto whichever classification the experiment's
-    # vegTypes approach resolved into (the canonical vocabulary, or a grouping like
+    # vegClassMap approach resolved into (the canonical vocabulary, or a grouping like
     # VegTypeCatalog_PlantForm) -- see vegTypeCatalogFor.
-    lit_C_to_N_per_vegtype = vegTypeCatalogFor(LIT_C_TO_N_PER_VEGTYPE, typeof(veg_type_classification))
-    lit_frac_lignin_per_vegtype = vegTypeCatalogFor(LIT_FRAC_LIGNIN_PER_VEGTYPE, typeof(veg_type_classification))
+    lit_CN_ratio_per_vegtype = vegTypeCatalogFor(LIT_CN_RATIO_PER_VEGTYPE, typeof(veg_type_class_map))
+    lit_frac_lignin_per_vegtype = vegTypeCatalogFor(LIT_FRAC_LIGNIN_PER_VEGTYPE, typeof(veg_type_class_map))
 
-    @pack_nt (lit_C_to_N_per_vegtype, lit_frac_lignin_per_vegtype) ⇒ land.diagnostics
+    @pack_nt (lit_CN_ratio_per_vegtype, lit_frac_lignin_per_vegtype) ⇒ land.diagnostics
     return land
 end
 
-function precompute(params::vegQualityTraits_VegTypes, forcing, land, helpers)
+function precompute(params::vegQualityTraits_vegType, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegQualityTraits_VegTypes params
+    @unpack_vegQualityTraits_vegType params
 
     ## unpack land variables
     @unpack_nt begin
-        lit_C_to_N_per_vegtype ⇐ land.diagnostics
+        lit_CN_ratio_per_vegtype ⇐ land.diagnostics
         lit_frac_lignin_per_vegtype ⇐ land.diagnostics
-        veg_type ⇐ land.states
+        veg_type_name ⇐ land.states
         o_one ⇐ land.constants
     end
 
     ## calculate variables
-    # Select the litter chemistry of land.states.veg_type, whatever classification
+    # Select the litter chemistry of land.states.veg_type_name, whatever classification
     # (fine canonical, or a grouping such as tree/shrub/herb) produced it, by name
     # rather than by a positional index into an array. The per-vegetation-type tables
     # are plain Float64 literals; oftype matches each looked-up value to its scalar's
     # type before multiplying, so the result stays the parameter type instead of
     # silently widening to Float64.
-    lit_C_to_N = oftype(lit_C_to_N_scalar, getproperty(lit_C_to_N_per_vegtype, veg_type)) * lit_C_to_N_scalar
-    lit_frac_lignin = oftype(lit_frac_lignin_scalar, getproperty(lit_frac_lignin_per_vegtype, veg_type)) * lit_frac_lignin_scalar
+    lit_C_to_N = oftype(lit_CN_ratio_scalar, getproperty(lit_CN_ratio_per_vegtype, veg_type_name)) * lit_CN_ratio_scalar
+    lit_frac_lignin = oftype(lit_frac_lignin_scalar, getproperty(lit_frac_lignin_per_vegtype, veg_type_name)) * lit_frac_lignin_scalar
 
     # lignin-to-nitrogen ratio of litter
     lignin_to_N = (lit_C_to_N * lit_frac_lignin) * lit_nonsol_to_sol_lignin
@@ -74,22 +74,22 @@ function precompute(params::vegQualityTraits_VegTypes, forcing, land, helpers)
     return land
 end
 
-purpose(::Type{vegQualityTraits_VegTypes}) = "Metabolic litter fraction and the structural lignin fraction, with vegetation-type-dependent litter chemistry, and the lignin effect on decomposition rate, as modeled in CASA."
+purpose(::Type{vegQualityTraits_vegType}) = "Metabolic litter fraction and the structural lignin fraction, with vegetation-type-dependent litter chemistry, and the lignin effect on decomposition rate, as modeled in CASA."
 
 @doc """
 
-	$(getModelDocString(vegQualityTraits_VegTypes))
+	$(getModelDocString(vegQualityTraits_vegType))
 
 ---
 
 # Extended help
 
-The approach re-keys `LIT_FRAC_LIGNIN_PER_VEGTYPE` and `LIT_C_TO_N_PER_VEGTYPE`
-(declared in `vegTypeParamCatalog.jl`) onto whichever classification the experiment's
-`vegTypes` approach resolved into (`define`), then looks up the lignin fraction and
-the carbon-to-nitrogen ratio of litter for `land.states.veg_type` (`precompute`), each
+The approach re-keys `LIT_FRAC_LIGNIN_PER_VEGTYPE` and `LIT_CN_RATIO_PER_VEGTYPE`
+(declared in `ParamsForVegClasses.jl`) onto whichever classification the experiment's
+`vegClassMap` approach resolved into (`define`), then looks up the lignin fraction and
+the carbon-to-nitrogen ratio of litter for `land.states.veg_type_name` (`precompute`), each
 scaled by a bounded, optimizable multiplier (`lit_frac_lignin_scalar`,
-`lit_C_to_N_scalar`) since the per-vegetation-type tables themselves are fixed data
+`lit_CN_ratio_scalar`) since the per-vegetation-type tables themselves are fixed data
 excluded from optimization, forms the lignin-to-nitrogen ratio
 
 `lignin_to_N = lit_C_to_N * lit_frac_lignin * lit_nonsol_to_sol_lignin`
@@ -132,11 +132,13 @@ original did not.
    struct fields cannot be optimized
  - 4.0 on 10.09.2026 [skoirala]: the fixed tables moved to the consolidated
    `vegTypeParamCatalog.jl`; a new `define` re-keys them at experiment setup
-   time onto the active `vegTypes` classification via `vegTypeCatalogFor`
+   time onto the active `vegClassMap` classification via `vegTypeCatalogFor`
    instead of `precompute` reading them directly by canonical PFT name
+ - 5.0 on 12.09.2026 [skoirala]: renamed from `vegQualityTraits_VegTypes` to
+   `vegQualityTraits_vegType`
 
 *Created by*
  - ncarvalhais
 
 """
-vegQualityTraits_VegTypes
+vegQualityTraits_vegType

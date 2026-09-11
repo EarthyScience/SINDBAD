@@ -43,7 +43,7 @@ purpose(::Type{vegQualityTraits_constant}) = "Sets the metabolic litter fraction
 Use this approach to hold `lit_frac_metabolic` and `lit_frac_lignin_struct` at
 prescribed values instead of deriving them from PFT-dependent litter chemistry. The
 default `lit_frac_metabolic` of 0.85 is the CASA intercept `lit_frac_metabolic_A`,
-which is what [`vegQualityTraits_CASA`](@ref) returns when litter contains no lignin.
+which is what [`vegQualityTraits_vegType`](@ref) returns when litter contains no lignin.
 The decomposition-rate effect is still derived from the prescribed lignin fraction, as
 
 `lit_k_f_lignin = exp(-lit_k_f_lignin_A * lit_frac_lignin_struct)`
