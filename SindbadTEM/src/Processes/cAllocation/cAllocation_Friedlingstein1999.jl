@@ -45,7 +45,7 @@ function compute(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
     ## unpack land variables
     @unpack_nt begin
         c_allocation ⇐ land.diagnostics
-        (cVeg_names, cVeg_nzix, cVeg_zix, c_allocation_to_veg) ⇐ land.cAllocation
+        (cVeg_nzix, cVeg_zix, c_allocation_to_veg) ⇐ land.cAllocation
         c_allocation_f_W_N ⇐ land.diagnostics
         c_allocation_f_LAI ⇐ land.diagnostics
         (z_zero, o_one) ⇐ land.constants
@@ -63,14 +63,7 @@ function compute(params::cAllocation_Friedlingstein1999, forcing, land, helpers)
 
 
     # distribute the allocation according to pools
-    for cl in eachindex(cVeg_names)
-        zix = cVeg_zix[cl]
-        nZix = cVeg_nzix[cl]
-        for ix ∈ zix
-            c_allocation_to_veg_ix = c_allocation_to_veg[cl] / nZix
-            @rep_elem c_allocation_to_veg_ix ⇒ (c_allocation, ix)
-        end
-    end
+    c_allocation = allocateToPools(c_allocation, cVeg_zix, cVeg_nzix, c_allocation_to_veg)
 
     ## pack land variables
     @pack_nt c_allocation ⇒ land.diagnostics

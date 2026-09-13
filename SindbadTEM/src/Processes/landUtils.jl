@@ -6,6 +6,7 @@ export getVectorOfType
 export getZix
 export processPackNT, processUnpackNT
 export repElem, repVec
+export allocateToPools
 export setComponentFromMainPool, setFlowValue, setMainFromComponentPool
 export totalS
 export totalS_indices
@@ -394,7 +395,13 @@ the exact pools a caller means, not reach for a broader alias merely because one
 exists with a convenient name.
 """
 function edgesBetween(c_giver, c_taker, giver_zix, taker_zix)
-    return Tuple(flow for flow ∈ eachindex(c_giver, c_taker)
+    # A lazy filtered generator, not `Tuple(...)`: every call site only iterates the
+    # result once (`for flow in edgesBetween(...)`), and materializing it into a Tuple
+    # requires collecting into a heap-allocated Vector first (a filtered generator's
+    # length isn't known ahead of iteration) -- on every call, in the hot per-timestep
+    # carbon-flow path. The lazy form yields the identical flow indices, in the same
+    # order, with zero allocation.
+    return (flow for flow ∈ eachindex(c_giver, c_taker)
                  if c_giver[flow] ∈ giver_zix && c_taker[flow] ∈ taker_zix)
 end
 
@@ -415,6 +422,58 @@ function setFlowValue(flow_vec, c_giver, c_taker, giver_zix, taker_zix, value)
         flow_vec = repElem(flow_vec, value, flow)
     end
     return flow_vec
+end
+
+"""
+    allocateToPools(v, group_zix, group_n, group_vals)
+
+Spread each group's total value evenly across the pool indices in that group, writing
+`group_vals[g] / group_n[g]` into every index in `group_zix[g]`, for every group `g`.
+
+# Arguments
+- `v`: A `StaticVector` or `AbstractVector`, e.g. a pool's carbon allocation vector
+- `group_zix`: A tuple of pool-index tuples, one per group, e.g. `cVeg_zix`
+- `group_n`: The number of pool indices per group, matching `group_zix`, e.g. `cVeg_nzix`
+- `group_vals`: An indexable collection of the total value to distribute per group (its
+  own length may exceed the number of groups, e.g. a pool-shaped `SVector` of which only
+  the first few positions hold real per-group values), e.g. `c_allocation_to_veg`
+
+# Returns
+- `v` with every group's share written into its pool indices
+
+# Notes
+`group_zix`'s groups do not all have the same number of pool indices (e.g. one veg
+class split across several pools, another mapping to just one), so `group_zix` is a
+*heterogeneous* tuple of differently-sized tuples. Iterating it with a `for` loop over
+`eachindex(group_zix)` makes each iteration's element a `Union` of those tuple types --
+not concretely inferred, allocating on every call. Recursing on the tuples themselves
+(`first`/`Base.tail`) instead gives each group's own call its own, fully concrete
+specialization, with no such `Union`.
+
+`group_vals` is read by position (`group_vals[group_index]`), not consumed via
+`first`/`Base.tail` like `group_zix`/`group_n` -- callers typically pass something like
+`c_allocation_to_veg` as-is, without slicing or converting it to a tuple first. Slicing
+it into a tuple at the call site (e.g. via `ntuple(i -> group_vals[i], length(group_zix))`)
+works out to the same values, but do not do that: it closes over a variable that was just
+reassigned by `@rep_elem`/`repElem` a few lines above, and Julia's closure analysis boxes
+any local that is both reassigned and captured by an inner closure -- even though every
+reassignment keeps the exact same type, the boxed capture makes the whole calling
+function's return type uninferrable, boxing everything downstream of it.
+"""
+function allocateToPools(v, group_zix::Tuple, group_n::Tuple, group_vals)
+    return allocateToPools(v, group_zix, group_n, group_vals, 1)
+end
+
+function allocateToPools(v, ::Tuple{}, ::Tuple{}, group_vals, group_index)
+    return v
+end
+
+function allocateToPools(v, group_zix::Tuple, group_n::Tuple, group_vals, group_index)
+    group_val = group_vals[group_index] / first(group_n)
+    for ix ∈ first(group_zix)
+        v = repElem(v, group_val, ix)
+    end
+    return allocateToPools(v, Base.tail(group_zix), Base.tail(group_n), group_vals, group_index + 1)
 end
 
 """

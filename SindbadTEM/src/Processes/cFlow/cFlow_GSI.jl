@@ -57,8 +57,10 @@ function compute(params::cFlow_GSI, forcing, land, helpers)
         c_eco_k ⇐ land.diagnostics
         c_flow_A_vec ⇐ land.diagnostics
     end
-    (zix_cVegLeaf, zix_cVegRoot, zix_cVegReserve, zix_cLit) = (helpers.pools.zix.cVegLeaf,
-        helpers.pools.zix.cVegRoot, helpers.pools.zix.cVegReserve, helpers.pools.zix.cLit)
+    zix_cVegLeaf = helpers.pools.zix.cVegLeaf
+    zix_cVegRoot = helpers.pools.zix.cVegRoot
+    zix_cVegReserve = helpers.pools.zix.cVegReserve
+    zix_cLit = helpers.pools.zix.cLit
 
     # Compute sigmoid functions
     # LPJ-GSI formulation: In GSI; the stressors are smoothened per control variable. That means; gppfsoilW; fTair; and fRdiff should all have a GSI approach for 1:1 conversion. For now; the function below smoothens the combined stressors; & then calculates the slope for allocation
