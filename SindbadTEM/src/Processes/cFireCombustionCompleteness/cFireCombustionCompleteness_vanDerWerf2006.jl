@@ -41,14 +41,16 @@ function define(params::cFireCombustionCompleteness_vanDerWerf2006, forcing, lan
         # c_fire_ccMax[[zix_keys...]] .= imax
         # c_fire_ccMin[[zix_keys...]] .= imin
         for izix in zix_keys
-            @rep_elem imax ⇒ (c_fire_ccMax, izix, :cEco)
-            @rep_elem imin ⇒ (c_fire_ccMin, izix, :cEco)
+            @rep_elem imax ⇒ (c_fire_ccMax, izix)
+            @rep_elem imin ⇒ (c_fire_ccMin, izix)
         end
     end
+    zix_lit_soil = (zix.cLit..., zix.cSoil...)
 
     ## pack land variables
     @pack_nt begin
         (c_fire_ccMin, c_fire_ccMax, c_Fire_cci, c_Fire_cc_fW) ⇒ land.diagnostics
+        zix_lit_soil ⇒ land.cFireCombustionCompleteness
     end
     return land
 end
@@ -63,26 +65,25 @@ function compute(params::cFireCombustionCompleteness_vanDerWerf2006, forcing, la
         soilW ⇐ land.pools
         ∑w_sat ⇐ land.properties
         (z_zero, o_one) ⇐ land.constants
+        zix_lit_soil ⇐ land.cFireCombustionCompleteness
     end
 
     totalSoilW = at_least_zero(totalS(soilW))
     soilW_nor = at_most_one(totalSoilW / ∑w_sat)
 
     # for all soil pools c_Fire_cc_fW = soilW_nor
-    for zixSoil in (zix.cLit, zix.cSoil)
-        for izix in zixSoil
-            @rep_elem soilW_nor ⇒ (c_Fire_cc_fW, izix, :cEco)
-        end
+    for izix in zix_lit_soil
+        @rep_elem soilW_nor ⇒ (c_Fire_cc_fW, izix)
     end
     # for all veg pools c_Fire_cc_fW = gpp_f_soilW
     for zixVeg in zix.cVeg
-        @rep_elem gpp_f_soilW ⇒ (c_Fire_cc_fW, zixVeg, :cEco)
+        @rep_elem gpp_f_soilW ⇒ (c_Fire_cc_fW, zixVeg)
     end
 
     # for all cEco pools
     for zix_idx in zix.cEco
         cci = (c_fire_ccMax[zix_idx] - c_fire_ccMin[zix_idx]) * (o_one - c_Fire_cc_fW[zix_idx]) + c_fire_ccMin[zix_idx]
-        @rep_elem cci ⇒ (c_Fire_cci, zix_idx, :cEco)
+        @rep_elem cci ⇒ (c_Fire_cci, zix_idx)
     end
 
     # ## pack land variables
